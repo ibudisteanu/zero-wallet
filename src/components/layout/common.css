@@ -39,3 +39,7 @@ body{
 .circle{
     border-radius: 50%;
 }
+
+.centered{
+    text-align: center;
+}
