@@ -2,7 +2,7 @@
     <div class="footer">
 
         <div class="boxed">
-            <div class="row">
+            <div class="row pd-bottom-10">
                 <span>Consensus Established</span>
                 <span>Block Height #0</span>
             </div>

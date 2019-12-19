@@ -1,3 +1,11 @@
+html{
+    font-size: 14px;
+    --nimiq-size: 14px;
+    font-family: Muli,system-ui,sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
 body{
     margin: 0;
 }
@@ -14,4 +22,20 @@ body{
 
 .pd-bottom-10{
     padding-bottom: 10px;
+}
+
+.normal{
+    font-weight: normal;
+}
+
+.thick{
+    font-weight: bold;
+}
+
+.thicker{
+    font-weight: 900;
+}
+
+.circle{
+    border-radius: 50%;
 }

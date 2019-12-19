@@ -1,18 +1,16 @@
 <template>
-    <div>
-        <h1>Home Page</h1>
-        Hello Worldxx
-    </div>
+    <Layout>
+
+    </Layout>
 </template>
 
 <script>
-    export default {
-        name: 'AppHome'
-    };
+import Layout from "src/components/layout/layout";
+export default {
+    components: {Layout},
+};
 </script>
 
 <style scoped>
-    h1  {
-        color: green;
-    }
+
 </style>
