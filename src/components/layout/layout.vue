@@ -1,6 +1,6 @@
 <template>
 
-    <div>
+    <div class="layout ">
 
         <layout-header > </layout-header>
 
@@ -11,6 +11,8 @@
 </template>
 
 <script>
+
+require('./common.css');
 
 import LayoutHeader from "./header/layout-header.vue";
 import LayoutFooter from "./footer/layout-footer.vue";
@@ -24,6 +26,11 @@ export default {
 </script>
 
 
-<style>
+<style scoped>
+
+    .layout {
+
+    }
+
 
 </style>

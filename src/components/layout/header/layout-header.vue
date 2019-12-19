@@ -1,6 +1,16 @@
 <template>
 
-   <b>Hello World</b>
+   <div class="header">
+
+      <div class="boxed">
+
+         <img :src="logo" class="logo">
+
+         <span>{{title}}</span>
+
+      </div>
+
+   </div>
 
 </template>
 
@@ -24,3 +34,15 @@ export default {
 
 }
 </script>
+
+<style scoped>
+
+   .logo{
+      width: 50px
+   }
+
+   .header {
+      width: 100%;
+      background-color: #EEEEEE;
+   }
+</style>
