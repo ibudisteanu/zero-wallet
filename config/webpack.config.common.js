@@ -13,7 +13,8 @@ const webpackConfig = {
         extensions: [ '.js', '.vue' ],
         alias: {
             'vue$': isDev ? 'vue/dist/vue.runtime.js' : 'vue/dist/vue.runtime.min.js',
-            'src': helpers.root('src')
+            'src': helpers.root('src'),
+            'consts': helpers.root('consts'),
         }
     },
     module: {

@@ -1,10 +1,16 @@
 <template>
-    <div>
-        <router-link to="/">
-            Home
-        </router-link> | <router-link to="/medium">
-        Medium
-    </router-link>
-        <router-view />
-    </div>
+
+    <layout></layout>
+
 </template>
+
+<script>
+
+import Layout from "src/components/layout/layout";
+
+export default{
+
+    components: {Layout},
+
+}
+</script>
