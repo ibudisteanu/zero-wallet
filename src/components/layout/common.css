@@ -8,12 +8,19 @@ html{
 
 body{
     margin: 0;
+    background-color: #fafafa;
 }
 
 
 .boxed{
     max-width: 850px;
     margin: 0 auto;
+}
+
+.boxed-background{
+    background: white;
+    box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.25);
+    padding: 2em;
 }
 
 .pd-top-10{
@@ -42,4 +49,28 @@ body{
 
 .centered{
     text-align: center;
+}
+
+
+
+.btn-round {
+    background-color: white;
+    border-radius: 999em;
+    width: 56px;
+    height: 56px;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    line-height: 1;
+    font-size: 36px;
+    position: relative;
+    cursor: pointer;
+}
+
+.btn-round span {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    margin-top: -22px;
 }
