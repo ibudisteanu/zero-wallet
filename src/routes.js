@@ -1,17 +1,17 @@
-import Home from 'src/pages/home';
-const Medium = () => import('src/pages/medium');
+import HomePage from 'src/pages/home/home.page';
+const LoginPage = () => import('src/pages/login/login.page');
 
 
 const routes = [
     {
         path: '/',
         name: 'Home',
-        component: Home
+        component: HomePage
     },
     {
-        path: '/medium',
-        name: 'Medium',
-        component: Medium
+        path: '/login',
+        name: 'Login',
+        component: LoginPage
     }
 ];
 

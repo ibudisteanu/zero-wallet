@@ -1,6 +1,6 @@
 <template>
 
-    <div class="transaction">
+    <div class="transaction pd-top-10">
 
         <div class="time">
             <span>{{showDate}}</span> </br>
@@ -46,7 +46,6 @@ export default {
 <style scoped>
 
     .transaction{
-        padding-top: 10px;
         padding-bottom: 10px;
         display: grid;
         grid-template-columns: 80px 1fr;

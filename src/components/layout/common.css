@@ -23,12 +23,48 @@ body{
     padding: 2em;
 }
 
+.disabled{
+    color: #aeaeae;
+}
+
+.mg-top-0{
+    margin-top: 0;
+}
+
+.mg-bottom-0{
+    margin-bottom: 0;
+}
+
 .pd-top-10{
     padding-top: 10px;
 }
 
 .pd-bottom-10{
     padding-bottom: 10px;
+}
+
+.pd-top-20{
+    padding-top: 20px;
+}
+
+.pd-bottom-20{
+    padding-bottom: 20px;
+}
+
+.pd-top-30{
+    padding-top: 30px;
+}
+
+.pd-bottom-30{
+    padding-bottom: 30px;
+}
+
+.pd-top-40{
+    padding-top: 40px;
+}
+
+.pd-bottom-40{
+    padding-bottom: 40px;
 }
 
 .normal{
@@ -51,6 +87,13 @@ body{
     text-align: center;
 }
 
+.left{
+    text-align: left;
+}
+
+.right{
+    text-align: right;
+}
 
 
 .btn-round {
@@ -73,4 +116,34 @@ body{
     width: 100%;
     text-align: center;
     margin-top: -22px;
+}
+
+input[type=text], input[type=password], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: transparent;
+}
+
+input[type=submit] {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover {
+    background-color: #45a049;
+}
+
+input[type=submit]:disabled {
+    background: #dddddd;
 }

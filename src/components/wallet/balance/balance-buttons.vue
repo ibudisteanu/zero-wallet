@@ -1,6 +1,6 @@
 <template>
 
-    <div class="buttons-row">
+    <div class="buttons-row pd-top-20">
 
         <div class="btn">
             <div class="btn-round" @mouseover="hover('send')" @mouseleave="hover('')" >
@@ -54,7 +54,6 @@ export default {
 
     .buttons-row{
         text-align: center;
-        padding-top: 20px;
     }
 
     .buttons-row .btn{

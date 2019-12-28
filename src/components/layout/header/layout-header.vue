@@ -1,6 +1,6 @@
 <template>
 
-   <div class="header">
+   <div class="header pd-top-10 pd-bottom-10">
 
       <div class="boxed" >
 
@@ -55,8 +55,6 @@ export default {
    .header {
       width: 100%;
       background-color: #EEEEEE;
-      padding-top: 10px;
-      padding-bottom: 10px;
    }
 
    .row{

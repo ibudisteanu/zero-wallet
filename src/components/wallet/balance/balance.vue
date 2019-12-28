@@ -1,7 +1,7 @@
 <template>
 
     <div class="container">
-        <div class="boxed centered">
+        <div class="boxed centered pd-top-30 pd-bottom-30">
 
             <span class="title">Account Balance</span> <br/>
 
@@ -43,8 +43,7 @@ export default {
     }
 
     .boxed{
-        padding-top: 40px;
-        padding-bottom: 40px;
+
     }
 
     .title{
