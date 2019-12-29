@@ -4,7 +4,7 @@
 
         <li>My accounts</li>
 
-        <li v-for="(address) in addresses" :class="`address ${ address.address === mainAddress  ? 'focused' : ''} ` " >
+        <li v-for="(address) in addresses" :class="`address ${ address.address === mainAddress  ? 'focused' : ''} ` " @click="setMainAddress(address.address)" >
             <account-identicon :identicon="address.identicon" :size="20" :outer-size="18" > </account-identicon>
             <div>
                 <span>{{address.name}}</span> <br/>
@@ -14,8 +14,8 @@
 
         <li class="divider"></li>
 
-        <li>Create account</li>
-        <li>Import account</li>
+        <li @click="createAccount">Create account</li>
+        <li @click="importAccount">Import account</li>
         <li class="divider"></li>
         <li>View Mnemonic</li>
     </ul>
@@ -36,6 +36,26 @@ export default {
 
         mainAddress(){
             return this.$store.state.mainAddress;
+        }
+
+    },
+
+    methods:{
+
+        async createAccount(){
+
+            const out = await global.apacache.wallet.manager.createNewAddress();
+
+        },
+
+        async setMainAddress(address){
+
+            this.$store.commit('setMainAddress', address );
+
+        },
+
+        importAccount(){
+
         }
 
     }
@@ -70,6 +90,8 @@ export default {
         box-shadow: 0 0 6px 0 rgba(0,0,0,0.1);
         background-color: #ffffff;
         list-style-type: none;
+
+        z-index: 100;
     }
 
     .dd-menu li {

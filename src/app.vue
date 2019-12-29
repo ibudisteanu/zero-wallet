@@ -44,6 +44,31 @@ export default {
             this.$store.commit('setEncrypted', wallet.encrypted );
             this.$store.commit('setVersion', wallet.version );
 
+            await this.readAddresses();
+
+            this.$store.commit('setLoggedIn', wallet.isLoggedIn() );
+        });
+
+        global.apacache.events.on("wallet/address-pushed", async (walletAddress) => {
+
+            await this.readAddresses();
+
+        });
+
+        global.apacache.events.on("wallet/loaded-error", err => {
+            this.error = err;
+        });
+
+        global.apacache.start();
+
+    },
+
+    methods:{
+
+        async readAddresses(){
+
+            const wallet = global.apacache.wallet;
+
             const addresses = {};
             for (let i=0; i < wallet.addresses.length; i++ ){
 
@@ -53,25 +78,19 @@ export default {
                     address: address,
                     name: wallet.addresses[i].name,
                     identicon: publicAddress.identiconImg(),
-                }
+                };
 
-                if (i === 0){
+                if (i === 0 && !this.$store.mainAddress ){
                     this.$store.commit('setMainAddress', address );
                 }
             }
 
             this.$store.commit('setAddresses', addresses );
 
-            this.$store.commit('setLoggedIn', wallet.isLoggedIn() );
-        });
 
-        global.apacache.events.on("wallet/loaded-error", err => {
-            this.error = err;
-        });
+        }
 
-        global.apacache.start();
-
-    }
+    },
 
 }
 </script>
