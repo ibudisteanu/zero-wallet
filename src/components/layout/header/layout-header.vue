@@ -9,9 +9,6 @@
 
             <span class="thicker">{{title}}</span>
 
-            <div class="account">
-               <img :src="identicon" class="circle identicon">
-            </div>
 
          </div>
 
@@ -24,8 +21,11 @@
 <script>
 
 import consts from "consts/consts"
+import HeaderAccount from "./account/header-account"
 
 export default {
+
+   components: {HeaderAccount},
 
     computed:{
 
@@ -63,13 +63,6 @@ export default {
       align-items: center;
    }
 
-   .account{
-      margin-left:auto;
-      margin-right:0;
-    }
 
-   .identicon{
-      width: 40px;
-   }
 
 </style>

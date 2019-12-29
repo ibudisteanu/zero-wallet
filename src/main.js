@@ -7,4 +7,4 @@ const exportObject = {
 if ( typeof window !== 'undefined')
     window.Wallet = exportObject;
 
-module.exports =  exportObject;
+export default exportObject;
