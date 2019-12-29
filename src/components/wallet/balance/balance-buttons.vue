@@ -72,13 +72,9 @@ export default {
     }
 
     .btn-round{
-        font-size: 20px;
-        margin-bottom: 10px;
-        margin-right: 15px;
+
     }
 
-    .btn-round i{
-        margin-top: 18px;
-    }
+
 
 </style>

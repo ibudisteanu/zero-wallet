@@ -46,7 +46,6 @@ export default {
         },
 
         closeMenu(){
-            console.log('close menu');
             this.menuOpen = false;
         }
 
