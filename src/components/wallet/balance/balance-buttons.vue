@@ -1,31 +1,26 @@
 <template>
 
     <div class="buttons-row pd-top-20">
-
         <div class="btn">
-            <div class="btn-round" @mouseover="hover('send')" @mouseleave="hover('')" >
+            <div class="btn-round" v-tooltip.bottom="'Send Money'" >
                 <i class="fa fa-long-arrow-down"></i>
             </div>
-            <span > {{hovered !== 'send' ? '&nbsp;' : 'Send'}}</span>
         </div>
 
         <div class="btn">
-            <div class="btn-round" @mouseover="hover('receive')" @mouseleave="hover('')">
+            <div class="btn-round" v-tooltip.bottom="'Receive Money'" >
                 <i class="fa fa-long-arrow-up"></i>
             </div>
-            <span > {{hovered !== 'receive' ? '&nbsp;' : 'Receive'}}</span>
         </div>
         <div class="btn">
-            <div class="btn-round" @mouseover="hover('qrcode')" @mouseleave="hover('')">
+            <div class="btn-round"  v-tooltip.bottom="'Scan QR Code'">
                 <i class="fa fa-qrcode"></i>
             </div>
-            <span > {{hovered !== 'qrcode' ? '&nbsp;' : 'Scan QR'}}</span>
         </div>
         <div class="btn">
-            <div class="btn-round" @mouseover="hover('info')" @mouseleave="hover('')" @click="openAccountInfoModal">
+            <div class="btn-round" @click="openAccountInfoModal" v-tooltip.bottom="'View Account Info'" >
                 <i class="fa fa-info"></i>
             </div>
-            <span > {{hovered !== 'info' ? '&nbsp;' : 'Info'}}</span>
         </div>
 
 
@@ -37,20 +32,14 @@
 
 <script>
 import AccountInfoModal from "./../account/account-info.modal"
+
+
 export default {
 
     components: {AccountInfoModal},
 
-    data(){
-        return {
-            hovered: '',
-        }
-    },
-
     methods:{
-        hover(which){
-            this.hovered = which;
-        },
+
 
         openAccountInfoModal(){
             this.$refs.refAccountInfoModal.showModal();

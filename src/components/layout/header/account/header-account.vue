@@ -2,7 +2,7 @@
 
     <div class="account" @click="toggleMenu" v-on-clickaway="closeMenu">
 
-        <account-identicon :identicon="identicon" :size="40" :outer-size="40" ></account-identicon>
+        <account-identicon v-if="address" :identicon="identicon" :size="40" :outer-size="40" ></account-identicon>
 
         <i class="fa fa-chevron-down"></i>
 
@@ -33,8 +33,12 @@ export default {
 
     computed: {
 
+        address(){
+            return this.$store.state.addresses[this.$store.state.mainAddress];
+        },
+
         identicon(){
-            return this.$store.state.addresses[this.$store.state.mainAddress].identicon;
+            return this.address.identicon;
         }
 
     },

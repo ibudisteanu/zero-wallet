@@ -12,24 +12,21 @@
                 <div class="buttons-row pd-top-30">
 
                     <div class="btn">
-                        <div class="btn-round" @mouseover="hover('download')" @mouseleave="hover('')" @click="downloadAddress">
+                        <div class="btn-round" @click="downloadAddress" v-tooltip.bottom="'Download Account'" >
                             <i class="fa fa-download"></i>
                         </div>
-                        <span > {{hovered !== 'download' ? '&nbsp;' : 'Download'}}</span>
                     </div>
 
                     <div class="btn">
-                        <div class="btn-round" @mouseover="hover('delete')" @mouseleave="hover('')" @click="deleteAddress">
-                            <i class="fa fa-times"></i>
+                        <div class="btn-round" @click="deleteAddress" v-tooltip.bottom="'Delete'" >
+                            <i class="danger fa fa-times"></i>
                         </div>
-                        <span > {{hovered !== 'delete' ? '&nbsp;' : 'Delete'}}</span>
                     </div>
 
                     <div class="btn">
-                        <div class="btn-round" @mouseover="hover('privateKey')" @mouseleave="hover('')" @click="showPrivateKey">
+                        <div class="btn-round" @click="showPrivateKey" v-tooltip.bottom="'View Private Key'" >
                             <i class="fa fa-eye"></i>
                         </div>
-                        <span > {{hovered !== 'privateKey' ? '&nbsp;' : 'Private Key'}}</span>
                     </div>
 
                 </div>
@@ -53,12 +50,6 @@ import AccountPrivateKeyModal from "./account-private-key-modal"
 export default {
 
     components: {AccountIdenticon, Modal, AccountPrivateKeyModal},
-
-    data(){
-        return {
-            hovered: '',
-        }
-    },
 
 
     methods:{

@@ -11,7 +11,7 @@ const store = new Vuex.Store({
         encrypted: null,
         version: null,
 
-        addresses: null,
+        addresses: {},
         mainAddress: null,
     },
 
