@@ -1,15 +1,58 @@
 <template>
 
-    <div class="account">
-        <img :src="identicon" class="circle identicon">
+    <div class="account" @click="toggleMenu" v-on-clickaway="closeMenu">
+
+        <account-identicon :identicon="identicon" :size="40" :outer-size="40" ></account-identicon>
+
         <i class="fa fa-chevron-down"></i>
+
+        <div class="menu" >
+            <header-account-dropdown-menu v-if="menuOpen"  />
+        </div>
+
     </div>
 
 </template>
 
 <script>
 
+import HeaderAccountDropdownMenu from "./header-account-dropdown-menu"
+import { mixin as clickaway } from 'vue-clickaway';
+import AccountIdenticon from "src/components/account/account-identicon"
+
 export default {
+
+    components: { HeaderAccountDropdownMenu, AccountIdenticon },
+    mixins: [ clickaway ],
+
+    data(){
+        return {
+            menuOpen: false,
+        }
+    },
+
+    computed: {
+
+        identicon(){
+            return this.$store.state.addresses[this.$store.state.mainAddress].identicon;
+        }
+
+    },
+
+    methods:{
+
+        toggleMenu(){
+            this.menuOpen = !this.menuOpen;
+        },
+
+        closeMenu(){
+            console.log('close menu');
+            this.menuOpen = false;
+        }
+
+
+
+    },
 
 }
 
@@ -17,14 +60,15 @@ export default {
 
 <style scoped>
 
+
     .account{
         margin-left:auto;
         margin-right:0;
         cursor: pointer;
     }
 
-    .identicon{
-        width: 40px;
+    .menu{
+        position: absolute;
     }
 
 </style>

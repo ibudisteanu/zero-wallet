@@ -4,14 +4,15 @@
 
         <div v-if="!error">
 
-            <home-page v-if="loggedIn" />
-            <login-page v-if="!loggedIn" />
+
+            <dashboard v-if="$store.state.loggedIn"/>
+            <login-page v-if="!$store.state.loggedIn" />
 
 
         </div>
 
         <div v-if="error">
-
+            {{error}}
         </div>
 
     </div>
@@ -20,20 +21,16 @@
 
 <script>
 
-import HomePage from "./pages/dashboard/dashboard.page";
+import Dashboard from "./pages/dashboard/dashboard.page";
 import LoginPage from "./pages/login/login.page";
 
 export default {
 
-    components: {HomePage, LoginPage },
+    components: {Dashboard, LoginPage },
 
     data(){
         return {
-            loggedIn: false,
             error: '',
-
-            encrypted: null,
-            version: null,
 
         }
     },
@@ -42,11 +39,30 @@ export default {
 
         if (typeof window === "undefined") return;
 
-        global.apacache.events.on("wallet/loaded", (wallet) => {
+        global.apacache.events.on("wallet/loaded", async (wallet) => {
             console.log("LOADED");
-            this.encrypted = wallet.encrypted;
-            this.version = wallet.version;
-            this.loggedIn = wallet.isLoggedIn();
+            this.$store.commit('setEncrypted', wallet.encrypted );
+            this.$store.commit('setVersion', wallet.version );
+
+            const addresses = {};
+            for (let i=0; i < wallet.addresses.length; i++ ){
+
+                const publicAddress = await wallet.addresses[i].decryptPublicAddress();
+                const address = publicAddress.calculateAddress();
+                addresses[address] = {
+                    address: address,
+                    name: wallet.addresses[i].name,
+                    identicon: publicAddress.identiconImg(),
+                }
+
+                if (i === 0){
+                    this.$store.commit('setMainAddress', address );
+                }
+            }
+
+            this.$store.commit('setAddresses', addresses );
+
+            this.$store.commit('setLoggedIn', wallet.isLoggedIn() );
         });
 
         global.apacache.events.on("wallet/loaded-error", err => {

@@ -9,6 +9,7 @@
 
             <span class="thicker">{{title}}</span>
 
+            <header-account />
 
          </div>
 
@@ -37,9 +38,7 @@ export default {
             return consts.title;
         },
 
-        identicon(){
-           return 'https://www.gravatar.com/avatar/7210278e402d3907234586653e55a35c7e8cb2c8a7cf5b5f61fbfd835999de64?d=retro&f=y';
-        }
+
 
     },
 
