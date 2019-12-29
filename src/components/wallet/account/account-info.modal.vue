@@ -24,9 +24,20 @@
                         </div>
                         <span > {{hovered !== 'delete' ? '&nbsp;' : 'Delete'}}</span>
                     </div>
+
+                    <div class="btn">
+                        <div class="btn-round" @mouseover="hover('privateKey')" @mouseleave="hover('')" @click="showPrivateKey">
+                            <i class="fa fa-eye"></i>
+                        </div>
+                        <span > {{hovered !== 'privateKey' ? '&nbsp;' : 'Private Key'}}</span>
+                    </div>
+
                 </div>
+
             </div>
         </div>
+
+        <account-private-key-modal ref="refAccountPrivateKeyModal"/>
 
     </modal>
 
@@ -35,9 +46,13 @@
 <script>
 import Modal from "src/components/utils/modal"
 import AccountIdenticon from "./account-identicon";
+import FileSaver from 'file-saver'
+import consts from 'consts/consts';
+import AccountPrivateKeyModal from "./account-private-key-modal"
+
 export default {
 
-    components: {AccountIdenticon, Modal},
+    components: {AccountIdenticon, Modal, AccountPrivateKeyModal},
 
     data(){
         return {
@@ -60,15 +75,38 @@ export default {
             this.hovered = which;
         },
 
-        downloadAddress(){
+        async downloadAddress(){
+
+            const address = await global.apacache.wallet.manager.getWalletAddressByAddress( this.address.address );
+            if (!address) return false;
+
+            const json = address.toJSON();
+
+            let addressFile = new Blob([JSON.stringify(json)], {type: "application/json;charset=utf-8"});
+            let fileName = consts.name + "_" +this.address.address + ".json";
+            FileSaver.saveAs(addressFile, fileName);
+
+        },
+
+        async showPrivateKey(){
+
+            const address = await global.apacache.wallet.manager.getWalletAddressByAddress( this.address.address );
+            if (!address) return false;
+
+            const privateKey = await address.decryptPrivateKey();
+
+            this.$refs.refAccountPrivateKeyModal.showModal(this.address, privateKey.toString("hex") );
 
         },
 
         async deleteAddress(){
+
+            const confirmation = confirm( `Are you sure you want to Delete ${this.address.name} ${ this.address.address } `);
+            if (!confirmation) return;
+
             const out = await global.apacache.wallet.manager.deleteWalletAddressByAddress( this.address.address );
             this.closeModal();
-        }
-
+        },
 
     },
 

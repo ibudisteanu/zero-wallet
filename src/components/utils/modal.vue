@@ -81,11 +81,11 @@ export default{
         border: solid 1px #313131;
         left: 0;
         right: 0;
-        text-align: center;
         background-color: white;
         z-index: 1600;
         top: 50%;
         transform: translateY(-50%);
+        text-align: left;
     }
 
     .body{
@@ -125,6 +125,7 @@ export default{
         text-transform: uppercase;
         letter-spacing: 4px;
         line-height: 22px;
+        text-align: center;
     }
 
 

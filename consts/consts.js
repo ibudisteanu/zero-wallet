@@ -1,5 +1,6 @@
 export default {
 
+    name: "ZERO",
     title: 'ZEROWALLET',
     entity: 'ZERO ENTITY',
     logo: 'https://metamask.io/img/metamask.png',
