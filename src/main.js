@@ -1,22 +1,10 @@
-// Import Vue
-import Vue from 'vue';
-import VueRouter from 'vue-router';
+import InitializeParams from "./initialize-params/initialize-params"
 
-// Import Vue App, routes, store
-import App from './app';
-import routes from './routes';
+const exportObject = {
+    initializeParams: InitializeParams,
+};
 
-Vue.use(VueRouter);
+if ( typeof window !== 'undefined')
+    window.Wallet = exportObject;
 
-// Configure router
-const router = new VueRouter({
-    routes,
-    linkActiveClass: 'active',
-    mode: 'history'
-});
-
-new Vue({
-    el: '#app',
-    render: h => h(App),
-    router
-});
+module.exports =  exportObject;
