@@ -49,7 +49,7 @@ export default {
             this.$store.commit('setLoggedIn', wallet.isLoggedIn() );
         });
 
-        global.apacache.events.on("wallet/address-delete", async (walletAddress) => this.readAddresses() );
+        global.apacache.events.on("wallet/address-removed", async (walletAddress) => this.readAddresses() );
 
         global.apacache.events.on("wallet/address-pushed", async (walletAddress) => this.readAddresses() );
 
