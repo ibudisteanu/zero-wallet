@@ -8,7 +8,7 @@
             <account-identicon :identicon="address.identicon" :size="20" :outer-size="18" > </account-identicon>
             <div>
                 <span>{{address.name}}</span> <br/>
-                <span class="gray">{{address.address.substr(0, 20)+'...'}}</span>
+                <span class="disabled">{{address.address.substr(0, 20)+'...'}}</span>
             </div>
         </li>
 
@@ -24,7 +24,8 @@
 
 <script>
 
-import AccountIdenticon from "src/components/account/account-identicon"
+import AccountIdenticon from "src/components/wallet/account/account-identicon"
+
 export default {
 
     components: {AccountIdenticon},
@@ -64,10 +65,6 @@ export default {
 </script>
 
 <style scoped>
-
-    .gray{
-        color: #9193a5;
-    }
 
     .address{
         display: grid;

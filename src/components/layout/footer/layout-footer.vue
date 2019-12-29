@@ -2,16 +2,16 @@
     <div class="footer">
 
         <div class="boxed">
-            <div class="row pd-bottom-10">
+            <div class="row pd-bottom-10 disabled">
                 <span>Consensus</span>
                 <span class="color">Established</span>
                 <span>Block Height </span>
                 <span class="color">#0</span>
             </div>
-            <div class="row">
+            <div class="row disabled">
                 <span>© 2019 {{entity}}</span>
             </div>
-            <div class="row">
+            <div class="row disabled">
                 <span>Disclaimer</span>
                 <span>Safety</span>
             </div>
@@ -46,7 +46,6 @@ export default {
 
     .row span{
         display:inline-block;
-        color: #9193a5;
     }
 
     .color{

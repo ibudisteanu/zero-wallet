@@ -18,7 +18,7 @@
 
 import HeaderAccountDropdownMenu from "./header-account-dropdown-menu"
 import { mixin as clickaway } from 'vue-clickaway';
-import AccountIdenticon from "src/components/account/account-identicon"
+import AccountIdenticon from "src/components/wallet/account/account-identicon"
 
 export default {
 

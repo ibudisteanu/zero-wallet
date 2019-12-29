@@ -22,18 +22,24 @@
             <span > {{hovered !== 'qrcode' ? '&nbsp;' : 'Scan QR'}}</span>
         </div>
         <div class="btn">
-            <div class="btn-round" @mouseover="hover('savePrivateKey')" @mouseleave="hover('')">
-                <i class="fa fa-save"></i>
+            <div class="btn-round" @mouseover="hover('info')" @mouseleave="hover('')" @click="openAccountInfoModal">
+                <i class="fa fa-info"></i>
             </div>
-            <span > {{hovered !== 'savePrivateKey' ? '&nbsp;' : 'Save Key'}}</span>
+            <span > {{hovered !== 'info' ? '&nbsp;' : 'Info'}}</span>
         </div>
+
+
+        <account-info-modal ref="refAccountInfoModal"/>
 
     </div>
 
 </template>
 
 <script>
+import AccountInfoModal from "./../account/account-info.modal"
 export default {
+
+    components: {AccountInfoModal},
 
     data(){
         return {
@@ -44,6 +50,10 @@ export default {
     methods:{
         hover(which){
             this.hovered = which;
+        },
+
+        openAccountInfoModal(){
+            this.$refs.refAccountInfoModal.showModal();
         }
     }
 

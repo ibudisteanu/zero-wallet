@@ -49,11 +49,9 @@ export default {
             this.$store.commit('setLoggedIn', wallet.isLoggedIn() );
         });
 
-        global.apacache.events.on("wallet/address-pushed", async (walletAddress) => {
+        global.apacache.events.on("wallet/address-delete", async (walletAddress) => this.readAddresses() );
 
-            await this.readAddresses();
-
-        });
+        global.apacache.events.on("wallet/address-pushed", async (walletAddress) => this.readAddresses() );
 
         global.apacache.events.on("wallet/loaded-error", err => {
             this.error = err;
@@ -69,6 +67,7 @@ export default {
 
             const wallet = global.apacache.wallet;
 
+            let firstAddress;
             const addresses = {};
             for (let i=0; i < wallet.addresses.length; i++ ){
 
@@ -80,10 +79,17 @@ export default {
                     identicon: publicAddress.identiconImg(),
                 };
 
-                if (i === 0 && !this.$store.mainAddress ){
-                    this.$store.commit('setMainAddress', address );
-                }
+                if (i === 0)
+                    firstAddress = address;
             }
+
+            if (this.$store.mainAddress && !addresses[this.$store.mainAddress]){
+                this.$store.commit('setMainAddress', null );
+            }
+
+            if (!this.$store.mainAddress && firstAddress )
+                this.$store.commit('setMainAddress', firstAddress );
+
 
             this.$store.commit('setAddresses', addresses );
 

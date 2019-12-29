@@ -4,7 +4,7 @@
 
         <layout-header > </layout-header>
 
-        <slot></slot>
+        <slot/>
 
         <layout-footer> </layout-footer>
 
