@@ -12,7 +12,10 @@
                 <div class="left">
                     <span class="disabled" >Password</span> <br/>
                     <input type="password" class="label" v-model="password">
-                    <input type="submit" value="Login" :disabled="password.length === 0">
+                    <span v-if="error" class="danger">
+                        {{error}}
+                    </span>
+                    <input type="submit" value="Login" :disabled="password.length === 0" @click="login">
                 </div>
 
             </div>
@@ -31,6 +34,7 @@ export default {
     data(){
         return {
             password: '',
+            error: '',
         }
     },
 
@@ -38,7 +42,27 @@ export default {
         logo(){
             return consts.logo;
         }
-    }
+    },
+
+    methods:{
+
+        async login(){
+
+            this.error = '';
+
+            try{
+
+                const out = await global.apacache.wallet.encryption.decryptWallet(this.password);
+
+
+            }catch(err){
+                console.log(err);
+                this.error = 'Password is invalid';
+            }
+
+        },
+
+    },
 
 };
 </script>

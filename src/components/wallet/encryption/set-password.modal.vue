@@ -2,16 +2,19 @@
 
     <modal ref="modal" title="Set a password" >
 
-
         <span class="disabled" >Password</span> <br/>
         <input type="password" class="label" v-model="password">
 
         <span class="disabled" >Retype Password</span> <br/>
         <input type="password" class="label" v-model="retypePassword">
 
+        <span v-if="error" class="danger">
+            {{error}}
+        </span>
+
         <input type="submit" value="Set Password" :disabled="password.length === 0 || retypePassword.length === 0" @click="setPassword">
 
-        <span class="thick pd-top-40 pd-bottom-40">Info: Write down your password.</span>
+        <span class="thick pd-top-20 pd-bottom-20">Tip: Write down your password.</span>
 
         <div class="centered">
             <span class="danger">Warning: In case you lose your password, you will need your <strong>seed to recover your seed accounts!</strong>. Imported accounts generated from a different seed can not be recovered by using your seed.</span>
@@ -33,6 +36,7 @@ export default {
         return {
             password: '',
             retypePassword: '',
+            error: '',
         }
     },
 
@@ -46,7 +50,23 @@ export default {
             this.$refs.modal.closeModal();
         },
 
-        setPassword(){
+        async setPassword(){
+
+            this.error = '';
+
+            try{
+
+                if (this.password.length < 6) throw "password is too weak";
+                if (this.password !== this.retypePassword) throw "passwords are not matching";
+
+                const out = await global.apacache.wallet.encryption.encryptWallet( undefined, this.password );
+
+                this.closeModal();
+
+            }catch(err){
+                this.error = err;
+            }
+
 
         },
 

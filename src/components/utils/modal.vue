@@ -127,5 +127,32 @@ export default{
     }
 
 
+    /*
+    ##Device = Low Resolution Tablets, Mobiles (Landscape)
+    ##Screen = B/w 481px to 767px
+    */
+
+    @media (min-width: 481px) and (max-width: 767px) {
+
+        .modal{
+            width: 80%;
+            min-width: 0;
+        }
+
+    }
+
+    /*
+      ##Device = Most of the Smartphones Mobiles (Portrait)
+      ##Screen = B/w 320px to 479px
+    */
+
+    @media (max-width: 480px) {
+
+        .modal{
+            width: 95%;
+            min-width: 0;
+        }
+
+    }
 
 </style>

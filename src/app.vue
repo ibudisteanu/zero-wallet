@@ -44,18 +44,22 @@ export default {
             this.$store.commit('setEncrypted', wallet.encrypted );
             this.$store.commit('setVersion', wallet.version );
 
+            const loggedIn = wallet.isLoggedIn();
+            this.$store.commit('setLoggedIn', loggedIn );
+
             await this.readAddresses(true);
 
-            this.$store.commit('setLoggedIn', wallet.isLoggedIn() );
         });
 
-        global.apacache.events.on("wallet/address-removed", async (walletAddress) => this.readAddresses() );
+        global.apacache.events.on("wallet/address-removed", async walletAddress => this.readAddresses() );
 
-        global.apacache.events.on("wallet/address-pushed", async (walletAddress) => this.readAddresses() );
+        global.apacache.events.on("wallet/address-pushed", async walletAddress => this.readAddresses() );
 
         global.apacache.events.on("wallet/loaded-error", err => {
             this.error = err;
         });
+
+        global.apacache.events.on("wallet/encrypted", async encrypted => this.$store.commit('setEncrypted', encrypted ) );
 
         global.apacache.start();
 
@@ -70,6 +74,8 @@ export default {
                 minerAddress = localStorage.getItem('mainAddress') || null;
 
             const wallet = global.apacache.wallet;
+
+            if ( !wallet.isLoggedIn() ) return;
 
             let firstAddress;
             const addresses = {};
