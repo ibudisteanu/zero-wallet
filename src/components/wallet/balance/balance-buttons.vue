@@ -42,6 +42,7 @@
 
         <account-info-modal ref="refAccountInfoModal"/>
         <set-password-modal ref="refSetPasswordModal" />
+        <remove-password-modal ref="refRemovePasswordModal" />
 
     </div>
 
@@ -50,10 +51,11 @@
 <script>
 import AccountInfoModal from "./../account/account-info.modal"
 import SetPasswordModal from "./../encryption/set-password.modal"
+import RemovePasswordModal from "./../encryption/remove-password.modal"
 
 export default {
 
-    components: { AccountInfoModal, SetPasswordModal },
+    components: {AccountInfoModal, SetPasswordModal, RemovePasswordModal },
 
     computed:{
         encrypted(){
@@ -72,7 +74,7 @@ export default {
         },
 
         removePassword(){
-
+            this.$refs.refRemovePasswordModal.showModal();
         },
 
     }
