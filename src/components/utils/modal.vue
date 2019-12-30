@@ -4,8 +4,9 @@
         <div class="background" @click="closeModal"> </div>
         <div class="modal" ref="refModal">
             <div class="body">
+
                 <div class="close" @click="closeModal">
-                    x
+                    <i class="fa fa-times"></i>
                 </div>
 
                 <div class="header" v-if="title">
@@ -109,14 +110,11 @@ export default{
 
     .modal .close{
         position: fixed;
-        top: -10px;
         right: 10px!important;
-        color: #ffc12c;
         cursor: pointer;
         width: 20px;
-        height: 20px;    font-size: 22px;
-        display: none!important;
-        margin-top: 7px;
+        height: 20px;
+        font-size: 22px;
     }
 
     .modal .title{

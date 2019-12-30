@@ -2,10 +2,10 @@
 
     <div class="account">
 
-        <div @click="toggleMenu" v-on-clickaway="closeMenu">
+        <div class="toggle" @click="toggleMenu" v-on-clickaway="closeMenu">
             <account-identicon v-if="address" :identicon="identicon" :size="40" :outer-size="40" ></account-identicon>
 
-            <i class="fa fa-chevron-down"></i>
+            <i class="chevron-down fa fa-chevron-down"></i>
         </div>
 
         <div class="menu" >
@@ -77,11 +77,19 @@ export default {
     .account{
         margin-left:auto;
         margin-right:0;
-        cursor: pointer;
+    }
+
+    .chevron-down{
+        position: relative;
+        left: -10px;
     }
 
     .menu{
         position: absolute;
+    }
+
+    .toggle{
+        cursor: pointer;
     }
 
 </style>

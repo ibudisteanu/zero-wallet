@@ -17,10 +17,10 @@
 
             <li class="divider"></li>
 
-            <li @click="createAccount">Create account</li>
-            <li @click="importAccount">Import account</li>
+            <li @click="createAccount"> <i class="fa fa-plus"></i> Create account </li>
+            <li @click="importAccount"> <i class="fa fa-upload"></i> Import account</li>
             <li class="divider"></li>
-            <li @click="viewMnemonic">View Seed Words</li>
+            <li @click="viewMnemonic"><i class="fa fa-key"></i>  View Seed Words</li>
         </ul>
 
 
@@ -122,6 +122,10 @@ export default {
     .dd-menu li.divider{
         padding: 0;
         border-bottom: 1px solid #cccccc;
+    }
+
+    i{
+        margin-right: 5px;
     }
 
 </style>
