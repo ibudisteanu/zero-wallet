@@ -1,40 +1,47 @@
 <template>
 
-    <div class="buttons-row pd-top-20">
-        <div class="btn">
-            <div class="btn-round" v-tooltip.bottom="'Send Money'" >
-                <i class="fa fa-long-arrow-down"></i>
+    <div class="pd-top-20">
+
+        <div class="buttons-row">
+            <div class="btn">
+                <div class="btn-round" v-tooltip.bottom="'Send Money'" >
+                    <i class="fa fa-long-arrow-down"></i>
+                </div>
+            </div>
+
+            <div class="btn">
+                <div class="btn-round" v-tooltip.bottom="'Receive Money'" >
+                    <i class="fa fa-long-arrow-up"></i>
+                </div>
+            </div>
+            <div class="btn">
+                <div class="btn-round"  v-tooltip.bottom="'Scan QR Code'">
+                    <i class="fa fa-qrcode"></i>
+                </div>
             </div>
         </div>
 
-        <div class="btn">
-            <div class="btn-round" v-tooltip.bottom="'Receive Money'" >
-                <i class="fa fa-long-arrow-up"></i>
+        <div class="buttons-row">
+            <div class="btn">
+                <div class="btn-round" @click="openAccountInfoModal" v-tooltip.bottom="'View Account Info'" >
+                    <i class="fa fa-info"></i>
+                </div>
             </div>
-        </div>
-        <div class="btn">
-            <div class="btn-round"  v-tooltip.bottom="'Scan QR Code'">
-                <i class="fa fa-qrcode"></i>
+            <div class="btn" v-if="!encrypted">
+                <div class="btn-round" @click="setPassword" v-tooltip.bottom="'Set Password'" >
+                    <i class="fa fa-unlock-alt"></i>
+                </div>
             </div>
-        </div>
-        <div class="btn">
-            <div class="btn-round" @click="openAccountInfoModal" v-tooltip.bottom="'View Account Info'" >
-                <i class="fa fa-info"></i>
-            </div>
-        </div>
-        <div class="btn" v-if="!encrypted">
-            <div class="btn-round" @click="setPassword" v-tooltip.bottom="'Set Password'" >
-                <i class="fa fa-unlock-alt"></i>
-            </div>
-        </div>
 
-        <div class="btn" v-if="encrypted">
-            <div class="btn-round" @click="removePassword" v-tooltip.bottom="'Remove Password'" >
-                <i class="fa fa-lock"></i>
+            <div class="btn" v-if="encrypted">
+                <div class="btn-round" @click="removePassword" v-tooltip.bottom="'Remove Password'" >
+                    <i class="fa fa-lock"></i>
+                </div>
             </div>
         </div>
 
         <account-info-modal ref="refAccountInfoModal"/>
+        <set-password-modal ref="refSetPasswordModal" />
 
     </div>
 
@@ -42,11 +49,11 @@
 
 <script>
 import AccountInfoModal from "./../account/account-info.modal"
-
+import SetPasswordModal from "./../encryption/set-password.modal"
 
 export default {
 
-    components: {AccountInfoModal},
+    components: { AccountInfoModal, SetPasswordModal },
 
     computed:{
         encrypted(){
@@ -61,7 +68,7 @@ export default {
         },
 
         setPassword(){
-
+            this.$refs.refSetPasswordModal.showModal();
         },
 
         removePassword(){
@@ -76,7 +83,13 @@ export default {
 <style scoped>
 
     .buttons-row{
-        text-align: center;
+        display: inline-block;
+    }
+
+    .buttons-row:first-child{
+    }
+
+    .buttons-row:last-child{
     }
 
     .buttons-row .btn{
