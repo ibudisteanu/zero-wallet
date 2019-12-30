@@ -1,8 +1,13 @@
 <template>
 
     <modal ref="modal" :title="`${ address ? address.name : '' }`" >
+
+        <span class="thick">Private Key</span> <br/> <br/>
+
         <span class="font-medium-size wordwrap pd-bottom-40">{{privateKey}}</span>
-        <span class="danger">Warning: Never disclose this key. Anyone with your private keys can steal any assets held in your account.</span>
+        <div class="centered">
+            <span class="danger">Warning: Never disclose this key. Anyone with your private keys can steal any assets held in your account.</span>
+        </div>
     </modal>
 
 </template>

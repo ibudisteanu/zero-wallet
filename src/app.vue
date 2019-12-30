@@ -44,7 +44,7 @@ export default {
             this.$store.commit('setEncrypted', wallet.encrypted );
             this.$store.commit('setVersion', wallet.version );
 
-            await this.readAddresses();
+            await this.readAddresses(true);
 
             this.$store.commit('setLoggedIn', wallet.isLoggedIn() );
         });
@@ -63,7 +63,11 @@ export default {
 
     methods:{
 
-        async readAddresses(){
+        async readAddresses(firstTime = false){
+
+            let minerAddress;
+            if (firstTime)
+                minerAddress = localStorage.getItem('mainAddress') || null;
 
             const wallet = global.apacache.wallet;
 
@@ -83,11 +87,16 @@ export default {
                     firstAddress = address;
             }
 
-            if (this.$store.mainAddress && !addresses[this.$store.mainAddress]){
-                this.$store.commit('setMainAddress', null );
-            }
+            //localstorage
+            if (minerAddress && addresses[minerAddress])
+                this.$store.commit('setMainAddress', minerAddress);
 
-            if (!this.$store.mainAddress && firstAddress )
+
+            if (this.$store.state.mainAddress && !addresses[this.$store.state.mainAddress])
+                this.$store.commit('setMainAddress', null );
+
+
+            if (!this.$store.state.mainAddress && firstAddress )
                 this.$store.commit('setMainAddress', firstAddress );
 
 

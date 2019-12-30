@@ -31,6 +31,7 @@ const store = new Vuex.Store({
         },
         setMainAddress( context, value){
             context.mainAddress = value;
+            localStorage.setItem('mainAddress', value);
         },
     },
 
