@@ -21,6 +21,7 @@
             <li @click="importAccount"> <i class="fa fa-upload"></i> Import account</li>
             <li class="divider"></li>
             <li @click="viewMnemonic"><i class="fa fa-key"></i>  View Seed Words</li>
+            <li v-if="encrypted" @click="logout"><i class="fa fa-sign-out"></i>  Logout</li>
         </ul>
 
 
@@ -43,6 +44,10 @@ export default {
 
         mainAddress(){
             return this.$store.state.mainAddress;
+        },
+
+        encrypted(){
+            return this.$store.state.encrypted;
         }
 
     },
@@ -55,19 +60,25 @@ export default {
 
         },
 
-        async setMainAddress(address){
+        setMainAddress(address){
 
-            this.$store.commit('setMainAddress', address );
-
-        },
-
-        async viewMnemonic(){
-
-            this.$emit('viewMnemonic', true);
+            return this.$store.commit('setMainAddress', address );
 
         },
 
         importAccount(){
+
+        },
+
+        viewMnemonic(){
+
+            return this.$emit('viewMnemonic', true);
+
+        },
+
+        async logout(){
+
+            const out = await global.apacache.wallet.encryption.logoutEncryptionWallet();
 
         }
 

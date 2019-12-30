@@ -137,7 +137,13 @@ body{
     margin-top: -22px;
 }
 
-input[type=text], input[type=password], select {
+.password-group{
+    position: relative;;
+}
+
+input[type=text],
+input[type=password],
+select {
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;
@@ -146,6 +152,22 @@ input[type=text], input[type=password], select {
     border-radius: 4px;
     box-sizing: border-box;
     background-color: transparent;
+}
+
+.input-toggle{
+    background: none;
+    border: none;
+    position: absolute;
+    right: 8px;
+    top: 18px;
+    z-index: 1;
+    cursor: pointer;
+    color: #ccc;
+    font-size: 20px;
+}
+
+.input-toggle:hover{
+    color: #45a049;
 }
 
 input[type=submit] {

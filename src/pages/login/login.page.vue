@@ -11,7 +11,7 @@
 
                 <div class="left">
                     <span class="disabled" >Password</span> <br/>
-                    <input type="password" class="label" v-model="password">
+                    <password-input v-model="password"/>
                     <span v-if="error" class="danger">
                         {{error}}
                     </span>
@@ -28,8 +28,9 @@
 <script>
 import Layout from "src/components/layout/layout";
 import consts from 'consts/consts';
+import PasswordInput from "../../components/utils/password-input";
 export default {
-    components: {Layout},
+    components: {PasswordInput, Layout},
 
     data(){
         return {
@@ -56,8 +57,12 @@ export default {
 
 
             }catch(err){
-                console.log(err);
-                this.error = 'Password is invalid';
+
+                if (err.message === "Invalid password")
+                    this.error = 'Password is invalid';
+                else
+                    this.error = err;
+
             }
 
         },

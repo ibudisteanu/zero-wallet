@@ -39,27 +39,26 @@ export default {
 
         if (typeof window === "undefined") return;
 
-        global.apacache.events.on("wallet/loaded", async (wallet) => {
-            console.log("LOADED");
-            this.$store.commit('setEncrypted', wallet.encrypted );
-            this.$store.commit('setVersion', wallet.version );
+        global.apacache.events.on("wallet/loaded", wallet => this.readWallet() );
 
-            const loggedIn = wallet.isLoggedIn();
-            this.$store.commit('setLoggedIn', loggedIn );
+        global.apacache.events.on("wallet/address-removed", walletAddress => this.readAddresses() );
 
-            await this.readAddresses(true);
-
-        });
-
-        global.apacache.events.on("wallet/address-removed", async walletAddress => this.readAddresses() );
-
-        global.apacache.events.on("wallet/address-pushed", async walletAddress => this.readAddresses() );
+        global.apacache.events.on("wallet/address-pushed", walletAddress => this.readAddresses() );
 
         global.apacache.events.on("wallet/loaded-error", err => {
             this.error = err;
         });
 
-        global.apacache.events.on("wallet/encrypted", async encrypted => this.$store.commit('setEncrypted', encrypted ) );
+        global.apacache.events.on("wallet/encrypted",async encrypted => this.$store.commit('setEncrypted', encrypted ) );
+
+        global.apacache.events.on("wallet/loggedIn", loggedIn => {
+
+            if (loggedIn)
+                return this.readWallet();
+            else
+                return this.clearWallet();
+
+        } );
 
         global.apacache.start();
 
@@ -67,15 +66,32 @@ export default {
 
     methods:{
 
-        async readAddresses(firstTime = false){
+        async readWallet(){
 
-            let minerAddress;
-            if (firstTime)
-                minerAddress = localStorage.getItem('mainAddress') || null;
+            const wallet = global.apacache.wallet;
+
+            console.log("LOADED");
+            this.$store.commit('setEncrypted', wallet.encrypted );
+            this.$store.commit('setVersion', wallet.version );
+
+            const loggedIn = wallet.isLoggedIn();
+            this.$store.commit('setLoggedIn', loggedIn );
+
+            await this.readAddresses();
+
+        },
+
+        async clearWallet(){
+            return this.$store.commit('clear');
+        },
+
+        async readAddresses(){
 
             const wallet = global.apacache.wallet;
 
             if ( !wallet.isLoggedIn() ) return;
+
+            let minerAddress = localStorage.getItem('mainAddress') || null;
 
             let firstAddress;
             const addresses = {};

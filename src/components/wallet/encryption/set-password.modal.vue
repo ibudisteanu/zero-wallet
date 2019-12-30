@@ -3,10 +3,10 @@
     <modal ref="modal" title="Set a password" >
 
         <span class="disabled" >Password</span> <br/>
-        <input type="password" class="label" v-model="password">
+        <password-input v-model="password"/>
 
         <span class="disabled" >Retype Password</span> <br/>
-        <input type="password" class="label" v-model="retypePassword">
+        <password-input v-model="retypePassword"/>
 
         <span v-if="error" class="danger">
             {{error}}
@@ -27,10 +27,11 @@
 <script>
 
 import Modal from "src/components/utils/modal"
+import PasswordInput from "../../utils/password-input";
 
 export default {
 
-    components: {Modal},
+    components: {PasswordInput, Modal},
 
     data(){
         return {

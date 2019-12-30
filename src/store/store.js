@@ -1,19 +1,21 @@
 import Vue from 'vue/dist/vue.min';
 import Vuex from 'vuex/dist/vuex.min';
 
-Vue.use(Vuex)
+Vue.use(Vuex);
+
+const init = {
+    loggedIn: false,
+
+    encrypted: null,
+    version: null,
+
+    addresses: {},
+    mainAddress: null,
+};
 
 const store = new Vuex.Store({
 
-    state: {
-        loggedIn: false,
-
-        encrypted: null,
-        version: null,
-
-        addresses: {},
-        mainAddress: null,
-    },
+    state: Object.assign({}, init ),
 
     mutations: {
         setLoggedIn( context, value){
@@ -33,6 +35,18 @@ const store = new Vuex.Store({
             context.mainAddress = value;
             localStorage.setItem('mainAddress', value);
         },
+        clear(context){
+
+            context.loggedIn = false;
+            context.encrypted = null;
+            context.version = null;
+            context.addresses = {};
+            context.mainAddress = null;
+
+            localStorage.removeItem('mainAddress');
+        }
+
+
     },
 
     actions:{

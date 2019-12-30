@@ -1,6 +1,6 @@
 <template>
 
-    <modal ref="modal" :title="`${ address.name }`" >
+    <modal v-if="address" ref="modal" :title="`${ address.name }`" >
 
         <div class="account-info">
             <account-identicon :identicon="address.identicon" :size="60" :outer-size="70" />

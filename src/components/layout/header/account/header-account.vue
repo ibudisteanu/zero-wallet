@@ -1,9 +1,9 @@
 <template>
 
-    <div class="account">
+    <div class="account" v-if="address">
 
         <div class="toggle" @click="toggleMenu" v-on-clickaway="closeMenu">
-            <account-identicon v-if="address" :identicon="identicon" :size="40" :outer-size="40" ></account-identicon>
+            <account-identicon :identicon="identicon" :size="40" :outer-size="40" ></account-identicon>
 
             <i class="chevron-down fa fa-chevron-down"></i>
         </div>
