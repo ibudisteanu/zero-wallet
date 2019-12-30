@@ -22,7 +22,17 @@
                 <i class="fa fa-info"></i>
             </div>
         </div>
+        <div class="btn" v-if="!encrypted">
+            <div class="btn-round" @click="setPassword" v-tooltip.bottom="'Set Password'" >
+                <i class="fa fa-unlock-alt"></i>
+            </div>
+        </div>
 
+        <div class="btn" v-if="encrypted">
+            <div class="btn-round" @click="removePassword" v-tooltip.bottom="'Remove Password'" >
+                <i class="fa fa-lock"></i>
+            </div>
+        </div>
 
         <account-info-modal ref="refAccountInfoModal"/>
 
@@ -38,12 +48,26 @@ export default {
 
     components: {AccountInfoModal},
 
-    methods:{
+    computed:{
+        encrypted(){
+            return this.$store.state.encrypted;
+        }
+    },
 
+    methods:{
 
         openAccountInfoModal(){
             this.$refs.refAccountInfoModal.showModal();
-        }
+        },
+
+        setPassword(){
+
+        },
+
+        removePassword(){
+
+        },
+
     }
 
 }
