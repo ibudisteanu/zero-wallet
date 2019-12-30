@@ -1,15 +1,18 @@
 <template>
 
-    <div class="account" @click="toggleMenu" v-on-clickaway="closeMenu">
+    <div class="account">
 
-        <account-identicon v-if="address" :identicon="identicon" :size="40" :outer-size="40" ></account-identicon>
+        <div @click="toggleMenu" v-on-clickaway="closeMenu">
+            <account-identicon v-if="address" :identicon="identicon" :size="40" :outer-size="40" ></account-identicon>
 
-        <i class="fa fa-chevron-down"></i>
-
-        <div class="menu" >
-            <header-account-dropdown-menu v-if="menuOpen"  />
+            <i class="fa fa-chevron-down"></i>
         </div>
 
+        <div class="menu" >
+            <header-account-dropdown-menu v-if="menuOpen" @viewMnemonic="viewMnemonic" />
+        </div>
+
+        <wallet-seed-modal ref="refWalletSeedModal" />
     </div>
 
 </template>
@@ -19,10 +22,11 @@
 import HeaderAccountDropdownMenu from "./header-account-dropdown-menu"
 import { mixin as clickaway } from 'vue-clickaway';
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
+import WalletSeedModal from "src/components/wallet/seed/wallet-seed-modal";
 
 export default {
 
-    components: { HeaderAccountDropdownMenu, AccountIdenticon },
+    components: { HeaderAccountDropdownMenu, AccountIdenticon, WalletSeedModal },
     mixins: [ clickaway ],
 
     data(){
@@ -51,9 +55,15 @@ export default {
 
         closeMenu(){
             this.menuOpen = false;
-        }
+        },
 
+        async viewMnemonic(){
 
+            const out = await global.apacache.wallet.encryption.decryptMnemonic();
+
+            this.$refs.refWalletSeedModal.showModal( out.join(' ') );
+
+        },
 
     },
 

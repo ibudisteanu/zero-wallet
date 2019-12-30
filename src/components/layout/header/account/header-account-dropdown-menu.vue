@@ -1,24 +1,30 @@
 <template>
 
-    <ul class="dd-menu">
+    <div>
+        <ul class="dd-menu">
 
-        <li>My accounts</li>
+            <li>My accounts</li>
 
-        <li v-for="(address) in addresses" :class="`address ${ address.address === mainAddress  ? 'focused' : ''} ` " @click="setMainAddress(address.address)" >
-            <account-identicon :identicon="address.identicon" :size="20" :outer-size="18" > </account-identicon>
-            <div>
-                <span>{{address.name}}</span> <br/>
-                <span class="disabled">{{address.address.substr(0, 20)+'...'}}</span>
-            </div>
-        </li>
+            <li v-for="(address) in addresses" :class="`address ${ address.address === mainAddress  ? 'focused' : ''} ` " @click="setMainAddress(address.address)" >
+                <account-identicon :identicon="address.identicon" :size="20" :outer-size="18" > </account-identicon>
 
-        <li class="divider"></li>
+                <div>
+                    <span>{{address.name}}</span> <br/>
+                    <span class="disabled">{{address.address.substr(0, 20)+'...'}}</span>
+                </div>
 
-        <li @click="createAccount">Create account</li>
-        <li @click="importAccount">Import account</li>
-        <li class="divider"></li>
-        <li>View Mnemonic</li>
-    </ul>
+            </li>
+
+            <li class="divider"></li>
+
+            <li @click="createAccount">Create account</li>
+            <li @click="importAccount">Import account</li>
+            <li class="divider"></li>
+            <li @click="viewMnemonic">View Seed Words</li>
+        </ul>
+
+
+    </div>
 
 </template>
 
@@ -52,6 +58,12 @@ export default {
         async setMainAddress(address){
 
             this.$store.commit('setMainAddress', address );
+
+        },
+
+        async viewMnemonic(){
+
+            this.$emit('viewMnemonic', true);
 
         },
 

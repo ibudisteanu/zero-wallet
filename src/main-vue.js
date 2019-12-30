@@ -7,8 +7,7 @@ import App from './app';
 import store from "./store/store";
 
 import VTooltip from 'v-tooltip'
-
-Vue.use(VTooltip)
+Vue.use(VTooltip);
 
 export default (params)=> {
 
