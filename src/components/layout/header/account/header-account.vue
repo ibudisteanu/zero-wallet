@@ -57,11 +57,9 @@ export default {
             this.menuOpen = false;
         },
 
-        async viewMnemonic(){
+        viewMnemonic(){
 
-            const out = await global.apacache.wallet.encryption.decryptMnemonic();
-
-            this.$refs.refWalletSeedModal.showModal( out.join(' ') );
+            this.$refs.refWalletSeedModal.showModal(  );
 
         },
 
