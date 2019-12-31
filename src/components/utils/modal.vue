@@ -67,7 +67,6 @@ export default{
 
     .modal .content{
         padding: 20px;
-        padding-top: 30px;
         margin: 0!important;
     }
 
@@ -137,6 +136,7 @@ export default{
         .modal{
             width: 80%;
             min-width: 0;
+            padding: 10px;
         }
 
     }
@@ -151,6 +151,7 @@ export default{
         .modal{
             width: 95%;
             min-width: 0;
+            padding: 10px;
         }
 
     }

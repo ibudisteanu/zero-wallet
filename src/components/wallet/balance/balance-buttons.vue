@@ -10,7 +10,7 @@
             </div>
 
             <div class="btn">
-                <div class="btn-round" v-tooltip.bottom="'Receive Money'" >
+                <div class="btn-round" @click="receive" v-tooltip.bottom="'Receive Money'" >
                     <i class="fa fa-long-arrow-up"></i>
                 </div>
             </div>
@@ -43,6 +43,7 @@
         <account-info-modal ref="refAccountInfoModal"/>
         <set-password-modal ref="refSetPasswordModal" />
         <remove-password-modal ref="refRemovePasswordModal" />
+        <receive-modal ref="refReceiveModal" />
 
     </div>
 
@@ -52,10 +53,11 @@
 import AccountInfoModal from "./../account/account-info.modal"
 import SetPasswordModal from "./../encryption/set-password.modal"
 import RemovePasswordModal from "./../encryption/remove-password.modal"
+import ReceiveModal from "./../receive/receive.modal"
 
 export default {
 
-    components: {AccountInfoModal, SetPasswordModal, RemovePasswordModal },
+    components: { AccountInfoModal, SetPasswordModal, RemovePasswordModal, ReceiveModal },
 
     computed:{
         encrypted(){
@@ -76,6 +78,10 @@ export default {
         removePassword(){
             this.$refs.refRemovePasswordModal.showModal();
         },
+
+        receive(){
+            this.$refs.refReceiveModal.showModal();
+        }
 
     }
 
