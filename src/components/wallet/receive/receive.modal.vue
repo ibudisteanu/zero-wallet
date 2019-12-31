@@ -20,9 +20,16 @@ export default {
 
     components: { Account, Modal, 'qrCode': QRCode},
 
+    data(){
+        return {
+
+        }
+    },
+
     methods:{
 
         showModal(){
+            Object.assign(this.$data, this.$options.data());
             this.$refs.modal.showModal();
         },
 

@@ -51,19 +51,21 @@ export default {
 
     components: {AccountIdenticon, Modal, AccountPrivateKeyModal},
 
+    data(){
+        return {
+
+        }
+    },
 
     methods:{
 
         showModal(){
+            Object.assign(this.$data, this.$options.data());
             this.$refs.modal.showModal();
         },
 
         closeModal(){
             this.$refs.modal.closeModal();
-        },
-
-        hover(which){
-            this.hovered = which;
         },
 
         async downloadAddress(){

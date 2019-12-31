@@ -49,6 +49,8 @@ export default{
 
             this.open = false;
 
+            this.$emit('closed');
+
         },
 
         showModal(e){
@@ -56,6 +58,7 @@ export default{
             if (e ) e.stopPropagation();
 
             this.open = true;
+            this.$emit('opened');
         },
 
     }

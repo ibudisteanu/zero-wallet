@@ -1,5 +1,6 @@
 <template>
-    <modal ref="modal" title="Import Address" >
+
+    <modal ref="modal" title="Import Address" @opened="opened" >
 
         <input class="importAddresses" ref="refImportedAddresses" type="file" v-on:change="handleImportAccounts"  size="50" />
 
@@ -36,6 +37,7 @@
         </div>
 
     </modal>
+
 </template>
 
 <script>
@@ -69,6 +71,8 @@ export default {
     methods:{
 
         showModal() {
+
+            Object.assign(this.$data, this.$options.data());
             this.$refs.modal.showModal();
         },
 

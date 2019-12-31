@@ -44,6 +44,7 @@ export default {
     methods: {
 
         showModal() {
+            Object.assign(this.$data, this.$options.data());
             this.$refs.modal.showModal();
         },
 

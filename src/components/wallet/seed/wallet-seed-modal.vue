@@ -53,8 +53,8 @@ export default {
     methods: {
 
         showModal() {
-            this.seed = '';
-            this.password = '';
+
+            Object.assign(this.$data, this.$options.data());
             this.$refs.modal.showModal();
 
             if (!this.encrypted)
