@@ -1,7 +1,7 @@
 <template>
 
     <div class="outer" :style="`width: ${outerSize}px; height: ${outerSize}px`">
-        <img :src="identicon" class="identicon" :style="`width: ${size}px`" >
+        <img v-if="identicon" :src="identicon" class="identicon" :style="`width: ${size}px`" >
     </div>
 
 </template>

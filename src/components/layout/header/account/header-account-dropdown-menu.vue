@@ -10,7 +10,7 @@
 
                 <div>
                     <span>{{address.name}}</span> <br/>
-                    <span class="disabled">{{address.account.substr(0, 20)+'...'}}</span>
+                    <span class="disabled">{{address.address.substr(0, 20)+'...'}}</span>
                 </div>
 
             </li>
@@ -102,7 +102,7 @@ export default {
         left: -160px;
 
         position: absolute;
-        top: 100%;
+        top: 80px;
         border: 1px solid #ccc;
         border-radius: 4px;
         padding: 0;
