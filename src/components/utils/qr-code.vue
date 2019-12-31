@@ -1,16 +1,22 @@
 <template>
     <div>
-        <qr-canvas v-if="image" :options="options" class="qr"></qr-canvas>
+        <qrcode-vue class="qr"
+                    :size="size"
+                    :value="data"
+                    :logo="logo"
+                    :bgColor="bgColor"
+                    :fgColor="fgColor"
+        />
     </div>
 </template>
 
 <script>
 
-const { QRCanvas } = require('qrcanvas-vue');
+import qrcodeVue from "qrcode-vue";
 
 export default {
 
-    components: { 'qrCanvas': QRCanvas },
+    components: { qrcodeVue },
 
     props: {
         data: '',
@@ -18,32 +24,12 @@ export default {
 
     data(){
         return {
-            image: undefined,
+            size: 256,
+            bgColor: '#fff',
+            fgColor: '#000',
+            logo: 'https://s.gravatar.com/avatar/cc8931e95990f00dabb6c27d822477a9?size=100&default=retro'
         }
     },
-
-    computed:{
-        options() {
-            return {
-                cellSize: 10,
-                correctLevel: 'H',
-                data: this.data,
-                logo: this.image ? {
-                    image: this.image
-                }:undefined,
-            }
-        }
-    },
-
-    created() {
-        const image = new Image();
-        image.src = 'https://user-images.githubusercontent.com/3139113/38300650-ed2c25c4-382f-11e8-9792-d46987eb17d1.png';
-        image.onload = () => {
-
-            this.image = image;
-
-        };
-    }
 
 }
 </script>

@@ -10,7 +10,7 @@
         </div>
 
         <div class="qr-code">
-            <qr-code />
+            <qr-code :data="address.address" />
         </div>
 
     </modal>
