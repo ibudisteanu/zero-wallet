@@ -4,7 +4,7 @@
 
         <div class="buttons-row">
             <div class="btn">
-                <div class="btn-round" v-tooltip.bottom="'Send Money'" >
+                <div class="btn-round" @click="send" v-tooltip.bottom="'Send Money'" >
                     <i class="fa fa-long-arrow-down"></i>
                 </div>
             </div>
@@ -45,6 +45,7 @@
         <remove-password-modal ref="refRemovePasswordModal" />
         <receive-modal ref="refReceiveModal" />
         <qr-code-scanner ref="refQRCodeScannerModal"/>
+        <send-modal ref="refSendModal" />
 
     </div>
 
@@ -56,10 +57,11 @@ import SetPasswordModal from "./../encryption/set-password.modal"
 import RemovePasswordModal from "./../encryption/remove-password.modal"
 import ReceiveModal from "./../receive/receive.modal"
 import QrCodeScanner from "../send/qr-code-scanner/qr-code-scanner";
+import SendModal from "../send/send.modal"
 
 export default {
 
-    components: {QrCodeScanner, AccountInfoModal, SetPasswordModal, RemovePasswordModal, ReceiveModal},
+    components: { QrCodeScanner, AccountInfoModal, SetPasswordModal, RemovePasswordModal, ReceiveModal, SendModal },
 
     computed:{
         encrypted(){
@@ -86,7 +88,11 @@ export default {
         },
 
         qrCodeScanner(){
-          this.$refs.refQRCodeScannerModal.showModal();
+            this.$refs.refQRCodeScannerModal.showModal();
+        },
+
+        send(){
+            this.$refs.refSendModal.showModal();
         }
 
     }

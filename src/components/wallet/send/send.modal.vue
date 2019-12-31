@@ -1,24 +1,32 @@
 <template>
-    <modal v-if="address" ref="modal" title="Receive funds" >
+    <modal ref="modal" title="Send Funds Anonymously" >
 
-        <account :identicon="address.identicon" :name="address.name" :address="address.address" />
+        <span class="disabled">Destination Address</span> <br/>
+        <input type="text" v-model="inputVal">
 
-        <div class="qr-code">
-            <qr-code :data="address.address" />
+        <div v-if="error" class="danger centered">
+            {{error}}
         </div>
+
+        <input type="submit" value="Send Money Anonymously" :disabled="address.length === 0" @click="sendMoney">
 
     </modal>
 </template>
 
 <script>
-
 import Modal from "src/components/utils/modal"
-import QRCode from "src/components/utils/qr-code"
 import Account from "./../account/account"
 
 export default {
 
-    components: { Account, Modal, 'qrCode': QRCode},
+    components: { Modal, Account },
+
+    data(){
+        return {
+            address: '',
+            error: '',
+        }
+    },
 
     methods:{
 
@@ -29,6 +37,10 @@ export default {
         closeModal(){
             this.$refs.modal.closeModal();
         },
+
+        sendMoney(){
+
+        }
 
     },
 
@@ -41,13 +53,9 @@ export default {
     },
 
 }
+
 </script>
 
 <style scoped>
-
-
-    .qr-code{
-        text-align: center;
-    }
 
 </style>

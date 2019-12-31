@@ -68,20 +68,20 @@ export default {
 
         async downloadAddress(){
 
-            const address = await global.apacache.wallet.manager.getWalletAddressByAddress( this.address.address );
+            const address = await global.apacache.wallet.manager.getWalletAddressByAddress( this.address.account );
             if (!address) return false;
 
             const json = address.toJSON();
 
             let addressFile = new Blob([JSON.stringify(json)], {type: "application/json;charset=utf-8"});
-            let fileName = consts.name + "_" +this.address.address + ".json";
+            let fileName = consts.name + "_" +this.address.account + ".json";
             FileSaver.saveAs(addressFile, fileName);
 
         },
 
         async showPrivateKey(){
 
-            const address = await global.apacache.wallet.manager.getWalletAddressByAddress( this.address.address );
+            const address = await global.apacache.wallet.manager.getWalletAddressByAddress( this.address.account );
             if (!address) return false;
 
             const privateKey = await address.decryptPrivateKey();
@@ -92,10 +92,10 @@ export default {
 
         async deleteAddress(){
 
-            const confirmation = confirm( `Are you sure you want to Delete ${this.address.name} ${ this.address.address } `);
+            const confirmation = confirm( `Are you sure you want to Delete ${this.address.name} ${ this.address.account } `);
             if (!confirmation) return;
 
-            const out = await global.apacache.wallet.manager.deleteWalletAddressByAddress( this.address.address );
+            const out = await global.apacache.wallet.manager.deleteWalletAddressByAddress( this.address.account );
             this.closeModal();
         },
 

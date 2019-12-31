@@ -5,12 +5,12 @@
 
             <li>My accounts</li>
 
-            <li v-for="(address) in addresses" :class="`address ${ address.address === mainAddress  ? 'focused' : ''} ` " @click="setMainAddress(address.address)" >
+            <li v-for="(address) in addresses" :class="`address ${ address.account === mainAddress  ? 'focused' : ''} ` " @click="setMainAddress(address.account)" >
                 <account-identicon :identicon="address.identicon" :size="20" :outer-size="18" > </account-identicon>
 
                 <div>
                     <span>{{address.name}}</span> <br/>
-                    <span class="disabled">{{address.address.substr(0, 20)+'...'}}</span>
+                    <span class="disabled">{{address.account.substr(0, 20)+'...'}}</span>
                 </div>
 
             </li>

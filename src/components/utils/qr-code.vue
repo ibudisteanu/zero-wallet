@@ -37,7 +37,7 @@ export default {
 <style scoped>
     .qr{
         /* set border styling */
-        border-color: #b1d2fc;
+        border-color: #eeeeee;
         border-style: solid;
         border-width: 10px;
 
