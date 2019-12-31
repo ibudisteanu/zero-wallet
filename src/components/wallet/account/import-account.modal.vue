@@ -21,15 +21,18 @@
             <span>Name: {{address.name}}</span> <br/>
             <span>Encrypted: {{this.isAddressEncrypted}}</span> <br/>
 
-
-            <div v-if="isAddressEncrypted">
+            <div v-if="isAddressEncrypted" class="pd-top-40">
                 <span class="disabled">Address password</span> <br/>
                 <password-input v-model="addressPassword"></password-input>
             </div>
 
-            <div v-if="isWalletEncrypted">
+            <div v-if="isWalletEncrypted" class="pd-top-40">
                 <span class="disabled">Wallet password</span> <br/>
                 <password-input v-model="walletPassword"></password-input>
+            </div>
+
+            <div v-if="error" class="centered danger">
+                {{error}}
             </div>
 
             <input type="submit" value="Import Account" @click="process">
@@ -51,8 +54,10 @@ export default {
     data(){
         return {
             address: null,
+            addressData: '',
             addressPassword: '',
             walletPassword: '',
+            error: '',
         }
     },
 
@@ -89,19 +94,22 @@ export default {
         handleImportAccounts(){
 
 
-            if ((window.File && window.FileReader && window.FileList && window.Blob) === false){
-                Notification.addAlert(undefined, "error", "Import Error", "The File import is not fully supported in this browser", 5000);
-                return;
-            }
+            if ((window.File && window.FileReader && window.FileList && window.Blob) === false)
+                return this.$notify({
+                    type: 'error',
+                    title: `Import Error`,
+                    text: `Your browser/device doesn't support file import.`,
+                });
 
-            console.log(this.$refs.refImportedAddresses);
 
             const file = this.$refs.refImportedAddresses.files[0];
 
-            if (!file){
-                Notification.addAlert(undefined, "error", "Import Error", "No file selected", 5000);
-                return;
-            }
+            if (!file)
+                return this.$notify({
+                    type: 'error',
+                    title: `Import Error`,
+                    text: `No file selected.`,
+                });
 
 
             let extension = file.name.split('.').pop();
@@ -112,21 +120,30 @@ export default {
                 try {
                     reader.onload = async (e) => {
 
-                        let data = JSON.parse(reader.result);
+                        const data = JSON.parse(reader.result);
 
                         console.log("data", data);
                         this.address = data;
+                        this.addressData = reader.result;
 
 
                     }
 
                 } catch (exception){
-                    Notification.addAlert(undefined, "error", "Import Error","Your Uploaded file is not a valid JSON format", 5000);
+                    this.$notify({
+                        type: 'error',
+                        title: `Import Error`,
+                        text: `Your file is not a valid JSON file. Maybe wrong file? `,
+                    });
                 }
 
                 reader.readAsText(file);
             } else {
-                Notification.addAlert(undefined, "error","Import Error", "File not supported!", 5000);
+                this.$notify({
+                    type: 'error',
+                    title: `Import Error`,
+                    text: `File not supported. Maybe wrong file? `,
+                });
             }
 
 
@@ -134,15 +151,44 @@ export default {
 
         async process(){
 
-            const out = await global.apacache.wallet.manager.importJSON(data);
+            this.error = '';
 
-            console.log("out", out);
+            const checkPassword = await global.apacache.wallet.encryption.checkPassword(this.walletPassword);
+            if (!checkPassword) {
+                this.error = "Your wallet password is invalid";
+                return false;
+            }
 
-            // if (answer.result === true){
-            //     Notification.addAlert(undefined, "success", "Import Success", answer.address + " has been imported!", 5000);
-            // } else {
-            //     Notification.addAlert(undefined, "error", "Import Error", answer.message, 5000);
-            // }
+            try{
+
+                const out = await global.apacache.wallet.manager.importJSON( JSON.parse(this.addressData) );
+                console.log("out", out);
+
+                if (out)
+                    this.$notify({
+                        type: 'success',
+                        title: `Imported successfully`,
+                        text: `Your Address has been successfully imported.`,
+                    });
+                else
+                if (out === false )
+                    this.$notify({
+                        type: 'warn',
+                        title: `Import Warning`,
+                        text: `Your address already exists`,
+                    });
+
+                this.closeModal();
+
+            }catch(err){
+                this.$notify({
+                    type: 'error',
+                    title: `Import Error`,
+                    text: `Your Address couldn't be imported. ${err.message}`,
+                });
+
+            }
+
 
         }
 

@@ -4,7 +4,6 @@
 
         <div v-if="!error">
 
-
             <dashboard v-if="$store.state.loggedIn"/>
             <login-page v-if="!$store.state.loggedIn" />
 
@@ -70,7 +69,6 @@ export default {
 
             const wallet = global.apacache.wallet;
 
-            console.log("LOADED");
             this.$store.commit('setEncrypted', wallet.encrypted );
             this.$store.commit('setVersion', wallet.version );
 
@@ -78,6 +76,8 @@ export default {
             this.$store.commit('setLoggedIn', loggedIn );
 
             await this.readAddresses();
+
+            this.$store.commit('setLoaded', true);
 
         },
 
@@ -98,10 +98,14 @@ export default {
             for (let i=0; i < wallet.addresses.length; i++ ){
 
                 const publicAddress = await wallet.addresses[i].decryptPublicAddress();
+                const mnemonicSequenceIndex = await wallet.addresses[i].decryptMonemonicSequenceIndex();
+                const mnemonicSequenceIndexValue = Number.parseInt( mnemonicSequenceIndex.toString("hex"), 16);
+
                 const address = publicAddress.calculateAddress();
                 addresses[address] = {
                     address: address,
                     name: wallet.addresses[i].name,
+                    mnemonicSequenceIndex: mnemonicSequenceIndexValue ,
                     identicon: publicAddress.identiconImg(),
                 };
 

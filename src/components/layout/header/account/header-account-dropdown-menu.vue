@@ -9,7 +9,7 @@
                 <account-identicon :identicon="address.identicon" :size="20" :outer-size="18" > </account-identicon>
 
                 <div>
-                    <span>{{address.name}}</span> <br/>
+                    <span>{{address.name}}</span> <span class="disabled right-float" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : ''}}</span><br/>
                     <span class="disabled">{{address.address.substr(0, 20)+'...'}}</span>
                 </div>
 

@@ -4,6 +4,7 @@ import Vuex from 'vuex/dist/vuex.min';
 Vue.use(Vuex);
 
 const init = {
+    loaded: false,
     loggedIn: false,
 
     encrypted: null,
@@ -35,8 +36,12 @@ const store = new Vuex.Store({
             context.mainAddress = value;
             localStorage.setItem('mainAddress', value);
         },
+        setLoaded(context, value){
+            context.loaded = value;
+        },
         clear(context){
 
+            context.loaded = false;
             context.loggedIn = false;
             context.encrypted = null;
             context.version = null;

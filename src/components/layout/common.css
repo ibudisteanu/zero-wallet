@@ -108,6 +108,9 @@ body{
     text-align: right;
 }
 
+.right-float{
+    float:right;
+}
 
 .btn-round {
     background-color: white;

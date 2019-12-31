@@ -1,6 +1,6 @@
 <template>
 
-    <modal ref="modal" title="Set a password" >
+    <modal ref="modal" title="Remove password" >
 
         <span class="disabled" >Password</span> <br/>
         <password-input v-model="password"/>

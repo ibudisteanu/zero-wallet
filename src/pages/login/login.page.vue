@@ -4,18 +4,24 @@
         <div class="container pd-top-40">
             <div class="boxed centered">
 
-                <img :src="logo" class="logo pd-bottom-20"> <br/>
+                <loading-spinner v-if="!$store.state.loaded" />
 
-                <h1 class="title mg-bottom-0">World's First Anonymous Cash</h1>
-                <h2 class="sub-title disabled mg-top-0 pd-bottom-40">The Anonymous Cash awaits</h2>
+                <div v-if="$store.state.loaded">
 
-                <div class="left">
-                    <span class="disabled" >Password</span> <br/>
-                    <password-input v-model="password"/>
-                    <span v-if="error" class="danger">
-                        {{error}}
-                    </span>
-                    <input type="submit" value="Login" :disabled="password.length === 0" @click="login">
+                    <img :src="logo" class="logo pd-bottom-20"> <br/>
+
+                    <h1 class="title mg-bottom-0">World's First Anonymous Cash</h1>
+                    <h2 class="sub-title disabled mg-top-0 pd-bottom-40">The Anonymous Cash awaits</h2>
+
+                    <div class="left">
+                        <span class="disabled" >Password</span> <br/>
+                        <password-input v-model="password"/>
+                        <span v-if="error" class="danger">
+                            {{error}}
+                        </span>
+                        <input type="submit" value="Login" :disabled="password.length === 0" @click="login">
+                    </div>
+
                 </div>
 
             </div>
@@ -29,8 +35,9 @@
 import Layout from "src/components/layout/layout";
 import consts from 'consts/consts';
 import PasswordInput from "../../components/utils/password-input";
+import LoadingSpinner from "../../components/utils/loading-spinner";
 export default {
-    components: {PasswordInput, Layout},
+    components: {LoadingSpinner, PasswordInput, Layout},
 
     data(){
         return {
