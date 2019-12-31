@@ -4,7 +4,7 @@
         <div class="account">
             <account-identicon  :identicon="address.identicon" :size="60" :outer-size="70"  />
             <div class="pd-top-10">
-                <soan class="wordwrap thick">{{address.name}}</soan>
+                <span class="wordwrap thick">{{address.name}}</span>
                 <span class="wordwrap">{{address.address}}</span>
             </div>
         </div>

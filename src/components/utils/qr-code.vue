@@ -27,7 +27,7 @@ export default {
             size: 256,
             bgColor: '#fff',
             fgColor: '#000',
-            logo: 'https://s.gravatar.com/avatar/cc8931e95990f00dabb6c27d822477a9?size=100&default=retro'
+            //logo: 'https://s.gravatar.com/avatar/cc8931e95990f00dabb6c27d822477a9?size=100&default=retro'
         }
     },
 
