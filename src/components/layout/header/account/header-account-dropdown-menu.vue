@@ -5,7 +5,7 @@
 
             <li>My accounts</li>
 
-            <li v-for="(address) in addresses" :class="`address ${ address.account === mainAddress  ? 'focused' : ''} ` " @click="setMainAddress(address.account)" >
+            <li v-for="(address) in addresses" :class="`address ${ address.account === mainAddress  ? 'focused' : ''} ` " @click="setMainAddress(address.address)" >
                 <account-identicon :identicon="address.identicon" :size="20" :outer-size="18" > </account-identicon>
 
                 <div>

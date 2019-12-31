@@ -14,11 +14,6 @@
                     <i class="fa fa-long-arrow-up"></i>
                 </div>
             </div>
-            <div class="btn">
-                <div class="btn-round" @click="qrCodeScanner" v-tooltip.bottom="'Scan QR Code'">
-                    <i class="fa fa-qrcode"></i>
-                </div>
-            </div>
         </div>
 
         <div class="buttons-row">
@@ -44,7 +39,6 @@
         <set-password-modal ref="refSetPasswordModal" />
         <remove-password-modal ref="refRemovePasswordModal" />
         <receive-modal ref="refReceiveModal" />
-        <qr-code-scanner ref="refQRCodeScannerModal"/>
         <send-modal ref="refSendModal" />
 
     </div>
@@ -56,12 +50,11 @@ import AccountInfoModal from "./../account/account-info.modal"
 import SetPasswordModal from "./../encryption/set-password.modal"
 import RemovePasswordModal from "./../encryption/remove-password.modal"
 import ReceiveModal from "./../receive/receive.modal"
-import QrCodeScanner from "../send/qr-code-scanner/qr-code-scanner";
 import SendModal from "../send/send.modal"
 
 export default {
 
-    components: { QrCodeScanner, AccountInfoModal, SetPasswordModal, RemovePasswordModal, ReceiveModal, SendModal },
+    components: { AccountInfoModal, SetPasswordModal, RemovePasswordModal, ReceiveModal, SendModal },
 
     computed:{
         encrypted(){
@@ -87,9 +80,6 @@ export default {
             this.$refs.refReceiveModal.showModal();
         },
 
-        qrCodeScanner(){
-            this.$refs.refQRCodeScannerModal.showModal();
-        },
 
         send(){
             this.$refs.refSendModal.showModal();
