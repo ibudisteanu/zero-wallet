@@ -5,7 +5,7 @@
 
             <li>My accounts</li>
 
-            <li v-for="(address) in addresses" :class="`address ${ address.account === mainAddress  ? 'focused' : ''} ` " @click="setMainAddress(address.address)" >
+            <li v-for="(address) in addresses" :class="`address ${ address.address === mainAddress  ? 'focused' : ''} ` " @click="setMainAddress(address.address)" >
                 <account-identicon :identicon="address.identicon" :size="20" :outer-size="18" > </account-identicon>
 
                 <div>
@@ -18,7 +18,7 @@
             <li class="divider"></li>
 
             <li @click="createAccount"> <i class="fa fa-plus"></i> Create account </li>
-            <li @click="importAccount"> <i class="fa fa-upload"></i> Import account</li>
+            <li @click="importAccount"><i class="fa fa-upload"></i> Import account</li>
             <li class="divider"></li>
             <li @click="viewMnemonic"><i class="fa fa-key"></i>  View Seed Words</li>
             <li v-if="encrypted" @click="logout"><i class="fa fa-sign-out"></i>  Logout</li>
@@ -37,7 +37,14 @@ export default {
 
     components: {AccountIdenticon},
 
+    data(){
+        return {
+            allowClose: false,
+        }
+    },
+
     computed: {
+
         addresses(){
             return this.$store.state.addresses;
         },
@@ -57,16 +64,19 @@ export default {
         async createAccount(){
 
             const out = await global.apacache.wallet.manager.createNewAddress();
+            if (out)
+                this.$notify({
+                    type: 'success',
+                    title: 'Address has been added successfully',
+                    text: 'A new address has been added and saved in your wallet'
+                });
+
 
         },
 
         setMainAddress(address){
 
             return this.$store.commit('setMainAddress', address );
-
-        },
-
-        importAccount(){
 
         },
 
@@ -80,6 +90,10 @@ export default {
 
             const out = await global.apacache.wallet.encryption.logoutEncryptionWallet();
 
+        },
+
+        importAccount(){
+            return this.$emit('showImportAccount');
         }
 
     }
@@ -138,5 +152,7 @@ export default {
     i{
         margin-right: 5px;
     }
+
+
 
 </style>

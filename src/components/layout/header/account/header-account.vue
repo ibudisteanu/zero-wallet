@@ -9,10 +9,12 @@
         </div>
 
         <div class="menu" >
-            <header-account-dropdown-menu v-if="menuOpen" @viewMnemonic="viewMnemonic" />
+            <header-account-dropdown-menu v-if="menuOpen" @viewMnemonic="viewMnemonic" @showImportAccount="showImportAccount" />
         </div>
 
         <wallet-seed-modal ref="refWalletSeedModal" />
+        <import-account-modal ref="refImportAccountModal" />
+
     </div>
 
 </template>
@@ -20,13 +22,15 @@
 <script>
 
 import HeaderAccountDropdownMenu from "./header-account-dropdown-menu"
-import { mixin as clickaway } from 'vue-clickaway';
+import { mixin as clickaway } from 'vue-clickaway'
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
-import WalletSeedModal from "src/components/wallet/seed/wallet-seed-modal";
+import WalletSeedModal from "src/components/wallet/seed/wallet-seed-modal"
+import ImportAccountModal from "src/components/wallet/account/import-account.modal"
 
 export default {
 
-    components: { HeaderAccountDropdownMenu, AccountIdenticon, WalletSeedModal },
+    components: { HeaderAccountDropdownMenu, AccountIdenticon, WalletSeedModal, ImportAccountModal },
+
     mixins: [ clickaway ],
 
     data(){
@@ -58,9 +62,11 @@ export default {
         },
 
         viewMnemonic(){
+            this.$refs.refWalletSeedModal.showModal( );
+        },
 
-            this.$refs.refWalletSeedModal.showModal(  );
-
+        showImportAccount(){
+            this.$refs.refImportAccountModal.showModal( );
         },
 
     },

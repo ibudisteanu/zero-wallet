@@ -68,20 +68,26 @@ export default {
 
         async downloadAddress(){
 
-            const address = await global.apacache.wallet.manager.getWalletAddressByAddress( this.address.account );
+            const address = await global.apacache.wallet.manager.getWalletAddressByAddress( this.address.address );
             if (!address) return false;
 
             const json = address.toJSON();
 
             let addressFile = new Blob([JSON.stringify(json)], {type: "application/json;charset=utf-8"});
-            let fileName = consts.name + "_" +this.address.account + ".json";
+            let fileName = consts.name + "_" +this.address.name + " "+this.address.address + ".wallet";
             FileSaver.saveAs(addressFile, fileName);
+
+            this.$notify({
+                type: 'success',
+                title: `Address ${this.address.name} has been saved in your machine`,
+                text: `The address ${this.address.address} has been saved in the downloads folder.`,
+            });
 
         },
 
         async showPrivateKey(){
 
-            const address = await global.apacache.wallet.manager.getWalletAddressByAddress( this.address.account );
+            const address = await global.apacache.wallet.manager.getWalletAddressByAddress( this.address.address );
             if (!address) return false;
 
             const privateKey = await address.decryptPrivateKey();
@@ -92,10 +98,18 @@ export default {
 
         async deleteAddress(){
 
-            const confirmation = confirm( `Are you sure you want to Delete ${this.address.name} ${ this.address.account } `);
+            const confirmation = confirm( `Are you sure you want to Delete ${this.address.name} ${ this.address.address } `);
             if (!confirmation) return;
 
-            const out = await global.apacache.wallet.manager.deleteWalletAddressByAddress( this.address.account );
+            const out = await global.apacache.wallet.manager.deleteWalletAddressByAddress( this.address.address );
+            if (out)
+                this.$notify({
+                    type: 'success',
+                    title: `Address ${this.address.name} has been removed successfully`,
+                    text: `The address ${this.address.address} has been removed and deleted from your wallet`,
+                });
+
+
             this.closeModal();
         },
 

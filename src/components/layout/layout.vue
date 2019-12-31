@@ -6,6 +6,8 @@
 
         <slot/>
 
+        <notifications position="bottom left" />
+
         <layout-footer> </layout-footer>
 
     </div>

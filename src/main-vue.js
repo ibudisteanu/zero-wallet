@@ -6,8 +6,13 @@ import App from './app';
 
 import store from "./store/store";
 
+import Notification from 'vue-notification';
+
 import VTooltip from 'v-tooltip'
 Vue.use(VTooltip);
+
+Vue.use(Notification);
+
 
 export default (params)=> {
 

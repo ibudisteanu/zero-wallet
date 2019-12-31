@@ -65,7 +65,9 @@ export default {
     methods:{
 
         openAccountInfoModal(){
+
             this.$refs.refAccountInfoModal.showModal();
+
         },
 
         setPassword(){
