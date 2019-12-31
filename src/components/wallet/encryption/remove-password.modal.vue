@@ -53,6 +53,14 @@ export default {
 
                 const out = await global.apacache.wallet.encryption.removeEncryptionWallet( this.password );
 
+                if (out)
+                    this.$notify({
+                        type: 'success',
+                        title: `Wallet has been decrypted successfully`,
+                        text: `Your wallet has been decrypted. No password is required from now. You can encrypt it with a new password.`,
+                    });
+
+
                 this.closeModal();
 
             }catch(err){

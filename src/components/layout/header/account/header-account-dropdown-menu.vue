@@ -89,6 +89,12 @@ export default {
         async logout(){
 
             const out = await global.apacache.wallet.encryption.logoutEncryptionWallet();
+            if (out)
+                this.$notify({
+                    type: 'success',
+                    title: `You have been logged out!`,
+                    text: `You have been logged out. You need to login with the password to access your wallet.`,
+                });
 
         },
 

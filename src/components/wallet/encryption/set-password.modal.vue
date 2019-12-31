@@ -62,6 +62,13 @@ export default {
 
                 const out = await global.apacache.wallet.encryption.encryptWallet( undefined, this.password );
 
+                if (out)
+                    this.$notify({
+                        type: 'success',
+                        title: `Wallet has been encrypted successfully`,
+                        text: `Your wallet has been encrypted with the password provided`,
+                    });
+
                 this.closeModal();
 
             }catch(err){
