@@ -54,28 +54,51 @@ export default {
 
         async setPassword(){
 
-            this.error = '';
+            this.$store.commit('setIsLoading', true);
 
-            try{
+            const promise = new Promise((resolve)=>{
 
-                if (this.password.length < 6) throw "password is too weak";
-                if (this.password !== this.retypePassword) throw "passwords are not matching";
 
-                const out = await global.apacache.wallet.encryption.encryptWallet( undefined, this.password );
+                setTimeout( async ()=>{
 
-                if (out)
-                    this.$notify({
-                        type: 'success',
-                        title: `Wallet has been encrypted successfully`,
-                        text: `Your wallet has been encrypted with the password provided`,
-                    });
+                    try{
 
-                this.closeModal();
+                        this.error = '';
 
-            }catch(err){
-                this.error = err;
-            }
+                        try{
 
+                            //if (this.password.length < 6) throw "password is too weak";
+                            if (this.password !== this.retypePassword) throw "passwords are not matching";
+
+                            const out = await global.apacache.wallet.encryption.encryptWallet( undefined, this.password );
+
+                            if (out)
+                                this.$notify({
+                                    type: 'success',
+                                    title: `Wallet has been encrypted successfully`,
+                                    text: `Your wallet has been encrypted with the password provided`,
+                                });
+
+                            this.closeModal();
+
+                        }catch(err){
+                            this.error = err;
+                        }
+
+
+                    }catch(err){
+
+                    }
+
+                    resolve(true);
+
+                }, 1000);
+
+            });
+
+            await promise;
+
+            this.$store.commit('setIsLoading', false);
 
         },
 

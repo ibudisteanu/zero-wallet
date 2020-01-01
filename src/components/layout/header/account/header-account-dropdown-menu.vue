@@ -63,14 +63,23 @@ export default {
 
         async createAccount(){
 
-            const out = await global.apacache.wallet.manager.createNewAddress();
-            if (out)
-                this.$notify({
-                    type: 'success',
-                    title: 'Address has been added successfully',
-                    text: 'A new address has been added and saved in your wallet'
-                });
+            this.$store.commit('setIsLoading', true);
 
+            try{
+
+                const out = await global.apacache.wallet.manager.createNewAddress();
+                if (out)
+                    this.$notify({
+                        type: 'success',
+                        title: 'Address has been added successfully',
+                        text: 'A new address has been added and saved in your wallet'
+                    });
+
+            }catch(err){
+
+            }
+
+            this.$store.commit('setIsLoading', false);
 
         },
 

@@ -85,6 +85,7 @@ export default {
                 text: `The address ${this.address.address} has been saved in the downloads folder.`,
             });
 
+
         },
 
         async showPrivateKey(){
@@ -100,19 +101,32 @@ export default {
 
         async deleteAddress(){
 
-            const confirmation = confirm( `Are you sure you want to Delete ${this.address.name} ${ this.address.address } `);
-            if (!confirmation) return;
-
-            const out = await global.apacache.wallet.manager.deleteWalletAddressByAddress( this.address.address );
-            if (out)
-                this.$notify({
-                    type: 'success',
-                    title: `Address ${this.address.name} has been removed successfully`,
-                    text: `The address ${this.address.address} has been removed and deleted from your wallet`,
-                });
+            this.$store.commit('setIsLoading', true);
 
 
-            this.closeModal();
+            try{
+
+                const confirmation = confirm( `Are you sure you want to Delete ${this.address.name} ${ this.address.address } `);
+                if (!confirmation) return;
+
+                const out = await global.apacache.wallet.manager.deleteWalletAddressByAddress( this.address.address );
+                if (out)
+                    this.$notify({
+                        type: 'success',
+                        title: `Address ${this.address.name} has been removed successfully`,
+                        text: `The address ${this.address.address} has been removed and deleted from your wallet`,
+                    });
+
+
+                this.closeModal();
+
+            }catch(err){
+
+            }
+
+
+            this.$store.commit('setIsLoading', false);
+
         },
 
     },

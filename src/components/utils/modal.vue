@@ -1,11 +1,11 @@
 <template>
 
-    <div v-if="open">
+    <div v-if="open || openAlways">
         <div class="background" @click="closeModal"> </div>
         <div class="modal" ref="refModal">
             <div class="body">
 
-                <div class="close" @click="closeModal">
+                <div class="close" @click="closeModal" v-if="closeButton">
                     <i class="fa fa-times"></i>
                 </div>
 
@@ -38,12 +38,16 @@ export default{
     props:{
 
         title: {default: 'Modal Title'},
+        closeButton: { default: true },
+        openAlways: {default: false},
 
     },
 
     methods:{
 
         closeModal(e){
+
+            if (!this.closeButton) return;
 
             if( e ) e.stopPropagation();
 

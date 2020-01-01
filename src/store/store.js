@@ -12,6 +12,9 @@ const init = {
 
     addresses: {},
     mainAddress: null,
+
+
+    isLoading: false,
 };
 
 const store = new Vuex.Store({
@@ -39,6 +42,11 @@ const store = new Vuex.Store({
         setLoaded(context, value){
             context.loaded = value;
         },
+
+        setIsLoading(context, value){
+            context.isLoading = value;
+        },
+
         clear(context){
 
             context.loaded = false;
@@ -47,6 +55,8 @@ const store = new Vuex.Store({
             context.version = null;
             context.addresses = {};
             context.mainAddress = null;
+
+            context.isLoading = false;
 
             localStorage.removeItem('mainAddress');
         }

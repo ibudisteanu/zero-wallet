@@ -7,6 +7,7 @@
         <slot/>
 
         <notifications position="bottom left" />
+        <loading-modal />
 
         <layout-footer> </layout-footer>
 
@@ -20,10 +21,11 @@ require('./common.css');
 
 import LayoutHeader from "./header/layout-header.vue";
 import LayoutFooter from "./footer/layout-footer.vue";
+import LoadingModal from "./modals/loading.modal"
 
 export default {
 
-    components: { LayoutHeader, LayoutFooter}
+    components: { LayoutHeader, LayoutFooter, LoadingModal}
 
 }
 

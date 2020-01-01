@@ -151,43 +151,53 @@ export default {
 
         async process(){
 
-            this.error = '';
-
-            const checkPassword = await global.apacache.wallet.encryption.checkPassword(this.walletPassword);
-            if (!checkPassword) {
-                this.error = "Your wallet password is invalid";
-                return false;
-            }
-
+            this.$store.commit('setIsLoading', true);
             try{
 
-                const out = await global.apacache.wallet.manager.importJSON( JSON.parse(this.addressData) );
-                console.log("out", out);
+                this.error = '';
 
-                if (out)
+                const checkPassword = await global.apacache.wallet.encryption.checkPassword(this.walletPassword);
+                if (!checkPassword) {
+                    this.error = "Your wallet password is invalid";
+                    return false;
+                }
+
+                try{
+
+                    const out = await global.apacache.wallet.manager.importJSON( JSON.parse(this.addressData) );
+                    console.log("out", out);
+
+                    if (out)
+                        this.$notify({
+                            type: 'success',
+                            title: `Imported successfully`,
+                            text: `Your Address has been successfully imported.`,
+                        });
+                    else
+                    if (out === false )
+                        this.$notify({
+                            type: 'warn',
+                            title: `Import Warning`,
+                            text: `Your address already exists`,
+                        });
+
+                    this.closeModal();
+
+                }catch(err){
                     this.$notify({
-                        type: 'success',
-                        title: `Imported successfully`,
-                        text: `Your Address has been successfully imported.`,
-                    });
-                else
-                if (out === false )
-                    this.$notify({
-                        type: 'warn',
-                        title: `Import Warning`,
-                        text: `Your address already exists`,
+                        type: 'error',
+                        title: `Import Error`,
+                        text: `Your Address couldn't be imported. ${err.message}`,
                     });
 
-                this.closeModal();
+                }
 
             }catch(err){
-                this.$notify({
-                    type: 'error',
-                    title: `Import Error`,
-                    text: `Your Address couldn't be imported. ${err.message}`,
-                });
 
             }
+            this.$store.commit('setIsLoading', false);
+
+
 
 
         }

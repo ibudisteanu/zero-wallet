@@ -48,29 +48,38 @@ export default {
 
         async removePassword(){
 
-            this.error = '';
+            this.$store.commit('setIsLoading', true);
 
             try{
 
-                const out = await global.apacache.wallet.encryption.removeEncryptionWallet( this.password );
+                this.error = '';
 
-                if (out)
-                    this.$notify({
-                        type: 'success',
-                        title: `Wallet has been decrypted successfully`,
-                        text: `Your wallet has been decrypted. No password is required from now. You can encrypt it with a new password.`,
-                    });
+                try{
+
+                    const out = await global.apacache.wallet.encryption.removeEncryptionWallet( this.password );
+
+                    if (out)
+                        this.$notify({
+                            type: 'success',
+                            title: `Wallet has been decrypted successfully`,
+                            text: `Your wallet has been decrypted. No password is required from now. You can encrypt it with a new password.`,
+                        });
 
 
-                this.closeModal();
+                    this.closeModal();
+
+                }catch(err){
+
+                    if (err.message === "Old password is not matching")
+                        this.error = "Password is invalid";
+                    else
+                        this.error = err;
+                }
 
             }catch(err){
 
-                if (err.message === "Old password is not matching")
-                    this.error = "Password is invalid";
-                else
-                    this.error = err;
             }
+            this.$store.commit('setIsLoading', false);
 
 
         },
