@@ -19,6 +19,7 @@
 
             <li @click="createAccount"> <i class="fa fa-plus"></i> Create account </li>
             <li @click="importAccount"><i class="fa fa-upload"></i> Import account</li>
+            <li @click="importPrivateKey"><i class="fa fa-upload"></i> Import Private Key</li>
             <li class="divider"></li>
             <li @click="viewMnemonic"><i class="fa fa-key"></i>  View Seed Words</li>
             <li v-if="encrypted" @click="logout"><i class="fa fa-sign-out"></i>  Logout</li>
@@ -109,6 +110,10 @@ export default {
 
         importAccount(){
             return this.$emit('showImportAccount');
+        },
+
+        importPrivateKey(){
+            return this.$emit('showImportPrivateKey');
         }
 
     }

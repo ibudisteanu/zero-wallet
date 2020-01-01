@@ -1,6 +1,6 @@
 <template>
 
-    <modal ref="modal" title="Import Address" @opened="opened" >
+    <modal ref="modal" title="Import Address" >
 
         <input class="importAddresses" ref="refImportedAddresses" type="file" v-on:change="handleImportAccounts"  size="50" />
 
@@ -31,10 +31,6 @@
                 <password-input v-model="walletPassword"></password-input>
             </div>
 
-            <div v-if="error" class="centered danger">
-                {{error}}
-            </div>
-
             <input type="submit" value="Import Account" @click="process">
 
         </div>
@@ -57,7 +53,6 @@ export default {
             addressData: '',
             addressPassword: '',
             walletPassword: '',
-            error: '',
         }
     },
 
@@ -153,14 +148,11 @@ export default {
 
             this.$store.commit('setIsLoading', true);
 
-            this.error = '';
-
-            const checkPassword = await global.apacache.wallet.encryption.checkPassword(this.walletPassword);
-            if (!checkPassword)
-                this.error = "Your wallet password is invalid";
-
-
             try{
+
+                const checkPassword = await global.apacache.wallet.encryption.checkPassword(this.walletPassword);
+                if (!checkPassword)
+                    throw {message: "Your wallet password is invalid"};
 
                 const out = await global.apacache.wallet.manager.importJSON( JSON.parse(this.addressData), this.addressPassword );
                 console.log("out", out);

@@ -9,8 +9,8 @@
                 <span class="disabled">Name</span> <span class="wordwrap" style="display: inline-block">{{address.name}} </span><br/>
                 <span class="disabled">Address</span> <span class="wordwrap thick" style="display: inline-block">{{address.address}}</span> <br/>
 
-                <span class="disabled wordwrap pd-top-40">Public Key {{address.publicKey}}</span> <br/>
-                <span class="disabled wordwrap">Public Key Hash {{address.publicKeyHash}}</span> <br/>
+                <span :class="`disabled wordwrap pd-top-40 ${showPublicKey ? '' : 'pointer'}`" @click="showPublicKey = true">{{showPublicKey  ? '' : 'View'}} Public Key {{showPublicKey ? address.publicKey : ''}}</span> <br/>
+                <span :class="`disabled wordwrap ${showPublicKeyHash ? '' : 'pointer'}`" @click="showPublicKeyHash = true">{{showPublicKeyHash  ? '' : 'View'}} Public Key Hash {{showPublicKeyHash ? address.publicKeyHash : ''}}</span> <br/>
 
                 <div class="buttons-row pd-top-20">
 
@@ -56,7 +56,8 @@ export default {
 
     data(){
         return {
-
+            showPublicKey: false,
+            showPublicKeyHash: false,
         }
     },
 

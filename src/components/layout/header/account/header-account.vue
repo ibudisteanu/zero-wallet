@@ -9,11 +9,12 @@
         </div>
 
         <div class="menu" >
-            <header-account-dropdown-menu v-if="menuOpen" @viewMnemonic="viewMnemonic" @showImportAccount="showImportAccount" />
+            <header-account-dropdown-menu v-if="menuOpen" @viewMnemonic="viewMnemonic" @showImportAccount="showImportAccount" @showImportPrivateKey="showImportPrivateKey" />
         </div>
 
         <wallet-seed-modal ref="refWalletSeedModal" />
         <import-account-modal ref="refImportAccountModal" />
+        <import-private-key-modal ref="refImportPrivateKeyModal" />
 
     </div>
 
@@ -26,10 +27,11 @@ import { mixin as clickaway } from 'vue-clickaway'
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
 import WalletSeedModal from "src/components/wallet/seed/wallet-seed-modal"
 import ImportAccountModal from "src/components/wallet/account/import-account.modal"
+import ImportPrivateKeyModal from "src/components/wallet/account/import-private-key.modal"
 
 export default {
 
-    components: { HeaderAccountDropdownMenu, AccountIdenticon, WalletSeedModal, ImportAccountModal },
+    components: { HeaderAccountDropdownMenu, AccountIdenticon, WalletSeedModal, ImportAccountModal, ImportPrivateKeyModal },
 
     mixins: [ clickaway ],
 
@@ -67,6 +69,10 @@ export default {
 
         showImportAccount(){
             this.$refs.refImportAccountModal.showModal( );
+        },
+
+        showImportPrivateKey(){
+            this.$refs.refImportPrivateKeyModal.showModal( );
         },
 
     },
