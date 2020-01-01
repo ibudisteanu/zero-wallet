@@ -54,8 +54,10 @@ export default {
 
             if (loggedIn)
                 return this.readWallet();
-            else
-                return this.clearWallet();
+            else {
+                this.clearWallet();
+                return this.readWallet();
+            }
 
         } );
 
@@ -65,7 +67,7 @@ export default {
 
     methods:{
 
-        async readWallet(){
+        readWallet(){
 
             const wallet = global.apacache.wallet;
 
@@ -75,17 +77,17 @@ export default {
             const loggedIn = wallet.isLoggedIn();
             this.$store.commit('setLoggedIn', loggedIn );
 
-            await this.readAddresses();
+            this.readAddresses();
 
             this.$store.commit('setLoaded', true);
 
         },
 
-        async clearWallet(){
+        clearWallet(){
             return this.$store.commit('clear');
         },
 
-        async readAddresses(){
+        readAddresses(){
 
             const wallet = global.apacache.wallet;
 
@@ -97,8 +99,8 @@ export default {
             const addresses = {};
             for (let i=0; i < wallet.addresses.length; i++ ){
 
-                const publicAddress = await wallet.addresses[i].decryptPublicAddress();
-                const mnemonicSequenceIndex = await wallet.addresses[i].decryptMonemonicSequenceIndex();
+                const publicAddress =  wallet.addresses[i].decryptPublicAddress();
+                const mnemonicSequenceIndex =  wallet.addresses[i].decryptMonemonicSequenceIndex();
                 const mnemonicSequenceIndexValue = Number.parseInt( mnemonicSequenceIndex.toString("hex"), 16);
 
                 const address = publicAddress.calculateAddress();
