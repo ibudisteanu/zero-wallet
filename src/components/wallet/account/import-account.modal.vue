@@ -64,7 +64,7 @@ export default {
     computed:{
 
         isAddressEncrypted(){
-            return this.address.keys.encryption === 2;
+            return Number.parseInt(this.address.keys.private.encryption) === 2;
         },
 
         isWalletEncrypted() {
@@ -164,7 +164,7 @@ export default {
 
                 try{
 
-                    const out = await global.apacache.wallet.manager.importJSON( JSON.parse(this.addressData) );
+                    const out = await global.apacache.wallet.manager.importJSON( JSON.parse(this.addressData), this.addressPassword );
                     console.log("out", out);
 
                     if (out)
