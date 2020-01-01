@@ -6,10 +6,13 @@
             <account-identicon :identicon="address.identicon" :size="60" :outer-size="70" />
 
             <div>
-                <span class="disabled">Name</span> <span>{{address.name}} </span><br/>
-                <span class="disabled">Address</span> <span>{{address.address}}</span> <br/>
+                <span class="disabled">Name</span> <span class="wordwrap" style="display: inline-block">{{address.name}} </span><br/>
+                <span class="disabled">Address</span> <span class="wordwrap thick" style="display: inline-block">{{address.address}}</span> <br/>
 
-                <div class="buttons-row pd-top-30">
+                <span class="disabled wordwrap pd-top-40">Public Key {{address.publicKey}}</span> <br/>
+                <span class="disabled wordwrap">Public Key Hash {{address.publicKeyHash}}</span> <br/>
+
+                <div class="buttons-row pd-top-20">
 
                     <div class="btn">
                         <div class="btn-round" @click="downloadAddress" v-tooltip.bottom="'Download Account'" >
@@ -96,13 +99,13 @@ export default {
 
         async deleteAddress(){
 
+            const confirmation = confirm( `Are you sure you want to Delete ${this.address.name} ${ this.address.address } `);
+            if (!confirmation) return;
+
             this.$store.commit('setIsLoading', true);
 
 
             try{
-
-                const confirmation = confirm( `Are you sure you want to Delete ${this.address.name} ${ this.address.address } `);
-                if (!confirmation) return;
 
                 const out = await global.apacache.wallet.manager.deleteWalletAddressByAddress( this.address.address );
                 if (out)

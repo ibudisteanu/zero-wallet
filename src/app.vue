@@ -100,12 +100,17 @@ export default {
             for (let i=0; i < wallet.addresses.length; i++ ){
 
                 const publicAddress =  wallet.addresses[i].decryptPublicAddress();
+                const publicKey = wallet.addresses[i].decryptPublicKey();
+
                 const mnemonicSequenceIndex =  wallet.addresses[i].decryptMonemonicSequenceIndex();
                 const mnemonicSequenceIndexValue = Number.parseInt( mnemonicSequenceIndex.toString("hex"), 16);
 
                 const address = publicAddress.calculateAddress();
+
                 addresses[address] = {
                     address: address,
+                    publicKey: publicKey.toString("hex"),
+                    publicKeyHash: publicAddress.publicKeyHash.toString("hex"),
                     name: wallet.addresses[i].name,
                     mnemonicSequenceIndex: mnemonicSequenceIndexValue ,
                     identicon: publicAddress.identiconImg(),
