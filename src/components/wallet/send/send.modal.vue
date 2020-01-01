@@ -3,9 +3,9 @@
 
         <span class="disabled">Destination Address</span> <br/>
 
-        <div class="destination-row">
+        <div :class="`${destinationAddressIdenticon ? 'destination': ''}-row`">
 
-            <account-identicon :identicon="destinationAddressIdenticon" size="35" outer-size="35" />
+            <account-identicon v-if="destinationAddressIdenticon" :identicon="destinationAddressIdenticon" size="35" outer-size="35" />
 
             <div class="input-toggle-group">
                 <input type="text" v-model="destinationAddress">
@@ -143,11 +143,13 @@ export default {
     .amount-row{
         display: grid;
         grid-template-columns: 1fr 100px;
+        grid-column-gap: 10px;
     }
 
     .fee-row{
         display: grid;
-        grid-template-columns: 40px 1fr 40px;
+        grid-template-columns: 40px 1fr 100px;
+        grid-column-gap: 10px;
     }
 
     .fee-row span{
