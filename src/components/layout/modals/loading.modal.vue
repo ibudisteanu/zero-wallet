@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <modal ref="modal" title="Loading..." v-if="isLoading" :open-always="true" >
+        <modal ref="modal" title="Loading..." v-if="isLoading" :open-always="true" :close-button="false" >
 
             <span class="thick">Please wait... Don't close the page</span> <br/>
 

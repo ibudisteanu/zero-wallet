@@ -88,14 +88,9 @@ export default {
 
         },
 
-        async showPrivateKey(){
+        showPrivateKey(){
 
-            const address = await global.apacache.wallet.manager.getWalletAddressByAddress( this.address.address );
-            if (!address) return false;
-
-            const privateKey = await address.decryptPrivateKey();
-
-            this.$refs.refAccountPrivateKeyModal.showModal(this.address, privateKey.toString("hex") );
+            this.$refs.refAccountPrivateKeyModal.showModal(this.address);
 
         },
 

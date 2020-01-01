@@ -12,14 +12,16 @@
         </div>
 
         <div v-if="!seed">
-            <span class="disabled" >Password</span> <br/>
+            <span class="disabled" >Enter the password to view the wallet seed</span> <br/>
             <password-input v-model="password" />
+
+
+            <span v-if="error" class="centered danger">
+                {{error}}
+            </span>
+
             <input type="submit" value="Remove password" :disabled="password.length === 0 " @click="showSeed">
         </div>
-
-        <span v-if="error" class="centered danger">
-            {{error}}
-        </span>
 
     </modal>
 
@@ -70,7 +72,6 @@ export default {
         async showSeed(){
 
             this.error = '';
-
 
             try{
 

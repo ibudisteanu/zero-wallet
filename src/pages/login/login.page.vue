@@ -34,8 +34,8 @@
 <script>
 import Layout from "src/components/layout/layout";
 import consts from 'consts/consts';
-import PasswordInput from "../../components/utils/password-input";
-import LoadingSpinner from "../../components/utils/loading-spinner";
+import PasswordInput from "src/components/utils/password-input";
+import LoadingSpinner from "src/components/utils/loading-spinner";
 export default {
     components: {LoadingSpinner, PasswordInput, Layout},
 
