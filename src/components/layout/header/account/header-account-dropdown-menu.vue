@@ -95,9 +95,9 @@ export default {
 
         },
 
-        async logout(){
+        logout(){
 
-            const out = await global.apacache.wallet.encryption.logoutEncryptionWallet();
+            const out = global.apacache.wallet.encryption.logoutEncryptionWallet();
             if (out)
                 this.$notify({
                     type: 'success',
