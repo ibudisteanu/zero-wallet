@@ -202,5 +202,35 @@ input[type=submit]:disabled {
 }
 
 .table{
-    display: grid;
+    padding: 10px;
 }
+
+.table-header,
+.table-row{
+    display: grid;
+    border-bottom: 1px solid rgb(240, 242, 247);
+}
+
+.table .table-header{
+    color: #677185;
+    font-size: 15px;
+    text-align: center;
+}
+
+.table .table-row{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.table .table-row:hover{
+    background-color: #ececff;
+}
+
+.table .table-row span:first-child{
+    padding-left: 20px;
+}
+
+.table .table-row span:last-child{
+    padding-right: 20px;
+}
+
