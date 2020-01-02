@@ -155,7 +155,6 @@ export default {
                     throw {message: "Your wallet password is invalid"};
 
                 const out = await global.apacache.wallet.manager.importJSON( JSON.parse(this.addressData), this.addressPassword );
-                console.log("out", out);
 
                 if (out)
                     this.$notify({

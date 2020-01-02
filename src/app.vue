@@ -22,6 +22,7 @@
 
 import Dashboard from "./pages/dashboard/dashboard.page";
 import LoginPage from "./pages/login/login.page";
+import Consensus from "./consensus/consensus";
 
 export default {
 
@@ -61,7 +62,9 @@ export default {
 
         } );
 
-        global.apacache.start();
+        await global.apacache.start();
+
+        await Consensus.start();
 
     },
 

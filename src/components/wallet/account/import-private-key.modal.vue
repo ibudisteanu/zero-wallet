@@ -66,7 +66,6 @@ export default {
                 if (this.privateKey.length !== 64) throw {message: "Private key must be 64 hex numbers"};
 
                 const out = await global.apacache.wallet.manager.importPrivateKeyAddress( this.privateKey );
-                console.log("out", out);
 
                 if (out)
                     this.$notify({

@@ -13,6 +13,7 @@ Vue.use(VTooltip);
 
 Vue.use(Notification);
 
+import Consensus from "src/consensus/consensus"
 
 export default (params)=> {
 
