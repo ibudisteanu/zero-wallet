@@ -108,7 +108,12 @@ export default {
 
             this.readAddresses();
 
+            const route = this.$router.currentRoute.path;
+            if (!loggedIn && route.indexOf('/explorer') === -1 ) this.$router.push('/login');
+            if (loggedIn && route.indexOf('/login') >= 0) this.$router.push('/');
+
             this.$store.commit('setLoaded', true);
+
 
         },
 

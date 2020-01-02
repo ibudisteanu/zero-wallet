@@ -16,10 +16,17 @@ import store from "./../store/store"
 
 const guardDecrypted = (to, from, next) => {
 
-    if (store.state.wallet.loggedIn && store.state.wallet.loaded) return next();
+    if (store.state.wallet.loaded && !store.state.wallet.loggedIn ) return next('/login');
 
-    next('/login');
+    next();
 
+};
+
+const guardLogin = (to, from, next) =>{
+
+    if (store.state.wallet.loaded && store.state.wallet.loggedIn ) return next('/');
+
+    next();
 };
 
 const routes = [
@@ -32,13 +39,14 @@ const routes = [
     {path: '/set-password', component: SetPasswordPage , beforeEnter: guardDecrypted},
     {path: '/remove-password', component: RemovePasswordPage, beforeEnter: guardDecrypted },
     {path: '/explorer', component: BlockchainExplorerPage },
-    {path: '/login', component: LoginPage },
+    {path: '/login', component: LoginPage, beforeEnter: guardLogin },
 
     {path: '/', component: WalletPage, beforeEnter: guardDecrypted },
 
 ];
 
 const router = new VueRouter({
+    mode: 'history',
     routes // short for `routes: routes`
 });
 

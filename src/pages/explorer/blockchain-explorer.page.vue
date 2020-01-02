@@ -12,7 +12,7 @@
 
                 <h3>Last blocks</h3>
 
-                <show-blocks :blocksInfo="lastBlocksInfo" />
+                <show-blocks-info :blocksInfo="lastBlocksInfo" />
 
             </div>
         </div>
@@ -23,11 +23,11 @@
 <script>
 
 import Layout from "src/components/layout/layout"
-import ShowBlocks from "src/components/explorer/show-blocks"
+import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
 
 export default {
 
-    components: { Layout, ShowBlocks },
+    components: { Layout, ShowBlocksInfo },
 
     data(){
         return {

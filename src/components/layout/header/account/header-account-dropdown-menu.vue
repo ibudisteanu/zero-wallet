@@ -22,7 +22,7 @@
             <li @click="importPrivateKey"><i class="fa fa-upload"></i> Import Private Key</li>
             <li class="divider"></li>
             <li @click="viewMnemonic"><i class="fa fa-key"></i>  View Seed Words</li>
-            <li v-if="encrypted" @click="logout"><i class="fa fa-sign-out"></i>  Logout</li>
+            <li v-if="encrypted" @click="logout"><i class="fa fa-sign-out-alt"></i>  Logout</li>
         </ul>
 
 
