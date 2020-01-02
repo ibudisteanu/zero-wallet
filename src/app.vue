@@ -82,8 +82,8 @@ export default {
             this.$store.commit('setBlockchainInfo', info);
         });
 
-        Consensus.on("consensus/last-blocks-info-downloaded", (data) =>{
-            this.$store.commit('setBlockchainBlocksInfo', data);
+        Consensus.on("consensus/block-info-downloaded", data =>{
+            this.$store.commit('setBlockchainBlockInfo', data);
         });
 
         Consensus.on("consensus/status-update", status => {
@@ -109,7 +109,7 @@ export default {
             this.readAddresses();
 
             const route = this.$router.currentRoute.path;
-            if (!loggedIn && route.indexOf('/explorer') === -1 ) this.$router.push('/login');
+            if (!loggedIn && route.indexOf('/blockchain-explorer') === -1 ) this.$router.push('/login');
             if (loggedIn && route.indexOf('/login') >= 0) this.$router.push('/');
 
             this.$store.commit('setLoaded', true);

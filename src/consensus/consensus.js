@@ -48,6 +48,7 @@ class Consensus extends BaseConsensus{
 
         const sock = client( this._settings.address, {
 
+            reconnection: true,
             maxHttpBufferSize: global.apacache._scope.argv.networkSettings.networkMaxSize,
             query: {
                 handshake: JSON.stringify({
@@ -130,8 +131,6 @@ class Consensus extends BaseConsensus{
         const starting = this.starting;
         const ending =  this.ending-1;
 
-        const blocksInfo = {};
-
         let i, done = false;
         for (i = ending; i >= starting && !done ; i-- ){
 
@@ -146,16 +145,14 @@ class Consensus extends BaseConsensus{
             blockInfo.kernelHash = Buffer.from(blockInfo.kernelHash);
 
             if (!this._data.blocksInfo[i] || !this._data.blocksInfo[i].hash.equals(blockInfo.hash)){
-                blocksInfo[i] = blockInfo;
                 this._data.blocksInfo[i] = blockInfo;
+                this.emit('consensus/block-info-downloaded', blockInfo );
             }else {
                 if (this._data.blocksInfo[i] && this._data.blocksInfo[i].hash.equals( blockInfo.hash) )
                     done = true;
 
             }
         }
-
-        this.emit('consensus/last-blocks-info-downloaded', { end: ending, start:i, blocksInfo } );
 
         return true;
 

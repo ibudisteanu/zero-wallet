@@ -37,7 +37,7 @@ export default {
 
     computed:{
         lastBlocksInfo(){
-            return this.$store.state.blockchain.blocksInfo;
+            return this.$store.getters.blocksInfoSorted;
         }
     },
 

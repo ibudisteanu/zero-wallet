@@ -1,3 +1,4 @@
+import getters from "./blockchain-getters"
 import mutations from "./blockchain-mutations"
 
 export default {
@@ -19,5 +20,6 @@ export default {
     },
 
     mutations,
+    getters,
 
 }

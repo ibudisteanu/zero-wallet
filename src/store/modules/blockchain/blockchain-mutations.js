@@ -16,10 +16,9 @@ export default {
         context.status = status;
     },
 
-    setBlockchainBlocksInfo(context, {end, start, blocksInfo} ){
+    setBlockchainBlockInfo(context, blockInfo ){
 
-        for (const height in blocksInfo)
-            Vue.set( context.blocksInfo, height, blocksInfo[height] );
+        Vue.set(context.blocksInfo, blockInfo.height, blockInfo);
 
     }
 

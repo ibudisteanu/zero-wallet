@@ -6,32 +6,32 @@
             <span>Wallet</span>
         </router-link>
 
-        <router-link to="send-money" >
+        <router-link to="/send-money" >
             <i class="fa fa-money-bill-alt"></i>
             <span>Send</span>
         </router-link>
 
-        <router-link to="receive-money" >
+        <router-link to="/receive-money" >
             <i class="fa fa-hand-holding-usd"></i>
             <span>Receive</span>
         </router-link>
 
-        <router-link to="account" >
+        <router-link to="/account" >
             <i class="fa fa-file-invoice-dollar"></i>
             <span>Account</span>
         </router-link>
 
-        <router-link to="set-password" v-if="!encrypted" >
+        <router-link to="/set-password" v-if="!encrypted" >
             <i class="fa fa-unlock-alt"></i>
             <span>Encrypt</span>
         </router-link>
 
-        <router-link to="remove-password" v-if="encrypted" >
+        <router-link to="/remove-password" v-if="encrypted" >
             <i class="fa fa-lock"></i>
             <span>Decrypt</span>
         </router-link>
 
-        <router-link to="explorer" >
+        <router-link to="/blockchain-explorer" >
             <i class="fa fa-cubes"></i>
             <span>Explorer</span>
         </router-link>

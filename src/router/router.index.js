@@ -38,7 +38,7 @@ const routes = [
     {path: '/account', component: AccountInfoPage, beforeEnter: guardDecrypted },
     {path: '/set-password', component: SetPasswordPage , beforeEnter: guardDecrypted},
     {path: '/remove-password', component: RemovePasswordPage, beforeEnter: guardDecrypted },
-    {path: '/explorer', component: BlockchainExplorerPage },
+    {path: '/blockchain-explorer', component: BlockchainExplorerPage },
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
 
     {path: '/', component: WalletPage, beforeEnter: guardDecrypted },
