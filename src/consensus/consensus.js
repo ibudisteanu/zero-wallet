@@ -2,9 +2,10 @@ import BaseConsensus from "./consensus-base";
 
 const {client} = global.blockchain.sockets.client;
 const {BasicSocket} = global.blockchain.sockets.basic;
+const {Helper} = global.protocol.helpers;
 
 const {NodeConsensusTypeEnum} = global.blockchain.sockets.schemas.types;
-const {BigNumber} = global.blockchain.utils;
+const {BigNumber} = global.protocol.utils;
 const {MarshalData} = global.protocol.marshal;
 
 const {Block} = global.blockchain.blockchain.block;
@@ -41,25 +42,6 @@ class Consensus extends BaseConsensus{
 
     async _started(){
 
-        console.log( {
-
-            maxHttpBufferSize: global.apacache._scope.argv.networkSettings.networkMaxSize,
-            query: {
-                handshake: JSON.stringify({
-                    short: global.apacache._scope.argv.settings.applicationShort,
-
-                    build: global.apacache._scope.argv.settings.buildVersion,
-
-                    net: {
-                        type: global.apacache._scope.argv.settings.networkType,
-                    },
-
-                    address: '',
-                    consensus: NodeConsensusTypeEnum.CONSENSUS_RPC
-                })
-            }
-        } );
-
         const sock = client( this._settings.address, {
 
             maxHttpBufferSize: global.apacache._scope.argv.networkSettings.networkMaxSize,
@@ -81,7 +63,8 @@ class Consensus extends BaseConsensus{
 
         this._client = new BasicSocket( global.apacache._scope, this._settings.address, sock, undefined );
 
-        [ "connect", "on","once", "disconnect", "emit" ].map( fct => this._client[fct] = this._client._socket[fct].bind(this._client._socket) );
+        [ "connect", "disconnect"  ].map( fct => this._client[fct] = sock[fct].bind( sock ) );
+        [ "emit", "on","once" ].map( fct => this._client['_'+fct] = sock[fct].bind( sock ) );
 
         this._client.on("connect", ()=> this.status = "online" );
         this._client.on("disconnect", ()=> this.status = "offline" );
@@ -129,6 +112,7 @@ class Consensus extends BaseConsensus{
         this._data.hash = data.hash;
         this._data.prevHash = data.prevHash;
         this._data.prevKernelHash = data.prevKernelHash;
+
         this._data.chainwork = MarshalData.decompressBigNumber( data.chainwork );
 
         return this._downloadLastBlocks();
@@ -140,12 +124,17 @@ class Consensus extends BaseConsensus{
         const starting = this.starting;
         const ending =  this.ending-1;
 
-        let done = false;
-        for (let i = ending; i >= starting && !done; i-- ){
+        for (let i = ending; i >= starting ; i-- ){
 
-            const blockHash = await this._client.emitAsync("blockchain/get-block-hash", { index: i } );
+            let error = false, blockHash;
+            while (!error) {
+                blockHash = await this._client.emitAsync("blockchain/get-block-hash", {index: i});
+                if (blockHash) error = true;
+                await Helper.sleep(500);
+            }
+            blockHash = Buffer.from(blockHash);
 
-            if (!this._data.blocks[i] || this._data.blocks[i].hash().equals(blockHash)) {
+            if (!this._data.blocks[i] || !this._data.blocks[i].hash().equals(blockHash)) {
 
                 const blockData = await this._client.emitAsync("blockchain/get-block-by-height", {index: i, type: "json"}  );
 
@@ -154,7 +143,7 @@ class Consensus extends BaseConsensus{
 
             } else {
 
-                if (this._data.blocks[i].hash().equals(blockHash) )
+                if (this._data.blocks[i] && this._data.blocks[i].hash().equals(blockHash) ) //done
                     return true;
 
             }
