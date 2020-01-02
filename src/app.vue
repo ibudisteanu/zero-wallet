@@ -2,6 +2,7 @@
 
     <div>
 
+
         <div v-if="!error">
 
             <div v-if="pageActive === 'wallet'">
@@ -34,11 +35,18 @@
                 <login-page v-if="!loggedIn" />
             </div>
 
+            <div v-if="pageActive === 'blockchain-explorer'">
+                <blockchain-explorer-page v-if="loggedIn"/>
+                <login-page v-if="!loggedIn" />
+            </div>
+
         </div>
 
         <div v-if="error">
             {{error}}
         </div>
+
+        <notifications position="bottom left" />
 
     </div>
 
@@ -54,10 +62,11 @@ import ReceiveMoneyPage from "./pages/receive-page/receive-money.page"
 import AccountInfoPage from "./pages/account-info/account-info.page"
 import SetPasswordPage from "./pages/encryption/set-password.page"
 import RemovePasswordPage from "./pages/encryption/remove-password.page"
+import BlockchainExplorerPage from "./pages/explorer/blockchain-explorer.page"
 
 export default {
 
-    components: { WalletPage, LoginPage, SendMoneyPage, ReceiveMoneyPage, AccountInfoPage, SetPasswordPage, RemovePasswordPage },
+    components: { WalletPage, LoginPage, SendMoneyPage, ReceiveMoneyPage, AccountInfoPage, SetPasswordPage, RemovePasswordPage, BlockchainExplorerPage },
 
     data(){
         return {

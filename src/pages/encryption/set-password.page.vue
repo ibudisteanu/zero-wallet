@@ -69,12 +69,18 @@ export default {
 
                             const out = await global.apacache.wallet.encryption.encryptWallet( undefined, this.password );
 
-                            if (out)
+                            if (out) {
+
                                 this.$notify({
                                     type: 'success',
                                     title: `Wallet has been encrypted successfully`,
                                     text: `Your wallet has been encrypted with the password provided`,
                                 });
+
+                                this.$store.commit('setPageActive', 'wallet' );
+                            }
+                            else
+                                throw {message: "Result is not true"};
 
 
                         }catch(err){

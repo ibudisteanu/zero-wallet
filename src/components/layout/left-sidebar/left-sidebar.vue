@@ -31,7 +31,7 @@
             <span>Decrypt</span>
         </div>
 
-        <div @click="setPage('explorer')">
+        <div @click="setPage('blockchain-explorer')">
             <i class="fa fa-cubes"></i>
             <span>Explorer</span>
         </div>
@@ -55,7 +55,7 @@ export default {
 
     methods:{
         setPage(pageActiveName){
-            this.$store.commit('setPageActive', pageActiveName)
+            this.$store.commit('setPageActive', pageActiveName);
         }
     },
 

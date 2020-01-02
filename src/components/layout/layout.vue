@@ -10,7 +10,6 @@
 
             <slot/>
 
-            <notifications position="bottom left" />
             <loading-modal />
 
             <layout-footer> </layout-footer>
