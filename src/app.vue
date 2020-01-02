@@ -4,8 +4,8 @@
 
         <div v-if="!error">
 
-            <dashboard v-if="$store.state.loggedIn"/>
-            <login-page v-if="!$store.state.loggedIn" />
+            <dashboard v-if="$store.state.wallet.loggedIn"/>
+            <login-page v-if="!$store.state.wallet.loggedIn" />
 
 
         </div>
@@ -38,6 +38,8 @@ export default {
     async mounted(){
 
         if (typeof window === "undefined") return;
+
+        global.apacache._scope.argvBrowser = ["--blockchain:genesisTestNet:createNewTestNet", "true", "--wallet:printWallet", "true", "--settings:networkType", "1"];
 
         global.apacache.events.on("wallet/loaded", wallet => this.readWallet() );
 
@@ -87,7 +89,7 @@ export default {
         },
 
         clearWallet(){
-            return this.$store.commit('clear');
+            return this.$store.commit('walletClear');
         },
 
         readAddresses(){
@@ -128,11 +130,11 @@ export default {
                 this.$store.commit('setMainAddress', minerAddress);
 
 
-            if (this.$store.state.mainAddress && !addresses[this.$store.state.mainAddress])
+            if (this.$store.state.wallet.mainAddress && !addresses[this.$store.state.wallet.mainAddress])
                 this.$store.commit('setMainAddress', null );
 
 
-            if (!this.$store.state.mainAddress && firstAddress )
+            if (!this.$store.state.wallet.mainAddress && firstAddress )
                 this.$store.commit('setMainAddress', firstAddress );
 
 

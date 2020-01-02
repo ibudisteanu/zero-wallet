@@ -36,7 +36,7 @@ export default {
     computed:{
 
         isWalletEncrypted() {
-            return this.$store.state.encrypted;
+            return this.$store.state.wallet.encrypted;
         },
 
     },

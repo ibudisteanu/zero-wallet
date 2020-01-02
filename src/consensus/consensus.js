@@ -7,6 +7,8 @@ const {NodeConsensusTypeEnum} = global.blockchain.sockets.schemas.types;
 const {BigNumber} = global.blockchain.utils;
 const {MarshalData} = global.protocol.marshal;
 
+const {Block} = global.blockchain.blockchain.block;
+
 class Consensus extends BaseConsensus{
 
     constructor(settings) {
@@ -147,7 +149,8 @@ class Consensus extends BaseConsensus{
 
                 const blockData = await this._client.emitAsync("blockchain/get-block-by-height", {index: i, type: "json"}  );
 
-                this._data.blocks[i] = blockData;
+                const block = new Block(global.apacache._scope, undefined, blockData );
+                this._data.blocks[i] = block;
 
             } else {
 
@@ -182,7 +185,9 @@ class Consensus extends BaseConsensus{
 
         const blockData = await this._client.emitAsync("blockchain/get-block-by-height", {index: i, type: "buffer"}  );
 
-        this._data.blocks[height] = blockData ;
+        const block = new Block(global.apacache._scope, undefined, blockData);
+
+        this._data.blocks[height] = block;
 
         return blockData;
 

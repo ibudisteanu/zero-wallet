@@ -4,9 +4,9 @@
         <div class="container pd-top-40">
             <div class="boxed centered">
 
-                <loading-spinner v-if="!$store.state.loaded" />
+                <loading-spinner v-if="!$store.state.wallet.loaded" />
 
-                <div v-if="$store.state.loaded">
+                <div v-if="$store.state.wallet.loaded">
 
                     <img :src="logo" class="logo pd-bottom-20"> <br/>
 

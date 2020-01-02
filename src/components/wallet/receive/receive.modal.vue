@@ -42,7 +42,7 @@ export default {
     computed:{
 
         address(){
-            return this.$store.state.addresses[this.$store.state.mainAddress] ;
+            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainAddress] ;
         }
 
     },

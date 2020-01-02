@@ -47,15 +47,15 @@ export default {
     computed: {
 
         addresses(){
-            return this.$store.state.addresses;
+            return this.$store.state.wallet.addresses;
         },
 
         mainAddress(){
-            return this.$store.state.mainAddress;
+            return this.$store.state.wallet.mainAddress;
         },
 
         encrypted(){
-            return this.$store.state.encrypted;
+            return this.$store.state.wallet.encrypted;
         }
 
     },

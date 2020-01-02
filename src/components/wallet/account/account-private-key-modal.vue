@@ -52,7 +52,7 @@ export default {
     computed:{
 
         encrypted(){
-            return this.$store.state.encrypted;
+            return this.$store.state.wallet.encrypted;
         }
 
     },
