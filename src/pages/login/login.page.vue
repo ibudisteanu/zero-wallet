@@ -62,6 +62,10 @@ export default {
 
                 const out = await global.apacache.wallet.encryption.decryptWallet(this.password);
 
+                if (out)
+                    this.$router.push('/');
+                else
+                    throw {message: "An error encountered"};
 
             }catch(err){
 

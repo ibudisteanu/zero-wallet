@@ -12,20 +12,29 @@ import BlockchainExplorerPage from "src/pages/explorer/blockchain-explorer.page"
 
 Vue.use(VueRouter);
 
+import store from "./../store/store"
+
+const guardDecrypted = (to, from, next) => {
+
+    if (store.state.wallet.loggedIn && store.state.wallet.loaded) return next();
+
+    next('/login');
+
+};
 
 const routes = [
 
-    {path: '/send-money', component: SendMoneyPage },
-    {path: '/send', component: SendMoneyPage },
-    {path: '/receive-money', component: ReceiveMoneyPage },
-    {path: '/receive', component: ReceiveMoneyPage },
-    {path: '/account', component: AccountInfoPage },
-    {path: '/set-password', component: SetPasswordPage },
-    {path: '/remove-password', component: RemovePasswordPage },
+    {path: '/send-money', component: SendMoneyPage, beforeEnter: guardDecrypted, },
+    {path: '/send', component: SendMoneyPage, beforeEnter: guardDecrypted },
+    {path: '/receive-money', component: ReceiveMoneyPage, beforeEnter: guardDecrypted },
+    {path: '/receive', component: ReceiveMoneyPage, beforeEnter: guardDecrypted },
+    {path: '/account', component: AccountInfoPage, beforeEnter: guardDecrypted },
+    {path: '/set-password', component: SetPasswordPage , beforeEnter: guardDecrypted},
+    {path: '/remove-password', component: RemovePasswordPage, beforeEnter: guardDecrypted },
     {path: '/explorer', component: BlockchainExplorerPage },
     {path: '/login', component: LoginPage },
 
-    {path: '/', component: WalletPage },
+    {path: '/', component: WalletPage, beforeEnter: guardDecrypted },
 
 ];
 

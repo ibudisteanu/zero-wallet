@@ -200,3 +200,7 @@ input[type=submit]:disabled {
 .tooltip {
     z-index: 10000;
 }
+
+.table{
+    display: grid;
+}
