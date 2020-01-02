@@ -5,9 +5,14 @@
       <div class="boxed" >
 
          <div class="row">
-            <img :src="logo" class="logo" >
 
-            <span class="thicker">{{title}}</span>
+            <router-link to="/">
+               <img :src="logo" class="logo" >
+            </router-link>
+
+            <router-link to="/">
+               <span class="thicker">{{title}}</span>
+            </router-link>
 
             <header-account />
 
@@ -62,6 +67,10 @@ export default {
       align-items: center;
    }
 
-
+   .row a{
+      color: black;
+      text-decoration: none;
+      align-items: center;
+   }
 
 </style>

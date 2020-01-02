@@ -9,12 +9,13 @@
                 <span class="color">#{{blockHeight}}</span>
             </div>
             <div class="row disabled">
-                <span>© 2019 {{entity}}</span>
+                <span>© 2019 {{entity}} - Wallet v {{version}}</span>
             </div>
             <div class="row disabled">
                 <span>Disclaimer</span>
                 <span>Safety</span>
             </div>
+
         </div>
 
     </div>
@@ -28,6 +29,10 @@ export default {
 
         entity(){
             return consts.entity;
+        },
+
+        version(){
+            return consts.version;
         },
 
         blockHeight(){

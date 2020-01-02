@@ -8,38 +8,33 @@
 
                 <div class="account-info">
 
-                    <account-identicon :identicon="address.identicon" :size="60" :outer-size="70" />
+                    <account :identicon="address.identicon" :name="address.name" :address="address.address" />
 
-                    <div>
-                        <span class="disabled">Name</span> <span class="wordwrap" style="display: inline-block">{{address.name}} </span><br/>
-                        <span class="disabled">Address</span> <span class="wordwrap thick" style="display: inline-block">{{address.address}}</span> <br/>
+                    <span :class="`disabled wordwrap pd-top-40 ${showPublicKey ? '' : 'pointer'}`" @click="showPublicKey = true">{{showPublicKey  ? '' : 'View'}} Public Key {{showPublicKey ? address.publicKey : ''}}</span> <br/>
+                    <span :class="`disabled wordwrap ${showPublicKeyHash ? '' : 'pointer'}`" @click="showPublicKeyHash = true">{{showPublicKeyHash  ? '' : 'View'}} Public Key Hash {{showPublicKeyHash ? address.publicKeyHash : ''}}</span> <br/>
 
-                        <span :class="`disabled wordwrap pd-top-40 ${showPublicKey ? '' : 'pointer'}`" @click="showPublicKey = true">{{showPublicKey  ? '' : 'View'}} Public Key {{showPublicKey ? address.publicKey : ''}}</span> <br/>
-                        <span :class="`disabled wordwrap ${showPublicKeyHash ? '' : 'pointer'}`" @click="showPublicKeyHash = true">{{showPublicKeyHash  ? '' : 'View'}} Public Key Hash {{showPublicKeyHash ? address.publicKeyHash : ''}}</span> <br/>
+                    <div class="buttons-row pd-top-10">
 
-                        <div class="buttons-row pd-top-20">
-
-                            <div class="btn">
-                                <div class="btn-round" @click="downloadAddress" v-tooltip.bottom="'Download Account'" >
-                                    <i class="fa fa-download"></i>
-                                </div>
+                        <div class="btn">
+                            <div class="btn-round" @click="downloadAddress" v-tooltip.bottom="'Download Account'" >
+                                <i class="fa fa-download"></i>
                             </div>
+                        </div>
 
-                            <div class="btn">
-                                <div class="btn-round" @click="deleteAddress" v-tooltip.bottom="'Delete'" >
-                                    <i class="danger fa fa-times"></i>
-                                </div>
+                        <div class="btn">
+                            <div class="btn-round" @click="deleteAddress" v-tooltip.bottom="'Delete'" >
+                                <i class="danger fa fa-times"></i>
                             </div>
+                        </div>
 
-                            <div class="btn">
-                                <div class="btn-round" @click="showPrivateKey" v-tooltip.bottom="'View Private Key'" >
-                                    <i class="fa fa-eye"></i>
-                                </div>
+                        <div class="btn">
+                            <div class="btn-round" @click="showPrivateKey" v-tooltip.bottom="'View Private Key'" >
+                                <i class="fa fa-eye"></i>
                             </div>
-
                         </div>
 
                     </div>
+
                 </div>
 
                 <account-private-key-modal ref="refAccountPrivateKeyModal"/>
@@ -57,10 +52,11 @@ import FileSaver from 'file-saver'
 import consts from 'consts/consts';
 import AccountPrivateKeyModal from "src/components/wallet/account/account-private-key-modal"
 import Layout from "src/components/layout/layout"
+import Account from "src/components/wallet/account/account"
 
 export default {
 
-    components: {AccountIdenticon, AccountPrivateKeyModal, Layout},
+    components: {AccountIdenticon, AccountPrivateKeyModal, Layout, Account},
 
     data(){
         return {
@@ -140,8 +136,6 @@ export default {
 <style scoped>
 
     .account-info{
-        display: grid;
-        grid-template-columns: 100px 1fr;
         text-align: left;
     }
 

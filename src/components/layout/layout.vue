@@ -6,6 +6,8 @@
 
         <div class="layout" :style="{marginLeft: marginLeft+'px' }">
 
+            <warning-bar />
+
             <layout-header > </layout-header>
 
             <slot/>
@@ -27,10 +29,11 @@ import LayoutHeader from "./header/layout-header.vue";
 import LayoutFooter from "./footer/layout-footer.vue";
 import LoadingModal from "./modals/loading.modal"
 import LeftSidebar from "./left-sidebar/left-sidebar"
+import WarningBar from "./header/warning-bar"
 
 export default {
 
-    components: { LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal},
+    components: { LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar},
 
     data(){
         return {

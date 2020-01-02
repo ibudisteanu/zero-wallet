@@ -1,10 +1,10 @@
 <template>
     <div class="account">
 
-        <account-identicon  :identicon="identicon" :size="60" :outer-size="70"  />
+        <account-identicon  :identicon="identicon" :size="60" :outer-size="60"  />
         <div class="pd-top-10">
-            <span class="wordwrap thick">{{name}}</span>
-            <span class="wordwrap">{{address}}</span>
+            <span class="wordwrap ">{{name}}</span>
+            <span class="wordwrap thick">{{address}}</span>
         </div>
 
     </div>
@@ -31,7 +31,7 @@ export default {
 
     .account{
         display: grid;
-        grid-template-columns: 80px 1fr;
+        grid-template-columns: 100px 1fr;
     }
 
 </style>
