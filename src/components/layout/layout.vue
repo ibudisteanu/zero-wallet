@@ -1,16 +1,21 @@
 <template>
 
-    <div class="layout">
+    <div>
 
-        <layout-header > </layout-header>
+        <left-sidebar />
 
-        <slot/>
+        <div class="layout">
 
-        <notifications position="bottom left" />
-        <loading-modal />
+            <layout-header > </layout-header>
 
-        <layout-footer> </layout-footer>
+            <slot/>
 
+            <notifications position="bottom left" />
+            <loading-modal />
+
+            <layout-footer> </layout-footer>
+
+        </div>
     </div>
 
 </template>
@@ -22,10 +27,11 @@ require('./common.css');
 import LayoutHeader from "./header/layout-header.vue";
 import LayoutFooter from "./footer/layout-footer.vue";
 import LoadingModal from "./modals/loading.modal"
+import LeftSidebar from "./left-sidebar/left-sidebar"
 
 export default {
 
-    components: { LayoutHeader, LayoutFooter, LoadingModal}
+    components: { LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal}
 
 }
 
