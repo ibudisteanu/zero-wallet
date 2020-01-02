@@ -1,5 +1,5 @@
-import Vue from 'vue/dist/vue.min';
-import Vuex from 'vuex/dist/vuex.min';
+import Vue from 'vue';
+import Vuex from 'vuex';
 import WalletStore from "./modules/wallet/wallet-store"
 import BlockchainStore from "./modules/blockchain/blockchain-store"
 import PageStore from "./modules/page/page-store"

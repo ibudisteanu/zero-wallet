@@ -15,7 +15,7 @@
 <script>
 
 import Modal from "src/components/utils/modal"
-import Vue from 'vue/dist/vue.min'
+import Vue from 'vue'
 
 let VueQrcodeReader = undefined;
 if (typeof window !== "undefined") {

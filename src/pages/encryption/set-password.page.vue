@@ -77,7 +77,8 @@ export default {
                                     text: `Your wallet has been encrypted with the password provided`,
                                 });
 
-                                this.$store.commit('setPageActive', 'wallet' );
+                                this.$router.push('/');
+
                             }
                             else
                                 throw {message: "Result is not true"};

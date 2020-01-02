@@ -2,43 +2,10 @@
 
     <div>
 
-
         <div v-if="!error">
 
-            <div v-if="pageActive === 'wallet'">
-                <wallet-page v-if="loggedIn"/>
-                <login-page v-if="!loggedIn" />
-            </div>
-
-            <div v-if="pageActive === 'send-money'">
-                <send-money-page v-if="loggedIn"/>
-                <login-page v-if="!loggedIn" />
-            </div>
-
-            <div v-if="pageActive === 'receive-money'">
-                <receive-money-page v-if="loggedIn"/>
-                <login-page v-if="!loggedIn" />
-            </div>
-
-            <div v-if="pageActive === 'account-info'">
-                <account-info-page v-if="loggedIn"/>
-                <login-page v-if="!loggedIn" />
-            </div>
-
-            <div v-if="pageActive === 'set-password'">
-                <set-password-page v-if="loggedIn"/>
-                <login-page v-if="!loggedIn" />
-            </div>
-
-            <div v-if="pageActive === 'remove-password'">
-                <remove-password-page v-if="loggedIn"/>
-                <login-page v-if="!loggedIn" />
-            </div>
-
-            <div v-if="pageActive === 'blockchain-explorer'">
-                <blockchain-explorer-page v-if="loggedIn"/>
-                <login-page v-if="!loggedIn" />
-            </div>
+            <!-- component matched by the route will render here -->
+            <router-view></router-view>
 
         </div>
 
@@ -54,19 +21,11 @@
 
 <script>
 
-import WalletPage from "./pages/wallet/wallet.page"
-import LoginPage from "./pages/login/login.page"
 import Consensus from "./consensus/consensus"
-import SendMoneyPage from "./pages/send-money/send-money.page"
-import ReceiveMoneyPage from "./pages/receive-page/receive-money.page"
-import AccountInfoPage from "./pages/account-info/account-info.page"
-import SetPasswordPage from "./pages/encryption/set-password.page"
-import RemovePasswordPage from "./pages/encryption/remove-password.page"
-import BlockchainExplorerPage from "./pages/explorer/blockchain-explorer.page"
 
 export default {
 
-    components: { WalletPage, LoginPage, SendMoneyPage, ReceiveMoneyPage, AccountInfoPage, SetPasswordPage, RemovePasswordPage, BlockchainExplorerPage },
+    components: {  },
 
     data(){
         return {

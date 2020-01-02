@@ -62,7 +62,8 @@ export default {
                             text: `Your wallet has been decrypted. No password is required from now. You can encrypt it with a new password.`,
                         });
 
-                        this.$store.commit('setPageActive', 'wallet');
+                        this.$router.push('/');
+
                     }else
                         throw {message: "Result is not true"};
 

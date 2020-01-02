@@ -149,11 +149,9 @@ class Consensus extends BaseConsensus{
                 blocksInfo[i] = blockInfo;
                 this._data.blocksInfo[i] = blockInfo;
             }else {
-                console.log("compare")
-                if (this._data.blocksInfo[i] && this._data.blocksInfo[i].hash.equals( blockInfo.hash) ) {
-                    console.log("found");
+                if (this._data.blocksInfo[i] && this._data.blocksInfo[i].hash.equals( blockInfo.hash) )
                     done = true;
-                }
+
             }
         }
 

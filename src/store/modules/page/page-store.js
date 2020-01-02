@@ -4,8 +4,6 @@ export default {
 
     state: {
 
-        pageActive: 'wallet',
-
     },
 
     mutations,

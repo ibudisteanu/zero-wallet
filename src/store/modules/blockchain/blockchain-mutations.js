@@ -1,4 +1,4 @@
-var Vue = require('vue/dist/vue.min.js');
+var Vue = require('vue');
 
 export default {
 

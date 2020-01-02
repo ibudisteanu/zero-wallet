@@ -1,40 +1,40 @@
 <template>
     <div class="sidebar" :style="{width: width+'px'}">
 
-        <div @click="setPage('wallet')">
+        <router-link to="/" >
             <i class="fa fa-wallet" ></i>
             <span>Wallet</span>
-        </div>
+        </router-link>
 
-        <div @click="setPage('send-money')">
+        <router-link to="send-money" >
             <i class="fa fa-money-bill-alt"></i>
             <span>Send</span>
-        </div>
+        </router-link>
 
-        <div @click="setPage('receive-money')">
+        <router-link to="receive-money" >
             <i class="fa fa-hand-holding-usd"></i>
             <span>Receive</span>
-        </div>
+        </router-link>
 
-        <div @click="setPage('account-info')">
+        <router-link to="account" >
             <i class="fa fa-file-invoice-dollar"></i>
             <span>Account</span>
-        </div>
+        </router-link>
 
-        <div v-if="!encrypted" @click="setPage('set-password')">
+        <router-link to="set-password" v-if="!encrypted" >
             <i class="fa fa-unlock-alt"></i>
             <span>Encrypt</span>
-        </div>
+        </router-link>
 
-        <div v-if="encrypted" @click="setPage('remove-password')">
+        <router-link to="remove-password" v-if="encrypted" >
             <i class="fa fa-lock"></i>
             <span>Decrypt</span>
-        </div>
+        </router-link>
 
-        <div @click="setPage('blockchain-explorer')">
+        <router-link to="explorer" >
             <i class="fa fa-cubes"></i>
             <span>Explorer</span>
-        </div>
+        </router-link>
 
     </div>
 </template>
@@ -54,9 +54,7 @@ export default {
     },
 
     methods:{
-        setPage(pageActiveName){
-            this.$store.commit('setPageActive', pageActiveName);
-        }
+
     },
 
 }
@@ -80,7 +78,7 @@ export default {
         background-color: white;
     }
 
-    .sidebar div {
+    .sidebar a {
         text-decoration: none;
         color: #818181;
         display: block;
@@ -89,7 +87,7 @@ export default {
         cursor: pointer;
     }
 
-    .sidebar div:hover {
+    .sidebar a:hover {
         color: black;
     }
 
