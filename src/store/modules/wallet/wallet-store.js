@@ -5,6 +5,7 @@ import actions from "./wallet-actions"
 export default {
 
     state: {
+
         loaded: false,
         loggedIn: false,
 

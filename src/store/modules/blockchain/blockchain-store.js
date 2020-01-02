@@ -8,6 +8,10 @@ export default {
 
         start: 0,
         end: 0,
+        hash: '',
+        prevHash: '',
+        prevKernelHash: '',
+        chainWork: '',
 
         status: '',
 

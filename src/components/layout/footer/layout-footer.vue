@@ -4,9 +4,9 @@
         <div class="boxed">
             <div class="row pd-bottom-10 disabled">
                 <span>Consensus</span>
-                <span class="color">Established</span>
+                <span class="color">{{blockchainStatus}}</span>
                 <span>Block Height </span>
-                <span class="color">#0</span>
+                <span class="color">#{{blockHeight}}</span>
             </div>
             <div class="row disabled">
                 <span>© 2019 {{entity}}</span>
@@ -28,6 +28,22 @@ export default {
 
         entity(){
             return consts.entity;
+        },
+
+        blockHeight(){
+            return this.$store.state.blockchain.end;
+        },
+
+        blockchainStatus(){
+
+            const status = this.$store.state.blockchain.status;
+
+            if (status === 'sync') return 'Established';
+            if (status === 'syncing') return 'Synching';
+            if (status === 'offline') return 'Offline';
+            if (status === 'online') return 'Connected';
+
+            return 'na';
         }
 
     },

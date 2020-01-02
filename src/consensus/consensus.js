@@ -115,6 +115,8 @@ class Consensus extends BaseConsensus{
 
         this._data.chainwork = MarshalData.decompressBigNumber( data.chainwork );
 
+        this.emit('consensus/blockchain-info-updated', this._data );
+
         return this._downloadLastBlocks();
 
     }
@@ -124,7 +126,10 @@ class Consensus extends BaseConsensus{
         const starting = this.starting;
         const ending =  this.ending-1;
 
-        for (let i = ending; i >= starting ; i-- ){
+        const blocks = [];
+
+        let i;
+        for (i = ending; i >= starting ; i-- ){
 
             let error = false, blockHash;
             while (!error) {
@@ -140,24 +145,24 @@ class Consensus extends BaseConsensus{
 
                 const block = new Block(global.apacache._scope, undefined, blockData );
                 this._data.blocks[i] = block;
+                blocks.push(block);
 
             } else {
 
                 if (this._data.blocks[i] && this._data.blocks[i].hash().equals(blockHash) ) //done
-                    return true;
+                    break;
 
             }
 
         }
+
+        this.emit('consensus/blocks-downloaded', { end: ending, start:i, blocks } );
 
         return true;
 
     }
 
     async _stopped(){
-
-        // if (this._scope.masterCluster)
-        //     await this._scope.masterCluster.close();
 
     }
 

@@ -88,7 +88,7 @@ export default class BaseConsensus extends EventEmitter{
         if (newValue === "sync")
             this._syncPromiseResolve(true);
 
-        this.emit(newValue);
+        this.emit('consensus/status-update',newValue);
 
         console.log("new status: ", this._status);
 

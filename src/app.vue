@@ -39,7 +39,7 @@ export default {
 
         if (typeof window === "undefined") return;
 
-        global.apacache._scope.argvBrowser = ["--blockchain:genesisTestNet:createNewTestNet", "true", "--wallet:printWallet", "true", "--settings:networkType", "1"];
+        global.apacache._scope.argvBrowser = ["--blockchain:genesisTestNet:createNewTestNet", "true", "--settings:networkType", "1"];
 
         global.apacache.events.on("wallet/loaded", wallet => this.readWallet() );
 
@@ -65,6 +65,19 @@ export default {
         } );
 
         await global.apacache.start();
+
+
+        Consensus.on("consensus/blockchain-info-updated", info => {
+            this.$store.commit('setBlockchainInfo', info);
+        });
+
+        Consensus.on("consensus/blocks-downloaded", ({end, start, blocks}) =>{
+
+        });
+
+        Consensus.on("consensus/status-update", status => {
+            this.$store.commit('setConsensusStatus', status);
+        });
 
         await Consensus.start();
 
