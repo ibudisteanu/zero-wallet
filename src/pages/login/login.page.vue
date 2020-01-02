@@ -1,6 +1,6 @@
 <template>
-    <layout>
 
+    <layout>
         <div class="container pd-top-40">
             <div class="boxed centered">
 

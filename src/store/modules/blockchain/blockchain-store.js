@@ -1,6 +1,4 @@
 import mutations from "./blockchain-mutations"
-import getters from "./blockchain-getters"
-import actions from "./blockchain-actions"
 
 export default {
 
@@ -18,7 +16,5 @@ export default {
     },
 
     mutations,
-    getters,
-    actions,
 
 }

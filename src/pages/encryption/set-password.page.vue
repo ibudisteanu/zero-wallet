@@ -1,37 +1,43 @@
 <template>
 
-    <modal ref="modal" title="Set a password" >
+    <layout>
+        <div class="container pd-top-40">
+            <div class="boxed ">
 
-        <span class="disabled" >Password</span> <br/>
-        <password-input v-model="password"/>
+                <h1>Set Password</h1>
 
-        <span class="disabled" >Retype Password</span> <br/>
-        <password-input v-model="retypePassword"/>
+                <span class="disabled" >Password</span> <br/>
+                <password-input v-model="password"/>
 
-        <span v-if="error" class="danger">
-            {{error}}
-        </span>
+                <span class="disabled" >Retype Password</span> <br/>
+                <password-input v-model="retypePassword"/>
 
-        <input type="submit" value="Set Password" :disabled="password.length === 0 || retypePassword.length === 0" @click="setPassword">
+                <span v-if="error" class="danger">
+                    {{error}}
+                </span>
 
-        <span class="thick pd-top-20 pd-bottom-20">Tip: Write down your password.</span>
+                <input type="submit" value="Set Password" :disabled="password.length === 0 || retypePassword.length === 0" @click="setPassword">
 
-        <div class="centered">
-            <span class="danger">Warning: In case you lose your password, you will need your <strong>seed to recover your seed accounts!</strong>. Imported accounts generated from a different seed can not be recovered by using your seed.</span>
+                <span class="thick pd-top-20 pd-bottom-20">Tip: Write down your password.</span>
+
+                <div class="centered">
+                    <span class="danger">Warning: In case you lose your password, you will need your <strong>seed to recover your seed accounts!</strong>. Imported accounts generated from a different seed can not be recovered by using your seed.</span>
+                </div>
+
+            </div>
         </div>
-
-    </modal>
+    </layout>
 
 </template>
 
 <script>
 
-import Modal from "src/components/utils/modal"
-import PasswordInput from "../../utils/password-input";
+import PasswordInput from "src/components/utils/password-input";
+import Layout from "src/components/layout/layout"
 
 export default {
 
-    components: {PasswordInput, Modal},
+    components: {PasswordInput, Layout},
 
     data(){
         return {
@@ -42,15 +48,6 @@ export default {
     },
 
     methods: {
-
-        showModal() {
-            Object.assign(this.$data, this.$options.data());
-            this.$refs.modal.showModal();
-        },
-
-        closeModal() {
-            this.$refs.modal.closeModal();
-        },
 
         async setPassword(){
 
@@ -79,7 +76,6 @@ export default {
                                     text: `Your wallet has been encrypted with the password provided`,
                                 });
 
-                            this.closeModal();
 
                         }catch(err){
                             this.error = err;

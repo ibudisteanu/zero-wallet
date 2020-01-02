@@ -1,32 +1,38 @@
 <template>
 
-    <modal ref="modal" title="Remove password" >
+    <layout>
+        <div class="container pd-top-40">
+            <div class="boxed ">
 
-        <span class="disabled" >Password</span> <br/>
-        <password-input v-model="password"/>
+                <h1>Remove Password</h1>
 
-        <span v-if="error" class="danger">
-            {{error}}
-        </span>
+                <span class="disabled" >Password</span> <br/>
+                <password-input v-model="password"/>
 
-        <input type="submit" value="Remove password" :disabled="password.length === 0 " @click="removePassword">
+                <span v-if="error" class="danger">
+                    {{error}}
+                </span>
 
-        <div class="centered">
-            <span class="danger">Warning: It will remove your password. You can set it again later.</span>
+                <input type="submit" value="Remove password" :disabled="password.length === 0 " @click="removePassword">
+
+                <div class="centered">
+                    <span class="danger">Warning: It will remove your password. You can set it again later.</span>
+                </div>
+
+            </div>
         </div>
-
-    </modal>
+    </layout>
 
 </template>
 
 <script>
 
-import Modal from "src/components/utils/modal"
-import PasswordInput from "../../utils/password-input";
+import PasswordInput from "src/components/utils/password-input";
+import Layout from "src/components/layout/layout"
 
 export default {
 
-    components: {PasswordInput, Modal},
+    components: {PasswordInput, Layout },
 
     data(){
         return {
@@ -36,15 +42,6 @@ export default {
     },
 
     methods: {
-
-        showModal() {
-            Object.assign(this.$data, this.$options.data());
-            this.$refs.modal.showModal();
-        },
-
-        closeModal() {
-            this.$refs.modal.closeModal();
-        },
 
         async removePassword(){
 
@@ -58,6 +55,8 @@ export default {
 
                     const out = await global.apacache.wallet.encryption.removeEncryptionWallet( this.password );
 
+                    console.log(out);
+
                     if (out)
                         this.$notify({
                             type: 'success',
@@ -66,7 +65,6 @@ export default {
                         });
 
 
-                    this.closeModal();
 
                 }catch(err){
 

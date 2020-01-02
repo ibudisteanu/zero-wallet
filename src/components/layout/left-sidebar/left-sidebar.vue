@@ -1,32 +1,37 @@
 <template>
-    <div class="sidebar">
+    <div class="sidebar" :style="{width: width+'px'}">
 
-        <div>
-            <i class="fa fa-long-arrow-down"></i>
+        <div @click="setPage('wallet')">
+            <i class="fa fa-wallet" ></i>
+            <span>Wallet</span>
+        </div>
+
+        <div @click="setPage('send-money')">
+            <i class="fa fa-money-bill-alt"></i>
             <span>Send</span>
         </div>
 
-        <div>
-            <i class="fa fa-long-arrow-up"></i>
+        <div @click="setPage('receive-money')">
+            <i class="fa fa-hand-holding-usd"></i>
             <span>Receive</span>
         </div>
 
-        <div>
-            <i class="fa fa-info"></i>
+        <div @click="setPage('account-info')">
+            <i class="fa fa-file-invoice-dollar"></i>
             <span>Account</span>
         </div>
 
-        <div v-if="encrypted">
+        <div v-if="!encrypted" @click="setPage('set-password')">
             <i class="fa fa-unlock-alt"></i>
             <span>Encrypt</span>
         </div>
 
-        <div v-if="!encrypted">
+        <div v-if="encrypted" @click="setPage('remove-password')">
             <i class="fa fa-lock"></i>
             <span>Decrypt</span>
         </div>
 
-        <div>
+        <div @click="setPage('explorer')">
             <i class="fa fa-cubes"></i>
             <span>Explorer</span>
         </div>
@@ -38,8 +43,19 @@
 export default {
 
     computed:{
+
+        width(){
+            return 70;
+        },
+
         encrypted(){
             return this.$store.state.wallet.encrypted;
+        }
+    },
+
+    methods:{
+        setPage(pageActiveName){
+            this.$store.commit('setPageActive', pageActiveName)
         }
     },
 
@@ -50,7 +66,6 @@ export default {
 
     .sidebar {
         height: 100%;
-        width: 70px;
         position: fixed;
         z-index: 1;
         top: 0;

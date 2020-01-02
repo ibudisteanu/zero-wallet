@@ -2,9 +2,9 @@
 
     <div>
 
-        <left-sidebar />
+        <left-sidebar ref="refSidebar" :onUpdateMarginLeft="onUpdateMarginLeft" />
 
-        <div class="layout">
+        <div class="layout" :style="{marginLeft: marginLeft+'px' }">
 
             <layout-header > </layout-header>
 
@@ -31,7 +31,26 @@ import LeftSidebar from "./left-sidebar/left-sidebar"
 
 export default {
 
-    components: { LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal}
+    components: { LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal},
+
+    data(){
+        return {
+            marginLeft: 0,
+        }
+    },
+
+    methods:{
+
+        onUpdateMarginLeft(value){
+            console.log("pdate", value);
+            this.marginLeft = value;
+        }
+
+    },
+
+    mounted(){
+        this.marginLeft = this.$refs.refSidebar.width;
+    }
 
 }
 
@@ -41,7 +60,6 @@ export default {
 <style scoped>
 
     .layout {
-
     }
 
 

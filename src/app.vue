@@ -4,9 +4,35 @@
 
         <div v-if="!error">
 
-            <dashboard v-if="$store.state.wallet.loggedIn"/>
-            <login-page v-if="!$store.state.wallet.loggedIn" />
+            <div v-if="pageActive === 'wallet'">
+                <wallet-page v-if="loggedIn"/>
+                <login-page v-if="!loggedIn" />
+            </div>
 
+            <div v-if="pageActive === 'send-money'">
+                <send-money-page v-if="loggedIn"/>
+                <login-page v-if="!loggedIn" />
+            </div>
+
+            <div v-if="pageActive === 'receive-money'">
+                <receive-money-page v-if="loggedIn"/>
+                <login-page v-if="!loggedIn" />
+            </div>
+
+            <div v-if="pageActive === 'account-info'">
+                <account-info-page v-if="loggedIn"/>
+                <login-page v-if="!loggedIn" />
+            </div>
+
+            <div v-if="pageActive === 'set-password'">
+                <set-password-page v-if="loggedIn"/>
+                <login-page v-if="!loggedIn" />
+            </div>
+
+            <div v-if="pageActive === 'remove-password'">
+                <remove-password-page v-if="loggedIn"/>
+                <login-page v-if="!loggedIn" />
+            </div>
 
         </div>
 
@@ -20,19 +46,35 @@
 
 <script>
 
-import Dashboard from "./pages/dashboard/dashboard.page";
-import LoginPage from "./pages/login/login.page";
-import Consensus from "./consensus/consensus";
+import WalletPage from "./pages/wallet/wallet.page"
+import LoginPage from "./pages/login/login.page"
+import Consensus from "./consensus/consensus"
+import SendMoneyPage from "./pages/send-money/send-money.page"
+import ReceiveMoneyPage from "./pages/receive-page/receive-money.page"
+import AccountInfoPage from "./pages/account-info/account-info.page"
+import SetPasswordPage from "./pages/encryption/set-password.page"
+import RemovePasswordPage from "./pages/encryption/remove-password.page"
 
 export default {
 
-    components: {Dashboard, LoginPage },
+    components: { WalletPage, LoginPage, SendMoneyPage, ReceiveMoneyPage, AccountInfoPage, SetPasswordPage, RemovePasswordPage },
 
     data(){
         return {
             error: '',
 
         }
+    },
+
+    computed:{
+
+        pageActive(){
+            return this.$store.state.page.pageActive;
+        },
+        loggedIn(){
+            return this.$store.state.wallet.loggedIn;
+        },
+
     },
 
     async mounted(){

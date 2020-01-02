@@ -7,8 +7,6 @@
 
             <span class="balance thick">{{balance}}</span> <span class="currency thick">{{currency}}</span> <br/>
 
-            <balance-buttons></balance-buttons>
-
         </div>
     </div>
 
@@ -16,11 +14,9 @@
 
 <script>
 
-import BalanceButtons from "./balance-buttons"
-
 export default {
 
-    components: {BalanceButtons},
+    components: {},
 
     computed:{
 

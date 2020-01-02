@@ -1,58 +1,66 @@
 <template>
 
-    <modal v-if="address" ref="modal" :title="`${ address.name }`" >
+    <layout>
+        <div class="container pd-top-40">
+            <div class="boxed ">
 
-        <div class="account-info">
-            <account-identicon :identicon="address.identicon" :size="60" :outer-size="70" />
+                <h1>Account Details</h1>
 
-            <div>
-                <span class="disabled">Name</span> <span class="wordwrap" style="display: inline-block">{{address.name}} </span><br/>
-                <span class="disabled">Address</span> <span class="wordwrap thick" style="display: inline-block">{{address.address}}</span> <br/>
+                <div class="account-info">
 
-                <span :class="`disabled wordwrap pd-top-40 ${showPublicKey ? '' : 'pointer'}`" @click="showPublicKey = true">{{showPublicKey  ? '' : 'View'}} Public Key {{showPublicKey ? address.publicKey : ''}}</span> <br/>
-                <span :class="`disabled wordwrap ${showPublicKeyHash ? '' : 'pointer'}`" @click="showPublicKeyHash = true">{{showPublicKeyHash  ? '' : 'View'}} Public Key Hash {{showPublicKeyHash ? address.publicKeyHash : ''}}</span> <br/>
+                    <account-identicon :identicon="address.identicon" :size="60" :outer-size="70" />
 
-                <div class="buttons-row pd-top-20">
+                    <div>
+                        <span class="disabled">Name</span> <span class="wordwrap" style="display: inline-block">{{address.name}} </span><br/>
+                        <span class="disabled">Address</span> <span class="wordwrap thick" style="display: inline-block">{{address.address}}</span> <br/>
 
-                    <div class="btn">
-                        <div class="btn-round" @click="downloadAddress" v-tooltip.bottom="'Download Account'" >
-                            <i class="fa fa-download"></i>
+                        <span :class="`disabled wordwrap pd-top-40 ${showPublicKey ? '' : 'pointer'}`" @click="showPublicKey = true">{{showPublicKey  ? '' : 'View'}} Public Key {{showPublicKey ? address.publicKey : ''}}</span> <br/>
+                        <span :class="`disabled wordwrap ${showPublicKeyHash ? '' : 'pointer'}`" @click="showPublicKeyHash = true">{{showPublicKeyHash  ? '' : 'View'}} Public Key Hash {{showPublicKeyHash ? address.publicKeyHash : ''}}</span> <br/>
+
+                        <div class="buttons-row pd-top-20">
+
+                            <div class="btn">
+                                <div class="btn-round" @click="downloadAddress" v-tooltip.bottom="'Download Account'" >
+                                    <i class="fa fa-download"></i>
+                                </div>
+                            </div>
+
+                            <div class="btn">
+                                <div class="btn-round" @click="deleteAddress" v-tooltip.bottom="'Delete'" >
+                                    <i class="danger fa fa-times"></i>
+                                </div>
+                            </div>
+
+                            <div class="btn">
+                                <div class="btn-round" @click="showPrivateKey" v-tooltip.bottom="'View Private Key'" >
+                                    <i class="fa fa-eye"></i>
+                                </div>
+                            </div>
+
                         </div>
-                    </div>
 
-                    <div class="btn">
-                        <div class="btn-round" @click="deleteAddress" v-tooltip.bottom="'Delete'" >
-                            <i class="danger fa fa-times"></i>
-                        </div>
                     </div>
-
-                    <div class="btn">
-                        <div class="btn-round" @click="showPrivateKey" v-tooltip.bottom="'View Private Key'" >
-                            <i class="fa fa-eye"></i>
-                        </div>
-                    </div>
-
                 </div>
+
+                <account-private-key-modal ref="refAccountPrivateKeyModal"/>
 
             </div>
         </div>
-
-        <account-private-key-modal ref="refAccountPrivateKeyModal"/>
-
-    </modal>
+    </layout>
 
 </template>
 
 <script>
-import Modal from "src/components/utils/modal"
-import AccountIdenticon from "./account-identicon";
+
+import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import FileSaver from 'file-saver'
 import consts from 'consts/consts';
-import AccountPrivateKeyModal from "./account-private-key-modal"
+import AccountPrivateKeyModal from "src/components/wallet/account/account-private-key-modal"
+import Layout from "src/components/layout/layout"
 
 export default {
 
-    components: {AccountIdenticon, Modal, AccountPrivateKeyModal},
+    components: {AccountIdenticon, AccountPrivateKeyModal, Layout},
 
     data(){
         return {
@@ -62,15 +70,6 @@ export default {
     },
 
     methods:{
-
-        showModal(){
-            Object.assign(this.$data, this.$options.data());
-            this.$refs.modal.showModal();
-        },
-
-        closeModal(){
-            this.$refs.modal.closeModal();
-        },
 
         async downloadAddress(){
 
@@ -115,9 +114,6 @@ export default {
                         title: `Address ${this.address.name} has been removed successfully`,
                         text: `The address ${this.address.address} has been removed and deleted from your wallet`,
                     });
-
-
-                this.closeModal();
 
             }catch(err){
 
