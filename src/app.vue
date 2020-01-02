@@ -122,8 +122,8 @@ export default {
             this.$store.commit('setBlockchainInfo', info);
         });
 
-        Consensus.on("consensus/blocks-downloaded", ({end, start, blocks}) =>{
-
+        Consensus.on("consensus/last-blocks-hashes-downloaded", (data) =>{
+            this.$store.commit('setBlockchainBlocksHashes', data);
         });
 
         Consensus.on("consensus/status-update", status => {

@@ -1,3 +1,5 @@
+var Vue = require('vue/dist/vue.min.js');
+
 export default {
 
     setBlockchainInfo(context, data){
@@ -12,6 +14,13 @@ export default {
 
     setConsensusStatus(context, status){
         context.status = status;
+    },
+
+    setBlockchainBlocksHashes(context, {end, start, blocksHashes} ){
+
+        for (const height in blocksHashes)
+            Vue.set( context.blocksHashes, height, blocksHashes[height] );
+
     }
 
 }

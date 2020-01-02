@@ -13,6 +13,9 @@ export default {
 
         status: '',
 
+        blocks: {},
+        blocksHashes: {},
+
     },
 
     mutations,

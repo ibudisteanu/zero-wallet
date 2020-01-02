@@ -10,6 +10,10 @@
                     {{error}}
                 </span>
 
+                <h3>Last blocks</h3>
+
+                <show-blocks :blocksHashes="lastBlocksHashes" />
+
             </div>
         </div>
     </layout>
@@ -19,10 +23,11 @@
 <script>
 
 import Layout from "src/components/layout/layout"
+import ShowBlocks from "src/components/explorer/show-blocks"
 
 export default {
 
-    components: { Layout },
+    components: { Layout, ShowBlocks },
 
     data(){
         return {
@@ -30,11 +35,16 @@ export default {
         }
     },
 
+    computed:{
+        lastBlocksHashes(){
+            return this.$store.state.blockchain.blocksHashes;
+        }
+    },
+
     methods: {
 
 
-
-    }
+    },
 
 }
 

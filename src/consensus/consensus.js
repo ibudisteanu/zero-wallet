@@ -28,6 +28,10 @@ class Consensus extends BaseConsensus{
             prevKernelHash: Buffer.alloc(32),
             chainwork: BigNumber(0),
 
+            blocksHashses:{
+
+            },
+
             blocks: {
 
             },
@@ -117,16 +121,16 @@ class Consensus extends BaseConsensus{
 
         this.emit('consensus/blockchain-info-updated', this._data );
 
-        return this._downloadLastBlocks();
+        return this._downloadLastBlocksHashes();
 
     }
 
-    async _downloadLastBlocks(){
+    async _downloadLastBlocksHashes(){
 
         const starting = this.starting;
         const ending =  this.ending-1;
 
-        const blocks = [];
+        const blocksHashes = {};
 
         let i;
         for (i = ending; i >= starting ; i-- ){
@@ -139,24 +143,16 @@ class Consensus extends BaseConsensus{
             }
             blockHash = Buffer.from(blockHash);
 
-            if (!this._data.blocks[i] || !this._data.blocks[i].hash().equals(blockHash)) {
-
-                const blockData = await this._client.emitAsync("blockchain/get-block-by-height", {index: i, type: "json"}  );
-
-                const block = new Block(global.apacache._scope, undefined, blockData );
-                this._data.blocks[i] = block;
-                blocks.push(block);
-
-            } else {
-
-                if (this._data.blocks[i] && this._data.blocks[i].hash().equals(blockHash) ) //done
+            if (!this._data.blocksHashses[i] || !this._data.blocksHashses[i].equals(blockHash)){
+                blocksHashes[i] = blockHash;
+                this._data.blocksHashses[i] = blockHash;
+            }else {
+                if (!this._data.blocksHashses[i] || this._data.blocksHashses[i].equals( blockHash ) )
                     break;
-
             }
-
         }
 
-        this.emit('consensus/blocks-downloaded', { end: ending, start:i, blocks } );
+        this.emit('consensus/last-blocks-hashes-downloaded', { end: ending, start:i, blocksHashes } );
 
         return true;
 
@@ -197,7 +193,7 @@ class Consensus extends BaseConsensus{
 
 
     get starting(){
-        return this._starting || this._data.end - 30;
+        return this._starting || this._data.end - 15;
     }
 
     get ending(){
