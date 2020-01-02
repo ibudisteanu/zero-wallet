@@ -14,7 +14,7 @@ export default {
         status: '',
 
         blocks: {},
-        blocksHashes: {},
+        blocksInfo: {},
 
     },
 

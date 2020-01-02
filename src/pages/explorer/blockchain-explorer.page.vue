@@ -12,7 +12,7 @@
 
                 <h3>Last blocks</h3>
 
-                <show-blocks :blocksHashes="lastBlocksHashes" />
+                <show-blocks :blocksInfo="lastBlocksInfo" />
 
             </div>
         </div>
@@ -36,8 +36,8 @@ export default {
     },
 
     computed:{
-        lastBlocksHashes(){
-            return this.$store.state.blockchain.blocksHashes;
+        lastBlocksInfo(){
+            return this.$store.state.blockchain.blocksInfo;
         }
     },
 

@@ -16,10 +16,10 @@ export default {
         context.status = status;
     },
 
-    setBlockchainBlocksHashes(context, {end, start, blocksHashes} ){
+    setBlockchainBlocksInfo(context, {end, start, blocksInfo} ){
 
-        for (const height in blocksHashes)
-            Vue.set( context.blocksHashes, height, blocksHashes[height] );
+        for (const height in blocksInfo)
+            Vue.set( context.blocksInfo, height, blocksInfo[height] );
 
     }
 

@@ -28,7 +28,7 @@ class Consensus extends BaseConsensus{
             prevKernelHash: Buffer.alloc(32),
             chainwork: BigNumber(0),
 
-            blocksHashses:{
+            blocksInfo:{
 
             },
 
@@ -130,29 +130,34 @@ class Consensus extends BaseConsensus{
         const starting = this.starting;
         const ending =  this.ending-1;
 
-        const blocksHashes = {};
+        const blocksInfo = {};
 
-        let i;
-        for (i = ending; i >= starting ; i-- ){
+        let i, done = false;
+        for (i = ending; i >= starting && !done ; i-- ){
 
-            let error = false, blockHash;
+            let error = false, blockInfo;
+
             while (!error) {
-                blockHash = await this._client.emitAsync("blockchain/get-block-hash", {index: i});
-                if (blockHash) error = true;
+                blockInfo = await this._client.emitAsync("blockchain/get-block-info", {index: i});
+                if (blockInfo) error = true;
                 await Helper.sleep(500);
             }
-            blockHash = Buffer.from(blockHash);
+            blockInfo.hash = Buffer.from(blockInfo.hash);
+            blockInfo.kernelHash = Buffer.from(blockInfo.kernelHash);
 
-            if (!this._data.blocksHashses[i] || !this._data.blocksHashses[i].equals(blockHash)){
-                blocksHashes[i] = blockHash;
-                this._data.blocksHashses[i] = blockHash;
+            if (!this._data.blocksInfo[i] || !this._data.blocksInfo[i].hash.equals(blockInfo.hash)){
+                blocksInfo[i] = blockInfo;
+                this._data.blocksInfo[i] = blockInfo;
             }else {
-                if (!this._data.blocksHashses[i] || this._data.blocksHashses[i].equals( blockHash ) )
-                    break;
+                console.log("compare")
+                if (this._data.blocksInfo[i] && this._data.blocksInfo[i].hash.equals( blockInfo.hash) ) {
+                    console.log("found");
+                    done = true;
+                }
             }
         }
 
-        this.emit('consensus/last-blocks-hashes-downloaded', { end: ending, start:i, blocksHashes } );
+        this.emit('consensus/last-blocks-info-downloaded', { end: ending, start:i, blocksInfo } );
 
         return true;
 

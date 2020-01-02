@@ -1,11 +1,16 @@
 <template>
 
-    <div class="table">
+    <div >
 
-        <div v-for="(blockHash, height) in blocksHashes">
+        <div v-for="blockInfo in blocksInfo" class="table">
 
-            <span>{{height}}</span>
-            <span>{{blockHash.toString("hex")}}</span>
+            <span>{{blockInfo.height}}</span>
+            <span>{{blockInfo.hash.toString("hex").substr(0, 20)}}</span>
+            <span>{{blockInfo.kernelHash.toString("hex").substr(0, 20)}}</span>
+            <span>{{blockInfo.timestamp}}</span>
+            <span>{{blockInfo.size}}</span>
+            <span>{{blockInfo.txCount}}</span>
+            <span>{{blockInfo.forgedBy.substr(0, 20)}}</span>
 
         </div>
 
@@ -17,7 +22,7 @@
 export default {
 
     props:{
-        blocksHashes: null,
+        blocksInfo: null,
     }
 
 }
@@ -27,7 +32,7 @@ export default {
 
     .table{
         display: grid;
-        grid-template-columns: 60px 1fr 100px ;
+        grid-template-columns: 60px 1fr 1fr 50px 50px 50px 1fr ;
     }
 
 </style>
