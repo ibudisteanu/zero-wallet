@@ -69,7 +69,6 @@ export default {
 
    .row a{
       color: black;
-      text-decoration: none;
       align-items: center;
    }
 

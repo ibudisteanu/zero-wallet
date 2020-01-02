@@ -14,8 +14,8 @@
             </div>
             <div v-for="blockInfo in blocksInfo" class="table-row">
 
-                <span>{{blockInfo.height}}</span>
-                <span>{{blockInfo.hash.toString("hex").substr(0, 20)}}</span>
+                <span><router-link :to="`/explorer/blocks/height/${blockInfo.height}`">{{blockInfo.height}}</router-link></span>
+                <span><router-link :to="`/explorer/blocks/hash/${blockInfo.hash}`">{{blockInfo.hash.toString("hex").substr(0, 20)}}</router-link></span>
                 <span>{{blockInfo.kernelHash.toString("hex").substr(0, 20)}}</span>
                 <span>{{blockInfo.timestamp}}</span>
                 <span>{{blockInfo.size}}</span>

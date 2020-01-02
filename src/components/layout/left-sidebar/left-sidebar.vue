@@ -31,7 +31,7 @@
             <span>Decrypt</span>
         </router-link>
 
-        <router-link to="/blockchain-explorer" >
+        <router-link to="/explorer" >
             <i class="fa fa-cubes"></i>
             <span>Explorer</span>
         </router-link>
@@ -79,7 +79,6 @@ export default {
     }
 
     .sidebar a {
-        text-decoration: none;
         color: #818181;
         display: block;
         padding-bottom: 20px;

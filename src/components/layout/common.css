@@ -11,6 +11,10 @@ body{
     background-color: #fafafa;
 }
 
+a{
+    text-decoration: none;
+}
+
 
 .boxed{
     max-width: 850px;
