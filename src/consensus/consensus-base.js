@@ -51,9 +51,6 @@ export default class BaseConsensus extends EventEmitter{
     async _stopped(){
     }
 
-    async getBlocksDetails(startingHeight, endingHeight){
-
-    }
 
     async getBlock(height){
 

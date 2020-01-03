@@ -169,13 +169,22 @@ class Consensus extends BaseConsensus{
 
     }
 
+    async subscribeBalance( account ){
+
+        const blockData = await this._client.emitAsync("account/subscribe/balance", { account }, 0  );
+
+        console.log("blockData", blockData);
+
+    }
+
+    async subscribeNonce(){
+
+    }
+
     async _stopped(){
 
     }
 
-    async getBlocksDetails(startingHeight, endingHeight){
-
-    }
 
     async getBlockByHash(hash){
 
@@ -191,8 +200,6 @@ class Consensus extends BaseConsensus{
         this._data.blocksByHash[block.hash().toString("hex")] = block;
 
         this.emit('consensus/block-downloaded', block );
-
-        console.log("block", block);
 
         return block;
 
@@ -214,8 +221,6 @@ class Consensus extends BaseConsensus{
 
         this.emit('consensus/block-downloaded', block );
 
-        console.log("block", block);
-
         return block;
 
     }
@@ -230,7 +235,7 @@ class Consensus extends BaseConsensus{
 
 
     get starting(){
-        return this._starting || this._data.end - 15;
+        return Math.max(0 , this._starting || this._data.end - 15);
     }
 
     get ending(){

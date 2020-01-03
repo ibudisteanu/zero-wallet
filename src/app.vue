@@ -164,6 +164,9 @@ export default {
             if (!this.$store.state.wallet.mainAddress && firstAddress )
                 this.$store.commit('setMainAddress', firstAddress );
 
+            //subscribe addresses
+            for (let i=0; i < addresses.length; i++)
+                Consensus.subscribeBalance(addresses[i].address);
 
             this.$store.commit('setAddresses', addresses );
 
