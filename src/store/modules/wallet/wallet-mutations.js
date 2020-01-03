@@ -1,3 +1,5 @@
+import Vue from 'vue';
+
 export default {
 
     setLoggedIn( context, value){
@@ -10,9 +12,23 @@ export default {
     setVersion( context, value){
         context.version = value;
     },
+
     setAddresses( context, value){
         context.addresses = value;
     },
+
+    setAddressWalletBalances(context, {account, balances, nonce}){
+
+        const address = {...context.addresses[account]};
+
+        address.balances = balances;
+        address.nonce = nonce;
+        address.loaded = true;
+
+        Vue.set(context.addresses, account, address );
+
+    },
+
     setMainAddress( context, value){
         context.mainAddress = value;
         localStorage.setItem('mainAddress', value);

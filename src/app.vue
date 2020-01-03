@@ -88,6 +88,8 @@ export default {
 
         Consensus.on("consensus/block-deleted", data => this.$store.commit('deleteBlockchainBlock', data ) );
 
+        Consensus.on("consensus/account-update", data => this.$store.commit('setAddressWalletBalances', data ) );
+
         await Consensus.start();
 
     },
@@ -165,8 +167,8 @@ export default {
                 this.$store.commit('setMainAddress', firstAddress );
 
             //subscribe addresses
-            for (let i=0; i < addresses.length; i++)
-                Consensus.subscribeBalance(addresses[i].address);
+            Consensus.subscribeAccounts( Object.keys(addresses) );
+
 
             this.$store.commit('setAddresses', addresses );
 

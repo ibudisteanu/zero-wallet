@@ -30,6 +30,10 @@ export default {
 
     components: {Transaction},
 
+    props: {
+        address: null
+    },
+
     data(){
         return {
             txs: [ {

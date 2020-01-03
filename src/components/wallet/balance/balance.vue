@@ -5,6 +5,8 @@
 
             <span class="title">Account Balance</span> <br/>
 
+            {{address}}
+
             <span class="balance thick">{{balance}}</span> <span class="currency thick">{{currency}}</span> <br/>
 
         </div>
@@ -17,6 +19,10 @@
 export default {
 
     components: {},
+
+    props: {
+        address: null
+    },
 
     computed:{
 
