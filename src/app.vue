@@ -78,17 +78,15 @@ export default {
         await global.apacache.start();
 
 
-        Consensus.on("consensus/blockchain-info-updated", info => {
-            this.$store.commit('setBlockchainInfo', info);
-        });
+        Consensus.on("consensus/blockchain-info-updated", info => this.$store.commit('setBlockchainInfo', info) );
 
-        Consensus.on("consensus/block-info-downloaded", data =>{
-            this.$store.commit('setBlockchainBlockInfo', data);
-        });
+        Consensus.on("consensus/block-info-downloaded", data => this.$store.commit('setBlockchainBlockInfo', data) );
 
-        Consensus.on("consensus/status-update", status => {
-            this.$store.commit('setConsensusStatus', status);
-        });
+        Consensus.on("consensus/status-update", status =>  this.$store.commit('setConsensusStatus', status) );
+
+        Consensus.on("consensus/block-downloaded", data => this.$store.commit('setBlockchainBlock', data ) );
+
+        Consensus.on("consensus/block-deleted", data => this.$store.commit('deleteBlockchainBlock', data ) );
 
         await Consensus.start();
 

@@ -10,7 +10,7 @@
                     {{error}}
                 </span>
 
-                <h3>Block {{  }}</h3>
+                <h3>Block {{ block ? block.toJSON() : '' }}</h3>
 
 
             </div>
@@ -42,6 +42,12 @@ export default {
         hash(){
             return this.$route.params.hash;
         },
+
+        block(){
+
+            if (this.height) return this.$store.state.blockchain.blocks[this.height];
+            if (this.hash) return this.$store.state.blockchain.blocksByHash[this.hash];
+        }
     },
 
     methods: {
@@ -54,12 +60,9 @@ export default {
             return;
         }
 
-        if (this.height !== undefined){
-            await Consensus.getBlock(this.height);
-        } else
-        if (this.hash ){
-            await Consensus.getBlockByHash(this.hash);
-        }
+        if (this.height !== undefined)  return Consensus.getBlock(this.height);
+        else
+        if (this.hash ) return Consensus.getBlockByHash(this.hash);
 
     }
 

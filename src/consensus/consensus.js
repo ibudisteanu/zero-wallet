@@ -151,6 +151,9 @@ class Consensus extends BaseConsensus{
             if (!this._data.blocksInfo[i] || !this._data.blocksInfo[i].hash.equals(blockInfo.hash)){
 
                 if (this._data.blocksInfo[i] && !this._data.blocksInfo[i].hash.equals(blockInfo.hash)){
+
+                    this.emit('consensus/block-deleted', {hash: blockInfo.hash, height: i} );
+
                     delete this._data.blocks[i];
                     delete this._data.blocksByHash[blockInfo.hash.toString("hex")];
                     await this.getBlock(height);
@@ -182,12 +185,16 @@ class Consensus extends BaseConsensus{
 
         if (this._data.blocks[hash]) return this._data.blocksByHash[hash];
 
-        const blockData = await this._client.emitAsync("blockchain/get-block-by-height", {index: height, type: "buffer"}  );
+        const blockData = await this._client.emitAsync("blockchain/get-block", {hash: height, type: "buffer"}  );
 
-        const block = new Block(global.apacache._scope, undefined, blockData);
+        const block = new Block(global.apacache._scope, undefined, Buffer.from(blockData) );
 
         this._data.blocks[block.height] = block;
         this._data.blocksByHash[block.hash().toString("hex")] = block;
+
+        this.emit('consensus/block-downloaded', block );
+
+        console.log("block", block);
 
         return block;
 
@@ -198,14 +205,16 @@ class Consensus extends BaseConsensus{
 
         if (this._data.blocks[height]) return this._data.blocks[height];
 
-        if (height >= this._data.end) return;
-
         const blockData = await this._client.emitAsync("blockchain/get-block-by-height", {index: height, type: "buffer"}  );
 
-        const block = new Block(global.apacache._scope, undefined, blockData);
+        const block = new Block(global.apacache._scope, undefined, Buffer.from(blockData));
         this._data.blocks[height] = block;
 
         this._data.blocksByHash[block.hash().toString("hex")] = block;
+
+        this.emit('consensus/block-downloaded', block );
+
+        console.log("block", block);
 
         return block;
 

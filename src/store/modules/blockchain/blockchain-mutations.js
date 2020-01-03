@@ -20,6 +20,22 @@ export default {
 
         Vue.set(context.blocksInfo, blockInfo.height, blockInfo);
 
-    }
+    },
+
+    deleteBlockchainBlock(context, {height, hash} ){
+
+        Vue.delete(context.blocks, height);
+        Vue.delete(context.blocksByHash, hash.toString("hex") );
+
+    },
+
+
+    setBlockchainBlock(context, block ){
+
+        Vue.set(context.blocks, block.height, block);
+        Vue.set(context.blocksByHash, block.hash().toString("hex"), block);
+
+    },
+
 
 }
