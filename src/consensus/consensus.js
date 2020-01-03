@@ -181,7 +181,7 @@ class Consensus extends BaseConsensus{
 
         if (this._data.blocks[hash]) return this._data.blocksByHash[hash];
 
-        const blockData = await this._client.emitAsync("blockchain/get-block", {hash: height, type: "buffer"}, 0  );
+        const blockData = await this._client.emitAsync("blockchain/get-block", { hash, type: "buffer"}, 0  );
 
         if (!blockData) return;
 

@@ -29,11 +29,11 @@
                         </div>
                         <div class="table-row">
                             <span>Confirmations</span>
-                            <span>{{}}</span>
+                            <span>{{ $store.state.blockchain.end - block.height -1 }}</span>
                         </div>
                         <div class="table-row">
                             <span>Timestamp</span>
-                            <span>{{block.timestamp}}</span>
+                            <span>{{  block.timestamp }}</span>
                         </div>
                         <div class="table-row">
                             <span>Height</span>
@@ -95,7 +95,8 @@
 import Layout from "src/components/layout/layout"
 import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
 import Consensus from "src/consensus/consensus"
-import LoadingSpinner from "../../components/utils/loading-spinner";
+import LoadingSpinner from "src/components/utils/loading-spinner";
+import Utils from "src/utils/utils"
 
 export default {
 
@@ -123,6 +124,11 @@ export default {
     },
 
     methods: {
+
+        timeAgo(timestamp){
+            return Utils.timeSince( timestamp*1000 );
+        }
+
     },
 
     async mounted(){
@@ -133,8 +139,6 @@ export default {
         }
 
         await Consensus.initPromise;
-
-        console.log(this.height);
 
         if (this.height !== undefined)  return Consensus.getBlock(this.height);
         else
