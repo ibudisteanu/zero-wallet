@@ -95,8 +95,9 @@ class Consensus extends BaseConsensus{
         this._client.on("connect", ()=>{
 
             this._client.emit("blockchain/get-info", undefined, this._processBlockchain.bind(this) );
+            this._initPromiseResolve(true);
 
-        })
+        });
 
     }
 
@@ -138,13 +139,8 @@ class Consensus extends BaseConsensus{
         let i, done = false;
         for (i = ending; i >= starting && !done ; i-- ){
 
-            let error = false, blockInfo;
+            const blockInfo = await this._client.emitAsync("blockchain/get-block-info", {index: i}, 0);
 
-            while (!error) {
-                blockInfo = await this._client.emitAsync("blockchain/get-block-info", {index: i});
-                if (blockInfo) error = true;
-                await Helper.sleep(500);
-            }
             blockInfo.hash = Buffer.from(blockInfo.hash);
             blockInfo.kernelHash = Buffer.from(blockInfo.kernelHash);
 
@@ -185,7 +181,9 @@ class Consensus extends BaseConsensus{
 
         if (this._data.blocks[hash]) return this._data.blocksByHash[hash];
 
-        const blockData = await this._client.emitAsync("blockchain/get-block", {hash: height, type: "buffer"}  );
+        const blockData = await this._client.emitAsync("blockchain/get-block", {hash: height, type: "buffer"}, 0  );
+
+        if (!blockData) return;
 
         const block = new Block(global.apacache._scope, undefined, Buffer.from(blockData) );
 
@@ -205,7 +203,9 @@ class Consensus extends BaseConsensus{
 
         if (this._data.blocks[height]) return this._data.blocks[height];
 
-        const blockData = await this._client.emitAsync("blockchain/get-block-by-height", {index: height, type: "buffer"}  );
+        const blockData = await this._client.emitAsync("blockchain/get-block-by-height", {index: height, type: "buffer"}, 0  );
+
+        if (!blockData) return;
 
         const block = new Block(global.apacache._scope, undefined, Buffer.from(blockData));
         this._data.blocks[height] = block;

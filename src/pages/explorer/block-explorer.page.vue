@@ -132,7 +132,9 @@ export default {
             return;
         }
 
-        await Consensus.syncPromise;
+        await Consensus.initPromise;
+
+        console.log(this.height);
 
         if (this.height !== undefined)  return Consensus.getBlock(this.height);
         else

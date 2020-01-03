@@ -12,8 +12,16 @@ export default class BaseConsensus extends EventEmitter{
 
         this._status = "offline";
         this._createSyncPromise();
+        this._createInitPromise();
 
     }
+
+    _createInitPromise(){
+        this.initPromise = new Promise( resolve => {
+            this._initPromiseResolve = resolve;
+        });
+    }
+
     _createSyncPromise(){
         this.syncPromise = new Promise( resolve => {
             this._syncPromiseResolve = resolve;
