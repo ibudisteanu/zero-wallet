@@ -10,7 +10,70 @@
                     {{error}}
                 </span>
 
-                <h3>Block {{ block ? block.toJSON() : '' }}</h3>
+                <h3>Block {{height ? height : hash}} </h3>
+
+                <div class="table" v-if="block">
+                    <div class="table-row">
+                        <span>Hash</span>
+                        <span>{{block.hash().toString("hex")}}</span>
+                    </div>
+                    <div class="table-row">
+                        <span>Kernel Hash</span>
+                        <span>{{block.kernelHash().toString("hex")}}</span>
+                    </div>
+                    <div class="table-row">
+                        <span>Confirmations</span>
+                        <span>{{}}</span>
+                    </div>
+                    <div class="table-row">
+                        <span>Timestamp</span>
+                        <span>{{block.timestamp}}</span>
+                    </div>
+                    <div class="table-row">
+                        <span>Height</span>
+                        <span>{{block.height}}</span>
+                    </div>
+                    <div class="table-row">
+                        <span>Number of Transactions</span>
+                        <span>{{block.txCount()}}</span>
+                    </div>
+                    <div class="table-row">
+                        <span>Difficulty</span>
+                        <span>{{block.difficulty.toString(10)}}</span>
+                    </div>
+                    <div class="table-row">
+                        <span>Merkle root</span>
+                        <span>{{block.transactionsMerkleTree.hash().toString("hex")}}</span>
+                    </div>
+                    <div class="table-row">
+                        <span>Account Tree root</span>
+                        <span>{{block.accountTreeHash.toString("hex")}}</span>
+                    </div>
+                    <div class="table-row">
+                        <span>Previous Hash</span>
+                        <span>{{block.prevHash.toString("hex")}}</span>
+                    </div>
+                    <div class="table-row">
+                        <span>Previous Kernel Hash</span>
+                        <span>{{block.prevKernelHash.toString("hex")}}</span>
+                    </div>
+                    <div class="table-row">
+                        <span>Fees</span>
+                        <span>{{block.sumFees()}}</span>
+                    </div>
+                    <div class="table-row">
+                        <span>Reward</span>
+                        <span>{{block.reward()}}</span>
+                    </div>
+                    <div class="table-row">
+                        <span>Version</span>
+                        <span>{{block.version}}</span>
+                    </div>
+                    <div class="table-row">
+                        <span>Size</span>
+                        <span>{{block.size()}}</span>
+                    </div>
+                </div>
 
 
             </div>
@@ -60,6 +123,8 @@ export default {
             return;
         }
 
+        await Consensus.syncPromise;
+
         if (this.height !== undefined)  return Consensus.getBlock(this.height);
         else
         if (this.hash ) return Consensus.getBlockByHash(this.hash);
@@ -71,5 +136,9 @@ export default {
 </script>
 
 <style scoped>
+
+    .table-row{
+        grid-template-columns: 200px 1fr;
+    }
 
 </style>
