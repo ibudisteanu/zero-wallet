@@ -57,7 +57,7 @@
                         </div>
                         <div class="table-row">
                             <span>Previous Hash</span>
-                            <span>{{block.prevHash.toString("hex")}}</span>
+                            <span><router-link :to="`/explorer/block/hash/${block.prevHash.toString('hex')}`">{{block.prevHash.toString("hex")}}</router-link></span>
                         </div>
                         <div class="table-row">
                             <span>Previous Kernel Hash</span>
@@ -127,22 +127,34 @@ export default {
 
         timeAgo(timestamp){
             return Utils.timeSince( timestamp*1000 );
+        },
+
+        async loadBlock(){
+
+            if (this.height === undefined && !this.hash){
+                this.error = 'Block index was not specified';
+                return;
+            }
+
+            await Consensus.initPromise;
+
+            if (this.height !== undefined)  return Consensus.getBlock(this.height);
+            else
+            if (this.hash ) return Consensus.getBlockByHash(this.hash);
+
         }
 
     },
 
+    watch: {
+        '$route' (to, from) {
+            return this.loadBlock();
+        }
+    },
+
     async mounted(){
 
-        if (this.height === undefined && !this.hash){
-            this.error = 'Block index was not specified';
-            return;
-        }
-
-        await Consensus.initPromise;
-
-        if (this.height !== undefined)  return Consensus.getBlock(this.height);
-        else
-        if (this.hash ) return Consensus.getBlockByHash(this.hash);
+        return this.loadBlock();
 
     }
 
