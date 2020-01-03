@@ -36,6 +36,10 @@ class Consensus extends BaseConsensus{
 
             },
 
+            blocksByHash:{
+
+            },
+
             transactions : {
 
             },
@@ -145,8 +149,16 @@ class Consensus extends BaseConsensus{
             blockInfo.kernelHash = Buffer.from(blockInfo.kernelHash);
 
             if (!this._data.blocksInfo[i] || !this._data.blocksInfo[i].hash.equals(blockInfo.hash)){
+
+                if (this._data.blocksInfo[i] && !this._data.blocksInfo[i].hash.equals(blockInfo.hash)){
+                    delete this._data.blocks[i];
+                    delete this._data.blocksByHash[blockInfo.hash.toString("hex")];
+                    await this.getBlock(height);
+                }
+
                 this._data.blocksInfo[i] = blockInfo;
                 this.emit('consensus/block-info-downloaded', blockInfo );
+
             }else {
                 if (this._data.blocksInfo[i] && this._data.blocksInfo[i].hash.equals( blockInfo.hash) )
                     done = true;
@@ -166,20 +178,36 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async getBlock(height){
+    async getBlockByHash(hash){
 
-        if (this._data.blocks[height])
-            return this._data.blocks[height];
+        if (this._data.blocks[hash]) return this._data.blocksByHash[hash];
 
-        if (height >= this._data.end) return;
-
-        const blockData = await this._client.emitAsync("blockchain/get-block-by-height", {index: i, type: "buffer"}  );
+        const blockData = await this._client.emitAsync("blockchain/get-block-by-height", {index: height, type: "buffer"}  );
 
         const block = new Block(global.apacache._scope, undefined, blockData);
 
+        this._data.blocks[block.height] = block;
+        this._data.blocksByHash[block.hash().toString("hex")] = block;
+
+        return block;
+
+
+    }
+
+    async getBlock(height){
+
+        if (this._data.blocks[height]) return this._data.blocks[height];
+
+        if (height >= this._data.end) return;
+
+        const blockData = await this._client.emitAsync("blockchain/get-block-by-height", {index: height, type: "buffer"}  );
+
+        const block = new Block(global.apacache._scope, undefined, blockData);
         this._data.blocks[height] = block;
 
-        return blockData;
+        this._data.blocksByHash[block.hash().toString("hex")] = block;
+
+        return block;
 
     }
 

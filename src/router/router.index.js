@@ -9,6 +9,7 @@ import AccountInfoPage from "src/pages/account-info/account-info.page"
 import SetPasswordPage from "src/pages/encryption/set-password.page"
 import RemovePasswordPage from "src/pages/encryption/remove-password.page"
 import BlockchainExplorerPage from "src/pages/explorer/blockchain-explorer.page"
+import BlockExplorerPage from "src/pages/explorer/block-explorer.page"
 
 Vue.use(VueRouter);
 
@@ -38,7 +39,12 @@ const routes = [
     {path: '/account', component: AccountInfoPage, beforeEnter: guardDecrypted },
     {path: '/set-password', component: SetPasswordPage , beforeEnter: guardDecrypted},
     {path: '/remove-password', component: RemovePasswordPage, beforeEnter: guardDecrypted },
+
+    {path: '/explorer/block/height/:height', component: BlockExplorerPage },
+    {path: '/explorer/block/hash/:hash', component: BlockExplorerPage },
     {path: '/explorer', component: BlockchainExplorerPage },
+
+
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
 
     {path: '/', component: WalletPage, beforeEnter: guardDecrypted },
