@@ -10,69 +10,77 @@
                     {{error}}
                 </span>
 
-                <h3>Block {{height ? height : hash}} </h3>
+                <div v-if="!error">
 
-                <div class="table" v-if="block">
-                    <div class="table-row">
-                        <span>Hash</span>
-                        <span>{{block.hash().toString("hex")}}</span>
+                    <h3>Block {{height ? height : hash}} </h3>
+
+                    <div v-if="!block">
+                        <loading-spinner/>
                     </div>
-                    <div class="table-row">
-                        <span>Kernel Hash</span>
-                        <span>{{block.kernelHash().toString("hex")}}</span>
+
+                    <div class="table" v-if="block">
+                        <div class="table-row">
+                            <span>Hash</span>
+                            <span>{{block.hash().toString("hex")}}</span>
+                        </div>
+                        <div class="table-row">
+                            <span>Kernel Hash</span>
+                            <span>{{block.kernelHash().toString("hex")}}</span>
+                        </div>
+                        <div class="table-row">
+                            <span>Confirmations</span>
+                            <span>{{}}</span>
+                        </div>
+                        <div class="table-row">
+                            <span>Timestamp</span>
+                            <span>{{block.timestamp}}</span>
+                        </div>
+                        <div class="table-row">
+                            <span>Height</span>
+                            <span>{{block.height}}</span>
+                        </div>
+                        <div class="table-row">
+                            <span>Number of Transactions</span>
+                            <span>{{block.txCount()}}</span>
+                        </div>
+                        <div class="table-row">
+                            <span>Difficulty</span>
+                            <span>{{block.difficulty.toString(10)}}</span>
+                        </div>
+                        <div class="table-row">
+                            <span>Merkle root</span>
+                            <span>{{block.transactionsMerkleTree.hash().toString("hex")}}</span>
+                        </div>
+                        <div class="table-row">
+                            <span>Account Tree root</span>
+                            <span>{{block.accountTreeHash.toString("hex")}}</span>
+                        </div>
+                        <div class="table-row">
+                            <span>Previous Hash</span>
+                            <span>{{block.prevHash.toString("hex")}}</span>
+                        </div>
+                        <div class="table-row">
+                            <span>Previous Kernel Hash</span>
+                            <span>{{block.prevKernelHash.toString("hex")}}</span>
+                        </div>
+                        <div class="table-row">
+                            <span>Fees</span>
+                            <span>{{block.sumFees()}}</span>
+                        </div>
+                        <div class="table-row">
+                            <span>Reward</span>
+                            <span>{{block.reward()}}</span>
+                        </div>
+                        <div class="table-row">
+                            <span>Version</span>
+                            <span>{{block.version}}</span>
+                        </div>
+                        <div class="table-row">
+                            <span>Size</span>
+                            <span>{{block.size()}}</span>
+                        </div>
                     </div>
-                    <div class="table-row">
-                        <span>Confirmations</span>
-                        <span>{{}}</span>
-                    </div>
-                    <div class="table-row">
-                        <span>Timestamp</span>
-                        <span>{{block.timestamp}}</span>
-                    </div>
-                    <div class="table-row">
-                        <span>Height</span>
-                        <span>{{block.height}}</span>
-                    </div>
-                    <div class="table-row">
-                        <span>Number of Transactions</span>
-                        <span>{{block.txCount()}}</span>
-                    </div>
-                    <div class="table-row">
-                        <span>Difficulty</span>
-                        <span>{{block.difficulty.toString(10)}}</span>
-                    </div>
-                    <div class="table-row">
-                        <span>Merkle root</span>
-                        <span>{{block.transactionsMerkleTree.hash().toString("hex")}}</span>
-                    </div>
-                    <div class="table-row">
-                        <span>Account Tree root</span>
-                        <span>{{block.accountTreeHash.toString("hex")}}</span>
-                    </div>
-                    <div class="table-row">
-                        <span>Previous Hash</span>
-                        <span>{{block.prevHash.toString("hex")}}</span>
-                    </div>
-                    <div class="table-row">
-                        <span>Previous Kernel Hash</span>
-                        <span>{{block.prevKernelHash.toString("hex")}}</span>
-                    </div>
-                    <div class="table-row">
-                        <span>Fees</span>
-                        <span>{{block.sumFees()}}</span>
-                    </div>
-                    <div class="table-row">
-                        <span>Reward</span>
-                        <span>{{block.reward()}}</span>
-                    </div>
-                    <div class="table-row">
-                        <span>Version</span>
-                        <span>{{block.version}}</span>
-                    </div>
-                    <div class="table-row">
-                        <span>Size</span>
-                        <span>{{block.size()}}</span>
-                    </div>
+
                 </div>
 
 
@@ -87,10 +95,11 @@
 import Layout from "src/components/layout/layout"
 import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
 import Consensus from "src/consensus/consensus"
+import LoadingSpinner from "../../components/utils/loading-spinner";
 
 export default {
 
-    components: { Layout, ShowBlocksInfo },
+    components: {LoadingSpinner, Layout, ShowBlocksInfo },
 
     data(){
         return {
