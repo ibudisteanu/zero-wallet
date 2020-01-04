@@ -5,9 +5,26 @@
 
             <span class="title">Account Balance</span> <br/>
 
-            {{address}}
+            <div v-if="address">
 
-            <span class="balance thick">{{balance}}</span> <span class="currency thick">{{currency}}</span> <br/>
+                <loading-spinner v-if="!address.loaded" />
+
+                <div v-if="address.loaded">
+
+                    <div v-for="(balance, token) in balances" >
+                    <span class="balance thick" >
+                        {{formatMoney( convertToBase(balance) ) }}
+                    </span>
+                        <span class="currency thick">
+                        {{token}}
+                    </span>
+                        <br/>
+                    </div>
+
+                </div>
+
+
+            </div>
 
         </div>
     </div>
@@ -15,10 +32,12 @@
 </template>
 
 <script>
+import Utils from "src/utils/utils"
+import LoadingSpinner from "../../utils/loading-spinner";
 
 export default {
 
-    components: {},
+    components: {LoadingSpinner},
 
     props: {
         address: null
@@ -26,14 +45,19 @@ export default {
 
     computed:{
 
-        balance(){
-            return '0.00';
+        balances(){
+            return this.address.balances || {"00": 0};
         },
 
-        currency(){
-            return 'USD';
-        }
+    },
 
+    methods:{
+        convertToBase(number){
+            return global.apacache._scope.argv.transactions.coins.convertToBase(number);
+        },
+        formatMoney(amount){
+            return Utils.formatMoney(amount);
+        }
     }
 
 }
