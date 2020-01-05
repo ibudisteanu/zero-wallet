@@ -134,13 +134,20 @@ export default {
             if (this.height) block = this.$store.state.blockchain.blocks[this.height];
             if (this.hash) block = this.$store.state.blockchain.blocksByHash[this.hash];
 
-
             const asyncData = async ()=>{
 
                 if (block) {
                     console.log(block.toJSON() );
                     this.fees = await block.sumFees();
                     this.transactions = await block.getTransactions();
+
+                    for (let tx of this.transactions){
+                        tx.__extra = {
+                            height: block.height,
+                            timestamp: block.timestamp,
+                        }
+                    }
+
                     this.loaded = true;
                 } else {
                     Object.assign(this.$data, this.$options.data());
