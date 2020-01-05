@@ -14,71 +14,76 @@
 
                     <h3>Block {{height ? height : hash}} </h3>
 
-                    <div v-if="!block">
+                    <div v-if="!block || !loaded">
                         <loading-spinner/>
                     </div>
+                    <div v-else>
+                        <div class="table">
+                            <div class="table-row">
+                                <span>Hash</span>
+                                <span>{{block.hash().toString("hex")}}</span>
+                            </div>
+                            <div class="table-row">
+                                <span>Kernel Hash</span>
+                                <span>{{block.kernelHash().toString("hex")}}</span>
+                            </div>
+                            <div class="table-row">
+                                <span>Confirmations</span>
+                                <span>{{ $store.state.blockchain.end - block.height -1 }}</span>
+                            </div>
+                            <div class="table-row">
+                                <span>Time</span>
+                                <span>{{  block.timestamp }}</span>
+                            </div>
+                            <div class="table-row">
+                                <span>Height</span>
+                                <span>{{block.height}}</span>
+                            </div>
+                            <div class="table-row">
+                                <span>Number of Transactions</span>
+                                <span>{{block.txCount()}}</span>
+                            </div>
+                            <div class="table-row">
+                                <span>Difficulty</span>
+                                <span>{{block.difficulty.toString(10)}}</span>
+                            </div>
+                            <div class="table-row">
+                                <span>Merkle root</span>
+                                <span>{{block.transactionsMerkleTree.hash().toString("hex")}}</span>
+                            </div>
+                            <div class="table-row">
+                                <span>Account Tree root</span>
+                                <span>{{block.accountTreeHash.toString("hex")}}</span>
+                            </div>
+                            <div class="table-row">
+                                <span>Previous Hash</span>
+                                <span><router-link :to="`/explorer/block/hash/${block.prevHash.toString('hex')}`">{{block.prevHash.toString("hex")}}</router-link></span>
+                            </div>
+                            <div class="table-row">
+                                <span>Previous Kernel Hash</span>
+                                <span>{{block.prevKernelHash.toString("hex")}}</span>
+                            </div>
+                            <div class="table-row">
+                                <span>Fees</span>
+                                <span>{{fees}}</span>
+                            </div>
+                            <div class="table-row">
+                                <span>Reward</span>
+                                <span>{{block.reward()}}</span>
+                            </div>
+                            <div class="table-row">
+                                <span>Version</span>
+                                <span>{{block.version}}</span>
+                            </div>
+                            <div class="table-row">
+                                <span>Size</span>
+                                <span>{{block.size()}}</span>
+                            </div>
+                        </div>
 
-                    <div class="table" v-if="block">
-                        <div class="table-row">
-                            <span>Hash</span>
-                            <span>{{block.hash().toString("hex")}}</span>
-                        </div>
-                        <div class="table-row">
-                            <span>Kernel Hash</span>
-                            <span>{{block.kernelHash().toString("hex")}}</span>
-                        </div>
-                        <div class="table-row">
-                            <span>Confirmations</span>
-                            <span>{{ $store.state.blockchain.end - block.height -1 }}</span>
-                        </div>
-                        <div class="table-row">
-                            <span>Timestamp</span>
-                            <span>{{  block.timestamp }}</span>
-                        </div>
-                        <div class="table-row">
-                            <span>Height</span>
-                            <span>{{block.height}}</span>
-                        </div>
-                        <div class="table-row">
-                            <span>Number of Transactions</span>
-                            <span>{{block.txCount()}}</span>
-                        </div>
-                        <div class="table-row">
-                            <span>Difficulty</span>
-                            <span>{{block.difficulty.toString(10)}}</span>
-                        </div>
-                        <div class="table-row">
-                            <span>Merkle root</span>
-                            <span>{{block.transactionsMerkleTree.hash().toString("hex")}}</span>
-                        </div>
-                        <div class="table-row">
-                            <span>Account Tree root</span>
-                            <span>{{block.accountTreeHash.toString("hex")}}</span>
-                        </div>
-                        <div class="table-row">
-                            <span>Previous Hash</span>
-                            <span><router-link :to="`/explorer/block/hash/${block.prevHash.toString('hex')}`">{{block.prevHash.toString("hex")}}</router-link></span>
-                        </div>
-                        <div class="table-row">
-                            <span>Previous Kernel Hash</span>
-                            <span>{{block.prevKernelHash.toString("hex")}}</span>
-                        </div>
-                        <div class="table-row">
-                            <span>Fees</span>
-                            <span>{{block.sumFees()}}</span>
-                        </div>
-                        <div class="table-row">
-                            <span>Reward</span>
-                            <span>{{block.reward()}}</span>
-                        </div>
-                        <div class="table-row">
-                            <span>Version</span>
-                            <span>{{block.version}}</span>
-                        </div>
-                        <div class="table-row">
-                            <span>Size</span>
-                            <span>{{block.size()}}</span>
-                        </div>
+                        <h4>Transactions</h4>
+                        <show-transactions :transactions="transactions"></show-transactions>
+
                     </div>
 
                 </div>
@@ -97,14 +102,21 @@ import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
 import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import Utils from "src/utils/utils"
+import ShowTransactions from "src/components/explorer/show-transactions"
 
 export default {
 
-    components: {LoadingSpinner, Layout, ShowBlocksInfo },
+    components: {LoadingSpinner, Layout, ShowBlocksInfo, ShowTransactions },
 
     data(){
         return {
+
+            fees: 'loading', //async data
+            transactions: 'loading',
+            loaded: false,
+
             error: '',
+
         }
     },
 
@@ -118,9 +130,30 @@ export default {
 
         block(){
 
-            if (this.height) return this.$store.state.blockchain.blocks[this.height];
-            if (this.hash) return this.$store.state.blockchain.blocksByHash[this.hash];
-        }
+            let block;
+            if (this.height) block = this.$store.state.blockchain.blocks[this.height];
+            if (this.hash) block = this.$store.state.blockchain.blocksByHash[this.hash];
+
+
+            const asyncData = async ()=>{
+
+                if (block) {
+                    console.log(block.toJSON() );
+                    this.fees = await block.sumFees();
+                    this.transactions = await block.getTransactions();
+                    this.loaded = true;
+                } else {
+                    Object.assign(this.$data, this.$options.data());
+                }
+
+            };
+
+            asyncData();
+
+            return block;
+
+        },
+
     },
 
     methods: {
@@ -142,7 +175,8 @@ export default {
             else
             if (this.hash ) return Consensus.getBlockByHash(this.hash);
 
-        }
+        },
+
 
     },
 

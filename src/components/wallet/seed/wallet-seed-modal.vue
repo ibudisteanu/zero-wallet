@@ -20,7 +20,7 @@
                 {{error}}
             </span>
 
-            <input type="submit" value="Remove password" :disabled="password.length === 0 " @click="showSeed">
+            <input type="submit" value="Show Wallet Seed" :disabled="password.length === 0 " @click="showSeed">
         </div>
 
     </modal>
