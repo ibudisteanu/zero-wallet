@@ -121,6 +121,7 @@ export default {
     },
 
     computed:{
+
         height(){
             return this.$route.params.height;
         },
