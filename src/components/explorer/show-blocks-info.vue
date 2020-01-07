@@ -42,7 +42,7 @@ export default {
 <style scoped>
 
     .table-row{
-        grid-template-columns: 60px 1fr 1fr 50px 50px 50px 1fr ;
+        grid-template-columns: 100px 1fr 1fr 50px 50px 50px 1fr ;
     }
 
 </style>
