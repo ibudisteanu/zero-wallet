@@ -219,7 +219,10 @@ class Consensus extends BaseConsensus{
 
         if (!blockData) return; //disconnected
 
-        const block = new Block(global.apacache._scope, undefined, Buffer.from(blockData) );
+        const block = new Block( {
+            ...global.apacache._scope,
+            chain: global.apacache._scope.mainChain
+        }, undefined, Buffer.from(blockData) );
 
         this._data.blocks[block.height] = block;
         this._data.blocksByHash[block.hash().toString("hex")] = block;
@@ -239,7 +242,10 @@ class Consensus extends BaseConsensus{
 
         if (!blockData) return; //disconnected
 
-        const block = new Block(global.apacache._scope, undefined, Buffer.from(blockData));
+        const block = new Block({
+            ...global.apacache._scope,
+            chain: global.apacache._scope.mainChain
+        }, undefined, Buffer.from(blockData));
         this._data.blocks[height] = block;
 
         this._data.blocksByHash[block.hash().toString("hex")] = block;
