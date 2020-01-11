@@ -121,7 +121,7 @@ export default {
             return this.$store.commit('walletClear');
         },
 
-        readAddresses(){
+         readAddresses(){
 
             const wallet = global.apacache.wallet;
 
@@ -169,6 +169,7 @@ export default {
             //subscribe addresses
             Consensus.subscribeAccounts( Object.keys(addresses) );
 
+            Consensus.getBlockchain();
 
             this.$store.commit('setAddresses', addresses );
 

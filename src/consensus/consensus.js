@@ -98,11 +98,17 @@ class Consensus extends BaseConsensus{
 
         this._client.on("connect", ()=>{
 
-            this._client.emit("blockchain/get-info", undefined, this._processBlockchain.bind(this) );
+            this.getBlockchain();
             this._initPromiseResolve(true);
 
         });
 
+    }
+
+    getBlockchain(){
+
+        if (this._client)
+            return this._client.emit("blockchain/get-info", undefined, this._processBlockchain.bind(this) );
     }
 
     async _processBlockchainNewBlock(data) {
