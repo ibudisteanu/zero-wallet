@@ -121,7 +121,7 @@ export default {
             return this.$store.commit('walletClear');
         },
 
-         readAddresses(){
+        readAddresses(){
 
             const wallet = global.apacache.wallet;
 
