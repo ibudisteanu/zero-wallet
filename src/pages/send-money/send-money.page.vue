@@ -6,51 +6,58 @@
 
                 <h1>Send Funds Anonymously</h1>
 
-                <span class="disabled">Destination Address</span> <br/>
+                <loading-spinner v-if="!address.loaded" />
 
-                <div :class="`${destinationAddressIdenticon ? 'destination': ''}-row`">
+                <div v-if="address.loaded">
 
-                    <account-identicon v-if="destinationAddressIdenticon" :identicon="destinationAddressIdenticon" size="35" outer-size="35" />
+                    <span class="disabled">Destination Address</span> <br/>
 
-                    <div class="input-toggle-group">
-                        <input type="text" v-model="destinationAddress">
-                        <i class="fa fa-qrcode input-toggle" @click="qrCodeScanner"></i>
+                    <div :class="`${destinationAddressIdenticon ? 'destination': ''}-row`">
+
+                        <account-identicon v-if="destinationAddressIdenticon" :identicon="destinationAddressIdenticon" size="35" outer-size="35" />
+
+                        <div class="input-toggle-group">
+                            <input type="text" v-model="destinationAddress">
+                            <i class="fa fa-qrcode input-toggle" @click="qrCodeScanner"></i>
+                        </div>
+
                     </div>
 
-                </div>
-
-                <div class="pd-top-20">
-                    <span class="disabled">Amount</span> <br/>
-                    <div class="amount-row">
-                        <input type="number" v-model="amount" min="0">
-                        <select v-model="currency">
-                            <option >USD</option>
-                            <option >EUR</option>
-                            <option >BTC</option>
-                            <option >ETH</option>
-                        </select>
+                    <div class="pd-top-20">
+                        <span class="disabled">Amount</span> <br/>
+                        <div class="amount-row">
+                            <input type="number" v-model="amount" min="0">
+                            <select v-model="currency">
+                                <option v-for="(balance, token) in balances"
+                                        :value="token">
+                                    {{token}}
+                                </option>
+                            </select>
+                        </div>
                     </div>
+
+                    <div class="fee-row">
+                        <span class="disabled">Fee</span>
+                        <input type="number" v-model="fee" min="0">
+                        <span class="disabled">{{currency}}</span>
+                    </div>
+
+
+                    <div v-if="error || validation" class="danger centered">
+                        {{validation}}
+                        {{error}}
+                    </div>
+
+                    <div class="pd-top-20">
+                        <input type="submit" value="Send Money Anonymously" :disabled=" !destinationAddress  || !!validation " @click="sendMoney">
+                    </div>
+
+                    <qr-code-scanner ref="refQRCodeScannerModal"/>
+
                 </div>
-
-                <div class="fee-row">
-                    <span class="disabled">Fee</span>
-                    <input type="number" v-model="fee" min="0">
-                    <span class="disabled">{{currency}}</span>
-                </div>
-
-
-                <div v-if="error || validation" class="danger centered">
-                    {{validation}}
-                    {{error}}
-                </div>
-
-                <div class="pd-top-20">
-                    <input type="submit" value="Send Money Anonymously" :disabled="destinationAddress.length === 0" @click="sendMoney">
-                </div>
-
-                <qr-code-scanner ref="refQRCodeScannerModal"/>
 
             </div>
+
         </div>
 
     </layout>
@@ -62,10 +69,12 @@ import Layout from "src/components/layout/layout"
 import Account from "src/components/wallet/account/account"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import QrCodeScanner from "./qr-code-scanner/qr-code-scanner";
+const {TransactionTokenCurrencyTypeEnum} = global.cryptography.transactions;
+import LoadingSpinner from "src/components/utils/loading-spinner";
 
 export default {
 
-    components: {Layout, AccountIdenticon, Account, QrCodeScanner },
+    components: {Layout, AccountIdenticon, Account, QrCodeScanner, LoadingSpinner },
 
     data(){
         return {
@@ -73,7 +82,7 @@ export default {
             destinationAddress: '',
             amount: 0,
             fee: 0,
-            currency: '',
+            currency: '00',
 
             error: '',
         }
@@ -92,6 +101,10 @@ export default {
     },
 
     computed:{
+
+        balances(){
+            return this.address.balances || {"00": 0};
+        },
 
         address(){
             return this.$store.state.wallet.addresses[this.$store.state.wallet.mainAddress] ;
@@ -124,6 +137,10 @@ export default {
             }catch(err){
 
             }
+
+        },
+
+        availableTokens(){
 
         }
 
