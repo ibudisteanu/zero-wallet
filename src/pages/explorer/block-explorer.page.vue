@@ -79,6 +79,13 @@
                                 <span>Size</span>
                                 <span>{{block.size()}}</span>
                             </div>
+                            <div class="table-row">
+                                <span>Forger</span>
+                                <div class="vertical-center">
+                                    <account-identicon class="vertical-center" :identicon="getIdenticon(block.pos.stakeForgerAddress)" :size="20" :outer-size="20"  />
+                                    <span class="forger-address">{{block.pos.stakeForgerAddress}}</span>
+                                </div>
+                            </div>
                         </div>
 
                         <h4>Transactions</h4>
@@ -103,10 +110,11 @@ import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import Utils from "src/utils/utils"
 import ShowTransactions from "src/components/explorer/show-transactions"
+import AccountIdenticon from "src/components/wallet/account/account-identicon";
 
 export default {
 
-    components: {LoadingSpinner, Layout, ShowBlocksInfo, ShowTransactions },
+    components: {LoadingSpinner, Layout, ShowBlocksInfo, ShowTransactions, AccountIdenticon },
 
     data(){
         return {
@@ -185,6 +193,9 @@ export default {
 
         },
 
+        getIdenticon(address){
+            return global.blockchain.utils.Identicon.createIdenticon( address ).toDataURL();
+        },
 
     },
 
@@ -208,6 +219,10 @@ export default {
 
     .table-row{
         grid-template-columns: 200px 1fr;
+    }
+
+    .forger-address{
+        display: inline-block;
     }
 
 </style>

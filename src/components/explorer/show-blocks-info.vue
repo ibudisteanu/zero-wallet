@@ -41,9 +41,6 @@ export default {
         blocksInfo: null,
     },
 
-    computed:{
-    },
-
     methods: {
 
         getIdenticon(address){
