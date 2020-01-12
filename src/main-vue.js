@@ -11,9 +11,10 @@ import Notification from 'vue-notification';
 import VTooltip from 'v-tooltip'
 
 import router from "./router/router.index"
-
+import VueClipboard from 'vue-clipboard2'
 Vue.use(VTooltip);
 Vue.use(Notification);
+Vue.use(VueClipboard);
 
 import Consensus from "src/consensus/consensus"
 

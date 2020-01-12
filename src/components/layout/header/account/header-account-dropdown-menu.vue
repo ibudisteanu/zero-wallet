@@ -10,7 +10,7 @@
 
                 <div>
                     <span>{{address.name}}</span> <span class="disabled right-float" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : ''}}</span><br/>
-                    <span class="disabled">{{address.address.substr(0, 20)+'...'}}</span>
+                    <span class="disabled">{{address.address.substr(0, 15)+'...'}} <i class="fa fa-copy"  @click="copyAddress(address)" ></i> </span>
                 </div>
 
             </li>
@@ -114,6 +114,22 @@ export default {
 
         importPrivateKey(){
             return this.$emit('showImportPrivateKey');
+        },
+
+        copyAddress(address){
+            this.$copyText(address.address).then( (e) => {
+                this.$notify({
+                    type: 'success',
+                    title: `Address copied to clipboard`,
+                    text: `Adddress ${address.address} copied to clipboard`,
+                });
+            }, (e) => {
+                this.$notify({
+                    type: 'error',
+                    title: `Clipboard failed`,
+                    text: `Failed to copy to clipboard`,
+                });
+            })
         }
 
     }
@@ -173,6 +189,8 @@ export default {
         margin-right: 5px;
     }
 
-
+    i:hover{
+        color: #313131;
+    }
 
 </style>
