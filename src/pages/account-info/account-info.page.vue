@@ -10,10 +10,27 @@
 
                     <account :identicon="address.identicon" :name="address.name" :address="address.address" />
 
-                    <span :class="`disabled wordwrap pd-top-40 ${showPublicKey ? '' : 'pointer'}`" @click="showPublicKey = true">{{showPublicKey  ? '' : 'View'}} Public Key {{showPublicKey ? address.publicKey : ''}}</span> <br/>
-                    <span :class="`disabled wordwrap ${showPublicKeyHash ? '' : 'pointer'}`" @click="showPublicKeyHash = true">{{showPublicKeyHash  ? '' : 'View'}} Public Key Hash {{showPublicKeyHash ? address.publicKeyHash : ''}}</span> <br/>
+                    <div class="pd-top-40" />
 
-                    <div class="buttons-row pd-top-10">
+                    <span class="disabled wordwrap ">
+                        <span v-if="!showPublicKey" class="pointer" @click="showPublicKey = true">
+                            View Public Key
+                        </span>
+                        <span v-else >
+                            Public Key {{address.publicKey}} <i class="fa fa-copy pointer"  @click="copyAddress(address.publicKey)"/>
+                        </span>
+                    </span> <br/>
+
+                    <span class="disabled wordwrap ">
+                        <span v-if="!showPublicKeyHash" class="pointer" @click="showPublicKeyHash = true">
+                            View Public Key Hash
+                        </span>
+                        <span v-else >
+                            Public Key Hash {{address.publicKeyHash}} <i class="fa fa-copy pointer"  @click="copyAddress(address.publicKeyHash)"/>
+                        </span>
+                    </span>
+
+                    <div class="buttons-row pd-top-20">
 
                         <div class="btn">
                             <div class="btn-round" @click="downloadAddress" v-tooltip.bottom="'Download Account'" >
@@ -119,6 +136,24 @@ export default {
             this.$store.commit('setIsLoading', false);
 
         },
+
+        copyAddress(key){
+
+            this.$copyText(key).then( (e) => {
+                this.$notify({
+                    type: 'success',
+                    title: `Copied to clipboard successfully`,
+                    text: `${key} copied to clipboard`,
+                });
+            }, (e) => {
+                this.$notify({
+                    type: 'error',
+                    title: `Clipboard failed`,
+                    text: `Failed to copy to clipboard`,
+                });
+            })
+
+        }
 
     },
 

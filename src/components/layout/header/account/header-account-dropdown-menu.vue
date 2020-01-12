@@ -10,7 +10,7 @@
 
                 <div>
                     <span>{{address.name}}</span> <span class="disabled right-float" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : ''}}</span><br/>
-                    <span class="disabled">{{address.address.substr(0, 15)+'...'}} <i class="fa fa-copy"  @click="copyAddress(address)" ></i> </span>
+                    <span class="disabled">{{address.address.substr(0, 15)+'...'}} <i class="fa fa-copy pointer"  @click="copyAddress(address)" /> </span>
                 </div>
 
             </li>
@@ -120,8 +120,8 @@ export default {
             this.$copyText(address.address).then( (e) => {
                 this.$notify({
                     type: 'success',
-                    title: `Address copied to clipboard`,
-                    text: `Adddress ${address.address} copied to clipboard`,
+                    title: `Copied to clipboard successfully`,
+                    text: `Address ${address.address} copied to clipboard`,
                 });
             }, (e) => {
                 this.$notify({
