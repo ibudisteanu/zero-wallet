@@ -189,6 +189,29 @@ class Consensus extends BaseConsensus{
 
             const balances = await this._client.emitAsync("account/get-balance", {account }, 0);
             const nonce = await this._client.emitAsync("account/get-nonce", {account }, 0);
+
+            const address = global.apacache._scope.cryptography.addressValidator.validateAddress( account );
+            const publicKeyHash = address.publicKeyHash;
+
+            //remove old balance
+            const balancesOld = await global.apacache.mainChain.data.accountTree.getBalances(publicKeyHash);
+            const nonceOld = await global.apacache.mainChain.data.accountTree.getNonce(publicKeyHash);
+
+            if (balancesOld)
+                for (const currencyToken in balancesOld)
+                    await global.apacache.mainChain.data.accountTree.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
+
+            if (nonceOld)
+                await global.apacache.mainChain.data.accountTree.updateNonce( publicKeyHash, - nonceOld, );
+
+            //update with new balance
+            if (balances)
+                for (const currencyToken in balances)
+                    await global.apacache.mainChain.data.accountTree.updateBalance(publicKeyHash, balances[currencyToken], currencyToken,);
+
+            if (nonce)
+                await global.apacache.mainChain.data.accountTree.updateNonce(publicKeyHash, nonce,);
+
             this.emit('consensus/account-update', { account, balances, nonce  } );
 
         }

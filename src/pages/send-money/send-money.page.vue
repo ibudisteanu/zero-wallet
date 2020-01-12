@@ -88,6 +88,7 @@ export default {
             amount: 0,
             fee: 0,
             currency: '00',
+            paymentId: '',
 
             error: '',
         }
@@ -95,7 +96,20 @@ export default {
 
     methods:{
 
-        sendMoney(){
+        async sendMoney(){
+
+            this.error = '';
+
+            try{
+
+                const out = await global.apacache.wallet.transfer.transferSimple(this.address.address,[ {
+                    address: this.destinationAddress,
+                    amount: Number.parseInt(this.amount),
+                }], Number.parseInt(this.fee), this.paymentId, this.currency );
+
+            }catch(err){
+                this.error = err.message;
+            }
 
         },
 
