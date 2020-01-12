@@ -4,7 +4,7 @@
         <div class="container pd-top-40">
             <div class="boxed ">
 
-                <h1>Send Funds Anonymously</h1>
+                <h1>Send Funds Publicly</h1>
 
                 <loading-spinner v-if="!address.loaded" />
 
@@ -54,7 +54,7 @@
                     </div>
 
                     <div class="pd-top-20">
-                        <input type="submit" value="Send Money Anonymously" :disabled=" !destinationAddress  || !!validation " @click="sendMoney">
+                        <input type="submit" value="Send Money Publicly" :disabled=" !destinationAddress  || !!validation " @click="sendMoney">
                     </div>
 
                     <qr-code-scanner ref="refQRCodeScannerModal"/>
@@ -102,10 +102,20 @@ export default {
 
             try{
 
+                const amount = global.apacache._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.amount) );
+                const fee = global.apacache._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.fee) );
+
                 const out = await global.apacache.wallet.transfer.transferSimple(this.address.address,[ {
                     address: this.destinationAddress,
-                    amount: Number.parseInt(this.amount),
-                }], Number.parseInt(this.fee), this.paymentId, this.currency );
+                    amount,
+                }], fee, this.paymentId, this.currency );
+
+                if (out)
+                    this.$notify({
+                        type: 'success',
+                        title: `Transaction created`,
+                        text: `A transaction has been made. \n TxId ${ out.tx.hash().toString("hex") }`,
+                    });
 
             }catch(err){
                 this.error = err.message;
