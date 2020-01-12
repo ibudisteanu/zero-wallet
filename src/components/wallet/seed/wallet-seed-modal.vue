@@ -4,7 +4,9 @@
 
         <div v-if="seed">
 
-            <span class="font-medium-size wordwrap pd-bottom-40 thick" >{{seed}}</span>
+            <div class="pd-bottom-40 seed">
+                <span class="font-medium-size wordwrap thick" >{{seed}} <i class="fa fa-copy pointer"  @click="copySeed"/></span>
+            </div>
             <div class="centered">
                 <span class="danger">Warning: DO NOT share this phrase with anyone! These words can be used to steal all your accounts.</span>
             </div>
@@ -85,6 +87,24 @@ export default {
             }catch(err){
                 this.error = err;
             }
+        },
+
+        copySeed(){
+
+            this.$copyText(this.seed).then( (e) => {
+                this.$notify({
+                    type: 'success',
+                    title: `Copied to clipboard successfully`,
+                    text: `Wallet Seed ${this.seed} copied to clipboard`,
+                });
+            }, (e) => {
+                this.$notify({
+                    type: 'error',
+                    title: `Clipboard failed`,
+                    text: `Failed to copy to clipboard`,
+                });
+            })
+
         }
 
     }
@@ -99,4 +119,9 @@ export default {
     .wordwrap{
         display: block;
     }
+
+    .seed{
+        display: inline-block;
+    }
+
 </style>

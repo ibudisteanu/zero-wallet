@@ -5,7 +5,9 @@
         <div v-if="privateKey">
             <span class="thick pd-bottom-40">Private Key</span>
 
-            <span class="font-medium-size wordwrap pd-bottom-40" >{{privateKey}}</span>
+            <div class="pd-bottom-40">
+                <span class="font-medium-size wordwrap " >{{privateKey}} <i class="fa fa-copy pointer"  @click="copyPrivateKey"/> </span>
+            </div>
 
             <div class="centered">
                 <span class="danger">Warning: Never disclose this key. Anyone with your private keys can steal any assets held in your account.</span>
@@ -96,6 +98,24 @@ export default {
             }
 
         },
+
+        copyPrivateKey(){
+
+            this.$copyText(this.privateKey).then( (e) => {
+                this.$notify({
+                    type: 'success',
+                    title: `Copied to clipboard successfully`,
+                    text: `Private Key ${this.privateKey} copied to clipboard`,
+                });
+            }, (e) => {
+                this.$notify({
+                    type: 'error',
+                    title: `Clipboard failed`,
+                    text: `Failed to copy to clipboard`,
+                });
+            })
+
+        }
 
     }
 
