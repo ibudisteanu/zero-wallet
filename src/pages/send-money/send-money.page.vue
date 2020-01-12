@@ -24,15 +24,20 @@
                     </div>
 
                     <div class="pd-top-20">
-                        <span class="disabled">Amount</span> <br/>
                         <div class="amount-row">
-                            <input type="number" v-model="amount" min="0">
-                            <select v-model="currency">
-                                <option v-for="(balance, token) in balances"
-                                        :value="token">
-                                    {{token}}
-                                </option>
-                            </select>
+                            <div>
+                                <span class="disabled">Amount</span> <br/>
+                                <input type="number" v-model="amount" min="0">
+                            </div>
+                            <div>
+                                <span class="disabled">Currency</span> <br/>
+                                <select v-model="currency">
+                                    <option v-for="(balance, token) in balances"
+                                            :value="token">
+                                        {{token}}
+                                    </option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
