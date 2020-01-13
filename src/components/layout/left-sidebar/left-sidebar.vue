@@ -36,6 +36,21 @@
             <span>Explorer</span>
         </router-link>
 
+        <router-link to="/exchange/buy" >
+            <i class="fa fa-coins"></i>
+            <span>Buy</span>
+        </router-link>
+
+        <router-link to="/exchange/sell" >
+            <i class="fa fa-donate"></i>
+            <span>Sell</span>
+        </router-link>
+
+        <router-link to="/explorer" >
+            <i class="fa fa-shopping-cart"></i>
+            <span>Shop</span>
+        </router-link>
+
     </div>
 </template>
 
