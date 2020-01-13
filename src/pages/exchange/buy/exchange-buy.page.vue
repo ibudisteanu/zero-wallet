@@ -27,6 +27,23 @@ export default {
     data(){
         return {
             error: '',
+            listings: [
+                {
+                    name: "Trade Buy 1",
+                    description: "Low fee",
+                    price: "10 USD",
+                    escrow: "XXXXXX",
+                    acceptedPayments: ["paypal", "alipay", "btc", "eth"],
+                },
+
+                {
+                    name: "Trade Buy 2",
+                    description: "Very low fee, instant payment",
+                    price: "15 USD",
+                    acceptedPayments: ["google pay", "apple pay"],
+                }
+
+            ],
         }
     },
 

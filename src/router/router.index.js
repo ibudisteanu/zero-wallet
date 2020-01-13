@@ -11,6 +11,9 @@ import RemovePasswordPage from "src/pages/encryption/remove-password.page"
 import BlockchainExplorerPage from "src/pages/explorer/blockchain-explorer.page"
 import BlockExplorerPage from "src/pages/explorer/block-explorer.page"
 import PendingTransactionsExplorerPage from "src/pages/explorer/pending-transactions-explorer.page"
+import ExchangeBuyPage from "src/pages/exchange/buy/exchange-buy.page"
+import ExchangeSellPage from "src/pages/exchange/sell/exchange-sell.page"
+
 
 Vue.use(VueRouter);
 
@@ -45,6 +48,9 @@ const routes = [
     {path: '/explorer/block/hash/:hash', component: BlockExplorerPage },
     {path: '/explorer', component: BlockchainExplorerPage },
     {path: '/explorer/pending-transactions', component: PendingTransactionsExplorerPage },
+
+    {path: '/exchange/buy', component: ExchangeBuyPage },
+    {path: '/exchange/sell', component: ExchangeSellPage },
 
 
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
