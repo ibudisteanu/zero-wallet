@@ -4,19 +4,15 @@
         <div class="container pd-top-40">
             <div class="boxed ">
 
-                <h1>Blockchain Explorer</h1>
+                <h1>Pending Transactions</h1>
 
                 <span v-if="error" class="danger">
                     {{error}}
                 </span>
 
-                <router-link to="/explorer/pending-transactions">
-                    <h3>View Pending Transactions</h3>
-                </router-link>
+                <h3>Last Pending Transactions</h3>
 
-                <h3>Last blocks</h3>
-
-                <show-blocks-info :blocksInfo="lastBlocksInfo" />
+                <show-transactions-info :transactionsInfo="transactionsInfo" />
 
             </div>
         </div>
@@ -27,11 +23,11 @@
 <script>
 
 import Layout from "src/components/layout/layout"
-import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
+import ShowTransactionsInfo from "src/components/explorer/show-transactions-info"
 
 export default {
 
-    components: { Layout, ShowBlocksInfo },
+    components: { Layout, ShowTransactionsInfo },
 
     data(){
         return {
@@ -40,7 +36,7 @@ export default {
     },
 
     computed:{
-        lastBlocksInfo(){
+        lastPendingTransactions(){
             return this.$store.getters.blocksInfoSorted;
         }
     },

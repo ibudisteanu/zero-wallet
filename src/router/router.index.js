@@ -10,6 +10,7 @@ import SetPasswordPage from "src/pages/encryption/set-password.page"
 import RemovePasswordPage from "src/pages/encryption/remove-password.page"
 import BlockchainExplorerPage from "src/pages/explorer/blockchain-explorer.page"
 import BlockExplorerPage from "src/pages/explorer/block-explorer.page"
+import PendingTransactionsExplorerPage from "src/pages/explorer/pending-transactions-explorer.page"
 
 Vue.use(VueRouter);
 
@@ -43,6 +44,7 @@ const routes = [
     {path: '/explorer/block/height/:height', component: BlockExplorerPage },
     {path: '/explorer/block/hash/:hash', component: BlockExplorerPage },
     {path: '/explorer', component: BlockchainExplorerPage },
+    {path: '/explorer/pending-transactions', component: PendingTransactionsExplorerPage },
 
 
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
