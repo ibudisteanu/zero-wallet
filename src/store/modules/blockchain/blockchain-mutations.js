@@ -17,9 +17,7 @@ export default {
     },
 
     setBlockchainBlockInfo(context, blockInfo ){
-
         Vue.set(context.blocksInfo, blockInfo.height, blockInfo);
-
     },
 
     deleteBlockchainBlock(context, {height, hash} ){

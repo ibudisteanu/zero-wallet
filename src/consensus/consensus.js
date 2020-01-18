@@ -238,7 +238,9 @@ class Consensus extends BaseConsensus{
 
         const transactions = await this._client.emitAsync("mem-pool/content", { }, 0);
 
-        console.log(transactions);
+        if (!transactions) return ;
+
+        this.emit('consensus/pending-transactions', transactions );
 
     }
 
