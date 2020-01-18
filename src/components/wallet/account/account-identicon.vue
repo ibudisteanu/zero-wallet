@@ -1,7 +1,7 @@
 <template>
 
     <div class="identicon outer" :style="`width: ${outerSize}px; height: ${outerSize}px`">
-        <img v-if="identicon || address" :src="identicon ? identicon : addressIdenticon" class="identicon" :style="`width: ${size}px`" >
+        <img v-if="addressIdenticon" :src="addressIdenticon" class="identicon" :style="`width: ${size}px`" >
     </div>
 
 </template>
@@ -13,7 +13,11 @@ export default {
         size: 40,
         outerSize: 34,
         identicon: "",
+
         address: "",
+        publicKey: null,
+        publicKeyHash: null,
+
     },
 
     computed:{
@@ -21,10 +25,28 @@ export default {
         addressIdenticon(){
 
             try{
-                const address = global.apacache._scope.cryptography.addressValidator.validateAddress( this.address );
-                if (!address) throw {message: "Invalid address"};
 
-                return address.identiconImg();
+                if (this.identicon) return this.identicon;
+
+                let address;
+
+                if (this.address) {
+                    address = global.apacache._scope.cryptography.addressValidator.validateAddress(this.address);
+                    if (!address) throw {message: "Invalid address"};
+                }
+
+                if (this.publicKey){
+                    address = global.apacache._scope.cryptography.addressGenerator.generateAddressFromPublicKey( this.publicKey );
+                    if (!address) throw {message: "Invalid address"};
+                }
+
+                if (this.publicKeyHash){
+                    address = global.apacache._scope.cryptography.addressGenerator.generateAddressFromPublicKeyHash( this.publicKeyHash );
+                    if (!address) throw {message: "Invalid address"};
+                }
+
+                return address ? address.identiconImg() : undefined;
+
 
             }catch(err){
 
