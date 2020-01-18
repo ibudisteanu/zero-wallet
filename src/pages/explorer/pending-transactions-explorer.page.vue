@@ -12,7 +12,7 @@
 
                 <h3>Last Pending Transactions</h3>
 
-                <show-transactions-info :transactionsInfo="transactionsInfo" />
+                <show-transactions-info :transactionsInfo="pendingTransactions" />
 
             </div>
         </div>
@@ -37,8 +37,8 @@ export default {
     },
 
     computed:{
-        lastPendingTransactions(){
-            return this.$store.getters.blocksInfoSorted;
+        pendingTransactions(){
+            return this.$store.state.pendingTransactions.list;
         }
     },
 

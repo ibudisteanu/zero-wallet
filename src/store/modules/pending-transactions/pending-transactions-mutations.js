@@ -4,14 +4,17 @@ export default {
 
     clearPendingTransaction(context, ) {
 
-        context.pendingTransactions = {};
+        context.list = {};
 
     },
 
-    setPendingTransaction(context, { transactions }) {
+    setPendingTransactions(context, { transactions, clear = false }) {
+
+        if (clear)
+            context.list = {};
 
         for (const key in transactions)
-            Vue.set(context.pendingTransactions, key, transactions[key]);
+            Vue.set(context.list, key, transactions[key]);
 
 
     }

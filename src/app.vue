@@ -90,7 +90,7 @@ export default {
 
         Consensus.on("consensus/account-update", data => this.$store.commit('setAddressWalletBalances', data ) );
 
-        Consensus.on("consensus/pending-transactions", data => this.$store.commit('setPendingTransactions', data ) );
+        Consensus.on("consensus/pending-transactions", data => this.$store.commit('setPendingTransactions', { transactions: data, clear:true} ) );
 
         await Consensus.start();
 

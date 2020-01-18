@@ -5,16 +5,20 @@
         <div class="table">
             <div class="table-header table-row">
                 <span>Hash</span>
+                <span>nonce</span>
+                <span>Token</span>
                 <span>Queued</span>
-                <span>Fee</span>
-                <span>Amount</span>
+                <span>In</span>
+                <span>Out</span>
             </div>
-            <div v-for="tx in transactionsInfo" class="table-row">
+            <div v-for="(tx, txId) in transactionsInfo" class="table-row">
 
-                <span><router-link :to="`/explorer/tx/hash/${tx.hash().toString('hex')}`">{{tx.hash().toString("hex").substr(0,45)+'...'}}</router-link></span>
+                <span><router-link :to="`/explorer/tx/hash/${txId}`">{{txId.substr(0,45)+'...'}}</router-link></span>
+                <span>{{tx.nonce}}</span>
+                <span>{{tx.tokenCurrency.toString("hex")}}</span>
                 <span>{{tx.queued}}</span>
-                <span>{{tx.fee}}</span>
-                <span>{{tx.amount}}</span>
+                <span>{{tx.vin}}</span>
+                <span>{{tx.vout}}</span>
             </div>
         </div>
 
