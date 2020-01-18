@@ -50,6 +50,8 @@ class Consensus extends BaseConsensus{
 
         };
 
+        this._downloadPendingTransactions = false;
+
     }
 
     async _started(){
@@ -228,6 +230,18 @@ class Consensus extends BaseConsensus{
 
     }
 
+    async startDownloadPendingTransactions(){
+
+        if (!this._downloadPendingTransactions)
+            this._downloadPendingTransactions = true;
+
+    }
+
+    async stopDownloadPendingTransactions(){
+
+        if (this._downloadPendingTransactions)
+            this._downloadPendingTransactions = false;
+    }
 
     async _stopped(){
 

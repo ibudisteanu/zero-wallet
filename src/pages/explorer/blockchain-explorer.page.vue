@@ -14,7 +14,7 @@
                     <h3>View Pending Transactions</h3>
                 </router-link>
 
-                <h3>Last blocks</h3>
+                <h3>Last blocks forged</h3>
 
                 <show-blocks-info :blocksInfo="lastBlocksInfo" />
 

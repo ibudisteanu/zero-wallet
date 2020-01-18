@@ -24,6 +24,7 @@
 
 import Layout from "src/components/layout/layout"
 import ShowTransactionsInfo from "src/components/explorer/show-transactions-info"
+import Consensus from "src/consensus/consensus"
 
 export default {
 
@@ -41,10 +42,28 @@ export default {
         }
     },
 
-    methods: {
+    methods:{
+        async startDownloadPendingTransactions(){
+            await Consensus.initPromise;
+            await Consensus.startDownloadPendingTransactions();
+        }
+    },
 
+    watch: {
+        '$route' (to, from) {
+            return this.startDownloadPendingTransactions();
+        }
+    },
+
+    async mounted(){
+
+        return this.startDownloadPendingTransactions();
 
     },
+
+    beforeDestroy(){
+        await Consensus.stopDownloadPendingTransactions();
+    }
 
 }
 
