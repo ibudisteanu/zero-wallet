@@ -1,7 +1,7 @@
 <template>
 
-    <div class="outer" :style="`width: ${outerSize}px; height: ${outerSize}px`">
-        <img v-if="identicon" :src="identicon" class="identicon" :style="`width: ${size}px`" >
+    <div class="identicon outer" :style="`width: ${outerSize}px; height: ${outerSize}px`">
+        <img v-if="identicon || address" :src="identicon ? identicon : addressIdenticon" class="identicon" :style="`width: ${size}px`" >
     </div>
 
 </template>
@@ -13,6 +13,25 @@ export default {
         size: 40,
         outerSize: 34,
         identicon: "",
+        address: "",
+    },
+
+    computed:{
+
+        addressIdenticon(){
+
+            try{
+                const address = global.apacache._scope.cryptography.addressValidator.validateAddress( this.address );
+                if (!address) throw {message: "Invalid address"};
+
+                return address.identiconImg();
+
+            }catch(err){
+
+            }
+
+        },
+
     }
 
 

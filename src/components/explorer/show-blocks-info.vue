@@ -20,7 +20,7 @@
                 <span>{{blockInfo.timestamp}}</span>
                 <span>{{blockInfo.size}}</span>
                 <span>{{blockInfo.txCount}}</span>
-                <span> <account-identicon  :identicon="getIdenticon(blockInfo.forgedBy)" :size="20" :outer-size="20"  /> </span>
+                <span> <account-identicon  :address="blockInfo.forgedBy" :size="20" :outer-size="20"  /> </span>
 
             </div>
         </div>
@@ -42,10 +42,6 @@ export default {
     },
 
     methods: {
-
-        getIdenticon(address){
-            return global.blockchain.utils.Identicon.createIdenticon( address ).toDataURL();
-        }
 
     },
 

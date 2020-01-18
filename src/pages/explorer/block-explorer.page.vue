@@ -82,7 +82,7 @@
                             <div class="table-row">
                                 <span>Forger</span>
                                 <div class="vertical-center">
-                                    <account-identicon class="vertical-center" :identicon="getIdenticon(block.pos.stakeForgerAddress)" :size="20" :outer-size="20"  />
+                                    <account-identicon class="vertical-center" :address="block.pos.stakeForgerAddress" :size="20" :outer-size="20"  />
                                     <span class="forger-address">{{block.pos.stakeForgerAddress}}</span>
                                 </div>
                             </div>
@@ -191,10 +191,6 @@ export default {
             else
             if (this.hash ) return Consensus.getBlockByHash(this.hash);
 
-        },
-
-        getIdenticon(address){
-            return global.blockchain.utils.Identicon.createIdenticon( address ).toDataURL();
         },
 
     },
