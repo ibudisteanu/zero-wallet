@@ -55,14 +55,14 @@ export default {
         }
     },
 
-    async mounted(){
+    mounted(){
 
         return this.startDownloadPendingTransactions();
 
     },
 
     beforeDestroy(){
-        await Consensus.stopDownloadPendingTransactions();
+        return Consensus.stopDownloadPendingTransactions();
     }
 
 }

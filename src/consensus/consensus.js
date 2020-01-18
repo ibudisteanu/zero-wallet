@@ -50,7 +50,7 @@ class Consensus extends BaseConsensus{
 
         };
 
-        this._downloadPendingTransactions = false;
+        this._downloadPendingTransactionsEnabled = false;
 
     }
 
@@ -143,6 +143,8 @@ class Consensus extends BaseConsensus{
 
         await this._downloadBalances();
 
+        await this._downloadPendingTransactions();
+
     }
 
     async _downloadLastBlocksHashes(){
@@ -230,17 +232,28 @@ class Consensus extends BaseConsensus{
 
     }
 
+    async _downloadPendingTransactions(){
+
+        if (!this._downloadPendingTransactionsEnabled) return;
+
+        const transactions = await this._client.emitAsync("mem-pool/content", { }, 0);
+
+        console.log(transactions);
+
+    }
+
     async startDownloadPendingTransactions(){
 
-        if (!this._downloadPendingTransactions)
-            this._downloadPendingTransactions = true;
+        if (!this._downloadPendingTransactionsEnabled)
+            this._downloadPendingTransactionsEnabled = true;
 
+        this._downloadPendingTransactions();
     }
 
     async stopDownloadPendingTransactions(){
 
-        if (this._downloadPendingTransactions)
-            this._downloadPendingTransactions = false;
+        if (this._downloadPendingTransactionsEnabled)
+            this._downloadPendingTransactionsEnabled = false;
     }
 
     async _stopped(){
