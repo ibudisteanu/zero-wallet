@@ -170,7 +170,7 @@ class Consensus extends BaseConsensus{
 
                     delete this._data.blocks[i];
                     delete this._data.blocksByHash[blockInfo.hash.toString("hex")];
-                    await this.getBlock(height);
+                    await this.getBlock(i);
                 }
 
                 this._data.blocksInfo[i] = blockInfo;
