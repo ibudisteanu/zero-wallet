@@ -56,10 +56,6 @@ export default class BaseConsensus extends EventEmitter{
 
     }
 
-    async getBlockTransactions(height){
-
-    }
-
     async getTransaction(txId){
 
     }

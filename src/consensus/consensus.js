@@ -268,7 +268,6 @@ class Consensus extends BaseConsensus{
         if (this._data.blocks[hash]) return this._data.blocksByHash[hash];
 
         const blockData = await this._client.emitAsync("blockchain/get-block", { hash, type: "buffer"}, 0  );
-
         if (!blockData) return; //disconnected
 
         const block = new Block( {
@@ -281,6 +280,10 @@ class Consensus extends BaseConsensus{
 
         this.emit('consensus/block-downloaded', block );
 
+        const txs = await block.getTransactions();
+        for (const tx of txs)
+            this._data.transactions[tx.hash().toString("hex")] = tx;
+
         return block;
 
 
@@ -291,24 +294,34 @@ class Consensus extends BaseConsensus{
         if (this._data.blocks[height]) return this._data.blocks[height];
 
         const blockData = await this._client.emitAsync("blockchain/get-block-by-height", {index: height, type: "buffer"}, 0  );
-
         if (!blockData) return; //disconnected
 
         const block = new Block({
             ...global.apacache._scope,
             chain: global.apacache._scope.mainChain
         }, undefined, Buffer.from(blockData));
-        this._data.blocks[height] = block;
 
+        this._data.blocks[height] = block;
         this._data.blocksByHash[block.hash().toString("hex")] = block;
 
         this.emit('consensus/block-downloaded', block );
+
+        const txs = await block.getTransactions();
+        for (const tx of txs)
+            this._data.transactions[tx.hash().toString("hex")] = tx;
 
         return block;
 
     }
 
-    async getBlockTransactions(height){
+    async getTransactionByHash(hash){
+
+        if (this._data.transactions[hash]) return this._data.transactions[hash];
+
+        const txData = await this._client.emitAsync("transactions/get-raw-transaction", { hash }, 0  );
+        if (!txData) return; //disconnected
+
+        console.log("hash", txData);
 
     }
 

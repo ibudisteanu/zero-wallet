@@ -102,10 +102,64 @@
 <script>
 
 import Layout from "src/components/layout/layout"
+import Consensus from "src/consensus/consensus"
+import LoadingSpinner from "src/components/utils/loading-spinner";
 
 export default {
 
-    components: {Layout},
+    components: {Layout, Consensus, LoadingSpinner},
+
+    methods: {
+
+        computed:{
+
+            height(){
+                return this.$route.params.height;
+            },
+            hash(){
+                return this.$route.params.hash;
+            },
+
+            tx(){
+
+                let tx;
+                if (this.height) tx = this.$store.state.blockchain.transactions[this.height];
+                if (this.hash) tx = this.$store.state.blockchain.transactionsByHash[this.hash];
+
+                return tx;
+
+            },
+
+        },
+
+        async loadTransaction(){
+
+            if (this.height === undefined && !this.hash){
+                this.error = 'Tx index was not specified';
+                return;
+            }
+
+            await Consensus.initPromise;
+
+            if (this.height !== undefined)  return Consensus.getTransaction(this.height);
+            else
+            if (this.hash ) return Consensus.getTransactionByHash(this.hash);
+
+        },
+
+    },
+
+    watch: {
+        '$route' (to, from) {
+            return this.loadTransaction();
+        }
+    },
+
+    async mounted(){
+
+        return this.loadTransaction();
+
+    }
 
 }
 </script>
