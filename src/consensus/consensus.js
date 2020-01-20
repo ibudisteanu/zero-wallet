@@ -275,21 +275,8 @@ class Consensus extends BaseConsensus{
             chain: global.apacache._scope.mainChain
         }, undefined, Buffer.from(blockData) );
 
-        this._data.blocks[block.height] = block;
-        this._data.blocksByHash[block.hash().toString("hex")] = block;
 
-        this.emit('consensus/block-downloaded', block );
-
-        const data = {};
-        const txs = await block.getTransactions();
-        for (const tx of txs) {
-            tx.__extra = {
-                height: block.height,
-            };
-            this._data.transactions[tx.hash().toString("hex")] = tx;
-            data[tx.hash().toString("hex")] = tx;
-        }
-        this.emit('consensus/tx-downloaded', data );
+        await this._includeBlock(block);
 
         return block;
 
@@ -308,16 +295,29 @@ class Consensus extends BaseConsensus{
             chain: global.apacache._scope.mainChain
         }, undefined, Buffer.from(blockData));
 
-        this._data.blocks[height] = block;
-        this._data.blocksByHash[block.hash().toString("hex")] = block;
+        await this._includeBlock(block);
+
+        return block;
+
+    }
+
+    async _includeBlock(block){
 
         this.emit('consensus/block-downloaded', block );
 
-        const txs = await block.getTransactions();
-        for (const tx of txs)
-            this._data.transactions[tx.hash().toString("hex")] = tx;
+        this._data.blocks[block.height] = block;
+        this._data.blocksByHash[block.hash().toString("hex")] = block;
 
-        return block;
+        const data = {};
+        const txs = await block.getTransactions();
+        for (const tx of txs) {
+            tx.__extra = {
+                height: block.height,
+            };
+            this._data.transactions[tx.hash().toString("hex")] = tx;
+            data[tx.hash().toString("hex")] = tx;
+        }
+        this.emit('consensus/tx-downloaded', data );
 
     }
 

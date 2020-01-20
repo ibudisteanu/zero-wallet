@@ -25,13 +25,32 @@
                             </div>
                             <div class="table-row">
                                 <span>Block Height</span>
-                                <span>{{tx.__data.height}}</span>
+                                <span>{{tx.__extra.height}}</span>
                             </div>
                             <div class="table-row">
                                 <span>Confirmations</span>
-                                <span>{{ $store.state.blockchain.end - tx.__data.height -1 }}</span>
+                                <span>{{ $store.state.blockchain.end - tx.__extra.height -1 }}</span>
                             </div>
-
+                            <div class="table-row">
+                                <span>Nonce</span>
+                                <span>{{tx.nonce}}</span>
+                            </div>
+                            <div class="table-row">
+                                <span>Token Currency </span>
+                                <span>{{tx.tokenCurrency.toString("hex")}}</span>
+                            </div>
+                            <div class="table-row">
+                                <span>Unlock Time</span>
+                                <span>{{tx.unlockTime}}</span>
+                            </div>
+                            <div class="table-row">
+                                <span>Version</span>
+                                <span>{{tx.version}}</span>
+                            </div>
+                            <div class="table-row">
+                                <span>Script Version</span>
+                                <span>{{tx.scriptVersion}}</span>
+                            </div>
                         </div>
 
                     </div>
@@ -50,10 +69,11 @@
 import Layout from "src/components/layout/layout"
 import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
+import AccountIdenticon from "src/components/wallet/account/account-identicon";
 
 export default {
 
-    components: {Layout, Consensus, LoadingSpinner},
+    components: {Layout, Consensus, LoadingSpinner, AccountIdenticon},
 
     computed:{
 
