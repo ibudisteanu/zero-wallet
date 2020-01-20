@@ -340,9 +340,6 @@ class Consensus extends BaseConsensus{
         const txData = await this._client.emitAsync("transactions/get-transaction", { hash }, 0  );
         if (!txData) return; //disconnected
 
-        console.log("tx", txData );
-        console.log("tx", txData.scriptVersion );
-
         const tx = global.apacache._scope.mainChain.transactionsValidator.validateTx( txData.tx );
 
         tx.__extra = {

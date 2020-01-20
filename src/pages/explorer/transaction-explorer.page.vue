@@ -25,11 +25,13 @@
                             </div>
                             <div class="table-row">
                                 <span>Block Height</span>
-                                <span>{{tx.__extra.height}}</span>
+                                <span v-if="tx.__extra.height "><router-link :to="`/explorer/block/height/${tx.__extra.height}`">{{tx.__extra.height}}</router-link></span>
+                                <span v-else>-</span>
                             </div>
                             <div class="table-row">
                                 <span>Confirmations</span>
-                                <span>{{ tx.__extra.height ? $store.state.blockchain.end - tx.__extra.height -1 : '-' }}</span>
+                                <span v-if="tx.__extra.height">{{ $store.state.blockchain.end - tx.__extra.height -1 }}</span>
+                                <span v-else>-</span>
                             </div>
                             <div v-if="tx.__extra.memPool" class="table-row">
                                 <span>Mem Pool</span>
