@@ -94,6 +94,8 @@ export default {
 
         Consensus.on("consensus/tx-downloaded", data => this.$store.commit('setTransactions', { transactions: data } ) );
 
+        Consensus.on("consensus/tx-deleted", data => this.$store.commit('deleteTransactions', { transactions: data } ) );
+
         await Consensus.start();
 
     },

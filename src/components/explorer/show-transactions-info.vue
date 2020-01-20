@@ -23,13 +23,13 @@
                 <span>{{tx.queued}}</span>
                 <span>
                     <div v-for="vin in tx.vin ">
-                        <account-identicon :address="vin.address" size="20" outer-size="20" />
+                        <account-identicon :publicKey="vin.publicKey" size="20" outer-size="20" />
                         <span class="amount vertical-center">-{{convertToBase(vin.amount)}}</span>
                     </div>
                 </span>
                 <span>
                     <div v-for="vout in tx.vout">
-                        <account-identicon :address="vout.address" size="20" outer-size="20" />
+                        <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="20" />
                         <span class="amount vertical-center">{{convertToBase(vout.amount)}}</span>
                     </div>
                 </span>

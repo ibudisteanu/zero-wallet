@@ -168,6 +168,16 @@ class Consensus extends BaseConsensus{
 
                     this.emit('consensus/block-deleted', {hash: blockInfo.hash, height: i} );
 
+                    const block = this._data.blocks[i];
+                    if (block){
+                        const txs = await block.getTransactions();
+                        for (const tx of txs) {
+                            delete this._data.transactions[tx.hash().toString("hex")];
+                            data[tx.hash().toString("hex")] = tx;
+                        }
+                        this.emit('consensus/tx-deleted', data );
+                    }
+
                     delete this._data.blocks[i];
                     delete this._data.blocksByHash[blockInfo.hash.toString("hex")];
                     await this.getBlock(i);
@@ -327,16 +337,20 @@ class Consensus extends BaseConsensus{
 
         if (this._data.transactions[hash]) return this._data.transactions[hash];
 
-        const txData = await this._client.emitAsync("transactions/get-raw-transaction", { hash }, 0  );
+        const txData = await this._client.emitAsync("transactions/get-transaction", { hash }, 0  );
         if (!txData) return; //disconnected
+
+        console.log("tx", txData );
+        console.log("tx", txData.scriptVersion );
 
         const tx = global.apacache._scope.mainChain.transactionsValidator.validateTx( txData.tx );
 
         tx.__extra = {
             height: txData.block,
+            confirmations: txData.confirmations,
+            memPoolQueued: txData.memPoolQueued,
+            memPool: txData.memPool,
         };
-
-        console.log("tx", tx);
 
         const data = {};
         data[hash] = tx;

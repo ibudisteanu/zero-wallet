@@ -29,7 +29,15 @@
                             </div>
                             <div class="table-row">
                                 <span>Confirmations</span>
-                                <span>{{ $store.state.blockchain.end - tx.__extra.height -1 }}</span>
+                                <span>{{ tx.__extra.height ? $store.state.blockchain.end - tx.__extra.height -1 : '-' }}</span>
+                            </div>
+                            <div v-if="tx.__extra.memPool" class="table-row">
+                                <span>Mem Pool</span>
+                                <span>Yes</span>
+                            </div>
+                            <div v-if="tx.__extra.memPoolQueued" class="table-row">
+                                <span>Confirmations</span>
+                                <span>{{tx.__extra.memPoolQueued ? 'Yes' : 'No'}}</span>
                             </div>
                             <div class="table-row">
                                 <span>Nonce</span>

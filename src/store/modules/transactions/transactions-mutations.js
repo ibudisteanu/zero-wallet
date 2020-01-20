@@ -2,7 +2,7 @@ import Vue from 'vue';
 
 export default {
 
-    removeTransactions(context, {transactions}){
+    deleteTransactions(context, {transactions}){
 
         for (const key in transactions)
             Vue.delete(context.list, key);
