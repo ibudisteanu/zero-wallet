@@ -44,6 +44,20 @@
                                 <span>{{tx.unlockTime}}</span>
                             </div>
                             <div class="table-row">
+                                <span>In</span>
+                                <div v-for="vin in tx.vin ">
+                                    <account-identicon :publicKey="vin.publicKey" size="20" outer-size="20" />
+                                    <span class="amount vertical-center">-{{convertToBase(vin.amount)}}</span>
+                                </div>
+                            </div>
+                            <div class="table-row">
+                                <span>Out</span>
+                                <div v-for="vout in tx.vout">
+                                    <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="20" />
+                                    <span class="amount vertical-center">{{convertToBase(vout.amount)}}</span>
+                                </div>
+                            </div>
+                            <div class="table-row">
                                 <span>Version</span>
                                 <span>{{tx.version}}</span>
                             </div>
@@ -112,6 +126,10 @@ export default {
 
         },
 
+        convertToBase(amount){
+            return global.apacache._scope.argv.transactions.coins.convertToBase(amount);
+        }
+
     },
 
     watch: {
@@ -129,10 +147,19 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
     .table-row{
         grid-template-columns: 200px 1fr;
     }
+
+    .identicon{
+        display: inline;
+    }
+
+    .amount{
+        display: inline-block;
+    }
+
 
 </style>
