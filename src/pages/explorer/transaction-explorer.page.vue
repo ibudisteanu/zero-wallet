@@ -37,8 +37,8 @@
                                 <span>Mem Pool</span>
                                 <span>Yes</span>
                             </div>
-                            <div v-if="tx.__extra.memPoolQueued" class="table-row">
-                                <span>Confirmations</span>
+                            <div v-if="tx.__extra.memPool" class="table-row">
+                                <span>Mem Pool Queued</span>
                                 <span>{{tx.__extra.memPoolQueued ? 'Yes' : 'No'}}</span>
                             </div>
                             <div class="table-row">
