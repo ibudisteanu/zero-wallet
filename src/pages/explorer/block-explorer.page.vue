@@ -89,7 +89,7 @@
                         </div>
 
                         <h4>Transactions</h4>
-                        <show-transactions :transactions="transactions"></show-transactions>
+                        <show-transactions :transactions="transactions"/>
 
                     </div>
 

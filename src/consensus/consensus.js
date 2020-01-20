@@ -238,14 +238,21 @@ class Consensus extends BaseConsensus{
         for (const account in this._data.accounts) {
 
             const txCount = await this._client.emitAsync("transactions/account/get-transaction-count", {account }, 0);
-            console.log("txCount", account, txCount);
-
-            this.emit('consensus/account-update-tx-counts', {account, txCount});
 
             if (txCount){
 
+                this.emit('consensus/account-update-tx-counts', {account, txCount});
+
                 const txs = await this._client.emitAsync("transactions/account/get-transactions", {account }, 0);
-                console.log("txs", txs);
+
+                if (txs) {
+                    this.emit('consensus/account-update-txs', {account, txs});
+
+                    for (const key in txs)
+                        this.getTransactionByHash( txs[key].toString("hex") );
+
+                }
+
 
             }
 
@@ -344,6 +351,7 @@ class Consensus extends BaseConsensus{
         for (const tx of txs) {
             tx.__extra = {
                 height: block.height,
+                timestamp: block.timestamp,
             };
             this._data.transactions[tx.hash().toString("hex")] = tx;
             data[tx.hash().toString("hex")] = tx;
@@ -365,6 +373,7 @@ class Consensus extends BaseConsensus{
 
         tx.__extra = {
             height: txData.block,
+            timestamp: txData.blockTimestamp,
             confirmations: txData.confirmations,
             memPoolQueued: txData.memPoolQueued,
             memPool: txData.memPool,

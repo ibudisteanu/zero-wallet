@@ -29,7 +29,32 @@ export default {
     setAddressTxs(context, {account, txs}){
 
         const address = {...context.addresses[account]};
-        address.txs = {};
+
+        if (!address.txs) address.txs = {};
+
+        let minimumIndex = Number.MAX_SAFE_INTEGER;
+        for (const txIndex in txs) {
+
+            if (address.txs[txIndex] ) {
+
+                const txIndexNumber = Number.parseInt(txIndex);
+
+                if (address.txs[txIndex] !== txs[txIndex].toString("hex"))
+                    minimumIndex = Math.min(minimumIndex, txIndexNumber );
+                else
+                    if ( minimumIndex < txIndexNumber  ) minimumIndex = Number.MAX_SAFE_INTEGER;
+            }
+
+            address.txs[txIndex] = txs[txIndex].toString("hex");
+        }
+
+        if (minimumIndex !== Number.MAX_SAFE_INTEGER){
+
+            for (const txIndex in address.txs)
+                if (Number.parseInt(txIndex) < minimumIndex)
+                    delete address[txIndex];
+
+        }
 
         Vue.set(context.addresses, account, address );
 

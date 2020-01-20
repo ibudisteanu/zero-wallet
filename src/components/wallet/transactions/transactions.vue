@@ -4,17 +4,19 @@
 
         <div class="boxed boxed-background">
 
-            <span class="title">Transactions</span>
+            <div v-if="address">
 
-            <div>
+                <span class="title">Transactions {{ txCount }}</span>
 
-                <transaction v-for=" (tx, index) in txs "
-                             :key="index"
-                             :tx="tx">
+                <loading-spinner v-if="!address.loaded" />
 
-                </transaction>
+                <div v-else>
 
+                    <show-transactions :transactions="transactions"/>
+
+                </div>
             </div>
+
 
         </div>
 
@@ -24,42 +26,38 @@
 
 <script>
 
-import Transaction from "./transaction"
+import LoadingSpinner from "../../utils/loading-spinner";
+import ShowTransactions from "src/components/explorer/show-transactions"
 
 export default {
 
-    components: {Transaction},
+    components: { LoadingSpinner, ShowTransactions},
 
     props: {
         address: null
     },
 
-    data(){
-        return {
-            txs: [ {
-                    txId: '111111111111111',
-                    timestamp: new Date().getTime()-500000,
-                    amount: undefined,
-                    whisper: 10,
-                    currency: 'USD',
+    computed:{
 
-                    from: undefined,
-                    to: undefined,
-                },
+        txCount(){
+            return this.address.txCount;
+        },
 
-                {
-                    txId: '2222222222222222',
-                    timestamp: new Date().getTime()-1000,
-                    amount: 20,
-                    whisper: undefined,
-                    currency: 'EUR',
+        txs(){
+            return this.address.txs;
+        },
 
-                    from: undefined,
-                    to: undefined,
-                },
+        transactions(){
+            const txs = this.txs;
 
-            ],
+            const out = [];
+            for (const key in txs)
+                if (this.$store.state.transactions.list[txs[key]])
+                    out.push( this.$store.state.transactions.list[txs[key]] );
+
+            return out;
         }
+
     }
 
 }
