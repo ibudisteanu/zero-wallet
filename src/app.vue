@@ -92,6 +92,8 @@ export default {
 
         Consensus.on("consensus/pending-transactions", data => this.$store.commit('setPendingTransactions', { transactions: data, clear:true} ) );
 
+        Consensus.on("consensus/tx-downloaded", data => this.$store.commit('setTransactions', { transactions: data } ) );
+
         await Consensus.start();
 
     },

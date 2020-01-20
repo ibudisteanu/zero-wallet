@@ -188,7 +188,6 @@ export default {
             await Consensus.initPromise;
 
             if (this.height !== undefined)  return Consensus.getBlock(this.height);
-            else
             if (this.hash ) return Consensus.getBlockByHash(this.hash);
 
         },

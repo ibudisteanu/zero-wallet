@@ -1,10 +1,11 @@
-import mutations from "./pending-transactions-mutations"
+import mutations from "./transactions-mutations"
 
 export default {
 
     state: {
 
         list: {},
+        pending: {},
 
     },
 

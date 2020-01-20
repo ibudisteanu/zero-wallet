@@ -38,7 +38,7 @@ export default {
 
     computed:{
         pendingTransactions(){
-            return this.$store.state.pendingTransactions.list;
+            return this.$store.state.transactions.pending;
         }
     },
 
