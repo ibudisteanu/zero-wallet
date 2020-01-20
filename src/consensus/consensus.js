@@ -141,7 +141,8 @@ class Consensus extends BaseConsensus{
 
         await this._downloadLastBlocksHashes();
 
-        await this._downloadBalances();
+        await this._downloadAccountBalances();
+        await this._downloadAccountTransactions();
 
         await this._downloadPendingTransactions();
 
@@ -197,7 +198,7 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async _downloadBalances(){
+    async _downloadAccountBalances(){
 
         for (const account in this._data.accounts){
 
@@ -227,6 +228,24 @@ class Consensus extends BaseConsensus{
                 await global.apacache.mainChain.data.accountTree.updateNonce(publicKeyHash, nonce,);
 
             this.emit('consensus/account-update', { account, balances, nonce  } );
+
+        }
+
+    }
+
+    async _downloadAccountTransactions() {
+
+        for (const account in this._data.accounts) {
+
+            const countTx = await this._client.emitAsync("transactions/account/get-transaction-count", {account }, 0);
+            console.log("countTx", account, countTx);
+
+            if (countTx){
+
+                const txs = await this._client.emitAsync("transactions/account/get-transactions", {account }, 0);
+                console.log("txs", txs);
+
+            }
 
         }
 
