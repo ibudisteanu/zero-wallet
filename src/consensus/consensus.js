@@ -237,10 +237,12 @@ class Consensus extends BaseConsensus{
 
         for (const account in this._data.accounts) {
 
-            const countTx = await this._client.emitAsync("transactions/account/get-transaction-count", {account }, 0);
-            console.log("countTx", account, countTx);
+            const txCount = await this._client.emitAsync("transactions/account/get-transaction-count", {account }, 0);
+            console.log("txCount", account, txCount);
 
-            if (countTx){
+            this.emit('consensus/account-update-tx-counts', {account, txCount});
+
+            if (txCount){
 
                 const txs = await this._client.emitAsync("transactions/account/get-transactions", {account }, 0);
                 console.log("txs", txs);

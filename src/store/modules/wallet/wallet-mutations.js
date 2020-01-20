@@ -17,7 +17,25 @@ export default {
         context.addresses = value;
     },
 
-    setAddressWalletBalances(context, {account, balances, nonce}){
+    setAddressTxCounts(context, {account, txCount}){
+
+        const address = {...context.addresses[account]};
+        address.txCount = txCount;
+
+        Vue.set(context.addresses, account, address );
+
+    },
+
+    setAddressTxs(context, {account, txs}){
+
+        const address = {...context.addresses[account]};
+        address.txs = {};
+
+        Vue.set(context.addresses, account, address );
+
+    },
+
+    setAddressBalances(context, {account, balances, nonce}){
 
         const address = {...context.addresses[account]};
 

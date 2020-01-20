@@ -88,7 +88,11 @@ export default {
 
         Consensus.on("consensus/block-deleted", data => this.$store.commit('deleteBlockchainBlock', data ) );
 
-        Consensus.on("consensus/account-update", data => this.$store.commit('setAddressWalletBalances', data ) );
+        Consensus.on("consensus/account-update", data => this.$store.commit('setAddressBalances', data ) );
+
+        Consensus.on("consensus/account-update-tx-counts", data => this.$store.commit('setAddressTxCounts', data ) );
+
+        Consensus.on("consensus/account-update-txs", data => this.$store.commit('setAddressTxs', data ) );
 
         Consensus.on("consensus/pending-transactions", data => this.$store.commit('setPendingTransactions', { transactions: data, clear:true} ) );
 
