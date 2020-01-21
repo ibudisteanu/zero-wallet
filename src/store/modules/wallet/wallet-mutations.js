@@ -56,6 +56,12 @@ export default {
 
         }
 
+        let txsLowestIndex = Number.MAX_SAFE_INTEGER;
+        for (const txIndex in address.txs)
+            txsLowestIndex = Math.min(txsLowestIndex, Number.parseInt(txIndex) );
+
+        address.txsLowestIndex = txsLowestIndex;
+
         Vue.set(context.addresses, account, address );
 
     },

@@ -218,7 +218,6 @@ input[type=submit]:disabled {
 .table .table-header{
     color: #677185;
     font-size: 15px;
-    text-align: center;
 }
 
 .table .table-row{

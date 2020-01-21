@@ -14,6 +14,10 @@
 
                     <show-transactions :transactions="transactions"/>
 
+                    <div class="view-more">
+                        <span v-if="address.txsLowestIndex" class="pointer" @click="handleViewMore">View more...</span>
+                    </div>
+
                 </div>
             </div>
 
@@ -28,6 +32,7 @@
 
 import LoadingSpinner from "../../utils/loading-spinner";
 import ShowTransactions from "src/components/explorer/show-transactions"
+import Consensus from "src/consensus/consensus"
 
 export default {
 
@@ -55,9 +60,18 @@ export default {
                 if (this.$store.state.transactions.list[txs[key]])
                     out.push( this.$store.state.transactions.list[txs[key]] );
 
-            return out;
+            return out.sort ( (a,b) => b.__extra.height - a.__extra.height );
         }
 
+    },
+
+    methods:{
+        handleViewMore(){
+
+            if (this.address.txsLowestIndex)
+                return Consensus.downloadAccountTransactionsSpecific(this.address.address, this.address.txsLowestIndex )
+
+        }
     }
 
 }
@@ -71,6 +85,10 @@ export default {
 
     .title{
         font-size: 20px;
+    }
+
+    .view-more{
+        text-align: center;
     }
 
 </style>

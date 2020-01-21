@@ -243,18 +243,28 @@ class Consensus extends BaseConsensus{
 
                 this.emit('consensus/account-update-tx-counts', {account, txCount});
 
-                const txs = await this._client.emitAsync("transactions/account/get-transactions", {account }, 0);
-
-                if (txs) {
-                    this.emit('consensus/account-update-txs', {account, txs});
-
-                    for (const key in txs)
-                        this.getTransactionByHash( txs[key].toString("hex") );
-
-                }
+                await this.downloadAccountTransactionsSpecific(account);
 
 
             }
+
+        }
+
+    }
+
+    async downloadAccountTransactionsSpecific(account, index ){
+
+        console.log("downloadAccountTransactionsSpecific", account, index);
+
+        const txs = await this._client.emitAsync("transactions/account/get-transactions", { account, index }, 0);
+
+        console.log(txs);
+
+        if (txs) {
+            this.emit('consensus/account-update-txs', {account, txs});
+
+            for (const key in txs)
+                this.getTransactionByHash( txs[key].toString("hex") );
 
         }
 
@@ -361,8 +371,6 @@ class Consensus extends BaseConsensus{
     }
 
     async getTransactionByHash(hash){
-
-        console.log("hash", hash);
 
         if (this._data.transactions[hash]) return this._data.transactions[hash];
 
