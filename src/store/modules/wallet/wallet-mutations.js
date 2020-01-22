@@ -17,10 +17,29 @@ export default {
         context.addresses = value;
     },
 
-    setAddressTxCounts(context, {account, txCount}){
+    setAddressTxCounts(context, {account, txCount = 0, txCountPending = 0}){
 
         const address = {...context.addresses[account]};
         address.txCount = txCount;
+        address.txCountPending = txCountPending;
+
+        Vue.set(context.addresses, account, address );
+
+    },
+
+    setAddressPendingTxs(context, {account, txs, next, clear = true}){
+
+        const address = {...context.addresses[account]};
+
+        if (!address.pendingTxs) address.pendingTxs = {};
+
+        if (clear === true)
+            address.pendingTxs = {};
+
+        for (const key in txs)
+            address.pendingTxs[key] = key;
+
+        address.pendingTxsNext = next;
 
         Vue.set(context.addresses, account, address );
 

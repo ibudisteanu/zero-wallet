@@ -20,16 +20,15 @@ export default {
         context.pendingCount = count;
     },
 
-    setPendingTransactions(context, { transactions, transactionsNext, clear = false }) {
+    setPendingTransactions(context, { txs, next, clear = false }) {
 
-        if (clear)
-            context.pending = {};
 
-        for (const key in transactions)
-            Vue.set(context.pending, key, transactions[key]);
+        if (clear) context.pending = {};
 
-        context.pendingNext = transactionsNext;
+        for (const key in txs)
+            Vue.set(context.pending, key, txs[key]);
 
+        context.pendingNext = next;
 
     }
 

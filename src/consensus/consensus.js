@@ -233,17 +233,29 @@ class Consensus extends BaseConsensus{
 
     }
 
+    subscribeAccounts( accounts ){
+
+        this._data.accounts = {};
+
+        accounts.map (account => {
+            this._data.accounts[account] = true;
+        });
+
+    }
+
     async _downloadAccountTransactions() {
 
         for (const account in this._data.accounts) {
 
             const txCount = await this._client.emitAsync("transactions/account/get-transaction-count", {account }, 0);
+            const txCountPending = await this._client.emitAsync("mem-pool/content-count", {account }, 0);
 
-            if (!txCount) continue;
+            if (!txCountPending && !txCount) continue;
 
-            this.emit('consensus/account-update-tx-count', {account, txCount});
+            this.emit('consensus/account-update-tx-count', {account, txCount, txCountPending});
 
             await this.downloadAccountTransactionsSpecific({account, limit: 10});
+            await this.downloadPendingTransactionsSpecific( {account})
 
         }
 
@@ -255,28 +267,18 @@ class Consensus extends BaseConsensus{
 
         if (!data || !data.out) return;
 
-        this.emit('consensus/account-update-txs', {account, txs: data.out});
+        this.emit('consensus/account-update-txs', {account, txs: data.out, next: data.next, });
 
         for (const key in data.out)
             this.getTransactionByHash( data.out[key].toString("hex") );
 
     }
 
-    async subscribeAccounts( accounts ){
-
-        this._data.accounts = {};
-
-        accounts.map (account => {
-            this._data.accounts[account] = true;
-        });
-
-    }
-
-    async downloadPendingTransactions( account, index){
+    async downloadPendingTransactions( account, index ){
 
         if (!this._downloadPendingTransactionsEnabled) return;
 
-        const txCount = await this._client.emitAsync("mem-pool/content-count", {}, 0);
+        const txCount = await this._client.emitAsync("mem-pool/content-count", {acc}, 0);
 
         if (!txCount) return;
 
@@ -291,11 +293,13 @@ class Consensus extends BaseConsensus{
 
         if (!data|| !data.out) return ;
 
-        this.emit('consensus/pending-transactions', { transactions: data.out, transactionsNext: data.next, clear: index === undefined ? true: false } );
+        if (!account)
+            this.emit('consensus/pending-transactions', { transactions: data.out, transactionsNext: data.next, clear: index === undefined ? true: false } );
+        else
+            this.emit('consensus/account-update-txs', { account, txs: data.out, next: data.next, clear: index === undefined ? true: false } );
 
         for (const hash in data.out)
             this.getTransactionByHash(hash);
-
 
     }
 

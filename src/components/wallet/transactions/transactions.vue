@@ -6,13 +6,15 @@
 
             <div v-if="address">
 
-                <span class="title">Transactions {{ txCount }}</span>
+                <span class="title">Transactions {{ txCount + txCountPending }}</span>  <br/>
 
                 <loading-spinner v-if="!address.loaded" />
 
                 <div v-else>
 
-                    <show-transactions :transactions="transactions"/>
+                    {{pendingTransactions}}
+
+                    <show-transactions :transactions="pendingTransactions.concat( transactions) "/>
 
                     <div class="centered">
                         <span v-if="address.txsLowestIndex" class="pointer" @click="handleViewMore">View more...</span>
@@ -48,8 +50,28 @@ export default {
             return this.address.txCount;
         },
 
+        txCountPending(){
+            return this.address.txCountPending;
+        },
+
         txs(){
             return this.address.txs;
+        },
+
+        pendingTxs(){
+            return this.address.pendingTxs;
+        },
+
+        pendingTransactions(){
+
+            const txs = this.pendingTxs;
+
+            const out = [];
+            for (const key in txs)
+                if (this.$store.state.transactions.list[txs[key]])
+                    out.push( this.$store.state.transactions.list[txs[key]] );
+
+                return out;
         },
 
         transactions(){
