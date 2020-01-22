@@ -94,7 +94,7 @@ export default {
 
         Consensus.on("consensus/account-update-txs", data => this.$store.commit('setAddressTxs', data ) );
 
-        Consensus.on("consensus/pending-transactions", data => this.$store.commit('setPendingTransactions', { transactions: data.out, transactionsNext: data.next, clear:true} ) );
+        Consensus.on("consensus/pending-transactions", data => this.$store.commit('setPendingTransactions', data ) );
 
         Consensus.on("consensus/tx-downloaded", data => this.$store.commit('setTransactions', { transactions: data } ) );
 

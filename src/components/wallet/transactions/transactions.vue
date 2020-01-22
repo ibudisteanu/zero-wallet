@@ -67,7 +67,7 @@ export default {
 
     methods:{
         handleViewMore(){
-            return Consensus.downloadAccountTransactionsSpecific(this.address.address, this.address.txsLowestIndex )
+            return Consensus.downloadAccountTransactionsSpecific( {account: this.address.address, index: this.address.txsLowestIndex, limit: 10} )
 
         }
     }

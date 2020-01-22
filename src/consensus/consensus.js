@@ -243,8 +243,7 @@ class Consensus extends BaseConsensus{
 
                 this.emit('consensus/account-update-tx-counts', {account, txCount});
 
-                await this.downloadAccountTransactionsSpecific(account);
-
+                await this.downloadAccountTransactionsSpecific({account, limit: 10});
 
             }
 
@@ -252,13 +251,9 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async downloadAccountTransactionsSpecific(account, index ){
+    async downloadAccountTransactionsSpecific({account, index, limit} ){
 
-        console.log("downloadAccountTransactionsSpecific", account, index);
-
-        const data = await this._client.emitAsync("transactions/account/get-transactions", { account, index }, 0);
-
-        console.log(data);
+        const data = await this._client.emitAsync("transactions/account/get-transactions-ids", { account, index, limit }, 0);
 
         if (data) {
             this.emit('consensus/account-update-txs', {account, txs: data.out});
@@ -288,7 +283,7 @@ class Consensus extends BaseConsensus{
 
         if (!data|| !data.out) return ;
 
-        this.emit('consensus/pending-transactions', data );
+        this.emit('consensus/pending-transactions', { transactions: data.out, transactionsNext: data.next, clear: index === undefined ? true: false } );
 
     }
 
