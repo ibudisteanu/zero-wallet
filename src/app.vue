@@ -96,6 +96,8 @@ export default {
 
         Consensus.on("consensus/pending-transactions", data => this.$store.commit('setPendingTransactions', data ) );
 
+        Consensus.on("consensus/pending-transactions-count", data => this.$store.commit('setPendingTransactionsCount', data ) );
+
         Consensus.on("consensus/tx-downloaded", data => this.$store.commit('setTransactions', { transactions: data } ) );
 
         Consensus.on("consensus/tx-deleted", data => this.$store.commit('deleteTransactions', { transactions: data } ) );

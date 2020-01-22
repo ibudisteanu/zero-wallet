@@ -4,7 +4,7 @@
         <div class="container pd-top-40">
             <div class="boxed ">
 
-                <h1>Pending Transactions</h1>
+                <h1>Pending Transactions {{pendingCount}}</h1>
 
                 <span v-if="error" class="danger">
                     {{error}}
@@ -41,6 +41,11 @@ export default {
     },
 
     computed:{
+
+        pendingCount(){
+            return this.$store.state.transactions.pendingCount;
+        },
+
         pendingTransactions(){
             return this.$store.state.transactions.pending;
         },

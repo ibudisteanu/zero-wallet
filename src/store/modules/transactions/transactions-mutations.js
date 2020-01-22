@@ -16,6 +16,10 @@ export default {
 
     },
 
+    setPendingTransactionsCount(context, { count }) {
+        context.pendingCount = count;
+    },
+
     setPendingTransactions(context, { transactions, transactionsNext, clear = false }) {
 
         if (clear)
