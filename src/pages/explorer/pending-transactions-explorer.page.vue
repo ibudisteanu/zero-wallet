@@ -12,7 +12,7 @@
 
                 <h3>Last Pending Transactions</h3>
 
-                <show-transactions-info :transactionsInfo="pendingTransactions" />
+                <show-transactions :transactions="pendingTransactions"/>
 
                 <div class="centered" v-if="pendingNext" >
                     <span class="pointer" @click="handleViewMore">View more...</span>
@@ -27,12 +27,11 @@
 <script>
 
 import Layout from "src/components/layout/layout"
-import ShowTransactionsInfo from "src/components/explorer/show-transactions-info"
 import Consensus from "src/consensus/consensus"
-
+import ShowTransactions from "src/components/explorer/show-transactions"
 export default {
 
-    components: { Layout, ShowTransactionsInfo },
+    components: { Layout, ShowTransactions },
 
     data(){
         return {
@@ -46,8 +45,20 @@ export default {
             return this.$store.state.transactions.pendingCount;
         },
 
-        pendingTransactions(){
+        pending(){
             return this.$store.state.transactions.pending;
+        },
+
+        pendingTransactions(){
+
+            const txs = this.pending;
+
+            const out = [];
+            for (const hash in txs)
+                if (this.$store.state.transactions.list[ hash ])
+                    out.push( this.$store.state.transactions.list[ hash ] );
+
+            return out;
         },
 
         pendingNext(){

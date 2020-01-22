@@ -253,13 +253,12 @@ class Consensus extends BaseConsensus{
 
         const data = await this._client.emitAsync("transactions/account/get-transactions-ids", { account, index, limit }, 0);
 
-        if (data) {
-            this.emit('consensus/account-update-txs', {account, txs: data.out});
+        if (!data || !data.out) return;
 
-            for (const key in data.out)
-                this.getTransactionByHash( data.out[key].toString("hex") );
+        this.emit('consensus/account-update-txs', {account, txs: data.out});
 
-        }
+        for (const key in data.out)
+            this.getTransactionByHash( data.out[key].toString("hex") );
 
     }
 
@@ -288,13 +287,15 @@ class Consensus extends BaseConsensus{
 
     async downloadPendingTransactionsSpecific( {account, index, limit} ){
 
-        const data = await this._client.emitAsync("mem-pool/content", { account, index }, 0);
-
-        console.log("data", data);
+        const data = await this._client.emitAsync("mem-pool/content-ids", { account, index }, 0);
 
         if (!data|| !data.out) return ;
 
         this.emit('consensus/pending-transactions', { transactions: data.out, transactionsNext: data.next, clear: index === undefined ? true: false } );
+
+        for (const hash in data.out)
+            this.getTransactionByHash(hash);
+
 
     }
 
@@ -392,6 +393,8 @@ class Consensus extends BaseConsensus{
             memPoolQueued: txData.memPoolQueued,
             memPool: txData.memPool,
         };
+
+        this._data.transactions[hash] = tx;
 
         const data = {};
         data[hash] = tx;

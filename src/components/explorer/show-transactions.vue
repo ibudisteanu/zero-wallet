@@ -6,21 +6,27 @@
             <div class="table-header table-row">
                 <span>Hash</span>
                 <span>Block</span>
+                <span>Confirmations</span>
                 <span>Time</span>
                 <span>Size</span>
                 <span>Fee</span>
-                <span>Confirmations</span>
                 <span>In</span>
                 <span>Out</span>
             </div>
             <div v-for="tx in transactions" class="table-row">
 
                 <span><router-link :to="`/explorer/tx/hash/${tx.hash().toString('hex')}`">{{tx.hash().toString("hex").substr(0,20)+'...'}}</router-link></span>
-                <span><router-link :to="`/explorer/block/height/${tx.__extra.height}`">{{tx.__extra.height}}</router-link></span>
+                <span>
+                    <router-link v-if="tx.__extra.height" :to="`/explorer/block/height/${tx.__extra.height}`">{{tx.__extra.height}}</router-link>
+                </span>
+                <span>
+                    <template v-if="tx.__extra.height">
+                        {{ $store.state.blockchain.end - tx.__extra.height -1 }}
+                    </template>
+                </span>
                 <span>{{tx.__extra.timestamp}}</span>
                 <span>{{tx.size()}}</span>
                 <span>{{tx.fee}}</span>
-                <span>{{ $store.state.blockchain.end - tx.__extra.height -1 }}</span>
                 <span>
                     <div v-for="vin in tx.vin ">
                         <account-identicon :publicKey="vin.publicKey" size="20" outer-size="20" />
@@ -62,7 +68,7 @@ export default {
 <style scoped>
 
     .table-row{
-        grid-template-columns: 1fr 70px 50px 50px 70px 120px 100px 100px;
+        grid-template-columns: 1fr 70px 120px 50px 70px 50px 100px 100px;
     }
 
     .identicon{
