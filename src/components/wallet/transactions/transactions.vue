@@ -14,7 +14,7 @@
 
                     <show-transactions :transactions="transactions"/>
 
-                    <div class="view-more">
+                    <div class="centered">
                         <span v-if="address.txsLowestIndex" class="pointer" @click="handleViewMore">View more...</span>
                     </div>
 
@@ -67,9 +67,7 @@ export default {
 
     methods:{
         handleViewMore(){
-
-            if (this.address.txsLowestIndex)
-                return Consensus.downloadAccountTransactionsSpecific(this.address.address, this.address.txsLowestIndex )
+            return Consensus.downloadAccountTransactionsSpecific(this.address.address, this.address.txsLowestIndex )
 
         }
     }
@@ -85,10 +83,6 @@ export default {
 
     .title{
         font-size: 20px;
-    }
-
-    .view-more{
-        text-align: center;
     }
 
 </style>

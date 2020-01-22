@@ -36,6 +36,8 @@
             </div>
         </div>
 
+
+
     </div>
 
 </template>
@@ -43,6 +45,7 @@
 <script>
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
+import Consensus from "src/consensus/consensus"
 
 export default {
 
@@ -56,7 +59,9 @@ export default {
 
         convertToBase(amount){
             return global.apacache._scope.argv.transactions.coins.convertToBase(amount);
-        }
+        },
+
+
 
     }
 

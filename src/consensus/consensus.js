@@ -144,7 +144,7 @@ class Consensus extends BaseConsensus{
         await this._downloadAccountBalances();
         await this._downloadAccountTransactions();
 
-        await this._downloadPendingTransactions();
+        await this.downloadPendingTransactions();
 
     }
 
@@ -256,15 +256,15 @@ class Consensus extends BaseConsensus{
 
         console.log("downloadAccountTransactionsSpecific", account, index);
 
-        const txs = await this._client.emitAsync("transactions/account/get-transactions", { account, index }, 0);
+        const data = await this._client.emitAsync("transactions/account/get-transactions", { account, index }, 0);
 
-        console.log(txs);
+        console.log(data);
 
-        if (txs) {
-            this.emit('consensus/account-update-txs', {account, txs});
+        if (data) {
+            this.emit('consensus/account-update-txs', {account, txs: data.out});
 
-            for (const key in txs)
-                this.getTransactionByHash( txs[key].toString("hex") );
+            for (const key in data.out)
+                this.getTransactionByHash( data.out[key].toString("hex") );
 
         }
 
@@ -280,15 +280,15 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async _downloadPendingTransactions(){
+    async downloadPendingTransactions( account, index){
 
         if (!this._downloadPendingTransactionsEnabled) return;
 
-        const transactions = await this._client.emitAsync("mem-pool/content", { }, 0);
+        const data = await this._client.emitAsync("mem-pool/content", { account, index }, 0);
 
-        if (!transactions) return ;
+        if (!data|| !data.out) return ;
 
-        this.emit('consensus/pending-transactions', transactions );
+        this.emit('consensus/pending-transactions', data );
 
     }
 
@@ -297,7 +297,7 @@ class Consensus extends BaseConsensus{
         if (!this._downloadPendingTransactionsEnabled)
             this._downloadPendingTransactionsEnabled = true;
 
-        this._downloadPendingTransactions();
+        this.downloadPendingTransactions();
     }
 
     async stopDownloadPendingTransactions(){

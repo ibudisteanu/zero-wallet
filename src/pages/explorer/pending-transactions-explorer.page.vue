@@ -14,6 +14,10 @@
 
                 <show-transactions-info :transactionsInfo="pendingTransactions" />
 
+                <div class="centered" v-if="pendingNext" >
+                    <span class="pointer" @click="handleViewMore">View more...</span>
+                </div>
+
             </div>
         </div>
     </layout>
@@ -39,14 +43,24 @@ export default {
     computed:{
         pendingTransactions(){
             return this.$store.state.transactions.pending;
+        },
+
+        pendingNext(){
+            return this.$store.state.transactions.pendingNext;
         }
+
     },
 
     methods:{
         async startDownloadPendingTransactions(){
             await Consensus.initPromise;
             await Consensus.startDownloadPendingTransactions();
+        },
+
+        handleViewMore(){
+            return Consensus.downloadPendingTransactions( undefined, this.pendingNext )
         }
+
     },
 
     watch: {

@@ -5,7 +5,9 @@ export default {
     state: {
 
         list: {},
+
         pending: {},
+        pendingNext: null,
 
     },
 
