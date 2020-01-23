@@ -13,18 +13,24 @@
                 <span>In</span>
                 <span>Out</span>
             </div>
-            <div v-for="tx in transactions" class="table-row">
+            <div v-for="tx in transactions" :class="`table-row  ${isPending(tx) ? 'pending-row' : ''} `">
 
                 <span><router-link :to="`/explorer/tx/hash/${tx.hash().toString('hex')}`">{{tx.hash().toString("hex").substr(0,20)+'...'}}</router-link></span>
                 <span>
-                    <router-link v-if="tx.__extra.height" :to="`/explorer/block/height/${tx.__extra.height}`">{{tx.__extra.height}}</router-link>
+                    <template v-if="!isPending(tx)">
+                        <router-link :to="`/explorer/block/height/${tx.__extra.height}`">{{tx.__extra.height}}</router-link>
+                    </template>
                 </span>
                 <span>
-                    <template v-if="tx.__extra.height">
+                    <template v-if="!isPending(tx)">
                         {{ $store.state.blockchain.end - tx.__extra.height -1 }}
                     </template>
                 </span>
-                <span>{{tx.__extra.timestamp}}</span>
+                <span>
+                    <template v-if="!isPending(tx)">
+                        {{tx.__extra.timestamp}}
+                    </template>
+                </span>
                 <span>{{tx.size()}}</span>
                 <span>{{tx.fee}}</span>
                 <span>
@@ -59,7 +65,12 @@ export default {
     methods:{
         convertToBase(amount){
             return global.apacache._scope.argv.transactions.coins.convertToBase(amount);
+        },
+
+        isPending(tx){
+            return tx.__extra.height ? false : true
         }
+
     }
 
 }

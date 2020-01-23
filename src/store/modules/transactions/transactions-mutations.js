@@ -11,9 +11,12 @@ export default {
 
     setTransactions(context, { transactions }) {
 
-        for (const key in transactions)
-            Vue.set(context.list, key, transactions[key]);
+        const list = {... ( context.list || {} ) };
 
+        for (const key in transactions)
+            list[key] = transactions[key];
+
+        context.list = list;
     },
 
     setPendingTransactionsCount(context, { count }) {

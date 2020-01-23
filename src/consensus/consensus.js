@@ -181,7 +181,9 @@ class Consensus extends BaseConsensus{
 
                     delete this._data.blocks[i];
                     delete this._data.blocksByHash[blockInfo.hash.toString("hex")];
+
                     await this.getBlock(i);
+
                 }
 
                 this._data.blocksInfo[i] = blockInfo;
@@ -192,6 +194,8 @@ class Consensus extends BaseConsensus{
                     done = true;
 
             }
+
+
         }
 
         return true;
@@ -270,7 +274,7 @@ class Consensus extends BaseConsensus{
         this.emit('consensus/account-update-txs', {account, txs: data.out, next: data.next, });
 
         for (const key in data.out)
-            this.getTransactionByHash( data.out[key].toString("hex") );
+            this.getTransactionByHash( data.out[key].toString("hex"), false );
 
     }
 
@@ -296,10 +300,10 @@ class Consensus extends BaseConsensus{
         if (!account)
             this.emit('consensus/pending-transactions', { transactions: data.out, transactionsNext: data.next, clear: index === undefined ? true: false } );
         else
-            this.emit('consensus/account-update-txs', { account, txs: data.out, next: data.next, clear: index === undefined ? true: false } );
+            this.emit('consensus/account-update-pending-txs', { account, txs: data.out, next: data.next, clear: index === undefined ? true: false } );
 
         for (const hash in data.out)
-            this.getTransactionByHash(hash);
+            this.getTransactionByHash(hash, true);
 
     }
 
@@ -354,9 +358,7 @@ class Consensus extends BaseConsensus{
             chain: global.apacache._scope.mainChain
         }, undefined, Buffer.from(blockData));
 
-        await this._includeBlock(block);
-
-        return block;
+        return this._includeBlock(block);
 
     }
 
@@ -370,6 +372,9 @@ class Consensus extends BaseConsensus{
         const data = {};
         const txs = await block.getTransactions();
         for (const tx of txs) {
+
+            console.log("_includeBlock", tx.hash().toString("hex"), block.height);
+
             tx.__extra = {
                 height: block.height,
                 timestamp: block.timestamp,
@@ -379,11 +384,15 @@ class Consensus extends BaseConsensus{
         }
         this.emit('consensus/tx-downloaded', data );
 
+        return block;
     }
 
-    async getTransactionByHash(hash){
+    async getTransactionByHash(hash, isPending = false ){
 
-        if (this._data.transactions[hash]) return this._data.transactions[hash];
+        if (this._data.transactions[hash])
+            if ( (isPending && !this._data.transactions[hash].__extra.height ) || (!isPending && this._data.transactions[hash].__extra.height ) )
+                return this._data.transactions[hash];
+        
 
         const txData = await this._client.emitAsync("transactions/get-transaction", { hash }, 0  );
         if (!txData) return; //disconnected

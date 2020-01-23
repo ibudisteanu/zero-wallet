@@ -245,3 +245,7 @@ input[type=submit]:disabled {
 .vertical-center{
     vertical-align: middle;
 }
+
+.pending-row{
+    background-color: #4d35ff14;
+}

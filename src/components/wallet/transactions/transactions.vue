@@ -12,9 +12,7 @@
 
                 <div v-else>
 
-                    {{pendingTransactions}}
-
-                    <show-transactions :transactions="pendingTransactions.concat( transactions) "/>
+                    <show-transactions :transactions="transactionsAll "/>
 
                     <div class="centered">
                         <span v-if="address.txsLowestIndex" class="pointer" @click="handleViewMore">View more...</span>
@@ -83,6 +81,10 @@ export default {
                     out.push( this.$store.state.transactions.list[txs[key]] );
 
             return out.sort ( (a,b) => b.__extra.height - a.__extra.height );
+        },
+
+        transactionsAll(){
+            return this.pendingTransactions.concat( this.transactions );
         }
 
     },
