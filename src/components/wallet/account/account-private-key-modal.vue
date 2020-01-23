@@ -101,19 +101,19 @@ export default {
 
         copyPrivateKey(){
 
-            this.$copyText(this.privateKey).then( (e) => {
+            this.$copyText(this.privateKey).then( e =>
                 this.$notify({
                     type: 'success',
                     title: `Copied to clipboard successfully`,
                     text: `Private Key ${this.privateKey} copied to clipboard`,
-                });
-            }, (e) => {
+                }),
+                e =>
                 this.$notify({
                     type: 'error',
                     title: `Clipboard failed`,
                     text: `Failed to copy to clipboard`,
-                });
-            })
+                })
+            )
 
         }
 

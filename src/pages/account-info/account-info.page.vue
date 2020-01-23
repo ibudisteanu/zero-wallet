@@ -139,19 +139,19 @@ export default {
 
         copyAddress(key){
 
-            this.$copyText(key).then( (e) => {
+            this.$copyText(key).then( e =>
                 this.$notify({
                     type: 'success',
                     title: `Copied to clipboard successfully`,
                     text: `${key} copied to clipboard`,
-                });
-            }, (e) => {
+                }),
+                e =>
                 this.$notify({
                     type: 'error',
                     title: `Clipboard failed`,
                     text: `Failed to copy to clipboard`,
-                });
-            })
+                })
+            )
 
         }
 
@@ -160,7 +160,7 @@ export default {
     computed:{
 
         address(){
-            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainAddress] ;
+            return this.$store.state.addresses.list[this.$store.state.wallet.mainAddress] ;
         }
 
     },

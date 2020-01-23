@@ -105,6 +105,8 @@ export default {
                 const amount = global.apacache._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.amount) );
                 const fee = global.apacache._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.fee) );
 
+                const nonce = 0;
+
                 const out = await global.apacache.wallet.transfer.transferSimple({
                     address: this.address.address,
                     txDsts: [{
@@ -113,7 +115,8 @@ export default {
                     }],
                     fee,
                     paymentId: this.paymentId,
-                    tokenCurrency: this.tokenCurrency
+                    tokenCurrency: this.tokenCurrency,
+                    nonce: nonce,
                 });
 
                 if (out)
@@ -142,7 +145,7 @@ export default {
         },
 
         address(){
-            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainAddress] ;
+            return this.$store.state.addresses.list[this.$store.state.wallet.mainAddress] ;
         },
 
         validation(){

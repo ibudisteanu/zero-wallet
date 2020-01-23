@@ -10,9 +10,7 @@ export default {
         encrypted: null,
         version: null,
 
-        addresses: {},
         mainAddress: null,
-
 
         isLoading: false,
     },

@@ -30,19 +30,19 @@ export default {
     methods: {
         copyAddress(address){
 
-            this.$copyText(address).then( (e) => {
+            this.$copyText(address).then( e =>
                 this.$notify({
                     type: 'success',
                     title: `Copied to clipboard successfully`,
                     text: `Address ${address} copied to clipboard`,
-                });
-            }, (e) => {
+                }),
+                e =>
                 this.$notify({
                     type: 'error',
                     title: `Clipboard failed`,
                     text: `Failed to copy to clipboard`,
-                });
-            })
+                })
+            )
 
         }
     },

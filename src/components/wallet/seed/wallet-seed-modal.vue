@@ -91,19 +91,19 @@ export default {
 
         copySeed(){
 
-            this.$copyText(this.seed).then( (e) => {
+            this.$copyText(this.seed).then( e =>
                 this.$notify({
                     type: 'success',
                     title: `Copied to clipboard successfully`,
                     text: `Wallet Seed ${this.seed} copied to clipboard`,
-                });
-            }, (e) => {
+                }),
+                e =>
                 this.$notify({
                     type: 'error',
                     title: `Clipboard failed`,
                     text: `Failed to copy to clipboard`,
-                });
-            })
+                })
+            );
 
         }
 
