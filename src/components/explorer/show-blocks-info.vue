@@ -20,7 +20,7 @@
                 <span>{{blockInfo.timestamp}}</span>
                 <span>{{blockInfo.size}}</span>
                 <span>{{blockInfo.txCount}}</span>
-                <span> <account-identicon  :address="blockInfo.forgedBy" :size="20" :outer-size="20"  /> </span>
+                <span> <account-identicon  :address="blockInfo.forgedBy" :size="20" :outer-size="5"  /> </span>
 
             </div>
         </div>

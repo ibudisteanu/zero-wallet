@@ -24,7 +24,7 @@ a{
 .boxed-background{
     background: white;
     box-shadow: 0 4px 24px -8px rgba(0, 0, 0, 0.25);
-    padding: 2em;
+    padding: 25px;
 }
 
 .disabled{
@@ -248,4 +248,11 @@ input[type=submit]:disabled {
 
 .pending-row{
     background-color: #4d35ff14;
+}
+
+
+@media (max-width: 767px) {
+    .boxed-background {
+        padding: 15px;
+    }
 }

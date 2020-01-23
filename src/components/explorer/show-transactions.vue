@@ -6,7 +6,7 @@
             <div class="table-header table-row">
                 <span>Hash</span>
                 <span>Block</span>
-                <span>Confirmations</span>
+                <span>Confirm</span>
                 <span>Time</span>
                 <span>Size</span>
                 <span>Fee</span>
@@ -34,14 +34,14 @@
                 <span>{{tx.size()}}</span>
                 <span>{{tx.fee}}</span>
                 <span>
-                    <div v-for="vin in tx.vin ">
-                        <account-identicon :publicKey="vin.publicKey" size="20" outer-size="20" />
+                    <div class="input" v-for="vin in tx.vin ">
+                        <account-identicon :publicKey="vin.publicKey" size="20" outer-size="7" />
                         <span class="amount vertical-center">-{{convertToBase(vin.amount)}}</span>
                     </div>
                 </span>
                 <span>
-                    <div v-for="vout in tx.vout">
-                        <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="20" />
+                    <div class="output" v-for="vout in tx.vout">
+                        <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="7" />
                         <span class="amount vertical-center">{{convertToBase(vout.amount)}}</span>
                     </div>
                 </span>
@@ -79,15 +79,23 @@ export default {
 <style scoped>
 
     .table-row{
-        grid-template-columns: 1fr 70px 120px 50px 70px 50px 100px 100px;
+        grid-template-columns: 1fr 65px 59px 50px 70px 50px 110px 110px;
     }
 
     .identicon{
-        display: inline;
     }
 
     .amount{
         display: inline-block;
+    }
+
+    .input, .output{
+        display: grid;
+        grid-template-columns: 34px 1fr;
+    }
+
+    .amount {
+        padding-top: 10px;
     }
 
 </style>

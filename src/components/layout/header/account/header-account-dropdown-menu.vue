@@ -6,7 +6,7 @@
             <li>My accounts</li>
 
             <li v-for="(address) in addresses" :class="`address ${ address.address === mainAddress  ? 'focused' : ''} ` " @click="setMainAddress(address.address)" >
-                <account-identicon :identicon="address.identicon" :size="20" :outer-size="18" > </account-identicon>
+                <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" > </account-identicon>
 
                 <div>
                     <span>{{address.name}}</span> <span class="disabled right-float" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : ''}}</span><br/>
@@ -141,7 +141,8 @@ export default {
 
     .address{
         display: grid;
-        grid-template-columns: 50px 1fr;
+        grid-template-columns: 32px 1fr;
+        grid-column-gap: 10px;
     }
 
     .focused{

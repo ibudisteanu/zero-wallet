@@ -14,7 +14,7 @@
 
                     <div :class="`${destinationAddressIdenticon ? 'destination': ''}-row`">
 
-                        <account-identicon v-if="destinationAddressIdenticon" :identicon="destinationAddressIdenticon" size="35" outer-size="35" />
+                        <account-identicon v-if="destinationAddressIdenticon" :identicon="destinationAddressIdenticon" size="35" outer-size="8" />
 
                         <div class="input-toggle-group">
                             <input type="text" v-model="destinationAddress">
@@ -183,7 +183,8 @@ export default {
 
     .destination-row{
         display: grid;
-        grid-template-columns: 60px 1fr;
+        grid-template-columns: 50px 1fr;
+        grid-column-gap: 10px;
     }
 
     .amount-row{

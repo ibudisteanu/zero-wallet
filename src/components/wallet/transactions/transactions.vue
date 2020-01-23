@@ -6,7 +6,7 @@
 
             <div v-if="address">
 
-                <span class="title">Transactions {{ txCount + txCountPending }}</span>  <br/>
+                <span class="title">Transactions {{ !address.loaded ? '' : txCount + txCountPending }}</span>  <br/>
 
                 <loading-spinner v-if="!address.loaded" />
 
@@ -45,11 +45,11 @@ export default {
     computed:{
 
         txCount(){
-            return this.address.txCount;
+            return this.address.txCount || 0;
         },
 
         txCountPending(){
-            return this.address.txCountPending;
+            return this.address.txCountPending || 0;
         },
 
         txs(){

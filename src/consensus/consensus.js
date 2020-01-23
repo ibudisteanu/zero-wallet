@@ -392,7 +392,7 @@ class Consensus extends BaseConsensus{
         if (this._data.transactions[hash])
             if ( (isPending && !this._data.transactions[hash].__extra.height ) || (!isPending && this._data.transactions[hash].__extra.height ) )
                 return this._data.transactions[hash];
-        
+
 
         const txData = await this._client.emitAsync("transactions/get-transaction", { hash }, 0  );
         if (!txData) return; //disconnected
