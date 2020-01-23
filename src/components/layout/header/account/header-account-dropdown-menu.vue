@@ -10,7 +10,7 @@
 
                 <div>
                     <span>{{address.name}}</span> <span class="disabled right-float" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : ''}}</span><br/>
-                    <span class="disabled">{{address.address.substr(0, 15)+'...'}} <i class="fa fa-copy pointer"  @click="copyAddress(address)" /> </span>
+                    <span class="disabled">{{address.address.substr(0, 15)+'...'}} <i class="fa fa-copy pointer"  @click.stop=" copyAddress( address)" /> </span>
                 </div>
 
             </li>
@@ -116,7 +116,8 @@ export default {
             return this.$emit('showImportPrivateKey');
         },
 
-        copyAddress(address){
+        copyAddress( address){
+
             this.$copyText(address.address).then( (e) => {
                 this.$notify({
                     type: 'success',

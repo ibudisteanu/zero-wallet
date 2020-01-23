@@ -31,7 +31,7 @@
                             </div>
                             <div>
                                 <span class="disabled">Currency</span> <br/>
-                                <select v-model="currency">
+                                <select v-model="tokenCurrency">
                                     <option v-for="(balance, token) in balances"
                                             :value="token">
                                         {{token}}
@@ -44,7 +44,7 @@
                     <div class="fee-row">
                         <span class="disabled">Fee</span>
                         <input type="number" v-model="fee" min="0">
-                        <span class="disabled">{{currency}}</span>
+                        <span class="disabled">{{tokenCurrency}}</span>
                     </div>
 
 
@@ -87,7 +87,7 @@ export default {
             destinationAddress: '',
             amount: 0,
             fee: 0,
-            currency: '00',
+            tokenCurrency: '00',
             paymentId: '',
 
             error: '',
@@ -105,10 +105,16 @@ export default {
                 const amount = global.apacache._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.amount) );
                 const fee = global.apacache._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.fee) );
 
-                const out = await global.apacache.wallet.transfer.transferSimple(this.address.address,[ {
-                    address: this.destinationAddress,
-                    amount,
-                }], fee, this.paymentId, this.currency );
+                const out = await global.apacache.wallet.transfer.transferSimple({
+                    address: this.address.address,
+                    txDsts: [{
+                        address: this.destinationAddress,
+                        amount,
+                    }],
+                    fee,
+                    paymentId: this.paymentId,
+                    tokenCurrency: this.tokenCurrency
+                });
 
                 if (out)
                     this.$notify({
