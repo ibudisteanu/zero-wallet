@@ -4,7 +4,7 @@
         <div class="container pd-top-40">
             <div class="boxed ">
 
-                <h1>Blockchain Explorer</h1>
+                <h1>Blockchain Explorer {{blocks ? blocks : ''}}</h1>
 
                 <span v-if="error" class="danger">
                     {{error}}
@@ -42,6 +42,10 @@ export default {
     computed:{
         lastBlocksInfo(){
             return this.$store.getters.blocksInfoSorted;
+        },
+
+        blocks(){
+            return this.$store.state.blockchain.end;
         }
     },
 
