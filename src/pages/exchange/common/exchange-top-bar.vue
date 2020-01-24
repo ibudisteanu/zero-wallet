@@ -40,7 +40,6 @@ export default {
     }
 
     .row{
-        margin-left: 10px;
         display: grid;
         grid-template-columns: 80px 80px 80px;
         align-items: center;

@@ -22,13 +22,13 @@
                 <span>{{tx.tokenCurrency.toString("hex")}}</span>
                 <span>{{tx.queued}}</span>
                 <span>
-                    <div v-for="vin in tx.vin ">
+                    <div class="input" v-for="vin in tx.vin " >
                         <account-identicon :publicKey="vin.publicKey" size="20" outer-size="20" />
                         <span class="amount vertical-center">-{{convertToBase(vin.amount)}}</span>
                     </div>
                 </span>
                 <span>
-                    <div v-for="vout in tx.vout">
+                    <div class="output" v-for="vout in tx.vout" >
                         <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="20" />
                         <span class="amount vertical-center">{{convertToBase(vout.amount)}}</span>
                     </div>
@@ -80,6 +80,12 @@ export default {
 
     .amount{
         display: inline-block;
+    }
+
+    .input, .output{
+        align-items: center;
+        display: grid;
+        grid-template-columns: 34px 1fr;
     }
 
 </style>

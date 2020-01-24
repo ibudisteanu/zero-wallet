@@ -90,12 +90,12 @@ export default {
     }
 
     .input, .output{
+        align-items: center;
         display: grid;
         grid-template-columns: 34px 1fr;
     }
 
     .amount {
-        padding-top: 10px;
     }
 
 </style>
