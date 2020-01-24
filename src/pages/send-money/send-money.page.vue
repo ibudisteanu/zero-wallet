@@ -131,12 +131,22 @@ export default {
 
                     console.log("outConsensus", outConsensus);
 
-                    this.$notify({
-                        type: 'success',
-                        title: `Transaction created`,
-                        text: `A transaction has been made. \n TxId ${out.tx.hash().toString("hex")}`,
-                    });
-                }
+                    if (outConsensus) {
+
+                        await Consensus.downloadAccountTransactions(this.address.address);
+
+                        this.$notify({
+                            type: 'success',
+                            title: `Transaction created`,
+                            text: `A transaction has been made. \n TxId ${out.tx.hash().toString("hex")}`,
+                        });
+
+                        this.$router.push('/');
+
+                    } else throw {message: "Transaction was not included in MemPool"};
+
+                } else
+                    throw {message: "Transaction couldn't be made"};
 
             }catch(err){
                 this.error = err.message;

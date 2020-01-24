@@ -141,8 +141,8 @@ class Consensus extends BaseConsensus{
 
         await this._downloadLastBlocksHashes();
 
-        await this._downloadAccountBalances();
-        await this._downloadAccountTransactions();
+        await this._downloadAccountsBalances();
+        await this._downloadAccountsTransactions();
 
         await this.downloadPendingTransactions();
 
@@ -209,38 +209,41 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async _downloadAccountBalances(){
+    async _downloadAccountsBalances(){
 
-        for (const account in this._data.accounts){
+        for (const account in this._data.accounts)
+            await this.downloadAccountBalance(account);
 
-            const balances = await this._client.emitAsync("account/get-balance", {account }, 0);
-            const nonce = await this._client.emitAsync("account/get-nonce", {account }, 0);
+    }
 
-            const address = global.apacache._scope.cryptography.addressValidator.validateAddress( account );
-            const publicKeyHash = address.publicKeyHash;
+    async downloadAccountBalance(account){
 
-            //remove old balance
-            const balancesOld = await global.apacache.mainChain.data.accountTree.getBalances(publicKeyHash);
-            const nonceOld = await global.apacache.mainChain.data.accountTree.getNonce(publicKeyHash);
+        const balances = await this._client.emitAsync("account/get-balance", {account }, 0);
+        const nonce = await this._client.emitAsync("account/get-nonce", {account }, 0);
 
-            if (balancesOld)
-                for (const currencyToken in balancesOld)
-                    await global.apacache.mainChain.data.accountTree.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
+        const address = global.apacache._scope.cryptography.addressValidator.validateAddress( account );
+        const publicKeyHash = address.publicKeyHash;
 
-            if (nonceOld)
-                await global.apacache.mainChain.data.accountTree.updateNonce( publicKeyHash, - nonceOld, );
+        //remove old balance
+        const balancesOld = await global.apacache.mainChain.data.accountTree.getBalances(publicKeyHash);
+        const nonceOld = await global.apacache.mainChain.data.accountTree.getNonce(publicKeyHash);
 
-            //update with new balance
-            if (balances)
-                for (const currencyToken in balances)
-                    await global.apacache.mainChain.data.accountTree.updateBalance(publicKeyHash, balances[currencyToken], currencyToken,);
+        if (balancesOld)
+            for (const currencyToken in balancesOld)
+                await global.apacache.mainChain.data.accountTree.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
 
-            if (nonce)
-                await global.apacache.mainChain.data.accountTree.updateNonce(publicKeyHash, nonce,);
+        if (nonceOld)
+            await global.apacache.mainChain.data.accountTree.updateNonce( publicKeyHash, - nonceOld, );
 
-            this.emit('consensus/account-update', { account, balances, nonce  } );
+        //update with new balance
+        if (balances)
+            for (const currencyToken in balances)
+                await global.apacache.mainChain.data.accountTree.updateBalance(publicKeyHash, balances[currencyToken], currencyToken,);
 
-        }
+        if (nonce)
+            await global.apacache.mainChain.data.accountTree.updateNonce(publicKeyHash, nonce,);
+
+        this.emit('consensus/account-update', { account, balances, nonce  } );
 
     }
 
@@ -254,21 +257,24 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async _downloadAccountTransactions() {
+    async _downloadAccountsTransactions() {
 
-        for (const account in this._data.accounts) {
+        for (const account in this._data.accounts)
+            await this.downloadAccountTransactions(account);
 
-            const txCount = await this._client.emitAsync("transactions/account/get-transaction-count", {account }, 0);
-            const txCountPending = await this._client.emitAsync("mem-pool/content-count", {account }, 0);
+    }
 
-            if (!txCountPending && !txCount) continue;
+    async downloadAccountTransactions(account) {
 
-            this.emit('consensus/account-update-tx-count', {account, txCount, txCountPending});
+        const txCount = await this._client.emitAsync("transactions/account/get-transaction-count", {account }, 0);
+        const txCountPending = await this._client.emitAsync("mem-pool/content-count", {account }, 0);
 
-            await this.downloadAccountTransactionsSpecific({account, limit: 10});
-            await this.downloadPendingTransactionsSpecific( {account})
+        if (!txCountPending && !txCount) return;
 
-        }
+        this.emit('consensus/account-update-tx-count', {account, txCount, txCountPending});
+
+        await this.downloadAccountTransactionsSpecific({account, limit: 10});
+        await this.downloadPendingTransactionsSpecific( {account})
 
     }
 
