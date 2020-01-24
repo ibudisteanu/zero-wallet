@@ -202,6 +202,13 @@ class Consensus extends BaseConsensus{
 
     }
 
+    async downloadNonceIncludingMemPool(account){
+
+        const nonce = await this._client.emitAsync("account/get-nonce-including-mem-pool", { account }, 0);
+        return nonce;
+
+    }
+
     async _downloadAccountBalances(){
 
         for (const account in this._data.accounts){

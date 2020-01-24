@@ -74,6 +74,8 @@ import Layout from "src/components/layout/layout"
 import Account from "src/components/wallet/account/account"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import QrCodeScanner from "./qr-code-scanner/qr-code-scanner";
+import Consensus from "src/consensus/consensus"
+
 const {TransactionTokenCurrencyTypeEnum} = global.cryptography.transactions;
 import LoadingSpinner from "src/components/utils/loading-spinner";
 
@@ -105,7 +107,8 @@ export default {
                 const amount = global.apacache._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.amount) );
                 const fee = global.apacache._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.fee) );
 
-                const nonce = this.$store.getters.getAddressNonce( this.address.address );
+                const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
+                if (nonce === undefined) throw {message: "The connection to the node was dropped"};
 
                 console.log("nonce", nonce);
 
@@ -119,15 +122,21 @@ export default {
                     paymentId: this.paymentId,
                     tokenCurrency: this.tokenCurrency,
                     nonce,
-                    memPoolValidateNonce: false,
+                    memPoolValidateTxData: false,
                 });
 
-                if (out)
+                if (out) {
+
+                    const outConsensus = await Consensus._client.emitAsync("mem-pool/new-tx", {tx: out.tx.toBuffer() }, 0);
+
+                    console.log("outConsensus", outConsensus);
+
                     this.$notify({
                         type: 'success',
                         title: `Transaction created`,
-                        text: `A transaction has been made. \n TxId ${ out.tx.hash().toString("hex") }`,
+                        text: `A transaction has been made. \n TxId ${out.tx.hash().toString("hex")}`,
                     });
+                }
 
             }catch(err){
                 this.error = err.message;
