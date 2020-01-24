@@ -7,7 +7,7 @@
         <div class="container pd-top-40">
             <div class="boxed ">
 
-                <h1>Exchange Buy coins</h1>
+                <h1>Portofolio Trades</h1>
 
                 <span v-if="error" class="danger">
                     {{error}}
