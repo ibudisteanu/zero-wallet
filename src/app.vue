@@ -80,6 +80,8 @@ export default {
 
         Consensus.on("consensus/blockchain-info-updated", info => this.$store.commit('setBlockchainInfo', info) );
 
+        Consensus.on("consensus/blockchain-info-genesis-updated", info => this.$store.commit('setBlockchainInfoGenesis', info) );
+
         Consensus.on("consensus/block-info-downloaded", data => this.$store.commit('setBlockchainBlockInfo', data) );
 
         Consensus.on("consensus/status-update", status =>  this.$store.commit('setConsensusStatus', status) );

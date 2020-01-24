@@ -101,6 +101,7 @@ class Consensus extends BaseConsensus{
         this._client.on("connect", ()=>{
 
             this.getBlockchain();
+            this._downloadGenesis();
             this._initPromiseResolve(true);
 
         });
@@ -254,6 +255,17 @@ class Consensus extends BaseConsensus{
         accounts.map (account => {
             this._data.accounts[account] = true;
         });
+
+    }
+
+    async _downloadGenesis(){
+
+        const genesis = await this._client.emitAsync("blockchain/genesis", { }, 0);
+        console.log("genesis", genesis);
+
+        this._data.genesis = genesis;
+
+        this.emit('consensus/blockchain-info-genesis-updated', genesis );
 
     }
 

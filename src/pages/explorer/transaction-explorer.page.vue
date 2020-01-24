@@ -29,6 +29,11 @@
                                 <span v-else>-</span>
                             </div>
                             <div class="table-row">
+                                <span>Block Time</span>
+                                <span v-if="tx.__extra.timestamp">{{timeAgo( $store.state.blockchain.genesisTimestamp + tx.__extra.timestamp) }}</span>
+                                <span v-else>-</span>
+                            </div>
+                            <div class="table-row">
                                 <span>Confirmations</span>
                                 <span v-if="tx.__extra.height">{{ $store.state.blockchain.end - tx.__extra.height -1 }}</span>
                                 <span v-else>-</span>
@@ -94,6 +99,7 @@ import Layout from "src/components/layout/layout"
 import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
+import Utils from "src/utils/utils"
 
 export default {
 
@@ -138,7 +144,11 @@ export default {
 
         convertToBase(amount){
             return global.apacache._scope.argv.transactions.coins.convertToBase(amount);
-        }
+        },
+
+        timeAgo(timestamp){
+            return Utils.timeSince( timestamp*1000 );
+        },
 
     },
 

@@ -10,8 +10,7 @@
                 <span>Nonce</span>
                 <span>Token</span>
                 <span>Queued</span>
-                <span>In</span>
-                <span>Out</span>
+                <span>Data</span>
             </div>
             <div v-for="(tx, txId) in transactionsInfo" class="table-row">
 
@@ -26,8 +25,6 @@
                         <account-identicon :publicKey="vin.publicKey" size="20" outer-size="20" />
                         <span class="amount vertical-center">-{{convertToBase(vin.amount)}}</span>
                     </div>
-                </span>
-                <span>
                     <div class="output" v-for="vout in tx.vout" >
                         <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="20" />
                         <span class="amount vertical-center">{{convertToBase(vout.amount)}}</span>
@@ -71,7 +68,7 @@ export default {
 <style scoped>
 
     .table-row{
-        grid-template-columns: 1fr 30px 40px 60px 100px 70px 150px 150px;
+        grid-template-columns: 1fr 30px 40px 60px 100px 70px 150px;
     }
 
     .identicon{

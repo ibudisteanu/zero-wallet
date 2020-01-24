@@ -5,6 +5,8 @@ export default {
 
     state: {
 
+        genesisTimestamp: 0,
+
         start: 0,
         end: 0,
         hash: '',

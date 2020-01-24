@@ -33,7 +33,7 @@
                             </div>
                             <div class="table-row">
                                 <span>Time</span>
-                                <span>{{  block.timestamp }}</span>
+                                <span>{{  timeAgo( $store.state.blockchain.genesisTimestamp + block.timestamp ) }} ago</span>
                             </div>
                             <div class="table-row">
                                 <span>Height</span>

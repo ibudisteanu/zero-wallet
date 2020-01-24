@@ -65,6 +65,7 @@ export default {
     data(){
         return {
             show: false,
+            fullWidth: false,
         }
     },
 
@@ -86,6 +87,9 @@ export default {
         },
 
         closeMenu(){
+
+            if (this.fullWidth) return;
+
             this.show = false;
             console.log('show false');
         }
@@ -103,10 +107,12 @@ export default {
 
             if (width <= 450) {
                 this.show = false;
+                this.fullWidth = false;
                 this.$emit('onUpdateMarginLeft', {marginLeft: '0' });
             }
             else {
                 this.show = true;
+                this.fullWidth = true;
                 this.$emit('onUpdateMarginLeft', {marginLeft: '70px' });
             }
 

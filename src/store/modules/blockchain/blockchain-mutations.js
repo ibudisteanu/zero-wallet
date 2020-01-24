@@ -12,6 +12,12 @@ export default {
         context.chainWork = data.chainWork;
     },
 
+    setBlockchainInfoGenesis(context, data){
+
+        context.genesisTimestamp = data.timestampGenesis;
+
+    },
+
     setConsensusStatus(context, status){
         context.status = status;
     },
