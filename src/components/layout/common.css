@@ -19,6 +19,8 @@ a{
 .boxed{
     max-width: 850px;
     margin: 0 auto;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 .boxed-background{
@@ -205,10 +207,6 @@ input[type=submit]:disabled {
     z-index: 10000;
 }
 
-.table{
-    padding: 10px;
-}
-
 .table-header,
 .table-row{
     display: grid;
@@ -229,13 +227,6 @@ input[type=submit]:disabled {
     background-color: #ececff;
 }
 
-.table .table-row span:first-child{
-    padding-left: 20px;
-}
-
-.table .table-row span:last-child{
-    padding-right: 20px;
-}
 
 .table-row span{
     display:block;
@@ -255,7 +246,29 @@ input[type=submit]:disabled {
     .boxed-background {
         padding: 15px;
     }
-    .boxed{
-        margin-left: 15px;
+
+}
+
+.hide-tablet{
+
+}
+
+.hide-mobile{
+
+}
+
+
+@media (min-width: 481px) and (max-width: 767px) {
+
+    .hide-tablet{
+        display: none !important;
+    }
+
+}
+
+@media (max-width: 481px) {
+
+    .hide-mobile{
+        display: none !important;
     }
 }

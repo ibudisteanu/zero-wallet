@@ -2,9 +2,9 @@
 
     <div>
 
-        <left-sidebar ref="refSidebar" :onUpdateMarginLeft="onUpdateMarginLeft" />
+        <left-sidebar ref="refSidebar" @onUpdateMarginLeft="onUpdateMarginLeft" />
 
-        <div class="layout" :style="{marginLeft: marginLeft+'px' }">
+        <div class="layout" :style="{paddingLeft: marginLeft }">
 
             <warning-bar />
 
@@ -37,22 +37,19 @@ export default {
 
     data(){
         return {
-            marginLeft: 0,
+            marginLeft: '70px',
+            width: '100%',
         }
     },
 
     methods:{
 
-        onUpdateMarginLeft(value){
-            console.log("pdate", value);
-            this.marginLeft = value;
+        onUpdateMarginLeft({marginLeft, width}){
+            console.log("pdate", marginLeft, width);
+            this.marginLeft = marginLeft;
         }
 
     },
-
-    mounted(){
-        this.marginLeft = this.$refs.refSidebar.width;
-    }
 
 }
 
