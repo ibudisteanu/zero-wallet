@@ -104,6 +104,8 @@ export default {
 
             try{
 
+                if (this.address.address === this.destinationAddress) throw {message: "Destination can not be the same with from"};
+
                 const amount = global.apacache._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.amount) );
                 const fee = global.apacache._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.fee) );
 
@@ -125,28 +127,21 @@ export default {
                     memPoolValidateTxData: false,
                 });
 
-                if (out) {
+                if (!out) throw {message: "Transaction couldn't be made"};
 
-                    const outConsensus = await Consensus._client.emitAsync("mem-pool/new-tx", {tx: out.tx.toBuffer() }, 0);
+                const outConsensus = await Consensus._client.emitAsync("mem-pool/new-tx", {tx: out.tx.toBuffer() }, 0);
 
-                    console.log("outConsensus", outConsensus);
+                if (!outConsensus) throw {message: "Transaction was not included in MemPool"};
 
-                    if (outConsensus) {
+                await Consensus.downloadAccountTransactions(this.address.address);
 
-                        await Consensus.downloadAccountTransactions(this.address.address);
+                this.$notify({
+                    type: 'success',
+                    title: `Transaction created`,
+                    text: `A transaction has been made. \n TxId ${out.tx.hash().toString("hex")}`,
+                });
 
-                        this.$notify({
-                            type: 'success',
-                            title: `Transaction created`,
-                            text: `A transaction has been made. \n TxId ${out.tx.hash().toString("hex")}`,
-                        });
-
-                        this.$router.push('/');
-
-                    } else throw {message: "Transaction was not included in MemPool"};
-
-                } else
-                    throw {message: "Transaction couldn't be made"};
+                this.$router.push('/');
 
             }catch(err){
                 this.error = err.message;
