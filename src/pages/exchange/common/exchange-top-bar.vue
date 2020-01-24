@@ -5,17 +5,17 @@
 
             <div class="row">
 
-                <router-link to="/exchange/buy">
+                <router-link to="/exchange/buy" :class="`${route === '/exchange/buy' ? 'selected' : ''}`">
                     <i class="fa fa-coins"></i>
                     Buy
                 </router-link>
 
-                <router-link to="/exchange/sell">
+                <router-link to="/exchange/sell" :class="`${route === '/exchange/sell' ? 'selected' : ''}`">
                     <i class="fa fa-donate"></i>
                     Sell
                 </router-link>
 
-                <router-link to="/exchange/portfolio">
+                <router-link to="/exchange/portfolio" :class="`${route === '/exchange/portfolio' ? 'selected' : ''}`">
                     <i class="fa fa-money-check-alt"></i>
                     Portfolio
                 </router-link>
@@ -30,6 +30,14 @@
 <script>
 export default {
 
+    computed:{
+
+        route(){
+            return this.$router.currentRoute.path;
+        }
+
+    }
+
 }
 </script>
 
@@ -40,14 +48,19 @@ export default {
     }
 
     .row{
+        font-size: 15px;
         display: grid;
-        grid-template-columns: 80px 80px 80px;
+        grid-template-columns: 90px 90px 90px;
         align-items: center;
     }
 
     .row a{
         color: black;
         align-items: center;
+    }
+
+    .row a.selected{
+        color: #6c6ce0;
     }
 
 </style>

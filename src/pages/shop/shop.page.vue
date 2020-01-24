@@ -7,6 +7,8 @@
 
                 <h1>Shop</h1>
 
+                <span>It will be available in version 0.2</span>
+
                 <span v-if="error" class="danger">
                     {{error}}
                 </span>
