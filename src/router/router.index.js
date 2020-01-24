@@ -14,7 +14,8 @@ import TransactionExplorerPage from "src/pages/explorer/transaction-explorer.pag
 import PendingTransactionsExplorerPage from "src/pages/explorer/pending-transactions-explorer.page"
 import ExchangeBuyPage from "src/pages/exchange/buy/exchange-buy.page"
 import ExchangeSellPage from "src/pages/exchange/sell/exchange-sell.page"
-import ExchangePortfolio from "src/pages/exchange/protfolio/exchange-portfoliu.page"
+import ExchangePortfolioPage from "src/pages/exchange/protfolio/exchange-portfoliu.page"
+import ShopPage from "src/pages/shop/shop.page"
 
 Vue.use(VueRouter);
 
@@ -53,7 +54,9 @@ const routes = [
 
     {path: '/exchange/buy', component: ExchangeBuyPage },
     {path: '/exchange/sell', component: ExchangeSellPage },
-    {path: '/exchange/portfolio', component: ExchangePortfolio },
+    {path: '/exchange/portfolio', component: ExchangePortfolioPage },
+
+    {path: '/shop', component: ShopPage },
 
 
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
