@@ -105,7 +105,9 @@ export default {
                 const amount = global.apacache._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.amount) );
                 const fee = global.apacache._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.fee) );
 
-                const nonce = 0;
+                const nonce = this.$store.getters.getAddressNonce( this.address.address );
+
+                console.log("nonce", nonce);
 
                 const out = await global.apacache.wallet.transfer.transferSimple({
                     address: this.address.address,
@@ -116,7 +118,8 @@ export default {
                     fee,
                     paymentId: this.paymentId,
                     tokenCurrency: this.tokenCurrency,
-                    nonce: nonce,
+                    nonce,
+                    memPoolValidateNonce: false,
                 });
 
                 if (out)

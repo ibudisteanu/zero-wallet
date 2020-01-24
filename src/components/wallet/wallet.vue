@@ -4,6 +4,7 @@
 
         <balance :address="address"> </balance>
         <transactions :address="address"> </transactions>
+
     </div>
 
 </template>
