@@ -5,17 +5,17 @@
 
             <div class="row">
 
-                <router-link to="/exchange/buy" :class="`${route === '/exchange/buy' ? 'selected' : ''}`">
+                <router-link to="/exchange/buy" :class="`${route.indexOf('/exchange/buy') === 0 ? 'selected' : ''}`">
                     <i class="fa fa-coins"></i>
                     Buy
                 </router-link>
 
-                <router-link to="/exchange/sell" :class="`${route === '/exchange/sell' ? 'selected' : ''}`">
+                <router-link to="/exchange/sell" :class="`${route.indexOf('/exchange/sell') === 0 ? 'selected' : ''}`">
                     <i class="fa fa-donate"></i>
                     Sell
                 </router-link>
 
-                <router-link to="/exchange/portfolio" :class="`${route === '/exchange/portfolio' ? 'selected' : ''}`">
+                <router-link to="/exchange/portfolio" :class="`${route.indexOf('/exchange/portfolio') === 0 ? 'selected' : ''}`">
                     <i class="fa fa-money-check-alt"></i>
                     Portfolio
                 </router-link>

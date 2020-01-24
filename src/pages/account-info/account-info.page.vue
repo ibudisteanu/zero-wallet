@@ -180,7 +180,6 @@ export default {
 
     .buttons-row .btn{
         display: inline-block;
-        text-align: center;
     }
 
 

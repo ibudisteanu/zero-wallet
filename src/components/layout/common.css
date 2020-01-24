@@ -123,6 +123,7 @@ a{
 }
 
 .btn-round {
+    text-align: center;
     background-color: white;
     border-radius: 999em;
     width: 56px;

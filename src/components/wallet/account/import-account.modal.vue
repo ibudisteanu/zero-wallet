@@ -198,7 +198,6 @@ export default {
 
     .btn{
         display: inline-block;
-        text-align: center;
     }
 
     .importAddresses {
