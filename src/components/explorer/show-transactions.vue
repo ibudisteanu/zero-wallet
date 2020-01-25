@@ -4,11 +4,13 @@
 
         <div class="table">
             <div class="table-header table-row">
+                <span class="hide-mobile">Hash</span>
                 <span>Time</span>
                 <span>Data</span>
             </div>
             <router-link v-for="tx in transactions" :class="`table-row  ${isPending(tx) ? 'pending-row' : ''} `" :to="`/explorer/tx/hash/${tx.hash().toString('hex')}`">
 
+                <span class="hide-mobile"><router-link :to="`/explorer/tx/hash/${tx.hash().toString('hex')}`">{{tx.hash().toString("hex").substr(0,10)+'...'}}</router-link></span>
                 <span>
                     <template v-if="!isPending(tx)">
                         {{ timeAgo( $store.state.blockchain.genesisTimestamp +  tx.__extra.timestamp) }}
@@ -68,7 +70,7 @@ export default {
 <style scoped>
 
     .table-row{
-        grid-template-columns: 70px 1fr ;
+        grid-template-columns: 100px 70px 1fr ;
     }
 
     .identicon{
@@ -83,6 +85,13 @@ export default {
     }
 
     .amount {
+    }
+
+
+    @media (max-width: 481px) {
+        .table-row{
+            grid-template-columns: 70px 1fr ;
+        }
     }
 
 </style>

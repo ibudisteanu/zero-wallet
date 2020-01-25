@@ -12,7 +12,7 @@
 
                 <div v-if="!error">
 
-                    <h3>Transaction {{height ? height : hash}} </h3>
+                    <h3 class="wordwrap">Transaction {{height ? height : hash}} </h3>
 
                     <div v-if="!tx">
                         <loading-spinner/>
@@ -180,5 +180,18 @@ export default {
         display: inline-block;
     }
 
+    @media (min-width: 481px) and  (max-width: 767px) {
+
+        .table-row{
+            grid-template-columns: 150px 1fr;
+        }
+
+    }
+
+    @media (max-width: 481px) {
+        .table-row{
+            grid-template-columns: 100px 1fr;
+        }
+    }
 
 </style>

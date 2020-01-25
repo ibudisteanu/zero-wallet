@@ -34,8 +34,12 @@
 
         <div class="amount-row">
             <div>
-                <span class="disabled">Amount</span> <br/>
-                <input type="number" v-model="amount" min="0">
+                <span class="disabled">Amount Min</span> <br/>
+                <input type="number" v-model="amountMin" min="0">
+            </div>
+            <div>
+                <span class="disabled">Amount Max</span> <br/>
+                <input type="number" v-model="amountMax" min="0">
             </div>
             <div>
                 <span class="disabled">Currency</span> <br/>
@@ -110,6 +114,8 @@ export default {
             address: '',
             title: '',
             description: '',
+            amountMin: 0,
+            amountMax: 0,
             tokenCurrency: '00',
             price: 0,
 
@@ -165,6 +171,8 @@ export default {
                 address: this.address,
                 title: this.title,
                 description: this.description,
+                amountMin: this.amountMin,
+                amountMax: this.amountMax,
                 tokenCurrency: this.tokenCurrency,
                 price: this.price,
                 paymentsSelected: paymentsSelected,
@@ -214,7 +222,7 @@ export default {
 
     .amount-row{
         display: grid;
-        grid-template-columns: 1fr 200px;
+        grid-template-columns: 1fr 1fr 200px;
         grid-column-gap: 10px;
     }
 
