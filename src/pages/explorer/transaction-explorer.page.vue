@@ -158,7 +158,7 @@ export default {
         }
     },
 
-    async mounted(){
+    mounted(){
 
         return this.loadTransaction();
 

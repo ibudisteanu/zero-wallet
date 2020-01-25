@@ -6,6 +6,11 @@
         <div class="container pd-top-40">
             <div class="boxed ">
                 <h1>Exchange Buy Create Offer</h1>
+
+                <exchange-add-offer-form>
+
+                </exchange-add-offer-form>
+
             </div>
         </div>
 

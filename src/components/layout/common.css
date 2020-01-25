@@ -155,6 +155,7 @@ a{
     position: relative;;
 }
 
+textarea,
 input[type=text],
 input[type=number],
 input[type=password],
