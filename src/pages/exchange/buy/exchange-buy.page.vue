@@ -24,6 +24,7 @@
                     {{error}}
                 </span>
 
+                <exchange-offers-list :type="0" />
 
             </div>
         </div>
@@ -35,10 +36,11 @@
 
 import Layout from "src/components/layout/layout"
 import ExchangeTopBar from "./../common/exchange-top-bar"
+import ExchangeOffersList from "./../common/exchange-offers-list"
 
 export default {
 
-    components: { Layout, ExchangeTopBar },
+    components: { Layout, ExchangeTopBar, ExchangeOffersList },
 
     data(){
         return {

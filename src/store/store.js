@@ -5,6 +5,7 @@ import AddressesStore from "./modules/addresses/addresses-store"
 import BlockchainStore from "./modules/blockchain/blockchain-store"
 import PageStore from "./modules/page/page-store"
 import TransactionsStore from "./modules/transactions/transactions-store"
+import ExchangeStore from "./modules/exchange/exchange-store"
 
 Vue.use(Vuex);
 
@@ -18,6 +19,7 @@ const store = new Vuex.Store({
         page: PageStore,
         transactions: TransactionsStore,
         addresses: AddressesStore,
+        exchange: ExchangeStore,
 
     },
 

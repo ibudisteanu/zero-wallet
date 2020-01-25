@@ -310,7 +310,6 @@ class Consensus extends BaseConsensus{
         if (!this._downloadPendingTransactionsEnabled) return;
 
         const txCount = await this._client.emitAsync("mem-pool/content-count", {account}, 0);
-
         if (!txCount) return;
 
         this.emit('consensus/pending-transactions-count', {count: txCount});
@@ -338,10 +337,12 @@ class Consensus extends BaseConsensus{
 
         if (!this._downloadExchangeOffersEnabled) return;
 
-        const data = await this._client.emitAsync("mem-pool/content-ids", { account, index }, 0);
-        if (!data|| !data.out) return ;
+        console.log("exchange/content-count");
 
-        console.log("data", data);
+        const offersCount = await this._client.emitAsync("exchange/content-count", { }, 0);
+        if (!offersCount) return ;
+
+        console.log("offersCount", offersCount);
     }
 
     async startDownloadingExchangeOffers(){

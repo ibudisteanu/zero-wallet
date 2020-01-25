@@ -86,9 +86,7 @@ export default {
     },
 
     mounted(){
-
         return this.startDownloadPendingTransactions();
-
     },
 
     beforeDestroy(){
