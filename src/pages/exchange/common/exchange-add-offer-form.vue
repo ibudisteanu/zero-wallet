@@ -65,7 +65,7 @@
                     <span class="disabled">Options</span> <br/>
                     <select size="6" v-model="paymentAvailable">
                         <option v-for="(paymentAvailable, index) in paymentsAvailable"
-                                v-if="!paymentsAvailableMap[paymentAvailable.name]">
+                                v-if="!paymentsAvailableMap[paymentAvailable.name]" @dblclick="handlePaymentSelect">
                             {{paymentAvailable.name}}
                         </option>
                     </select>
@@ -83,7 +83,7 @@
                     <span class="disabled">Selected</span> <br/>
                     <select size="6" v-model="paymentSelected">
                         <option v-for="(paymentAvailable, index) in paymentsAvailable"
-                                v-if="paymentsSelectedMap[paymentAvailable.name]">
+                                v-if="paymentsSelectedMap[paymentAvailable.name]" @dblclick="handlePaymentUnselect">
                             {{paymentAvailable.name}}
                         </option>
                     </select>
@@ -176,11 +176,13 @@ export default {
 
     methods:{
 
-        handleCreateForm(){
+        async handleCreateForm(){
 
             this.error = '';
 
             try{
+
+                const walletAddress = global.apacache._scope.wallet.manager.getWalletAddressByAddress( this.address, false, this.password );
 
                 if (this.title.length < 10) throw {message: "Title too short"};
                 if (this.description.length < 10) throw {message: "Description too short"};
@@ -191,7 +193,7 @@ export default {
                 if (paymentsSelectedArray.length < 1) throw {message: "No payments selected"};
 
                 const data = {
-                    address: this.address,
+                    publicKey: walletAddress.decryptPublicKey(),
                     type: this.type,
                     title: this.title,
                     description: this.description,
@@ -199,15 +201,21 @@ export default {
                     amountMax: this.amountMax,
                     tokenCurrency: this.tokenCurrency,
                     price: this.price,
-                    payments: paymentsSelected.map( it => ({
+                    epoch: this.$store.state.blockchain.end-1,
+                    payments: paymentsSelectedArray.map( it => ({
                         name: it,
                     })),
                     signature: Buffer.alloc(65),
                 };
 
-                console.log("data", data);
-
                 const offer = global.apacache._scope.exchange.createExchangeOffer(data);
+
+                offer.signOffer( walletAddress.decryptPrivateKey() );
+
+                const outConsensus = await Consensus._client.emitAsync("exchange/new-offer", {offer: offer.toBuffer() }, 0);
+                if (!outConsensus) throw {message: "Transaction was not included in MemPool"};
+
+                console.log( "offer", offer.toJSON() );
 
             }catch(err){
                 this.error = err.message;

@@ -51,6 +51,7 @@ class Consensus extends BaseConsensus{
         };
 
         this._downloadPendingTransactionsEnabled = false;
+        this._downloadExchangeOffersEnabled = false;
 
     }
 
@@ -146,6 +147,7 @@ class Consensus extends BaseConsensus{
         await this._downloadAccountsTransactions();
 
         await this.downloadPendingTransactions();
+        await this.downloadExchangeOffers();
 
     }
 
@@ -320,8 +322,6 @@ class Consensus extends BaseConsensus{
 
         const data = await this._client.emitAsync("mem-pool/content-ids", { account, index }, 0);
 
-        console.log("data", data);
-
         if (!data|| !data.out) return ;
 
         if (!account)
@@ -334,18 +334,35 @@ class Consensus extends BaseConsensus{
 
     }
 
+    async downloadExchangeOffers(){
+
+        if (!this._downloadExchangeOffersEnabled) return;
+
+        const data = await this._client.emitAsync("mem-pool/content-ids", { account, index }, 0);
+        if (!data|| !data.out) return ;
+
+        console.log("data", data);
+    }
+
+    async startDownloadingExchangeOffers(){
+        this._downloadExchangeOffersEnabled = true;
+        return this.downloadExchangeOffers();
+    }
+
+    async stopDownloadingExchangeOffers(){
+        this._downloadExchangeOffersEnabled = false;
+    }
+
     async startDownloadPendingTransactions(){
 
-        if (!this._downloadPendingTransactionsEnabled)
-            this._downloadPendingTransactionsEnabled = true;
+        this._downloadPendingTransactionsEnabled = true;
 
         return this.downloadPendingTransactions();
     }
 
     async stopDownloadPendingTransactions(){
 
-        if (this._downloadPendingTransactionsEnabled)
-            this._downloadPendingTransactionsEnabled = false;
+        this._downloadPendingTransactionsEnabled = false;
     }
 
     async _stopped(){

@@ -130,7 +130,6 @@ export default {
                 if (!out) throw {message: "Transaction couldn't be made"};
 
                 const outConsensus = await Consensus._client.emitAsync("mem-pool/new-tx", {tx: out.tx.toBuffer() }, 0);
-
                 if (!outConsensus) throw {message: "Transaction was not included in MemPool"};
 
                 await Consensus.downloadAccountTransactions(this.address.address);
