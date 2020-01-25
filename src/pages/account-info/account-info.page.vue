@@ -182,7 +182,6 @@ export default {
         display: inline-block;
     }
 
-
     .btn-round{
         font-size: 20px;
         width: 40px;
@@ -194,7 +193,5 @@ export default {
     .btn-round i{
         margin-top: 10px;
     }
-
-
 
 </style>
