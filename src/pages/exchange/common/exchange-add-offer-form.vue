@@ -93,6 +93,11 @@
         </div>
 
         <div class="pd-top-20">
+
+            <span v-if="error" class="centered danger">
+                {{error}}
+            </span>
+
             <input type="submit" value="Create Offer" @click="handleCreateForm">
         </div>
 
@@ -108,6 +113,10 @@ import Vue from 'vue';
 export default {
 
     components: {AccountIdenticon},
+
+    props: {
+        type: 0
+    },
 
     data(){
         return {
@@ -126,22 +135,26 @@ export default {
             paymentsSelectedMap: {},
 
             paymentsAvailable: [],
+            error: '',
         }
     },
 
     computed: {
 
+        addresses() {
+            return this.$store.state.addresses.list;
+        },
+
         balances(){
-            return this.$store.state.addresses.list[this.address] .balances || {"00": 0};
+            if (!this.addresses[this.address]) return [];
+            return this.addresses[this.address] .balances || {"00": 0};
         },
 
         mainAddress(){
             return this.$store.state.wallet.mainAddress;
         },
 
-        addresses() {
-            return this.$store.state.addresses.list;
-        },
+
 
         addressIdenticon(){
 
@@ -165,20 +178,40 @@ export default {
 
         handleCreateForm(){
 
-            const paymentsSelected = JSON.parse( JSON.stringify(this.paymentsSelectedMap) );
+            this.error = '';
 
-            const data = {
-                address: this.address,
-                title: this.title,
-                description: this.description,
-                amountMin: this.amountMin,
-                amountMax: this.amountMax,
-                tokenCurrency: this.tokenCurrency,
-                price: this.price,
-                paymentsSelected: paymentsSelected,
-            };
+            try{
 
-            console.log("data", data);
+                if (this.title.length < 10) throw {message: "Title too short"};
+                if (this.description.length < 10) throw {message: "Description too short"};
+
+                const paymentsSelected = JSON.parse( JSON.stringify(this.paymentsSelectedMap) );
+                const paymentsSelectedArray = Object.keys(paymentsSelected);
+
+                if (paymentsSelectedArray.length < 1) throw {message: "No payments selected"};
+
+                const data = {
+                    address: this.address,
+                    type: this.type,
+                    title: this.title,
+                    description: this.description,
+                    amountMin: this.amountMin,
+                    amountMax: this.amountMax,
+                    tokenCurrency: this.tokenCurrency,
+                    price: this.price,
+                    payments: paymentsSelected.map( it => ({
+                        name: it,
+                    })),
+                    signature: Buffer.alloc(65),
+                };
+
+                console.log("data", data);
+
+                const offer = global.apacache._scope.exchange.createExchangeOffer(data);
+
+            }catch(err){
+                this.error = err.message;
+            }
 
         },
 
@@ -201,8 +234,8 @@ export default {
         this.address = this.mainAddress;
 
         const paymentsAvailable = [];
-        for (const key in global.apacache._scope.availablePayments.options){
-            paymentsAvailable.push( global.apacache._scope.availablePayments.options[key] );
+        for (const key in global.apacache._scope.exchange.availablePayments.options){
+            paymentsAvailable.push( global.apacache._scope.exchange.availablePayments.options[key] );
         }
 
         this.paymentsAvailable = paymentsAvailable;
