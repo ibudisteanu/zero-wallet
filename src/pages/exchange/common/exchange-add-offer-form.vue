@@ -32,7 +32,28 @@
             <textarea rows="4" v-model="description" />
         </div>
 
+        <div class="amount-row">
+            <div>
+                <span class="disabled">Amount</span> <br/>
+                <input type="number" v-model="amount" min="0">
+            </div>
+            <div>
+                <span class="disabled">Currency</span> <br/>
+                <select v-model="tokenCurrency">
+                    <option v-for="(balance, token) in balances"
+                            :value="token">
+                        {{token}}
+                    </option>
+                </select>
+            </div>
+        </div>
+
         <div class="row">
+            <span class="disabled">Price in USD</span> <br/>
+            <input type="number" v-model="price" min="0">
+        </div>
+
+        <div class="row pd-top-20">
             <span class="disabled">Offer Payments. Select the payments you want to accept</span> <br/> <br/>
 
             <div class="payments">
@@ -89,6 +110,8 @@ export default {
             address: '',
             title: '',
             description: '',
+            tokenCurrency: '00',
+            price: 0,
 
             paymentAvailable: '',
             paymentSelected: '',
@@ -101,6 +124,10 @@ export default {
     },
 
     computed: {
+
+        balances(){
+            return this.$store.state.addresses.list[this.address] .balances || {"00": 0};
+        },
 
         mainAddress(){
             return this.$store.state.wallet.mainAddress;
@@ -131,6 +158,19 @@ export default {
     methods:{
 
         handleCreateForm(){
+
+            const paymentsSelected = JSON.parse( JSON.stringify(this.paymentsSelectedMap) );
+
+            const data = {
+                address: this.address,
+                title: this.title,
+                description: this.description,
+                tokenCurrency: this.tokenCurrency,
+                price: this.price,
+                paymentsSelected: paymentsSelected,
+            };
+
+            console.log("data", data);
 
         },
 
@@ -169,6 +209,12 @@ export default {
     .address-row{
         display: grid;
         grid-template-columns: 50px 1fr;
+        grid-column-gap: 10px;
+    }
+
+    .amount-row{
+        display: grid;
+        grid-template-columns: 1fr 200px;
         grid-column-gap: 10px;
     }
 

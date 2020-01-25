@@ -215,13 +215,13 @@ export default {
 
     .amount-row{
         display: grid;
-        grid-template-columns: 1fr 100px;
+        grid-template-columns: 1fr 200px;
         grid-column-gap: 10px;
     }
 
     .fee-row{
         display: grid;
-        grid-template-columns: 40px 1fr 100px;
+        grid-template-columns: 40px 1fr 200px;
         grid-column-gap: 10px;
     }
 
