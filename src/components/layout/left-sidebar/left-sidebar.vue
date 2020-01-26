@@ -103,8 +103,6 @@ export default {
             const width = window.innerWidth;
             const height = window.innerHeight;
 
-            console.log("width", width);
-
             if (width <= 450) {
                 this.show = false;
                 this.fullWidth = false;

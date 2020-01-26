@@ -59,17 +59,16 @@
                                 <span>{{tx.unlockTime}}</span>
                             </div>
                             <div class="table-row">
-                                <span>In</span>
-                                <div v-for="vin in tx.vin ">
-                                    <account-identicon :publicKey="vin.publicKey" size="20" outer-size="5" />
-                                    <span class="amount vertical-center">-{{convertToBase(vin.amount)}}</span>
-                                </div>
-                            </div>
-                            <div class="table-row">
-                                <span>Out</span>
-                                <div v-for="vout in tx.vout">
-                                    <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="5" />
-                                    <span class="amount vertical-center">{{convertToBase(vout.amount)}}</span>
+                                <span>Data</span>
+                                <div>
+                                    <div v-for="vin in tx.vin" class="input">
+                                        <account-identicon :publicKey="vin.publicKey" size="20" outer-size="5" />
+                                        <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(-vin.amount) : '?'}}</span>
+                                    </div>
+                                    <div v-for="vout in tx.vout" class="input">
+                                        <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="5" />
+                                        <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(vout.amount) : '?'}}</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="table-row">
@@ -174,6 +173,10 @@ export default {
     }
 
     .identicon{
+    }
+
+    .input, .output{
+        display: inline-block;
     }
 
     .amount{

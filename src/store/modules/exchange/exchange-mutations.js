@@ -21,7 +21,7 @@ export default {
         const typeName = getTypeName(type);
         const object = {...context[typeName]};
 
-        if (clear === true) object.list = {};
+        if (clear === true) object.offers = {};
 
         for (const key in offers)
             object.offers[key] = true;

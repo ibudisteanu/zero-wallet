@@ -101,6 +101,7 @@
             <input type="submit" value="Create Offer" @click="handleCreateForm">
         </div>
 
+
     </div>
 
 </template>
@@ -154,8 +155,6 @@ export default {
             return this.$store.state.wallet.mainAddress;
         },
 
-
-
         addressIdenticon(){
 
             if (!this.address) return '';
@@ -172,9 +171,27 @@ export default {
 
         },
 
+        offer(){
+
+            const offers = this.$store.state.exchange[  this.type === 0 ? 'buy' : 'sell' ].offers || {};
+
+            for (const key in offers) {
+                const offer = this.$store.state.exchange.list[key];
+                if (offer && offer.address === this.address)
+                    return offer;
+            }
+
+        }
+
+
     },
 
     methods:{
+
+        async startDownloadingExchangeOffers() {
+            await Consensus.initPromise;
+            await Consensus.startDownloadingExchangeOffers();
+        },
 
         async handleCreateForm(){
 
@@ -214,9 +231,9 @@ export default {
                 offer.signOffer( walletAddress.decryptPrivateKey() );
 
                 const outConsensus = await Consensus._client.emitAsync("exchange/new-offer", {offer: offer.toBuffer() }, 0);
-                if (!outConsensus) throw {message: "Transaction was not included in MemPool"};
+                if (!outConsensus) throw {message: "Offer was not included"};
 
-                console.log( "offer", offer.toJSON() );
+                this.$router.push('/exchange/'+( this.type === 0 ? 'buy' : 'sell'));
 
             }catch(err){
                 this.error = err.message;
@@ -236,9 +253,44 @@ export default {
 
     },
 
+    watch: {
+
+        offer(oldValue, newValue){
+
+            if (newValue){
+
+                if (!this.title) this.title = newValue.title;
+                if (!this.description) this.description = newValue.description;
+                if (!this.amountMin) this.amountMin = newValue.amountMin;
+                if (!this.amountMax) this.amountMax = newValue.amountMax;
+                if (!this.tokenCurrency) this.tokenCurrency = newValue.tokenCurrency;
+                if (!this.price) this.price = newValue.price;
+
+                let payments = [];
+                for (const key in this.paymentsSelectedMap)
+                    payments.push(key);
+
+                if (payments.length === 0)
+                    for (const payment of newValue.payments){
+                        this.paymentsSelectedMap[payment.name] = true;
+                        this.paymentsAvailableMap[payment.name] = true;
+                    }
+
+
+            }
+
+        },
+
+        '$route' (to, from) {
+            return this.startDownloadingExchangeOffers();
+        }
+    },
+
     async mounted(){
 
         await Consensus.initPromise;
+
+        this.startDownloadingExchangeOffers();
 
         this.address = this.mainAddress;
 
@@ -249,7 +301,11 @@ export default {
 
         this.paymentsAvailable = paymentsAvailable;
 
-    }
+    },
+
+    beforeDestroy(){
+        return Consensus.stopDownloadingExchangeOffers();
+    },
 
 }
 </script>

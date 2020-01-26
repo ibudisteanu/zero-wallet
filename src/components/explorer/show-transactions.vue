@@ -7,6 +7,7 @@
                 <span class="hide-mobile">Hash</span>
                 <span>Time</span>
                 <span>Data</span>
+                <span>Token</span>
             </div>
             <router-link v-for="tx in transactions" :class="`table-row  ${isPending(tx) ? 'pending-row' : ''} `" :to="`/explorer/tx/hash/${tx.hash().toString('hex')}`">
 
@@ -22,12 +23,15 @@
                 <span>
                     <div class="input" v-for="vin in tx.vin ">
                         <account-identicon :publicKey="vin.publicKey" size="20" outer-size="7" />
-                        <span class="amount vertical-center">-{{convertToBase(vin.amount)}}</span>
+                        <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(-vin.amount) : '?'}}</span>
                     </div>
                     <div class="output" v-for="vout in tx.vout">
                         <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="7" />
-                        <span class="amount vertical-center">{{convertToBase(vout.amount)}}</span>
+                        <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(vout.amount) : '?'}}</span>
                     </div>
+                </span>
+                <span>
+                    {{tx.tokenCurrency.toString("hex")}}
                 </span>
             </router-link>
         </div>
@@ -70,7 +74,7 @@ export default {
 <style scoped>
 
     .table-row{
-        grid-template-columns: 100px 70px 1fr ;
+        grid-template-columns: 100px 70px 1fr 50px;
     }
 
     .identicon{

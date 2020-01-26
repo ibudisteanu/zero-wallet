@@ -5,6 +5,7 @@
             <div class="table-header table-row">
                 <span>Title</span>
                 <span>Date</span>
+                <span>Price</span>
                 <span>Amount min-max</span>
                 <span>Payments</span>
                 <span>Feedback</span>
@@ -14,6 +15,7 @@
 
                 <span class="wordwrap">{{offer.title}}</span>
                 <span>{{offer.height}}</span>
+                <span>${{offer.price}} </span>
                 <span>{{offer.amountMin }} - {{offer.amountMax}} </span>
                 <span>{{offer.payments.map (it => it.name ).join(' ')}}</span>
                 <span>na</span>
@@ -43,7 +45,7 @@ export default {
 <style scoped>
 
     .table-row{
-        grid-template-columns: 2fr 60px 130px 1fr 80px 60px ;
+        grid-template-columns: 2fr 60px  100px 130px 1fr 80px 60px ;
     }
 
 </style>

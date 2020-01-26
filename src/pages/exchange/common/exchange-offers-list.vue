@@ -64,6 +64,12 @@ export default {
 
     },
 
+    watch: {
+        '$route' (to, from) {
+            return this.startDownloadingExchangeOffers();
+        }
+    },
+
     mounted(){
         return this.startDownloadingExchangeOffers();
     },
