@@ -4,9 +4,21 @@ export default {
 
     state: {
 
-        list: {},
-        listNext: null,
-        listCount: null,
+        offers: {
+
+            buy:{
+                list: [],
+                next: null,
+                count: null,
+            },
+
+            sell:{
+                list: [],
+                next: null,
+                count: null,
+            },
+
+        },
 
     },
 

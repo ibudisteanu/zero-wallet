@@ -179,7 +179,7 @@ class Consensus extends BaseConsensus{
                             delete this._data.transactions[tx.hash().toString("hex")];
                             data[tx.hash().toString("hex")] = tx;
                         }
-                        this.emit('consensus/tx-deleted', data );
+                        this.emit('consensus/tx-deleted', {transactions: data} );
                     }
 
                     delete this._data.blocks[i];
@@ -337,15 +337,23 @@ class Consensus extends BaseConsensus{
 
         if (!this._downloadExchangeOffersEnabled) return;
 
-        console.log("exchange/content-count");
+        for (let i=0; i <= 1; i++) {
 
-        const offersCount = await this._client.emitAsync("exchange/content-count", { }, 0);
-        if (!offersCount) return ;
+            const offersCount = await this._client.emitAsync("exchange/content-count", {type: 0}, 0);
+            if (!offersCount) return;
 
-        console.log("offersCount", offersCount);
+            console.log("offersCount", offersCount);
+
+            this.emit('consensus/exchange-offers-count', {type: 0, count: offersCount});
+
+        }
+
     }
 
     async startDownloadingExchangeOffers(){
+
+        if (this._downloadExchangeOffersEnabled) return;
+
         this._downloadExchangeOffersEnabled = true;
         return this.downloadExchangeOffers();
     }
@@ -356,8 +364,9 @@ class Consensus extends BaseConsensus{
 
     async startDownloadPendingTransactions(){
 
-        this._downloadPendingTransactionsEnabled = true;
+        if (this._downloadPendingTransactionsEnabled) return;
 
+        this._downloadPendingTransactionsEnabled = true;
         return this.downloadPendingTransactions();
     }
 
@@ -427,7 +436,7 @@ class Consensus extends BaseConsensus{
             this._data.transactions[tx.hash().toString("hex")] = tx;
             data[tx.hash().toString("hex")] = tx;
         }
-        this.emit('consensus/tx-downloaded', data );
+        this.emit('consensus/tx-downloaded', {transactions: data} );
 
         return block;
     }
@@ -457,7 +466,7 @@ class Consensus extends BaseConsensus{
         const data = {};
         data[hash] = tx;
 
-        this.emit('consensus/tx-downloaded', data );
+        this.emit('consensus/tx-downloaded', {transactions: data} );
 
         return tx;
     }

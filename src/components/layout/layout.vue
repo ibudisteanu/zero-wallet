@@ -45,7 +45,6 @@ export default {
     methods:{
 
         onUpdateMarginLeft({marginLeft, width}){
-            console.log("pdate", marginLeft, width);
             this.marginLeft = marginLeft;
         }
 

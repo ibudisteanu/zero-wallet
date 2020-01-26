@@ -7,19 +7,6 @@
         <div class="container pd-top-40">
             <div class="boxed ">
 
-                <div class="title">
-                    <h1>Exchange Sell coins</h1>
-
-                    <router-link to="/exchange/sell/add-offer">
-                        <div class="btn right-float">
-                            <div class="btn-round" @click="createOffer" v-tooltip.bottom="'Create a new Sell Offer'" >
-                                <i class="fa fa-plus"></i>
-                            </div>
-                        </div>
-                    </router-link>
-
-                </div>
-
                 <span v-if="error" class="danger">
                     {{error}}
                 </span>
@@ -62,5 +49,8 @@ export default {
 </script>
 
 <style scoped>
-
+    .title h1,
+    .title .btn{
+        display: inline-block;
+    }
 </style>
