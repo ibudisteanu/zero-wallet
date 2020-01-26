@@ -13,8 +13,8 @@
             <div v-for="offer in offers" class="table-row"  >
 
                 <span class="wordwrap">{{offer.title}}</span>
-                <span>{{offer.epoch}}</span>
-                <span>{{offer.amountMin }} - {{offer.amountMax}} {{offer.tokenCurrency.toString("hex")}}</span>
+                <span>{{offer.height}}</span>
+                <span>{{offer.amountMin }} - {{offer.amountMax}} </span>
                 <span>{{offer.payments.map (it => it.name ).join(' ')}}</span>
                 <span>na</span>
                 <span>

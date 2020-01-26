@@ -7,7 +7,7 @@
 
             <router-link :to="`/exchange/${type === 0 ? 'buy' : 'sell'}/add-offer`">
                 <div class="btn right-float">
-                    <div class="btn-round"  v-tooltip.bottom="`Create a ${type ? 'Buy' : 'Sell'} Buy Offer`" >
+                    <div class="btn-round"  v-tooltip.bottom="`Create a ${type === 0 ? 'Buy' : 'Sell'} Buy Offer`" >
                         <i class="fa fa-plus"></i>
                     </div>
                 </div>

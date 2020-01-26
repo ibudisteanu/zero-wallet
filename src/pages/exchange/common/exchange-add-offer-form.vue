@@ -186,6 +186,7 @@ export default {
 
                 if (this.title.length < 10) throw {message: "Title too short"};
                 if (this.description.length < 10) throw {message: "Description too short"};
+                if (this.amountMax < this.amountMin || this.amountMax === 0) throw {message: "Amount Max needs to be greater or equal to Amount Min and non-zero"}
 
                 const paymentsSelected = JSON.parse( JSON.stringify(this.paymentsSelectedMap) );
                 const paymentsSelectedArray = Object.keys(paymentsSelected);
@@ -201,7 +202,7 @@ export default {
                     amountMax: this.amountMax,
                     tokenCurrency: this.tokenCurrency,
                     price: this.price,
-                    epoch: this.$store.state.blockchain.end-1,
+                    height: this.$store.state.blockchain.end-1,
                     payments: paymentsSelectedArray.map( it => ({
                         name: it,
                     })),

@@ -14,6 +14,7 @@ import TransactionExplorerPage from "src/pages/explorer/transaction-explorer.pag
 import PendingTransactionsExplorerPage from "src/pages/explorer/pending-transactions-explorer.page"
 import ExchangeBuyPage from "src/pages/exchange/buy/exchange-buy.page"
 import ExchangeBuyAddOfferPage from "src/pages/exchange/buy/exchange-buy-add-offer.page"
+import ExchangeSellAddOfferPage from "src/pages/exchange/sell/exchange-sell-add-offer.page"
 import ExchangeSellPage from "src/pages/exchange/sell/exchange-sell.page"
 import ExchangePortfolioPage from "src/pages/exchange/protfolio/exchange-portfoliu.page"
 import ShopPage from "src/pages/shop/shop.page"
@@ -57,6 +58,8 @@ const routes = [
     {path: '/exchange/buy/add-offer', component: ExchangeBuyAddOfferPage },
 
     {path: '/exchange/sell', component: ExchangeSellPage },
+    {path: '/exchange/sell/add-offer', component: ExchangeSellAddOfferPage },
+
     {path: '/exchange/portfolio', component: ExchangePortfolioPage },
 
     {path: '/shop', component: ShopPage },

@@ -383,8 +383,6 @@ class Consensus extends BaseConsensus{
             chain: global.apacache._scope.mainChain
         }, undefined, Buffer.from(data) );
 
-        console.log("getExchangeOffer", offer);
-
         this._data.offers[hash] = offer;
 
         this.emit('consensus/exchange-offers', {type, offers: [offer] });

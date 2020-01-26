@@ -1,0 +1,32 @@
+<template>
+    <layout>
+
+        <exchange-top-bar />
+
+        <div class="container pd-top-40">
+            <div class="boxed ">
+                <h1>Exchange Sell Create Offer</h1>
+
+                <exchange-add-offer-form :type="1">
+
+                </exchange-add-offer-form>
+
+            </div>
+        </div>
+
+    </layout>
+</template>
+
+<script>
+    import Layout from "src/components/layout/layout"
+    import ExchangeTopBar from "./../common/exchange-top-bar"
+    import ExchangeAddOfferForm from "./../common/exchange-add-offer-form"
+
+    export default {
+
+        components: { Layout, ExchangeTopBar, ExchangeAddOfferForm },
+    }
+</script>
+
+<style scoped>
+</style>

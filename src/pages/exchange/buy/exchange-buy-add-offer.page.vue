@@ -7,7 +7,7 @@
             <div class="boxed ">
                 <h1>Exchange Buy Create Offer</h1>
 
-                <exchange-add-offer-form>
+                <exchange-add-offer-form :type="0">
 
                 </exchange-add-offer-form>
 
