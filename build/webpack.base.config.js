@@ -41,9 +41,7 @@ let webpackConfig = {
                 use: [
                     {
                         loader: 'file-loader',
-                        options: {
-                            name: 'assets/images/[name].[ext]?[hash]'
-                        }
+
                     }
                 ]
             },

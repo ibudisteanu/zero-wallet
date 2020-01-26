@@ -1,8 +1,10 @@
 {
-  "name": "zero-wallet",
+  "name": "PandoraPay-Wallet",
   "keywords": [
-    "Vue",
-    "Webpack 4"
+    "PandoraPay",
+    "Wallet",
+    "Exchange",
+    "DEX"
   ],
   "scripts": {
     "build_browser": "webpack --config build/deploy/webpack.browser-frontend.config.js",
@@ -40,6 +42,7 @@
     "cross-env": "~5.2",
     "css-loader": "~2.1",
     "extract-text-webpack-plugin": "^3.0.2",
+    "file-loader": "^5.0.2",
     "friendly-errors-webpack-plugin": "~1.7",
     "html-webpack-plugin": "~3.2",
     "mini-css-extract-plugin": "~0.5",

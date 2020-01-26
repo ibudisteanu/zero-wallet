@@ -23,7 +23,7 @@
 
 <script>
 
-require('./common.css');
+require('src/assets/common.css');
 
 import LayoutHeader from "./header/layout-header.vue";
 import LayoutFooter from "./footer/layout-footer.vue";

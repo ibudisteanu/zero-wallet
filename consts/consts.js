@@ -1,9 +1,8 @@
 export default {
 
-    name: "ZERO",
-    title: 'ZEROWALLET',
-    entity: 'ZERO ENTITY',
-    logo: 'https://metamask.io/img/metamask.png',
+    name: "PandoraPay",
+    title: 'PandoraPay',
+    entity: 'PandoraPay',
     version: '0.1',
 
 }

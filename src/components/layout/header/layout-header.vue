@@ -7,11 +7,7 @@
          <div class="row">
 
             <router-link to="/">
-               <img :src="logo" class="logo" >
-            </router-link>
-
-            <router-link to="/">
-               <span class="thicker">{{title}}</span>
+               <img :src="require('src/assets/pandora-pay-logo-inline.png').default" class="logo" >
             </router-link>
 
             <header-account />
@@ -35,9 +31,6 @@ export default {
 
     computed:{
 
-        logo(){
-            return consts.logo;
-        },
 
         title(){
             return consts.title;
@@ -53,7 +46,7 @@ export default {
 <style scoped>
 
    .logo{
-      width: 40px
+      max-height: 64px;
    }
 
    .header {
@@ -63,7 +56,7 @@ export default {
 
    .row{
       display: grid;
-      grid-template-columns: 50px 100px 1fr;
+      grid-template-columns: 150px 1fr;
       align-items: center;
    }
 
