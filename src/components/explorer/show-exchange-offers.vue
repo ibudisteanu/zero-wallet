@@ -10,23 +10,28 @@
                 <span>Feedback</span>
                 <span>Trader</span>
             </div>
-            <router-link v-for="offer in offers" class="table-row" >
+            <div v-for="offer in offers" class="table-row"  >
 
                 <span class="wordwrap">{{offer.title}}</span>
-                <span>Date</span>
-                <span>Amount min-max</span>
-                <span>Payments</span>
-                <span>Feedback</span>
-                <span>Trader</span>
+                <span>{{offer.epoch}}</span>
+                <span>{{offer.amountMin }} - {{offer.amountMax}} {{offer.tokenCurrency.toString("hex")}}</span>
+                <span>{{offer.payments.map (it => it.name ).join(' ')}}</span>
+                <span>na</span>
+                <span>
+                    <account-identicon :publicKey="offer.publicKey" size="20" outer-size="7" />
+                </span>
 
-            </router-link>
+            </div>
         </div>
 
     </div>
 </template>
 
 <script>
+import AccountIdenticon from "src/components/wallet/account/account-identicon"
 export default {
+
+    components: {AccountIdenticon},
 
     props: {
         offers: {},

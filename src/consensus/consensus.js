@@ -9,6 +9,7 @@ const {BigNumber} = global.protocol.utils;
 const {MarshalData} = global.protocol.marshal;
 
 const {Block} = global.blockchain.blockchain.block;
+const {ExchangeOffer} = global.blockchain.exchange;
 
 class Consensus extends BaseConsensus{
 
@@ -47,6 +48,11 @@ class Consensus extends BaseConsensus{
             accounts: {
 
             },
+
+            offers:{
+
+            },
+
 
         };
 
@@ -344,7 +350,7 @@ class Consensus extends BaseConsensus{
 
     async downloadExchangeOffers({type, index}){
 
-        const offersCount = await this._client.emitAsync("exchange/content-count", { type, }, 0);
+        const offersCount = await this._client.emitAsync("exchange/content-count", { offerType: type, }, 0);
         if (!offersCount) return;
 
         this.emit('consensus/exchange-offers-count', {type, count: offersCount});
@@ -355,19 +361,33 @@ class Consensus extends BaseConsensus{
 
     async _downloadExchangeOffersSpecific({type, index, limit}){
 
-        const offers = await this._client.emitAsync("exchange/content-ids", {type: 0}, 0);
+        const offers = await this._client.emitAsync("exchange/content-ids", {offerType: type}, 0);
         if (!offers) return;
 
-        console.log("offers", offers);
-
-        this.emit('consensus/exchange-offers', {type, offers: offers.out, next: offers.next, clear: index === undefined });
+        this.emit('consensus/exchange-offers-ids', {type, offers: offers.out, next: offers.next, clear: index === undefined });
 
         for (const hash in offers.out)
-            this.getExchangeOffer(hash);
+            await this.getExchangeOffer(hash, type);
 
     }
 
-    async getExchangeOffer(hash){
+    async getExchangeOffer(hash, type){
+
+        if (this._data.offers[hash]) return this._data.offers[hash];
+
+        const data = await this._client.emitAsync("exchange/get-offer", {offerHash: hash, offerType: type}, 0);
+        if (!data) return;
+
+        const offer = new ExchangeOffer( {
+            ...global.apacache._scope,
+            chain: global.apacache._scope.mainChain
+        }, undefined, Buffer.from(data) );
+
+        console.log("getExchangeOffer", offer);
+
+        this._data.offers[hash] = offer;
+
+        this.emit('consensus/exchange-offers', {type, offers: [offer] });
 
     }
 

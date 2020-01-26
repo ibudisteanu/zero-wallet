@@ -16,7 +16,7 @@ export default {
         Vue.set(context, typeName, object );
     },
 
-    setExchangeOffers(context, { type, offers, next, clear}) {
+    setExchangeOffersIds(context, { type, offers, next, clear}) {
 
         const typeName = getTypeName(type);
         const object = {...context[typeName]};
@@ -30,6 +30,14 @@ export default {
 
         Vue.set(context, typeName, object );
     },
+
+    setExchangeOffers(context, { offers }) {
+
+        for (const key in offers )
+            Vue.set(context.list, offers[key].hash().toString("hex"), offers[key]) ;
+
+
+    }
 
 }
 

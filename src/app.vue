@@ -108,6 +108,8 @@ export default {
 
         Consensus.on("consensus/exchange-offers-count", data => this.$store.commit('setExchangeOffersCount', data ) );
 
+        Consensus.on("consensus/exchange-offers-ids", data => this.$store.commit('setExchangeOffersIds', data ) );
+
         Consensus.on("consensus/exchange-offers", data => this.$store.commit('setExchangeOffers', data ) );
 
         await Consensus.start();

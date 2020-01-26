@@ -40,7 +40,17 @@ export default {
         },
 
         offers(){
-            return this.$store.state.exchange[  this.type === 0 ? 'buy' : 'sell' ].offers || {};
+
+            const offers = this.$store.state.exchange[  this.type === 0 ? 'buy' : 'sell' ].offers || {};
+
+            const out = {};
+            for (const key in offers){
+                const offer = this.$store.state.exchange.list[ key ];
+                if (offer)
+                    out[key] = offer;
+            }
+
+            return out;
         }
 
     },
