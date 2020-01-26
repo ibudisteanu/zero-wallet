@@ -7,7 +7,7 @@
 
             <router-link :to="`/exchange/${type === 0 ? 'buy' : 'sell'}/add-offer`">
                 <div class="btn right-float">
-                    <div class="btn-round" @click="createOffer" v-tooltip.bottom="`Create a ${type ? 'Buy' : 'Sell'} Buy Offer`" >
+                    <div class="btn-round"  v-tooltip.bottom="`Create a ${type ? 'Buy' : 'Sell'} Buy Offer`" >
                         <i class="fa fa-plus"></i>
                     </div>
                 </div>
@@ -15,17 +15,34 @@
 
         </div>
 
-        Offers List
+        <h3>Offers List {{count}}</h3>
+
+        <show-exchange-offers :offers="offers" />
 
     </div>
 </template>
 
 <script>
 import Consensus from "src/consensus/consensus"
+import ShowExchangeOffers from "src/components/explorer/show-exchange-offers"
 export default {
+
+    components: {ShowExchangeOffers},
 
     props:{
         type: 0,
+    },
+
+    computed:{
+
+        count(){
+            return this.$store.state.exchange[  this.type === 0 ? 'buy' : 'sell' ].count || 0;
+        },
+
+        offers(){
+            return this.$store.state.exchange[  this.type === 0 ? 'buy' : 'sell' ].offers || {};
+        }
+
     },
 
     methods: {

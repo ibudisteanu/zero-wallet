@@ -9,21 +9,26 @@ export default {
     setExchangeOffersCount(context, { type, count }) {
 
         const typeName = getTypeName(type);
+        const object = {...context[typeName]};
 
-        const object = {...context.offers[typeName]};
-        object.pendingCount = count;
+        object.count = count;
 
-        Vue.set(context.offers, typeName, object );
+        Vue.set(context, typeName, object );
     },
 
-    setExchangeOffers(context, { type, count }) {
+    setExchangeOffers(context, { type, offers, next, clear}) {
 
         const typeName = getTypeName(type);
+        const object = {...context[typeName]};
 
-        const object = {...context.offers[typeName]};
-        object.pendingCount = count;
+        if (clear === true) object.list = {};
 
-        Vue.set(context.offers, typeName, object );
+        for (const key in offers)
+            object.offers[key] = true;
+
+        object.next = next;
+
+        Vue.set(context, typeName, object );
     },
 
 }

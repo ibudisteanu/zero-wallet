@@ -147,7 +147,7 @@ class Consensus extends BaseConsensus{
         await this._downloadAccountsTransactions();
 
         await this.downloadPendingTransactions();
-        await this.downloadExchangeOffers();
+        await this.downloadExchangeOffersAll();
 
     }
 
@@ -324,29 +324,50 @@ class Consensus extends BaseConsensus{
         if (!data|| !data.out) return ;
 
         if (!account)
-            this.emit('consensus/pending-transactions', { txs: data.out, next: data.next, clear: index === undefined ? true: false } );
+            this.emit('consensus/pending-transactions', { txs: data.out, next: data.next, clear: index === undefined } );
         else
-            this.emit('consensus/account-update-pending-txs', { account, txs: data.out, next: data.next, clear: index === undefined ? true: false } );
+            this.emit('consensus/account-update-pending-txs', { account, txs: data.out, next: data.next, clear: index === undefined } );
 
         for (const hash in data.out)
             this.getTransactionByHash(hash, true);
 
     }
 
-    async downloadExchangeOffers(){
+    async downloadExchangeOffersAll(){
 
         if (!this._downloadExchangeOffersEnabled) return;
 
-        for (let i=0; i <= 1; i++) {
+        for (let i=0; i <= 1; i++)
+            await this.downloadExchangeOffers({type: i});
 
-            const offersCount = await this._client.emitAsync("exchange/content-count", {type: 0}, 0);
-            if (!offersCount) return;
+    }
 
-            console.log("offersCount", offersCount);
+    async downloadExchangeOffers({type, index}){
 
-            this.emit('consensus/exchange-offers-count', {type: 0, count: offersCount});
+        const offersCount = await this._client.emitAsync("exchange/content-count", { type, }, 0);
+        if (!offersCount) return;
 
-        }
+        this.emit('consensus/exchange-offers-count', {type, count: offersCount});
+
+        await this._downloadExchangeOffersSpecific({type, index});
+
+    }
+
+    async _downloadExchangeOffersSpecific({type, index, limit}){
+
+        const offers = await this._client.emitAsync("exchange/content-ids", {type: 0}, 0);
+        if (!offers) return;
+
+        console.log("offers", offers);
+
+        this.emit('consensus/exchange-offers', {type, offers: offers.out, next: offers.next, clear: index === undefined });
+
+        for (const hash in offers.out)
+            this.getExchangeOffer(hash);
+
+    }
+
+    async getExchangeOffer(hash){
 
     }
 
@@ -355,7 +376,7 @@ class Consensus extends BaseConsensus{
         if (this._downloadExchangeOffersEnabled) return;
 
         this._downloadExchangeOffersEnabled = true;
-        return this.downloadExchangeOffers();
+        return this.downloadExchangeOffersAll();
     }
 
     async stopDownloadingExchangeOffers(){
