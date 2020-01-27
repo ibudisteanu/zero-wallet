@@ -8,7 +8,7 @@
 
                 <div v-if="$store.state.wallet.loaded">
 
-                    <img <img :src="require('src/assets/pandora-pay-logo.png').default"  class="logo"> <br/>
+                    <img :src="require('src/assets/pandora-pay-logo.png').default"  class="logo"> <br/>
 
                     <h1 class="title mg-bottom-0 mg-top-0">World's First Anonymous Cash</h1>
                     <h2 class="sub-title disabled mg-top-0 pd-bottom-40">The Anonymous Cash awaits</h2>

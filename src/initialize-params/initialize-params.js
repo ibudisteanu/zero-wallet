@@ -23,7 +23,8 @@ class InitializeParams{
 
     load(){
 
-        let mainVue = require('./../main-vue').default;
+        const mainVue = require('./../main-vue').default;
+
         mainVue(this.wallet);
 
         this.createElements();

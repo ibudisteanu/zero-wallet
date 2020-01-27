@@ -18,6 +18,7 @@ import ExchangeSellAddOfferPage from "src/pages/exchange/sell/exchange-sell-add-
 import ExchangeSellPage from "src/pages/exchange/sell/exchange-sell.page"
 import ExchangePortfolioPage from "src/pages/exchange/protfolio/exchange-portfoliu.page"
 import ShopPage from "src/pages/shop/shop.page"
+import NotFoundPage from "src/pages/not-found/not-found.page"
 
 Vue.use(VueRouter);
 
@@ -68,6 +69,8 @@ const routes = [
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
 
     {path: '/', component: WalletPage, beforeEnter: guardDecrypted },
+
+    { path: '*', name: 'not-found', component: NotFoundPage,}
 
 ];
 
