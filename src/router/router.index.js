@@ -75,7 +75,8 @@ const routes = [
 ];
 
 const router = new VueRouter({
-    mode: 'history',
+    base: window.PandoraPayWallet ? window.PandoraPayWallet.base : '',
+    mode: (window.PandoraPayWallet ? window.PandoraPayWallet.mode : '') || 'history',
     routes // short for `routes: routes`
 });
 

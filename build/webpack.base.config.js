@@ -22,7 +22,7 @@ let webpackConfig = {
     // send to distribution
     output: {
         path: path.resolve(__dirname, '../dist'),
-        publicPath: 'public/Wallet-dist/',
+        publicPath: 'public/wallet-dist/',
         filename: '[name].[chunkhash].js'
     },
     resolve: {
