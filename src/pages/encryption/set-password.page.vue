@@ -67,7 +67,7 @@ export default {
                             //if (this.password.length < 6) throw "password is too weak";
                             if (this.password !== this.retypePassword) throw "passwords are not matching";
 
-                            const out = await global.apacache.wallet.encryption.encryptWallet( undefined, this.password );
+                            const out = await global.PandoraPay.wallet.encryption.encryptWallet( undefined, this.password );
 
                             if (out) {
 

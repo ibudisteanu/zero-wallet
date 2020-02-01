@@ -86,7 +86,7 @@ export default {
 
         async downloadAddress(){
 
-            const address = await global.apacache.wallet.manager.getWalletAddressByAddress( this.address.address );
+            const address = await global.PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address );
             if (!address) return false;
 
             const json = address.toJSON();
@@ -120,7 +120,7 @@ export default {
 
             try{
 
-                const out = await global.apacache.wallet.manager.deleteWalletAddressByAddress( this.address.address );
+                const out = await global.PandoraPay.wallet.manager.deleteWalletAddressByAddress( this.address.address );
                 if (out)
                     this.$notify({
                         type: 'success',

@@ -60,7 +60,7 @@ export default {
 
             try{
 
-                const out = await global.apacache.wallet.encryption.decryptWallet(this.password);
+                const out = await global.PandoraPay.wallet.encryption.decryptWallet(this.password);
 
                 if (out)
                     this.$router.push('/');

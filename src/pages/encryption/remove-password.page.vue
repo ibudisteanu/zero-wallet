@@ -53,7 +53,7 @@ export default {
 
                 try{
 
-                    const out = await global.apacache.wallet.encryption.removeEncryptionWallet( this.password );
+                    const out = await global.PandoraPay.wallet.encryption.removeEncryptionWallet( this.password );
 
                     if (out) {
                         this.$notify({

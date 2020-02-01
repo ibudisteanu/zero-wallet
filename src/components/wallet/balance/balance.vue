@@ -54,7 +54,7 @@ export default {
     methods:{
 
         convertToBase(number){
-            return global.apacache._scope.argv.transactions.coins.convertToBase(number);
+            return global.PandoraPay._scope.argv.transactions.coins.convertToBase(number);
         },
 
         formatMoney(amount){

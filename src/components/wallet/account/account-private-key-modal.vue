@@ -83,11 +83,11 @@ export default {
 
             try{
 
-                const checkPassword = await global.apacache.wallet.encryption.checkPassword(this.password);
+                const checkPassword = await global.PandoraPay.wallet.encryption.checkPassword(this.password);
                 if (!checkPassword)
                     throw {message: 'Password invalid'};
 
-                const address = await global.apacache.wallet.manager.getWalletAddressByAddress( this.address.address );
+                const address = await global.PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address );
                 if (!address) throw {message: "Address not found"};
 
                 const privateKey = await address.decryptPrivateKey();
