@@ -1,5 +1,7 @@
 import BaseConsensus from "./consensus-base";
 
+import consts from "consts/consts"
+
 const {client} = global.blockchain.sockets.client;
 const {BasicSocket} = global.blockchain.sockets.basic;
 const {Helper} = global.kernel.helpers;
@@ -17,7 +19,7 @@ class Consensus extends BaseConsensus{
 
         super(settings);
 
-        this._settings.address = "http://helloworldx.ddns.net:8082";
+        this._settings.address = consts.fallback;
 
         this._data = {
 
@@ -92,8 +94,6 @@ class Consensus extends BaseConsensus{
         this._client.on("disconnect", ()=> this.status = "offline" );
 
         this._client.once("handshake", handshake =>{
-
-            console.log("handshake.short", handshake.short);
 
             if (handshake.short === PandoraPay._scope.argv.settings.applicationShort) {
                 this.status = "syncing";

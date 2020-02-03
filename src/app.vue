@@ -23,6 +23,7 @@
 <script>
 
 import Consensus from "./consensus/consensus"
+import Chat from "./chat/chat"
 
 export default {
 
@@ -114,6 +115,8 @@ export default {
 
         await Consensus.start();
 
+        await Chat.start();
+
     },
 
     methods:{
@@ -190,6 +193,7 @@ export default {
 
             //subscribe addresses
             Consensus.subscribeAccounts( Object.keys(addresses) );
+            Chat.subscribeAccounts( Object.keys(addresses) );
 
             Consensus.getBlockchain();
 
