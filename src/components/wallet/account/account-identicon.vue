@@ -49,7 +49,7 @@ export default {
 
 
             }catch(err){
-
+                console.error("Identicon error", err);
             }
 
         },

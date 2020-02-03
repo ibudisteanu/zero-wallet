@@ -7,8 +7,9 @@
         <div class="container pd-top-40">
             <div class="boxed ">
 
-                <h2>Chat encrypted </h2>
+                <h2>Encrypted Chat</h2>
                 <span class="disabled">Trader Public Key: {{publicKey}} </span>
+                <account-identicon :publicKey="publicKey" size="20" outer-size="7" />
 
                 <section class="msger">
 
@@ -60,29 +61,48 @@
 
 import Layout from "src/components/layout/layout"
 import ChatTopBar from "./common/chat-top-bar"
+import AccountIdenticon from "src/components/wallet/account/account-identicon";
+import Consensus from "src/consensus/consensus"
 
 export default {
 
-    components: { Layout, ChatTopBar },
+    components: { Layout, ChatTopBar, AccountIdenticon },
 
     data(){
         return {
+            publicKey: '',
             error: '',
         }
     },
 
     computed:{
 
-        publicKey(){
-            return this.$route.params.publicKey;
-        }
 
     },
 
     methods: {
 
+        async loadChat(){
+
+            await Consensus.initPromise;
+
+            this.publicKey = this.$route.params.publicKey;
+
+        }
 
     },
+
+    watch: {
+        '$route' (to, from) {
+            return this.loadChat();
+        }
+    },
+
+    async mounted(){
+
+        return this.loadChat();
+
+    }
 
 }
 
