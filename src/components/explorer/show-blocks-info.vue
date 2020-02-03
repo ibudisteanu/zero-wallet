@@ -12,7 +12,8 @@
                 <span>TX</span>
                 <span>Forge</span>
             </div>
-            <div v-for="blockInfo in blocksInfo" class="table-row">
+            <div v-for="(blockInfo, key) in blocksInfo" class="table-row"
+                 :key="`show-block-${key}`">
 
                 <span class="hide-mobile"><router-link :to="`/explorer/block/hash/${blockInfo.hash.toString('hex')}`">{{blockInfo.hash.toString("hex").substr(0, 20)+'...'}}</router-link></span>
                 <span class="hide-tablet hide-mobile">{{blockInfo.kernelHash.toString("hex").substr(0, 20)+'...'}}</span>
@@ -60,13 +61,13 @@ export default {
 <style scoped>
 
     .table-row{
-        grid-template-columns: 1fr 1fr 90px 60px 50px 50px 60px ;
+        grid-template-columns: 1fr 1fr 90px 60px 60px 50px 60px ;
     }
 
     @media (max-width: 767px) {
 
         .table-row{
-            grid-template-columns: 90px 60px 50px 50px 60px ;
+            grid-template-columns: 90px 60px 60px 50px 60px ;
         }
 
     }

@@ -10,8 +10,10 @@
                 <span>Payments</span>
                 <span>Feedback</span>
                 <span>Trader</span>
+                <span>Chat</span>
             </div>
-            <div v-for="offer in offers" class="table-row"  >
+            <div v-for="(offer, index) in offers" class="table-row"
+                 :key="`show-exchange-offers-${index}`">
 
                 <span class="wordwrap">{{offer.title}}</span>
                 <span>{{offer.height}}</span>
@@ -21,6 +23,11 @@
                 <span>na</span>
                 <span>
                     <account-identicon :publicKey="offer.publicKey" size="20" outer-size="7" />
+                </span>
+                <span>
+                    <router-link :to="`/chat/message/${offer.publicKey.toString('hex')}`">
+                        <i class="fa fa-comment-dots"></i>
+                    </router-link>
                 </span>
 
             </div>
@@ -45,7 +52,11 @@ export default {
 <style scoped>
 
     .table-row{
-        grid-template-columns: 2fr 60px  100px 130px 1fr 80px 60px ;
+        grid-template-columns: 2fr 60px  100px 130px 1fr 80px 60px 50px ;
+    }
+
+    i{
+        font-size: 22px;
     }
 
 </style>

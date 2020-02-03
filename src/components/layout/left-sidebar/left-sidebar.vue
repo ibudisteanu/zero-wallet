@@ -47,6 +47,11 @@
                 <span>Exchange</span>
             </router-link>
 
+            <router-link to="/explorer" :class="`${route.indexOf('/chat') === 0 ? 'selected' : ''}`" >
+                <i class="fa fa-comments"></i>
+                <span>Chat</span>
+            </router-link>
+
             <router-link to="/shop" :class="`${route.indexOf('/shop') === 0 ? 'selected' : ''}`"  >
                 <i class="fa fa-shopping-cart"></i>
                 <span>Shop</span>

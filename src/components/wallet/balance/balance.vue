@@ -11,14 +11,15 @@
 
                 <div v-if="address.loaded">
 
-                    <div v-for="(balance, token) in balances" >
-                    <span class="balance thick" >
-                        {{formatMoney( convertToBase(balance) ) }}
-                    </span>
-                        <span class="currency thick">
-                        {{token}}
-                    </span>
-                        <br/>
+                    <div v-for="(balance, token) in balances"
+                         :key="`balance-token-${token}`">
+                        <span class="balance thick" >
+                            {{formatMoney( convertToBase(balance) ) }}
+                        </span>
+                            <span class="currency thick">
+                            {{token}}
+                        </span>
+                            <br/>
                     </div>
 
                 </div>

@@ -33,6 +33,7 @@
                                 <span class="disabled">Currency</span> <br/>
                                 <select v-model="tokenCurrency">
                                     <option v-for="(balance, token) in balances"
+                                            :key="`send-money-${token}`"
                                             :value="token">
                                         {{token}}
                                     </option>

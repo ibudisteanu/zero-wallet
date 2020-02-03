@@ -61,11 +61,13 @@
                             <div class="table-row">
                                 <span>Data</span>
                                 <div>
-                                    <div v-for="vin in tx.vin" class="input">
+                                    <div v-for="(vin, index) in tx.vin" class="input"
+                                         :key="`transaction-explorer-vin-${index}`">
                                         <account-identicon :publicKey="vin.publicKey" size="20" outer-size="5" />
                                         <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(-vin.amount) : '?'}}</span>
                                     </div>
-                                    <div v-for="vout in tx.vout" class="input">
+                                    <div v-for="(vout, index) in tx.vout" class="input"
+                                         :key="`transaction-explorer-vout-${index}`">
                                         <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="5" />
                                         <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(vout.amount) : '?'}}</span>
                                     </div>

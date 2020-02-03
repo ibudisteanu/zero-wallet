@@ -15,7 +15,8 @@
                 <div v-else></div>
 
                 <select v-model="address">
-                    <option v-for="(address, i) in addresses" >
+                    <option v-for="(address, key) in addresses"
+                            :key="`exchange-offer-trader-account-${key}`">
                         {{address.address}}
                     </option>
                 </select>
@@ -45,6 +46,7 @@
                 <span class="disabled">Currency</span> <br/>
                 <select v-model="tokenCurrency">
                     <option v-for="(balance, token) in balances"
+                            :key="`exchange-offer-token-${token}`"
                             :value="token">
                         {{token}}
                     </option>
@@ -65,7 +67,8 @@
                     <span class="disabled">Options</span> <br/>
                     <select size="6" v-model="paymentAvailable">
                         <option v-for="(paymentAvailable, index) in paymentsAvailable"
-                                v-if="!paymentsAvailableMap[paymentAvailable.name]" @dblclick="handlePaymentSelect">
+                                v-if="!paymentsAvailableMap[paymentAvailable.name]" @dblclick="handlePaymentSelect"
+                                :key="`exchange-add-offer-payment-available-${index}`">
                             {{paymentAvailable.name}}
                         </option>
                     </select>
@@ -83,7 +86,8 @@
                     <span class="disabled">Selected</span> <br/>
                     <select size="6" v-model="paymentSelected">
                         <option v-for="(paymentAvailable, index) in paymentsAvailable"
-                                v-if="paymentsSelectedMap[paymentAvailable.name]" @dblclick="handlePaymentUnselect">
+                                v-if="paymentsSelectedMap[paymentAvailable.name]" @dblclick="handlePaymentUnselect"
+                                :key="`exchange-add-offer-payment-selected-${index}`">
                             {{paymentAvailable.name}}
                         </option>
                     </select>
@@ -204,6 +208,7 @@ export default {
                 if (this.title.length < 10) throw {message: "Title too short"};
                 if (this.description.length < 10) throw {message: "Description too short"};
                 if (this.amountMax < this.amountMin || this.amountMax === 0) throw {message: "Amount Max needs to be greater or equal to Amount Min and non-zero"}
+                if (this.price <= 0) throw {message: "Price can not be zero"};
 
                 const paymentsSelected = JSON.parse( JSON.stringify(this.paymentsSelectedMap) );
                 const paymentsSelectedArray = Object.keys(paymentsSelected);

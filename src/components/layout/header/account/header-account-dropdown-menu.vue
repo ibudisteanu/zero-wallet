@@ -5,7 +5,10 @@
 
             <li>My accounts</li>
 
-            <li v-for="(address) in addresses" :class="`address ${ address.address === mainAddress  ? 'focused' : ''} ` " @click="setMainAddress(address.address)" >
+            <li v-for="(address, index) in addresses"
+                :class="`address ${ address.address === mainAddress  ? 'focused' : ''} ` "
+                :key="`header-account-dropdown-li-${index}`"
+                @click="setMainAddress(address.address)" >
                 <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" > </account-identicon>
 
                 <div>

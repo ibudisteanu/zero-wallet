@@ -9,7 +9,10 @@
                 <span>Data</span>
                 <span>Token</span>
             </div>
-            <router-link v-for="tx in transactions" :class="`table-row  ${isPending(tx) ? 'pending-row' : ''} `" :to="`/explorer/tx/hash/${tx.hash().toString('hex')}`">
+            <router-link v-for="(tx, key) in transactions"
+                         :class="`table-row  ${isPending(tx) ? 'pending-row' : ''} `"
+                         :to="`/explorer/tx/hash/${tx.hash().toString('hex')}`"
+                         :key="`show-transaction-${key}`">
 
                 <span class="hide-mobile"><router-link :to="`/explorer/tx/hash/${tx.hash().toString('hex')}`">{{tx.hash().toString("hex").substr(0,10)+'...'}}</router-link></span>
                 <span>
@@ -21,11 +24,13 @@
                     </template>
                 </span>
                 <span>
-                    <div class="input" v-for="vin in tx.vin ">
+                    <div class="input" v-for="(vin, index) in tx.vin "
+                        :key="`show-transaction-vin-${index}`">
                         <account-identicon :publicKey="vin.publicKey" size="20" outer-size="7" />
                         <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(-vin.amount) : '?'}}</span>
                     </div>
-                    <div class="output" v-for="vout in tx.vout">
+                    <div class="output" v-for="(vout, index) in tx.vout"
+                         :key="`show-transaction-vout-${index}`">
                         <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="7" />
                         <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(vout.amount) : '?'}}</span>
                     </div>
