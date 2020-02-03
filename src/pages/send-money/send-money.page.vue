@@ -107,15 +107,15 @@ export default {
 
                 if (this.address.address === this.destinationAddress) throw {message: "Destination can not be the same with from"};
 
-                const amount = global.PandoraPay._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.amount) );
-                const fee = global.PandoraPay._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.fee) );
+                const amount = PandoraPay._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.amount) );
+                const fee = PandoraPay._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.fee) );
 
                 const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
                 if (nonce === undefined) throw {message: "The connection to the node was dropped"};
 
                 console.log("nonce", nonce);
 
-                const out = await global.PandoraPay.wallet.transfer.transferSimple({
+                const out = await PandoraPay.wallet.transfer.transferSimple({
                     address: this.address.address,
                     txDsts: [{
                         address: this.destinationAddress,
@@ -171,7 +171,7 @@ export default {
 
             try{
 
-                const address = global.PandoraPay._scope.cryptography.addressValidator.validateAddress( this.destinationAddress );
+                const address = PandoraPay._scope.cryptography.addressValidator.validateAddress( this.destinationAddress );
                 if (!address) throw {message: "Invalid address"};
 
                 return '';
@@ -184,7 +184,7 @@ export default {
         destinationAddressIdenticon(){
 
             try{
-                const address = global.PandoraPay._scope.cryptography.addressValidator.validateAddress( this.destinationAddress );
+                const address = PandoraPay._scope.cryptography.addressValidator.validateAddress( this.destinationAddress );
                 if (!address) throw {message: "Invalid address"};
 
                 return address.identiconImg();

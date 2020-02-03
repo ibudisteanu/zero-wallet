@@ -50,21 +50,21 @@ export default {
 
         if (typeof window === "undefined") return;
 
-        global.PandoraPay._scope.argvBrowser = ["--blockchain:genesisTestNet:createNewTestNet", "true", "--settings:networkType", "1"];
+        PandoraPay._scope.argvBrowser = ["--blockchain:genesisTestNet:createNewTestNet", "true", "--settings:networkType", "1"];
 
-        global.PandoraPay.events.on("wallet/loaded", wallet => this.readWallet() );
+        PandoraPay.events.on("wallet/loaded", wallet => this.readWallet() );
 
-        global.PandoraPay.events.on("wallet/address-removed", walletAddress => this.readAddresses() );
+        PandoraPay.events.on("wallet/address-removed", walletAddress => this.readAddresses() );
 
-        global.PandoraPay.events.on("wallet/address-pushed", walletAddress => this.readAddresses() );
+        PandoraPay.events.on("wallet/address-pushed", walletAddress => this.readAddresses() );
 
-        global.PandoraPay.events.on("wallet/loaded-error", err => {
+        PandoraPay.events.on("wallet/loaded-error", err => {
             this.error = err;
         });
 
-        global.PandoraPay.events.on("wallet/encrypted",async encrypted => this.$store.commit('setEncrypted', encrypted ) );
+        PandoraPay.events.on("wallet/encrypted",async encrypted => this.$store.commit('setEncrypted', encrypted ) );
 
-        global.PandoraPay.events.on("wallet/loggedIn", loggedIn => {
+        PandoraPay.events.on("wallet/loggedIn", loggedIn => {
 
             if (loggedIn)
                 return this.readWallet();
@@ -75,7 +75,7 @@ export default {
 
         } );
 
-        await global.PandoraPay.start();
+        await PandoraPay.start();
 
 
         Consensus.on("consensus/blockchain-info-updated", info => this.$store.commit('setBlockchainInfo', info) );
@@ -120,7 +120,7 @@ export default {
 
         readWallet(){
 
-            const wallet = global.PandoraPay.wallet;
+            const wallet = PandoraPay.wallet;
 
             this.$store.commit('setEncrypted', wallet.encrypted );
             this.$store.commit('setVersion', wallet.version );
@@ -145,7 +145,7 @@ export default {
 
         readAddresses(){
 
-            const wallet = global.PandoraPay.wallet;
+            const wallet = PandoraPay.wallet;
 
             if ( !wallet.isLoggedIn() ) return;
 

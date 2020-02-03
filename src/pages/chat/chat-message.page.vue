@@ -7,9 +7,9 @@
         <div class="container pd-top-40">
             <div class="boxed ">
 
-                <h2>Encrypted Chat</h2>
-                <span class="disabled">Trader Public Key: {{publicKey}} </span>
-                <account-identicon :publicKey="publicKey" size="20" outer-size="7" />
+                <h2>Encrypted End-to-End Chat</h2>
+                <span class="disabled">Trader Public Key: {{destinationPublicKey}} </span>
+                <account-identicon :publicKey="destinationPublicKey" size="20" outer-size="7" />
 
                 <section class="msger">
 
@@ -41,10 +41,10 @@
                         </div>
                     </main>
 
-                    <form class="msger-inputarea">
-                        <input type="text" class="msger-input" placeholder="Your message...">
-                        <button type="submit" class="msger-send-btn">Send</button>
-                    </form>
+                    <div class="msger-inputarea">
+                        <input type="text" class="msger-input" placeholder="Your message..." v-model="text">
+                        <button type="submit" class="msger-send-btn" @click="handleSendMessage">Send</button>
+                    </div>
                 </section>
 
 
@@ -70,13 +70,18 @@ export default {
 
     data(){
         return {
-            publicKey: '',
+            destinationPublicKey: '',
+            text: '',
+
             error: '',
         }
     },
 
     computed:{
 
+        mainAddress(){
+            return this.$store.state.wallet.mainAddress;
+        },
 
     },
 
@@ -86,9 +91,60 @@ export default {
 
             await Consensus.initPromise;
 
-            this.publicKey = this.$route.params.publicKey;
+            this.destinationPublicKey = this.$route.params.publicKey;
 
-        }
+        },
+
+        async handleSendMessage(){
+
+            this.error = '';
+
+            try{
+
+                const walletAddress = PandoraPay._scope.wallet.manager.getWalletAddressByAddress( this.mainAddress, false, this.password );
+
+                if (this.text.length < 1) throw {message: "Text needs at least one char"};
+
+                const data = {
+                    version: 0,
+                    senderPublicKey: walletAddress.decryptPublicKey(),
+                    script: 0,
+                    data: Buffer.from(this.text, "ascii"),
+                };
+
+                const chatMessage = new cryptography.encryption.ChatMessage( PandoraPay._scope, undefined, data );
+
+                //console.log("chatMessage", chatMessage);
+
+                const roundTime = 5*60; //5 minutes
+
+                const data2 = {
+                    version: 0,
+                    timestamp: Math.round ( new Date().getTime()/1000 / roundTime ) * roundTime,
+                    nonce: 0,
+                    destinationPublicKey: Buffer.from( this.destinationPublicKey, "hex"),
+                    encryptedData: Buffer.alloc(1),
+                    verifiedSignature: Buffer.alloc(65),
+                };
+
+                const encryptedMessage = new cryptography.encryption.EncryptedMessage( PandoraPay._scope, undefined, data2 );
+
+                await encryptedMessage.encryptData( chatMessage.toBuffer() );
+
+                console.log("encryptedMessage", encryptedMessage);
+
+
+                const outConsensus = await Consensus._client.emitAsync("exchange/new-offer", {offer: offer.toBuffer() }, 0);
+                if (!outConsensus) throw {message: "Offer was not included"};
+
+                this.title = '';
+
+            }catch(err){
+                this.error = err.message;
+            }
+
+        },
+
 
     },
 
@@ -115,7 +171,6 @@ export default {
         flex-flow: column wrap;
         justify-content: space-between;
         width: 100%;
-        max-width: 867px;
         margin: 25px 10px;
         height: calc(100% - 50px);
         border: 2px solid #ddd;

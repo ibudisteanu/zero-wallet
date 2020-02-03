@@ -77,11 +77,11 @@ export default {
 
             try{
 
-                const checkPassword = await global.PandoraPay.wallet.encryption.checkPassword(this.password);
+                const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.password);
                 if (!checkPassword)
                     throw 'Password invalid';
 
-                const out = await global.PandoraPay.wallet.encryption.decryptMnemonic();
+                const out = await PandoraPay.wallet.encryption.decryptMnemonic();
                 this.seed = out.join(' ');
 
             }catch(err){

@@ -150,11 +150,11 @@ export default {
 
             try{
 
-                const checkPassword = await global.PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
+                const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
                 if (!checkPassword)
                     throw {message: "Your wallet password is invalid"};
 
-                const out = await global.PandoraPay.wallet.manager.importJSON( JSON.parse(this.addressData), this.addressPassword );
+                const out = await PandoraPay.wallet.manager.importJSON( JSON.parse(this.addressData), this.addressPassword );
 
                 if (out)
                     this.$notify({

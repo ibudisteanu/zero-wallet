@@ -71,7 +71,7 @@ export default {
 
             try{
 
-                const out = await global.PandoraPay.wallet.manager.createNewAddress();
+                const out = await PandoraPay.wallet.manager.createNewAddress();
                 if (out)
                     this.$notify({
                         type: 'success',
@@ -101,7 +101,7 @@ export default {
 
         logout(){
 
-            const out = global.PandoraPay.wallet.encryption.logoutEncryptionWallet();
+            const out = PandoraPay.wallet.encryption.logoutEncryptionWallet();
             if (out)
                 this.$notify({
                     type: 'success',

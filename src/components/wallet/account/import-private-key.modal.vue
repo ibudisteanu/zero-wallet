@@ -56,7 +56,7 @@ export default {
 
             this.$store.commit('setIsLoading', true);
 
-            const checkPassword = await global.PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
+            const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
             if (!checkPassword)
                 this.error = "Your wallet password is invalid";
 
@@ -65,7 +65,7 @@ export default {
 
                 if (this.privateKey.length !== 64) throw {message: "Private key must be 64 hex numbers"};
 
-                const out = await global.PandoraPay.wallet.manager.importPrivateKeyAddress( this.privateKey );
+                const out = await PandoraPay.wallet.manager.importPrivateKeyAddress( this.privateKey );
 
                 if (out)
                     this.$notify({

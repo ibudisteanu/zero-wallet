@@ -164,7 +164,7 @@ export default {
             if (!this.address) return '';
 
             try{
-                const address = global.PandoraPay._scope.cryptography.addressValidator.validateAddress( this.address );
+                const address = PandoraPay._scope.cryptography.addressValidator.validateAddress( this.address );
                 if (!address) throw {message: "Invalid address"};
 
                 return address.identiconImg();
@@ -203,7 +203,7 @@ export default {
 
             try{
 
-                const walletAddress = global.PandoraPay._scope.wallet.manager.getWalletAddressByAddress( this.address, false, this.password );
+                const walletAddress = PandoraPay._scope.wallet.manager.getWalletAddressByAddress( this.address, false, this.password );
 
                 if (this.title.length < 10) throw {message: "Title too short"};
                 if (this.description.length < 10) throw {message: "Description too short"};
@@ -231,7 +231,7 @@ export default {
                     signature: Buffer.alloc(65),
                 };
 
-                const offer = global.PandoraPay._scope.exchange.createExchangeOffer(data);
+                const offer = PandoraPay._scope.exchange.createExchangeOffer(data);
 
                 offer.signOffer( walletAddress.decryptPrivateKey() );
 
@@ -300,8 +300,8 @@ export default {
         this.address = this.mainAddress;
 
         const paymentsAvailable = [];
-        for (const key in global.PandoraPay._scope.exchange.availablePayments.options){
-            paymentsAvailable.push( global.PandoraPay._scope.exchange.availablePayments.options[key] );
+        for (const key in PandoraPay._scope.exchange.availablePayments.options){
+            paymentsAvailable.push( PandoraPay._scope.exchange.availablePayments.options[key] );
         }
 
         this.paymentsAvailable = paymentsAvailable;
