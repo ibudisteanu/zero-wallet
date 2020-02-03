@@ -17,6 +17,8 @@ import ExchangeBuyAddOfferPage from "src/pages/exchange/buy/exchange-buy-add-off
 import ExchangeSellAddOfferPage from "src/pages/exchange/sell/exchange-sell-add-offer.page"
 import ExchangeSellPage from "src/pages/exchange/sell/exchange-sell.page"
 import ExchangePortfolioPage from "src/pages/exchange/protfolio/exchange-portfoliu.page"
+import ChatPage from "src/pages/chat/chat.page"
+import ChatMessagePage from "src/pages/chat/chat-message.page"
 import ShopPage from "src/pages/shop/shop.page"
 import NotFoundPage from "src/pages/not-found/not-found.page"
 
@@ -65,6 +67,8 @@ const routes = [
 
     {path: '/shop', component: ShopPage },
 
+    {path: '/chat', component: ChatPage },
+    {path: '/chat/message/:publicKey', component: ChatMessagePage },
 
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
 

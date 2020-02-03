@@ -47,7 +47,7 @@
                 <span>Exchange</span>
             </router-link>
 
-            <router-link to="/explorer" :class="`${route.indexOf('/chat') === 0 ? 'selected' : ''}`" >
+            <router-link to="/chat" :class="`${route.indexOf('/chat') === 0 ? 'selected' : ''}`" >
                 <i class="fa fa-comments"></i>
                 <span>Chat</span>
             </router-link>
