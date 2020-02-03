@@ -2,12 +2,21 @@
     <div class="footer">
 
         <div class="boxed">
+
             <div class="row pd-bottom-10 disabled">
                 <span>Consensus</span>
                 <span class="color">{{blockchainStatus}}</span>
                 <span>Block Height </span>
                 <span class="color">#{{blockHeight}}</span>
             </div>
+
+            <div class="row pd-bottom-10 disabled">
+                <span>Encrypted Chat</span>
+                <span class="color">{{chatStatus}}</span>
+                <span>Chat Index</span>
+                <span class="color">#{{chatIndex}}</span>
+            </div>
+
             <div class="row disabled">
                 <span>© 2019 {{entity}} - Wallet v {{version}}</span>
             </div>
@@ -49,7 +58,22 @@ export default {
             if (status === 'online') return 'Connected';
 
             return 'na';
-        }
+        },
+
+        chatIndex(){
+            return this.$store.state.chat.index;
+        },
+
+        chatStatus(){
+            const status = this.$store.state.chat.status;
+
+            if (status === 'sync') return 'Established';
+            if (status === 'syncing') return 'Synching';
+            if (status === 'offline') return 'Offline';
+            if (status === 'online') return 'Connected';
+
+            return 'na';
+        },
 
     },
 

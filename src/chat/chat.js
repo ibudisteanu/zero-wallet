@@ -77,17 +77,18 @@ class Chat extends BaseConsensus{
 
         this._client.on("connect", ()=>{
 
-            this.getLastMessages();
+            this.getEncryptedChatInfo();
             this._initPromiseResolve(true);
 
         });
 
     }
 
-    getLastMessages(){
+    getEncryptedChatInfo(){
 
         if (this._client)
-            return this._client.emit("blockchain/get-info", undefined, this._processBlockchain.bind(this) );
+            return this._client.emit("encrypted-chat/get-info", undefined, this._processEncryptedChatInfo.bind(this));
+
     }
 
     subscribeAccounts( accounts ){
@@ -98,6 +99,17 @@ class Chat extends BaseConsensus{
             this._data.accounts[account] = true;
         });
 
+    }
+
+    _processEncryptedChatInfo(info){
+
+        this.emit('encrypted-chat/chat-info-updated', info);
+        this.status = "sync";
+
+    }
+
+    emitStatusUpdate(newValue){
+        this.emit('encrypted-chat/status-update',newValue);
     }
 
 }

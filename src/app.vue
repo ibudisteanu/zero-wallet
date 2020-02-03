@@ -113,6 +113,11 @@ export default {
 
         Consensus.on("consensus/exchange-offers", data => this.$store.commit('setExchangeOffers', data ) );
 
+
+        Chat.on("encrypted-chat/chat-info-updated", info => this.$store.commit('setChatInfo', info));
+
+        Chat.on("encrypted-chat/status-update", status =>  this.$store.commit('setChatStatus', status) );
+
         await Consensus.start();
 
         await Chat.start();
