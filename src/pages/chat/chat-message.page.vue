@@ -27,6 +27,7 @@
                                     <div class="msg-info">
                                         <div class="msg-info-name">{{ messageName( messages[id] )  }}</div>
                                         <div class="msg-info-time">{{ messageTimeAgo(messages[id] ) }}</div>
+                                        <i class="fa fa-info pointer" @click="showMessageInfo(messages[id])"></i>
                                     </div>
 
                                     <div class="msg-text">
@@ -47,10 +48,8 @@
                         {{error}}
                     </span>
 
-                    <div class="msger-inputarea">
-                        <input type="text" class="msger-input" placeholder="Your message..." v-model="text">
-                        <button type="submit" class="msger-send-btn" @click="handleSendMessage">Send</button>
-                    </div>
+                    <chat-message-from :sender-public-key="senderPublicKey" :receiver-public-key="receiverPublicKey" />
+
                 </section>
 
 
@@ -75,15 +74,15 @@ import LoadingSpinner from "src/components/utils/loading-spinner";
 
 import Utils from "src/utils/utils"
 
+import ChatMessageFrom from "./forms/chat-message-form"
+
 export default {
 
-    components: { Layout, ChatTopBar, AccountIdenticon, LoadingSpinner },
+    components: { Layout, ChatTopBar, AccountIdenticon, LoadingSpinner, ChatMessageFrom },
 
     data(){
         return {
             receiverPublicKey: '',
-            text: '',
-
             error: '',
         }
     },
@@ -144,6 +143,10 @@ export default {
             return message && message._senderData
         },
 
+        showMessageInfo(message){
+            if (message) alert( JSON.stringify( message.toJSON() ) );
+        },
+
         async loadChat(){
 
             await Chat.initPromise;
@@ -154,38 +157,7 @@ export default {
 
         },
 
-        async handleSendMessage(){
 
-            this.error = '';
-
-            try{
-
-                const walletAddress = PandoraPay.wallet.manager.getWalletAddressByAddress( this.mainAddress, false, this.password );
-
-                if (this.text.length < 1) throw {message: "Text needs at least one char"};
-
-                const encryptedMessage = await PandoraPay.cryptography.encryptedMessageCreator.createEncryptedMessage({
-                    senderPublicKey: walletAddress.decryptPublicKey(),
-                    text: this.text,
-                    receiverPublicKey: this.receiverPublicKey,
-                });
-
-                const outChat = await Chat._client.emitAsync("encrypted-chat/new-message", { encryptedMessage: encryptedMessage.toBuffer() }, 0);
-                if (!outChat) throw {message: "Message was not included"};
-
-                this.$store.commit('setChatMessagesCount', { publicKey1: this.publicKeys[0], publicKey2: this.publicKeys[1], count: (this.count || 0) +1 });
-                this.$store.commit('setChatMessagesIds', {publicKey1: this.publicKeys[0], publicKey2: this.publicKeys[1], ids: [ encryptedMessage.hash().toString("hex") ] });
-                this.$store.commit('setChatMessage', {encryptedMessage});
-
-
-                this.text = '';
-
-            }catch(err){
-                console.error(err);
-                this.error = err.message;
-            }
-
-        },
 
 
     },
@@ -265,11 +237,17 @@ export default {
         align-items: center;
         margin-bottom: 10px;
     }
+
+    .msg-info i{
+        font-size: 0.85em;
+    }
+
     .msg-info-name {
         margin-right: 10px;
         font-weight: bold;
     }
     .msg-info-time {
+        margin-right: 10px;
         font-size: 0.85em;
     }
 
@@ -289,33 +267,6 @@ export default {
         margin: 0 0 0 10px;
     }
 
-    .msger-inputarea {
-        display: flex;
-        padding: 10px;
-        border-top: 2px solid #ddd;
-        background: #eee;
-    }
-    .msger-inputarea * {
-        padding: 10px;
-        border: none;
-        border-radius: 3px;
-        font-size: 1em;
-    }
-    .msger-input {
-        flex: 1;
-        background: #ddd;
-    }
-    .msger-send-btn {
-        margin-left: 10px;
-        background: rgb(0, 196, 65);
-        color: #fff;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background 0.23s;
-    }
-    .msger-send-btn:hover {
-        background: rgb(0, 180, 50);
-    }
 
     .msger-chat {
         background-color: #fcfcfe;

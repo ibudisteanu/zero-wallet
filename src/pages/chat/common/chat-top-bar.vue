@@ -5,7 +5,7 @@
 
             <div class="row">
 
-                <router-link to="/chat" :class="`${route.indexOf('/chat') === 0 ? 'selected' : ''}`">
+                <router-link to="/chat" :class="`${route === '/chat'? 'selected' : ''}`">
                     <i class="fa fa-inbox"></i>
                     Inbox
                 </router-link>

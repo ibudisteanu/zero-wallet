@@ -24,7 +24,7 @@ const config = merge(base, {
         hot: true,
         open: true,
         overlay: true,
-        port: 8001,
+        port: 8080,
         stats: {
             normal: true
         }
