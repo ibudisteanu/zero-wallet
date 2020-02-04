@@ -118,6 +118,8 @@ export default {
 
         Chat.on("encrypted-chat/status-update", status =>  this.$store.commit('setChatStatus', status) );
 
+        Chat.on("encrypted-chat/messages-count-count", info => this.$store.commit('setChatMessagesCount', info));
+
         await Consensus.start();
 
         await Chat.start();

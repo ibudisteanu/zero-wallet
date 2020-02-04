@@ -164,7 +164,7 @@ export default {
             if (!this.address) return '';
 
             try{
-                const address = PandoraPay._scope.cryptography.addressValidator.validateAddress( this.address );
+                const address = PandoraPay.cryptography.addressValidator.validateAddress( this.address );
                 if (!address) throw {message: "Invalid address"};
 
                 return address.identiconImg();
@@ -203,7 +203,7 @@ export default {
 
             try{
 
-                const walletAddress = PandoraPay._scope.wallet.manager.getWalletAddressByAddress( this.address, false, this.password );
+                const walletAddress = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address, false, this.password );
 
                 if (this.title.length < 10) throw {message: "Title too short"};
                 if (this.description.length < 10) throw {message: "Description too short"};
@@ -216,6 +216,8 @@ export default {
                 if (paymentsSelectedArray.length < 1) throw {message: "No payments selected"};
 
                 const data = {
+                    privateKey: walletAddress.decryptPrivateKey(), //for signing
+
                     publicKey: walletAddress.decryptPublicKey(),
                     type: this.type,
                     title: this.title,
@@ -231,9 +233,11 @@ export default {
                     signature: Buffer.alloc(65),
                 };
 
-                const offer = PandoraPay._scope.exchange.createExchangeOffer(data);
+                const offerOut = await PandoraPay.exchange.exchangeOfferCreator.createExchangeOffer(data);
 
-                offer.signOffer( walletAddress.decryptPrivateKey() );
+                console.log(offerOut);
+
+                const offer = offerOut.offer;
 
                 const outConsensus = await Consensus._client.emitAsync("exchange/new-offer", {offer: offer.toBuffer() }, 0);
                 if (!outConsensus) throw {message: "Offer was not included"};
@@ -300,8 +304,8 @@ export default {
         this.address = this.mainAddress;
 
         const paymentsAvailable = [];
-        for (const key in PandoraPay._scope.exchange.availablePayments.options){
-            paymentsAvailable.push( PandoraPay._scope.exchange.availablePayments.options[key] );
+        for (const key in PandoraPay.exchange.availablePayments.options){
+            paymentsAvailable.push( PandoraPay.exchange.availablePayments.options[key] );
         }
 
         this.paymentsAvailable = paymentsAvailable;

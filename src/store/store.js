@@ -6,7 +6,9 @@ import BlockchainStore from "./modules/blockchain/blockchain-store"
 import PageStore from "./modules/page/page-store"
 import TransactionsStore from "./modules/transactions/transactions-store"
 import ExchangeStore from "./modules/exchange/exchange-store"
+
 import ChatStore from "./modules/chat/chat-store"
+import ChatMessagesStore from "./modules/chat-messages/chat-messages-store"
 
 Vue.use(Vuex);
 
@@ -22,6 +24,7 @@ const store = new Vuex.Store({
         addresses: AddressesStore,
         exchange: ExchangeStore,
         chat: ChatStore,
+        chatMessages: ChatMessagesStore,
 
     },
 

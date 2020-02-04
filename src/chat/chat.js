@@ -24,12 +24,10 @@ class Chat extends BaseConsensus{
 
             },
 
-            messages:{
-
-            },
-
-
         };
+
+        this._publicKeySender = undefined;
+        this._publicKeyDestination = undefined;
 
 
     }
@@ -98,6 +96,33 @@ class Chat extends BaseConsensus{
         accounts.map (account => {
             this._data.accounts[account] = true;
         });
+
+    }
+
+    async startDownloadChatMessages( publicKeySender, publicKeyDestination ){
+
+        if (this._downloadChatMessagesEnabled) return;
+
+        console.log(publicKeySender, publicKeyDestination);
+        this._publicKeySender = publicKeySender;
+        this._publicKeyDestination = publicKeyDestination;
+
+        this._downloadChatMessagesEnabled = true;
+        return this.downloadChatMessages();
+    }
+
+    async stopDownloadChatMessages(){
+
+        this._downloadChatMessagesEnabled = false;
+    }
+
+
+    async downloadChatMessages(){
+
+        const out = await this._client.emitAsync("encrypted-chat/content-count", {publicKey1: this._publicKeySender, publicKey2: this._publicKeyDestination});
+        if (typeof out !== "number") return;
+
+        this.emit('encrypted-chat/messages-count-count', {publicKey1: this._publicKeySender, publicKey2: this._publicKeyDestination, count: out});
 
     }
 

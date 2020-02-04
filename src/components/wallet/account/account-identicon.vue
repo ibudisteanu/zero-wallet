@@ -31,17 +31,17 @@ export default {
                 let address;
 
                 if (this.address) {
-                    address = PandoraPay._scope.cryptography.addressValidator.validateAddress(this.address);
+                    address = PandoraPay.cryptography.addressValidator.validateAddress(this.address);
                     if (!address) throw {message: "Invalid address"};
                 }
 
                 if (this.publicKey){
-                    address = PandoraPay._scope.cryptography.addressGenerator.generateAddressFromPublicKey( this.publicKey );
+                    address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKey( this.publicKey );
                     if (!address) throw {message: "Invalid address"};
                 }
 
                 if (this.publicKeyHash){
-                    address = PandoraPay._scope.cryptography.addressGenerator.generateAddressFromPublicKeyHash( this.publicKeyHash );
+                    address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKeyHash( this.publicKeyHash );
                     if (!address) throw {message: "Invalid address"};
                 }
 

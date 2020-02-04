@@ -171,7 +171,7 @@ export default {
 
             try{
 
-                const address = PandoraPay._scope.cryptography.addressValidator.validateAddress( this.destinationAddress );
+                const address = PandoraPay.cryptography.addressValidator.validateAddress( this.destinationAddress );
                 if (!address) throw {message: "Invalid address"};
 
                 return '';
@@ -184,7 +184,7 @@ export default {
         destinationAddressIdenticon(){
 
             try{
-                const address = PandoraPay._scope.cryptography.addressValidator.validateAddress( this.destinationAddress );
+                const address = PandoraPay.cryptography.addressValidator.validateAddress( this.destinationAddress );
                 if (!address) throw {message: "Invalid address"};
 
                 return address.identiconImg();

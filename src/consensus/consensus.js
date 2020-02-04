@@ -230,7 +230,7 @@ class Consensus extends BaseConsensus{
         const balances = await this._client.emitAsync("account/get-balance", {account }, 0);
         const nonce = await this._client.emitAsync("account/get-nonce", {account }, 0);
 
-        const address = PandoraPay._scope.cryptography.addressValidator.validateAddress( account );
+        const address = PandoraPay.cryptography.addressValidator.validateAddress( account );
         const publicKeyHash = address.publicKeyHash;
 
         //remove old balance
@@ -269,7 +269,7 @@ class Consensus extends BaseConsensus{
     async _downloadGenesis(){
 
         const genesis = await this._client.emitAsync("blockchain/genesis", { }, 0);
-        console.log("genesis", genesis);
+        if (!genesis) return;
 
         this._data.genesis = genesis;
 

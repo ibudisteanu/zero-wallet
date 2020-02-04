@@ -7,7 +7,7 @@
         <div class="container pd-top-40">
             <div class="boxed ">
 
-                <h2>Encrypted End-to-End Chat</h2>
+                <h2>Encrypted End-to-End Chat {{count}}</h2>
                 <span class="disabled">Trader Public Key: {{destinationPublicKey}} </span>
                 <account-identicon :publicKey="destinationPublicKey" size="20" outer-size="7" />
 
@@ -41,6 +41,10 @@
                         </div>
                     </main>
 
+                    <span v-if="error" class="centered danger">
+                        {{error}}
+                    </span>
+
                     <div class="msger-inputarea">
                         <input type="text" class="msger-input" placeholder="Your message..." v-model="text">
                         <button type="submit" class="msger-send-btn" @click="handleSendMessage">Send</button>
@@ -62,7 +66,9 @@
 import Layout from "src/components/layout/layout"
 import ChatTopBar from "./common/chat-top-bar"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
+
 import Consensus from "src/consensus/consensus"
+import Chat from "src/chat/chat"
 
 export default {
 
@@ -79,9 +85,18 @@ export default {
 
     computed:{
 
+        count(){
+            return this.$store.state.chatMessages.count[ this.senderPublicKey + ':'+this.destinationPublicKey]
+        },
+
         mainAddress(){
             return this.$store.state.wallet.mainAddress;
         },
+
+        senderPublicKey(){
+            if (!this.mainAddress) return '';
+            return this.$store.state.addresses.list[this.mainAddress].publicKey;
+        }
 
     },
 
@@ -89,9 +104,11 @@ export default {
 
         async loadChat(){
 
-            await Consensus.initPromise;
+            await Chat.initPromise;
 
             this.destinationPublicKey = this.$route.params.publicKey;
+
+            await Chat.startDownloadChatMessages( this.senderPublicKey, this.destinationPublicKey );
 
         },
 
@@ -101,41 +118,21 @@ export default {
 
             try{
 
-                const walletAddress = PandoraPay._scope.wallet.manager.getWalletAddressByAddress( this.mainAddress, false, this.password );
+                const walletAddress = PandoraPay.wallet.manager.getWalletAddressByAddress( this.mainAddress, false, this.password );
 
                 if (this.text.length < 1) throw {message: "Text needs at least one char"};
 
-                const data = {
-                    version: 0,
+                const encryptedMessage = await PandoraPay.cryptography.encryptedMessageCreator.createEncryptedMessage({
                     senderPublicKey: walletAddress.decryptPublicKey(),
-                    script: 0,
-                    data: Buffer.from(this.text, "ascii"),
-                };
-
-                const chatMessage = new cryptography.encryption.ChatMessage( PandoraPay._scope, undefined, data );
-
-                //console.log("chatMessage", chatMessage);
-
-                const roundTime = 5*60; //5 minutes
-
-                const data2 = {
-                    version: 0,
-                    timestamp: Math.round ( new Date().getTime()/1000 / roundTime ) * roundTime,
-                    nonce: 0,
-                    destinationPublicKey: Buffer.from( this.destinationPublicKey, "hex"),
-                    encryptedData: Buffer.alloc(1),
-                    verifiedSignature: Buffer.alloc(65),
-                };
-
-                const encryptedMessage = new cryptography.encryption.EncryptedMessage( PandoraPay._scope, undefined, data2 );
-
-                await encryptedMessage.encryptData( chatMessage.toBuffer() );
-
-                console.log("encryptedMessage", encryptedMessage);
+                    text: this.text,
+                    destinationPublicKey: this.destinationPublicKey,
+                });
 
 
-                const outConsensus = await Consensus._client.emitAsync("exchange/new-offer", {offer: offer.toBuffer() }, 0);
-                if (!outConsensus) throw {message: "Offer was not included"};
+                const outChat = await Chat._client.emitAsync("encrypted-chat/new-message", { encryptedMessage: encryptedMessage.toBuffer() }, 0);
+                if (!outChat) throw {message: "Message was not included"};
+
+                console.log("out-chat", outChat);
 
                 this.title = '';
 
