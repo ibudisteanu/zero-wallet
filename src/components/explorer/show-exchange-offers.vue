@@ -25,7 +25,7 @@
                     <account-identicon :publicKey="offer.publicKey" size="20" outer-size="7" />
                 </span>
                 <span>
-                    <router-link :to="`/chat/message/${offer.publicKey.toString('hex')}`">
+                    <router-link :to="`/chat/conversation/${offer.publicKey.toString('hex')}`">
                         <i class="fa fa-comment-dots"></i>
                     </router-link>
                 </span>
