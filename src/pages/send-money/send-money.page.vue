@@ -74,7 +74,7 @@
 import Layout from "src/components/layout/layout"
 import Account from "src/components/wallet/account/account"
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
-import QrCodeScanner from "./qr-code-scanner/qr-code-scanner";
+import QrCodeScanner from "src/components/utils/qr-code-scanner/qr-code-scanner";
 import Consensus from "src/consensus/consensus"
 
 const {TransactionTokenCurrencyTypeEnum} = global.cryptography.transactions;

@@ -10,10 +10,15 @@
                     Inbox
                 </router-link>
 
-                <span :class="`${route.indexOf('/chat/message') === 0 ? 'selected' : ''}`">
+                <span :class="`${route.indexOf('/chat/conversation') === 0 ? 'selected' : ''}`">
                     <i class="fa fa-comment-dots"></i>
                     Private Chat
                 </span>
+
+                <router-link to="/chat/conversation/start" :class="`${route.indexOf('/chat/conversation/start') === 0 ? 'selected' : ''}`">
+                    <i class="fa fa-comment-dots"></i>
+                    Start Private Chat
+                </router-link>
 
 
             </div>
@@ -46,7 +51,7 @@ export default {
     .row{
         font-size: 15px;
         display: grid;
-        grid-template-columns: 100px 150px;
+        grid-template-columns: 100px 150px 150px;
         align-items: center;
     }
 
