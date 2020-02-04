@@ -26,8 +26,8 @@ class Chat extends BaseConsensus{
 
         };
 
-        this._publicKeySender = undefined;
-        this._publicKeyDestination = undefined;
+        this._senderPublicKey = undefined;
+        this._receiverPublicKey = undefined;
 
 
     }
@@ -99,13 +99,13 @@ class Chat extends BaseConsensus{
 
     }
 
-    async startDownloadChatMessages( publicKeySender, publicKeyDestination ){
+    async startDownloadChatMessages( publicKeySender, publicKeyReceiver ){
 
         if (this._downloadChatMessagesEnabled) return;
 
-        console.log(publicKeySender, publicKeyDestination);
-        this._publicKeySender = publicKeySender;
-        this._publicKeyDestination = publicKeyDestination;
+        console.log(publicKeySender, publicKeyReceiver);
+        this._senderPublicKey = publicKeySender;
+        this._receiverPublicKey = publicKeyReceiver;
 
         this._downloadChatMessagesEnabled = true;
         return this.downloadChatMessages();
@@ -119,10 +119,39 @@ class Chat extends BaseConsensus{
 
     async downloadChatMessages(){
 
-        const out = await this._client.emitAsync("encrypted-chat/content-count", {publicKey1: this._publicKeySender, publicKey2: this._publicKeyDestination});
+        const out = await this._client.emitAsync("encrypted-chat/content-count", {publicKey1: this._senderPublicKey, publicKey2: this._receiverPublicKey}, 0);
         if (typeof out !== "number") return;
 
-        this.emit('encrypted-chat/messages-count-count', {publicKey1: this._publicKeySender, publicKey2: this._publicKeyDestination, count: out});
+        this.emit('encrypted-chat/messages-count-update', {publicKey1: this._senderPublicKey, publicKey2: this._receiverPublicKey, count: out});
+
+        if (out > 0){
+
+            await this.downloadChatMessagesSpecific( out );
+
+        }
+
+    }
+
+    async downloadChatMessagesSpecific(index){
+
+        const out = await this._client.emitAsync("encrypted-chat/content-ids", {publicKey1: this._senderPublicKey, publicKey2: this._receiverPublicKey, index}, 0);
+        if (!out) return;
+
+        this.emit('encrypted-chat/messages-ids-update', {publicKey1: this._senderPublicKey, publicKey2: this._receiverPublicKey, ids: out.out, next: out.next });
+
+        for (const encryptedMessageId of out.out)
+            this._downloadChatMessage(encryptedMessageId);
+
+    }
+
+    async _downloadChatMessage(encryptedMessageId){
+
+        const out = await this._client.emitAsync("encrypted-chat/get-message", {encryptedMessageHash: encryptedMessageId}, 0);
+        if (!out) return;
+
+        const encryptedMessage = await PandoraPay.cryptography.encryptedMessageValidator.validateEncryptedMessage( Buffer.from(out) );
+
+        this.emit('encrypted-chat/message-downloaded', { encryptedMessage });
 
     }
 

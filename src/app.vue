@@ -2,7 +2,6 @@
 
     <div>
 
-
         <div v-if="!error">
 
             <!-- component matched by the route will render here -->
@@ -118,7 +117,11 @@ export default {
 
         Chat.on("encrypted-chat/status-update", status =>  this.$store.commit('setChatStatus', status) );
 
-        Chat.on("encrypted-chat/messages-count-count", info => this.$store.commit('setChatMessagesCount', info));
+        Chat.on("encrypted-chat/messages-count-update", data => this.$store.commit('setChatMessagesCount', data));
+
+        Chat.on("encrypted-chat/messages-ids-update", data => this.$store.commit('setChatMessagesIds', data));
+
+        Chat.on("encrypted-chat/message-downloaded", data => this.$store.commit('setChatMessage', data));
 
         await Consensus.start();
 

@@ -8,37 +8,39 @@
             <div class="boxed ">
 
                 <h2>Encrypted End-to-End Chat {{count}}</h2>
-                <span class="disabled">Trader Public Key: {{destinationPublicKey}} </span>
-                <account-identicon :publicKey="destinationPublicKey" size="20" outer-size="7" />
+                <span class="disabled">Trader Public Key: {{receiverPublicKey}} </span>
+                <account-identicon :publicKey="receiverPublicKey" size="20" outer-size="7" />
 
                 <section class="msger">
 
                     <main class="msger-chat">
-                        <div class="msg left-msg">
+
+                        <div v-for="(value, id) in ids"
+                             :class="`msg ${ messageSender(messages[id])  ? 'right' : 'left' }-msg`"
+                             :key="`chat-message-${id}`">
                             <div class="msg-bubble">
-                                <div class="msg-info">
-                                    <div class="msg-info-name">Trader</div>
-                                    <div class="msg-info-time">12:45</div>
+
+                                <loading-spinner v-if="!messages[id]" />
+
+                                <div v-else>
+
+                                    <div class="msg-info">
+                                        <div class="msg-info-name">{{ messageName( messages[id] )  }}</div>
+                                        <div class="msg-info-time">{{ messageTimeAgo(messages[id] ) }}</div>
+                                    </div>
+
+                                    <div class="msg-text">
+
+                                        {{ messageText(messages[id]) }}
+
+                                    </div>
+
                                 </div>
 
-                                <div class="msg-text">
-                                    Text
-                                </div>
                             </div>
                         </div>
 
-                        <div class="msg right-msg">
-                            <div class="msg-bubble">
-                                <div class="msg-info">
-                                    <div class="msg-info-name">You</div>
-                                    <div class="msg-info-time">12:46</div>
-                                </div>
 
-                                <div class="msg-text">
-                                    Text
-                                </div>
-                            </div>
-                        </div>
                     </main>
 
                     <span v-if="error" class="centered danger">
@@ -69,14 +71,17 @@ import AccountIdenticon from "src/components/wallet/account/account-identicon";
 
 import Consensus from "src/consensus/consensus"
 import Chat from "src/chat/chat"
+import LoadingSpinner from "src/components/utils/loading-spinner";
+
+import Utils from "src/utils/utils"
 
 export default {
 
-    components: { Layout, ChatTopBar, AccountIdenticon },
+    components: { Layout, ChatTopBar, AccountIdenticon, LoadingSpinner },
 
     data(){
         return {
-            destinationPublicKey: '',
+            receiverPublicKey: '',
             text: '',
 
             error: '',
@@ -85,8 +90,29 @@ export default {
 
     computed:{
 
+        publicKeys(){
+            const publicKeys = [this.senderPublicKey , this.receiverPublicKey];
+            publicKeys.sort( (a,b) => a.localeCompare(b) );
+            return publicKeys;
+
+        },
+
         count(){
-            return this.$store.state.chatMessages.count[ this.senderPublicKey + ':'+this.destinationPublicKey]
+            return (this.$store.state.chatMessages.messagesConversation[ this.publicKeys[0] + ':'+ this.publicKeys[1] ] || {}).count
+        },
+
+        ids(){
+            return (this.$store.state.chatMessages.messagesConversation[ this.publicKeys[0] + ':'+ this.publicKeys[1]] || {}).ids || {};
+        },
+
+        messages(){
+            const ids = this.ids;
+            const messages = {};
+
+            for (const id in ids)
+                messages[id] = this.$store.state.chatMessages.messages[id];
+
+            return messages;
         },
 
         mainAddress(){
@@ -102,13 +128,29 @@ export default {
 
     methods: {
 
+        messageTimeAgo(message){
+            return Utils.timeSince( message.timestamp*1000 );
+        },
+
+        messageName(message){
+            return message._senderData ? 'YOU' : 'TRADER';
+        },
+
+        messageText(message){
+            return (message._senderData ? message._senderData : message._receiverData).toString("ascii");
+        },
+
+        messageSender(message){
+            return message && message._senderData
+        },
+
         async loadChat(){
 
             await Chat.initPromise;
 
-            this.destinationPublicKey = this.$route.params.publicKey;
+            this.receiverPublicKey = this.$route.params.publicKey;
 
-            await Chat.startDownloadChatMessages( this.senderPublicKey, this.destinationPublicKey );
+            await Chat.startDownloadChatMessages( this.senderPublicKey, this.receiverPublicKey );
 
         },
 
@@ -125,18 +167,21 @@ export default {
                 const encryptedMessage = await PandoraPay.cryptography.encryptedMessageCreator.createEncryptedMessage({
                     senderPublicKey: walletAddress.decryptPublicKey(),
                     text: this.text,
-                    destinationPublicKey: this.destinationPublicKey,
+                    receiverPublicKey: this.receiverPublicKey,
                 });
-
 
                 const outChat = await Chat._client.emitAsync("encrypted-chat/new-message", { encryptedMessage: encryptedMessage.toBuffer() }, 0);
                 if (!outChat) throw {message: "Message was not included"};
 
-                console.log("out-chat", outChat);
+                this.$store.commit('setChatMessagesCount', { publicKey1: this.publicKeys[0], publicKey2: this.publicKeys[1], count: (this.count || 0) +1 });
+                this.$store.commit('setChatMessagesIds', {publicKey1: this.publicKeys[0], publicKey2: this.publicKeys[1], ids: [ encryptedMessage.hash().toString("hex") ] });
+                this.$store.commit('setChatMessage', {encryptedMessage});
 
-                this.title = '';
+
+                this.text = '';
 
             }catch(err){
+                console.error(err);
                 this.error = err.message;
             }
 

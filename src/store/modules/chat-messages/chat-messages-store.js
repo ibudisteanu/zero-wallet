@@ -4,9 +4,13 @@ export default {
 
     state: {
 
-        count: {
+        messagesConversation: {
 
         },
+
+        messages:{
+
+        }
 
     },
 
