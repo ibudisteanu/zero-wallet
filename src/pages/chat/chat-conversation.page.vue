@@ -76,6 +76,7 @@ import Utils from "src/utils/utils"
 
 import ChatMessageFrom from "./forms/chat-message-form"
 
+
 export default {
 
     components: { Layout, ChatTopBar, AccountIdenticon, LoadingSpinner, ChatMessageFrom },

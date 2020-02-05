@@ -1,10 +1,13 @@
 <template>
 
     <layout>
+
+        <chat-top-bar/>
+
         <div class="container pd-top-40">
             <div class="boxed ">
 
-                <h1>Start Conversation</h1>
+                <h1>Start Encrypted End to End Conversation</h1>
 
                     <span class="disabled">Public Key</span> <br/>
 
@@ -40,10 +43,11 @@ import Layout from "src/components/layout/layout"
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
 import QrCodeScanner from "src/components/utils/qr-code-scanner/qr-code-scanner";
 import Consensus from "src/consensus/consensus"
+import ChatTopBar from "./common/chat-top-bar"
 
 export default {
 
-    components: {Layout, AccountIdenticon, QrCodeScanner },
+    components: {Layout, AccountIdenticon, QrCodeScanner, ChatTopBar },
 
     data(){
         return {

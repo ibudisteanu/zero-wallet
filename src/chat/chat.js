@@ -146,7 +146,7 @@ class Chat extends BaseConsensus{
 
     async _downloadChatMessage(encryptedMessageId){
 
-        const out = await this._client.emitAsync("encrypted-chat/get-message", {encryptedMessageHash: encryptedMessageId}, 0);
+        const out = await this._client.emitAsync("encrypted-chat/get-message", {encryptedMessageId: encryptedMessageId}, 0);
         if (!out) return;
 
         const encryptedMessage = await PandoraPay.cryptography.encryptedMessageValidator.validateEncryptedMessage( Buffer.from(out) );
