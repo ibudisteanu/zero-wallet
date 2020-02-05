@@ -68,7 +68,6 @@ import Layout from "src/components/layout/layout"
 import ChatTopBar from "./common/chat-top-bar"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 
-import Consensus from "src/consensus/consensus"
 import Chat from "src/chat/chat"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 
@@ -91,8 +90,7 @@ export default {
     computed:{
 
         publicKeys(){
-            const publicKeys = [this.senderPublicKey , this.receiverPublicKey];
-            publicKeys.sort( (a,b) => a.localeCompare(b) );
+            const publicKeys = [this.senderPublicKey , this.receiverPublicKey].sort( (a,b) => a.localeCompare(b) );
             return publicKeys;
 
         },
@@ -133,7 +131,7 @@ export default {
         },
 
         messageName(message){
-            return message._senderData ? 'YOU' : 'TRADER';
+            return  this.messageSender(message) ? 'YOU' : 'TRADER';
         },
 
         messageText(message){
@@ -141,7 +139,7 @@ export default {
         },
 
         messageSender(message){
-            return message && message._senderData
+            return message && message._senderData && this.senderPublicKey === message.senderPublicKey.toString("hex");
         },
 
         showMessageInfo(message){

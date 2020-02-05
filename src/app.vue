@@ -202,8 +202,8 @@ export default {
                 this.$store.commit('setMainAddress', firstAddress );
 
             //subscribe addresses
-            Consensus.subscribeAccounts( Object.keys(addresses) );
-            Chat.subscribeAccounts( Object.keys(addresses) );
+            Consensus.setAccounts( addresses );
+            Chat.setAccounts( addresses );
 
             Consensus.getBlockchain();
 

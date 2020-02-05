@@ -256,13 +256,12 @@ class Consensus extends BaseConsensus{
 
     }
 
-    subscribeAccounts( accounts ){
+    setAccounts( accounts ){
 
         this._data.accounts = {};
 
-        accounts.map (account => {
+        for (const account in accounts)
             this._data.accounts[account] = true;
-        });
 
     }
 

@@ -4,8 +4,7 @@ export default {
 
     setChatMessagesCount(context, { publicKey1, publicKey2, count } ){
 
-        const publicKeys = [publicKey1, publicKey2];
-        publicKeys.sort( (a,b) => a.localeCompare(b) );
+        const publicKeys = [publicKey1, publicKey2].sort( (a,b) => a.localeCompare(b) );
 
         const messagesConversation = { ...( context.messagesConversation[ publicKeys[0]+":"+publicKeys[1] ] || {} )  };
 
@@ -17,16 +16,13 @@ export default {
 
     setChatMessagesIds(context, { publicKey1, publicKey2, ids, next } ){
 
-        const publicKeys = [publicKey1, publicKey2];
-        publicKeys.sort( (a,b) => a.localeCompare(b) );
+        const publicKeys = [publicKey1, publicKey2].sort( (a,b) => a.localeCompare(b) );
 
         const messagesConversation = { ...( context.messagesConversation[ publicKeys[0]+":"+publicKeys[1] ] || {} )  };
+        if (!messagesConversation.ids) messagesConversation.ids = {};
 
-        if (!messagesConversation.ids)
-            messagesConversation.ids = {};
-
-        for (const key of ids)
-            messagesConversation.ids[key] = true;
+        for (const id of ids)
+            messagesConversation.ids[id] = true;
 
         if (next !== undefined)
             messagesConversation.next = next;
@@ -36,6 +32,21 @@ export default {
     },
 
     async setChatMessage(context, { encryptedMessage } ){
+
+
+        const publicKeys = [encryptedMessage.senderPublicKey.toString("hex"), encryptedMessage.receiverPublicKey.toString("hex")].sort( (a,b) => a.localeCompare(b) );
+
+        const messagesConversation = { ...( context.messagesConversation[ publicKeys[0]+":"+publicKeys[1] ] || {} )  };
+        if (!messagesConversation.ids) messagesConversation.ids = {};
+
+        const id = encryptedMessage.hash().toString("hex");
+        if (!messagesConversation.ids[ id ]){
+
+            messagesConversation.ids[ id ]++;
+            messagesConversation.count += 1;
+
+            Vue.set(context.messagesConversation, publicKeys[0]+":"+publicKeys[1], messagesConversation );
+        }
 
         const senderAddress = await PandoraPay.wallet.manager.getWalletAddressByAddress( encryptedMessage.senderAddress );
         if (senderAddress) {
@@ -54,6 +65,5 @@ export default {
         Vue.set( context.messages, encryptedMessage.hash().toString("hex"), encryptedMessage );
 
     },
-
 
 }

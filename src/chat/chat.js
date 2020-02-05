@@ -24,6 +24,10 @@ class Chat extends BaseConsensus{
 
             },
 
+            encryptedMessages:{
+
+            },
+
         };
 
         this._senderPublicKey = undefined;
@@ -76,6 +80,8 @@ class Chat extends BaseConsensus{
         this._client.on("connect", ()=>{
 
             this.getEncryptedChatInfo();
+            this._subscribeAccounts();
+
             this._initPromiseResolve(true);
 
         });
@@ -89,13 +95,42 @@ class Chat extends BaseConsensus{
 
     }
 
-    subscribeAccounts( accounts ){
+    setAccounts( accounts ){
 
         this._data.accounts = {};
+        for (const account in accounts)
+            this._data.accounts[account] = accounts[account];
 
-        accounts.map (account => {
-            this._data.accounts[account] = true;
-        });
+        this._subscribeAccounts();
+    }
+
+    async _subscribeAccounts(){
+
+        if (!this._client) return;
+
+        console.log("accounts", this._data.accounts);
+
+        this._client.on('encrypted-chat/subscribe/new-message/answer', async (out) => {
+
+            console.log("out", out);
+
+            const encryptedMessage = await PandoraPay.cryptography.encryptedMessageValidator.validateEncryptedMessage( Buffer.from(out) );
+            this._data.encryptedMessages[ encryptedMessage.hash().toString("hex") ] = encryptedMessage;
+
+            const publicKeys = [encryptedMessage.senderPublicKey.toString("hex"), encryptedMessage.receiverPublicKey.toString("hex")].sort( (a,b) => a.localeCompare(b) );
+            console.log("encryptedMessage", encryptedMessage);
+
+            this.emit('encrypted-chat/message-downloaded', { encryptedMessage });
+
+        } );
+
+        for (const account in this._data.accounts){
+
+            const out = await this._client.emitAsync('encrypted-chat/subscribe/new-message', {publicKey: this._data.accounts[account].publicKey} );
+
+            console.log("output", out);
+
+        }
 
     }
 
@@ -146,12 +181,18 @@ class Chat extends BaseConsensus{
 
     async _downloadChatMessage(encryptedMessageId){
 
+        if (this._data.encryptedMessages[encryptedMessageId]) return this._data.encryptedMessages[encryptedMessageId];
+
         const out = await this._client.emitAsync("encrypted-chat/get-message", {encryptedMessageId: encryptedMessageId}, 0);
         if (!out) return;
 
         const encryptedMessage = await PandoraPay.cryptography.encryptedMessageValidator.validateEncryptedMessage( Buffer.from(out) );
 
+        this._data.encryptedMessages[encryptedMessageId] = encryptedMessage;
+
         this.emit('encrypted-chat/message-downloaded', { encryptedMessage });
+
+
 
     }
 
