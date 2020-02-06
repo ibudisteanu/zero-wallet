@@ -15,7 +15,7 @@
                     <div class="user">
                         <account-identicon :publicKey="publicKey" :size="40" :outer-size="10" />
                         <div>
-                            <span class="thick">{{ getAddress(publicKey) }}</span>
+                            <span class="thick wordwrap">{{ getAddress(publicKey) }}</span>
                         </div>
                     </div>
                 </router-link>

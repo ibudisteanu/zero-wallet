@@ -8,8 +8,14 @@
             <div class="boxed ">
 
                 <h2>Encrypted End-to-End Chat {{count}}</h2>
-                <span class="disabled">Trader Public Key: {{receiverPublicKey}} </span>
-                <account-identicon :publicKey="receiverPublicKey" size="20" outer-size="7" />
+
+                <div class="user">
+                    <account-identicon :publicKey="receiverPublicKey" :size="40" :outer-size="10" />
+                    <div>
+                        <span class="thick wordwrap">{{ getAddress(receiverPublicKey) }}</span>
+                        <span class="disabled wordwrap">{{ receiverPublicKey }}</span>
+                    </div>
+                </div>
 
                 <section class="msger">
 
@@ -126,6 +132,13 @@ export default {
 
     methods: {
 
+        getAddress(publicKey){
+
+            const address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKey( publicKey );
+            return address ? address.calculateAddress() : '';
+
+        },
+
         messageTimeAgo(message){
             return Utils.timeSince( message.timestamp*1000 );
         },
@@ -135,7 +148,10 @@ export default {
         },
 
         messageText(message){
-            return (message._senderData ? message._senderData : message._receiverData).toString("ascii");
+            const chatMessage = (message._senderData ? message._senderData : message._receiverData);
+            if ( !chatMessage ) return 'error';
+
+            return chatMessage.data.toString("ascii");
         },
 
         messageSender(message){
@@ -275,6 +291,13 @@ export default {
 
     .msger-chat {
         background-color: #fcfcfe;
+    }
+
+    .user{
+
+        display: grid;
+        grid-template-columns: 60px 1fr;
+        grid-column-gap: 5px;
     }
 
 
