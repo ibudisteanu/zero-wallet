@@ -9,7 +9,8 @@
                 :class="`address ${ address.address === mainAddress  ? 'focused' : ''} ` "
                 :key="`header-account-dropdown-li-${index}`"
                 @click="setMainAddress(address.address)" >
-                <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" > </account-identicon>
+
+                <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" />
 
                 <div>
                     <span>{{address.name}}</span> <span class="disabled right-float" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : ''}}</span><br/>

@@ -117,11 +117,15 @@ export default {
 
         Chat.on("encrypted-chat/status-update", status =>  this.$store.commit('setChatStatus', status) );
 
-        Chat.on("encrypted-chat/messages-count-update", data => this.$store.commit('setChatMessagesCount', data));
+        Chat.on("encrypted-chat/conversation-messages-count-update", data => this.$store.commit('setChatConversationMessagesCount', data));
 
-        Chat.on("encrypted-chat/messages-ids-update", data => this.$store.commit('setChatMessagesIds', data));
+        Chat.on("encrypted-chat/conversation-messages-ids-update", data => this.$store.commit('setChatConversationMessagesIds', data));
 
-        Chat.on("encrypted-chat/message-downloaded", data => this.$store.commit('setChatMessage', data));
+        Chat.on("encrypted-chat/message-downloaded", data => this.$store.commit('setChatEncryptedMessage', data));
+
+        Chat.on("encrypted-chat/conversations-count-update", data => this.$store.commit('setChatConversationsCount', data));
+
+        Chat.on("encrypted-chat/conversations-ids-update", data => this.$store.commit('setChatConversationsIds', data));
 
         await Consensus.start();
 

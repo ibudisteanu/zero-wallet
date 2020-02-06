@@ -4,7 +4,11 @@ export default {
 
     state: {
 
-        messagesConversation: {
+        conversations: {
+
+        },
+
+        conversationMessages: {
 
         },
 

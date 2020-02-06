@@ -35,8 +35,12 @@ export default {
 
     computed:{
 
+        count(){
+            return (this.$store.state.chatMessages.conversationMessages[ this.publicKeys[0] + ':'+ this.publicKeys[1] ] || {}).count
+        },
+
         publicKeys(){
-            const publicKeys = [this.senderPublicKey , this.receiverPublicKey].sort( (a,b) => a.localeCompare(b) );
+            const publicKeys = [ this.senderPublicKey , this.receiverPublicKey ].sort( (a,b) => a.localeCompare(b) );
             return publicKeys;
 
         },
@@ -62,9 +66,9 @@ export default {
                 const outChat = await Chat._client.emitAsync("encrypted-chat/new-message", { encryptedMessage: encryptedMessage.toBuffer() }, 0);
                 if (!outChat) throw {message: "Message was not included"};
 
-                this.$store.commit('setChatMessagesCount', { publicKey1: this.publicKeys[0], publicKey2: this.publicKeys[1], count: (this.count || 0) +1 });
-                this.$store.commit('setChatMessagesIds', {publicKey1: this.publicKeys[0], publicKey2: this.publicKeys[1], ids: [ encryptedMessage.hash().toString("hex") ] });
-                this.$store.commit('setChatMessage', {encryptedMessage});
+                this.$store.commit('setChatConversationMessagesCount', { publicKey1: this.publicKeys[0], publicKey2: this.publicKeys[1], count: (this.count || 0) +1 });
+                this.$store.commit('setChatConversationMessagesIds', {publicKey1: this.publicKeys[0], publicKey2: this.publicKeys[1], ids: [ encryptedMessage.hash().toString("hex") ] });
+                this.$store.commit('setChatEncryptedMessage', {encryptedMessage});
 
 
                 this.text = '';

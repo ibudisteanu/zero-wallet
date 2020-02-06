@@ -96,11 +96,11 @@ export default {
         },
 
         count(){
-            return (this.$store.state.chatMessages.messagesConversation[ this.publicKeys[0] + ':'+ this.publicKeys[1] ] || {}).count
+            return (this.$store.state.chatMessages.conversationMessages[ this.publicKeys[0] + ':'+ this.publicKeys[1] ] || {}).count
         },
 
         ids(){
-            return (this.$store.state.chatMessages.messagesConversation[ this.publicKeys[0] + ':'+ this.publicKeys[1]] || {}).ids || {};
+            return (this.$store.state.chatMessages.conversationMessages[ this.publicKeys[0] + ':'+ this.publicKeys[1]] || {}).ids || {};
         },
 
         messages(){
@@ -146,13 +146,13 @@ export default {
             if (message) alert( JSON.stringify( message.toJSON() ) );
         },
 
-        async loadChat(){
+        async loadChat(senderPublicKey = this.senderPublicKey){
 
             await Chat.initPromise;
 
             this.receiverPublicKey = this.$route.params.publicKey;
 
-            await Chat.startDownloadChatMessages( this.senderPublicKey, this.receiverPublicKey );
+            await Chat.downloadChatConversationMessages( senderPublicKey, this.receiverPublicKey );
 
         },
 
@@ -164,7 +164,13 @@ export default {
     watch: {
         '$route' (to, from) {
             return this.loadChat();
-        }
+        },
+
+        senderPublicKey (to, from){
+            console.log("senderPublicKey  changed");
+            return this.loadChat(to);
+        },
+
     },
 
     async mounted(){

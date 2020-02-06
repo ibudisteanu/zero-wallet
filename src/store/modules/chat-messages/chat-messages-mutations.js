@@ -2,50 +2,73 @@ import Vue from 'vue';
 
 export default {
 
-    setChatMessagesCount(context, { publicKey1, publicKey2, count } ){
+    setChatConversationsCount(context, { publicKey, count } ){
 
-        const publicKeys = [publicKey1, publicKey2].sort( (a,b) => a.localeCompare(b) );
+        const conversations = { ...( context.conversations[ publicKey ] || {} )  };
 
-        const messagesConversation = { ...( context.messagesConversation[ publicKeys[0]+":"+publicKeys[1] ] || {} )  };
+        conversations.count = count;
 
-        messagesConversation.count = count;
-
-        Vue.set(context.messagesConversation, publicKeys[0]+":"+publicKeys[1], messagesConversation );
+        Vue.set(context.conversations, publicKey, conversations );
 
     },
 
-    setChatMessagesIds(context, { publicKey1, publicKey2, ids, next } ){
+    setChatConversationsIds(context, { publicKey, ids } ){
 
-        const publicKeys = [publicKey1, publicKey2].sort( (a,b) => a.localeCompare(b) );
-
-        const messagesConversation = { ...( context.messagesConversation[ publicKeys[0]+":"+publicKeys[1] ] || {} )  };
-        if (!messagesConversation.ids) messagesConversation.ids = {};
+        const conversations = { ...( context.conversations[ publicKey ] || {} )  };
+        if (!conversations.ids) conversations.ids = {};
 
         for (const id of ids)
-            messagesConversation.ids[id] = true;
+            conversations.ids[id] = true;
 
-        if (next !== undefined)
-            messagesConversation.next = next;
-
-        Vue.set(context.messagesConversation, publicKeys[0]+":"+publicKeys[1], messagesConversation );
+        Vue.set(context.conversations, publicKey, conversations );
 
     },
 
-    async setChatMessage(context, { encryptedMessage } ){
+
+    setChatConversationMessagesCount(context, { publicKey1, publicKey2, count } ){
+
+        const publicKeys = [publicKey1, publicKey2].sort( (a,b) => a.localeCompare(b) );
+
+        const conversationMessages = { ...( context.conversationMessages[ publicKeys[0]+":"+publicKeys[1] ] || {} )  };
+
+        conversationMessages.count = count;
+
+        Vue.set(context.conversationMessages, publicKeys[0]+":"+publicKeys[1], conversationMessages );
+
+    },
+
+    setChatConversationMessagesIds(context, { publicKey1, publicKey2, ids, next } ){
+
+        const publicKeys = [publicKey1, publicKey2].sort( (a,b) => a.localeCompare(b) );
+
+        const conversationMessages = { ...( context.conversationMessages[ publicKeys[0]+":"+publicKeys[1] ] || {} )  };
+        if (!conversationMessages.ids) conversationMessages.ids = {};
+
+        for (const id of ids)
+            conversationMessages.ids[id] = true;
+
+        if (next !== undefined)
+            conversationMessages.next = next;
+
+        Vue.set(context.conversationMessages, publicKeys[0]+":"+publicKeys[1], conversationMessages );
+
+    },
+
+    async setChatEncryptedMessage(context, { encryptedMessage } ){
 
 
         const publicKeys = [encryptedMessage.senderPublicKey.toString("hex"), encryptedMessage.receiverPublicKey.toString("hex")].sort( (a,b) => a.localeCompare(b) );
 
-        const messagesConversation = { ...( context.messagesConversation[ publicKeys[0]+":"+publicKeys[1] ] || {} )  };
-        if (!messagesConversation.ids) messagesConversation.ids = {};
+        const conversationMessages = { ...( context.conversationMessages[ publicKeys[0]+":"+publicKeys[1] ] || {} )  };
+        if (!conversationMessages.ids) conversationMessages.ids = {};
 
         const id = encryptedMessage.hash().toString("hex");
-        if (!messagesConversation.ids[ id ]){
+        if (!conversationMessages.ids[ id ]){
 
-            messagesConversation.ids[ id ]++;
-            messagesConversation.count += 1;
+            conversationMessages.ids[ id ]++;
+            conversationMessages.count += 1;
 
-            Vue.set(context.messagesConversation, publicKeys[0]+":"+publicKeys[1], messagesConversation );
+            Vue.set(context.conversationMessages, publicKeys[0]+":"+publicKeys[1], conversationMessages );
         }
 
         const senderAddress = await PandoraPay.wallet.manager.getWalletAddressByAddress( encryptedMessage.senderAddress );
