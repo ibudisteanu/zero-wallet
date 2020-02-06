@@ -71,6 +71,16 @@ export default {
             Vue.set(context.conversationMessages, publicKeys[0]+":"+publicKeys[1], conversationMessages );
         }
 
+        //a new conversation
+        for (let i=0; i < publicKeys.length; i++) {
+            let conversations = {...( context.conversations[publicKeys[i]] || {} )};
+            if (!conversations.ids) conversations.ids = {};
+
+            conversations.ids[ i === 0 ? publicKeys[1] : publicKeys[0] ] = true;
+
+            Vue.set(context.conversations, publicKeys[i], conversations);
+        }
+
         const senderAddress = await PandoraPay.wallet.manager.getWalletAddressByAddress( encryptedMessage.senderAddress );
         if (senderAddress) {
             const senderData = await encryptedMessage.decryptData(encryptedMessage.senderEncryptedData, senderAddress.decryptPrivateKey() );
