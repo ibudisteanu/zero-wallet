@@ -27,7 +27,7 @@ const config = merge(base, {
         port: 8080,
         stats: {
             normal: true
-        }
+        },
     },
 
     plugins: [

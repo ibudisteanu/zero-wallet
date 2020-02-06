@@ -133,7 +133,7 @@ export default {
     methods: {
 
         getAddress(publicKey){
-
+            if (!publicKey) return '';
             const address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKey( publicKey );
             return address ? address.calculateAddress() : '';
 

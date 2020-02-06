@@ -35,6 +35,10 @@ class Chat extends BaseConsensus{
 
     async _started(){
 
+        console.log("testing testEncryptDecrypt");
+        const out = await PandoraPay.cryptography.cryptoSignature.testEncryptDecrypt();
+        console.log("testEncryptDecrypt", out);
+
         const sock = client( this._settings.address, {
 
             reconnection: true,
