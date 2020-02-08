@@ -50,14 +50,13 @@ export default {
 
     .row{
         font-size: 15px;
-        display: grid;
-        grid-template-columns: 100px 150px 150px;
-        align-items: center;
+        display: inline-block;
     }
 
-    .row a{
+    .row a,
+    .row span{
         color: black;
-        align-items: center;
+        margin-right: 15px;
     }
 
     .row .selected{

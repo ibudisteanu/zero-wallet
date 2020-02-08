@@ -49,18 +49,17 @@ export default {
 
     .row{
         font-size: 15px;
-        display: grid;
-        grid-template-columns: 90px 90px 90px;
-        align-items: center;
+        display: inline-block;
     }
 
     .row a{
         color: black;
-        align-items: center;
+        margin-right: 15px;
     }
 
     .row a.selected{
         color: #6c6ce0;
     }
+
 
 </style>
