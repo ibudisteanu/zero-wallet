@@ -21,33 +21,11 @@
 
                     <main class="msger-chat">
 
-                        <div v-for="(value, id) in ids"
-                             :class="`msg ${ messageSender(messages[id])  ? 'right' : 'left' }-msg`"
-                             :key="`chat-message-${id}`">
+                        <div v-for="(message, index) in messages"
+                             :key="`chat-message-${index}`">
 
-                            <account-identicon v-if="messages[id]" class="msg-img" :publicKey="messageSender(messages[id]) ? senderPublicKey : receiverPublicKey" size="40" outer-size="10" outer-color="#ececec" />
-                            <div class="msg-bubble">
+                            <chat-message  :message="message" :receiverPublicKey="receiverPublicKey" :senderPublicKey="senderPublicKey" />
 
-                                <loading-spinner v-if="!messages[id]" />
-
-                                <div v-else>
-
-
-                                    <div class="msg-info">
-                                        <div class="msg-info-name">{{ messageName( messages[id] )  }}</div>
-                                        <div class="msg-info-time">{{ messageTimeAgo(messages[id] ) }}</div>
-                                        <i class="fa fa-info pointer" @click="showMessageInfo(messages[id])"></i>
-                                    </div>
-
-                                    <div class="msg-text">
-
-                                        {{ messageText(messages[id]) }}
-
-                                    </div>
-
-                                </div>
-
-                            </div>
                         </div>
 
 
@@ -80,14 +58,12 @@ import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import Chat from "src/chat/chat"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 
-import Utils from "src/utils/utils"
-
 import ChatMessageFrom from "./forms/chat-message-form"
-
+import ChatMessage from "./common/chat-message"
 
 export default {
 
-    components: { Layout, ChatTopBar, AccountIdenticon, LoadingSpinner, ChatMessageFrom },
+    components: { Layout, ChatTopBar, AccountIdenticon, LoadingSpinner, ChatMessageFrom, ChatMessage },
 
     data(){
         return {
@@ -114,12 +90,12 @@ export default {
 
         messages(){
             const ids = this.ids;
-            const messages = {};
+            const messages = [];
 
             for (const id in ids)
-                messages[id] = this.$store.state.chatMessages.messages[id];
+                messages.push( this.$store.state.chatMessages.messages[id] );
 
-            return messages;
+            return messages.sort( (a,b) => a.index - b.index );
         },
 
         mainAddress(){
@@ -132,11 +108,11 @@ export default {
         },
 
 
-
-
     },
 
     methods: {
+
+
 
         getAddress(publicKey){
             if (!publicKey) return '';
@@ -145,28 +121,6 @@ export default {
 
         },
 
-        messageTimeAgo(message){
-            return Utils.timeSince( message.timestamp*1000 );
-        },
-
-        messageName(message){
-            return  this.messageSender(message) ? 'YOU' : 'TRADER';
-        },
-
-        messageText(message){
-            const chatMessage = (message._senderData ? message._senderData : message._receiverData);
-            if ( !chatMessage ) return 'error';
-
-            return chatMessage.data.toString("ascii");
-        },
-
-        messageSender(message){
-            return message && message._senderData && this.senderPublicKey === message.senderPublicKey.toString("hex");
-        },
-
-        showMessageInfo(message){
-            if (message) alert( JSON.stringify( message.toJSON() ) );
-        },
 
         async loadChat(senderPublicKey = this.senderPublicKey){
 
@@ -177,8 +131,6 @@ export default {
             await Chat.downloadChatConversationMessages( senderPublicKey, this.receiverPublicKey );
 
         },
-
-
 
 
     },
@@ -233,59 +185,6 @@ export default {
     }
     .msger-chat::-webkit-scrollbar-thumb {
         background: #bdbdbd;
-    }
-    .msg {
-        display: flex;
-        align-items: flex-end;
-        margin-bottom: 10px;
-    }
-    .msg:last-of-type {
-        margin: 0;
-    }
-    .msg-img {
-        margin-right: 10px;
-    }
-
-    .msg-bubble {
-        max-width: 450px;
-        padding: 15px;
-        border-radius: 15px;
-        background: #ececec;
-    }
-    .msg-info {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-    }
-
-    .msg-info i{
-        font-size: 0.85em;
-    }
-
-    .msg-info-name {
-        margin-right: 10px;
-        font-weight: bold;
-    }
-    .msg-info-time {
-        margin-right: 10px;
-        font-size: 0.85em;
-    }
-
-    .left-msg .msg-bubble {
-        border-bottom-left-radius: 0;
-    }
-
-    .right-msg {
-        flex-direction: row-reverse;
-    }
-    .right-msg .msg-bubble {
-        background: #579ffb;
-        color: #fff;
-        border-bottom-right-radius: 0;
-    }
-    .right-msg .msg-img {
-        margin: 0 0 0 10px;
     }
 
 

@@ -63,10 +63,12 @@ export default {
                     receiverPublicKey: this.receiverPublicKey,
                 });
 
+                encryptedMessage.index = this.count;
+
                 const outChat = await Chat._client.emitAsync("encrypted-chat/new-message", { encryptedMessage: encryptedMessage.toBuffer() }, 0);
                 if (!outChat) throw {message: "Message was not included"};
 
-                this.$store.commit('setChatEncryptedMessage', {encryptedMessage});
+                this.$store.commit('setChatEncryptedMessage', {encryptedMessage, newMessage: true});
 
 
                 this.text = '';

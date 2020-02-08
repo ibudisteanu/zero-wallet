@@ -56,7 +56,7 @@ export default {
 
     },
 
-    async setChatEncryptedMessage(context, { encryptedMessage } ){
+    async setChatEncryptedMessage(context, { encryptedMessage, newMessage = false } ){
 
 
         const publicKeys = [encryptedMessage.senderPublicKey.toString("hex"), encryptedMessage.receiverPublicKey.toString("hex")].sort( (a,b) => a.localeCompare(b) );
@@ -74,20 +74,21 @@ export default {
         }
 
         //a new conversation
-        for (let i=0; i < publicKeys.length; i++) {
+        if (newMessage)
+            for (let i=0; i < publicKeys.length; i++) {
 
-            let conversations = {...( context.conversations[publicKeys[i]] || {} )};
-            if (!conversations.array) conversations.array = {};
+                let conversations = {...( context.conversations[publicKeys[i]] || {} )};
+                if (!conversations.array) conversations.array = {};
 
-            const element = conversations.array[ i === 0 ? publicKeys[1] : publicKeys[0] ];
+                const element = conversations.array[ i === 0 ? publicKeys[1] : publicKeys[0] ];
 
-            if (element && element.encryptedMessage !== encryptedMessage.hash().toString("hex")) {
-                element.count += 1;
-                element.encryptedMessage = encryptedMessage.hash().toString("hex");
-                Vue.set(context.conversations, publicKeys[i], conversations);
+                if (element && element.encryptedMessage !== encryptedMessage.hash().toString("hex")) {
+                    element.count += 1;
+                    element.encryptedMessage = encryptedMessage.hash().toString("hex");
+                    Vue.set(context.conversations, publicKeys[i], conversations);
+                }
+
             }
-
-        }
 
         try{
 

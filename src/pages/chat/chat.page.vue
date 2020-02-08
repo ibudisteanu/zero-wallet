@@ -17,12 +17,11 @@
                         <div>
 
                             <span class="address thick wordwrap">{{ getAddress(publicKey) }} </span>
-                            <span class="badge badge-small">{{conversation.count}}</span> <br/>
+                            <span v-if="conversation.count - getReadConversations(publicKey) > 1" class="badge badge-small badge-warning">{{ conversation.count - getReadConversations(publicKey) -1 }}</span>
+                            <br/>
 
-                            <div v-if="message(conversation)">
-                                <span class="thick">{{messageName( message(conversation) )}}:</span>
-                                <span>{{messageText( message(conversation) )}}</span>
-                            </div>
+                            <chat-message v-if="message(conversation)" :message="message(conversation)" :senderPublicKey="senderPublicKey" :receiverPublicKey="publicKey" :allowWayPoint="false" />
+
                         </div>
                     </div>
                 </router-link>
@@ -41,10 +40,11 @@ import Layout from "src/components/layout/layout"
 import ChatTopBar from "./common/chat-top-bar"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import Utils from "src/utils/utils"
+import ChatMessage from "./common/chat-message.vue"
 
 export default {
 
-    components: { Layout, ChatTopBar, AccountIdenticon },
+    components: { Layout, ChatTopBar, AccountIdenticon, ChatMessage },
 
     data(){
         return {
@@ -81,23 +81,13 @@ export default {
             return this.$store.state.chatMessages.messages[encryptedMessageId];
         },
 
-        messageTimeAgo(message){
-            return Utils.timeSince( message.timestamp*1000 );
-        },
+        getReadConversations(receiverPublicKey){
 
-        messageName(message){
-            return  this.messageSender(message) ? 'YOU' : 'TRADER';
-        },
+            const publicKeys = [this.publicKey, receiverPublicKey].sort( (a,b) => a.localeCompare(b) );
 
-        messageText(message){
-            const chatMessage = (message._senderData ? message._senderData : message._receiverData);
-            if ( !chatMessage ) return 'error';
+            const conversationKey = 'seenConversation:'+publicKeys[0]+':'+publicKeys[1];
+            return Number.parseInt( localStorage.getItem(conversationKey) || '0' );
 
-            return chatMessage.data.toString("ascii");
-        },
-
-        messageSender(message){
-            return message && message._senderData && this.senderPublicKey === message.senderPublicKey.toString("hex");
         },
 
         getAddress(publicKey){

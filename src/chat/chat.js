@@ -86,7 +86,7 @@ class Chat extends BaseConsensus{
                 const encryptedMessage = await PandoraPay.cryptography.encryptedMessageValidator.validateEncryptedMessage( Buffer.from(out) );
                 this._data.messages[ encryptedMessage.hash().toString("hex") ] = encryptedMessage;
 
-                this.emit('encrypted-chat/message-downloaded', { encryptedMessage });
+                this.emit('encrypted-chat/message-downloaded', { encryptedMessage, newMessage: true });
 
             } );
 
@@ -151,7 +151,7 @@ class Chat extends BaseConsensus{
         for (const element of out ){
 
             const encryptedMessage = element.encryptedMessage;
-            await this._downloadChatMessage(encryptedMessage);
+            await this._downloadChatMessage(encryptedMessage, element.count-1 );
 
         }
 
@@ -173,18 +173,21 @@ class Chat extends BaseConsensus{
     async downloadChatConversationMessagesSpecific(publicKeySender, publicKeyReceiver, index){
 
         const limit = 20;
+        const startIndex = Math.ceil(index / limit)-1;
 
-        const out = await this._client.emitAsync("encrypted-chat/conversation-messages/content-ids", {publicKey1: publicKeySender, publicKey2: publicKeyReceiver, index: Math.ceil(index / limit)-1 , limit , }, 0);
+        const out = await this._client.emitAsync("encrypted-chat/conversation-messages/content-ids", {publicKey1: publicKeySender, publicKey2: publicKeyReceiver, index: startIndex , limit , }, 0);
         if (!out) return;
 
         this.emit('encrypted-chat/conversation-messages-ids-update', {publicKey1: publicKeySender, publicKey2: publicKeyReceiver, ids: out, next: Math.max(0, index - limit) });
 
-        for (const encryptedMessageId of out)
-            this._downloadChatMessage(encryptedMessageId);
+        for (let i=0; i < out.length; i++) {
+            const encryptedMessageId = out[i];
+            await this._downloadChatMessage(encryptedMessageId, startIndex + i);
+        }
 
     }
 
-    async _downloadChatMessage(encryptedMessageId){
+    async _downloadChatMessage(encryptedMessageId, index){
 
         if (this._data.messages[encryptedMessageId]) return this._data.messages[encryptedMessageId];
 
@@ -192,10 +195,11 @@ class Chat extends BaseConsensus{
         if (!out) return;
 
         const encryptedMessage = await PandoraPay.cryptography.encryptedMessageValidator.validateEncryptedMessage( Buffer.from(out) );
+        encryptedMessage.index = index;
 
         this._data.messages[encryptedMessageId] = encryptedMessage;
 
-        this.emit('encrypted-chat/message-downloaded', { encryptedMessage });
+        this.emit('encrypted-chat/message-downloaded', { encryptedMessage, newMessage: false });
 
 
     }
