@@ -35,9 +35,8 @@ class Chat extends BaseConsensus{
 
     async _started(){
 
-        console.log("testing testEncryptDecrypt");
         const out = await PandoraPay.cryptography.cryptoSignature.testEncryptDecrypt();
-        console.log("testEncryptDecrypt", out);
+        if (!out) alert('Chat encryption is not supported');
 
         const sock = client( this._settings.address, {
 
@@ -144,11 +143,17 @@ class Chat extends BaseConsensus{
 
         const limit = 20;
 
-        const out = await this._client.emitAsync("encrypted-chat/conversations/content-ids", {publicKey, index: Math.ceil(index / limit)-1 , limit , }, 0);
+        const out = await this._client.emitAsync("encrypted-chat/conversations/content", {publicKey, index: Math.max(0, Math.ceil(index / limit)-1), limit , }, 0);
         if (!out) return;
 
-        console.log("downloadChatConversations", out);
-        this.emit('encrypted-chat/conversations-ids-update', { publicKey,  ids: out });
+        this.emit('encrypted-chat/conversations-update', { publicKey,  array: out });
+
+        for (const element of out ){
+
+            const encryptedMessage = element.encryptedMessage;
+            await this._downloadChatMessage(encryptedMessage);
+
+        }
 
     }
 
@@ -160,7 +165,8 @@ class Chat extends BaseConsensus{
         this.emit('encrypted-chat/conversation-messages-count-update', {publicKey1: publicKeySender, publicKey2: publicKeyReceiver, count: out});
 
         if (out > 0)
-            await this.downloadChatConversationMessagesSpecific( publicKeySender, publicKeyReceiver, out );
+            await this.downloadChatConversationMessagesSpecific(publicKeySender, publicKeyReceiver, out);
+
 
     }
 

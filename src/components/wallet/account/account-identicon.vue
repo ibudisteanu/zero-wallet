@@ -1,6 +1,6 @@
 <template>
 
-    <div class="identicon outer" :style="`padding: ${outerSize}px`">
+    <div class="identicon outer" :style="`padding: ${outerSize}px; background-color: ${outerColor}`">
         <img v-if="addressIdenticon" :src="addressIdenticon" class="identicon" :style="`width: ${size}px`" >
     </div>
 
@@ -12,9 +12,10 @@ export default {
     props:{
         size: 40,
         outerSize: 34,
+        outerColor: {default: "white;"},
         identicon: "",
 
-        address: "",
+        address: {default: ""},
         publicKey: null,
         publicKeyHash: null,
 
@@ -71,7 +72,6 @@ export default {
         border-radius: 50%;
         overflow: hidden;
         padding: 10px;
-        background-color: white;
     }
 
     .identicon{

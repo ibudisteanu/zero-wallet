@@ -125,7 +125,7 @@ export default {
 
         Chat.on("encrypted-chat/conversations-count-update", data => this.$store.commit('setChatConversationsCount', data));
 
-        Chat.on("encrypted-chat/conversations-ids-update", data => this.$store.commit('setChatConversationsIds', data));
+        Chat.on("encrypted-chat/conversations-update", data => this.$store.commit('setChatConversations', data));
 
         await Consensus.start();
 

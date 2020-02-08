@@ -15,7 +15,14 @@
                     <div class="user">
                         <account-identicon :publicKey="publicKey" :size="40" :outer-size="10" />
                         <div>
-                            <span class="thick wordwrap">{{ getAddress(publicKey) }}</span>
+
+                            <span class="address thick wordwrap">{{ getAddress(publicKey) }} </span>
+                            <span class="badge badge-small">{{conversation.count}}</span> <br/>
+
+                            <div v-if="message(conversation)">
+                                <span class="thick">{{messageName( message(conversation) )}}:</span>
+                                <span>{{messageText( message(conversation) )}}</span>
+                            </div>
                         </div>
                     </div>
                 </router-link>
@@ -33,6 +40,7 @@
 import Layout from "src/components/layout/layout"
 import ChatTopBar from "./common/chat-top-bar"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
+import Utils from "src/utils/utils"
 
 export default {
 
@@ -60,13 +68,37 @@ export default {
         },
 
         conversations(){
-            return (this.$store.state.chatMessages.conversations[this.publicKey] || {}).ids||{}
+            return (this.$store.state.chatMessages.conversations[this.publicKey] || {}).array||{}
         }
 
     },
 
 
     methods: {
+
+        message(conversation){
+            const encryptedMessageId = this.conversations[conversation.receiverPublicKey].encryptedMessage;
+            return this.$store.state.chatMessages.messages[encryptedMessageId];
+        },
+
+        messageTimeAgo(message){
+            return Utils.timeSince( message.timestamp*1000 );
+        },
+
+        messageName(message){
+            return  this.messageSender(message) ? 'YOU' : 'TRADER';
+        },
+
+        messageText(message){
+            const chatMessage = (message._senderData ? message._senderData : message._receiverData);
+            if ( !chatMessage ) return 'error';
+
+            return chatMessage.data.toString("ascii");
+        },
+
+        messageSender(message){
+            return message && message._senderData && this.senderPublicKey === message.senderPublicKey.toString("hex");
+        },
 
         getAddress(publicKey){
             if (!publicKey) return '';
@@ -88,6 +120,10 @@ export default {
         display: grid;
         grid-template-columns: 60px 1fr;
         grid-column-gap: 5px;
+    }
+
+    .address{
+        display: inline-block;
     }
 
 </style>

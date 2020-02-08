@@ -12,13 +12,15 @@ export default {
 
     },
 
-    setChatConversationsIds(context, { publicKey, ids } ){
+    setChatConversations(context, { publicKey, array } ){
 
         const conversations = { ...( context.conversations[ publicKey ] || {} )  };
-        if (!conversations.ids) conversations.ids = {};
+        if (!conversations.array) conversations.array = {};
 
-        for (const id of ids)
-            conversations.ids[id] = true;
+        for (const element of array) {
+            element.count = Number.parseInt(element.count);
+            conversations.array[element.receiverPublicKey] = element;
+        }
 
         Vue.set(context.conversations, publicKey, conversations );
 
@@ -73,12 +75,18 @@ export default {
 
         //a new conversation
         for (let i=0; i < publicKeys.length; i++) {
+
             let conversations = {...( context.conversations[publicKeys[i]] || {} )};
-            if (!conversations.ids) conversations.ids = {};
+            if (!conversations.array) conversations.array = {};
 
-            conversations.ids[ i === 0 ? publicKeys[1] : publicKeys[0] ] = true;
+            const element = conversations.array[ i === 0 ? publicKeys[1] : publicKeys[0] ];
 
-            Vue.set(context.conversations, publicKeys[i], conversations);
+            if (element && element.encryptedMessage !== encryptedMessage.hash().toString("hex")) {
+                element.count += 1;
+                element.encryptedMessage = encryptedMessage.hash().toString("hex");
+                Vue.set(context.conversations, publicKeys[i], conversations);
+            }
+
         }
 
         try{
@@ -86,9 +94,7 @@ export default {
             const senderAddress = await PandoraPay.wallet.manager.getWalletAddressByAddress( encryptedMessage.senderAddress );
             if (senderAddress) {
 
-                console.log(`senderData    =====`,encryptedMessage.senderEncryptedData.toString("hex"), senderAddress.decryptPrivateKey().toString("hex") );
                 const data = await encryptedMessage.decryptData(encryptedMessage.senderEncryptedData, senderAddress.decryptPrivateKey() );
-                console.log(`senderData    #${data}#`);
 
                 const senderData = await PandoraPay.cryptography.chatMessageValidator.validateChatMessage(data);
                 if (senderData)
@@ -103,9 +109,7 @@ export default {
 
             const receiverAddress = await PandoraPay.wallet.manager.getWalletAddressByAddress( encryptedMessage.receiverAddress );
             if (receiverAddress) {
-                console.log(`receiverData    =====`,encryptedMessage.senderEncryptedData.toString("hex"), receiverAddress.decryptPrivateKey().toString("hex")  );
                 const data = await encryptedMessage.decryptData(encryptedMessage.receiverEncryptedData, receiverAddress.decryptPrivateKey() );
-                console.log(`receiverData    #${data}#`);
 
                 const receiverData = await PandoraPay.cryptography.chatMessageValidator.validateChatMessage(data);
                 if (receiverData)

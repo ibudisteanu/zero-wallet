@@ -24,11 +24,14 @@
                         <div v-for="(value, id) in ids"
                              :class="`msg ${ messageSender(messages[id])  ? 'right' : 'left' }-msg`"
                              :key="`chat-message-${id}`">
+
+                            <account-identicon v-if="messages[id]" class="msg-img" :publicKey="messageSender(messages[id]) ? senderPublicKey : receiverPublicKey" size="40" outer-size="10" outer-color="#ececec" />
                             <div class="msg-bubble">
 
                                 <loading-spinner v-if="!messages[id]" />
 
                                 <div v-else>
+
 
                                     <div class="msg-info">
                                         <div class="msg-info-name">{{ messageName( messages[id] )  }}</div>
@@ -126,7 +129,10 @@ export default {
         senderPublicKey(){
             if (!this.mainAddress) return '';
             return this.$store.state.addresses.list[this.mainAddress].publicKey;
-        }
+        },
+
+
+
 
     },
 
@@ -237,15 +243,9 @@ export default {
         margin: 0;
     }
     .msg-img {
-        width: 50px;
-        height: 50px;
         margin-right: 10px;
-        background: #ddd;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: cover;
-        border-radius: 50%;
     }
+
     .msg-bubble {
         max-width: 450px;
         padding: 15px;
