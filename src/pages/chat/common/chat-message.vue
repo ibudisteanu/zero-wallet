@@ -6,7 +6,7 @@
 
         <div class="msg-bubble">
 
-            <loading-spinner v-if="!message || typeof message.index === 'undefined'" />
+            <loading-spinner v-if="!message || message.index === undefined" />
 
             <div v-else>
 
@@ -21,7 +21,7 @@
                 <div class="msg-text">
 
                     {{ messageText }}
-
+                    Index {{message.index}}
 
                 </div>
 
@@ -94,6 +94,7 @@ export default {
 
             const conversationKey = 'seenConversation:'+this.publicKeys[0]+':'+this.publicKeys[1];
             const prevValue = Number.parseInt( localStorage.getItem(conversationKey) || '0' );
+
             localStorage.setItem(conversationKey, Math.max(prevValue, this.message.index + 1) );
         },
 

@@ -9,18 +9,18 @@
 
                 <h1>Encrypted End to End Chat {{count}}</h1>
 
-                <router-link v-for="(conversation, publicKey) in conversations"
-                             :key="`conversation-router-link-${publicKey}`"
-                             :to="`/chat/conversation/${publicKey}`">
+                <router-link v-for="(conversation, receiverPublicKey) in conversations"
+                             :key="`conversation-router-link-${receiverPublicKey}`"
+                             :to="`/chat/conversation/${receiverPublicKey}`">
                     <div class="user">
-                        <account-identicon class="account-identicon" :publicKey="publicKey" :size="40" :outer-size="10" />
+                        <account-identicon class="account-identicon" :publicKey="receiverPublicKey" :size="40" :outer-size="10" />
                         <div>
 
-                            <span class="address thick wordwrap">{{ getAddress(publicKey) }} </span>
-                            <span v-if="conversation.count - getReadConversations(publicKey) >= 1" class="badge badge-small badge-warning">{{ conversation.count - getReadConversations(publicKey)  }}</span>
+                            <span class="address thick wordwrap">{{ getAddress(receiverPublicKey) }} </span>
+                            <span v-if="$store.getters.conversationNewNotifications(conversation, publicKey) >= 1" class="badge badge-small badge-warning">{{ $store.getters.conversationNewNotifications(conversation, publicKey)  }}</span>
                             <br/>
 
-                            <chat-message v-if="message(conversation)" :message="message(conversation)" :senderPublicKey="publicKeys(publicKey)[0]" :receiverPublicKey="publicKeys(publicKey)[1]" :allowWayPoint="false" />
+                            <chat-message v-if="message(conversation)" :message="message(conversation)" :senderPublicKey="publicKey" :receiverPublicKey="receiverPublicKey" :allowWayPoint="false" />
 
                         </div>
                     </div>
@@ -81,14 +81,6 @@ export default {
             return this.$store.state.chatMessages.messages[encryptedMessageId];
         },
 
-        getReadConversations(receiverPublicKey){
-
-            const publicKeys = this.publicKeys(receiverPublicKey);
-
-            const conversationKey = 'seenConversation:'+publicKeys[0]+':'+publicKeys[1];
-            return Number.parseInt( localStorage.getItem(conversationKey) || '0' );
-
-        },
 
         getAddress(publicKey){
             if (!publicKey) return '';

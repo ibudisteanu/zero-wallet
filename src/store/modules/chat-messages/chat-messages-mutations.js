@@ -68,11 +68,9 @@ export default {
         if (!conversationMessages.ids[ id ]){
 
             conversationMessages.ids[ id ] = true;
-            conversationMessages.count += 1;
 
             Vue.set(context.conversationMessages, publicKeys[0]+":"+publicKeys[1], conversationMessages );
 
-            encryptedMessage.index = conversationMessages.count -1;
         }
 
         //a new conversation
@@ -107,6 +105,9 @@ export default {
                     element.count += 1;
                     element.encryptedMessage = encryptedMessage.hash().toString("hex");
                 }
+
+                if ( encryptedMessage.index === undefined)
+                    encryptedMessage.index = element.count -1;
 
                 Vue.set(context.conversations, publicKeys[i], conversations);
 

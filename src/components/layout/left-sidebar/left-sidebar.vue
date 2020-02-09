@@ -48,6 +48,9 @@
             </router-link>
 
             <router-link to="/chat" :class="`${route.indexOf('/chat') === 0 ? 'selected' : ''}`" >
+                <div class="badge-div">
+                    <span v-if="conversationsNewNotifications" class="badge badge-smaller badge-warning">{{conversationsNewNotifications}}</span>
+                </div>
                 <i class="fa fa-comments"></i>
                 <span>Chat</span>
             </router-link>
@@ -82,11 +85,23 @@ export default {
 
         route(){
             return this.$router.currentRoute.path;
+        },
+
+        address(){
+            return this.$store.state.addresses.list[this.$store.state.wallet.mainAddress];
+        },
+
+        conversationsNewNotifications(){
+
+            if (!this.address) return 0;
+            return this.$store.getters.conversationsNewNotifications(this.address.publicKey)
+
         }
 
     },
 
     methods:{
+
         showMenu(){
             this.show = true;
         },
@@ -179,6 +194,18 @@ export default {
         display: none;
     }
 
+    .badge-div{
+        text-align: right;
+    }
+
+    .badge{
+        position: relative;
+        top: 0;
+        right: 5px;
+        width: 100%;
+        display: inline !important;
+    }
+
     @media screen and (max-width: 450px) {
 
         .mobile-menu{
@@ -202,6 +229,7 @@ export default {
             padding-bottom: 10px;
         }
     }
+
 
 
 </style>

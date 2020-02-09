@@ -1,4 +1,5 @@
 import mutations from "./chat-messages-mutations"
+import getters from "./chat-messages-getters"
 
 export default {
 
@@ -19,5 +20,6 @@ export default {
     },
 
     mutations,
+    getters
 
 }
