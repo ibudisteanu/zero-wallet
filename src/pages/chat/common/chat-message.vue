@@ -94,7 +94,7 @@ export default {
 
             const conversationKey = 'seenConversation:'+this.publicKeys[0]+':'+this.publicKeys[1];
             const prevValue = Number.parseInt( localStorage.getItem(conversationKey) || '0' );
-            localStorage.setItem(conversationKey, Math.max(prevValue, this.message.index) );
+            localStorage.setItem(conversationKey, Math.max(prevValue, this.message.index + 1) );
         },
 
         getSeen(){

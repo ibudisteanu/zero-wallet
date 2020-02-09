@@ -17,7 +17,7 @@
                         <div>
 
                             <span class="address thick wordwrap">{{ getAddress(publicKey) }} </span>
-                            <span v-if="conversation.count - getReadConversations(publicKey) > 1" class="badge badge-small badge-warning">{{ conversation.count - getReadConversations(publicKey) -1 }}</span>
+                            <span v-if="conversation.count - getReadConversations(publicKey) >= 1" class="badge badge-small badge-warning">{{ conversation.count - getReadConversations(publicKey)  }}</span>
                             <br/>
 
                             <chat-message v-if="message(conversation)" :message="message(conversation)" :senderPublicKey="publicKeys(publicKey)[0]" :receiverPublicKey="publicKeys(publicKey)[1]" :allowWayPoint="false" />
@@ -86,7 +86,6 @@ export default {
             const publicKeys = this.publicKeys(receiverPublicKey);
 
             const conversationKey = 'seenConversation:'+publicKeys[0]+':'+publicKeys[1];
-            console.log("localStorage.getItem(conversationKey)", localStorage.getItem(conversationKey));
             return Number.parseInt( localStorage.getItem(conversationKey) || '0' );
 
         },

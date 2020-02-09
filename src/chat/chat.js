@@ -142,8 +142,9 @@ class Chat extends BaseConsensus{
         const limit = 20;
 
         const out = await this._client.emitAsync("encrypted-chat/conversations/content", {publicKey, index: Math.max(0, Math.ceil(index / limit)-1), limit , }, 0);
-
         if (!out) return;
+
+        console.log("downloadChatConversations", out);
 
         this.emit('encrypted-chat/conversations-update', { publicKey,  array: out });
 

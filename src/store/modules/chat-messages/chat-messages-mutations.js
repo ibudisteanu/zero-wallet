@@ -71,6 +71,8 @@ export default {
             conversationMessages.count += 1;
 
             Vue.set(context.conversationMessages, publicKeys[0]+":"+publicKeys[1], conversationMessages );
+
+            encryptedMessage.index = conversationMessages.count -1;
         }
 
         //a new conversation
