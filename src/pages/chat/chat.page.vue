@@ -86,6 +86,7 @@ export default {
             const publicKeys = this.publicKeys(receiverPublicKey);
 
             const conversationKey = 'seenConversation:'+publicKeys[0]+':'+publicKeys[1];
+            console.log("localStorage.getItem(conversationKey)", localStorage.getItem(conversationKey));
             return Number.parseInt( localStorage.getItem(conversationKey) || '0' );
 
         },

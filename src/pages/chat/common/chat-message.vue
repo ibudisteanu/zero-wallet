@@ -6,7 +6,7 @@
 
         <div class="msg-bubble">
 
-            <loading-spinner v-if="!message" />
+            <loading-spinner v-if="!message || typeof message.index === 'undefined'" />
 
             <div v-else>
 
@@ -22,7 +22,6 @@
 
                     {{ messageText }}
 
-                    Index {{message.index}}
 
                 </div>
 
