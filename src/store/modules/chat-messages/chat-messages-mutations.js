@@ -77,16 +77,36 @@ export default {
         if (newMessage)
             for (let i=0; i < publicKeys.length; i++) {
 
-                let conversations = {...( context.conversations[publicKeys[i]] || {} )};
+                const senderPublicKey = publicKeys[i];
+                const receiverPublicKey = i === 0 ? publicKeys[1] : publicKeys[0];
+
+                const conversations = {...( context.conversations[ senderPublicKey ] || {} )};
                 if (!conversations.array) conversations.array = {};
 
-                const element = conversations.array[ i === 0 ? publicKeys[1] : publicKeys[0] ];
+                let notFound = false;
+                if ( !conversations.array[ receiverPublicKey ] ){
+                    conversations.array[ receiverPublicKey ] = {};
+                    notFound = true;
+                }
 
-                if (element && element.encryptedMessage !== encryptedMessage.hash().toString("hex")) {
+                const element = conversations.array[ receiverPublicKey ];
+
+                if (notFound){
+                    element.version = 0;
+                    element.receiverPublicKey = receiverPublicKey;
+                    element.count = 1;
+                    element.encryptedMessage = encryptedMessage.hash().toString("hex");
+
+                    if (i === 0)
+                        conversations.count = (conversations.count || 0) + 1;
+
+                } else
+                if (element && element.encryptedMessage !== encryptedMessage.hash().toString("hex"))  {
                     element.count += 1;
                     element.encryptedMessage = encryptedMessage.hash().toString("hex");
-                    Vue.set(context.conversations, publicKeys[i], conversations);
                 }
+
+                Vue.set(context.conversations, publicKeys[i], conversations);
 
             }
 

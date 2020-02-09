@@ -61,9 +61,7 @@ export default {
     computed:{
 
         publicKeys(){
-            const publicKeys = [ this.senderPublicKey , this.receiverPublicKey ].sort( (a,b) => a.localeCompare(b) );
-            return publicKeys;
-
+            return [ this.senderPublicKey , this.receiverPublicKey ].sort( (a,b) => a.localeCompare(b) );
         },
 
         messageTimeAgo(){

@@ -40,8 +40,7 @@ export default {
         },
 
         publicKeys(){
-            const publicKeys = [ this.senderPublicKey , this.receiverPublicKey ].sort( (a,b) => a.localeCompare(b) );
-            return publicKeys;
+            return [ this.senderPublicKey , this.receiverPublicKey ].sort( (a,b) => a.localeCompare(b) );
 
         },
 
@@ -68,7 +67,7 @@ export default {
                 const outChat = await Chat._client.emitAsync("encrypted-chat/new-message", { encryptedMessage: encryptedMessage.toBuffer() }, 0);
                 if (!outChat) throw {message: "Message was not included"};
 
-                this.$store.commit('setChatEncryptedMessage', {encryptedMessage, newMessage: true});
+                await this.$store.commit('setChatEncryptedMessage', {encryptedMessage, newMessage: true});
 
 
                 this.text = '';

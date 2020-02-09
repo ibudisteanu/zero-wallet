@@ -20,7 +20,7 @@
                             <span v-if="conversation.count - getReadConversations(publicKey) > 1" class="badge badge-small badge-warning">{{ conversation.count - getReadConversations(publicKey) -1 }}</span>
                             <br/>
 
-                            <chat-message v-if="message(conversation)" :message="message(conversation)" :senderPublicKey="senderPublicKey" :receiverPublicKey="publicKey" :allowWayPoint="false" />
+                            <chat-message v-if="message(conversation)" :message="message(conversation)" :senderPublicKey="publicKeys(publicKey)[0]" :receiverPublicKey="publicKeys(publicKey)[1]" :allowWayPoint="false" />
 
                         </div>
                     </div>
@@ -83,7 +83,7 @@ export default {
 
         getReadConversations(receiverPublicKey){
 
-            const publicKeys = [this.publicKey, receiverPublicKey].sort( (a,b) => a.localeCompare(b) );
+            const publicKeys = this.publicKeys(receiverPublicKey);
 
             const conversationKey = 'seenConversation:'+publicKeys[0]+':'+publicKeys[1];
             return Number.parseInt( localStorage.getItem(conversationKey) || '0' );
@@ -95,7 +95,12 @@ export default {
             const address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKey( publicKey );
             return address ? address.calculateAddress() : '';
 
-        }
+        },
+
+        publicKeys(receiverPublicKey){
+            return [ this.publicKey, receiverPublicKey ].sort( (a,b) => a.localeCompare(b) );
+
+        },
 
     },
 
