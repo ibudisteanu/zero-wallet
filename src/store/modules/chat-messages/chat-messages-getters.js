@@ -3,7 +3,9 @@ const getReadConversations = (conversation, senderPublicKey) => {
     const publicKeys = [senderPublicKey, conversation.receiverPublicKey ].sort( (a,b) => a.localeCompare(b) );
 
     const conversationKey = 'seenConversation:'+publicKeys[0]+':'+publicKeys[1];
-    const out= Number.parseInt( localStorage.getItem(conversationKey) || '0' );
+    const data = localStorage.getItem(conversationKey);
+
+    const out = Number.parseInt( data || '0' );
 
     return out;
 };
