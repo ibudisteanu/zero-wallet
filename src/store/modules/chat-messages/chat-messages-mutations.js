@@ -101,7 +101,7 @@ export default {
                         conversations.count = (conversations.count || 0) + 1;
 
                 } else
-                if (element && element.encryptedMessage !== encryptedMessage.hash().toString("hex"))  {
+                if (element.encryptedMessage !== encryptedMessage.hash().toString("hex"))  {
                     element.count += 1;
                     element.encryptedMessage = encryptedMessage.hash().toString("hex");
                 }
