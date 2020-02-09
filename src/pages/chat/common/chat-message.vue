@@ -22,6 +22,8 @@
 
                     {{ messageText }}
 
+                    DebugIndex {{message.index}}
+
                 </div>
 
                 <way-point @shown="wasShown" :distance="0" :checkVisible="true" :enabled="wayPointEnabled && allowWayPoint" />
@@ -89,6 +91,7 @@ export default {
         },
 
         wasShown(){
+
             localStorage.setItem('seenMessage:'+this.message.hash().toString("hex"), new Date().getTime() );
 
             const conversationKey = 'seenConversation:'+this.publicKeys[0]+':'+this.publicKeys[1];

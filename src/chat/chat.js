@@ -182,7 +182,7 @@ class Chat extends BaseConsensus{
 
         for (let i=0; i < out.length; i++) {
             const encryptedMessageId = out[i];
-            await this._downloadChatMessage(encryptedMessageId, startIndex + i);
+            await this._downloadChatMessage(encryptedMessageId, (startIndex * limit) + i);
         }
 
     }

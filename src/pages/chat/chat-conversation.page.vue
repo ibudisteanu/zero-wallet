@@ -140,7 +140,6 @@ export default {
         },
 
         senderPublicKey (to, from){
-            console.log("senderPublicKey  changed");
             return this.loadChat(to);
         },
 
