@@ -13,7 +13,7 @@
                              :key="`conversation-router-link-${publicKey}`"
                              :to="`/chat/conversation/${publicKey}`">
                     <div class="user">
-                        <account-identicon :publicKey="publicKey" :size="40" :outer-size="10" />
+                        <account-identicon class="account-identicon" :publicKey="publicKey" :size="40" :outer-size="10" />
                         <div>
 
                             <span class="address thick wordwrap">{{ getAddress(publicKey) }} </span>
@@ -115,6 +115,10 @@ export default {
         display: grid;
         grid-template-columns: 60px 1fr;
         grid-column-gap: 5px;
+    }
+
+    .account-identicon{
+        max-height: 50px;
     }
 
     .address{

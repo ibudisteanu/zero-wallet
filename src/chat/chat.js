@@ -119,8 +119,6 @@ class Chat extends BaseConsensus{
 
         if (!this._client) return;
 
-        console.log("accounts", this._data.accounts);
-
         for (const account in this._data.accounts){
 
             const publicKey = this._data.accounts[account].publicKey;
@@ -132,7 +130,7 @@ class Chat extends BaseConsensus{
             if (typeof conversations === "number") {
 
                 this.emit('encrypted-chat/conversations-count-update', { publicKey,  count: conversations });
-                this.downloadChatConversations(publicKey, conversations);
+                await this.downloadChatConversations(publicKey, conversations);
 
             }
         }
@@ -144,6 +142,7 @@ class Chat extends BaseConsensus{
         const limit = 20;
 
         const out = await this._client.emitAsync("encrypted-chat/conversations/content", {publicKey, index: Math.max(0, Math.ceil(index / limit)-1), limit , }, 0);
+
         if (!out) return;
 
         this.emit('encrypted-chat/conversations-update', { publicKey,  array: out });
