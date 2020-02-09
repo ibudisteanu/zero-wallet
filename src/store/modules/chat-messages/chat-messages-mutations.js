@@ -56,18 +56,18 @@ export default {
 
     },
 
-    async setChatEncryptedMessage(context, { encryptedMessage, newMessage = false } ){
+    async setChatEncryptedMessage(context, { encryptedMessage, newMessage = false, createdByMe = false } ){
 
+        const hash = encryptedMessage.hash().toString("hex");
 
         const publicKeys = [encryptedMessage.senderPublicKey.toString("hex"), encryptedMessage.receiverPublicKey.toString("hex")].sort( (a,b) => a.localeCompare(b) );
 
         const conversationMessages = { ...( context.conversationMessages[ publicKeys[0]+":"+publicKeys[1] ] || {} )  };
         if (!conversationMessages.ids) conversationMessages.ids = {};
 
-        const id = encryptedMessage.hash().toString("hex");
-        if (!conversationMessages.ids[ id ]){
+        if (!conversationMessages.ids[ hash ]){
 
-            conversationMessages.ids[ id ] = true;
+            conversationMessages.ids[ hash ] = true;
 
             Vue.set(context.conversationMessages, publicKeys[0]+":"+publicKeys[1], conversationMessages );
 
@@ -98,14 +98,14 @@ export default {
                     element.version = 0;
                     element.receiverPublicKey = receiverPublicKey;
                     element.count = 1;
-                    element.encryptedMessage = encryptedMessage.hash().toString("hex");
+                    element.encryptedMessage = hash;
 
                     if (i === 0)
                         conversations.count = (conversations.count || 0) + 1;
 
-                } else if (element.encryptedMessage !== encryptedMessage.hash().toString("hex")) {
+                } else if (element.encryptedMessage !== hash) {
                     element.count += 1;
-                    element.encryptedMessage = encryptedMessage.hash().toString("hex");
+                    element.encryptedMessage = hash;
                 }
 
                 elements.push(element);
@@ -150,11 +150,9 @@ export default {
 
         }
 
-        if (newMessage){
+        if (newMessage && !createdByMe && !context.messages[hash]){
 
             const chatMessage = (encryptedMessage._senderData ? encryptedMessage._senderData : encryptedMessage._receiverData);
-
-            console.log(chatMessage.data.toString("ascii"));
 
             if (chatMessage && chatMessage.data.length > 0)
                 Vue.notify({
@@ -165,7 +163,6 @@ export default {
 
         }
 
-        const hash = encryptedMessage.hash().toString("hex");
         Vue.set( context.messages, hash, encryptedMessage );
 
     },

@@ -22,8 +22,6 @@
 
                     {{ messageText }}
 
-                    DebugIndex {{message.index}}
-
                 </div>
 
                 <way-point @shown="wasShown" :distance="0" :checkVisible="true" :enabled="wayPointEnabled && allowWayPoint" />
