@@ -150,6 +150,21 @@ export default {
 
         }
 
+        if (newMessage){
+
+            const chatMessage = (encryptedMessage._senderData ? encryptedMessage._senderData : encryptedMessage._receiverData);
+
+            console.log(chatMessage.data.toString("ascii"));
+
+            if (chatMessage && chatMessage.data.length > 0)
+                Vue.notify({
+                    type: 'warn',
+                    title: 'A new message received',
+                    text: chatMessage.data.toString("ascii"),
+                });
+
+        }
+
         const hash = encryptedMessage.hash().toString("hex");
         Vue.set( context.messages, hash, encryptedMessage );
 
