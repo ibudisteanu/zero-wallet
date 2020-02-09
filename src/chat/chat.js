@@ -81,8 +81,6 @@ class Chat extends BaseConsensus{
 
             this._client.on('encrypted-chat/subscribe/new-message/answer', async (out) => {
 
-                console.log("out", out);
-
                 const encryptedMessage = await PandoraPay.cryptography.encryptedMessageValidator.validateEncryptedMessage( Buffer.from(out) );
                 this._data.messages[ encryptedMessage.hash().toString("hex") ] = encryptedMessage;
 
@@ -143,8 +141,6 @@ class Chat extends BaseConsensus{
 
         const out = await this._client.emitAsync("encrypted-chat/conversations/content", {publicKey, index: Math.max(0, Math.ceil(index / limit)-1), limit , }, 0);
         if (!out) return;
-
-        console.log("downloadChatConversations", out);
 
         this.emit('encrypted-chat/conversations-update', { publicKey,  array: out });
 

@@ -74,24 +74,27 @@ export default {
         }
 
         //a new conversation
-        if (newMessage)
-            for (let i=0; i < publicKeys.length; i++) {
+        if (newMessage) {
+
+            const elements = [];
+
+            for (let i = 0; i < publicKeys.length; i++) {
 
                 const senderPublicKey = publicKeys[i];
                 const receiverPublicKey = i === 0 ? publicKeys[1] : publicKeys[0];
 
-                const conversations = {...( context.conversations[ senderPublicKey ] || {} )};
+                const conversations = {...( context.conversations[senderPublicKey] || {} )};
                 if (!conversations.array) conversations.array = {};
 
                 let notFound = false;
-                if ( !conversations.array[ receiverPublicKey ] ){
-                    conversations.array[ receiverPublicKey ] = {};
+                if (!conversations.array[receiverPublicKey]) {
+                    conversations.array[receiverPublicKey] = {};
                     notFound = true;
                 }
 
-                const element = conversations.array[ receiverPublicKey ];
+                const element = conversations.array[receiverPublicKey];
 
-                if (notFound){
+                if (notFound) {
                     element.version = 0;
                     element.receiverPublicKey = receiverPublicKey;
                     element.count = 1;
@@ -100,18 +103,21 @@ export default {
                     if (i === 0)
                         conversations.count = (conversations.count || 0) + 1;
 
-                } else
-                if (element.encryptedMessage !== encryptedMessage.hash().toString("hex"))  {
+                } else if (element.encryptedMessage !== encryptedMessage.hash().toString("hex")) {
                     element.count += 1;
                     element.encryptedMessage = encryptedMessage.hash().toString("hex");
                 }
 
-                if ( encryptedMessage.index === undefined)
-                    encryptedMessage.index = element.count -1;
+                elements.push(element);
 
                 Vue.set(context.conversations, publicKeys[i], conversations);
 
             }
+
+            encryptedMessage.index = Math.max( elements[0].count - 1, elements[1].count -1);
+
+
+        }
 
         try{
 
