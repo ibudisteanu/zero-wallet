@@ -4,7 +4,7 @@
 
         <exchange-top-bar />
 
-        <div class="container pd-top-40">
+        <div class="container pd-top-20">
             <div class="boxed ">
 
                 <h1>Exchange Portfolio Trades</h1>

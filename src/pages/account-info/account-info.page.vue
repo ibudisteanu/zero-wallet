@@ -1,7 +1,7 @@
 <template>
 
     <layout>
-        <div class="container pd-top-40">
+        <div class="container pd-top-20">
             <div class="boxed ">
 
                 <h1>Account Details</h1>
@@ -10,7 +10,7 @@
 
                     <account :identicon="address.identicon" :name="address.name" :address="address.address" />
 
-                    <div class="pd-top-40" />
+                    <div class="pd-top-20" />
 
                     <span class="disabled wordwrap ">
                         <span v-if="!showPublicKey" class="pointer" @click="showPublicKey = true">

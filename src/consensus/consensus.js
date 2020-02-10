@@ -181,9 +181,10 @@ class Consensus extends BaseConsensus{
                     const block = this._data.blocks[i];
                     if (block){
                         const txs = await block.getTransactions();
+                        const data = {};
                         for (const tx of txs) {
+                            data[tx.hash().toString("hex")] = tx;
                             delete this._data.transactions[tx.hash().toString("hex")];
-                            this._data.transactions[tx.hash().toString("hex")] = tx;
                         }
                         this.emit('consensus/tx-deleted', {transactions: data} );
                     }

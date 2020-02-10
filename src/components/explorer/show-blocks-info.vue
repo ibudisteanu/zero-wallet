@@ -2,28 +2,41 @@
 
     <div>
 
-        <div class="table">
-            <div class="table-header table-row">
-                <span class="hide-mobile">Hash</span>
-                <span class="hide-tablet hide-mobile">Kernel Hash</span>
-                <span>Height</span>
-                <span>Time</span>
-                <span>Size</span>
-                <span>TX</span>
-                <span>Forge</span>
-            </div>
-            <div v-for="(blockInfo, key) in blocksInfo" class="table-row"
-                 :key="`show-block-${key}`">
+        <div class="row pd-top-10 pd-bottom-10">
+            <span class="hidden-xs col-sm-6 col-md-3 wordwrap">Hash</span>
+            <span class="hidden-xs hidden-sm col-md-3 wordwrap">Kernel Hash</span>
+            <span class="col-xs-4 col-sm-1 col-md-1 wordwrap">Height</span>
+            <span class="col-xs-4 col-sm-1 col-md-1 wordwrap">Time</span>
+            <span class="hidden-xs col-sm-2 col-md-2 wordwrap">Size</span>
+            <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">TX</span>
+            <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">Forge</span>
+        </div>
+        <div v-for="(blockInfo, key) in blocksInfo"
+             class="row pd-top-10 pd-bottom-10"
+             :key="`show-block-${key}`">
 
-                <span class="hide-mobile"><router-link :to="`/explorer/block/hash/${blockInfo.hash.toString('hex')}`">{{blockInfo.hash.toString("hex").substr(0, 20)+'...'}}</router-link></span>
-                <span class="hide-tablet hide-mobile">{{blockInfo.kernelHash.toString("hex").substr(0, 20)+'...'}}</span>
-                <span><router-link :to="`/explorer/block/height/${blockInfo.height}`">{{blockInfo.height}}</router-link></span>
-                <span>{{timeAgo( $store.state.blockchain.genesisTimestamp +  blockInfo.timestamp)  }}</span>
-                <span>{{formatBytes(blockInfo.size)}}</span>
-                <span>{{blockInfo.txCount}}</span>
-                <span> <account-identicon  :address="blockInfo.forgedBy" :size="20" :outer-size="5"  /> </span>
+            <span class="hidden-xs col-sm-6 col-md-3 wordwrap">
+                <router-link :to="`/explorer/block/hash/${blockInfo.hash.toString('hex')}`">{{blockInfo.hash.toString("hex").substr(0, 20)+'...'}}</router-link>
+            </span>
+            <span class="hidden-xs hidden-sm col-md-3 wordwrap">
+                {{blockInfo.kernelHash.toString("hex").substr(0, 20)+'...'}}
+            </span>
+            <span class="col-xs-4 col-sm-1 col-md-1 wordwrap">
+                <router-link :to="`/explorer/block/height/${blockInfo.height}`">{{blockInfo.height}}</router-link>
+            </span>
+            <span class="col-xs-4 col-sm-1 col-md-1 wordwrap">
+                {{timeAgo( $store.state.blockchain.genesisTimestamp +  blockInfo.timestamp)  }}
+            </span>
+            <span class="hidden-xs col-sm-2 col-md-2 wordwrap">
+                {{formatBytes(blockInfo.size)}}
+            </span>
+            <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">
+                {{blockInfo.txCount}}
+            </span>
+            <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">
+                <account-identicon  :address="blockInfo.forgedBy" :size="20" :outer-size="5"  />
+            </span>
 
-            </div>
         </div>
 
     </div>
@@ -60,16 +73,5 @@ export default {
 
 <style scoped>
 
-    .table-row{
-        grid-template-columns: 1fr 1fr 90px 60px 60px 50px 60px ;
-    }
-
-    @media (max-width: 767px) {
-
-        .table-row{
-            grid-template-columns: 90px 60px 60px 50px 60px ;
-        }
-
-    }
 
 </style>

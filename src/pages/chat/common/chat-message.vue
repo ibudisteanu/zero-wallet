@@ -2,7 +2,7 @@
 
     <div :class="`msg ${ messageSender  ? 'right' : 'left' }-msg`">
 
-        <account-identicon v-if="message" class="msg-img" :publicKey="messageSender ? senderPublicKey : receiverPublicKey" size="40" outer-size="10" outer-color="#ececec" />
+        <account-identicon v-if="message" class="hidden-xs msg-img" :publicKey="messageSender ? senderPublicKey : receiverPublicKey" size="40" outer-size="10" outer-color="#ececec" />
 
         <div class="msg-bubble">
 

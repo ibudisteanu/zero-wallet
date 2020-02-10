@@ -4,25 +4,30 @@
 
         <chat-top-bar />
 
-        <div class="container pd-top-40">
+        <div class="container pd-top-20">
             <div class="boxed ">
 
                 <h1>Encrypted End to End Chat {{count}}</h1>
 
-                <router-link v-for="(conversation, receiverPublicKey) in conversations"
-                             :key="`conversation-router-link-${receiverPublicKey}`"
-                             :to="`/chat/conversation/${receiverPublicKey}`">
-                    <div class="user">
-                        <account-identicon class="account-identicon" :publicKey="receiverPublicKey" :size="40" :outer-size="10" />
-                        <div>
+                <div v-for="(conversation, receiverPublicKey) in conversations"
+                     :key="`conversation-router-link-${receiverPublicKey}`"
+                     class="row pd-top-10 pd-bottom-10">
 
-                            <span class="address thick wordwrap">{{ getAddress(receiverPublicKey) }} </span>
-                            <span v-if="$store.getters.conversationNewNotifications(conversation, publicKey) >= 1" class="badge badge-small badge-warning">{{ $store.getters.conversationNewNotifications(conversation, publicKey)  }}</span>
-                            <br/>
+                        <router-link :to="`/chat/conversation/${receiverPublicKey}`" >
+                            <div class="col-xs-12 col-sm-2">
+                                <account-identicon class="account-identicon" :publicKey="receiverPublicKey" :size="40" :outer-size="10" />
 
-                            <chat-message v-if="message(conversation)" :message="message(conversation)" :senderPublicKey="publicKey" :receiverPublicKey="receiverPublicKey" :allowWayPoint="false" />
+                                <span v-if="$store.getters.conversationNewNotifications(conversation, publicKey) >= 1" class="badge badge-smaller badge-warning">{{ $store.getters.conversationNewNotifications(conversation, publicKey)  }}</span>
 
-                        </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-10">
+
+                                <span class="address thick wordwrap">{{ getAddress(receiverPublicKey) }} </span>
+                                <chat-message v-if="message(conversation)" :message="message(conversation)" :senderPublicKey="publicKey" :receiverPublicKey="receiverPublicKey" :allowWayPoint="false" />
+
+                            </div>
+                        </router-link>
+
                     </div>
                 </router-link>
 
@@ -102,19 +107,20 @@ export default {
 
 <style scoped>
 
-    .user{
-
-        display: grid;
-        grid-template-columns: 60px 1fr;
-        grid-column-gap: 5px;
-    }
-
     .account-identicon{
-        max-height: 50px;
+        max-height: 45px;
     }
 
     .address{
         display: inline-block;
+    }
+
+    .badge{
+        position: relative;
+        top: -60px;
+        right: 0px;
+        width: 100%;
+        display: inline !important;
     }
 
 </style>

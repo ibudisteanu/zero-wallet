@@ -3,7 +3,7 @@
 
         <exchange-top-bar />
 
-        <div class="container pd-top-40">
+        <div class="container pd-top-20">
             <div class="boxed ">
                 <h1>Exchange Buy Create Offer</h1>
 

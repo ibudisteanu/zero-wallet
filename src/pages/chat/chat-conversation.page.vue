@@ -4,7 +4,7 @@
 
         <chat-top-bar />
 
-        <div class="container pd-top-40">
+        <div class="container pd-top-20">
             <div class="boxed ">
 
                 <h2>Encrypted End-to-End Chat {{count}}</h2>
@@ -162,7 +162,6 @@ export default {
         flex-flow: column wrap;
         justify-content: space-between;
         width: 100%;
-        margin: 25px 10px;
         height: calc(100% - 50px);
         border: 2px solid #ddd;
         border-radius: 5px;

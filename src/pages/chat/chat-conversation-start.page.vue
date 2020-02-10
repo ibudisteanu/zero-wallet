@@ -4,7 +4,7 @@
 
         <chat-top-bar/>
 
-        <div class="container pd-top-40">
+        <div class="container pd-top-20">
             <div class="boxed ">
 
                 <h1>Start Encrypted End to End Conversation</h1>

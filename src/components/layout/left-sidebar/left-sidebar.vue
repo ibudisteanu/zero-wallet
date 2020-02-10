@@ -123,7 +123,7 @@ export default {
             const width = window.innerWidth;
             const height = window.innerHeight;
 
-            if (width <= 450) {
+            if (width <= 767) {
                 this.show = false;
                 this.fullWidth = false;
                 this.$emit('onUpdateMarginLeft', {marginLeft: '0' });
@@ -206,7 +206,7 @@ export default {
         display: inline !important;
     }
 
-    @media screen and (max-width: 450px) {
+    @media screen and (max-width: 767px) {
 
         .mobile-menu{
             color: #818181;

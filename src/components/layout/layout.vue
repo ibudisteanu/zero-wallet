@@ -24,6 +24,7 @@
 <script>
 
 require('src/assets/common.css');
+require('src/assets/grid.css');
 
 import LayoutHeader from "./header/layout-header.vue";
 import LayoutFooter from "./footer/layout-footer.vue";

@@ -1,7 +1,7 @@
 <template>
     <div class="header pd-top-10 pd-bottom-10">
 
-        <div class="boxed" >
+        <div class="container boxed" >
 
             <div class="row">
 
