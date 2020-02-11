@@ -53,10 +53,6 @@
                                 <span class="col-xs-7 col-sm-9 wordwrap">{{block.transactionsMerkleTree.hash().toString("hex")}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Account Tree root</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.accountTreeHash.toString("hex")}}</span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Previous Hash</span>
                                 <span class="col-xs-7 col-sm-9 wordwrap"><router-link :to="`/explorer/block/hash/${block.prevHash.toString('hex')}`">{{block.prevHash.toString("hex")}}</router-link></span>
                             </div>

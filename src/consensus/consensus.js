@@ -235,23 +235,23 @@ class Consensus extends BaseConsensus{
         const publicKeyHash = address.publicKeyHash;
 
         //remove old balance
-        const balancesOld = await PandoraPay.mainChain.data.accountTree.getBalances(publicKeyHash);
-        const nonceOld = await PandoraPay.mainChain.data.accountTree.getNonce(publicKeyHash);
+        const balancesOld = await PandoraPay.mainChain.data.accountHashMap.getBalances(publicKeyHash);
+        const nonceOld = await PandoraPay.mainChain.data.accountHashMap.getNonce(publicKeyHash);
 
         if (balancesOld)
             for (const currencyToken in balancesOld)
-                await PandoraPay.mainChain.data.accountTree.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
+                await PandoraPay.mainChain.data.accountHashMap.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
 
         if (nonceOld)
-            await PandoraPay.mainChain.data.accountTree.updateNonce( publicKeyHash, - nonceOld, );
+            await PandoraPay.mainChain.data.accountHashMap.updateNonce( publicKeyHash, - nonceOld, );
 
         //update with new balance
         if (balances)
             for (const currencyToken in balances)
-                await PandoraPay.mainChain.data.accountTree.updateBalance(publicKeyHash, balances[currencyToken], currencyToken,);
+                await PandoraPay.mainChain.data.accountHashMap.updateBalance(publicKeyHash, balances[currencyToken], currencyToken,);
 
         if (nonce)
-            await PandoraPay.mainChain.data.accountTree.updateNonce(publicKeyHash, nonce,);
+            await PandoraPay.mainChain.data.accountHashMap.updateNonce(publicKeyHash, nonce,);
 
         this.emit('consensus/account-update', { account, balances, nonce  } );
 
@@ -431,7 +431,6 @@ class Consensus extends BaseConsensus{
             chain: PandoraPay._scope.mainChain
         }, undefined, Buffer.from(blockData) );
 
-
         await this._includeBlock(block);
 
         return block;
@@ -466,7 +465,7 @@ class Consensus extends BaseConsensus{
         const txs = await block.getTransactions();
         for (const tx of txs) {
 
-            console.log("_includeBlock", tx.hash().toString("hex"), block.height);
+            console.log("_includeTxInBlock", tx.hash().toString("hex"), block.height);
 
             tx.__extra = {
                 height: block.height,
