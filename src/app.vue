@@ -127,6 +127,9 @@ export default {
 
         Chat.on("encrypted-chat/conversations-update", data => this.$store.commit('setChatConversations', data));
 
+        Chat.on("encrypted-chat/set-captcha", data => this.$store.commit('setCaptcha', data));
+        Chat.on("encrypted-chat/set-captcha-loading", data => this.$store.commit('setCaptchaLoading', data));
+
         await Consensus.start();
 
         await Chat.start();

@@ -99,9 +99,17 @@ class Chat extends BaseConsensus{
 
     getEncryptedChatInfo(){
 
-        if (this._client)
-            return this._client.emit("encrypted-chat/get-info", undefined, this._processEncryptedChatInfo.bind(this));
+        return this._client.emit("encrypted-chat/get-info", undefined, this._processEncryptedChatInfo.bind(this));
 
+    }
+
+    getCaptcha(){
+
+        this.emit('encrypted-chat/set-captcha-loading', true);
+
+        return this._client.emit("captcha/get-captcha", undefined, (data)=>{
+            this.emit('encrypted-chat/set-captcha', data);
+        });
     }
 
     setAccounts( accounts ){

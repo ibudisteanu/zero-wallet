@@ -7,8 +7,8 @@
         </span>
 
         <div class="msger-inputarea">
-            <input type="text" class="msger-input" placeholder="Your message..." v-model="text">
-            <button type="submit" class="msger-send-btn" @click="handleSendMessage">Send</button>
+            <input type="text" class="msger-input" placeholder="Your message..." v-model="text" v-on:keyup="keyUp" >
+            <loading-button class="msger-send-btn"  @submit="handleSendMessage" icon="fa fa-paper-plane" text="Send"/>
         </div>
 
     </div>
@@ -18,8 +18,11 @@
 <script>
 
 import Chat from "src/chat/chat"
+import LoadingButton from "src/components/utils/loading-button.vue"
 
 export default {
+
+    components: {LoadingButton},
 
     props:{
         senderPublicKey: {default: ''},
@@ -48,7 +51,7 @@ export default {
 
     methods:{
 
-        async handleSendMessage(){
+        async handleSendMessage(resolve){
 
             this.error = '';
 
@@ -75,7 +78,15 @@ export default {
                 this.error = err.message;
             }
 
+            resolve(true);
         },
+
+        keyUp(event){
+
+            if (event.key === "Enter")
+                return this.handleSendMessage();
+
+        }
 
     }
 
