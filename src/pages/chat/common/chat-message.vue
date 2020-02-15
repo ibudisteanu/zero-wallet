@@ -29,11 +29,14 @@
             </div>
 
         </div>
+
+
     </div>
 
 </template>
 
 <script>
+
 import WayPoint from "src/components/utils/waypoint.vue"
 import Utils from "src/utils/utils"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";

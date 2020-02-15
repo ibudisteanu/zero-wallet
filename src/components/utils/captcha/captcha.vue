@@ -4,15 +4,16 @@
 
 
         <div class="captcha">
-            <loading-spinner v-if="!captcha || captchaLoading" />
+            <loading-spinner v-if="!captcha || captchaLoading"  />
             <template v-if="captcha && !captchaLoading">
                 <div v-html="captcha ? captcha.data : '...'"></div>
                 <i class="fa fa-sync-alt" @click="reset"/>
             </template>
         </div>
 
-        <input  type="text" id="lcaptcha" name="captcha" :placeholder="captcha" v-model="captchaInput" :maxlength="captcha ? captcha.size : 1" v-on:keyup.enter="submitForm" autocomplete="off" >
-        <loading-button :text="buttonText || 'post'" @submit="submit" ref="refLoadingButton" />
+        <input  type="text" placeholder="captcha" v-model="captchaInput" :maxlength="captcha ? captcha.size : 1" v-on:keyup.enter="submitForm" autocomplete="off" >
+
+        <loading-button :text="buttonText || 'send'" @submit="submit" ref="refLoadingButton" icon="fa fa-paper-plane" />
 
     </div>
 
@@ -95,22 +96,23 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+
+    .fa-spin{
+        font-size: 40px;
+    }
+
     .captcha-box{
         display: grid;
         grid-template-columns: 100px 100px 1fr;
         grid-column-gap: 10px;
         margin-bottom: 10px;
+        text-align: center;
     }
-    .captcha-box .captcha{
-        position: relative;
-        right: 0;
+    .captcha{
     }
-    .captcha-box svg:first-child{
-        width: auto;
-        height: 35px;
-    }
-    .captcha-box .reload-captcha{
+
+    .reload-captcha{
         position: absolute;
         left: 13px;
         top: 38px;

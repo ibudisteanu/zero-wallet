@@ -180,6 +180,7 @@ select {
     color: #45a049;
 }
 
+button,
 input[type=submit] {
     width: 100%;
     background-color: #4CAF50;
@@ -191,10 +192,12 @@ input[type=submit] {
     cursor: pointer;
 }
 
+button:hover,
 input[type=submit]:hover {
     background-color: #45a049;
 }
 
+button:disabled,
 input[type=submit]:disabled {
     background: #dddddd;
 }

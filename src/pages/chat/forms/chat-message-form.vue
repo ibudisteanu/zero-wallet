@@ -8,8 +8,10 @@
 
         <div class="msger-inputarea">
             <input type="text" class="msger-input" placeholder="Your message..." v-model="text" v-on:keyup="keyUp" >
-            <loading-button class="msger-send-btn"  @submit="handleSendMessage" icon="fa fa-paper-plane" text="Send"/>
+            <loading-button @submit="handleSendMessage" icon="fa fa-paper-plane" text="Send"/>
         </div>
+
+        <captcha-modal ref="refCaptchaModal" />
 
     </div>
 
@@ -19,10 +21,11 @@
 
 import Chat from "src/chat/chat"
 import LoadingButton from "src/components/utils/loading-button.vue"
+import CaptchaModal from "src/components/utils/captcha/captcha.modal.vue"
 
 export default {
 
-    components: {LoadingButton},
+    components: {LoadingButton, CaptchaModal},
 
     props:{
         senderPublicKey: {default: ''},
@@ -52,6 +55,9 @@ export default {
     methods:{
 
         async handleSendMessage(resolve){
+
+            this.$refs['refCaptchaModal'].showModal();
+            return;
 
             this.error = '';
 
@@ -112,19 +118,9 @@ export default {
         flex: 1;
         background: #ddd;
     }
-    .msger-send-btn {
-        margin-left: 10px;
-        background: rgb(0, 196, 65);
-        color: #fff;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background 0.23s;
+
+    button{
+        width: 75px
     }
-    .msger-send-btn:hover {
-        background: rgb(0, 180, 50);
-    }
-
-
-
 
 </style>

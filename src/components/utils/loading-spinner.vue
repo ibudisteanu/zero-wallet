@@ -1,12 +1,14 @@
 <template>
-    <i class="fas fa-circle-notch fa-spin" :style="`width: ${width}; height: ${height}`"></i>
+    <i class="fas fa-sync fa-spin"></i>
 </template>
 
 <script>
     export default{
-        props:{
-            width: {default: '40px'},
-            height: {default: '40px'},
-        }
     }
 </script>
+
+<style scoped>
+    .fa-spin{
+        font-size: 20px;
+    }
+</style>
