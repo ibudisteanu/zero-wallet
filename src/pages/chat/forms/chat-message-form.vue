@@ -7,11 +7,28 @@
         </span>
         <div class="msger-inputarea">
 
-            <input type="text" class="msger-input" placeholder="Your message..." v-model="text" v-on:keyup="keyUp" >
-            <loading-button @submit="handleSendMessage" icon="fa fa-paper-plane" text="Send"/>
+            <div class="row">
+                <div class="col-xs-10">
+                    <input type="text" class="msger-input" placeholder="Your message..." v-model="text" v-on:keyup="keyUp" >
+                </div>
+                <div class="col-xs-2">
+                    <loading-button @submit="handleSendMessage" icon="fa fa-paper-plane" text="Send"/>
+                </div>
+            </div>
+            <div class="row">
+                <div v-if="!attachment">
+                    <i v-if="!attachmentLoading" class="fa fa-paperclip pointer" @click="handleOpenFileDialog"/>
+                    <loading-spinner v-else />
+                </div>
+                <div v-else>
+                    <chat-attachment :attachment="attachment" :allowDelete="true" @deleteAttachment="handleDeleteAttachment" />
+                </div>
+            </div>
         </div>
 
         <captcha-modal ref="refCaptchaModal" />
+
+        <input type="file" class="file" ref="refFile" @change="handleFileSelected" />
 
     </div>
 
@@ -22,10 +39,12 @@
 import Chat from "src/chat/chat"
 import LoadingButton from "src/components/utils/loading-button.vue"
 import CaptchaModal from "src/components/utils/captcha/captcha.modal.vue"
+import LoadingSpinner from "src/components/utils/loading-spinner";
+import ChatAttachment from "./../common/chat-attachment.vue"
 
 export default {
 
-    components: {LoadingButton, CaptchaModal},
+    components: {LoadingButton, CaptchaModal, LoadingSpinner, ChatAttachment},
 
     props:{
         senderPublicKey: {default: ''},
@@ -36,6 +55,8 @@ export default {
         return {
             text: '',
             error: '',
+            attachmentLoading: false,
+            attachment: null,
         }
     },
 
@@ -54,6 +75,54 @@ export default {
 
     methods:{
 
+        handleDeleteAttachment(){
+
+            this.attachmentLoading = false;
+            this.attachment = null;
+            
+        },
+
+        async handleFileSelected(){
+            const file = this.$refs.refFile.files[0];
+            if (file){
+
+                this.attachmentLoading = true;
+
+                const obj = {
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                };
+
+                const reader = new FileReader();
+
+                reader.onload = () => {
+                    const data = reader.result;
+                    const buffer = Buffer.from(data);
+                    obj.buffer = buffer;
+
+                    this.attachmentLoading = false;
+                    this.attachment = obj;
+                    console.log(obj);
+                };
+
+                // Read in the image file as a data URL.
+                reader.readAsArrayBuffer(file);
+
+            }
+            console.log("file", file);
+        },
+
+        async handleOpenFileDialog(){
+
+            if (!window.File || !window.FileReader || !window.FileList || !window.Blob)
+                return alert('The File APIs are not fully supported in this browser.');
+
+            this.$refs.refFile.click();
+
+
+        },
+
         async handleSendMessage(resolve, captcha){
 
             this.error = '';
@@ -67,9 +136,6 @@ export default {
                     text: this.text,
                     receiverPublicKey: this.receiverPublicKey,
                 });
-
-
-                console.log("encrypted-chat/new-message");
 
                 const out = await Chat._client.emitAsync("encrypted-chat/new-message", { encryptedMessage: encryptedMessage.toBuffer(), captcha: captcha }, 0);
 
@@ -125,24 +191,24 @@ export default {
 <style scoped>
 
     .msger-inputarea {
-        display: flex;
-        padding: 10px;
         border-top: 2px solid #ddd;
         background: #eee;
-    }
-    .msger-inputarea * {
-        padding: 10px;
-        border: none;
-        border-radius: 3px;
-        font-size: 1em;
-    }
-    .msger-input {
-        flex: 1;
-        background: #ddd;
+        padding: 20px;
     }
 
-    button{
-        width: 75px
+    .fa-paperclip{
+        font-size: 20px;
+    }
+
+    @media (max-width: 767px) {
+
+        .msger-inputarea {
+            padding: 10px;
+        }
+    }
+
+    .file{
+        display: none;
     }
 
 </style>
