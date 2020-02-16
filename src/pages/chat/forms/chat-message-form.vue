@@ -2,11 +2,10 @@
 
     <div>
 
+        <span v-if="error" class="centered danger">
+            {{error}}
+        </span>
         <div class="msger-inputarea">
-
-            <span v-if="error" class="centered danger">
-                {{error}}
-            </span>
 
             <input type="text" class="msger-input" placeholder="Your message..." v-model="text" v-on:keyup="keyUp" >
             <loading-button @submit="handleSendMessage" icon="fa fa-paper-plane" text="Send"/>
@@ -69,7 +68,12 @@ export default {
                     receiverPublicKey: this.receiverPublicKey,
                 });
 
+
+                console.log("encrypted-chat/new-message");
+
                 const out = await Chat._client.emitAsync("encrypted-chat/new-message", { encryptedMessage: encryptedMessage.toBuffer(), captcha: captcha }, 0);
+
+                console.log("out", out);
 
                 if (!out) throw {message: "Message was not included"};
 

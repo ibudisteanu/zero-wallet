@@ -1,7 +1,7 @@
 <template>
 
     <modal ref="modal" title="Captcha">
-        <span>To avoid spam, captcha is required to avoid robots</span>
+        <span>To avoid spam/robots, captcha is required.</span>
         <captcha @submit="captchaSubmit" ref="refCaptcha" />
     </modal>
 

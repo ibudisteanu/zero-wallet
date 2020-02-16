@@ -21,7 +21,6 @@
                 <div class="msg-text">
 
                     {{ messageText }}
-                    {{message.index}}
 
                 </div>
 
