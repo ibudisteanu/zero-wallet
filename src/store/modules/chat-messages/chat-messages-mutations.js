@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import chat from "../../../chat/chat";
 
 export default {
 
@@ -155,12 +156,18 @@ export default {
 
             const chatMessage = (encryptedMessage._senderData ? encryptedMessage._senderData : encryptedMessage._receiverData);
 
-            if (chatMessage && chatMessage.data.length > 0)
+            if (chatMessage && chatMessage.data.length > 0) {
+
+                let text;
+                if (chatMessage.script === 0) text = chatMessage.data; else
+                if (chatMessage.script === 1) text = chatMessage.data.text;
+
                 Vue.notify({
                     type: 'warn',
                     title: 'A new message received',
                     text: chatMessage.data.toString("ascii"),
                 });
+            }
 
         }
 

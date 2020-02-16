@@ -86,14 +86,18 @@ export default {
 
         async downloadAddress(){
 
+            if ( !Blob)
+                return alert('Blob is not supported by your Browser');
+
             const address = await PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address );
             if (!address) return false;
 
             const json = address.toJSON();
 
-            let addressFile = new Blob([JSON.stringify(json)], {type: "application/json;charset=utf-8"});
-            let fileName = consts.name + "_" +this.address.name + " "+this.address.address + ".wallet";
-            FileSaver.saveAs(addressFile, fileName);
+            const fileName = consts.name + "_" +this.address.name + " "+this.address.address + ".wallet";
+
+            const file = new Blob([JSON.stringify(json)], {type: "application/json;charset=utf-8"});
+            FileSaver.saveAs(file, fileName);
 
             this.$notify({
                 type: 'success',

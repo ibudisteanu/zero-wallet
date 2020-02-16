@@ -22,6 +22,8 @@
 
                     {{ messageText }}
 
+                    <chat-attachment v-if="messageChatData.script === 1" :attachment="messageChatData.data" />
+
                 </div>
 
                 <way-point @shown="wasShown" :distance="0" :checkVisible="true" :enabled="wayPointEnabled && allowWayPoint" />
@@ -40,10 +42,11 @@
 import WayPoint from "src/components/utils/waypoint.vue"
 import Utils from "src/utils/utils"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
+import ChatAttachment from "./chat-attachment.vue"
 
 export default {
 
-    components: { WayPoint, AccountIdenticon},
+    components: { WayPoint, AccountIdenticon, ChatAttachment},
 
     data(){
         return {
@@ -73,11 +76,20 @@ export default {
             return  this.messageSender ? 'YOU' : 'TRADER';
         },
 
-        messageText(){
+        messageChatData(){
+
             const chatMessage = (this.message._senderData ? this.message._senderData : this.message._receiverData);
+            return chatMessage;
+
+        },
+
+        messageText(){
+            const chatMessage = this.messageChatData;
+
             if ( !chatMessage ) return 'error';
 
-            return chatMessage.data.toString("ascii");
+            if (chatMessage.script === 0) return chatMessage.data;
+            if (chatMessage.script === 1) return chatMessage.data.text;
         },
 
         messageSender(){

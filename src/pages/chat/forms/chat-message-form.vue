@@ -79,12 +79,23 @@ export default {
 
             this.attachmentLoading = false;
             this.attachment = null;
-            
+            this.$refs.refFile.value = '';
+
         },
 
         async handleFileSelected(){
+
+            this.error = '';
+
             const file = this.$refs.refFile.files[0];
+            console.log("file", file);
+
             if (file){
+
+                if (file.size > PandoraPay._scope.argv.encryptedMessage.maxSize){
+                    this.error = 'File selected is too big';
+                    return false;
+                }
 
                 this.attachmentLoading = true;
 
@@ -99,18 +110,16 @@ export default {
                 reader.onload = () => {
                     const data = reader.result;
                     const buffer = Buffer.from(data);
-                    obj.buffer = buffer;
+                    obj.data = buffer;
 
                     this.attachmentLoading = false;
                     this.attachment = obj;
-                    console.log(obj);
                 };
 
                 // Read in the image file as a data URL.
                 reader.readAsArrayBuffer(file);
 
             }
-            console.log("file", file);
         },
 
         async handleOpenFileDialog(){
@@ -131,11 +140,39 @@ export default {
 
                 if (this.text.length < 1) throw {message: "Text needs at least one char"};
 
-                const encryptedMessage = await PandoraPay.cryptography.encryptedMessageCreator.createEncryptedMessage({
-                    senderPublicKey: this.senderPublicKey,
-                    text: this.text,
-                    receiverPublicKey: this.receiverPublicKey,
-                });
+                let data;
+                if (this.attachment)
+                    data = {
+                        script: 1,
+                        version: 0,
+                        data: {
+                            version: 0,
+                            text: this.text,
+                            name: this.attachment.name,
+                            type: this.attachment.type,
+                            data: this.attachment.data,
+                        }
+                    };
+                else
+                    data = {
+                        script: 0,
+                        data: { string: this.text },
+                    };
+
+                let encryptedMessage;
+
+                try{
+
+                    encryptedMessage = await PandoraPay.cryptography.encryptedMessageCreator.createEncryptedMessage({
+                        senderPublicKey: this.senderPublicKey,
+                        receiverPublicKey: this.receiverPublicKey,
+                        data,
+                    });
+
+                }catch(err){
+                    this.error = 'Data is to big';
+                    return;
+                }
 
                 const out = await Chat._client.emitAsync("encrypted-chat/new-message", { encryptedMessage: encryptedMessage.toBuffer(), captcha: captcha }, 0);
 
@@ -166,6 +203,7 @@ export default {
                 //await this.$store.commit('setChatEncryptedMessage', {encryptedMessage, newMessage: true, createdByMe: true});
 
                 this.text = '';
+                this.handleDeleteAttachment();
 
             }catch(err){
                 console.error(err);
