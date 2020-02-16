@@ -68,6 +68,7 @@ export default {
         if (!conversationMessages.ids[ hash ]){
 
             conversationMessages.ids[ hash ] = true;
+            conversationMessages.count = (conversationMessages.count||0) + 1;
 
             Vue.set(context.conversationMessages, publicKeys[0]+":"+publicKeys[1], conversationMessages );
 

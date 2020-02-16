@@ -2,8 +2,7 @@
 
     <modal ref="modal" title="Captcha">
         <span>To avoid spam, captcha is required to avoid robots</span>
-        <captcha style="margin-top: 20px" @submit="captchaSubmit" ref="refCaptcha" />
-        <span class="danger">{{error}}</span>
+        <captcha @submit="captchaSubmit" ref="refCaptcha" />
     </modal>
 
 </template>
@@ -37,19 +36,17 @@ export default {
         },
         processError(error){
 
-            if (error === "Captcha expired" || error === "Captcha was already used"  || error === "Captcha is incorrect") {
+            return this.$refs['refCaptcha'].processError(error);
 
-                this.$refs['refCaptcha'].processError(error);
-
-                this.error = error;
-                return error;
-            }
-
-            return '';
         }
     }
 }
 </script>
 
 <style scoped>
+
+    .captcha-box{
+        margin-top: 20px;
+    }
+
 </style>

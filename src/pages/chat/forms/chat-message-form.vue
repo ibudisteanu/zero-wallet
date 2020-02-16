@@ -2,11 +2,12 @@
 
     <div>
 
-        <span v-if="error" class="centered danger">
-            {{error}}
-        </span>
-
         <div class="msger-inputarea">
+
+            <span v-if="error" class="centered danger">
+                {{error}}
+            </span>
+
             <input type="text" class="msger-input" placeholder="Your message..." v-model="text" v-on:keyup="keyUp" >
             <loading-button @submit="handleSendMessage" icon="fa fa-paper-plane" text="Send"/>
         </div>
@@ -56,8 +57,6 @@ export default {
 
         async handleSendMessage(resolve, captcha){
 
-            console.log(resolve, captcha);
-
             this.error = '';
 
             try{
@@ -94,7 +93,8 @@ export default {
 
                 }
 
-                await this.$store.commit('setChatEncryptedMessage', {encryptedMessage, newMessage: true, createdByMe: true});
+                //await this.$store.commit('setChatEncryptedMessage', {encryptedMessage, newMessage: true, createdByMe: true});
+
                 this.text = '';
 
             }catch(err){

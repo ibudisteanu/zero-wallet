@@ -1,21 +1,27 @@
 <template>
 
-    <div class="captcha-box row" >
+    <div class="captcha-box" >
 
-        <div class="captcha col-xs-12 col-sm-6">
-            <loading-spinner v-if="!captcha || captchaLoading"  />
-            <template v-if="captcha && !captchaLoading">
-                <img v-if="captcha.data" :src="captcha.data" alt="captcha" />
-                <i class="fa fa-sync-alt pointer" @click="reset"/>
-            </template>
+        <div class="row">
+            <div class="captcha col-xs-12 col-sm-6">
+                <loading-spinner v-if="!captcha || captchaLoading"  />
+                <template v-if="captcha && !captchaLoading">
+                    <img v-if="captcha.data" :src="captcha.data" alt="captcha" />
+                    <i class="fa fa-sync-alt pointer" @click="reset"/>
+                </template>
+            </div>
+
+            <div class="col-xs-6 col-sm-4">
+                <input  type="text" placeholder="captcha" v-model="captchaInput" :minlength="captcha ? captcha.size : 1" :maxlength="captcha ? captcha.size : 1" v-on:keyup.enter="submitForm" autocomplete="off" >
+            </div>
+
+            <div class="col-xs-6 col-sm-2">
+                <loading-button text="" @submit="submit" ref="refLoadingButton" icon="fa fa-paper-plane" />
+            </div>
         </div>
 
-        <div class="col-xs-6 col-sm-4">
-            <input  type="text" placeholder="captcha" v-model="captchaInput" :maxlength="captcha ? captcha.size : 1" v-on:keyup.enter="submitForm" autocomplete="off" >
-        </div>
-
-        <div class="col-xs-6 col-sm-2">
-            <loading-button text="" @submit="submit" ref="refLoadingButton" icon="fa fa-paper-plane" />
+        <div class="row row-error">
+            <span class="danger">{{error}}</span>
         </div>
 
     </div>
@@ -31,13 +37,12 @@ export default {
     components: {LoadingSpinner, LoadingButton},
 
     props:{
-        buttonText: {
-            default: '',
-        }
+        buttonText: { default: '',}
     },
     data(){
         return {
             captchaInput: '',
+            error: '',
         }
     },
     computed: {
@@ -51,7 +56,7 @@ export default {
     mounted(){
         if (typeof window === "undefined") return;
 
-        if (!this.captcha)
+        if (!this.captcha || this.captcha.expireDate >= new Date().getTime() /1000)
             this.reset();
 
         this.captchaInput = this.$store.state.captcha.captchaUserInput;
@@ -63,6 +68,12 @@ export default {
         },
 
         submit(resolve){
+
+            if (this.captchaInput.length !== this.captcha.size){
+                this.error = `Captcha is ${this.captcha.size} letters.`;
+                return resolve(false);
+            } else this.error = '';
+
             this.$emit('submit', resolve, this.captchaData() );
         },
 
@@ -75,10 +86,15 @@ export default {
 
         processError(error){
 
-            if (error === "Captcha expired" || error === "Captcha was already used" || error === "Captcha is incorrect") {
+            if (error === "Captcha expired" || error === "Captcha was already used"  || error === "Captcha is incorrect") {
+
                 this.reset();
+
+                this.error = error;
                 return error;
-            } else return '';
+            }
+
+            return '';
         },
 
         submitForm(e){
@@ -88,6 +104,7 @@ export default {
     },
     watch: {
         captchaInput: function (newValue, oldValue) {
+            if (newValue !== '') this.error = '';
             this.$store.dispatch('setCaptchaUserInput', newValue);
         },
     }
@@ -112,6 +129,10 @@ export default {
     }
     button{
         width: 90%;
+    }
+
+    .row-error{
+        padding-top: 10px;
     }
 
 </style>
