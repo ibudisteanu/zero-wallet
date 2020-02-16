@@ -54,10 +54,9 @@ export default {
 
     methods:{
 
-        async handleSendMessage(resolve){
+        async handleSendMessage(resolve, captcha){
 
-            this.$refs['refCaptchaModal'].showModal();
-            return;
+            console.log(resolve, captcha);
 
             this.error = '';
 
@@ -71,12 +70,31 @@ export default {
                     receiverPublicKey: this.receiverPublicKey,
                 });
 
+                const out = await Chat._client.emitAsync("encrypted-chat/new-message", { encryptedMessage: encryptedMessage.toBuffer(), captcha: captcha }, 0);
+
+                if (!out) throw {message: "Message was not included"};
+
+                if (out.result === false) {
+
+                    if (out.error === "Captcha is missing") {
+
+                        this.$refs.refCaptchaModal.showModal(this.handleSendMessage);
+                        return resolve(false);
+                    }
+
+                    if ( this.$refs.refCaptchaModal.processError(out.error) !== '')
+                        return resolve(false);
+
+                } else {
+
+                    if (captcha){
+                        this.$refs.refCaptchaModal.reset();
+                        this.$refs.refCaptchaModal.closeModal();
+                    }
+
+                }
+
                 await this.$store.commit('setChatEncryptedMessage', {encryptedMessage, newMessage: true, createdByMe: true});
-
-                const outChat = await Chat._client.emitAsync("encrypted-chat/new-message", { encryptedMessage: encryptedMessage.toBuffer() }, 0);
-                if (!outChat) throw {message: "Message was not included"};
-
-
                 this.text = '';
 
             }catch(err){

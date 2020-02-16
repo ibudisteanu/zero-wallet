@@ -1,19 +1,22 @@
 <template>
 
-    <div class="captcha-box" >
+    <div class="captcha-box row" >
 
-
-        <div class="captcha">
+        <div class="captcha col-xs-12 col-sm-6">
             <loading-spinner v-if="!captcha || captchaLoading"  />
             <template v-if="captcha && !captchaLoading">
-                <div v-html="captcha ? captcha.data : '...'"></div>
-                <i class="fa fa-sync-alt" @click="reset"/>
+                <img v-if="captcha.data" :src="captcha.data" alt="captcha" />
+                <i class="fa fa-sync-alt pointer" @click="reset"/>
             </template>
         </div>
 
-        <input  type="text" placeholder="captcha" v-model="captchaInput" :maxlength="captcha ? captcha.size : 1" v-on:keyup.enter="submitForm" autocomplete="off" >
+        <div class="col-xs-6 col-sm-4">
+            <input  type="text" placeholder="captcha" v-model="captchaInput" :maxlength="captcha ? captcha.size : 1" v-on:keyup.enter="submitForm" autocomplete="off" >
+        </div>
 
-        <loading-button :text="buttonText || 'send'" @submit="submit" ref="refLoadingButton" icon="fa fa-paper-plane" />
+        <div class="col-xs-6 col-sm-2">
+            <loading-button text="" @submit="submit" ref="refLoadingButton" icon="fa fa-paper-plane" />
+        </div>
 
     </div>
 
@@ -72,15 +75,10 @@ export default {
 
         processError(error){
 
-            if (error.indexOf("Captcha was already used") >= 0) {
+            if (error === "Captcha expired" || error === "Captcha was already used" || error === "Captcha is incorrect") {
                 this.reset();
-                error = error.replace("Captcha was already used", "Captcha was already used");
-            }
-            if (error.indexOf("Captcha is incorrect") >= 0 ){
-                this.reset();
-                error = error.replace("Captcha is incorrect", "Captcha is incorrect");
-            }
-            return error;
+                return error;
+            } else return '';
         },
 
         submitForm(e){
@@ -103,33 +101,17 @@ export default {
     }
 
     .captcha-box{
-        display: grid;
-        grid-template-columns: 100px 100px 1fr;
-        grid-column-gap: 10px;
         margin-bottom: 10px;
         text-align: center;
     }
     .captcha{
     }
 
-    .reload-captcha{
-        position: absolute;
-        left: 13px;
-        top: 38px;
+    input{
+        width: 90%;
     }
-    .captcha-box button{
-        margin-top: 0;
+    button{
+        width: 90%;
     }
-    @media only screen and (max-width: 600px) {
-        .captcha-box {
-            grid-template-columns: 90px 1fr 40px;
-            grid-row-gap: 5px;
-        }
-    }
-    @media only screen and (max-width: 300px) {
-        .captcha-box {
-            grid-template-columns: 90px 1fr ;
-            grid-row-gap: 5px;
-        }
-    }
+
 </style>

@@ -3,7 +3,7 @@
     <modal ref="modal" title="Captcha">
         <span>To avoid spam, captcha is required to avoid robots</span>
         <captcha style="margin-top: 20px" @submit="captchaSubmit" ref="refCaptcha" />
-        <span class="error-text">{{error}}</span>
+        <span class="danger">{{error}}</span>
     </modal>
 
 </template>
@@ -19,36 +19,33 @@ export default {
             error: '',
         };
     },
-    computed: {
-        captchaInput(){
-            return this.$store.state.captcha.captchaUserInput;
-        }
-    },
+
     methods: {
-        showModal(onSubmit, captchaForm ){
+        showModal(onSubmit ){
             this.onSubmit = onSubmit;
             this.error = '';
-            this.$refs['modal'].showModal(undefined, captchaForm);
+            this.$refs['modal'].showModal(undefined,);
         },
         closeModal(){
             this.$refs['modal'].closeModal();
         },
         captchaSubmit(resolve, captcha ){
-            this.onSubmit( resolve, captcha, this.$refs['modal'].$refs['refForm'] );
+            this.onSubmit( resolve, captcha);
         },
         reset(){
             this.$refs['refCaptcha'].reset();
         },
         processError(error){
-            let isError;
-            if (error.indexOf("Captcha was already used") >= 0 || error.indexOf("Captcha is incorrect") >= 0)
-                isError = true;
-            error = this.$refs['refCaptcha'].processError(error);
-            if (isError) {
+
+            if (error === "Captcha expired" || error === "Captcha was already used"  || error === "Captcha is incorrect") {
+
+                this.$refs['refCaptcha'].processError(error);
+
                 this.error = error;
-                return '';
+                return error;
             }
-            return error;
+
+            return '';
         }
     }
 }

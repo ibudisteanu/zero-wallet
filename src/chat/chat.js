@@ -103,13 +103,16 @@ class Chat extends BaseConsensus{
 
     }
 
-    getCaptcha(){
+    async getCaptcha(){
 
         this.emit('encrypted-chat/set-captcha-loading', true);
 
-        return this._client.emit("captcha/get-captcha", undefined, (data)=>{
-            this.emit('encrypted-chat/set-captcha', data);
-        });
+        const out = await this._client.emitAsync("captcha/get-captcha", undefined,0);
+
+        if (out) {
+            this.emit('encrypted-chat/set-captcha', out);
+            this.emit('encrypted-chat/set-captcha-loading', false);
+        }
     }
 
     setAccounts( accounts ){
