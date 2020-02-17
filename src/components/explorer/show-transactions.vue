@@ -47,7 +47,6 @@
 
 <script>
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
-import Utils from "src/utils/utils"
 
 export default {
 
@@ -60,7 +59,7 @@ export default {
     methods:{
 
         timeAgo(timestamp){
-            return Utils.timeSince( timestamp*1000, false );
+            return kernel.helpers.StringHelper.timeSince( timestamp*1000, false );
         },
 
         convertToBase(amount){

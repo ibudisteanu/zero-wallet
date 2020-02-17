@@ -4,6 +4,7 @@
         <div class="row">
             <i class="fa fa-file" />
             <span :class="` ${allowDelete ? '' : 'pointer'}`" @click="handleDownload">{{attachment.name}}</span>
+            <span>{{formatBytes}}</span>
             <i v-if="allowDelete" class="danger fa fa-times pointer" @click="handleDeleteFile"/>
         </div>
         <div class="row">
@@ -24,6 +25,10 @@ export default {
     },
 
     computed:{
+
+        formatBytes(){
+            return kernel.helpers.StringHelper.formatBytes( this.attachment.data.length, 2);
+        },
 
         isMimeTypeImage(){
 

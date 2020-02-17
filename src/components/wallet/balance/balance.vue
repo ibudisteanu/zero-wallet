@@ -33,7 +33,6 @@
 </template>
 
 <script>
-import Utils from "src/utils/utils"
 import LoadingSpinner from "../../utils/loading-spinner";
 
 export default {
@@ -59,7 +58,7 @@ export default {
         },
 
         formatMoney(amount){
-            return Utils.formatMoney(amount);
+            return kernel.helpers.StringHelper.formatMoney(amount);
         }
 
     }

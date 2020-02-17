@@ -43,7 +43,6 @@
 <script>
 
 import WayPoint from "src/components/utils/waypoint.vue"
-import Utils from "src/utils/utils"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import ChatAttachment from "./chat-attachment.vue"
 import LoadingSpinner from "src/components/utils/loading-spinner";
@@ -73,7 +72,7 @@ export default {
         },
 
         messageTimeAgo(){
-            return Utils.timeSince( this.message.timestamp*1000 );
+            return kernel.helpers.StringHelper.timeSince( this.message.timestamp*1000 );
         },
 
         messageName(){

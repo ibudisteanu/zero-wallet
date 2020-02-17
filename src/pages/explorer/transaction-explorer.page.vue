@@ -100,7 +100,6 @@ import Layout from "src/components/layout/layout"
 import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
-import Utils from "src/utils/utils"
 
 export default {
 
@@ -148,7 +147,7 @@ export default {
         },
 
         timeAgo(timestamp){
-            return Utils.timeSince( timestamp*1000 );
+            return kernel.helpers.StringHelper.Utils.timeSince( timestamp*1000 );
         },
 
     },

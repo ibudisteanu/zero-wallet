@@ -105,7 +105,6 @@ import Layout from "src/components/layout/layout"
 import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
 import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import Utils from "src/utils/utils"
 import ShowTransactions from "src/components/explorer/show-transactions"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 
@@ -172,7 +171,7 @@ export default {
     methods: {
 
         timeAgo(timestamp){
-            return Utils.timeSince( timestamp*1000 );
+            return kernel.helpers.StringHelper.timeSince( timestamp*1000 );
         },
 
         async loadBlock(){

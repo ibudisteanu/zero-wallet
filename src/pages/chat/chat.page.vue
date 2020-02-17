@@ -44,7 +44,6 @@
 import Layout from "src/components/layout/layout"
 import ChatTopBar from "./common/chat-top-bar"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
-import Utils from "src/utils/utils"
 import ChatMessage from "./common/chat-message.vue"
 
 export default {
