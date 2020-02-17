@@ -21,6 +21,10 @@
 
                     <main class="msger-chat">
 
+                        <div class="centered" v-if="next>=0">
+                            <span class="pointer" @click="handleViewMore">View more...</span>
+                        </div>
+
                         <div v-for="(message, index) in messages"
                              :key="`chat-message-${index}`">
 
@@ -79,8 +83,12 @@ export default {
 
         },
 
+        next(){
+            return (this.$store.state.chatMessages.conversationMessages[ this.publicKeys[0] + ':'+ this.publicKeys[1] ] || {}).next;
+        },
+
         count(){
-            return (this.$store.state.chatMessages.conversationMessages[ this.publicKeys[0] + ':'+ this.publicKeys[1] ] || {}).count
+            return (this.$store.state.chatMessages.conversationMessages[ this.publicKeys[0] + ':'+ this.publicKeys[1] ] || {}).count;
         },
 
         ids(){
@@ -111,7 +119,11 @@ export default {
 
     methods: {
 
+        handleViewMore(){
 
+            return Chat.downloadChatConversationMessagesSpecific(this.publicKeys[0], this.publicKeys[1], this.next);
+
+        },
 
         getAddress(publicKey){
             if (!publicKey) return '';

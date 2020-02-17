@@ -22,7 +22,10 @@
 
                     {{ messageText }}
 
+                    {{message.index}}
+
                     <chat-attachment v-if="chatMessage.script === 1" :attachment="chatMessage.data" />
+
 
                 </div>
 
@@ -43,10 +46,11 @@ import WayPoint from "src/components/utils/waypoint.vue"
 import Utils from "src/utils/utils"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import ChatAttachment from "./chat-attachment.vue"
+import LoadingSpinner from "src/components/utils/loading-spinner";
 
 export default {
 
-    components: { WayPoint, AccountIdenticon, ChatAttachment},
+    components: { WayPoint, AccountIdenticon, ChatAttachment, LoadingSpinner},
 
     data(){
         return {

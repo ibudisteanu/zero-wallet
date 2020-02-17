@@ -14,8 +14,8 @@
 
                     <show-transactions :transactions="transactionsAll "/>
 
-                    <div class="centered">
-                        <span v-if="address.txsLowestIndex" class="pointer" @click="handleViewMore">View more...</span>
+                    <div class="centered" v-if="address.txsLowestIndex">
+                        <span class="pointer" @click="handleViewMore">View more...</span>
                     </div>
 
                 </div>

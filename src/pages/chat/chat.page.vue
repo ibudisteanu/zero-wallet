@@ -14,13 +14,13 @@
                      class="row pd-top-10 pd-bottom-10">
 
                         <router-link :to="`/chat/conversation/${receiverPublicKey}`" >
-                            <div class="col-xs-12 col-sm-2">
+                            <div class="col-xs-12 col-sm-1">
                                 <account-identicon class="account-identicon" :publicKey="receiverPublicKey" :size="40" :outer-size="10" />
 
                                 <span v-if="$store.getters.conversationNewNotifications(conversation, publicKey) >= 1" class="badge badge-smaller badge-warning">{{ $store.getters.conversationNewNotifications(conversation, publicKey)  }}</span>
 
                             </div>
-                            <div class="col-xs-12 col-sm-10">
+                            <div class="col-xs-12 col-sm-11">
 
                                 <span class="address thick wordwrap">{{ getAddress(receiverPublicKey) }} </span>
                                 <chat-message v-if="message(conversation)" :message="message(conversation)" :senderPublicKey="publicKey" :receiverPublicKey="receiverPublicKey" :allowWayPoint="false" />
