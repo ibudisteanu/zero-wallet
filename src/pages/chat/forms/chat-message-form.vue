@@ -156,18 +156,21 @@ export default {
                 else
                     data = {
                         script: 0,
-                        data: { string: this.text },
+                        data: this.text,
                     };
+
 
                 let encryptedMessage;
 
                 try{
 
-                    encryptedMessage = await PandoraPay.cryptography.encryptedMessageCreator.createEncryptedMessage({
+                    const out = await PandoraPay.cryptography.encryptedMessageCreator.createEncryptedMessage({
                         senderPublicKey: this.senderPublicKey,
                         receiverPublicKey: this.receiverPublicKey,
                         data,
                     });
+
+                    encryptedMessage = out.encryptedMessage;
 
                 }catch(err){
                     this.error = 'Data is to big';

@@ -131,6 +131,7 @@ export default {
                 const senderData = await PandoraPay.cryptography.chatMessageValidator.validateChatMessage(data);
                 if (senderData)
                     encryptedMessage._senderData = senderData;
+
             }
 
         }catch(err){
@@ -146,6 +147,7 @@ export default {
                 const receiverData = await PandoraPay.cryptography.chatMessageValidator.validateChatMessage(data);
                 if (receiverData)
                     encryptedMessage._receiverData = receiverData;
+
             }
 
         }catch(err){

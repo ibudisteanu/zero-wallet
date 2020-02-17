@@ -22,7 +22,7 @@
 
                     {{ messageText }}
 
-                    <chat-attachment v-if="messageChatData.script === 1" :attachment="messageChatData.data" />
+                    <chat-attachment v-if="chatMessage.script === 1" :attachment="chatMessage.data" />
 
                 </div>
 
@@ -76,19 +76,18 @@ export default {
             return  this.messageSender ? 'YOU' : 'TRADER';
         },
 
-        messageChatData(){
+        chatMessage(){
 
-            const chatMessage = (this.message._senderData ? this.message._senderData : this.message._receiverData);
-            return chatMessage;
+            return (this.message._senderData ? this.message._senderData : this.message._receiverData);
 
         },
 
         messageText(){
-            const chatMessage = this.messageChatData;
+            const chatMessage = this.chatMessage;
 
             if ( !chatMessage ) return 'error';
 
-            if (chatMessage.script === 0) return chatMessage.data;
+            if (chatMessage.script === 0) return chatMessage.data.string;
             if (chatMessage.script === 1) return chatMessage.data.text;
         },
 
