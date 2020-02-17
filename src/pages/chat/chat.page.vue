@@ -9,28 +9,30 @@
 
                 <h1>Encrypted End to End Chat {{count}}</h1>
 
-                <div v-for="(conversation, receiverPublicKey) in conversations"
-                     :key="`conversation-router-link-${receiverPublicKey}`"
+                <div v-for="(conversation) in conversations"
+                     :key="`conversation-router-link-${conversation.receiverPublicKey}`"
                      class="row pd-top-10 pd-bottom-10">
 
-                        <router-link :to="`/chat/conversation/${receiverPublicKey}`" >
-                            <div class="col-xs-12 col-sm-1">
-                                <account-identicon class="account-identicon" :publicKey="receiverPublicKey" :size="40" :outer-size="10" />
+                    <router-link :to="`/chat/conversation/${conversation.receiverPublicKey}`" >
+                        <div class="col-xs-12 col-sm-1">
+                            <account-identicon class="account-identicon" :publicKey="conversation.receiverPublicKey.toString('hex')" :size="40" :outer-size="10" />
 
-                                <span v-if="$store.getters.conversationNewNotifications(conversation, publicKey) >= 1" class="badge badge-smaller badge-warning">{{ $store.getters.conversationNewNotifications(conversation, publicKey)  }}</span>
+                            <span v-if="$store.getters.conversationNewNotifications(conversation, publicKey) >= 1" class="badge badge-smaller badge-warning">{{ $store.getters.conversationNewNotifications(conversation, publicKey)  }}</span>
 
-                            </div>
-                            <div class="col-xs-12 col-sm-11">
+                        </div>
+                        <div class="col-xs-12 col-sm-11">
 
-                                <span class="address thick wordwrap">{{ getAddress(receiverPublicKey) }} </span>
-                                <chat-message v-if="message(conversation)" :message="message(conversation)" :senderPublicKey="publicKey" :receiverPublicKey="receiverPublicKey" :allowWayPoint="false" />
+                            <span class="address thick wordwrap">{{ getAddress(conversation.receiverPublicKey) }} </span>
+                            <chat-message v-if="message(conversation)" :message="message(conversation)" :senderPublicKey="publicKey" :receiverPublicKey="conversation.receiverPublicKey" :allowWayPoint="false" />
 
-                            </div>
-                        </router-link>
+                        </div>
+                    </router-link>
 
-                    </div>
-                </router-link>
+                </div>
 
+                <div class="centered" v-if="next>=0">
+                    <loading-button class="button-width-inherit" @submit="handleViewMore" icon="fa fa-cloud-download-alt" text="View more..."/>
+                </div>
 
             </div>
         </div>
@@ -45,10 +47,12 @@ import Layout from "src/components/layout/layout"
 import ChatTopBar from "./common/chat-top-bar"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import ChatMessage from "./common/chat-message.vue"
+import Chat from "src/chat/chat"
+import LoadingButton from "src/components/utils/loading-button.vue"
 
 export default {
 
-    components: { Layout, ChatTopBar, AccountIdenticon, ChatMessage },
+    components: { Layout, ChatTopBar, AccountIdenticon, ChatMessage, LoadingButton },
 
     data(){
         return {
@@ -57,6 +61,11 @@ export default {
     },
 
     computed:{
+
+        next(){
+            return (this.$store.state.chatMessages.conversations[this.publicKey]||{}).next;
+        },
+
 
         count(){
             return (this.$store.state.chatMessages.conversations[this.publicKey]||{}).count;
@@ -72,7 +81,17 @@ export default {
         },
 
         conversations(){
-            return (this.$store.state.chatMessages.conversations[this.publicKey] || {}).array||{}
+
+            const list = (this.$store.state.chatMessages.conversations[this.publicKey] || {}).list||{};
+
+            const conversations = [];
+            for (const receiverPublicKey in list)
+                conversations.push(list[receiverPublicKey]);
+
+            conversations.sort( (a,b) => b.update - a.update );
+
+            return conversations;
+
         }
 
     },
@@ -80,8 +99,16 @@ export default {
 
     methods: {
 
+        async handleViewMore(resolve){
+            try{
+                await Chat.downloadChatConversations(this.publicKey, this.next);
+            }finally{
+                resolve(true);
+            }
+        },
+
         message(conversation){
-            const encryptedMessageId = this.conversations[conversation.receiverPublicKey].encryptedMessage;
+            const encryptedMessageId = conversation.encryptedMessage;
             return this.$store.state.chatMessages.messages[encryptedMessageId];
         },
 

@@ -22,8 +22,6 @@
 
                     {{ messageText }}
 
-                    {{message.index}}
-
                     <chat-attachment v-if="chatMessage.script === 1" :attachment="chatMessage.data" />
 
 

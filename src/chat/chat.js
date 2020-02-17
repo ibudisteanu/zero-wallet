@@ -148,12 +148,13 @@ class Chat extends BaseConsensus{
 
     async downloadChatConversations(publicKey, index){
 
-        const limit = 20;
+        const limit = 10;
+        const startIndex = Math.max(0, index-limit);
 
-        const out = await this._client.emitAsync("encrypted-chat/conversations/content", {publicKey, index: Math.max(0, index-limit), limit , }, 0);
+        const out = await this._client.emitAsync("encrypted-chat/conversations/content", {publicKey, index: startIndex, limit , }, 0);
         if (!out) return;
 
-        this.emit('encrypted-chat/conversations-update', { publicKey,  array: out });
+        this.emit('encrypted-chat/conversations-update', { publicKey,  array: out, next: Math.max(-1, index - limit) });
 
         for (const element of out ){
 
@@ -179,7 +180,7 @@ class Chat extends BaseConsensus{
 
     async downloadChatConversationMessagesSpecific(publicKeySender, publicKeyReceiver, index){
 
-        const limit = 20;
+        const limit = 10;
         const startIndex = Math.max(0, index-limit);
 
         const out = await this._client.emitAsync("encrypted-chat/conversation-messages/content-ids", {publicKey1: publicKeySender, publicKey2: publicKeyReceiver, index: startIndex , limit , }, 0);

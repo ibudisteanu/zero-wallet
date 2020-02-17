@@ -56,7 +56,7 @@ export default {
     mounted(){
         if (typeof window === "undefined") return;
 
-        if (!this.captcha || this.captcha.expireDate >= new Date().getTime() /1000)
+        if (!this.captcha || this.captcha.expireDate < new Date().getTime() /1000)
             this.reset();
 
         this.captchaInput = this.$store.state.captcha.captchaUserInput;

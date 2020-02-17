@@ -47,6 +47,7 @@ export default {
     components: {LoadingButton, CaptchaModal, LoadingSpinner, ChatAttachment},
 
     props:{
+        senderAddress: {default: ''},
         senderPublicKey: {default: ''},
         receiverPublicKey: {default: ''},
     },
@@ -177,6 +178,11 @@ export default {
                     return;
                 }
 
+
+                const senderWalletAddress = PandoraPay.wallet.manager.getWalletAddressByAddress( this.senderAddress, false, this.password );
+
+                encryptedMessage.signEncryptedMessage( senderWalletAddress.decryptPrivateKey() );
+
                 const out = await Chat._client.emitAsync("encrypted-chat/new-message", { encryptedMessage: encryptedMessage.toBuffer(), captcha: captcha }, 0);
 
                 console.log("out", out);
@@ -191,8 +197,11 @@ export default {
                         return resolve(false);
                     }
 
-                    if ( this.$refs.refCaptchaModal.processError(out.error) !== '')
+                    if ( this.$refs.refCaptchaModal.processError(out.error) === '')
                         return resolve(false);
+                    else{
+                        return resolve(false);
+                    }
 
                 } else {
 

@@ -13,15 +13,17 @@ export default {
 
     },
 
-    setChatConversations(context, { publicKey, array } ){
+    setChatConversations(context, { publicKey, array, next } ){
 
         const conversations = { ...( context.conversations[ publicKey ] || {} )  };
-        if (!conversations.array) conversations.array = {};
+        if (!conversations.list) conversations.list = {};
 
         for (const element of array) {
             element.count = Number.parseInt(element.count);
-            conversations.array[element.receiverPublicKey] = element;
+            conversations.list[element.receiverPublicKey] = element;
         }
+
+        conversations.next = next;
 
         Vue.set(context.conversations, publicKey, conversations );
 
@@ -86,15 +88,15 @@ export default {
                 const receiverPublicKey = i === 0 ? publicKeys[1] : publicKeys[0];
 
                 const conversations = {...( context.conversations[senderPublicKey] || {} )};
-                if (!conversations.array) conversations.array = {};
+                if (!conversations.list) conversations.list = {};
 
                 let notFound = false;
-                if (!conversations.array[receiverPublicKey]) {
-                    conversations.array[receiverPublicKey] = {};
+                if (!conversations.list[receiverPublicKey]) {
+                    conversations.list[receiverPublicKey] = {};
                     notFound = true;
                 }
 
-                const element = conversations.array[receiverPublicKey];
+                const element = conversations.list[receiverPublicKey];
 
                 if (notFound) {
                     element.version = 0;
@@ -109,6 +111,8 @@ export default {
                     element.count += 1;
                     element.encryptedMessage = hash;
                 }
+
+                element.update = Math.floor( new Date().getTime()/1000 );
 
                 elements.push(element);
 

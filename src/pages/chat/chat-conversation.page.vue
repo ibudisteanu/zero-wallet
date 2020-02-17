@@ -22,7 +22,7 @@
                     <main class="msger-chat">
 
                         <div class="centered" v-if="next>=0">
-                            <span class="pointer" @click="handleViewMore">View more...</span>
+                            <loading-button class="button-width-inherit" @submit="handleViewMore" icon="fa fa-cloud-download-alt" text="View more..."/>
                         </div>
 
                         <div v-for="(message, index) in messages"
@@ -39,7 +39,7 @@
                         {{error}}
                     </span>
 
-                    <chat-message-from :sender-public-key="senderPublicKey" :receiver-public-key="receiverPublicKey" />
+                    <chat-message-from :sender-address="mainAddress" :sender-public-key="senderPublicKey" :receiver-public-key="receiverPublicKey" />
 
                 </section>
 
@@ -64,10 +64,11 @@ import LoadingSpinner from "src/components/utils/loading-spinner";
 
 import ChatMessageFrom from "./forms/chat-message-form"
 import ChatMessage from "./common/chat-message"
+import LoadingButton from "src/components/utils/loading-button.vue"
 
 export default {
 
-    components: { Layout, ChatTopBar, AccountIdenticon, LoadingSpinner, ChatMessageFrom, ChatMessage },
+    components: { Layout, ChatTopBar, AccountIdenticon, LoadingSpinner, ChatMessageFrom, ChatMessage, LoadingButton },
 
     data(){
         return {
@@ -119,9 +120,13 @@ export default {
 
     methods: {
 
-        handleViewMore(){
+        async handleViewMore(resolve){
 
-            return Chat.downloadChatConversationMessagesSpecific(this.publicKeys[0], this.publicKeys[1], this.next);
+            try {
+                await Chat.downloadChatConversationMessagesSpecific(this.publicKeys[0], this.publicKeys[1], this.next);
+            }finally{
+                resolve(true);
+            }
 
         },
 

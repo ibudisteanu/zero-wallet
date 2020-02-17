@@ -14,9 +14,10 @@
 
                 <show-transactions :transactions="pendingTransactions"/>
 
-                <div class="centered" v-if="pendingNext" >
-                    <span class="pointer" @click="handleViewMore">View more...</span>
+                <div class="centered" v-if="pendingNext">
+                    <loading-button class="button-width-inherit" @submit="handleViewMore" icon="fa fa-cloud-download-alt" text="View more..."/>
                 </div>
+
 
             </div>
         </div>
@@ -29,9 +30,11 @@
 import Layout from "src/components/layout/layout"
 import Consensus from "src/consensus/consensus"
 import ShowTransactions from "src/components/explorer/show-transactions"
+import LoadingButton from "src/components/utils/loading-button.vue"
+
 export default {
 
-    components: { Layout, ShowTransactions },
+    components: { Layout, ShowTransactions, LoadingButton },
 
     data(){
         return {
@@ -73,8 +76,12 @@ export default {
             await Consensus.startDownloadPendingTransactions();
         },
 
-        handleViewMore(){
-            return Consensus.downloadPendingTransactions( undefined, this.pendingNext )
+        async handleViewMore(resolve){
+            try {
+                await Consensus.downloadPendingTransactions(undefined, this.pendingNext)
+            }finally{
+                resolve(true);
+            }
         }
 
     },
