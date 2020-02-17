@@ -51,14 +51,14 @@ export default {
             if ( !Blob)
                 return alert('FileSaver or Blob are not supported by your Browser');
 
-            const file = new Blob([this.attachment.data], {type: this.attachment.type } );
+            const file = new Blob([this.attachment.data], {type: "application/octet-stream" } );
 
             FileSaver.saveAs( file, this.attachment.name);
 
             this.$notify({
                 type: 'success',
                 title: `Your file was downloaded`,
-                text: `File ${this.attachment.name} was downloaded to your computer.`,
+                text: `File <strong>${this.attachment.name}</strong> was downloaded to your computer.`,
             });
 
         }
