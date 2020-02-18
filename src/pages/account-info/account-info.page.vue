@@ -178,10 +178,6 @@ export default {
         text-align: left;
     }
 
-    .buttons .btn-round{
-        display: inline-block;
-    }
-
     .buttons-row .btn{
         display: inline-block;
     }
