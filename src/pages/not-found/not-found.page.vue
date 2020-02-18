@@ -1,7 +1,7 @@
 <template>
     <layout>
-        <div class="container pd-top-40">
-            <div class="boxed centered">
+        <div class="container pd-top-20">
+            <div class="centered">
 
                     <img :src="require('src/assets/pandora-pay-logo.png').default"  class="logo"> <br/>
 

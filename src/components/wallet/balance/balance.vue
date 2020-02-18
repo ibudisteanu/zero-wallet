@@ -9,16 +9,17 @@
 
                 <loading-spinner v-if="!address.loaded" />
 
-                <div v-if="address.loaded">
+                <div v-else>
 
-                    <div v-for="(balance, token) in balances" >
-                    <span class="balance thick" >
-                        {{formatMoney( convertToBase(balance) ) }}
-                    </span>
-                        <span class="currency thick">
-                        {{token}}
-                    </span>
-                        <br/>
+                    <div v-for="(balance, token) in balances"
+                         :key="`balance-token-${token}`">
+                        <span class="balance thick" >
+                            {{formatMoney( convertToBase(balance) ) }}
+                        </span>
+                            <span class="currency thick">
+                            {{token}}
+                        </span>
+                            <br/>
                     </div>
 
                 </div>
@@ -32,8 +33,7 @@
 </template>
 
 <script>
-import Utils from "src/utils/utils"
-import LoadingSpinner from "../../utils/loading-spinner";
+import LoadingSpinner from "src/components/utils/loading-spinner";
 
 export default {
 
@@ -54,11 +54,11 @@ export default {
     methods:{
 
         convertToBase(number){
-            return global.PandoraPay._scope.argv.transactions.coins.convertToBase(number);
+            return PandoraPay._scope.argv.transactions.coins.convertToBase(number);
         },
 
         formatMoney(amount){
-            return Utils.formatMoney(amount);
+            return kernel.helpers.StringHelper.formatMoney(amount);
         }
 
     }

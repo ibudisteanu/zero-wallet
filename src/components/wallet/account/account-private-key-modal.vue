@@ -24,7 +24,7 @@
                 {{error}}
             </span>
 
-            <input type="submit" value="Show Private Key" :disabled="password.length === 0 " @click="showPrivateKey">
+            <loading-button text="Show Private Key" @submit="handleShowPrivateKey" icon="fa fa-eye"  :disabled="password.length === 0" />
 
         </div>
 
@@ -36,10 +36,11 @@
 
 import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
+import LoadingButton from "src/components/utils/loading-button.vue"
 
 export default {
 
-    components: { Modal, PasswordInput },
+    components: { Modal, PasswordInput, LoadingButton },
 
     data(){
         return {
@@ -69,7 +70,7 @@ export default {
             this.$refs.modal.showModal();
 
             if (!this.encrypted)
-                return this.showPrivateKey();
+                return this.handleShowPrivateKey( () => { });
 
         },
 
@@ -77,24 +78,26 @@ export default {
             this.$refs.modal.closeModal();
         },
 
-        async showPrivateKey(){
+        async handleShowPrivateKey(resolve){
 
             this.error = '';
 
             try{
 
-                const checkPassword = await global.PandoraPay.wallet.encryption.checkPassword(this.password);
+                const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.password);
                 if (!checkPassword)
                     throw {message: 'Password invalid'};
 
-                const address = await global.PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address );
+                const address = await PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address );
                 if (!address) throw {message: "Address not found"};
 
-                const privateKey = await address.decryptPrivateKey();
+                const privateKey = address.decryptPrivateKey();
                 this.privateKey = privateKey.toString("hex");
 
             }catch(err){
-                this.error = err.message;
+                this.error = err;
+            }finally{
+                resolve(true);
             }
 
         },

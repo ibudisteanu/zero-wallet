@@ -5,8 +5,12 @@
 
             <li>My accounts</li>
 
-            <li v-for="(address) in addresses" :class="`address ${ address.address === mainAddress  ? 'focused' : ''} ` " @click="setMainAddress(address.address)" >
-                <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" > </account-identicon>
+            <li v-for="(address, index) in addresses"
+                :class="`address ${ address.address === mainAddress  ? 'focused' : ''} ` "
+                :key="`header-account-dropdown-li-${index}`"
+                @click="setMainAddress(address.address)" >
+
+                <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" />
 
                 <div>
                     <span>{{address.name}}</span> <span class="disabled right-float" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : ''}}</span><br/>
@@ -68,7 +72,7 @@ export default {
 
             try{
 
-                const out = await global.PandoraPay.wallet.manager.createNewAddress();
+                const out = await PandoraPay.wallet.manager.createNewAddress();
                 if (out)
                     this.$notify({
                         type: 'success',
@@ -98,7 +102,7 @@ export default {
 
         logout(){
 
-            const out = global.PandoraPay.wallet.encryption.logoutEncryptionWallet();
+            const out = PandoraPay.wallet.encryption.logoutEncryptionWallet();
             if (out)
                 this.$notify({
                     type: 'success',

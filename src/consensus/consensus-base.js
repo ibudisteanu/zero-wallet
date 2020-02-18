@@ -89,7 +89,7 @@ export default class BaseConsensus extends EventEmitter{
         if (newValue === "sync")
             this._syncPromiseResolve(true);
 
-        this.emit('consensus/status-update',newValue);
+        this.emitStatusUpdate(newValue);
 
         console.log("new status: ", this._status);
 
@@ -97,6 +97,10 @@ export default class BaseConsensus extends EventEmitter{
 
     get status(){
         return this._status;
+    }
+
+    emitStatusUpdate(newValue){
+        this.emit('consensus/status-update',newValue);
     }
 
 }

@@ -1,7 +1,7 @@
 <template>
 
     <layout>
-        <div class="container pd-top-40">
+        <div class="container pd-top-20">
             <div class="boxed ">
 
                 <h1>Block Explorer</h1>
@@ -19,71 +19,68 @@
                     </div>
                     <div v-else>
                         <div class="table">
-                            <div class="table-row">
-                                <span>Hash</span>
-                                <span>{{block.hash().toString("hex")}}</span>
+                            
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Hash</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.hash().toString("hex")}}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Kernel Hash</span>
-                                <span>{{block.kernelHash().toString("hex")}}</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Kernel Hash</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.kernelHash().toString("hex")}}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Confirmations</span>
-                                <span>{{ $store.state.blockchain.end - block.height -1 }}</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Confirmations</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{ $store.state.blockchain.end - block.height -1 }}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Time</span>
-                                <span>{{  timeAgo( $store.state.blockchain.genesisTimestamp + block.timestamp ) }} ago</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Time</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{  timeAgo( $store.state.blockchain.genesisTimestamp + block.timestamp ) }} ago</span>
                             </div>
-                            <div class="table-row">
-                                <span>Height</span>
-                                <span>{{block.height}}</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Height</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.height}}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Number of Transactions</span>
-                                <span>{{block.txCount()}}</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Number of Transactions</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.txCount()}}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Difficulty</span>
-                                <span>{{block.difficulty.toString(10)}}</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Difficulty</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.difficulty.toString(10)}}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Merkle root</span>
-                                <span>{{block.transactionsMerkleTree.hash().toString("hex")}}</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Merkle root</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.transactionsMerkleTree.hash().toString("hex")}}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Account Tree root</span>
-                                <span>{{block.accountTreeHash.toString("hex")}}</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Previous Hash</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap"><router-link :to="`/explorer/block/hash/${block.prevHash.toString('hex')}`">{{block.prevHash.toString("hex")}}</router-link></span>
                             </div>
-                            <div class="table-row">
-                                <span>Previous Hash</span>
-                                <span><router-link :to="`/explorer/block/hash/${block.prevHash.toString('hex')}`">{{block.prevHash.toString("hex")}}</router-link></span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Previous Kernel Hash</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.prevKernelHash.toString("hex")}}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Previous Kernel Hash</span>
-                                <span>{{block.prevKernelHash.toString("hex")}}</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Fees</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{fees}}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Fees</span>
-                                <span>{{fees}}</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Reward</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.reward()}}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Reward</span>
-                                <span>{{block.reward()}}</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Version</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.version}}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Version</span>
-                                <span>{{block.version}}</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Size</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.size()}}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Size</span>
-                                <span>{{block.size()}}</span>
-                            </div>
-                            <div class="table-row">
-                                <span>Forger</span>
-                                <div class="vertical-center">
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Forger</span>
+                                <div class="col-xs-7 col-sm-9">
                                     <account-identicon class="vertical-center" :address="block.pos.stakeForgerAddress" :size="20" :outer-size="5"  />
-                                    <span class="forger-address">{{block.pos.stakeForgerAddress}}</span>
+                                    <span class="forger-address wordwrap">{{block.pos.stakeForgerAddress}}</span>
                                 </div>
                             </div>
                         </div>
@@ -108,7 +105,6 @@ import Layout from "src/components/layout/layout"
 import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
 import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import Utils from "src/utils/utils"
 import ShowTransactions from "src/components/explorer/show-transactions"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 
@@ -175,7 +171,7 @@ export default {
     methods: {
 
         timeAgo(timestamp){
-            return Utils.timeSince( timestamp*1000 );
+            return kernel.helpers.StringHelper.timeSince( timestamp*1000 );
         },
 
         async loadBlock(){
@@ -211,27 +207,5 @@ export default {
 </script>
 
 <style scoped>
-
-    .table-row{
-        grid-template-columns: 200px 1fr;
-    }
-
-    .forger-address{
-        display: inline-block;
-    }
-
-    @media (min-width: 481px) and  (max-width: 767px) {
-
-        .table-row{
-            grid-template-columns: 150px 1fr;
-        }
-
-    }
-
-    @media (max-width: 481px) {
-        .table-row{
-            grid-template-columns: 100px 1fr;
-        }
-    }
 
 </style>

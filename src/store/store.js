@@ -7,6 +7,10 @@ import PageStore from "./modules/page/page-store"
 import TransactionsStore from "./modules/transactions/transactions-store"
 import ExchangeStore from "./modules/exchange/exchange-store"
 
+import ChatStore from "./modules/chat/chat-store"
+import ChatMessagesStore from "./modules/chat-messages/chat-messages-store"
+import CaptchaStore from "./modules/captcha/captcha-store"
+
 Vue.use(Vuex);
 
 
@@ -20,6 +24,9 @@ const store = new Vuex.Store({
         transactions: TransactionsStore,
         addresses: AddressesStore,
         exchange: ExchangeStore,
+        chat: ChatStore,
+        chatMessages: ChatMessagesStore,
+        captcha: CaptchaStore,
 
     },
 

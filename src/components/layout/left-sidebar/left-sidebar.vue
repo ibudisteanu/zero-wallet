@@ -27,6 +27,11 @@
                 <span>Account</span>
             </router-link>
 
+            <router-link to="/delegate-stake" :class="`${route === '/delegate-stake' ? 'selected' : ''}`"  >
+                <i class="fa fa-piggy-bank"></i>
+                <span>Delegate</span>
+            </router-link>
+
             <router-link to="/set-password" v-if="!encrypted" :class="`${route === '/set-password' ? 'selected' : ''}`"  >
                 <i class="fa fa-unlock-alt"></i>
                 <span>Encrypt</span>
@@ -45,6 +50,14 @@
             <router-link to="/exchange/buy" :class="`${route.indexOf('/exchange') === 0 ? 'selected' : ''}`"  >
                 <i class="fa fa-coins"></i>
                 <span>Exchange</span>
+            </router-link>
+
+            <router-link to="/chat" :class="`${route.indexOf('/chat') === 0 ? 'selected' : ''}`" >
+                <div class="badge-div">
+                    <span v-if="conversationsNewNotifications" class="badge badge-smaller badge-warning">{{conversationsNewNotifications}}</span>
+                </div>
+                <i class="fa fa-comments"></i>
+                <span>Chat</span>
             </router-link>
 
             <router-link to="/shop" :class="`${route.indexOf('/shop') === 0 ? 'selected' : ''}`"  >
@@ -77,11 +90,23 @@ export default {
 
         route(){
             return this.$router.currentRoute.path;
+        },
+
+        address(){
+            return this.$store.state.addresses.list[this.$store.state.wallet.mainAddress];
+        },
+
+        conversationsNewNotifications(){
+
+            if (!this.address) return 0;
+            return this.$store.getters.conversationsNewNotifications(this.address.publicKey)
+
         }
 
     },
 
     methods:{
+
         showMenu(){
             this.show = true;
         },
@@ -103,7 +128,7 @@ export default {
             const width = window.innerWidth;
             const height = window.innerHeight;
 
-            if (width <= 450) {
+            if (width <= 767) {
                 this.show = false;
                 this.fullWidth = false;
                 this.$emit('onUpdateMarginLeft', {marginLeft: '0' });
@@ -174,7 +199,19 @@ export default {
         display: none;
     }
 
-    @media screen and (max-width: 450px) {
+    .badge-div{
+        text-align: right;
+    }
+
+    .badge{
+        position: relative;
+        top: 0;
+        right: 5px;
+        width: 100%;
+        display: inline !important;
+    }
+
+    @media screen and (max-width: 767px) {
 
         .mobile-menu{
             color: #818181;
@@ -197,6 +234,7 @@ export default {
             padding-bottom: 10px;
         }
     }
+
 
 
 </style>

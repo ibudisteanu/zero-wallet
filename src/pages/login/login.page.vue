@@ -1,8 +1,8 @@
 <template>
 
     <layout>
-        <div class="container pd-top-40">
-            <div class="boxed centered">
+        <div class="container pd-top-20">
+            <div class="centered">
 
                 <loading-spinner v-if="!$store.state.wallet.loaded" />
 
@@ -19,7 +19,8 @@
                         <span v-if="error" class="danger">
                             {{error}}
                         </span>
-                        <input type="submit" value="Login" :disabled="password.length === 0" @click="login">
+
+                        <loading-button text="Login" @submit="handleLogin" icon="fa fa-sign-in-alt"  :disabled="password.length === 0" />
                     </div>
 
                 </div>
@@ -36,8 +37,10 @@ import Layout from "src/components/layout/layout";
 import consts from 'consts/consts';
 import PasswordInput from "src/components/utils/password-input";
 import LoadingSpinner from "src/components/utils/loading-spinner";
+import LoadingButton from "src/components/utils/loading-button.vue"
+
 export default {
-    components: {LoadingSpinner, PasswordInput, Layout},
+    components: {LoadingSpinner, PasswordInput, Layout, LoadingButton},
 
     data(){
         return {
@@ -54,13 +57,13 @@ export default {
 
     methods:{
 
-        async login(){
+        async handleLogin(resolve){
 
             this.error = '';
 
             try{
 
-                const out = await global.PandoraPay.wallet.encryption.decryptWallet(this.password);
+                const out = await PandoraPay.wallet.encryption.decryptWallet(this.password);
 
                 if (out)
                     this.$router.push('/');
@@ -74,6 +77,8 @@ export default {
                 else
                     this.error = err;
 
+            }finally{
+                resolve(true);
             }
 
         },
@@ -86,9 +91,6 @@ export default {
 <style scoped>
 
     .container{
-    }
-
-    .boxed{
         max-width: 400px;
     }
 

@@ -15,7 +15,8 @@
                 <div v-else></div>
 
                 <select v-model="address">
-                    <option v-for="(address, i) in addresses" >
+                    <option v-for="(address, key) in addresses"
+                            :key="`exchange-offer-trader-account-${key}`">
                         {{address.address}}
                     </option>
                 </select>
@@ -45,6 +46,7 @@
                 <span class="disabled">Currency</span> <br/>
                 <select v-model="tokenCurrency">
                     <option v-for="(balance, token) in balances"
+                            :key="`exchange-offer-token-${token}`"
                             :value="token">
                         {{token}}
                     </option>
@@ -65,7 +67,8 @@
                     <span class="disabled">Options</span> <br/>
                     <select size="6" v-model="paymentAvailable">
                         <option v-for="(paymentAvailable, index) in paymentsAvailable"
-                                v-if="!paymentsAvailableMap[paymentAvailable.name]" @dblclick="handlePaymentSelect">
+                                v-if="!paymentsAvailableMap[paymentAvailable.name]" @dblclick="handlePaymentSelect"
+                                :key="`exchange-add-offer-payment-available-${index}`">
                             {{paymentAvailable.name}}
                         </option>
                     </select>
@@ -83,7 +86,8 @@
                     <span class="disabled">Selected</span> <br/>
                     <select size="6" v-model="paymentSelected">
                         <option v-for="(paymentAvailable, index) in paymentsAvailable"
-                                v-if="paymentsSelectedMap[paymentAvailable.name]" @dblclick="handlePaymentUnselect">
+                                v-if="paymentsSelectedMap[paymentAvailable.name]" @dblclick="handlePaymentUnselect"
+                                :key="`exchange-add-offer-payment-selected-${index}`">
                             {{paymentAvailable.name}}
                         </option>
                     </select>
@@ -98,7 +102,8 @@
                 {{error}}
             </span>
 
-            <input type="submit" value="Create Offer" @click="handleCreateForm">
+            <loading-button text="Create Offer" @submit="handleCreateForm" icon="fa fa-plus"  />
+
         </div>
 
 
@@ -110,10 +115,11 @@
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import Consensus from "src/consensus/consensus"
 import Vue from 'vue';
+import LoadingButton from "src/components/utils/loading-button.vue"
 
 export default {
 
-    components: {AccountIdenticon},
+    components: {AccountIdenticon, LoadingButton},
 
     props: {
         type: 0
@@ -160,7 +166,7 @@ export default {
             if (!this.address) return '';
 
             try{
-                const address = global.PandoraPay._scope.cryptography.addressValidator.validateAddress( this.address );
+                const address = PandoraPay.cryptography.addressValidator.validateAddress( this.address );
                 if (!address) throw {message: "Invalid address"};
 
                 return address.identiconImg();
@@ -193,17 +199,18 @@ export default {
             await Consensus.startDownloadingExchangeOffers();
         },
 
-        async handleCreateForm(){
-
-            this.error = '';
+        async handleCreateForm(resolve){
 
             try{
 
-                const walletAddress = global.PandoraPay._scope.wallet.manager.getWalletAddressByAddress( this.address, false, this.password );
+                this.error = '';
+
+                const walletAddress = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address, false, this.password );
 
                 if (this.title.length < 10) throw {message: "Title too short"};
                 if (this.description.length < 10) throw {message: "Description too short"};
                 if (this.amountMax < this.amountMin || this.amountMax === 0) throw {message: "Amount Max needs to be greater or equal to Amount Min and non-zero"}
+                if (this.price <= 0) throw {message: "Price can not be zero"};
 
                 const paymentsSelected = JSON.parse( JSON.stringify(this.paymentsSelectedMap) );
                 const paymentsSelectedArray = Object.keys(paymentsSelected);
@@ -211,6 +218,8 @@ export default {
                 if (paymentsSelectedArray.length < 1) throw {message: "No payments selected"};
 
                 const data = {
+                    privateKey: walletAddress.decryptPrivateKey(), //for signing
+
                     publicKey: walletAddress.decryptPublicKey(),
                     type: this.type,
                     title: this.title,
@@ -226,9 +235,11 @@ export default {
                     signature: Buffer.alloc(65),
                 };
 
-                const offer = global.PandoraPay._scope.exchange.createExchangeOffer(data);
+                const offerOut = await PandoraPay.exchange.exchangeOfferCreator.createExchangeOffer(data);
 
-                offer.signOffer( walletAddress.decryptPrivateKey() );
+                console.log(offerOut);
+
+                const offer = offerOut.offer;
 
                 const outConsensus = await Consensus._client.emitAsync("exchange/new-offer", {offer: offer.toBuffer() }, 0);
                 if (!outConsensus) throw {message: "Offer was not included"};
@@ -237,6 +248,8 @@ export default {
 
             }catch(err){
                 this.error = err.message;
+            }finally{
+                resolve(true);
             }
 
         },
@@ -295,8 +308,8 @@ export default {
         this.address = this.mainAddress;
 
         const paymentsAvailable = [];
-        for (const key in global.PandoraPay._scope.exchange.availablePayments.options){
-            paymentsAvailable.push( global.PandoraPay._scope.exchange.availablePayments.options[key] );
+        for (const key in PandoraPay.exchange.availablePayments.options){
+            paymentsAvailable.push( PandoraPay.exchange.availablePayments.options[key] );
         }
 
         this.paymentsAvailable = paymentsAvailable;

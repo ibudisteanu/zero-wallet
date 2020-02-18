@@ -1,6 +1,6 @@
 <template>
 
-    <div class="identicon outer" :style="`padding: ${outerSize}px`">
+    <div class="identicon outer" :style="`padding: ${outerSize}px; background-color: ${outerColor}`">
         <img v-if="addressIdenticon" :src="addressIdenticon" class="identicon" :style="`width: ${size}px`" >
     </div>
 
@@ -12,9 +12,10 @@ export default {
     props:{
         size: 40,
         outerSize: 34,
+        outerColor: {default: "white;"},
         identicon: "",
 
-        address: "",
+        address: {default: ""},
         publicKey: null,
         publicKeyHash: null,
 
@@ -31,17 +32,17 @@ export default {
                 let address;
 
                 if (this.address) {
-                    address = global.PandoraPay._scope.cryptography.addressValidator.validateAddress(this.address);
+                    address = PandoraPay.cryptography.addressValidator.validateAddress(this.address);
                     if (!address) throw {message: "Invalid address"};
                 }
 
                 if (this.publicKey){
-                    address = global.PandoraPay._scope.cryptography.addressGenerator.generateAddressFromPublicKey( this.publicKey );
+                    address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKey( this.publicKey );
                     if (!address) throw {message: "Invalid address"};
                 }
 
                 if (this.publicKeyHash){
-                    address = global.PandoraPay._scope.cryptography.addressGenerator.generateAddressFromPublicKeyHash( this.publicKeyHash );
+                    address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKeyHash( this.publicKeyHash );
                     if (!address) throw {message: "Invalid address"};
                 }
 
@@ -49,7 +50,7 @@ export default {
 
 
             }catch(err){
-
+                console.error("Identicon error", err);
             }
 
         },
@@ -71,7 +72,6 @@ export default {
         border-radius: 50%;
         overflow: hidden;
         padding: 10px;
-        background-color: white;
     }
 
     .identicon{

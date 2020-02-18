@@ -1,7 +1,7 @@
 <template>
 
     <layout>
-        <div class="container pd-top-40">
+        <div class="container pd-top-20">
             <div class="boxed ">
 
                 <h1>Transaction Explorer</h1>
@@ -19,65 +19,67 @@
                     </div>
                     <div v-else>
                         <div class="table">
-                            <div class="table-row">
-                                <span>Hash</span>
-                                <span>{{tx.hash().toString("hex")}}</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Hash</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.hash().toString("hex")}}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Block Height</span>
-                                <span v-if="tx.__extra.height "><router-link :to="`/explorer/block/height/${tx.__extra.height}`">{{tx.__extra.height}}</router-link></span>
-                                <span v-else>-</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Block Height</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap" v-if="tx.__extra.height "><router-link :to="`/explorer/block/height/${tx.__extra.height}`">{{tx.__extra.height}}</router-link></span>
+                                <span class="col-xs-7 col-sm-9 wordwrap" v-else>-</span>
                             </div>
-                            <div class="table-row">
-                                <span>Block Time</span>
-                                <span v-if="tx.__extra.timestamp">{{timeAgo( $store.state.blockchain.genesisTimestamp + tx.__extra.timestamp) }}</span>
-                                <span v-else>-</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Block Time</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap" v-if="tx.__extra.timestamp">{{timeAgo( $store.state.blockchain.genesisTimestamp + tx.__extra.timestamp) }}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap" v-else>-</span>
                             </div>
-                            <div class="table-row">
-                                <span>Confirmations</span>
-                                <span v-if="tx.__extra.height">{{ $store.state.blockchain.end - tx.__extra.height -1 }}</span>
-                                <span v-else>-</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Confirmations</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap" v-if="tx.__extra.height">{{ $store.state.blockchain.end - tx.__extra.height -1 }}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap" v-else>-</span>
                             </div>
-                            <div v-if="tx.__extra.memPool" class="table-row">
-                                <span>Mem Pool</span>
-                                <span>Yes</span>
+                            <div v-if="tx.__extra.memPool" class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-7 col-sm-9 wordwrap">Mem Pool</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">Yes</span>
                             </div>
-                            <div v-if="tx.__extra.memPool" class="table-row">
-                                <span>Mem Pool Queued</span>
-                                <span>{{tx.__extra.memPoolQueued ? 'Yes' : 'No'}}</span>
+                            <div v-if="tx.__extra.memPool" class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Mem Pool Queued</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.__extra.memPoolQueued ? 'Yes' : 'No'}}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Nonce</span>
-                                <span>{{tx.nonce}}</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Nonce</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.nonce}}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Token Currency </span>
-                                <span>{{tx.tokenCurrency.toString("hex")}}</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Token Currency </span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.tokenCurrency.toString("hex")}}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Unlock Time</span>
-                                <span>{{tx.unlockTime}}</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Unlock Time</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.unlockTime}}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Data</span>
-                                <div>
-                                    <div v-for="vin in tx.vin" class="input">
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Data</span>
+                                <div class="col-xs-7 col-sm-9 wordwrap">
+                                    <div v-for="(vin, index) in tx.vin" class="input"
+                                         :key="`transaction-explorer-vin-${index}`">
                                         <account-identicon :publicKey="vin.publicKey" size="20" outer-size="5" />
                                         <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(-vin.amount) : '?'}}</span>
                                     </div>
-                                    <div v-for="vout in tx.vout" class="input">
+                                    <div v-for="(vout, index) in tx.vout" class="input"
+                                         :key="`transaction-explorer-vout-${index}`">
                                         <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="5" />
                                         <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(vout.amount) : '?'}}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="table-row">
-                                <span>Version</span>
-                                <span>{{tx.version}}</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Version</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.version}}</span>
                             </div>
-                            <div class="table-row">
-                                <span>Script Version</span>
-                                <span>{{tx.scriptVersion}}</span>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Script Version</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.scriptVersion}}</span>
                             </div>
                         </div>
 
@@ -98,7 +100,6 @@ import Layout from "src/components/layout/layout"
 import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
-import Utils from "src/utils/utils"
 
 export default {
 
@@ -142,11 +143,11 @@ export default {
         },
 
         convertToBase(amount){
-            return global.PandoraPay._scope.argv.transactions.coins.convertToBase(amount);
+            return PandoraPay._scope.argv.transactions.coins.convertToBase(amount);
         },
 
         timeAgo(timestamp){
-            return Utils.timeSince( timestamp*1000 );
+            return kernel.helpers.StringHelper.Utils.timeSince( timestamp*1000 );
         },
 
     },

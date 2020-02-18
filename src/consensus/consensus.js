@@ -1,5 +1,7 @@
 import BaseConsensus from "./consensus-base";
 
+import consts from "consts/consts"
+
 const {client} = global.blockchain.sockets.client;
 const {BasicSocket} = global.blockchain.sockets.basic;
 const {Helper} = global.kernel.helpers;
@@ -17,7 +19,7 @@ class Consensus extends BaseConsensus{
 
         super(settings);
 
-        this._settings.address = "http://helloworldx.ddns.net:8082";
+        this._settings.address = consts.fallback;
 
         this._data = {
 
@@ -66,15 +68,15 @@ class Consensus extends BaseConsensus{
         const sock = client( this._settings.address, {
 
             reconnection: true,
-            maxHttpBufferSize: global.PandoraPay._scope.argv.networkSettings.networkMaxSize,
+            maxHttpBufferSize: PandoraPay._scope.argv.networkSettings.networkMaxSize,
             query: {
                 handshake: JSON.stringify({
-                    short: global.PandoraPay._scope.argv.settings.applicationShort,
+                    short: PandoraPay._scope.argv.settings.applicationShort,
 
-                    build: global.PandoraPay._scope.argv.settings.buildVersion,
+                    build: PandoraPay._scope.argv.settings.buildVersion,
 
                     net: {
-                        type: global.PandoraPay._scope.argv.settings.networkType,
+                        type: PandoraPay._scope.argv.settings.networkType,
                     },
 
                     address: '',
@@ -83,7 +85,7 @@ class Consensus extends BaseConsensus{
             }
         });
 
-        this._client = new BasicSocket( global.PandoraPay._scope, this._settings.address, sock, undefined );
+        this._client = new BasicSocket( PandoraPay._scope, this._settings.address, sock, undefined );
 
         [ "connect", "disconnect"  ].map( fct => this._client[fct] = sock[fct].bind( sock ) );
         [ "emit", "on","once" ].map( fct => this._client['_'+fct] = sock[fct].bind( sock ) );
@@ -93,9 +95,7 @@ class Consensus extends BaseConsensus{
 
         this._client.once("handshake", handshake =>{
 
-            console.log("handshake.short", handshake.short);
-
-            if (handshake.short === global.PandoraPay._scope.argv.settings.applicationShort) {
+            if (handshake.short === PandoraPay._scope.argv.settings.applicationShort) {
                 this.status = "syncing";
                 this._client.emit("ready!", "go!");
             }
@@ -149,7 +149,7 @@ class Consensus extends BaseConsensus{
 
         await this._downloadLastBlocksHashes();
 
-        await this._downloadAccountsBalances();
+        await this._downloadAccountsData();
         await this._downloadAccountsTransactions();
 
         await this.downloadPendingTransactions();
@@ -181,9 +181,10 @@ class Consensus extends BaseConsensus{
                     const block = this._data.blocks[i];
                     if (block){
                         const txs = await block.getTransactions();
+                        const data = {};
                         for (const tx of txs) {
-                            delete this._data.transactions[tx.hash().toString("hex")];
                             data[tx.hash().toString("hex")] = tx;
+                            delete this._data.transactions[tx.hash().toString("hex")];
                         }
                         this.emit('consensus/tx-deleted', {transactions: data} );
                     }
@@ -218,58 +219,65 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async _downloadAccountsBalances(){
+    async _downloadAccountsData(){
 
         for (const account in this._data.accounts)
-            await this.downloadAccountBalance(account);
+            await this.downloadAccountData(account);
 
     }
 
-    async downloadAccountBalance(account){
+    async downloadAccountData(account){
 
-        const balances = await this._client.emitAsync("account/get-balance", {account }, 0);
-        const nonce = await this._client.emitAsync("account/get-nonce", {account }, 0);
+        const accountData = await this._client.emitAsync("account/get-account", {account }, 0);
+        if (!accountData) return;
 
-        const address = global.PandoraPay._scope.cryptography.addressValidator.validateAddress( account );
+        console.log("account", accountData);
+
+        const {balances, nonce, delegate} = accountData;
+
+        if (!accountData) return false;
+
+        const address = PandoraPay.cryptography.addressValidator.validateAddress( account );
         const publicKeyHash = address.publicKeyHash;
 
         //remove old balance
-        const balancesOld = await global.PandoraPay.mainChain.data.accountTree.getBalances(publicKeyHash);
-        const nonceOld = await global.PandoraPay.mainChain.data.accountTree.getNonce(publicKeyHash);
+        const balancesOld = await PandoraPay.mainChain.data.accountHashMap.getBalances(publicKeyHash);
+        const nonceOld = await PandoraPay.mainChain.data.accountHashMap.getNonce(publicKeyHash) || 0;
+        const delegateOld = await PandoraPay.mainChain.data.accountHashMap.getDelegate(publicKeyHash);
 
         if (balancesOld)
             for (const currencyToken in balancesOld)
-                await global.PandoraPay.mainChain.data.accountTree.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
-
-        if (nonceOld)
-            await global.PandoraPay.mainChain.data.accountTree.updateNonce( publicKeyHash, - nonceOld, );
+                await PandoraPay.mainChain.data.accountHashMap.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
 
         //update with new balance
-        if (balances)
-            for (const currencyToken in balances)
-                await global.PandoraPay.mainChain.data.accountTree.updateBalance(publicKeyHash, balances[currencyToken], currencyToken,);
+        for (const balance of balances)
+            await PandoraPay.mainChain.data.accountHashMap.updateBalance(publicKeyHash, balance.amount, balance.tokenCurrency,);
 
-        if (nonce)
-            await global.PandoraPay.mainChain.data.accountTree.updateNonce(publicKeyHash, nonce,);
+        const diffNonce = nonce - nonceOld;
+        for (let i=0; i < Math.abs(diffNonce); i++)
+            await PandoraPay.mainChain.data.accountHashMap.updateNonce(publicKeyHash, diffNonce > 0 ? 1 : -1 );
 
-        this.emit('consensus/account-update', { account, balances, nonce  } );
+        const diffDelegateNonce = delegate.delegateNonce - (delegateOld ? - delegateOld.delegateNonce : 0);
+        for (let i=0; i < Math.abs(diffDelegateNonce); i++)
+            await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegatePublicKey, delegate.delegateFee );
+
+        this.emit('consensus/account-update', { account, balances, nonce, delegate  } );
 
     }
 
-    subscribeAccounts( accounts ){
+    setAccounts( accounts ){
 
         this._data.accounts = {};
 
-        accounts.map (account => {
+        for (const account in accounts)
             this._data.accounts[account] = true;
-        });
 
     }
 
     async _downloadGenesis(){
 
         const genesis = await this._client.emitAsync("blockchain/genesis", { }, 0);
-        console.log("genesis", genesis);
+        if (!genesis) return;
 
         this._data.genesis = genesis;
 
@@ -379,8 +387,8 @@ class Consensus extends BaseConsensus{
         if (!data) return;
 
         const offer = new ExchangeOffer( {
-            ...global.PandoraPay._scope,
-            chain: global.PandoraPay._scope.mainChain
+            ...PandoraPay._scope,
+            chain: PandoraPay._scope.mainChain
         }, undefined, Buffer.from(data) );
 
         this._data.offers[hash] = offer;
@@ -427,10 +435,9 @@ class Consensus extends BaseConsensus{
         if (!blockData) return; //disconnected
 
         const block = new Block( {
-            ...global.PandoraPay._scope,
-            chain: global.PandoraPay._scope.mainChain
+            ...PandoraPay._scope,
+            chain: PandoraPay._scope.mainChain
         }, undefined, Buffer.from(blockData) );
-
 
         await this._includeBlock(block);
 
@@ -447,8 +454,8 @@ class Consensus extends BaseConsensus{
         if (!blockData) return; //disconnected
 
         const block = new Block({
-            ...global.PandoraPay._scope,
-            chain: global.PandoraPay._scope.mainChain
+            ...PandoraPay._scope,
+            chain: PandoraPay._scope.mainChain
         }, undefined, Buffer.from(blockData));
 
         return this._includeBlock(block);
@@ -466,7 +473,7 @@ class Consensus extends BaseConsensus{
         const txs = await block.getTransactions();
         for (const tx of txs) {
 
-            console.log("_includeBlock", tx.hash().toString("hex"), block.height);
+            console.log("_includeTxInBlock", tx.hash().toString("hex"), block.height);
 
             tx.__extra = {
                 height: block.height,
@@ -490,7 +497,7 @@ class Consensus extends BaseConsensus{
         const txData = await this._client.emitAsync("transactions/get-transaction", { hash }, 0  );
         if (!txData) return; //disconnected
 
-        const tx = global.PandoraPay._scope.mainChain.transactionsValidator.validateTx( txData.tx );
+        const tx = PandoraPay._scope.mainChain.transactionsValidator.validateTx( txData.tx );
 
         tx.__extra = {
             height: txData.block,

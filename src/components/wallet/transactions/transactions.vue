@@ -6,7 +6,7 @@
 
             <div v-if="address">
 
-                <span class="title">Transactions {{ !address.loaded ? '' : txCount + txCountPending }}</span>  <br/>
+                <span class="title row ">TRANSACTIONS {{ !address.loaded ? '' : txCount + txCountPending }}</span>  <br/>
 
                 <loading-spinner v-if="!address.loaded" />
 
@@ -14,8 +14,8 @@
 
                     <show-transactions :transactions="transactionsAll "/>
 
-                    <div class="centered">
-                        <span v-if="address.txsLowestIndex" class="pointer" @click="handleViewMore">View more...</span>
+                    <div class="centered" v-if="address.txsLowestIndex">
+                        <loading-button class="button-width-inherit" @submit="handleViewMore" icon="fa fa-cloud-download-alt" text="View more..."/>
                     </div>
 
                 </div>
@@ -33,10 +33,11 @@
 import LoadingSpinner from "../../utils/loading-spinner";
 import ShowTransactions from "src/components/explorer/show-transactions"
 import Consensus from "src/consensus/consensus"
+import LoadingButton from "src/components/utils/loading-button.vue"
 
 export default {
 
-    components: { LoadingSpinner, ShowTransactions},
+    components: { LoadingSpinner, ShowTransactions, LoadingButton},
 
     props: {
         address: null
@@ -90,8 +91,15 @@ export default {
     },
 
     methods:{
-        handleViewMore(){
-            return Consensus.downloadAccountTransactionsSpecific( {account: this.address.address, index: this.address.txsLowestIndex, limit: 10} )
+
+        async handleViewMore(resolve){
+
+            try{
+                await Consensus.downloadAccountTransactionsSpecific( {account: this.address.address, index: this.address.txsLowestIndex, limit: 10} )
+            }finally{
+                resolve(true);
+            }
+
 
         }
     }

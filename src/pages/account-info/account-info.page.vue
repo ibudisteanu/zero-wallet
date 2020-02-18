@@ -1,7 +1,7 @@
 <template>
 
     <layout>
-        <div class="container pd-top-40">
+        <div class="container pd-top-20">
             <div class="boxed ">
 
                 <h1>Account Details</h1>
@@ -10,18 +10,17 @@
 
                     <account :identicon="address.identicon" :name="address.name" :address="address.address" />
 
-                    <div class="pd-top-40" />
 
-                    <span class="disabled wordwrap ">
+                    <span class="disabled wordwrap pd-top-20">
                         <span v-if="!showPublicKey" class="pointer" @click="showPublicKey = true">
                             View Public Key
                         </span>
                         <span v-else >
                             Public Key {{address.publicKey}} <i class="fa fa-copy pointer"  @click="copyAddress(address.publicKey)"/>
                         </span>
-                    </span> <br/>
+                    </span>
 
-                    <span class="disabled wordwrap ">
+                    <span class="disabled wordwrap pd-top-20">
                         <span v-if="!showPublicKeyHash" class="pointer" @click="showPublicKeyHash = true">
                             View Public Key Hash
                         </span>
@@ -49,6 +48,7 @@
                                 <i class="fa fa-eye"></i>
                             </div>
                         </div>
+
 
                     </div>
 
@@ -86,14 +86,18 @@ export default {
 
         async downloadAddress(){
 
-            const address = await global.PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address );
+            if ( !Blob)
+                return alert('Blob is not supported by your Browser');
+
+            const address = await PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address );
             if (!address) return false;
 
             const json = address.toJSON();
 
-            let addressFile = new Blob([JSON.stringify(json)], {type: "application/json;charset=utf-8"});
-            let fileName = consts.name + "_" +this.address.name + " "+this.address.address + ".wallet";
-            FileSaver.saveAs(addressFile, fileName);
+            const fileName = consts.name + "_" +this.address.name + " "+this.address.address + ".wallet";
+
+            const file = new Blob([JSON.stringify(json)], {type: "application/json;charset=utf-8"});
+            FileSaver.saveAs(file, fileName);
 
             this.$notify({
                 type: 'success',
@@ -120,7 +124,7 @@ export default {
 
             try{
 
-                const out = await global.PandoraPay.wallet.manager.deleteWalletAddressByAddress( this.address.address );
+                const out = await PandoraPay.wallet.manager.deleteWalletAddressByAddress( this.address.address );
                 if (out)
                     this.$notify({
                         type: 'success',
@@ -172,10 +176,6 @@ export default {
 
     .account-info{
         text-align: left;
-    }
-
-    .buttons .btn-round{
-        display: inline-block;
     }
 
     .buttons-row .btn{

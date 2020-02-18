@@ -10,7 +10,11 @@
             <password-input v-model="walletPassword"></password-input>
         </div>
 
-        <input type="submit" value="Import Private Key" @click="importPrivateKey">
+        <span v-if="error" class="centered danger">
+                {{error}}
+        </span>
+
+        <loading-button text="Import Private Key" @submit="importPrivateKey" icon="fa fa-file-upload"  />
 
     </modal>
 
@@ -19,11 +23,12 @@
 <script>
 
 import Modal from "src/components/utils/modal"
-import PasswordInput from "../../utils/password-input";
+import PasswordInput from "src/components/utils/password-input";
+import LoadingButton from "src/components/utils/loading-button.vue"
 
 export default {
 
-    components: {PasswordInput, Modal },
+    components: {PasswordInput, Modal, LoadingButton },
 
     data(){
         return {
@@ -52,20 +57,22 @@ export default {
             this.$refs.modal.closeModal();
         },
 
-        async importPrivateKey(){
+        async importPrivateKey(resolve){
 
-            this.$store.commit('setIsLoading', true);
-
-            const checkPassword = await global.PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
-            if (!checkPassword)
-                this.error = "Your wallet password is invalid";
-
+            const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
+            if (!checkPassword) {
+                resolve(true);
+                return this.error = "Your wallet password is invalid";
+            }
 
             try{
 
+
                 if (this.privateKey.length !== 64) throw {message: "Private key must be 64 hex numbers"};
 
-                const out = await global.PandoraPay.wallet.manager.importPrivateKeyAddress( this.privateKey );
+                this.$store.commit('setIsLoading', true);
+
+                const out = await PandoraPay.wallet.manager.importPrivateKeyAddress( this.privateKey );
 
                 if (out)
                     this.$notify({
@@ -90,11 +97,12 @@ export default {
                     text: `Your Address couldn't be imported. ${err.message}`,
                 });
 
+            }finally{
+
+                this.$store.commit('setIsLoading', false);
+                resolve(true);
+
             }
-
-            this.$store.commit('setIsLoading', false);
-
-
 
 
         }

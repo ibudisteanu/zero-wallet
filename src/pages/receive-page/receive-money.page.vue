@@ -1,7 +1,7 @@
 <template>
 
     <layout>
-        <div class="container pd-top-40">
+        <div class="container pd-top-20">
             <div class="boxed ">
 
 

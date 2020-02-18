@@ -2,7 +2,7 @@
 
     <layout>
 
-        <div class="container pd-top-40">
+        <div class="container pd-top-20">
             <div class="boxed ">
 
                 <h1>Shop</h1>

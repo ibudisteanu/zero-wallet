@@ -2,9 +2,9 @@
 
    <div class="header pd-top-10 pd-bottom-10">
 
-      <div class="boxed" >
+      <div class="container boxed" >
 
-         <div class="row">
+         <div class="layout-row">
 
             <router-link to="/">
                <img :src="require('src/assets/pandora-pay-logo-inline.png').default" class="logo" >
@@ -54,13 +54,13 @@ export default {
       background-color: #EEEEEE;
    }
 
-   .row{
+   .layout-row{
       display: grid;
       grid-template-columns: 150px 1fr;
       align-items: center;
    }
 
-   .row a{
+   .layout-row a{
       color: black;
       align-items: center;
    }

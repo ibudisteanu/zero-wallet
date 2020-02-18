@@ -2,7 +2,6 @@
 
     <div>
 
-
         <div v-if="!error">
 
             <!-- component matched by the route will render here -->
@@ -23,6 +22,7 @@
 <script>
 
 import Consensus from "./consensus/consensus"
+import Chat from "./chat/chat"
 
 export default {
 
@@ -50,21 +50,21 @@ export default {
 
         if (typeof window === "undefined") return;
 
-        global.PandoraPay._scope.argvBrowser = ["--blockchain:genesisTestNet:createNewTestNet", "true", "--settings:networkType", "1"];
+        PandoraPay._scope.argvBrowser = ["--blockchain:genesisTestNet:createNewTestNet", "true", "--settings:networkType", "1"];
 
-        global.PandoraPay.events.on("wallet/loaded", wallet => this.readWallet() );
+        PandoraPay.events.on("wallet/loaded", wallet => this.readWallet() );
 
-        global.PandoraPay.events.on("wallet/address-removed", walletAddress => this.readAddresses() );
+        PandoraPay.events.on("wallet/address-removed", walletAddress => this.readAddresses() );
 
-        global.PandoraPay.events.on("wallet/address-pushed", walletAddress => this.readAddresses() );
+        PandoraPay.events.on("wallet/address-pushed", walletAddress => this.readAddresses() );
 
-        global.PandoraPay.events.on("wallet/loaded-error", err => {
+        PandoraPay.events.on("wallet/loaded-error", err => {
             this.error = err;
         });
 
-        global.PandoraPay.events.on("wallet/encrypted",async encrypted => this.$store.commit('setEncrypted', encrypted ) );
+        PandoraPay.events.on("wallet/encrypted",async encrypted => this.$store.commit('setEncrypted', encrypted ) );
 
-        global.PandoraPay.events.on("wallet/loggedIn", loggedIn => {
+        PandoraPay.events.on("wallet/loggedIn", loggedIn => {
 
             if (loggedIn)
                 return this.readWallet();
@@ -75,7 +75,7 @@ export default {
 
         } );
 
-        await global.PandoraPay.start();
+        await PandoraPay.start();
 
 
         Consensus.on("consensus/blockchain-info-updated", info => this.$store.commit('setBlockchainInfo', info) );
@@ -90,7 +90,7 @@ export default {
 
         Consensus.on("consensus/block-deleted", data => this.$store.commit('deleteBlockchainBlock', data ) );
 
-        Consensus.on("consensus/account-update", data => this.$store.commit('setAddressBalances', data ) );
+        Consensus.on("consensus/account-update", data => this.$store.commit('setAddressUpdate', data ) );
 
         Consensus.on("consensus/account-update-tx-count", data => this.$store.commit('setAddressTxCounts', data ) );
 
@@ -112,7 +112,27 @@ export default {
 
         Consensus.on("consensus/exchange-offers", data => this.$store.commit('setExchangeOffers', data ) );
 
+
+        Chat.on("encrypted-chat/chat-info-updated", info => this.$store.commit('setChatInfo', info));
+
+        Chat.on("encrypted-chat/status-update", status =>  this.$store.commit('setChatStatus', status) );
+
+        Chat.on("encrypted-chat/conversation-messages-count-update", data => this.$store.commit('setChatConversationMessagesCount', data));
+
+        Chat.on("encrypted-chat/conversation-messages-ids-update", data => this.$store.commit('setChatConversationMessagesIds', data));
+
+        Chat.on("encrypted-chat/message-downloaded", data => this.$store.commit('setChatEncryptedMessage', data));
+
+        Chat.on("encrypted-chat/conversations-count-update", data => this.$store.commit('setChatConversationsCount', data));
+
+        Chat.on("encrypted-chat/conversations-update", data => this.$store.commit('setChatConversations', data));
+
+        Chat.on("encrypted-chat/set-captcha", data => this.$store.commit('setCaptcha', data));
+        Chat.on("encrypted-chat/set-captcha-loading", data => this.$store.commit('setCaptchaLoading', data));
+
         await Consensus.start();
+
+        await Chat.start();
 
     },
 
@@ -120,7 +140,7 @@ export default {
 
         readWallet(){
 
-            const wallet = global.PandoraPay.wallet;
+            const wallet = PandoraPay.wallet;
 
             this.$store.commit('setEncrypted', wallet.encrypted );
             this.$store.commit('setVersion', wallet.version );
@@ -145,7 +165,7 @@ export default {
 
         readAddresses(){
 
-            const wallet = global.PandoraPay.wallet;
+            const wallet = PandoraPay.wallet;
 
             if ( !wallet.isLoggedIn() ) return;
 
@@ -189,7 +209,8 @@ export default {
                 this.$store.commit('setMainAddress', firstAddress );
 
             //subscribe addresses
-            Consensus.subscribeAccounts( Object.keys(addresses) );
+            Consensus.setAccounts( addresses );
+            Chat.setAccounts( addresses );
 
             Consensus.getBlockchain();
 

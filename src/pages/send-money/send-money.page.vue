@@ -1,7 +1,7 @@
 <template>
 
     <layout>
-        <div class="container pd-top-40">
+        <div class="container pd-top-20">
             <div class="boxed ">
 
                 <h1>Send Funds Publicly</h1>
@@ -33,6 +33,7 @@
                                 <span class="disabled">Currency</span> <br/>
                                 <select v-model="tokenCurrency">
                                     <option v-for="(balance, token) in balances"
+                                            :key="`send-money-${token}`"
                                             :value="token">
                                         {{token}}
                                     </option>
@@ -54,7 +55,7 @@
                     </div>
 
                     <div class="pd-top-20">
-                        <input type="submit" value="Send Money Publicly" :disabled=" !destinationAddress  || !!validation " @click="sendMoney">
+                        <loading-button text="Send Money Publicly" @submit="handleSendMoney" icon="fa fa-comments"  :disabled="!destinationIdenticon  || !!validation" />
                     </div>
 
                     <qr-code-scanner ref="refQRCodeScannerModal"/>
@@ -73,15 +74,16 @@
 import Layout from "src/components/layout/layout"
 import Account from "src/components/wallet/account/account"
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
-import QrCodeScanner from "./qr-code-scanner/qr-code-scanner";
+import QrCodeScanner from "src/components/utils/qr-code-scanner/qr-code-scanner";
 import Consensus from "src/consensus/consensus"
 
 const {TransactionTokenCurrencyTypeEnum} = global.cryptography.transactions;
 import LoadingSpinner from "src/components/utils/loading-spinner";
+import LoadingButton from "src/components/utils/loading-button.vue"
 
 export default {
 
-    components: {Layout, AccountIdenticon, Account, QrCodeScanner, LoadingSpinner },
+    components: {Layout, AccountIdenticon, Account, QrCodeScanner, LoadingSpinner, LoadingButton },
 
     data(){
         return {
@@ -98,23 +100,23 @@ export default {
 
     methods:{
 
-        async sendMoney(){
-
-            this.error = '';
+        async handleSendMoney(resolve){
 
             try{
 
+                this.error = '';
+
                 if (this.address.address === this.destinationAddress) throw {message: "Destination can not be the same with from"};
 
-                const amount = global.PandoraPay._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.amount) );
-                const fee = global.PandoraPay._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.fee) );
+                const amount = PandoraPay._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.amount) );
+                const fee = PandoraPay._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.fee) );
 
                 const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
                 if (nonce === undefined) throw {message: "The connection to the node was dropped"};
 
                 console.log("nonce", nonce);
 
-                const out = await global.PandoraPay.wallet.transfer.transferSimple({
+                const out = await PandoraPay.wallet.transfer.transferSimple({
                     address: this.address.address,
                     txDsts: [{
                         address: this.destinationAddress,
@@ -144,6 +146,8 @@ export default {
 
             }catch(err){
                 this.error = err.message;
+            }finally{
+                resolve(true);
             }
 
         },
@@ -170,7 +174,7 @@ export default {
 
             try{
 
-                const address = global.PandoraPay._scope.cryptography.addressValidator.validateAddress( this.destinationAddress );
+                const address = PandoraPay.cryptography.addressValidator.validateAddress( this.destinationAddress );
                 if (!address) throw {message: "Invalid address"};
 
                 return '';
@@ -183,7 +187,7 @@ export default {
         destinationAddressIdenticon(){
 
             try{
-                const address = global.PandoraPay._scope.cryptography.addressValidator.validateAddress( this.destinationAddress );
+                const address = PandoraPay.cryptography.addressValidator.validateAddress( this.destinationAddress );
                 if (!address) throw {message: "Invalid address"};
 
                 return address.identiconImg();

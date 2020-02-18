@@ -6,6 +6,7 @@ import LoginPage from "src/pages/login/login.page"
 import SendMoneyPage from "src/pages/send-money/send-money.page"
 import ReceiveMoneyPage from "src/pages/receive-page/receive-money.page"
 import AccountInfoPage from "src/pages/account-info/account-info.page"
+import DelegateStakePage from "src/pages/delegate-stake/delegate-stake.page.vue"
 import SetPasswordPage from "src/pages/encryption/set-password.page"
 import RemovePasswordPage from "src/pages/encryption/remove-password.page"
 import BlockchainExplorerPage from "src/pages/explorer/blockchain-explorer.page"
@@ -17,6 +18,9 @@ import ExchangeBuyAddOfferPage from "src/pages/exchange/buy/exchange-buy-add-off
 import ExchangeSellAddOfferPage from "src/pages/exchange/sell/exchange-sell-add-offer.page"
 import ExchangeSellPage from "src/pages/exchange/sell/exchange-sell.page"
 import ExchangePortfolioPage from "src/pages/exchange/protfolio/exchange-portfoliu.page"
+import ChatPage from "src/pages/chat/chat.page"
+import ChatConversationPage from "src/pages/chat/chat-conversation.page"
+import ChatConversationStartPage from "src/pages/chat/chat-conversation-start.page"
 import ShopPage from "src/pages/shop/shop.page"
 import NotFoundPage from "src/pages/not-found/not-found.page"
 
@@ -63,8 +67,14 @@ const routes = [
 
     {path: '/exchange/portfolio', component: ExchangePortfolioPage },
 
+    {path: '/delegate-stake', component: DelegateStakePage },
+
     {path: '/shop', component: ShopPage },
 
+    {path: '/chat', component: ChatPage },
+
+    {path: '/chat/conversation/start', component: ChatConversationStartPage },
+    {path: '/chat/conversation/:publicKey', component: ChatConversationPage },
 
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
 
