@@ -31,7 +31,7 @@
                 <password-input v-model="walletPassword"></password-input>
             </div>
 
-            <input type="submit" value="Import Account" @click="process">
+            <loading-button text="Import Account" @submit="handleProcess" icon="fa fa-upload"  :disabled="password.length === 0" />
 
         </div>
 
@@ -42,10 +42,11 @@
 <script>
 import Modal from "src/components/utils/modal"
 import PasswordInput from "../../utils/password-input";
+import LoadingButton from "src/components/utils/loading-button.vue"
 
 export default {
 
-    components: {PasswordInput, Modal },
+    components: {PasswordInput, Modal, LoadingButton },
 
     data(){
         return {
@@ -144,11 +145,12 @@ export default {
 
         },
 
-        async process(){
+        async handleProcess(resolve){
 
-            this.$store.commit('setIsLoading', true);
 
             try{
+
+                this.$store.commit('setIsLoading', true);
 
                 const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
                 if (!checkPassword)
@@ -179,12 +181,10 @@ export default {
                     text: `Your Address couldn't be imported. ${err.message}`,
                 });
 
+            }finally{
+                this.$store.commit('setIsLoading', false);
+                resolve(true);
             }
-
-            this.$store.commit('setIsLoading', false);
-
-
-
 
         }
 

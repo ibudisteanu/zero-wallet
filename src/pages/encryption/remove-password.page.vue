@@ -13,7 +13,7 @@
                     {{error}}
                 </span>
 
-                <input type="submit" value="Remove password" :disabled="password.length === 0 " @click="removePassword">
+                <loading-button text="Remove password" @submit="handleRemovePassword" icon="fa fa-unlock-alt"  :disabled="password.length === 0" />
 
                 <div class="centered">
                     <span class="danger">Warning: It will remove your password. You can set it again later.</span>
@@ -29,10 +29,11 @@
 
 import PasswordInput from "src/components/utils/password-input";
 import Layout from "src/components/layout/layout"
+import LoadingButton from "src/components/utils/loading-button.vue"
 
 export default {
 
-    components: {PasswordInput, Layout },
+    components: {PasswordInput, Layout, LoadingButton },
 
     data(){
         return {
@@ -43,42 +44,38 @@ export default {
 
     methods: {
 
-        async removePassword(){
-
-            this.$store.commit('setIsLoading', true);
+        async handleRemovePassword(resolve){
 
             try{
 
                 this.error = '';
 
-                try{
+                this.$store.commit('setIsLoading', true);
 
-                    const out = await PandoraPay.wallet.encryption.removeEncryptionWallet( this.password );
 
-                    if (out) {
-                        this.$notify({
-                            type: 'success',
-                            title: `Wallet has been decrypted successfully`,
-                            text: `Your wallet has been decrypted. No password is required from now. You can encrypt it with a new password.`,
-                        });
+                const out = await PandoraPay.wallet.encryption.removeEncryptionWallet( this.password );
 
-                        this.$router.push('/');
+                if (out) {
+                    this.$notify({
+                        type: 'success',
+                        title: `Wallet has been decrypted successfully`,
+                        text: `Your wallet has been decrypted. No password is required from now. You can encrypt it with a new password.`,
+                    });
 
-                    }else
-                        throw {message: "Result is not true"};
+                    this.$router.push('/');
 
-                }catch(err){
-
-                    if (err.message === "Old password is not matching")
-                        this.error = "Password is invalid";
-                    else
-                        this.error = err;
-                }
+                }else
+                    throw {message: "Result is not true"};
 
             }catch(err){
+                if (err.message === "Old password is not matching")
+                    this.error = "Password is invalid";
+                else
+                    this.error = err;
+            }finally{
+                this.$store.commit('setIsLoading', false);
 
             }
-            this.$store.commit('setIsLoading', false);
 
 
         },

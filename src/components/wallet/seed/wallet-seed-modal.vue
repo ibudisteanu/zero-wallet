@@ -22,7 +22,8 @@
                 {{error}}
             </span>
 
-            <input type="submit" value="Show Wallet Seed" :disabled="password.length === 0 " @click="showSeed">
+            <loading-button text="Show Wallet Seed" @submit="handleShowSeed" icon="fa fa-key"  :disabled="password.length === 0" />
+
         </div>
 
     </modal>
@@ -33,10 +34,11 @@
 
 import Modal from "src/components/utils/modal"
 import PasswordInput from "../../utils/password-input";
+import LoadingButton from "src/components/utils/loading-button.vue"
 
 export default {
 
-    components: {PasswordInput, Modal},
+    components: {PasswordInput, Modal, LoadingButton},
 
     data(){
         return {
@@ -62,7 +64,7 @@ export default {
             this.$refs.modal.showModal();
 
             if (!this.encrypted)
-                return this.showSeed();
+                return this.handleShowSeed( ()=>{} );
 
 
         },
@@ -71,7 +73,7 @@ export default {
             this.$refs.modal.closeModal();
         },
 
-        async showSeed(){
+        async handleShowSeed(resolve){
 
             this.error = '';
 
@@ -86,6 +88,8 @@ export default {
 
             }catch(err){
                 this.error = err;
+            }finally{
+                resolve(true);
             }
         },
 

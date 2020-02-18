@@ -16,7 +16,7 @@
                     {{error}}
                 </span>
 
-                <input type="submit" value="Set Password" :disabled="password.length === 0 || retypePassword.length === 0" @click="setPassword">
+                <loading-button text="Set Password" @submit="handleSetPassword" icon="fa fa-lock"  :disabled="password.length === 0 || retypePassword.length === 0" />
 
                 <span class="thick pd-top-20 pd-bottom-20">Tip: Write down your password.</span>
 
@@ -34,10 +34,11 @@
 
 import PasswordInput from "src/components/utils/password-input";
 import Layout from "src/components/layout/layout"
+import LoadingButton from "src/components/utils/loading-button.vue"
 
 export default {
 
-    components: {PasswordInput, Layout},
+    components: {PasswordInput, Layout, LoadingButton},
 
     data(){
         return {
@@ -49,16 +50,16 @@ export default {
 
     methods: {
 
-        async setPassword(){
+        async handleSetPassword(resolve){
 
-            this.$store.commit('setIsLoading', true);
+            try{
 
-            const promise = new Promise((resolve)=>{
+                this.$store.commit('setIsLoading', true);
+
+                const promise = new Promise((resolve)=>{
 
 
-                setTimeout( async ()=>{
-
-                    try{
+                    setTimeout( async ()=>{
 
                         this.error = '';
 
@@ -88,20 +89,20 @@ export default {
                             this.error = err;
                         }
 
+                        resolve(true);
 
-                    }catch(err){
+                    }, 1000);
 
-                    }
+                });
 
-                    resolve(true);
+                await promise;
 
-                }, 1000);
 
-            });
 
-            await promise;
-
-            this.$store.commit('setIsLoading', false);
+            }finally{
+                this.$store.commit('setIsLoading', false);
+                resolve(true);
+            }
 
         },
 

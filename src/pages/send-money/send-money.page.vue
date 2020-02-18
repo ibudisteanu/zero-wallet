@@ -55,7 +55,7 @@
                     </div>
 
                     <div class="pd-top-20">
-                        <input type="submit" value="Send Money Publicly" :disabled=" !destinationAddress  || !!validation " @click="sendMoney">
+                        <loading-button text="Send Money Publicly" @submit="handleSendMoney" icon="fa fa-comments"  :disabled="!destinationIdenticon  || !!validation" />
                     </div>
 
                     <qr-code-scanner ref="refQRCodeScannerModal"/>
@@ -79,10 +79,11 @@ import Consensus from "src/consensus/consensus"
 
 const {TransactionTokenCurrencyTypeEnum} = global.cryptography.transactions;
 import LoadingSpinner from "src/components/utils/loading-spinner";
+import LoadingButton from "src/components/utils/loading-button.vue"
 
 export default {
 
-    components: {Layout, AccountIdenticon, Account, QrCodeScanner, LoadingSpinner },
+    components: {Layout, AccountIdenticon, Account, QrCodeScanner, LoadingSpinner, LoadingButton },
 
     data(){
         return {
@@ -99,11 +100,11 @@ export default {
 
     methods:{
 
-        async sendMoney(){
-
-            this.error = '';
+        async handleSendMoney(resolve){
 
             try{
+
+                this.error = '';
 
                 if (this.address.address === this.destinationAddress) throw {message: "Destination can not be the same with from"};
 
@@ -145,6 +146,8 @@ export default {
 
             }catch(err){
                 this.error = err.message;
+            }finally{
+                resolve(true);
             }
 
         },

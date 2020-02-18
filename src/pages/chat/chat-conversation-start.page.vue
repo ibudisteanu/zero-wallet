@@ -23,7 +23,7 @@
                     </div>
 
                     <div class="pd-top-20">
-                        <input type="submit" value="Start conversation" :disabled=" !destinationIdenticon  || !!validation " @click="startConversation">
+                        <loading-button text="Start conversation" @submit="handleStartConversation" icon="fa fa-comments"  :disabled="!destinationIdenticon  || !!validation" />
                     </div>
 
                     <qr-code-scanner ref="refQRCodeScannerModal"/>
@@ -44,10 +44,11 @@ import AccountIdenticon from "src/components/wallet/account/account-identicon"
 import QrCodeScanner from "src/components/utils/qr-code-scanner/qr-code-scanner";
 import Consensus from "src/consensus/consensus"
 import ChatTopBar from "./common/chat-top-bar"
+import LoadingButton from "src/components/utils/loading-button.vue"
 
 export default {
 
-    components: {Layout, AccountIdenticon, QrCodeScanner, ChatTopBar },
+    components: {Layout, AccountIdenticon, QrCodeScanner, ChatTopBar, LoadingButton },
 
     data(){
         return {
@@ -64,9 +65,13 @@ export default {
             this.$refs.refQRCodeScannerModal.showModal();
         },
 
-        startConversation(){
+        handleStartConversation(resolve){
 
-            this.$router.push('/chat/conversation/'+this.publicKey);
+            try{
+                this.$router.push('/chat/conversation/'+this.publicKey);
+            }finally{
+                resolve(true);
+            }
 
         }
 

@@ -102,7 +102,8 @@
                 {{error}}
             </span>
 
-            <input type="submit" value="Create Offer" @click="handleCreateForm">
+            <loading-button text="Create Offer" @submit="handleCreateForm" icon="fa fa-plus"  />
+
         </div>
 
 
@@ -114,10 +115,11 @@
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import Consensus from "src/consensus/consensus"
 import Vue from 'vue';
+import LoadingButton from "src/components/utils/loading-button.vue"
 
 export default {
 
-    components: {AccountIdenticon},
+    components: {AccountIdenticon, LoadingButton},
 
     props: {
         type: 0
@@ -197,11 +199,11 @@ export default {
             await Consensus.startDownloadingExchangeOffers();
         },
 
-        async handleCreateForm(){
-
-            this.error = '';
+        async handleCreateForm(resolve){
 
             try{
+
+                this.error = '';
 
                 const walletAddress = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address, false, this.password );
 
@@ -246,6 +248,8 @@ export default {
 
             }catch(err){
                 this.error = err.message;
+            }finally{
+                resolve(true);
             }
 
         },
