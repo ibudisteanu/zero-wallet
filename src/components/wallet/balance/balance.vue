@@ -9,7 +9,7 @@
 
                 <loading-spinner v-if="!address.loaded" />
 
-                <div v-if="address.loaded">
+                <div v-else>
 
                     <div v-for="(balance, token) in balances"
                          :key="`balance-token-${token}`">
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import LoadingSpinner from "../../utils/loading-spinner";
+import LoadingSpinner from "src/components/utils/loading-spinner";
 
 export default {
 

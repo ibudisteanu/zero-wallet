@@ -10,18 +10,17 @@
 
                     <account :identicon="address.identicon" :name="address.name" :address="address.address" />
 
-                    <div class="pd-top-20" />
 
-                    <span class="disabled wordwrap ">
+                    <span class="disabled wordwrap pd-top-20">
                         <span v-if="!showPublicKey" class="pointer" @click="showPublicKey = true">
                             View Public Key
                         </span>
                         <span v-else >
                             Public Key {{address.publicKey}} <i class="fa fa-copy pointer"  @click="copyAddress(address.publicKey)"/>
                         </span>
-                    </span> <br/>
+                    </span>
 
-                    <span class="disabled wordwrap ">
+                    <span class="disabled wordwrap pd-top-20">
                         <span v-if="!showPublicKeyHash" class="pointer" @click="showPublicKeyHash = true">
                             View Public Key Hash
                         </span>
@@ -49,6 +48,7 @@
                                 <i class="fa fa-eye"></i>
                             </div>
                         </div>
+
 
                     </div>
 

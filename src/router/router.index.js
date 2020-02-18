@@ -6,6 +6,7 @@ import LoginPage from "src/pages/login/login.page"
 import SendMoneyPage from "src/pages/send-money/send-money.page"
 import ReceiveMoneyPage from "src/pages/receive-page/receive-money.page"
 import AccountInfoPage from "src/pages/account-info/account-info.page"
+import DelegateStakePage from "src/pages/delegate-stake/delegate-stake.page.vue"
 import SetPasswordPage from "src/pages/encryption/set-password.page"
 import RemovePasswordPage from "src/pages/encryption/remove-password.page"
 import BlockchainExplorerPage from "src/pages/explorer/blockchain-explorer.page"
@@ -65,6 +66,8 @@ const routes = [
     {path: '/exchange/sell/add-offer', component: ExchangeSellAddOfferPage },
 
     {path: '/exchange/portfolio', component: ExchangePortfolioPage },
+
+    {path: '/delegate-stake', component: DelegateStakePage },
 
     {path: '/shop', component: ShopPage },
 
