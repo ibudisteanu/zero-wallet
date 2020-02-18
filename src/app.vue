@@ -90,7 +90,7 @@ export default {
 
         Consensus.on("consensus/block-deleted", data => this.$store.commit('deleteBlockchainBlock', data ) );
 
-        Consensus.on("consensus/account-update", data => this.$store.commit('setAddressBalances', data ) );
+        Consensus.on("consensus/account-update", data => this.$store.commit('setAddressUpdate', data ) );
 
         Consensus.on("consensus/account-update-tx-count", data => this.$store.commit('setAddressTxCounts', data ) );
 

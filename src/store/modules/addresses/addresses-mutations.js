@@ -75,12 +75,13 @@ export default {
 
     },
 
-    setAddressBalances(context, {account, balances, nonce}){
+    setAddressUpdate(context, {account, balances, nonce, delegate}){
 
         const address = { ... context.list[account]  };
 
         address.balances = balances;
         address.nonce = nonce;
+        address.delegate = delegate;
         address.loaded = true;
 
         Vue.set(context.list, account, address );

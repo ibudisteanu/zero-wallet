@@ -149,7 +149,7 @@ class Consensus extends BaseConsensus{
 
         await this._downloadLastBlocksHashes();
 
-        await this._downloadAccountsBalances();
+        await this._downloadAccountsData();
         await this._downloadAccountsTransactions();
 
         await this.downloadPendingTransactions();
@@ -219,41 +219,49 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async _downloadAccountsBalances(){
+    async _downloadAccountsData(){
 
         for (const account in this._data.accounts)
-            await this.downloadAccountBalance(account);
+            await this.downloadAccountData(account);
 
     }
 
-    async downloadAccountBalance(account){
+    async downloadAccountData(account){
 
-        const balances = await this._client.emitAsync("account/get-balance", {account }, 0);
-        const nonce = await this._client.emitAsync("account/get-nonce", {account }, 0);
+        const accountData = await this._client.emitAsync("account/get-account", {account }, 0);
+        if (!accountData) return;
+
+        console.log("account", accountData);
+
+        const {balances, nonce, delegate} = accountData;
+
+        if (!accountData) return false;
 
         const address = PandoraPay.cryptography.addressValidator.validateAddress( account );
         const publicKeyHash = address.publicKeyHash;
 
         //remove old balance
         const balancesOld = await PandoraPay.mainChain.data.accountHashMap.getBalances(publicKeyHash);
-        const nonceOld = await PandoraPay.mainChain.data.accountHashMap.getNonce(publicKeyHash);
+        const nonceOld = await PandoraPay.mainChain.data.accountHashMap.getNonce(publicKeyHash) || 0;
+        const delegateOld = await PandoraPay.mainChain.data.accountHashMap.getDelegate(publicKeyHash);
 
         if (balancesOld)
             for (const currencyToken in balancesOld)
                 await PandoraPay.mainChain.data.accountHashMap.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
 
-        if (nonceOld)
-            await PandoraPay.mainChain.data.accountHashMap.updateNonce( publicKeyHash, - nonceOld, );
-
         //update with new balance
-        if (balances)
-            for (const currencyToken in balances)
-                await PandoraPay.mainChain.data.accountHashMap.updateBalance(publicKeyHash, balances[currencyToken], currencyToken,);
+        for (const balance of balances)
+            await PandoraPay.mainChain.data.accountHashMap.updateBalance(publicKeyHash, balance.amount, balance.tokenCurrency,);
 
-        if (nonce)
-            await PandoraPay.mainChain.data.accountHashMap.updateNonce(publicKeyHash, nonce,);
+        const diffNonce = nonce - nonceOld;
+        for (let i=0; i < Math.abs(diffNonce); i++)
+            await PandoraPay.mainChain.data.accountHashMap.updateNonce(publicKeyHash, diffNonce > 0 ? 1 : -1 );
 
-        this.emit('consensus/account-update', { account, balances, nonce  } );
+        const diffDelegateNonce = delegate.delegateNonce - (delegateOld ? - delegateOld.delegateNonce : 0);
+        for (let i=0; i < Math.abs(diffDelegateNonce); i++)
+            await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegatePublicKey, delegate.delegateFee );
+
+        this.emit('consensus/account-update', { account, balances, nonce, delegate  } );
 
     }
 
