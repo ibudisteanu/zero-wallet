@@ -219,7 +219,7 @@ export default {
 
             }catch(err){
                 console.error(err);
-                this.error = err.message;
+                this.error = err;
             }
 
             resolve(true);

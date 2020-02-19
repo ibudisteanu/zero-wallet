@@ -61,7 +61,7 @@ export default {
 
                 const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
                 if (!checkPassword)
-                    throw "Your wallet password is invalid";
+                    throw {message: "Your wallet password is invalid"};
 
             }catch(err){
                 this.error = err.message;

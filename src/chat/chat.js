@@ -1,5 +1,5 @@
 import BaseConsensus from "../consensus/consensus-base";
-import consts from "../../consts/consts";
+import consts from "consts/consts";
 
 
 const {client} = global.blockchain.sockets.client;
