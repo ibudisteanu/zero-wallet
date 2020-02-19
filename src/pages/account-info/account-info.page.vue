@@ -6,7 +6,7 @@
 
                 <h1>Account Details</h1>
 
-                <div class="account-info">
+                <div class="account-info" v-if="address">
 
                     <account :identicon="address.identicon" :name="address.name" :address="address.address" />
 

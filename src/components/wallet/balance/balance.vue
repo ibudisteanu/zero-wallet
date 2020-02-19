@@ -54,7 +54,7 @@ export default {
     methods:{
 
         convertToBase(number){
-            return PandoraPay._scope.argv.transactions.coins.convertToBase(number);
+            return PandoraPay.argv.transactions.coins.convertToBase(number);
         },
 
         formatMoney(amount){

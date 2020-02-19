@@ -190,6 +190,7 @@ export default {
                     name: wallet.addresses[i].name,
                     mnemonicSequenceIndex: mnemonicSequenceIndexValue ,
                     identicon: publicAddress.identiconImg(),
+                    loaded: false,
                 };
 
                 if (i === 0)

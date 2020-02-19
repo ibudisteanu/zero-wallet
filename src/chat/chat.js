@@ -41,15 +41,15 @@ class Chat extends BaseConsensus{
         const sock = client( this._settings.address, {
 
             reconnection: true,
-            maxHttpBufferSize: PandoraPay._scope.argv.networkSettings.networkMaxSize,
+            maxHttpBufferSize: PandoraPay.argv.networkSettings.networkMaxSize,
             query: {
                 handshake: JSON.stringify({
-                    short: PandoraPay._scope.argv.settings.applicationShort,
+                    short: PandoraPay.argv.settings.applicationShort,
 
-                    build: PandoraPay._scope.argv.settings.buildVersion,
+                    build: PandoraPay.argv.settings.buildVersion,
 
                     net: {
-                        type: PandoraPay._scope.argv.settings.networkType,
+                        type: PandoraPay.argv.settings.networkType,
                     },
 
                     address: '',
@@ -69,7 +69,7 @@ class Chat extends BaseConsensus{
         this._client.once("handshake", handshake =>{
 
 
-            if (handshake.short === PandoraPay._scope.argv.settings.applicationShort) {
+            if (handshake.short === PandoraPay.argv.settings.applicationShort) {
                 this.status = "syncing";
                 this._client.emit("ready!", "go!");
             }

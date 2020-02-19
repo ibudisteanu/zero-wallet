@@ -74,7 +74,7 @@ export default {
                     this.error = err;
             }finally{
                 this.$store.commit('setIsLoading', false);
-
+                resolve(true);
             }
 
 

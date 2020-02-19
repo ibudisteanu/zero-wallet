@@ -6,7 +6,7 @@
 
                 <h1>Delegate Stake</h1>
 
-                <div class="account-info">
+                <div class="account-info" v-if="address">
 
                     <account :identicon="address.identicon" :name="address.name" :address="address.address" />
 
@@ -20,9 +20,12 @@
                         <div class="pd-bottom-20"></div>
 
                         <span>Delegated: <strong>{{isDelegated}}</strong> </span> <br/>
-                        <span>Delegated nonce {{address.delegate.delegateNonce}}</span> <br/>
-                        <span>Delegated public key {{address.delegate.delegatePublicKey}}</span> <br/>
-                        <span>Delegated fee {{delegateFeePercentage}} %</span> <br/>
+
+                        <div v-if="address.delegate">
+                            <span>Delegated nonce {{address.delegate.delegateNonce}}</span> <br/>
+                            <span>Delegated public key {{address.delegate.delegatePublicKey}}</span> <br/>
+                            <span>Delegated fee {{delegateFeePercentage}} %</span> <br/>
+                        </div>
 
                         <div class="buttons-row pd-top-20">
 
@@ -89,19 +92,19 @@ export default {
         balance(){
             const balances = this.address.balances || {"00": 0};
             console.log(balances["00"]||0);
-            return PandoraPay._scope.argv.transactions.coins.convertToBase( balances["00"]||0 );
+            return PandoraPay.argv.transactions.coins.convertToBase( balances["00"]||0 );
         },
 
         minimumForStaking(){
-            return PandoraPay._scope.argv.transactions.staking.stakingMinimumStake;
+            return PandoraPay.argv.transactions.staking.stakingMinimumStake;
         },
 
         isDelegated(){
-            return this.address.delegate.delegatePublicKey !== "00";
+            return this.address.delegate ? this.address.delegate.delegatePublicKey !== "00" : false;
         },
 
         delegateFeePercentage(){
-            return this.address.delegate.delegateFee / PandoraPay._scope.argv.transactions.staking.delegateStakingFeePercentage;
+            return this.address.delegate.delegateFee / PandoraPay.argv.transactions.staking.delegateStakingFeePercentage;
         }
 
     },

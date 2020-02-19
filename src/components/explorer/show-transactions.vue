@@ -63,7 +63,7 @@ export default {
         },
 
         convertToBase(amount){
-            return PandoraPay._scope.argv.transactions.coins.convertToBase(amount);
+            return PandoraPay.argv.transactions.coins.convertToBase(amount);
         },
 
         isPending(tx){
