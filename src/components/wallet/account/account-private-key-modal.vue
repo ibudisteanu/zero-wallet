@@ -86,7 +86,7 @@ export default {
 
                 const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.password);
                 if (!checkPassword)
-                    throw {message: 'Password invalid'};
+                    throw 'Password invalid';
 
                 const address = await PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address );
                 if (!address) throw {message: "Address not found"};

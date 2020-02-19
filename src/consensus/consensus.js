@@ -231,8 +231,6 @@ class Consensus extends BaseConsensus{
         let accountData = await this._client.emitAsync("account/get-account", {account }, 0);
         if (!accountData) accountData = {};
 
-        console.log("account", accountData);
-
         try{
 
 

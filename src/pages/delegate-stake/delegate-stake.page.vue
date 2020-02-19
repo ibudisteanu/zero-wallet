@@ -30,27 +30,27 @@
                         <div class="buttons-row pd-top-20">
 
                             <div class="btn">
-                                <div class="btn-round" @click="delegateStake" v-tooltip.bottom="'Delegate your stake'" >
+                                <div class="btn-round" @click="handleShowDelegateStake" v-tooltip.bottom="'Delegate your stake'" >
                                     <i class="fa fa-link"></i>
                                 </div>
                             </div>
 
                             <div class="btn">
-                                <div class="btn-round" @click="stopDelegateStake" v-tooltip.bottom="'Stop delegating your stake'" >
+                                <div class="btn-round" @click="handleShowStopDelegateStake" v-tooltip.bottom="'Stop delegating your stake'" >
                                     <i class="danger fa fa-unlink"></i>
                                 </div>
                             </div>
 
                             <div class="btn">
-                                <div class="btn-round" @click="showDelegatePrivateKey" v-tooltip.bottom="'View Private Key of the delegation'" >
+                                <div class="btn-round" @click="handleShowDelegatePrivateKey" v-tooltip.bottom="'View Private Key of the delegation'" >
                                     <i class="fa fa-eye"></i>
                                 </div>
                             </div>
 
                         </div>
 
-                        <delegate-stake-modal ref="refDelegateStakeModal" />
-                        <stop-delegate-stake-modal ref="refStopDelegateStakeModal" />
+                        <delegate-stake-modal ref="refDelegateStakeModal" :address="address" :delegate="address.delegate" />
+                        <stop-delegate-stake-modal ref="refStopDelegateStakeModal" :address="address" :delegate="address.delegate" />
 
                     </div>
 
@@ -111,15 +111,15 @@ export default {
 
     methods:{
 
-        delegateStake(){
-            return this.$refs.refDelegateStakeModal.showModal();
+        handleShowDelegateStake(){
+            return this.$refs.refDelegateStakeModal.showModal(  );
         },
 
-        stopDelegateStake(){
+        handleShowStopDelegateStake(){
             return this.$refs.refStopDelegateStakeModal.showModal();
         },
 
-        showDelegatePrivateKey(){
+        handleShowDelegatePrivateKey(){
 
         }
 
