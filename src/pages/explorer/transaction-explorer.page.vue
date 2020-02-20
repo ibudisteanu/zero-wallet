@@ -147,7 +147,7 @@ export default {
         },
 
         timeAgo(timestamp){
-            return kernel.helpers.StringHelper.Utils.timeSince( timestamp*1000 );
+            return kernel.helpers.StringHelper.timeSince( timestamp*1000 );
         },
 
     },

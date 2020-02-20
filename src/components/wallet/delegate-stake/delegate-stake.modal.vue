@@ -26,6 +26,8 @@
 
         <loading-button text="Delegate Stake" @submit="handleDelegateStake" icon="fa fa-link"  />
 
+        <span class="center">A transaction will be created in order to delegate your funds for staking to a third party.</span>
+
     </modal>
 
 </template>
@@ -43,6 +45,8 @@ export default {
 
     data(){
         return {
+            delegate: null,
+
             delegatePublicKey: '',
             delegateNonce: 0,
             delegateFee: 0,
@@ -53,7 +57,6 @@ export default {
 
     props:{
         address: null,
-        delegate: null,
     },
 
     computed:{
@@ -66,8 +69,13 @@ export default {
 
     methods:{
 
-        showModal() {
+        showModal( delegate ) {
             Object.assign(this.$data, this.$options.data());
+
+            this.delegate = delegate;
+            this.delegateNonce = delegate ? delegate.delegateNonce : 0;
+
+
             this.$refs.modal.showModal();
         },
 
@@ -146,6 +154,9 @@ export default {
 
                 console.log("out", out);
 
+                const buffer = out.tx.toHex();
+                out.tx.fromHex(buffer);
+
                 const outConsensus = await Consensus._client.emitAsync("mem-pool/new-tx", {tx: out.tx.toBuffer() }, 0);
                 if (!outConsensus) throw {message: "Transaction was not included in MemPool"};
 
@@ -156,6 +167,8 @@ export default {
                     title: `Delegate Staking Transaction created`,
                     text: `Delegate Staking Transaction has been made. \n TxId ${out.tx.hash().toString("hex")}`,
                 });
+
+                this.closeModal();
 
             }catch(err){
                 console.error(err);
@@ -168,15 +181,6 @@ export default {
 
     },
 
-    watch: {
-        'delegate' (to, from) {
-            this.delegateNonce = to ? to.delegateNonce : 0;
-        }
-    },
-
-    mounted(){
-        this.delegateNonce = this.delegate ? this.delegate.delegateNonce : 0;
-    }
 
 }
 </script>

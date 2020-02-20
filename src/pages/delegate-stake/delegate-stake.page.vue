@@ -49,8 +49,8 @@
 
                         </div>
 
-                        <delegate-stake-modal ref="refDelegateStakeModal" :address="address" :delegate="address.delegate" />
-                        <stop-delegate-stake-modal ref="refStopDelegateStakeModal" :address="address" :delegate="address.delegate" />
+                        <delegate-stake-modal ref="refDelegateStakeModal" :address="address" />
+                        <stop-delegate-stake-modal ref="refStopDelegateStakeModal" :address="address" />
 
                     </div>
 
@@ -112,11 +112,11 @@ export default {
     methods:{
 
         handleShowDelegateStake(){
-            return this.$refs.refDelegateStakeModal.showModal(  );
+            return this.$refs.refDelegateStakeModal.showModal( this.address.delegate );
         },
 
         handleShowStopDelegateStake(){
-            return this.$refs.refStopDelegateStakeModal.showModal();
+            return this.$refs.refStopDelegateStakeModal.showModal( this.address.delegate );
         },
 
         handleShowDelegatePrivateKey(){
