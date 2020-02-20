@@ -26,7 +26,7 @@
 
         <loading-button text="Delegate Stake" @submit="handleDelegateStake" icon="fa fa-link"  />
 
-        <span class="center">A transaction will be created in order to delegate your funds for staking to a third party.</span>
+        <span class="center">A transaction will be created in order to delegate your funds for staking to a third party. You will need to wait for the transaction to be confirmed.</span>
 
     </modal>
 
@@ -74,7 +74,6 @@ export default {
 
             this.delegate = delegate;
             this.delegateNonce = delegate ? delegate.delegateNonce : 0;
-
 
             this.$refs.modal.showModal();
         },
@@ -131,8 +130,6 @@ export default {
                 const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
                 if (nonce === undefined) throw {message: "The connection to the node was dropped"};
 
-                //console.log("delegatePublicKey", delegatePublicKey);
-
                 const out = await PandoraPay.wallet.transfer.changeDelegate({
                     address: this.address.address,
                     fee: 1,
@@ -152,11 +149,6 @@ export default {
 
                 if (!out) throw {message: "Transaction couldn't be made"};
 
-                console.log("out", out);
-
-                const buffer = out.tx.toHex();
-                out.tx.fromHex(buffer);
-
                 const outConsensus = await Consensus._client.emitAsync("mem-pool/new-tx", {tx: out.tx.toBuffer() }, 0);
                 if (!outConsensus) throw {message: "Transaction was not included in MemPool"};
 
@@ -167,6 +159,8 @@ export default {
                     title: `Delegate Staking Transaction created`,
                     text: `Delegate Staking Transaction has been made. \n TxId ${out.tx.hash().toString("hex")}`,
                 });
+
+                this.$router.push(`/explorer/tx/hash/${out.tx.hash().toString('hex')}`);
 
                 this.closeModal();
 

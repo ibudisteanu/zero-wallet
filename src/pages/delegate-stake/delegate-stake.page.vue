@@ -22,35 +22,43 @@
                         <span>Delegated: <strong>{{isDelegated}}</strong> </span> <br/>
 
                         <div v-if="address.delegate">
-                            <span>Delegated nonce {{address.delegate.delegateNonce}}</span> <br/>
-                            <span>Delegated public key {{address.delegate.delegatePublicKey}}</span> <br/>
-                            <span>Delegated fee {{delegateFeePercentage}} %</span> <br/>
-                        </div>
 
-                        <div class="buttons-row pd-top-20">
+                            <loading-spinner v-if="isDelegateStakeInPending"/>
 
-                            <div class="btn">
-                                <div class="btn-round" @click="handleShowDelegateStake" v-tooltip.bottom="'Delegate your stake'" >
-                                    <i class="fa fa-link"></i>
+                            <div v-else>
+                                <span>Delegated nonce {{address.delegate.delegateNonce}}</span> <br/>
+                                <span>Delegated public key {{address.delegate.delegatePublicKey}}</span> <br/>
+                                <span>Delegated fee {{delegateFeePercentage}} %</span> <br/>
+
+                                <div class="buttons-row pd-top-20">
+
+                                    <div class="btn">
+                                        <div class="btn-round" @click="handleShowDelegateStake" v-tooltip.bottom="'Delegate your stake'" >
+                                            <i class="fa fa-link"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="btn">
+                                        <div class="btn-round" @click="handleShowStopDelegateStake" v-tooltip.bottom="'Stop delegating your stake'" >
+                                            <i class="danger fa fa-unlink"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="btn">
+                                        <div class="btn-round" @click="handleShowDelegatePrivateKey" v-tooltip.bottom="'View Delegate Stake private key'" >
+                                            <i class="fa fa-eye"></i>
+                                        </div>
+                                    </div>
+
                                 </div>
-                            </div>
 
-                            <div class="btn">
-                                <div class="btn-round" @click="handleShowStopDelegateStake" v-tooltip.bottom="'Stop delegating your stake'" >
-                                    <i class="danger fa fa-unlink"></i>
-                                </div>
-                            </div>
-
-                            <div class="btn">
-                                <div class="btn-round" @click="handleShowDelegatePrivateKey" v-tooltip.bottom="'View Private Key of the delegation'" >
-                                    <i class="fa fa-eye"></i>
-                                </div>
                             </div>
 
                         </div>
 
                         <delegate-stake-modal ref="refDelegateStakeModal" :address="address" />
                         <stop-delegate-stake-modal ref="refStopDelegateStakeModal" :address="address" />
+                        <delegate-stake-private-key-modal ref="refDelegateStakePrivateKey" :address="address" />
 
                     </div>
 
@@ -71,10 +79,11 @@ import Consensus from "src/consensus/consensus"
 
 import DelegateStakeModal from "src/components/wallet/delegate-stake/delegate-stake.modal.vue"
 import StopDelegateStakeModal from "src/components/wallet/delegate-stake/stop-delegate-stake.modal.vue"
+import DelegateStakePrivateKeyModal from "src/components/wallet/delegate-stake/delegate-stake-private-key.modal.vue"
 
 export default {
 
-    components: {AccountIdenticon, Layout, Account, LoadingSpinner, DelegateStakeModal, StopDelegateStakeModal},
+    components: {AccountIdenticon, Layout, Account, LoadingSpinner, DelegateStakeModal, StopDelegateStakeModal, DelegateStakePrivateKeyModal},
 
     data() {
         return {
@@ -105,6 +114,33 @@ export default {
 
         delegateFeePercentage(){
             return this.address.delegate.delegateFee / PandoraPay.argv.transactions.staking.delegateStakingFeePercentage;
+        },
+
+        pendingTxs(){
+            return this.address.pendingTxs;
+        },
+
+        pendingTransactions(){
+
+            const txs = this.pendingTxs;
+
+            const out = [];
+            for (const key in txs)
+                if (this.$store.state.transactions.list[txs[key]])
+                    out.push( this.$store.state.transactions.list[txs[key]] );
+
+            return out;
+        },
+
+        isDelegateStakeInPending(){
+
+            const pendingTxs = this.pendingTransactions;
+
+            for (let i=0; i < pendingTxs.length; i++)
+                if (pendingTxs[i].scriptVersion === 1)
+                    return true;
+
+            return false;
         }
 
     },
@@ -120,7 +156,7 @@ export default {
         },
 
         handleShowDelegatePrivateKey(){
-
+            return this.$refs.refDelegateStakePrivateKey.showModal( this.address.delegate );
         }
 
     },
