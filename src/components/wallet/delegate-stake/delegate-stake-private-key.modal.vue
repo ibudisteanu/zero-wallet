@@ -1,6 +1,6 @@
 <template>
 
-    <modal ref="modal" :title="`View Delegate Stake Private key ${ address ? address.name : '' }`" >
+    <modal ref="modal" title="View Delegate Stake Private key" >
 
         <div v-if="privateKey">
             <span class="thick pd-bottom-40">Private Key of Delegate Stake</span>
@@ -101,7 +101,7 @@ export default {
 
 
                 const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false, this.walletPassword );
-                const delegatePrivateAddress = addressWallet.decryptDelegatePrivateAddress(this.delegate.delegateNonce, this.walletPassword);
+                const delegatePrivateAddress = addressWallet.decryptDelegateStakePrivateAddress(this.delegate.delegateNonce, this.walletPassword);
 
                 const delegatePublicKey = delegatePrivateAddress.publicKey.toString("hex");
                 if (delegatePublicKey !== this.delegate.delegatePublicKey) {

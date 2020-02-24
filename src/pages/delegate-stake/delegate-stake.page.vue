@@ -50,6 +50,12 @@
                                         </div>
                                     </div>
 
+                                    <div class="btn">
+                                        <div class="btn-round" @click="handleShowDelegateStakeNode" v-tooltip.bottom="'Delegate Stake to node'" >
+                                            <i class="fa fa-laptop-code"></i>
+                                        </div>
+                                    </div>
+
                                 </div>
 
                             </div>
@@ -58,7 +64,8 @@
 
                         <delegate-stake-modal ref="refDelegateStakeModal" :address="address" />
                         <stop-delegate-stake-modal ref="refStopDelegateStakeModal" :address="address" />
-                        <delegate-stake-private-key-modal ref="refDelegateStakePrivateKey" :address="address" />
+                        <delegate-stake-private-key-modal ref="refDelegateStakePrivateKeyModal" :address="address" />
+                        <delegate-stake-node-modal ref="refDelegateStakeNodeModal" :address="address"/>
 
                     </div>
 
@@ -80,10 +87,11 @@ import Consensus from "src/consensus/consensus"
 import DelegateStakeModal from "src/components/wallet/delegate-stake/delegate-stake.modal.vue"
 import StopDelegateStakeModal from "src/components/wallet/delegate-stake/stop-delegate-stake.modal.vue"
 import DelegateStakePrivateKeyModal from "src/components/wallet/delegate-stake/delegate-stake-private-key.modal.vue"
+import DelegateStakeNodeModal from "src/components/wallet/delegate-stake/delegate-stake-node.modal.vue"
 
 export default {
 
-    components: {AccountIdenticon, Layout, Account, LoadingSpinner, DelegateStakeModal, StopDelegateStakeModal, DelegateStakePrivateKeyModal},
+    components: {AccountIdenticon, Layout, Account, LoadingSpinner, DelegateStakeModal, StopDelegateStakeModal, DelegateStakePrivateKeyModal, DelegateStakeNodeModal},
 
     data() {
         return {
@@ -156,7 +164,11 @@ export default {
         },
 
         handleShowDelegatePrivateKey(){
-            return this.$refs.refDelegateStakePrivateKey.showModal( this.address.delegate );
+            return this.$refs.refDelegateStakePrivateKeyModal.showModal( this.address.delegate );
+        },
+
+        handleShowDelegateStakeNode(){
+            return this.$refs.refDelegateStakeNodeModal.showModal( this.address.delegate );
         }
 
     },

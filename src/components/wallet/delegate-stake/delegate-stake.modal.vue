@@ -93,7 +93,7 @@ export default {
                     throw {message: "Your wallet password is invalid"};
 
                 const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false, this.walletPassword );
-                const delegatePrivateAddress = addressWallet.decryptDelegatePrivateAddress(this.delegateNonce + 1, this.walletPassword);
+                const delegatePrivateAddress = addressWallet.decryptDelegateStakePrivateAddress(this.delegateNonce + 1, this.walletPassword);
 
                 this.delegatePublicKey = delegatePrivateAddress.publicKey.toString("hex");
 
@@ -122,7 +122,7 @@ export default {
                 let delegateNonce = this.delegateNonce;
 
                 const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false, this.walletPassword );
-                const delegatePrivateAddress = addressWallet.decryptDelegatePrivateAddress(this.delegateNonce + 1, this.walletPassword);
+                const delegatePrivateAddress = addressWallet.decryptDelegateStakePrivateAddress(this.delegateNonce + 1, this.walletPassword);
                 if (this.delegatePublicKey === delegatePrivateAddress.publicKey.toString("hex") ){
                     delegateNonce += 1;
                 }
