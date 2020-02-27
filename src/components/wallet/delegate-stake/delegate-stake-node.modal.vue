@@ -11,11 +11,16 @@
             </option>
         </select>
 
+        <div v-if="isWalletEncrypted" class="pd-top-40">
+            <span class="disabled">Wallet password</span> <br/>
+            <password-input v-model="walletPassword"></password-input>
+        </div>
+
         <span v-if="error" class="centered danger">
             {{error}}
         </span>
 
-        <loading-button text="Delegate your stake to node" @submit="handleStopDelegateStake" icon="fa fa-laptop-code"  />
+        <loading-button text="Delegate your stake to node" @submit="handleDelegateStake" icon="fa fa-laptop-code"  />
 
     </modal>
 
@@ -26,6 +31,7 @@ import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
 import consts from "consts/consts"
+import HttpHelper from "src/utils/http-helper"
 
 export default {
 
@@ -74,13 +80,60 @@ export default {
             this.$refs.modal.closeModal();
         },
 
-        handleStopDelegateStake(resolve){
+        async handleDelegateStake(resolve){
 
             this.error = '';
 
             try{
 
-                if (!this.nodeAddress) throw "Node Address is not selected"
+                const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
+                if (!checkPassword)
+                    throw {message: "Your wallet password is invalid"};
+
+                if (!this.nodeAddress) throw "Node Address is not selected";
+
+                let challenge = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/challenge', );
+                if (!challenge ) throw "Challenge couldn't be get. Maybe node is offline";
+
+                if (typeof challenge === "string") challenge = Buffer.from(challenge, "hex");
+
+                const publicKey = Buffer.from( this.address.publicKey, "hex");
+                const delegatePublicKey = Buffer.from( this.delegate.delegatePublicKey, "hex");
+
+                //getting private key
+                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false, this.walletPassword );
+                const delegatePrivateAddress = addressWallet.decryptDelegateStakePrivateAddress( this.delegate.delegateNonce, this.walletPassword );
+
+                let delegatePrivateKey;
+                if (delegatePrivateAddress.publicKey.toString("hex") === this.delegate.delegatePublicKey)
+                    delegatePrivateKey = delegatePrivateAddress.privateKey;
+
+                const concat = Buffer.concat([
+                    challenge,
+                    publicKey,
+                    delegatePublicKey,
+                    delegatePrivateKey ? delegatePrivateKey : Buffer.alloc(0),
+                ]);
+
+                const signature = addressWallet.sign( concat, this.walletPassword );
+                if (!signature) throw "message couldn't be signed";
+
+                console.log( {publicKey, signature, delegatePublicKey, delegatePrivateKey} );
+
+                const out = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/import-wallet-stake', {publicKey: publicKey.toString("hex"), signature: signature.toString("hex"), delegatePublicKey: delegatePublicKey.toString("hex"), delegatePrivateKey: delegatePrivateKey ? delegatePrivateKey.toString('hex') : undefined});
+                if (!out) throw "An error has occurred";
+
+                if ( !out.result ){
+
+                    if (out.error === "You need to set as delegate public key" && kernel.helpers.StringHelper.isHex(out.errorData) )
+                        throw out.error + " " + out.errorData;
+
+                    throw out.error;
+
+                }
+
+                console.log("out", out);
+                //if (out.error)
 
             }catch(err){
                 this.error = err;

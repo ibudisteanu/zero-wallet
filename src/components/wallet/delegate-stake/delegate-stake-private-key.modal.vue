@@ -101,7 +101,7 @@ export default {
 
 
                 const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false, this.walletPassword );
-                const delegatePrivateAddress = addressWallet.decryptDelegateStakePrivateAddress(this.delegate.delegateNonce, this.walletPassword);
+                const delegatePrivateAddress = addressWallet.decryptDelegateStakePrivateAddress( this.delegate.delegateNonce, this.walletPassword );
 
                 const delegatePublicKey = delegatePrivateAddress.publicKey.toString("hex");
                 if (delegatePublicKey !== this.delegate.delegatePublicKey) {
