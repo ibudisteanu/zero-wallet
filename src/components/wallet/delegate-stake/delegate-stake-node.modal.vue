@@ -123,17 +123,26 @@ export default {
                 const out = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/import-wallet-stake', {publicKey: publicKey.toString("hex"), signature: signature.toString("hex"), delegatePublicKey: delegatePublicKey.toString("hex"), delegatePrivateKey: delegatePrivateKey ? delegatePrivateKey.toString('hex') : undefined});
                 if (!out) throw "An error has occurred";
 
-                if ( !out.result ){
+                if ( !out.result && out.error ){
 
                     if (out.error === "You need to set as delegate public key" && kernel.helpers.StringHelper.isHex(out.errorData) )
+                        throw out.error + " " + out.errorData;
+
+                    if (out.error === "You need to set as delegate public key or the node is not sync" && kernel.helpers.StringHelper.isHex(out.errorData) )
                         throw out.error + " " + out.errorData;
 
                     throw out.error;
 
                 }
 
+                if (out)
+                    this.$notify({
+                        type: 'success',
+                        title: `Your stake was delegated successfully to Node `,
+                        text: `Your stake was delegated successfully to node. \n node ${this.nodeAddress}`,
+                    });
+
                 console.log("out", out);
-                //if (out.error)
 
             }catch(err){
                 this.error = err;

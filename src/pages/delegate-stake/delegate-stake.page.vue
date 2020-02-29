@@ -121,7 +121,7 @@ export default {
         },
 
         delegateFeePercentage(){
-            return this.address.delegate.delegateFee / PandoraPay.argv.transactions.staking.delegateStakingFeePercentage;
+            return this.address.delegate.delegateFee / PandoraPay.argv.transactions.staking.delegateStakingFeePercentage * 100;
         },
 
         pendingTxs(){
