@@ -39,13 +39,17 @@ export default {
             return this.$store.state.exchange[  this.type === 0 ? 'buy' : 'sell' ].count || 0;
         },
 
+        offersIds(){
+            return this.$store.state.exchange[  this.type === 0 ? 'buy' : 'sell' ].offers || {};
+        },
+
         offers(){
 
-            const offers = this.$store.state.exchange[  this.type === 0 ? 'buy' : 'sell' ].offers || {};
+            const offers = this.offersIds;
 
             const out = {};
             for (const key in offers){
-                const offer = this.$store.state.exchange.list[ key ];
+                const offer = this.$store.state.exchange.list[ this.type + '_' + key ];
                 if (offer)
                     out[key] = offer;
             }

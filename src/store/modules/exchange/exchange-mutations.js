@@ -34,7 +34,7 @@ export default {
     setExchangeOffers(context, { offers }) {
 
         for (const key in offers )
-            Vue.set(context.list, offers[key].hash().toString("hex"), offers[key]) ;
+            Vue.set(context.list, offers[key].type +'_'+ offers[key].id, offers[key]) ;
 
 
     }

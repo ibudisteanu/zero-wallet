@@ -391,15 +391,18 @@ class Consensus extends BaseConsensus{
 
     async getExchangeOffer(hash, type){
 
-        if (this._data.offers[hash]) return this._data.offers[hash];
+        if (this._data.offers[type+'_'+hash]) return this._data.offers[type+'_'+hash];
 
         const data = await this._client.emitAsync("exchange/get-offer", {offerHash: hash, offerType: type}, 0);
+
         if (!data) return;
 
         const offer = new ExchangeOffer( {
             ...PandoraPay._scope,
             chain: PandoraPay._scope.mainChain
         }, undefined, Buffer.from(data) );
+
+        offer.id = hash;
 
         this._data.offers[hash] = offer;
 
