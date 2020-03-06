@@ -529,6 +529,9 @@ class Consensus extends BaseConsensus{
 
             tx = PandoraPay._scope.mainChain.transactionsValidator.validateTx( txData.tx );
 
+            if (tx.hash().toString('hex') !== hash )
+                throw "Transaction hash is invalid";
+
             tx.__extra = {
                 height: txData.block,
                 timestamp: txData.blockTimestamp,

@@ -81,6 +81,10 @@
                                 <span class="col-xs-5 col-sm-3 wordwrap">Script Version</span>
                                 <span class="col-xs-7 col-sm-9 wordwrap">{{tx.scriptVersion}}</span>
                             </div>
+                            <div class="row pd-top-40 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">JSON</span>
+                                <textarea class="col-xs-7 col-sm-9" rows="20">{{ tx.toJSON() }}</textarea>
+                            </div>
                         </div>
 
                     </div>
@@ -103,7 +107,13 @@ import AccountIdenticon from "src/components/wallet/account/account-identicon";
 
 export default {
 
-    components: {Layout, Consensus, LoadingSpinner, AccountIdenticon},
+    components: {Layout, LoadingSpinner, AccountIdenticon},
+
+    data(){
+        return {
+            error: '',
+        }
+    },
 
     computed:{
 
@@ -131,9 +141,10 @@ export default {
         async loadTransaction(){
 
             if (this.height === undefined && !this.hash){
-                this.error = 'Tx index was not specified';
+                this.error = 'Tx height/hash was not specified';
                 return;
             }
+            this.error = '';
 
             await Consensus.initPromise;
 

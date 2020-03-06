@@ -90,6 +90,10 @@
                                     <span class="forger-address wordwrap">{{block.pos.stakeDelegateRewardAddress}}</span>
                                 </div>
                             </div>
+                            <div class="row pd-top-40 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">JSON</span>
+                                <textarea class="col-xs-7 col-sm-9" rows="20">{{ block.toJSON() }}</textarea>
+                            </div>
                         </div>
 
                         <h4>Transactions</h4>
@@ -149,7 +153,6 @@ export default {
             const asyncData = async ()=>{
 
                 if (block) {
-                    console.log(block.toJSON() );
                     this.fees = await block.sumFees();
                     this.transactions = await block.getTransactions();
 
@@ -187,6 +190,7 @@ export default {
                 this.error = 'Block index was not specified';
                 return;
             }
+            this.error = '';
 
             await Consensus.initPromise;
 
