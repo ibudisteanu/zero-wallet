@@ -16,10 +16,13 @@
                         <span class="balance thick" >
                             {{formatMoney( convertToBase(balance) ) }}
                         </span>
-                            <span class="currency thick">
-                            {{token}}
+                        <span class="currency thick">
+                            {{getToken(token).name}}
                         </span>
-                            <br/>
+                        <router-link to="/token">
+                            <i class="fa fa-info"></i>
+                        </router-link>
+                        <br/>
                     </div>
 
                 </div>
@@ -60,6 +63,10 @@ export default {
         formatMoney(amount){
             //return kernel.helpers.StringHelper.formatMoney(amount, 2);
             return amount;
+        },
+
+        getToken(token){
+            return this.$store.state.tokens.list[token];
         }
 
     }

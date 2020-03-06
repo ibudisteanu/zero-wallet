@@ -60,7 +60,6 @@ class Consensus extends BaseConsensus{
 
             },
 
-
         };
 
         this._downloadPendingTransactionsEnabled = false;
@@ -255,8 +254,10 @@ class Consensus extends BaseConsensus{
 
             //update with new balance
             if (balances)
-                for (const balance of balances)
+                for (const balance of balances) {
+                    await this.getTokenByHash(balance.tokenCurrency);
                     await PandoraPay.mainChain.data.accountHashMap.updateBalance(publicKeyHash, balance.amount, balance.tokenCurrency,);
+                }
 
             if (nonce) {
                 const diffNonce = nonce - nonceOld;
@@ -524,7 +525,7 @@ class Consensus extends BaseConsensus{
 
             const txData = await this._client.emitAsync("transactions/get-transaction", { hash }, 0  );
             if (!txData) //disconnected
-                throw "tx failed";
+                throw "tx fetch failed";
 
             tx = PandoraPay._scope.mainChain.transactionsValidator.validateTx( txData.tx );
 
@@ -536,8 +537,14 @@ class Consensus extends BaseConsensus{
                 memPool: txData.memPool,
             };
 
+
+            const data = {};
+            data[hash] = tx;
+
+            this.emit('consensus/tx-downloaded', {transactions: data} );
+
         }catch(err){
-            console.err(err);
+            console.error(err);
         }finally{
 
             resolver(tx);
@@ -545,10 +552,6 @@ class Consensus extends BaseConsensus{
 
         }
 
-        const data = {};
-        data[hash] = tx;
-
-        this.emit('consensus/tx-downloaded', {transactions: data} );
 
         return tx;
     }
@@ -565,26 +568,28 @@ class Consensus extends BaseConsensus{
         let resolver;
         this._data.tokens[hash] = new Promise( resolve => resolver = resolve);
 
-        const tokenData = await await this._client.emitAsync("tokens/get-token", { hash }, 0  );
-        if (!tokenData){ //disconnected
-            resolver(undefined);
-            return undefined;
-        }
-
-        const token = TokenHashMapData({
-            ...PandoraPay._scope,
-            chain: PandoraPay._scope.mainChain
-        }, undefined, tokenData );
-
-        resolver(token);
-        this._data.transactions[hash] = token;
-
+        let token;
         try{
 
-        }catch(err){
+            const tokenData = await this._client.emitAsync("token/get-token", { token: hash }, 0  );
+            if (!tokenData)
+                throw "token fetch failed";
 
+            token = new TokenHashMapData({
+                ...PandoraPay._scope,
+                chain: PandoraPay._scope.mainChain
+            }, undefined, tokenData );
+
+            await PandoraPay.mainChain.data.tokenHashMap.addMap( hash, token );
+
+            const data = {};
+            data[hash] = token;
+            this.emit('consensus/tokens-downloaded', {tokens: data} );
+
+        }catch(err){
+            console.error(err);
         }finally{
-            resolve(token);
+            resolver(token);
             this._data.tokens[hash] = token;
         }
 
