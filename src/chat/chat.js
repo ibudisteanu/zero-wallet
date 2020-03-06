@@ -115,9 +115,11 @@ class Chat extends BaseConsensus{
         }
     }
 
-    setAccounts( accounts ){
+    setAccounts( accounts, deletePrevAccounts = false ){
 
-        this._data.accounts = {};
+        if (deletePrevAccounts)
+            this._data.accounts = {};
+
         for (const account in accounts)
             this._data.accounts[account] = accounts[account];
 

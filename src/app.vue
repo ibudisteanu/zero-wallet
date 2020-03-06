@@ -210,8 +210,8 @@ export default {
                 this.$store.commit('setMainAddress', firstAddress );
 
             //subscribe addresses
-            Consensus.setAccounts( addresses );
-            Chat.setAccounts( addresses );
+            Consensus.setAccounts( addresses, true );
+            Chat.setAccounts( addresses, true );
 
             Consensus.getBlockchain();
 

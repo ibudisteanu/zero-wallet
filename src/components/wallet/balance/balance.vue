@@ -58,7 +58,8 @@ export default {
         },
 
         formatMoney(amount){
-            return kernel.helpers.StringHelper.formatMoney(amount);
+            //return kernel.helpers.StringHelper.formatMoney(amount, 2);
+            return amount;
         }
 
     }

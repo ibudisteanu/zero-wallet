@@ -11,6 +11,7 @@ const {BigNumber} = global.kernel.utils;
 const {MarshalData} = global.kernel.marshal;
 
 const {Block} = global.blockchain.blockchain.block;
+const {TokenHashMapData} = global.blockchain.blockchain.chain.token;
 const {ExchangeOffer} = global.blockchain.exchange;
 
 class Consensus extends BaseConsensus{
@@ -48,6 +49,10 @@ class Consensus extends BaseConsensus{
             },
 
             accounts: {
+
+            },
+
+            tokens:{
 
             },
 
@@ -275,9 +280,10 @@ class Consensus extends BaseConsensus{
 
     }
 
-    setAccounts( accounts ){
+    setAccounts( accounts, deletePrevAccounts = false ){
 
-        this._data.accounts = {};
+        if (deletePrevAccounts)
+            this._data.accounts = {};
 
         for (const account in accounts)
             this._data.accounts[account] = true;
@@ -502,25 +508,42 @@ class Consensus extends BaseConsensus{
 
     async getTransactionByHash(hash, isPending = false ){
 
-        if (this._data.transactions[hash])
-            if ( (isPending && !this._data.transactions[hash].__extra.height ) || (!isPending && this._data.transactions[hash].__extra.height ) )
-                return this._data.transactions[hash];
+        if (this._data.transactions[hash]) {
 
+            const tx = await this._data.transactions[hash];
 
-        const txData = await this._client.emitAsync("transactions/get-transaction", { hash }, 0  );
-        if (!txData) return; //disconnected
+            if ((isPending && !tx.__extra.height ) || (!isPending && tx.__extra.height ))
+                return tx;
+        }
 
-        const tx = PandoraPay._scope.mainChain.transactionsValidator.validateTx( txData.tx );
+        let resolver;
+        this._data.transactions[hash] = new Promise( resolve => resolver = resolve );
 
-        tx.__extra = {
-            height: txData.block,
-            timestamp: txData.blockTimestamp,
-            confirmations: txData.confirmations,
-            memPoolQueued: txData.memPoolQueued,
-            memPool: txData.memPool,
-        };
+        let tx;
+        try{
 
-        this._data.transactions[hash] = tx;
+            const txData = await this._client.emitAsync("transactions/get-transaction", { hash }, 0  );
+            if (!txData) //disconnected
+                throw "tx failed";
+
+            tx = PandoraPay._scope.mainChain.transactionsValidator.validateTx( txData.tx );
+
+            tx.__extra = {
+                height: txData.block,
+                timestamp: txData.blockTimestamp,
+                confirmations: txData.confirmations,
+                memPoolQueued: txData.memPoolQueued,
+                memPool: txData.memPool,
+            };
+
+        }catch(err){
+            console.err(err);
+        }finally{
+
+            resolver(tx);
+            this._data.transactions[hash] = tx;
+
+        }
 
         const data = {};
         data[hash] = tx;
@@ -534,6 +557,40 @@ class Consensus extends BaseConsensus{
 
     }
 
+    async getTokenByHash(hash){
+
+        if (this._data.tokens[hash])
+            return this._data.tokens[hash];
+
+        let resolver;
+        this._data.tokens[hash] = new Promise( resolve => resolver = resolve);
+
+        const tokenData = await await this._client.emitAsync("tokens/get-token", { hash }, 0  );
+        if (!tokenData){ //disconnected
+            resolver(undefined);
+            return undefined;
+        }
+
+        const token = TokenHashMapData({
+            ...PandoraPay._scope,
+            chain: PandoraPay._scope.mainChain
+        }, undefined, tokenData );
+
+        resolver(token);
+        this._data.transactions[hash] = token;
+
+        try{
+
+        }catch(err){
+
+        }finally{
+            resolve(token);
+            this._data.tokens[hash] = token;
+        }
+
+        return token;
+
+    }
 
     get starting(){
         return Math.max(0 , this._starting || this._data.end - 15);
