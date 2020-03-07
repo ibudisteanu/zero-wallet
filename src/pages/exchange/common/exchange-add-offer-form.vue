@@ -182,7 +182,7 @@ export default {
             const offers = this.$store.state.exchange[  this.type === 0 ? 'buy' : 'sell' ].offers || {};
 
             for (const key in offers) {
-                const offer = this.$store.state.exchange.list[key];
+                const offer = this.$store.state.exchange.list[ this.type  + '_' + key];
                 if (offer && offer.address === this.address)
                     return offer;
             }
@@ -243,6 +243,8 @@ export default {
 
                 const outConsensus = await Consensus._client.emitAsync("exchange/new-offer", {offer: offer.toBuffer() }, 0);
                 if (!outConsensus) throw {message: "Offer was not included"};
+
+                this.$store.commit('setExchangeOffers', {type: this.type, offers: [offer] });
 
                 this.$router.push('/exchange/'+( this.type === 0 ? 'buy' : 'sell'));
 

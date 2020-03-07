@@ -20,7 +20,7 @@ import Consensus from "src/consensus/consensus"
 
 export default (params)=> {
 
-    new Vue({
+    const app = new Vue({
         el: '#app',
         store,
         router,
@@ -37,5 +37,7 @@ export default (params)=> {
         }
     }).$mount('#app');
 
+    window.PandoraWallet = app;
+    window.PandoraConsensus = Consensus;
 
 }

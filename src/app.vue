@@ -106,6 +106,10 @@ export default {
 
         Consensus.on("consensus/tx-deleted", data => this.$store.commit('deleteTransactions', data ) );
 
+        Consensus.on("consensus/tokens-downloaded", data => this.$store.commit('setTokens', data  ) );
+
+        Consensus.on("consensus/tokens-deleted", data => this.$store.commit('deleteTokens', data ) );
+
         Consensus.on("consensus/exchange-offers-count", data => this.$store.commit('setExchangeOffersCount', data ) );
 
         Consensus.on("consensus/exchange-offers-ids", data => this.$store.commit('setExchangeOffersIds', data ) );
@@ -190,6 +194,7 @@ export default {
                     name: wallet.addresses[i].name,
                     mnemonicSequenceIndex: mnemonicSequenceIndexValue ,
                     identicon: publicAddress.identiconImg(),
+                    loaded: false,
                 };
 
                 if (i === 0)
@@ -209,8 +214,8 @@ export default {
                 this.$store.commit('setMainAddress', firstAddress );
 
             //subscribe addresses
-            Consensus.setAccounts( addresses );
-            Chat.setAccounts( addresses );
+            Consensus.setAccounts( addresses, true );
+            Chat.setAccounts( addresses, true );
 
             Consensus.getBlockchain();
 

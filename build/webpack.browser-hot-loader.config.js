@@ -38,7 +38,6 @@ const config = merge(base, {
             }
         }),
 
-        new webpack.HotModuleReplacementPlugin(),
 
     ]
 

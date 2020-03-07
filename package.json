@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "~7.2",
+    "axios": "^0.19.2",
     "file-saver": "^2.0.2",
     "qrcode-vue": "^1.2.0",
     "v-tooltip": "^2.0.2",

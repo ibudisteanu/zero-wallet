@@ -16,10 +16,13 @@
                         <span class="balance thick" >
                             {{formatMoney( convertToBase(balance) ) }}
                         </span>
-                            <span class="currency thick">
-                            {{token}}
+                        <span class="currency thick">
+                            {{getToken(token).name}}
                         </span>
-                            <br/>
+                        <router-link :to="`/explorer/token/${token}`">
+                            <i class="fa fa-info"></i>
+                        </router-link>
+                        <br/>
                     </div>
 
                 </div>
@@ -54,11 +57,16 @@ export default {
     methods:{
 
         convertToBase(number){
-            return PandoraPay._scope.argv.transactions.coins.convertToBase(number);
+            return PandoraPay.argv.transactions.coins.convertToBase(number);
         },
 
         formatMoney(amount){
-            return kernel.helpers.StringHelper.formatMoney(amount);
+            //return kernel.helpers.StringHelper.formatMoney(amount, 2);
+            return amount;
+        },
+
+        getToken(token){
+            return this.$store.state.tokens.list[token];
         }
 
     }

@@ -93,7 +93,7 @@ export default {
 
             if (file){
 
-                if (file.size > PandoraPay._scope.argv.encryptedMessage.maxSize){
+                if (file.size > PandoraPay.argv.encryptedMessage.maxSize){
                     this.error = 'File selected is too big';
                     return false;
                 }
@@ -219,7 +219,7 @@ export default {
 
             }catch(err){
                 console.error(err);
-                this.error = err.message;
+                this.error = err;
             }
 
             resolve(true);

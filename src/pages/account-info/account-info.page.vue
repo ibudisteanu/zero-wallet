@@ -6,7 +6,7 @@
 
                 <h1>Account Details</h1>
 
-                <div class="account-info">
+                <div class="account-info" v-if="address">
 
                     <account :identicon="address.identicon" :name="address.name" :address="address.address" />
 
@@ -54,7 +54,7 @@
 
                 </div>
 
-                <account-private-key-modal ref="refAccountPrivateKeyModal"/>
+                <account-private-key-modal ref="refAccountPrivateKeyModal" :address="address"/>
 
             </div>
         </div>
@@ -67,7 +67,7 @@
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import FileSaver from 'file-saver'
 import consts from 'consts/consts';
-import AccountPrivateKeyModal from "src/components/wallet/account/account-private-key-modal"
+import AccountPrivateKeyModal from "src/components/wallet/account/account-private-key.modal"
 import Layout from "src/components/layout/layout"
 import Account from "src/components/wallet/account/account"
 
@@ -81,6 +81,16 @@ export default {
             showPublicKeyHash: false,
         }
     },
+
+
+    computed:{
+
+        address(){
+            return this.$store.state.addresses.list[this.$store.state.wallet.mainAddress] ;
+        }
+
+    },
+
 
     methods:{
 
@@ -157,14 +167,6 @@ export default {
                 })
             )
 
-        }
-
-    },
-
-    computed:{
-
-        address(){
-            return this.$store.state.addresses.list[this.$store.state.wallet.mainAddress] ;
         }
 
     },

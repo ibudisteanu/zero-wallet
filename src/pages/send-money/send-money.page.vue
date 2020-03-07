@@ -108,13 +108,11 @@ export default {
 
                 if (this.address.address === this.destinationAddress) throw {message: "Destination can not be the same with from"};
 
-                const amount = PandoraPay._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.amount) );
-                const fee = PandoraPay._scope.argv.transactions.coins.convertToUnits( Number.parseInt(this.fee) );
+                const amount = PandoraPay.argv.transactions.coins.convertToUnits( Number.parseInt(this.amount) );
+                const fee = PandoraPay.argv.transactions.coins.convertToUnits( Number.parseInt(this.fee) );
 
                 const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
                 if (nonce === undefined) throw {message: "The connection to the node was dropped"};
-
-                console.log("nonce", nonce);
 
                 const out = await PandoraPay.wallet.transfer.transferSimple({
                     address: this.address.address,

@@ -80,8 +80,10 @@ export default {
         const address = { ... context.list[account]  };
 
         const balancesObj = {};
-        for (const balance of balances)
-            balancesObj[ balance.tokenCurrency.toString("hex") ] = balance.amount;
+
+        if (balances)
+            for (const balance of balances)
+                balancesObj[ balance.tokenCurrency.toString("hex") ] = balance.amount;
 
         address.balances = balancesObj;
         address.nonce = nonce;

@@ -3,7 +3,7 @@
     <modal ref="modal" :title="`${ address ? address.name : '' }`" >
 
         <div v-if="privateKey">
-            <span class="thick pd-bottom-40">Private Key</span>
+            <span class="thick pd-bottom-40">Private Key of Address</span>
 
             <div class="pd-bottom-40">
                 <span class="font-medium-size wordwrap " >{{privateKey}} <i class="fa fa-copy pointer"  @click="copyPrivateKey"/> </span>
@@ -17,14 +17,14 @@
         <div v-if="!privateKey">
 
             <span class="disabled" >Enter the password to view the wallet seed</span> <br/>
-            <password-input v-model="password" />
+            <password-input v-model="walletPassword" />
 
 
             <span v-if="error" class="centered danger">
                 {{error}}
             </span>
 
-            <loading-button text="Show Private Key" @submit="handleShowPrivateKey" icon="fa fa-eye"  :disabled="password.length === 0" />
+            <loading-button text="Show Private Key" @submit="handleShowPrivateKey" icon="fa fa-eye"  :disabled="walletPassword.length === 0" />
 
         </div>
 
@@ -44,12 +44,15 @@ export default {
 
     data(){
         return {
-            address: null,
-            password: '',
+            walletPassword: '',
             privateKey: '',
 
             error:'',
         }
+    },
+
+    props:{
+        address: null,
     },
 
     computed:{
@@ -84,9 +87,9 @@ export default {
 
             try{
 
-                const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.password);
+                const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
                 if (!checkPassword)
-                    throw {message: 'Password invalid'};
+                    throw 'Password invalid';
 
                 const address = await PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address );
                 if (!address) throw {message: "Address not found"};

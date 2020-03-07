@@ -11,6 +11,7 @@ const {BigNumber} = global.kernel.utils;
 const {MarshalData} = global.kernel.marshal;
 
 const {Block} = global.blockchain.blockchain.block;
+const {TokenHashMapData} = global.blockchain.blockchain.chain.token;
 const {ExchangeOffer} = global.blockchain.exchange;
 
 class Consensus extends BaseConsensus{
@@ -51,10 +52,13 @@ class Consensus extends BaseConsensus{
 
             },
 
-            offers:{
+            tokens:{
 
             },
 
+            offers:{
+
+            },
 
         };
 
@@ -68,15 +72,15 @@ class Consensus extends BaseConsensus{
         const sock = client( this._settings.address, {
 
             reconnection: true,
-            maxHttpBufferSize: PandoraPay._scope.argv.networkSettings.networkMaxSize,
+            maxHttpBufferSize: PandoraPay.argv.networkSettings.networkMaxSize,
             query: {
                 handshake: JSON.stringify({
-                    short: PandoraPay._scope.argv.settings.applicationShort,
+                    short: PandoraPay.argv.settings.applicationShort,
 
-                    build: PandoraPay._scope.argv.settings.buildVersion,
+                    build: PandoraPay.argv.settings.buildVersion,
 
                     net: {
-                        type: PandoraPay._scope.argv.settings.networkType,
+                        type: PandoraPay.argv.settings.networkType,
                     },
 
                     address: '',
@@ -95,7 +99,7 @@ class Consensus extends BaseConsensus{
 
         this._client.once("handshake", handshake =>{
 
-            if (handshake.short === PandoraPay._scope.argv.settings.applicationShort) {
+            if (handshake.short === PandoraPay.argv.settings.applicationShort) {
                 this.status = "syncing";
                 this._client.emit("ready!", "go!");
             }
@@ -228,46 +232,59 @@ class Consensus extends BaseConsensus{
 
     async downloadAccountData(account){
 
-        const accountData = await this._client.emitAsync("account/get-account", {account }, 0);
-        if (!accountData) return;
+        let accountData = await this._client.emitAsync("account/get-account", {account }, 0);
+        if (!accountData) accountData = {};
 
-        console.log("account", accountData);
+        try{
 
-        const {balances, nonce, delegate} = accountData;
 
-        if (!accountData) return false;
+            const {balances, nonce, delegate} = accountData;
 
-        const address = PandoraPay.cryptography.addressValidator.validateAddress( account );
-        const publicKeyHash = address.publicKeyHash;
+            const address = PandoraPay.cryptography.addressValidator.validateAddress( account );
+            const publicKeyHash = address.publicKeyHash;
 
-        //remove old balance
-        const balancesOld = await PandoraPay.mainChain.data.accountHashMap.getBalances(publicKeyHash);
-        const nonceOld = await PandoraPay.mainChain.data.accountHashMap.getNonce(publicKeyHash) || 0;
-        const delegateOld = await PandoraPay.mainChain.data.accountHashMap.getDelegate(publicKeyHash);
+            //remove old balance
+            const balancesOld = await PandoraPay.mainChain.data.accountHashMap.getBalances(publicKeyHash);
+            const nonceOld = await PandoraPay.mainChain.data.accountHashMap.getNonce(publicKeyHash) || 0;
+            const delegateOld = await PandoraPay.mainChain.data.accountHashMap.getDelegate(publicKeyHash);
 
-        if (balancesOld)
-            for (const currencyToken in balancesOld)
-                await PandoraPay.mainChain.data.accountHashMap.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
+            if (balancesOld)
+                for (const currencyToken in balancesOld)
+                    await PandoraPay.mainChain.data.accountHashMap.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
 
-        //update with new balance
-        for (const balance of balances)
-            await PandoraPay.mainChain.data.accountHashMap.updateBalance(publicKeyHash, balance.amount, balance.tokenCurrency,);
+            //update with new balance
+            if (balances)
+                for (const balance of balances) {
+                    await this.getTokenByHash(balance.tokenCurrency);
+                    await PandoraPay.mainChain.data.accountHashMap.updateBalance(publicKeyHash, balance.amount, balance.tokenCurrency,);
+                }
 
-        const diffNonce = nonce - nonceOld;
-        for (let i=0; i < Math.abs(diffNonce); i++)
-            await PandoraPay.mainChain.data.accountHashMap.updateNonce(publicKeyHash, diffNonce > 0 ? 1 : -1 );
+            if (nonce) {
+                const diffNonce = nonce - nonceOld;
+                for (let i = 0; i < Math.abs(diffNonce); i++)
+                    await PandoraPay.mainChain.data.accountHashMap.updateNonce(publicKeyHash, diffNonce > 0 ? 1 : -1);
+            }
 
-        const diffDelegateNonce = delegate.delegateNonce - (delegateOld ? - delegateOld.delegateNonce : 0);
-        for (let i=0; i < Math.abs(diffDelegateNonce); i++)
-            await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegatePublicKey, delegate.delegateFee );
+            if (delegate) {
+                const diffDelegateNonce = delegate.delegateNonce - (delegateOld ? -delegateOld.delegateNonce : 0);
+                for (let i = 0; i < Math.abs(diffDelegateNonce); i++)
+                    await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegatePublicKey, delegate.delegateFee);
+            }
 
-        this.emit('consensus/account-update', { account, balances, nonce, delegate  } );
+            this.emit('consensus/account-update', { account, balances, nonce, delegate  } );
+
+        }catch(err){
+            console.error(err);
+        }
+
+
 
     }
 
-    setAccounts( accounts ){
+    setAccounts( accounts, deletePrevAccounts = false ){
 
-        this._data.accounts = {};
+        if (deletePrevAccounts)
+            this._data.accounts = {};
 
         for (const account in accounts)
             this._data.accounts[account] = true;
@@ -381,15 +398,18 @@ class Consensus extends BaseConsensus{
 
     async getExchangeOffer(hash, type){
 
-        if (this._data.offers[hash]) return this._data.offers[hash];
+        if (this._data.offers[type+'_'+hash]) return this._data.offers[type+'_'+hash];
 
         const data = await this._client.emitAsync("exchange/get-offer", {offerHash: hash, offerType: type}, 0);
+
         if (!data) return;
 
         const offer = new ExchangeOffer( {
             ...PandoraPay._scope,
             chain: PandoraPay._scope.mainChain
         }, undefined, Buffer.from(data) );
+
+        offer.id = hash;
 
         this._data.offers[hash] = offer;
 
@@ -489,30 +509,52 @@ class Consensus extends BaseConsensus{
 
     async getTransactionByHash(hash, isPending = false ){
 
-        if (this._data.transactions[hash])
-            if ( (isPending && !this._data.transactions[hash].__extra.height ) || (!isPending && this._data.transactions[hash].__extra.height ) )
-                return this._data.transactions[hash];
+        if (this._data.transactions[hash]) {
+
+            const tx = await this._data.transactions[hash];
+
+            if ((isPending && !tx.__extra.height ) || (!isPending && tx.__extra.height ))
+                return tx;
+        }
+
+        let resolver;
+        this._data.transactions[hash] = new Promise( resolve => resolver = resolve );
+
+        let tx;
+        try{
+
+            const txData = await this._client.emitAsync("transactions/get-transaction", { hash }, 0  );
+            if (!txData) //disconnected
+                throw "tx fetch failed";
+
+            tx = PandoraPay._scope.mainChain.transactionsValidator.validateTx( txData.tx );
+
+            if (tx.hash().toString('hex') !== hash )
+                throw "Transaction hash is invalid";
+
+            tx.__extra = {
+                height: txData.block,
+                timestamp: txData.blockTimestamp,
+                confirmations: txData.confirmations,
+                memPoolQueued: txData.memPoolQueued,
+                memPool: txData.memPool,
+            };
 
 
-        const txData = await this._client.emitAsync("transactions/get-transaction", { hash }, 0  );
-        if (!txData) return; //disconnected
+            const data = {};
+            data[hash] = tx;
 
-        const tx = PandoraPay._scope.mainChain.transactionsValidator.validateTx( txData.tx );
+            this.emit('consensus/tx-downloaded', {transactions: data} );
 
-        tx.__extra = {
-            height: txData.block,
-            timestamp: txData.blockTimestamp,
-            confirmations: txData.confirmations,
-            memPoolQueued: txData.memPoolQueued,
-            memPool: txData.memPool,
-        };
+        }catch(err){
+            console.error(err);
+        }finally{
 
-        this._data.transactions[hash] = tx;
+            resolver(tx);
+            this._data.transactions[hash] = tx;
 
-        const data = {};
-        data[hash] = tx;
+        }
 
-        this.emit('consensus/tx-downloaded', {transactions: data} );
 
         return tx;
     }
@@ -521,6 +563,42 @@ class Consensus extends BaseConsensus{
 
     }
 
+    async getTokenByHash(hash){
+
+        if (this._data.tokens[hash])
+            return this._data.tokens[hash];
+
+        let resolver;
+        this._data.tokens[hash] = new Promise( resolve => resolver = resolve);
+
+        let token;
+        try{
+
+            const tokenData = await this._client.emitAsync("token/get-token", { token: hash }, 0  );
+            if (!tokenData)
+                throw "token fetch failed";
+
+            token = new TokenHashMapData({
+                ...PandoraPay._scope,
+                chain: PandoraPay._scope.mainChain
+            }, undefined, tokenData );
+
+            await PandoraPay.mainChain.data.tokenHashMap.addMap( hash, token );
+
+            const data = {};
+            data[hash] = token;
+            this.emit('consensus/tokens-downloaded', {tokens: data} );
+
+        }catch(err){
+            console.error(err);
+        }finally{
+            resolver(token);
+            this._data.tokens[hash] = token;
+        }
+
+        return token;
+
+    }
 
     get starting(){
         return Math.max(0 , this._starting || this._data.end - 15);

@@ -86,7 +86,8 @@ export default {
 
             try{
 
-                if (this.publicKey.length !== 66) throw {message: "Public Keys are 66 bytes"};
+                if (this.publicKey.length !== 66 ) throw {message: "Public Key needs to be 66 bytes"};
+                if ( !blockchain.helpers.StringHelper.isHex(this.publicKey) ) throw {message: "Public Key needs to be hex"};
 
                 const address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKey( this.publicKey );
                 if (!address) throw {message: "Invalid address"};
@@ -94,7 +95,7 @@ export default {
                 return '';
 
             }catch(err){
-                return err.message;
+                return err;
             }
         },
 
@@ -103,6 +104,7 @@ export default {
             try{
 
                 if (this.publicKey.length !== 66) throw {message: "Public Keys are 66 bytes"};
+                if ( !blockchain.helpers.StringHelper.isHex(this.publicKey) ) throw {message: "Public Key needs to be hex"};
 
                 const address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKey( this.publicKey );
                 if (!address) throw {message: "Invalid address"};
