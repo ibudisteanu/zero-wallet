@@ -35,7 +35,7 @@
                                     <option v-for="(balance, token) in balances"
                                             :key="`send-money-${token}`"
                                             :value="token">
-                                        {{token}}
+                                        {{$store.state.tokens.list[token].name}}
                                     </option>
                                 </select>
                             </div>
@@ -55,7 +55,7 @@
                     </div>
 
                     <div class="pd-top-20">
-                        <loading-button text="Send Money Publicly" @submit="handleSendMoney" icon="fa fa-comments"  :disabled="!destinationIdenticon  || !!validation" />
+                        <loading-button text="Send Money Publicly" @submit="handleSendMoney" icon="fa fa-money-bill-alt"  :disabled="!destinationIdenticon  || !!validation" />
                     </div>
 
                     <qr-code-scanner ref="refQRCodeScannerModal"/>

@@ -12,6 +12,10 @@
 
                 <show-tokens-info :tokens="tokens" />
 
+                <div class="centered" v-if="next">
+                    <loading-button class="button-width-inherit" @submit="handleViewMore" icon="fa fa-cloud-download-alt" text="View more..."/>
+                </div>
+
             </div>
         </div>
     </layout>
@@ -23,10 +27,11 @@
 import Consensus from "src/consensus/consensus"
 import Layout from "src/components/layout/layout"
 import ShowTokensInfo from "src/components/explorer/show-tokens-info.vue"
+import LoadingButton from "src/components/utils/loading-button.vue"
 
 export default {
 
-    components: { Layout, ShowTokensInfo },
+    components: { Layout, ShowTokensInfo, LoadingButton },
 
     data(){
         return {
@@ -38,6 +43,10 @@ export default {
 
         count(){
             return this.$store.state.tokens.count;
+        },
+
+        next(){
+            return this.$store.state.tokens.next;
         },
 
         tokens(){
@@ -52,6 +61,15 @@ export default {
             await Consensus.initPromise;
             await Consensus.startDownloadingTokens();
         },
+
+        async handleViewMore(resolve){
+            try {
+                await Consensus._downloadTokensSpecific({index: this.next});
+            }finally{
+                resolve(true);
+            }
+        }
+
 
     },
 
