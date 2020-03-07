@@ -12,6 +12,7 @@ import RemovePasswordPage from "src/pages/encryption/remove-password.page"
 import BlockchainExplorerPage from "src/pages/explorer/blockchain-explorer.page"
 import BlockExplorerPage from "src/pages/explorer/block-explorer.page"
 import TransactionExplorerPage from "src/pages/explorer/transaction-explorer.page"
+import TokenExplorerPage from "src/pages/explorer/token-explorer.page.vue"
 import PendingTransactionsExplorerPage from "src/pages/explorer/pending-transactions-explorer.page"
 import ExchangeBuyPage from "src/pages/exchange/buy/exchange-buy.page"
 import ExchangeBuyAddOfferPage from "src/pages/exchange/buy/exchange-buy-add-offer.page"
@@ -56,6 +57,7 @@ const routes = [
     {path: '/explorer/block/height/:height', component: BlockExplorerPage },
     {path: '/explorer/block/hash/:hash', component: BlockExplorerPage },
     {path: '/explorer/tx/hash/:hash', component: TransactionExplorerPage },
+    {path: '/explorer/token/:hash', component: TokenExplorerPage },
     {path: '/explorer', component: BlockchainExplorerPage },
     {path: '/explorer/pending-transactions', component: PendingTransactionsExplorerPage },
 
