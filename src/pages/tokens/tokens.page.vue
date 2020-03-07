@@ -10,6 +10,7 @@
                     {{error}}
                 </span>
 
+                <show-tokens-info :tokens="tokens" />
 
             </div>
         </div>
@@ -21,10 +22,11 @@
 
 import Consensus from "src/consensus/consensus"
 import Layout from "src/components/layout/layout"
+import ShowTokensInfo from "src/components/explorer/show-tokens-info.vue"
 
 export default {
 
-    components: { Layout },
+    components: { Layout, ShowTokensInfo },
 
     data(){
         return {
@@ -36,7 +38,12 @@ export default {
 
         count(){
             return this.$store.state.tokens.count;
-        }
+        },
+
+        tokens(){
+            return this.$store.state.tokens.list;
+        },
+
     },
 
     methods: {

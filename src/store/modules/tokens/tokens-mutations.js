@@ -25,4 +25,10 @@ export default {
 
     },
 
+    setTokensIds( context, { tokens, next }){
+
+        context.next = next;
+
+    }
+
 }

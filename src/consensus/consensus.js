@@ -390,7 +390,7 @@ class Consensus extends BaseConsensus{
 
     async _downloadExchangeOffersSpecific({type, index, limit}){
 
-        const offers = await this._client.emitAsync("exchange/content-ids", {offerType: type}, 0);
+        const offers = await this._client.emitAsync("exchange/content-ids", {offerType: type, index}, 0);
         if (!offers) return;
 
         this.emit('consensus/exchange-offers-ids', {type, offers: offers.out, next: offers.next, clear: index === undefined });
@@ -439,12 +439,24 @@ class Consensus extends BaseConsensus{
 
     async downloadTokens({index}){
 
-        const tokensCount = await this._client.emitAsync("tokens/count", 0);
+        const tokensCount = await this._client.emitAsync("tokens/content-count", 0);
         if (!tokensCount) return;
 
         this.emit('consensus/tokens-count', { count: tokensCount});
 
-        //await this._downloadExchangeOffersSpecific({type, index});
+        await this._downloadTokensSpecific({index});
+
+    }
+
+    async _downloadTokensSpecific({index, limit}){
+
+        const tokens = await this._client.emitAsync("tokens/content-ids", { index, limit}, 0);
+        if (!tokens) return;
+
+        this.emit('consensus/tokens-ids', { tokens: tokens.out, next: tokens.next });
+
+        for (const token of tokens.out)
+            await this.getTokenByHash(token);
 
     }
 
@@ -496,7 +508,6 @@ class Consensus extends BaseConsensus{
         await this._includeBlock(block);
 
         return block;
-
 
     }
 

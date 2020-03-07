@@ -106,6 +106,8 @@ export default {
 
         Consensus.on("consensus/tx-deleted", data => this.$store.commit('deleteTransactions', data ) );
 
+        Consensus.on("consensus/tokens-ids", data => this.$store.commit('setTokensIds', data  ) );
+
         Consensus.on("consensus/tokens-count", data => this.$store.commit('setTokensCount', data  ) );
 
         Consensus.on("consensus/tokens-downloaded", data => this.$store.commit('setTokens', data  ) );
