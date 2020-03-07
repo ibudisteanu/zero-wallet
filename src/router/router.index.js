@@ -19,6 +19,7 @@ import ExchangeBuyAddOfferPage from "src/pages/exchange/buy/exchange-buy-add-off
 import ExchangeSellAddOfferPage from "src/pages/exchange/sell/exchange-sell-add-offer.page"
 import ExchangeSellPage from "src/pages/exchange/sell/exchange-sell.page"
 import ExchangePortfolioPage from "src/pages/exchange/portfolio/exchange-portfolio.page"
+import TokensPage from "src/pages/tokens/tokens.page.vue"
 import ChatPage from "src/pages/chat/chat.page"
 import ChatConversationPage from "src/pages/chat/chat-conversation.page"
 import ChatConversationStartPage from "src/pages/chat/chat-conversation-start.page"
@@ -57,7 +58,6 @@ const routes = [
     {path: '/explorer/block/height/:height', component: BlockExplorerPage },
     {path: '/explorer/block/hash/:hash', component: BlockExplorerPage },
     {path: '/explorer/tx/hash/:hash', component: TransactionExplorerPage },
-    {path: '/explorer/token/:hash', component: TokenExplorerPage },
     {path: '/explorer', component: BlockchainExplorerPage },
     {path: '/explorer/pending-transactions', component: PendingTransactionsExplorerPage },
 
@@ -66,6 +66,9 @@ const routes = [
 
     {path: '/exchange/sell', component: ExchangeSellPage },
     {path: '/exchange/sell/add-offer', component: ExchangeSellAddOfferPage },
+
+    {path: '/tokens', component: TokensPage},
+    {path: '/tokens/token/:hash', component: TokenExplorerPage },
 
     {path: '/exchange/portfolio', component: ExchangePortfolioPage },
 

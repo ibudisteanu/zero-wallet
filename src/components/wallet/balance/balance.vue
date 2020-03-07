@@ -19,7 +19,7 @@
                         <span class="currency thick">
                             {{getToken(token).name}}
                         </span>
-                        <router-link :to="`/explorer/token/${token}`">
+                        <router-link :to="`/tokens/token/${token}`">
                             <i class="fa fa-info"></i>
                         </router-link>
                         <br/>

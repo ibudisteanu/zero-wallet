@@ -19,4 +19,10 @@ export default {
         context.list = list;
     },
 
+    setTokensCount(context, { count }) {
+
+        context.count = count;
+
+    },
+
 }

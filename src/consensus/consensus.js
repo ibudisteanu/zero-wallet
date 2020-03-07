@@ -364,6 +364,10 @@ class Consensus extends BaseConsensus{
 
     }
 
+    /**
+     * EXCHANGE
+     */
+
     async downloadExchangeOffersAll(){
 
         if (!this._downloadExchangeOffersEnabled) return;
@@ -428,6 +432,36 @@ class Consensus extends BaseConsensus{
     async stopDownloadingExchangeOffers(){
         this._downloadExchangeOffersEnabled = false;
     }
+
+    /**
+     * TOKENS
+     */
+
+    async downloadTokens({index}){
+
+        const tokensCount = await this._client.emitAsync("tokens/count", 0);
+        if (!tokensCount) return;
+
+        this.emit('consensus/tokens-count', { count: tokensCount});
+
+        //await this._downloadExchangeOffersSpecific({type, index});
+
+    }
+
+    async startDownloadingTokens(){
+        if (this._downloadTokensEnabled ) return;
+
+        this._downloadTokensEnabled = true;
+        return this.downloadTokens({index: 0});
+    }
+
+    async stopDownloadingTokens(){
+        this._downloadTokensEnabled = false;
+    }
+
+    /**
+     * PENDING TRANSACTIONS
+     */
 
     async startDownloadPendingTransactions(){
 
@@ -574,7 +608,7 @@ class Consensus extends BaseConsensus{
         let token;
         try{
 
-            const tokenData = await this._client.emitAsync("token/get-token", { token: hash }, 0  );
+            const tokenData = await this._client.emitAsync("tokens/get-token", { token: hash }, 0  );
             if (!tokenData)
                 throw "token fetch failed";
 
