@@ -49,6 +49,14 @@
                             </div>
                         </div>
 
+                        <div class="btn">
+                            <router-link to="/delegate-stake">
+                                <div class="btn-round" v-tooltip.bottom="'Delegate stake'" >
+                                    <i class="fa fa-piggy-bank"></i>
+                                </div>
+                            </router-link>
+                        </div>
+
 
                     </div>
 

@@ -35,7 +35,7 @@
                                     <option v-for="(balance, token) in balances"
                                             :key="`send-money-${token}`"
                                             :value="token">
-                                        {{$store.state.tokens.list[token].name}}
+                                        {{getTokenName(token)}}
                                     </option>
                                 </select>
                             </div>
@@ -45,7 +45,7 @@
                     <div class="fee-row">
                         <span class="disabled">Fee</span>
                         <input type="number" v-model="fee" min="0">
-                        <span class="disabled">{{tokenCurrency}}</span>
+                        <span class="disabled">{{getTokenName(tokenCurrency)}}</span>
                     </div>
 
 
@@ -154,6 +154,12 @@ export default {
             this.$refs.refQRCodeScannerModal.showModal();
         },
 
+        getTokenName(token){
+
+            if (!this.$store.state.tokens.list[token]) return '';
+            return this.$store.state.tokens.list[token].name;
+        }
+
     },
 
     computed:{
@@ -195,10 +201,6 @@ export default {
             }
 
         },
-
-        availableTokens(){
-
-        }
 
     },
 

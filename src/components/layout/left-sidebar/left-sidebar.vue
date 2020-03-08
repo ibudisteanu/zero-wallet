@@ -27,11 +27,6 @@
                 <span>Account</span>
             </router-link>
 
-            <router-link to="/delegate-stake" :class="`${route === '/delegate-stake' ? 'selected' : ''}`"  >
-                <i class="fa fa-piggy-bank"></i>
-                <span>Delegate</span>
-            </router-link>
-
             <router-link to="/set-password" v-if="!encrypted" :class="`${route === '/set-password' ? 'selected' : ''}`"  >
                 <i class="fa fa-unlock-alt"></i>
                 <span>Encrypt</span>
