@@ -14,7 +14,7 @@
              :key="`show-token-${key}`">
 
             <span class="col-xs-4 col-sm-3 col-md-3 wordwrap">
-                <account-identicon v-if="key" :publicKeyHash="key" :size="20" :outer-size="5"  />
+                <account-identicon v-if="key && key.length === 40" :publicKeyHash="key" :size="20" :outer-size="5"  />
                 {{token.name}}
             </span>
 
