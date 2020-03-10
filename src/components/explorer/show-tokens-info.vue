@@ -14,7 +14,7 @@
              :key="`show-token-${key}`">
 
             <span class="col-xs-4 col-sm-3 col-md-3 wordwrap">
-                <account-identicon  :publicKeyHash="key" :size="20" :outer-size="5"  />
+                <account-identicon v-if="key" :publicKeyHash="key" :size="20" :outer-size="5"  />
                 {{token.name}}
             </span>
 
@@ -28,6 +28,7 @@
 
             <span class="hidden-xs hidden-sm col-md-2 wordwrap">
                 {{token.maxSupply / Math.pow(10, token.decimalSeparator) }}
+
             </span>
 
             <span class="hidden-xs col-sm-2 col-md-2 wordwrap">

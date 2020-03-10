@@ -377,7 +377,7 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async downloadExchangeOffers({type, index}){
+    async downloadExchangeOffers({type, index = 0}){
 
         const offersCount = await this._client.emitAsync("exchange/content-count", { offerType: type, }, 0);
         if (!offersCount) return;
@@ -390,36 +390,32 @@ class Consensus extends BaseConsensus{
 
     async _downloadExchangeOffersSpecific({type, index, limit}){
 
-        const offers = await this._client.emitAsync("exchange/content-ids", {offerType: type, index}, 0);
-        if (!offers) return;
+        const offersData = await this._client.emitAsync("exchange/content", {offerType: type, index, type: 'buffer' }, 0);
+        if (!offersData) return;
 
-        this.emit('consensus/exchange-offers-ids', {type, offers: offers.out, next: offers.next, clear: index === undefined });
+        const offers = [];
+        const offersIds = {};
 
-        for (const hash in offers.out)
-            await this.getExchangeOffer(hash, type);
+        for (let i=0; i < offersData.out.length; i++ ){
 
-    }
+            const data = offersData.out[i];
+            const offer = new ExchangeOffer( {
+                ...PandoraPay._scope,
+                chain: PandoraPay._scope.mainChain
+            }, undefined, Buffer.from(data) );
 
-    async getExchangeOffer(hash, type){
+            offer.id = offer.publicKeyHash.toString('hex');
 
-        if (this._data.offers[type+'_'+hash]) return this._data.offers[type+'_'+hash];
+            offers.push(offer);
+            offersIds[offer.id] = offer;
 
-        const data = await this._client.emitAsync("exchange/get-offer", {offerHash: hash, offerType: type}, 0);
+        }
 
-        if (!data) return;
-
-        const offer = new ExchangeOffer( {
-            ...PandoraPay._scope,
-            chain: PandoraPay._scope.mainChain
-        }, undefined, Buffer.from(data) );
-
-        offer.id = hash;
-
-        this._data.offers[hash] = offer;
-
-        this.emit('consensus/exchange-offers', {type, offers: [offer] });
+        this.emit('consensus/exchange-offers-ids', {type, offers: offersIds, next: offers.next, clear: index === 0 });
+        this.emit('consensus/exchange-offers', {type, offers: offers });
 
     }
+
 
     async startDownloadingExchangeOffers(){
 

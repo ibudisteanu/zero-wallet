@@ -19,21 +19,31 @@
 
         <show-exchange-offers :offers="offers" />
 
+        <div class="centered" v-if="next">
+            <loading-button class="button-width-inherit" @submit="handleViewMore" icon="fa fa-cloud-download-alt" text="View more..."/>
+        </div>
+
     </div>
 </template>
 
 <script>
 import Consensus from "src/consensus/consensus"
 import ShowExchangeOffers from "src/components/explorer/show-exchange-offers"
+import LoadingButton from "src/components/utils/loading-button.vue"
+
 export default {
 
-    components: {ShowExchangeOffers},
+    components: {ShowExchangeOffers, LoadingButton},
 
     props:{
         type: 0,
     },
 
     computed:{
+
+        next(){
+            return this.$store.state.exchange[  this.type === 0 ? 'buy' : 'sell' ].next;
+        },
 
         count(){
             return this.$store.state.exchange[  this.type === 0 ? 'buy' : 'sell' ].count || 0;
@@ -65,6 +75,16 @@ export default {
             await Consensus.initPromise;
             await Consensus.startDownloadingExchangeOffers();
         },
+
+        async handleViewMore(resolve){
+
+            try{
+                await Consensus._downloadExchangeOffersSpecific( { type: this.type, index: next } )
+            }finally{
+                resolve(true);
+            }
+
+        }
 
     },
 
