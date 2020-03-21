@@ -97,8 +97,10 @@ export default {
 
                 if (typeof challenge === "string") challenge = Buffer.from(challenge, "hex");
 
+                console.log("this.delegate", this.delegate);
+
                 const publicKey = Buffer.from( this.address.publicKey, "hex");
-                const delegatePublicKey = Buffer.from( this.delegate.delegatePublicKey, "hex");
+                let delegatePublicKey = Buffer.from( this.delegate.delegatePublicKey, "hex");
 
                 //getting private key
                 const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false, this.walletPassword );
@@ -120,15 +122,21 @@ export default {
 
                 console.log( {publicKey, signature, delegatePublicKey, delegatePrivateKey} );
 
-                const out = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/import-wallet-stake', {publicKey: publicKey.toString("hex"), signature: signature.toString("hex"), delegatePublicKey: delegatePublicKey.toString("hex"), delegatePrivateKey: delegatePrivateKey ? delegatePrivateKey.toString('hex') : undefined});
+                const out = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/import-wallet-stake', {
+                    publicKey: publicKey.toString("hex"),
+                    signature: signature.toString("hex"),
+                    delegatePublicKey: delegatePublicKey.toString('hex'),
+                    delegatePrivateKey: delegatePrivateKey ? delegatePrivateKey.toString('hex') : undefined
+                });
+
                 if (!out) throw "An error has occurred";
 
                 if ( !out.result && out.error ){
 
-                    if (out.error === "You need to set as delegate public key" && kernel.helpers.StringHelper.isHex(out.errorData) )
+                    if (out.error === "Your stake delegate's public key is not matching with the private key" && kernel.helpers.StringHelper.isHex(out.errorData) )
                         throw out.error + " " + out.errorData;
 
-                    if (out.error === "You need to set as delegate public key or the node is not sync" && kernel.helpers.StringHelper.isHex(out.errorData) )
+                    if (out.error === "You need to delegate your stake to the following public key" && kernel.helpers.StringHelper.isHex(out.errorData) )
                         throw out.error + " " + out.errorData;
 
                     throw out.error;
@@ -145,6 +153,7 @@ export default {
                 console.log("out", out);
 
             }catch(err){
+                console.error(err);
                 this.error = err;
             }finally{
                 resolve(true);

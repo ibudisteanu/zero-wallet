@@ -134,11 +134,6 @@ export default {
                     address: this.address.address,
                     fee: 1,
                     nonce,
-                    delegateOld:{
-                        delegateNonce: this.delegate ? this.delegate.delegateNonce: 0,
-                        delegatePublicKey: this.delegate ? this.delegate.delegatePublicKey : Buffer.alloc(33).toString("hex"),
-                        delegateFee: this.delegate ? this.delegate.delegateFee: 0,
-                    },
                     delegate:{
                         delegateNonce: delegateNonce,
                         delegatePublicKey: this.delegatePublicKey,
