@@ -68,9 +68,14 @@ export default {
 
         async createAccount(){
 
-            this.$store.commit('setIsLoading', true);
+            const out = await this.$store.state.page.refAccountTypeModal.showModal();
+            console.log(out);
+
+            return;
 
             try{
+
+                this.$store.state.page.refLoadingModal.showModal();
 
                 const out = await PandoraPay.wallet.manager.createNewAddress();
                 if (out)
@@ -82,9 +87,9 @@ export default {
 
             }catch(err){
 
+            }finally{
+                this.$store.state.page.refLoadingModal.closeModal();
             }
-
-            this.$store.commit('setIsLoading', false);
 
         },
 

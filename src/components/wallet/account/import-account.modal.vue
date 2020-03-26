@@ -150,7 +150,7 @@ export default {
 
             try{
 
-                this.$store.commit('setIsLoading', true);
+                this.$store.state.page.refLoadingModal.showModal();
 
                 const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
                 if (!checkPassword)
@@ -182,7 +182,7 @@ export default {
                 });
 
             }finally{
-                this.$store.commit('setIsLoading', false);
+                this.$store.state.page.refLoadingModal.closeModal();
                 resolve(true);
             }
 

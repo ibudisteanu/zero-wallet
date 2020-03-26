@@ -50,7 +50,7 @@ export default {
 
                 this.error = '';
 
-                this.$store.commit('setIsLoading', true);
+                this.$store.state.page.refLoadingModal.showModal();
 
 
                 const out = await PandoraPay.wallet.encryption.removeEncryptionWallet( this.password );
@@ -73,7 +73,7 @@ export default {
                 else
                     this.error = err;
             }finally{
-                this.$store.commit('setIsLoading', false);
+                this.$store.state.page.refLoadingModal.closeModal();
                 resolve(true);
             }
 

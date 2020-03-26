@@ -164,7 +164,7 @@ export default {
             const confirmation = confirm( `Are you sure you want to Delete ${this.address.name} ${ this.address.address } `);
             if (!confirmation) return;
 
-            this.$store.commit('setIsLoading', true);
+            this.$store.state.page.refLoadingModal.showModal();
 
 
             try{
@@ -179,10 +179,10 @@ export default {
 
             }catch(err){
 
+            }finally{
+                this.$store.state.page.refLoadingModal.closeModal();
             }
 
-
-            this.$store.commit('setIsLoading', false);
 
         },
 

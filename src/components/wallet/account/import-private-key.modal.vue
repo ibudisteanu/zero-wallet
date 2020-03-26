@@ -70,7 +70,7 @@ export default {
 
                 if (this.privateKey.length !== 64) throw {message: "Private key must be 64 hex numbers"};
 
-                this.$store.commit('setIsLoading', true);
+                this.$store.state.page.refLoadingModal.showModal();
 
                 const out = await PandoraPay.wallet.manager.importPrivateKeyAddress( this.privateKey );
 
@@ -99,7 +99,7 @@ export default {
 
             }finally{
 
-                this.$store.commit('setIsLoading', false);
+                this.$store.state.page.refLoadingModal.closeModal();
                 resolve(true);
 
             }

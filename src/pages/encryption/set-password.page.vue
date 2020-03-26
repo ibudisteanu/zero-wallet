@@ -54,7 +54,7 @@ export default {
 
             try{
 
-                this.$store.commit('setIsLoading', true);
+                this.$store.state.page.refLoadingModal.showModal();
 
                 const promise = new Promise((resolve)=>{
 
@@ -100,7 +100,7 @@ export default {
 
 
             }finally{
-                this.$store.commit('setIsLoading', false);
+                this.$store.state.page.refLoadingModal.closeModal();
                 resolve(true);
             }
 

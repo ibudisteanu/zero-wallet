@@ -4,6 +4,9 @@ export default {
 
     state: {
 
+        refLoadingModal: null,
+        refAccountTypeModal: null,
+
     },
 
     mutations,

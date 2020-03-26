@@ -12,7 +12,9 @@
 
             <slot/>
 
-            <loading-modal />
+            <loading-modal ref="refLoadingModal" />
+
+            <account-type ref="refAccountTypeModal" />
 
             <layout-footer> </layout-footer>
 
@@ -29,12 +31,13 @@ require('src/assets/grid.css');
 import LayoutHeader from "./header/layout-header.vue";
 import LayoutFooter from "./footer/layout-footer.vue";
 import LoadingModal from "./modals/loading.modal"
+import AccountType from "./modals/account-type.modal"
 import LeftSidebar from "./left-sidebar/left-sidebar"
 import WarningBar from "./header/warning-bar"
 
 export default {
 
-    components: { LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar},
+    components: {AccountType, LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar},
 
     data(){
         return {
@@ -50,6 +53,11 @@ export default {
         }
 
     },
+
+    mounted(){
+        this.$store.commit('setLoadingModal', this.$refs.refLoadingModal);
+        this.$store.commit('setAccountTypeModal', this.$refs.refAccountTypeModal);
+    }
 
 }
 

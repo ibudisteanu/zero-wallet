@@ -32,6 +32,8 @@ export default{
     data: () => {
         return {
             open: false,
+            promise: null,
+            resolver: null,
         }
     },
 
@@ -47,11 +49,12 @@ export default{
 
         closeModal(e){
 
-            if (!this.closeButton) return;
+            if ( !this.closeButton ) return;
 
-            if( e ) e.stopPropagation();
+            if ( e ) e.stopPropagation();
 
             this.open = false;
+            this.resolver(this.data);
 
             this.$emit('closed');
 
@@ -59,10 +62,16 @@ export default{
 
         showModal(e){
 
-            if (e ) e.stopPropagation();
+            if ( e ) e.stopPropagation();
+
+            this.promise = new Promise((resolve)=>{
+                this.resolver = resolve;
+            });
 
             this.open = true;
             this.$emit('opened');
+
+            return this.promise;
         },
 
     }
