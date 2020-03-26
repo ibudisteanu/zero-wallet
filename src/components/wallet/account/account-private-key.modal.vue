@@ -94,7 +94,7 @@ export default {
                 const address = await PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address );
                 if (!address) throw {message: "Address not found"};
 
-                const privateKey = address.decryptPrivateKey();
+                const privateKey = address.keys.decryptPrivateKey();
                 this.privateKey = privateKey.toString("hex");
 
             }catch(err){

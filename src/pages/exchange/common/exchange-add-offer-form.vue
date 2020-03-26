@@ -218,9 +218,9 @@ export default {
                 if (paymentsSelectedArray.length < 1) throw {message: "No payments selected"};
 
                 const data = {
-                    privateKey: walletAddress.decryptPrivateKey(), //for signing
+                    privateKey: walletAddress.keys.decryptPrivateKey(), //for signing
 
-                    publicKey: walletAddress.decryptPublicKey(),
+                    publicKey: walletAddress.keys.decryptPublicKey(),
                     type: this.type,
                     title: this.title,
                     description: this.description,

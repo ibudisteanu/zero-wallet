@@ -49,12 +49,10 @@ export default{
 
         closeModal(e){
 
-            if ( !this.closeButton ) return;
-
             if ( e ) e.stopPropagation();
 
             this.open = false;
-            this.resolver(this.data);
+            this.resolver(this);
 
             this.$emit('closed');
 

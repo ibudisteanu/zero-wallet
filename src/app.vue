@@ -207,7 +207,8 @@ export default {
                     addresses[address].publicKeyHash = publicAddress.publicKeyHash.toString("hex");
                 }else
                 if (type === 1){ //zether
-                    addresses[address].zetherRegistration = wallet.addresses[i].keys.decryptZetherRegistration();
+                    const registration = wallet.addresses[i].keys.decryptRegistration();
+                    addresses[address].registration = registration.c.toString('hex')+registration.s.toString('hex');
 
                     const zetherPublicAddress =  wallet.addresses[i].keys.decryptPublicAddress(true);
                     addresses[address].addressRegistration = zetherPublicAddress.calculateAddress();

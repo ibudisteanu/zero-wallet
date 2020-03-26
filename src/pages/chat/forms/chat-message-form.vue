@@ -181,7 +181,7 @@ export default {
 
                 const senderWalletAddress = PandoraPay.wallet.manager.getWalletAddressByAddress( this.senderAddress, false, this.password );
 
-                encryptedMessage.signEncryptedMessage( senderWalletAddress.decryptPrivateKey() );
+                encryptedMessage.signEncryptedMessage( senderWalletAddress.keys.decryptPrivateKey() );
 
                 const out = await Chat._client.emitAsync("encrypted-chat/new-message", { encryptedMessage: encryptedMessage.toBuffer(), captcha: captcha }, 0);
 

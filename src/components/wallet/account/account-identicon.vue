@@ -1,6 +1,6 @@
 <template>
 
-    <div class="identicon outer" :style="`padding: ${outerSize}px; background-color: ${outerColor}`">
+    <div class="identicon outer" :style="`padding: ${outerSize}px; background-color: ${type === 0 ? outerColor : outerZetherColor}`">
         <img v-if="addressIdenticon" :src="addressIdenticon" class="identicon" :style="`width: ${size}px`" >
     </div>
 
@@ -13,11 +13,13 @@ export default {
         size: 40,
         outerSize: 34,
         outerColor: {default: "white;"},
+        outerZetherColor: {default: "antiquewhite;"},
         identicon: "",
 
         address: {default: ""},
         publicKey: null,
         publicKeyHash: null,
+        type: {default: 0},
 
     },
 

@@ -130,7 +130,7 @@ export default {
             const senderAddress = await PandoraPay.wallet.manager.getWalletAddressByAddress( encryptedMessage.senderAddress );
             if (senderAddress) {
 
-                const data = await encryptedMessage.decryptData(encryptedMessage.senderEncryptedData, senderAddress.decryptPrivateKey() );
+                const data = await encryptedMessage.decryptData(encryptedMessage.senderEncryptedData, senderAddress.keys.decryptPrivateKey() );
 
                 const senderData = await PandoraPay.cryptography.chatMessageValidator.validateChatMessage(data);
                 if (senderData)
@@ -146,7 +146,7 @@ export default {
 
             const receiverAddress = await PandoraPay.wallet.manager.getWalletAddressByAddress( encryptedMessage.receiverAddress );
             if (receiverAddress) {
-                const data = await encryptedMessage.decryptData(encryptedMessage.receiverEncryptedData, receiverAddress.decryptPrivateKey() );
+                const data = await encryptedMessage.decryptData(encryptedMessage.receiverEncryptedData, receiverAddress.keys.decryptPrivateKey() );
 
                 const receiverData = await PandoraPay.cryptography.chatMessageValidator.validateChatMessage(data);
                 if (receiverData)

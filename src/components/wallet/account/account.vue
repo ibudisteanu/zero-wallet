@@ -1,7 +1,7 @@
 <template>
     <div class="account">
 
-        <account-identicon  :identicon="address.identicon" :size="60" :outer-size="20" />
+        <account-identicon  :identicon="address.identicon" :size="60" :outer-size="20" :type="address.type" />
         <div class="pd-top-10">
             <span class="wordwrap ">{{address.name}}</span> <br/>
             <span>{{type}}</span> <br/>

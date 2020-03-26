@@ -10,7 +10,7 @@
                 :key="`header-account-dropdown-li-${index}`"
                 @click="setMainAddress(address.address)" >
 
-                <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" />
+                <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" :type="address.type" />
 
                 <div>
                     <span>{{address.name}}</span> <span class="disabled right-float" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : ''}}</span><br/>
@@ -68,16 +68,15 @@ export default {
 
         async createAccount(){
 
-            const out = await this.$store.state.page.refAccountTypeModal.showModal();
-            console.log(out);
+            const account = await this.$store.state.page.refAccountTypeModal.showModal();
 
-            return;
+            if (account.selectedType === -1) return;
 
             try{
 
                 this.$store.state.page.refLoadingModal.showModal();
 
-                const out = await PandoraPay.wallet.manager.createNewAddress();
+                const out = await PandoraPay.wallet.manager.createNewAddress(account.selectedType);
                 if (out)
                     this.$notify({
                         type: 'success',
@@ -86,7 +85,7 @@ export default {
                     });
 
             }catch(err){
-
+                console.error(err);
             }finally{
                 this.$store.state.page.refLoadingModal.closeModal();
             }

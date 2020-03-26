@@ -11,10 +11,16 @@ body{
     background-color: #fafafa;
 }
 
-a{
+.link, a:link,a:visited {
+    color: #0000A0;
     text-decoration: none;
+    target-new: none;
 }
-
+.link:hover, a:hover {
+    color: #0000FF;
+    text-decoration: none;
+    target-new: none;
+}
 
 
 .boxed-background{

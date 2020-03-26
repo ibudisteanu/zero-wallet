@@ -35,20 +35,11 @@
                     <template v-if="address.type === 1">
 
                         <span class="disabled wordwrap pd-top-20">
-                            <span v-if="!showZetherPublicKey" class="pointer" @click="showZetherPublicKey = true">
-                                View Zether Public Key
-                            </span>
-                            <span v-else >
-                                Zether Public Key {{address.zetherPublicKey}} <i class="fa fa-copy pointer"  @click="copyAddress(address.zetherPublicKey)"/>
-                            </span>
-                        </span>
-
-                            <span class="disabled wordwrap pd-top-20">
                             <span v-if="!showZetherRegistration" class="pointer" @click="showZetherRegistration = true">
                                 View Zether Registration
                             </span>
                             <span v-else >
-                                Zether Registration {{address.zetherRegistration}} <i class="fa fa-copy pointer"  @click="copyAddress(address.zetherRegistration)"/>
+                                Zether Registration {{address.registration}} <i class="fa fa-copy pointer"  @click="copyAddress(address.registration)"/>
                             </span>
                         </span>
 
@@ -74,7 +65,7 @@
                             </div>
                         </div>
 
-                        <div class="btn">
+                        <div class="btn" v-if="address.type === 0">
                             <router-link to="/delegate-stake">
                                 <div class="btn-round" v-tooltip.bottom="'Delegate stake'" >
                                     <i class="fa fa-piggy-bank"></i>
