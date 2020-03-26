@@ -183,8 +183,10 @@ export default {
             const addresses = {};
             for (let i=0; i < wallet.addresses.length; i++ ){
 
-                const publicAddress =  wallet.addresses[i].decryptPublicAddress();
-                const publicKey = wallet.addresses[i].decryptPublicKey();
+                const type = wallet.addresses[i].type;
+
+                const publicAddress =  wallet.addresses[i].keys.decryptPublicAddress();
+                const publicKey = wallet.addresses[i].keys.decryptPublicKey();
 
                 const mnemonicSequenceIndex =  wallet.addresses[i].decryptMonemonicSequenceIndex();
                 const mnemonicSequenceIndexValue = Number.parseInt( mnemonicSequenceIndex.toString("hex"), 16);
@@ -192,14 +194,25 @@ export default {
                 const address = publicAddress.calculateAddress();
 
                 addresses[address] = {
-                    address: address,
+                    address,
+                    type: type,
                     publicKey: publicKey.toString("hex"),
-                    publicKeyHash: publicAddress.publicKeyHash.toString("hex"),
                     name: wallet.addresses[i].name,
                     mnemonicSequenceIndex: mnemonicSequenceIndexValue ,
                     identicon: publicAddress.identiconImg(),
                     loaded: false,
                 };
+
+                if (type === 0){ //transparent
+                    addresses[address].publicKeyHash = publicAddress.publicKeyHash.toString("hex");
+                }else
+                if (type === 1){ //zether
+                    addresses[address].zetherRegistration = wallet.addresses[i].keys.decryptZetherRegistration();
+
+                    const zetherPublicAddress =  wallet.addresses[i].keys.decryptPublicAddress(true);
+                    addresses[address].addressRegistration = zetherPublicAddress.calculateAddress();
+
+                }
 
                 if (i === 0)
                     firstAddress = address;

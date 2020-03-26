@@ -8,7 +8,7 @@
 
                 <div class="account-info" v-if="address">
 
-                    <account :identicon="address.identicon" :name="address.name" :address="address.address" />
+                    <account :address="address" />
 
                     <loading-spinner v-if="!address.loaded" />
 

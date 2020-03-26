@@ -8,8 +8,7 @@
 
                 <div class="account-info" v-if="address">
 
-                    <account :identicon="address.identicon" :name="address.name" :address="address.address" />
-
+                    <account :address="address" />
 
                     <span class="disabled wordwrap pd-top-20">
                         <span v-if="!showPublicKey" class="pointer" @click="showPublicKey = true">
@@ -20,14 +19,40 @@
                         </span>
                     </span>
 
-                    <span class="disabled wordwrap pd-top-20">
-                        <span v-if="!showPublicKeyHash" class="pointer" @click="showPublicKeyHash = true">
-                            View Public Key Hash
+                    <template v-if="address.type === 0">
+
+                        <span class="disabled wordwrap pd-top-20">
+                            <span v-if="!showPublicKeyHash" class="pointer" @click="showPublicKeyHash = true">
+                                View Public Key Hash
+                            </span>
+                            <span v-else >
+                                Public Key Hash {{address.publicKeyHash}} <i class="fa fa-copy pointer"  @click="copyAddress(address.publicKeyHash)"/>
+                            </span>
                         </span>
-                        <span v-else >
-                            Public Key Hash {{address.publicKeyHash}} <i class="fa fa-copy pointer"  @click="copyAddress(address.publicKeyHash)"/>
+
+                    </template>
+
+                    <template v-if="address.type === 1">
+
+                        <span class="disabled wordwrap pd-top-20">
+                            <span v-if="!showZetherPublicKey" class="pointer" @click="showZetherPublicKey = true">
+                                View Zether Public Key
+                            </span>
+                            <span v-else >
+                                Zether Public Key {{address.zetherPublicKey}} <i class="fa fa-copy pointer"  @click="copyAddress(address.zetherPublicKey)"/>
+                            </span>
                         </span>
-                    </span>
+
+                            <span class="disabled wordwrap pd-top-20">
+                            <span v-if="!showZetherRegistration" class="pointer" @click="showZetherRegistration = true">
+                                View Zether Registration
+                            </span>
+                            <span v-else >
+                                Zether Registration {{address.zetherRegistration}} <i class="fa fa-copy pointer"  @click="copyAddress(address.zetherRegistration)"/>
+                            </span>
+                        </span>
+
+                    </template>
 
                     <div class="buttons-row pd-top-20">
 
@@ -87,6 +112,8 @@ export default {
         return {
             showPublicKey: false,
             showPublicKeyHash: false,
+            showZetherPublicKey: false,
+            showZetherRegistration: false,
         }
     },
 

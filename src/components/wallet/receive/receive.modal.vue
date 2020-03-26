@@ -1,7 +1,7 @@
 <template>
     <modal v-if="address" ref="modal" title="Receive funds" >
 
-        <account :identicon="address.identicon" :name="address.name" :address="address.address" />
+        <account :address="address" />
 
         <div class="qr-code">
             <qr-code :data="address.address" />

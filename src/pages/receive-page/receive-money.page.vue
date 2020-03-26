@@ -4,10 +4,9 @@
         <div class="container pd-top-20">
             <div class="boxed ">
 
-
                 <h1>Receive Money Anonymously</h1>
 
-                <account :identicon="address.identicon" :name="address.name" :address="address.address" />
+                <account :address="address" />
 
                 <div class="qr-code">
                     <qr-code :data="address.address" />

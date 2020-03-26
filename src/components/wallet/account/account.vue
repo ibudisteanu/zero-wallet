@@ -1,12 +1,13 @@
 <template>
     <div class="account">
 
-        <account-identicon  :identicon="identicon" :size="60" :outer-size="20"  />
+        <account-identicon  :identicon="address.identicon" :size="60" :outer-size="20" />
         <div class="pd-top-10">
-            <span class="wordwrap ">{{name}}</span>
-            <div>
-                <span class="wordwrap thick">{{address}} </span>
-                <i class="fa fa-copy pointer"  @click="copyAddress"/>
+            <span class="wordwrap ">{{address.name}}</span> <br/>
+            <span>{{type}}</span> <br/>
+            <div class="pd-top-20">
+                Address: <br/>
+                <span class="wordwrap thick">{{address.address}} </span> <i class="fa fa-copy pointer"  @click="copyAddress(address.address)"/> <br/> <br/>
             </div>
         </div>
 
@@ -22,9 +23,14 @@ export default {
     components: { AccountIdenticon },
 
     props: {
-        name: '',
-        address: '',
-        identicon: '',
+        address: {default: null},
+    },
+
+    computed:{
+        type(){
+            if (this.address.type === 0) return 'Transparent';
+            if (this.address.type === 1) return 'Zether';
+        }
     },
 
     methods: {

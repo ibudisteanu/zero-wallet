@@ -65,7 +65,7 @@ export default {
 
 
     .outer{
-        display: inline-block;
+        display: inline-table;
         -webkit-border-radius: 50%;
         -moz-border-radius: 50%;
         -khtml-border-radius: 50%;
