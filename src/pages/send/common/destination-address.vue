@@ -14,22 +14,7 @@
 
         </div>
 
-        <div class="amount-row">
-            <div>
-                <span class="disabled">Amount</span> <br/>
-                <input type="number" v-model="amount" min="0">
-            </div>
-            <div>
-                <span class="disabled">Currency</span> <br/>
-                <select v-model="tokenCurrency">
-                    <option v-for="(balance, token) in balances"
-                            :key="`send-money-${token}`"
-                            :value="token">
-                        {{getTokenName(token)}}
-                    </option>
-                </select>
-            </div>
-        </div>
+        <destination-amount @changed="changedDestinationAmount" />
 
     </div>
 
@@ -39,11 +24,12 @@
 <script>
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
-
+import DestinationAmount from "./destination-amount.vue"
+import QrCodeScanner from "src/components/utils/qr-code-scanner/qr-code-scanner";
 
 export default {
 
-    components: {AccountIdenticon},
+    components: {AccountIdenticon, DestinationAmount, QrCodeScanner},
 
     data(){
         return {
@@ -53,18 +39,19 @@ export default {
 
     props:{
         index: 0,
+        balances: {default: null },
     },
 
     computed:{
 
-        validation(){
-
-            if (!this.destinationAddress) return '';
+        validationError(){
 
             try{
 
+                if (!this.destinationAddress) throw {message: `Destination ${this.destinationAddress} Address not specified`};
+
                 const address = PandoraPay.cryptography.addressValidator.validateAddress( this.destinationAddress );
-                if (!address) throw {message: "Invalid address"};
+                if (!address) throw {message: `Address ${this.destinationAddress} is invalid`};
 
                 return '';
 
@@ -77,7 +64,7 @@ export default {
 
             try{
                 const address = PandoraPay.cryptography.addressValidator.validateAddress( this.destinationAddress );
-                if (!address) throw {message: "Invalid address"};
+                if (!address) throw {message: `Address ${this.destinationAddress} is invalid`};
 
                 return address.identiconImg();
 
@@ -88,17 +75,27 @@ export default {
         },
     },
 
-    methods: {
-        getTokenName(token){
+    watch: {
+        'destinationAddress' (to, from) {
+            return this.$emit('changed', {
+                destinationAddress: to,
+                validationError: this.validationError,
+            });
+        }
+    },
 
-            if (!this.$store.state.tokens.list[token]) return '';
-            return this.$store.state.tokens.list[token].name;
-        },
+    methods: {
 
         qrCodeScanner(){
             this.$refs.refQRCodeScannerModal.showModal();
         },
 
+        changedDestinationAmount(data){
+            return this.$emit('changed', {
+                ...data,
+                validationError: this.validationError,
+            });
+        }
 
     }
 
@@ -112,10 +109,6 @@ export default {
         grid-column-gap: 10px;
     }
 
-    .amount-row{
-        display: grid;
-        grid-template-columns: 1fr 200px;
-        grid-column-gap: 10px;
-    }
+
 
 </style>

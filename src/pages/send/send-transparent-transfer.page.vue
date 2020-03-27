@@ -17,20 +17,18 @@
                     <div v-if="!address.loaded">
 
                         <destination-address v-for="(destination, index) in destinations"
-                                             :index="index">
+                                             :index="index"
+                                             :balances="balances" @changed="e => changedDestination(index, e)">
                         </destination-address>
 
-                        <button @click="addDestination">
-                            <i class="fa fa-plus"></i>
-                            Add another destination
-                        </button>
-
-                        <div class="fee-row">
-                            <span class="disabled">Fee</span>
-                            <input type="number" v-model="fee" min="0">
-                            <span class="disabled">{{getTokenName(tokenCurrency)}}</span>
+                        <div class="centered">
+                            <button class="addMore" @click="addDestination">
+                                <i class="fa fa-plus"></i>
+                                Add another destination
+                            </button>
                         </div>
 
+                        <destination-amount text="Fee" :balances="balances" @changed="changedFee" />
 
                         <div v-if="error || validation" class="danger centered">
                             {{validation}}
@@ -38,7 +36,7 @@
                         </div>
 
                         <div class="pd-top-20">
-                            <loading-button text="Send Money Publicly" @submit="handleSendMoney" icon="fa fa-money-bill-alt"  :disabled="!destinationIdenticon  || !!validation" />
+                            <loading-button text="Send Money Publicly" @submit="handleSendFunds" icon="fa fa-money-bill-alt"  />
                         </div>
 
                         <qr-code-scanner ref="refQRCodeScannerModal"/>
@@ -59,7 +57,6 @@
 
 import Layout from "src/components/layout/layout"
 import Account from "src/components/wallet/account/account"
-import QrCodeScanner from "src/components/utils/qr-code-scanner/qr-code-scanner";
 import Consensus from "src/consensus/consensus"
 
 const {TransactionTokenCurrencyTypeEnum} = global.cryptography.transactions;
@@ -72,21 +69,21 @@ import SendTransparentTopBar from "./common/send-transparent-top-bar.vue"
 import SendZetherTopBar from "./common/send-zether-top-bar.vue"
 
 import DestinationAddress from "./common/destination-address.vue"
+import DestinationAmount from "./common/destination-amount.vue"
+import Vue from 'vue'
 
 export default {
 
-    components: {Layout, Account, QrCodeScanner, LoadingSpinner, LoadingButton, SendTransparentTopBar, SendZetherTopBar, DestinationAddress },
+    components: {Layout, Account, LoadingSpinner, LoadingButton, SendTransparentTopBar, SendZetherTopBar, DestinationAddress, DestinationAmount },
 
     data(){
         return {
 
             destinations: [],
-
-            amount: 0,
             fee: 0,
-            tokenCurrency: '00',
-            paymentId: '',
+            feeTokenCurrency: '00',
 
+            paymentId: '',
             error: '',
         }
     },
@@ -105,37 +102,63 @@ export default {
             return this.$store.state.addresses.list[this.$store.state.wallet.mainAddress] ;
         },
 
+
     },
 
     methods:{
 
         addDestination(){
-            this.destinations.push('');
+
+            this.destinations.push({
+                destinationAddress: '',
+                validationError: 'Address is empty',
+                amount: 0,
+                tokenCurrency: '00',
+            });
         },
 
-        async handleSendMoney(resolve){
+        changedDestination(index, data){
+            Vue.set(this.destinations, index, {
+                ...this.destinations[index],
+                ...data
+            });
+        },
+
+        changedFee(data){
+            if (data.amount) this.fee = data.amount;
+            if (data.tokenCurrency) this.feeTokenCurrency = data.tokenCurrency;
+        },
+
+        async handleSendFunds(resolve){
 
             try{
 
                 this.error = '';
 
-                if (this.address.address === this.destinationAddress) throw {message: "Destination can not be the same with from"};
+                for (const destination of this.destinations) {
+                    if (destination.destinationAddress === this.address.address)
+                        throw {message: "Destination can not be the same with from"};
 
-                const amount = PandoraPay.argv.transactions.coins.convertToUnits( Number.parseInt(this.amount) );
-                const fee = PandoraPay.argv.transactions.coins.convertToUnits( Number.parseInt(this.fee) );
+                    if (destination.validationError)
+                        throw {message: destination.validationError};
+
+                    destination.amountUnits = PandoraPay.argv.transactions.coins.convertToUnits( Number.parseInt(this.amount) );
+                }
+
+                const feeUnits = PandoraPay.argv.transactions.coins.convertToUnits( Number.parseInt(this.feeAmount) );
 
                 const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
                 if (nonce === undefined) throw {message: "The connection to the node was dropped"};
 
                 const out = await PandoraPay.wallet.transfer.transferSimple({
                     address: this.address.address,
-                    txDsts: [{
-                        address: this.destinationAddress,
-                        amount,
-                    }],
-                    fee,
+                    txDsts: this.destinations.map( it => ({
+                        address: it.destinationAddress,
+                        amount: it.amountUnits,
+                    })),
+                    fee: feeUnits,
+                    feeTokenCurrency: this.feeTokenCurrency,
                     paymentId: this.paymentId,
-                    tokenCurrency: this.tokenCurrency,
                     nonce,
                     memPoolValidateTxData: false,
                 });
@@ -153,7 +176,7 @@ export default {
                     text: `A transaction has been made. \n TxId ${out.tx.hash().toString("hex")}`,
                 });
 
-                this.$router.push('/');
+                this.$router.push(`/explorer/tx/hash/${out.tx.hash().toString('hex')}`);
 
             }catch(err){
                 this.error = err.message;
@@ -163,6 +186,10 @@ export default {
 
         },
 
+        getTokenName(token){
+            if (!this.$store.state.tokens.list[token]) return '';
+            return this.$store.state.tokens.list[token].name;
+        },
 
     },
 
@@ -175,18 +202,7 @@ export default {
 </script>
 
 <style scoped>
-
-
-    .fee-row{
-        display: grid;
-        grid-template-columns: 40px 1fr 200px;
-        grid-column-gap: 10px;
+    .addMore{
+        max-width: 200px;
     }
-
-    .fee-row span{
-        display: flex;
-        justify-content: center; /* align horizontal */
-        align-items: center; /* align vertical */
-    }
-
 </style>

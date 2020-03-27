@@ -87,6 +87,9 @@ export default {
     computed:{
 
         sendUrl(){
+
+            if (!this.address) return '';
+
             if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return '/send/transparent/transfer';
             if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER) return '/send/zether/transfer';
         },
