@@ -10,23 +10,13 @@
             <div class="container pd-top-20">
                 <div class="boxed ">
 
-                    <h1>Send Funds Publicly</h1>
+                    <h1>Deposit Funds to Zether Address</h1>
 
                     <loading-spinner v-if="!address.loaded" />
 
                     <div v-if="address.loaded">
 
-                        <destination-address v-for="(destination, index) in destinations"
-                                             :index="index"
-                                             :balances="balances" @changed="e => changedDestination(index, e)">
-                        </destination-address>
-
-                        <div class="centered">
-                            <button class="addMore" @click="addDestination">
-                                <i class="fa fa-plus"></i>
-                                Add another destination
-                            </button>
-                        </div>
+                        <destination-address :balances="balances" @changed="changedDestination" :type="WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER" />
 
                         <destination-amount text="Fee" :balances="balances" @changed="changedFee" />
 
@@ -36,10 +26,8 @@
                         </div>
 
                         <div class="pd-top-20">
-                            <loading-button text="Send Money Publicly" @submit="handleSendFunds" icon="fa fa-money-bill-alt"  />
+                            <loading-button text="Deposit Funds" @submit="handleSendFunds" icon="fa fa-money-bill-alt"  />
                         </div>
-
-                        <qr-code-scanner ref="refQRCodeScannerModal"/>
 
                     </div>
 
@@ -65,11 +53,11 @@ const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import LoadingButton from "src/components/utils/loading-button.vue"
 
-import SendTransparentTopBar from "./common/send-transparent-top-bar.vue"
-import SendZetherTopBar from "./common/send-zether-top-bar.vue"
+import SendTransparentTopBar from "../common/send-transparent-top-bar.vue"
+import SendZetherTopBar from "../common/send-zether-top-bar.vue"
 
-import DestinationAddress from "./common/destination-address.vue"
-import DestinationAmount from "./common/destination-amount.vue"
+import DestinationAddress from "../common/destination-address.vue"
+import DestinationAmount from "../common/destination-amount.vue"
 import Vue from 'vue'
 
 export default {
@@ -79,7 +67,13 @@ export default {
     data(){
         return {
 
-            destinations: [],
+            destination: {
+                destinationAddress: '',
+                validationError: 'Address is empty',
+                amount: 0,
+                tokenCurrency: '00',
+            },
+
             fee: 0,
             feeTokenCurrency: '00',
 
@@ -90,9 +84,7 @@ export default {
 
     computed:{
 
-        WalletAddressTypeEnum(){
-            return WalletAddressTypeEnum;
-        },
+        WalletAddressTypeEnum: () => WalletAddressTypeEnum,
 
         balances(){
             return this.address.balances || {"00": 0};
@@ -102,30 +94,19 @@ export default {
             return this.$store.state.addresses.list[this.$store.state.wallet.mainAddress] ;
         },
 
-
     },
 
     methods:{
 
-        addDestination(){
-
-            this.destinations.push({
-                destinationAddress: '',
-                validationError: 'Address is empty',
-                amount: 0,
-                tokenCurrency: '00',
-            });
-        },
-
-        changedDestination(index, data){
-            Vue.set(this.destinations, index, {
-                ...this.destinations[index],
+        changedDestination(data){
+            Vue.set(this.destination, {
+                ...this.destination,
                 ...data
             });
         },
 
         changedFee(data){
-            if (data.amount) this.fee = data.amount;
+            if (data.amount !== undefined) this.fee = data.amount;
             if (data.tokenCurrency) this.feeTokenCurrency = data.tokenCurrency;
         },
 
@@ -188,15 +169,9 @@ export default {
 
         },
 
-        getTokenName(token){
-            if (!this.$store.state.tokens.list[token]) return '';
-            return this.$store.state.tokens.list[token].name;
-        },
-
     },
 
     mounted(){
-        this.addDestination();
     }
 
 }

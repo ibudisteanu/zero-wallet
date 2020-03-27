@@ -94,9 +94,7 @@ export default {
             if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER) return '/send/zether/transfer';
         },
 
-        WalletAddressTypeEnum(){
-            return WalletAddressTypeEnum;
-        },
+        WalletAddressTypeEnum: () => WalletAddressTypeEnum,
 
         encrypted(){
             return this.$store.state.wallet.encrypted;

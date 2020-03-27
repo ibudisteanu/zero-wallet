@@ -111,9 +111,7 @@ export default {
 
     computed:{
 
-        WalletAddressTypeEnum(){
-            return WalletAddressTypeEnum;
-        },
+        WalletAddressTypeEnum: () => WalletAddressTypeEnum,
 
         address(){
             return this.$store.state.addresses.list[this.$store.state.wallet.mainAddress] ;

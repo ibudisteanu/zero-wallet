@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <span class="disabled">Destination Address {{index+1}}</span> <br/>
+        <span class="disabled">Destination Address {{index !== null ? index+1 : ''}}</span> <br/>
 
         <div :class="`${destinationAddressIdenticon ? 'destination': ''}-row`">
 
@@ -26,6 +26,7 @@
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
 import DestinationAmount from "./destination-amount.vue"
 import QrCodeScanner from "src/components/utils/qr-code-scanner/qr-code-scanner";
+const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 export default {
 
@@ -38,7 +39,8 @@ export default {
     },
 
     props:{
-        index: 0,
+        index: {default: null},
+        type: 0,
         balances: {default: null },
     },
 
@@ -50,7 +52,11 @@ export default {
 
                 if (!this.destinationAddress) throw {message: `Destination ${this.destinationAddress} Address not specified`};
 
-                const address = PandoraPay.cryptography.addressValidator.validateAddress( this.destinationAddress );
+                let address;
+
+                if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) address = PandoraPay.cryptography.addressValidator.validateAddress( this.destinationAddress );
+                if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER) address = PandoraPay.cryptography.zetherAddressValidator.validateAddress( this.destinationAddress );
+
                 if (!address) throw {message: `Address ${this.destinationAddress} is invalid`};
 
                 return '';
@@ -63,8 +69,10 @@ export default {
         destinationAddressIdenticon(){
 
             try{
-                const address = PandoraPay.cryptography.addressValidator.validateAddress( this.destinationAddress );
-                if (!address) throw {message: `Address ${this.destinationAddress} is invalid`};
+
+                let address;
+                if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) address = PandoraPay.cryptography.addressValidator.validateAddress( this.destinationAddress );
+                if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER) address = PandoraPay.cryptography.zetherAddressValidator.validateAddress( this.destinationAddress );
 
                 return address.identiconImg();
 
