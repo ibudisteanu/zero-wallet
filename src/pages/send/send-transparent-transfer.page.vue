@@ -14,7 +14,7 @@
 
                     <loading-spinner v-if="!address.loaded" />
 
-                    <div v-if="!address.loaded">
+                    <div v-if="address.loaded">
 
                         <destination-address v-for="(destination, index) in destinations"
                                              :index="index"
@@ -142,10 +142,10 @@ export default {
                     if (destination.validationError)
                         throw {message: destination.validationError};
 
-                    destination.amountUnits = PandoraPay.argv.transactions.coins.convertToUnits( Number.parseInt(this.amount) );
+                    destination.amountUnits = PandoraPay.argv.transactions.coins.convertToUnits( Number.parseInt(destination.amount) );
                 }
 
-                const feeUnits = PandoraPay.argv.transactions.coins.convertToUnits( Number.parseInt(this.feeAmount) );
+                const feeUnits = PandoraPay.argv.transactions.coins.convertToUnits( this.fee );
 
                 const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
                 if (nonce === undefined) throw {message: "The connection to the node was dropped"};
@@ -155,6 +155,7 @@ export default {
                     txDsts: this.destinations.map( it => ({
                         address: it.destinationAddress,
                         amount: it.amountUnits,
+                        tokenCurrency: it.tokenCurrency,
                     })),
                     fee: feeUnits,
                     feeTokenCurrency: this.feeTokenCurrency,
@@ -179,6 +180,7 @@ export default {
                 this.$router.push(`/explorer/tx/hash/${out.tx.hash().toString('hex')}`);
 
             }catch(err){
+                console.error(err);
                 this.error = err.message;
             }finally{
                 resolve(true);

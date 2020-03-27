@@ -14,7 +14,7 @@
 
         </div>
 
-        <destination-amount @changed="changedDestinationAmount" />
+        <destination-amount @changed="changedDestinationAmount" :balances="balances" />
 
     </div>
 

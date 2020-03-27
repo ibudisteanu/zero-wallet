@@ -232,52 +232,59 @@ class Consensus extends BaseConsensus{
 
     async downloadAccountData(account){
 
-        let accountData = await this._client.emitAsync("account/get-account", {account }, 0);
-        if (!accountData) accountData = {};
+        const address = PandoraPay.cryptography.addressValidator.validateAddress( account );
+        if ( address ){
 
-        try{
+            let accountData = await this._client.emitAsync("account/get-account", {account }, 0);
+            if (!accountData) accountData = {};
 
+            try{
 
-            const {balances, nonce, delegate} = accountData;
+                const {balances, nonce, delegate} = accountData;
+                const publicKeyHash = address.publicKeyHash;
 
-            const address = PandoraPay.cryptography.addressValidator.validateAddress( account );
-            const publicKeyHash = address.publicKeyHash;
+                //remove old balance
+                const balancesOld = await PandoraPay.mainChain.data.accountHashMap.getBalances(publicKeyHash);
+                const nonceOld = await PandoraPay.mainChain.data.accountHashMap.getNonce(publicKeyHash) || 0;
+                const delegateOld = await PandoraPay.mainChain.data.accountHashMap.getDelegate(publicKeyHash);
 
-            //remove old balance
-            const balancesOld = await PandoraPay.mainChain.data.accountHashMap.getBalances(publicKeyHash);
-            const nonceOld = await PandoraPay.mainChain.data.accountHashMap.getNonce(publicKeyHash) || 0;
-            const delegateOld = await PandoraPay.mainChain.data.accountHashMap.getDelegate(publicKeyHash);
+                if (balancesOld)
+                    for (const currencyToken in balancesOld)
+                        await PandoraPay.mainChain.data.accountHashMap.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
 
-            if (balancesOld)
-                for (const currencyToken in balancesOld)
-                    await PandoraPay.mainChain.data.accountHashMap.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
+                //update with new balance
+                if (balances)
+                    for (const balance of balances) {
+                        await this.getTokenByHash(balance.tokenCurrency);
+                        await PandoraPay.mainChain.data.accountHashMap.updateBalance(publicKeyHash, balance.amount, balance.tokenCurrency,);
+                    }
 
-            //update with new balance
-            if (balances)
-                for (const balance of balances) {
-                    await this.getTokenByHash(balance.tokenCurrency);
-                    await PandoraPay.mainChain.data.accountHashMap.updateBalance(publicKeyHash, balance.amount, balance.tokenCurrency,);
+                if (nonce) {
+                    const diffNonce = nonce - nonceOld;
+                    for (let i = 0; i < Math.abs(diffNonce); i++)
+                        await PandoraPay.mainChain.data.accountHashMap.updateNonce(publicKeyHash, diffNonce > 0 ? 1 : -1);
                 }
 
-            if (nonce) {
-                const diffNonce = nonce - nonceOld;
-                for (let i = 0; i < Math.abs(diffNonce); i++)
-                    await PandoraPay.mainChain.data.accountHashMap.updateNonce(publicKeyHash, diffNonce > 0 ? 1 : -1);
+                if (delegate) {
+                    const diffDelegateNonce = delegate.delegateNonce - (delegateOld ? -delegateOld.delegateNonce : 0);
+                    for (let i = 0; i < Math.abs(diffDelegateNonce); i++)
+                        await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegatePublicKey, delegate.delegateFee);
+                }
+
+                this.emit('consensus/account-update', { account, balances, nonce, delegate  } );
+
+            }catch(err){
+                console.error(err);
             }
 
-            if (delegate) {
-                const diffDelegateNonce = delegate.delegateNonce - (delegateOld ? -delegateOld.delegateNonce : 0);
-                for (let i = 0; i < Math.abs(diffDelegateNonce); i++)
-                    await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegatePublicKey, delegate.delegateFee);
-            }
-
-            this.emit('consensus/account-update', { account, balances, nonce, delegate  } );
-
-        }catch(err){
-            console.error(err);
+            return true;
         }
 
+        const zetherAddress = PandoraPay.cryptography.zetherAddressValidator.validateAddress( account  );
+        if (zetherAddress){
 
+            return true;
+        }
 
     }
 
@@ -311,15 +318,27 @@ class Consensus extends BaseConsensus{
 
     async downloadAccountTransactions(account) {
 
-        const txCount = await this._client.emitAsync("transactions/account/get-transaction-count", {account }, 0);
-        const txCountPending = await this._client.emitAsync("mem-pool/content-count", {account }, 0);
+        const address = PandoraPay.cryptography.addressValidator.validateAddress( account );
+        if (address){
 
-        if (!txCountPending && !txCount) return;
+            const txCount = await this._client.emitAsync("transactions/account/get-transaction-count", {account }, 0);
+            const txCountPending = await this._client.emitAsync("mem-pool/content-count", {account }, 0);
 
-        this.emit('consensus/account-update-tx-count', {account, txCount, txCountPending});
+            if (!txCountPending && !txCount) return;
 
-        await this.downloadAccountTransactionsSpecific({account, limit: 10});
-        await this.downloadPendingTransactionsSpecific( {account})
+            this.emit('consensus/account-update-tx-count', {account, txCount, txCountPending});
+
+            await this.downloadAccountTransactionsSpecific({account, limit: 10});
+            await this.downloadPendingTransactionsSpecific( {account})
+
+            return true;
+        }
+
+        const zetherAddress = PandoraPay.cryptography.zetherAddressValidator.validateAddress( account  );
+        if (zetherAddress){
+
+            return true;
+        }
 
     }
 
