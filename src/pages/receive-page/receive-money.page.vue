@@ -4,11 +4,11 @@
         <div class="container pd-top-20">
             <div class="boxed ">
 
-                <h1>Receive Money Anonymously</h1>
+                <h1>Receive Money {{address.type === 0 ? 'Transparently' : 'Anonymously' }}</h1>
 
                 <account :address="address" />
 
-                <div class="qr-code">
+                <div class="qr-code pd-top-20">
                     <qr-code :data="address.address" />
                 </div>
 
@@ -53,7 +53,6 @@ export default {
 
 
     .qr-code{
-        text-align: center;
     }
 
 </style>

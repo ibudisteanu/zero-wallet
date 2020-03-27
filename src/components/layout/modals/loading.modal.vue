@@ -22,6 +22,12 @@ export default {
 
     components: {LoadingSpinner, Modal},
 
+    data(){
+        return {
+
+        }
+    },
+
     computed:{
 
     },
@@ -29,6 +35,7 @@ export default {
     methods: {
 
         showModal() {
+            Object.assign(this.$data, this.$options.data());
             return this.$refs.modal.showModal();
         },
 

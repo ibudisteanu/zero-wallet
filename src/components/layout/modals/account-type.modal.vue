@@ -55,6 +55,8 @@ export default {
         },
 
         async showModal() {
+
+            Object.assign(this.$data, this.$options.data());
             await this.$refs.modal.showModal();
 
             if (this.selectedType === -1)

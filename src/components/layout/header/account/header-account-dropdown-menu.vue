@@ -21,8 +21,8 @@
 
             <li class="divider"></li>
 
-            <li @click="createAccount"> <i class="fa fa-plus"></i> Create account </li>
-            <li @click="importAccount"><i class="fa fa-upload"></i> Import account</li>
+            <li @click="createAccount"> <i class="fa fa-plus"></i> Create Account </li>
+            <li @click="importAccount"><i class="fa fa-upload"></i> Import Account (json)</li>
             <li @click="importPrivateKey"><i class="fa fa-upload"></i> Import Private Key</li>
             <li class="divider"></li>
             <li @click="viewMnemonic"><i class="fa fa-key"></i>  View Seed Words</li>
@@ -69,7 +69,6 @@ export default {
         async createAccount(){
 
             const account = await this.$store.state.page.refAccountTypeModal.showModal();
-
             if (account.selectedType === -1) return;
 
             try{

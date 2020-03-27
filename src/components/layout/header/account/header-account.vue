@@ -71,8 +71,12 @@ export default {
             this.$refs.refImportAccountModal.showModal( );
         },
 
-        showImportPrivateKey(){
-            this.$refs.refImportPrivateKeyModal.showModal( );
+        async showImportPrivateKey(){
+
+            const account = await this.$store.state.page.refAccountTypeModal.showModal();
+            if (account.selectedType === -1) return;
+
+            this.$refs.refImportPrivateKeyModal.showModal( account.selectedType );
         },
 
     },

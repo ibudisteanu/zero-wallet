@@ -31,7 +31,7 @@
                 <password-input v-model="walletPassword"></password-input>
             </div>
 
-            <loading-button text="Import Account" @submit="handleProcess" icon="fa fa-upload"  :disabled="password.length === 0" />
+            <loading-button text="Import Account" @submit="handleProcess" icon="fa fa-upload"  :disabled="(isAddressEncrypted && !walletPassword.length) || (isWalletEncrypted && !walletPassword.length ) " />
 
         </div>
 
@@ -175,6 +175,9 @@ export default {
                 this.closeModal();
 
             }catch(err){
+
+                console.error(err);
+
                 this.$notify({
                     type: 'error',
                     title: `Import Error`,

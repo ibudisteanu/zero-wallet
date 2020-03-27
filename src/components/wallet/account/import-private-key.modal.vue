@@ -32,6 +32,7 @@ export default {
 
     data(){
         return {
+            selectedType: 0,
             privateKey: '',
             walletPassword: '',
             error: '',
@@ -48,8 +49,9 @@ export default {
 
     methods:{
 
-        showModal() {
+        showModal(selectedType) {
             Object.assign(this.$data, this.$options.data());
+            this.selectedType = selectedType;
             this.$refs.modal.showModal();
         },
 
@@ -72,7 +74,7 @@ export default {
 
                 this.$store.state.page.refLoadingModal.showModal();
 
-                const out = await PandoraPay.wallet.manager.importPrivateKeyAddress( this.privateKey );
+                const out = await PandoraPay.wallet.manager.importPrivateKeyAddress( this.privateKey, this.selectedType );
 
                 if (out)
                     this.$notify({
@@ -91,6 +93,9 @@ export default {
                 this.closeModal();
 
             }catch(err){
+
+                console.error(err);
+
                 this.$notify({
                     type: 'error',
                     title: `Import Error`,
