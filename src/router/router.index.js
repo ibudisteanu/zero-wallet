@@ -3,8 +3,8 @@ import Vue from "vue";
 
 import WalletPage from "src/pages/wallet/wallet.page"
 import LoginPage from "src/pages/login/login.page"
-import SendMoneyPage from "src/pages/send-money/send-money.page"
-import ReceiveMoneyPage from "src/pages/receive-page/receive-money.page"
+import SendTransparentTransfer from "src/pages/send/send-transparent-transfer.page"
+import ReceivePage from "src/pages/receive/receive.page"
 import AccountInfoPage from "src/pages/account-info/account-info.page"
 import DelegateStakePage from "src/pages/delegate-stake/delegate-stake.page.vue"
 import SetPasswordPage from "src/pages/encryption/set-password.page"
@@ -47,10 +47,9 @@ const guardLogin = (to, from, next) =>{
 
 const routes = [
 
-    {path: '/send-money', component: SendMoneyPage, beforeEnter: guardDecrypted, },
-    {path: '/send', component: SendMoneyPage, beforeEnter: guardDecrypted },
-    {path: '/receive-money', component: ReceiveMoneyPage, beforeEnter: guardDecrypted },
-    {path: '/receive', component: ReceiveMoneyPage, beforeEnter: guardDecrypted },
+    {path: '/send/transparent/transfer', component: SendTransparentTransfer, beforeEnter: guardDecrypted },
+
+    {path: '/receive', component: ReceivePage, beforeEnter: guardDecrypted },
     {path: '/account', component: AccountInfoPage, beforeEnter: guardDecrypted },
     {path: '/set-password', component: SetPasswordPage , beforeEnter: guardDecrypted},
     {path: '/remove-password', component: RemovePasswordPage, beforeEnter: guardDecrypted },

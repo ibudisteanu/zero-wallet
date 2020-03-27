@@ -17,6 +17,7 @@
 <script>
 
 import AccountIdenticon from "../account/account-identicon";
+const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 export default {
 
@@ -28,8 +29,8 @@ export default {
 
     computed:{
         type(){
-            if (this.address.type === 0) return 'Transparent';
-            if (this.address.type === 1) return 'Zether';
+            if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return 'Transparent';
+            if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER) return 'Zether';
         }
     },
 

@@ -4,7 +4,7 @@
         <div class="container pd-top-20">
             <div class="boxed ">
 
-                <h1>Receive Money {{address.type === 0 ? 'Transparently' : 'Anonymously' }}</h1>
+                <h1>Receive Money {{ title }}</h1>
 
                 <account :address="address" />
 
@@ -23,6 +23,7 @@
 import QRCode from "src/components/utils/qr-code"
 import Account from "src/components/wallet/account/account"
 import Layout from "src/components/layout/layout"
+const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 export default {
 
@@ -39,6 +40,11 @@ export default {
     },
 
     computed:{
+
+        title(){
+          if (this.address === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return 'Transparent';
+          if (this.address === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER) return 'Zether';
+        },
 
         address(){
             return this.$store.state.addresses.list[this.$store.state.wallet.mainAddress] ;

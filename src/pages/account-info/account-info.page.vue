@@ -19,7 +19,7 @@
                         </span>
                     </span>
 
-                    <template v-if="address.type === 0">
+                    <template v-if="address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT">
 
                         <span class="disabled wordwrap pd-top-20">
                             <span v-if="!showPublicKeyHash" class="pointer" @click="showPublicKeyHash = true">
@@ -32,7 +32,7 @@
 
                     </template>
 
-                    <template v-if="address.type === 1">
+                    <template v-if="address.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER">
 
                         <span class="disabled wordwrap pd-top-20">
                             <span v-if="!showZetherRegistration" class="pointer" @click="showZetherRegistration = true">
@@ -65,7 +65,7 @@
                             </div>
                         </div>
 
-                        <div class="btn" v-if="address.type === 0">
+                        <div class="btn" v-if="address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT">
                             <router-link to="/delegate-stake">
                                 <div class="btn-round" v-tooltip.bottom="'Delegate stake'" >
                                     <i class="fa fa-piggy-bank"></i>
@@ -94,7 +94,7 @@ import consts from 'consts/consts';
 import AccountPrivateKeyModal from "src/components/wallet/account/account-private-key.modal"
 import Layout from "src/components/layout/layout"
 import Account from "src/components/wallet/account/account"
-
+const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 export default {
 
     components: {AccountIdenticon, AccountPrivateKeyModal, Layout, Account},
@@ -110,6 +110,10 @@ export default {
 
 
     computed:{
+
+        WalletAddressTypeEnum(){
+            return WalletAddressTypeEnum;
+        },
 
         address(){
             return this.$store.state.addresses.list[this.$store.state.wallet.mainAddress] ;

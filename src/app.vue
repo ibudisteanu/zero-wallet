@@ -23,6 +23,7 @@
 
 import Consensus from "./consensus/consensus"
 import Chat from "./chat/chat"
+const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 export default {
 
@@ -203,10 +204,10 @@ export default {
                     loaded: false,
                 };
 
-                if (type === 0){ //transparent
+                if (type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT){ //transparent
                     addresses[address].publicKeyHash = publicAddress.publicKeyHash.toString("hex");
                 }else
-                if (type === 1){ //zether
+                if (type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER){ //zether
                     const registration = wallet.addresses[i].keys.decryptRegistration();
                     addresses[address].registration = registration.c.toString('hex')+registration.s.toString('hex');
 

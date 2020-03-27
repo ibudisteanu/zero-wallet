@@ -12,12 +12,12 @@
                 <span>Wallet</span>
             </router-link>
 
-            <router-link to="/send-money" :class="`${route === '/send-money' ? 'selected' : ''}`" >
+            <router-link :to="sendUrl" :class="`${route === sendUrl ? 'selected' : ''}`" >
                 <i class="fa fa-money-bill-alt"></i>
                 <span>Send</span>
             </router-link>
 
-            <router-link to="/receive-money" :class="`${route === '/receive-money' ? 'selected' : ''}`" >
+            <router-link to="/receive" :class="`${route === '/receive' ? 'selected' : ''}`" >
                 <i class="fa fa-hand-holding-usd"></i>
                 <span>Receive</span>
             </router-link>
@@ -71,6 +71,8 @@
 
 <script>
 import { mixin as clickaway } from 'vue-clickaway'
+const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
+
 export default {
 
     mixins: [ clickaway ],
@@ -83,6 +85,15 @@ export default {
     },
 
     computed:{
+
+        sendUrl(){
+            if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return '/send/transparent/transfer';
+            if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER) return '/send/zether/transfer';
+        },
+
+        WalletAddressTypeEnum(){
+            return WalletAddressTypeEnum;
+        },
 
         encrypted(){
             return this.$store.state.wallet.encrypted;

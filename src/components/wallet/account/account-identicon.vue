@@ -1,12 +1,13 @@
 <template>
 
-    <div class="identicon outer" :style="`padding: ${outerSize}px; background-color: ${type === 0 ? outerColor : outerZetherColor}`">
+    <div class="identicon outer" :style="`padding: ${outerSize}px; background-color: ${background}`">
         <img v-if="addressIdenticon" :src="addressIdenticon" class="identicon" :style="`width: ${size}px`" >
     </div>
 
 </template>
 
 <script>
+const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 export default {
 
     props:{
@@ -24,6 +25,11 @@ export default {
     },
 
     computed:{
+
+        background(){
+            if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER) return this.outerZetherColor;
+            else return this.outerColor;
+        },
 
         addressIdenticon(){
 
