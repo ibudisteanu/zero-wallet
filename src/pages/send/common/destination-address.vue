@@ -5,7 +5,7 @@
 
         <div :class="`${destinationAddressIdenticon ? 'destination': ''}-row`">
 
-            <account-identicon v-if="destinationAddressIdenticon" :identicon="destinationAddressIdenticon" size="35" outer-size="8" />
+            <account-identicon v-if="destinationAddressIdenticon" :identicon="destinationAddressIdenticon" size="35" outer-size="8" :type="type" />
 
             <div class="input-toggle-group">
                 <input type="text" v-model="destinationAddress">

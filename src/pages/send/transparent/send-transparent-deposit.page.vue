@@ -16,7 +16,10 @@
 
                     <div v-if="address.loaded">
 
-                        <destination-address :balances="balances" @changed="changedDestination" :type="WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER" />
+                        <destination-address :balances="balances"
+                                             @changed="changedDestination"
+                                             :type="WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER"
+                        />
 
                         <destination-amount text="Fee" :balances="balances" @changed="changedFee" />
 
@@ -99,7 +102,7 @@ export default {
     methods:{
 
         changedDestination(data){
-            Vue.set(this.destination, {
+            Vue.set(this, "destination", {
                 ...this.destination,
                 ...data
             });
@@ -116,28 +119,21 @@ export default {
 
                 this.error = '';
 
-                for (const destination of this.destinations) {
-                    if (destination.destinationAddress === this.address.address)
-                        throw {message: "Destination can not be the same with from"};
+                if (this.destination.destinationAddress === this.address.address)
+                    throw {message: "Destination can not be the same with from"};
 
-                    if (destination.validationError)
-                        throw {message: destination.validationError};
+                if (this.destination.validationError)
+                    throw {message: this.destination.validationError};
 
-                    destination.amountUnits = PandoraPay.argv.transactions.coins.convertToUnits( Number.parseInt(destination.amount) );
-                }
-
+                this.destination.amountUnits = PandoraPay.argv.transactions.coins.convertToUnits( this.destination.amount );
                 const feeUnits = PandoraPay.argv.transactions.coins.convertToUnits( this.fee );
 
                 const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
                 if (nonce === undefined) throw {message: "The connection to the node was dropped"};
 
-                const out = await PandoraPay.wallet.transfer.transferSimple({
+                const out = await PandoraPay.wallet.transfer.zetherDepositSimple({
                     address: this.address.address,
-                    txDsts: this.destinations.map( it => ({
-                        address: it.destinationAddress,
-                        amount: it.amountUnits,
-                        tokenCurrency: it.tokenCurrency,
-                    })),
+                    txDst: this.destination,
                     fee: feeUnits,
                     feeTokenCurrency: this.feeTokenCurrency,
                     paymentId: this.paymentId,
@@ -146,6 +142,8 @@ export default {
                 });
 
                 if (!out) throw {message: "Transaction couldn't be made"};
+
+                console.log("out.tx", out.tx.toJSON() );
 
                 const outConsensus = await Consensus._client.emitAsync("mem-pool/new-tx", {tx: out.tx.toBuffer() }, 0);
                 if (!outConsensus) throw {message: "Transaction was not included in MemPool"};

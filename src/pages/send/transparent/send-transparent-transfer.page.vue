@@ -19,6 +19,7 @@
                         <destination-address v-for="(destination, index) in destinations"
                                              :key="`destinationAddress-${index}`"
                                              :index="index"
+                                             :type="WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT"
                                              :balances="balances" @changed="e => changedDestination(index, e)">
                         </destination-address>
 
