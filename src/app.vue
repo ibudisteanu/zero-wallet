@@ -51,7 +51,7 @@ export default {
 
         if (typeof window === "undefined") return;
 
-        PandoraPay._scope.argvBrowser = ["--blockchain:genesisTestNet:createNewTestNet", "true", "--settings:networkType", "1"];
+        PandoraPay._scope.argvBrowser = ["--testnet:activated", "true", '--testnet:createNewTestNet', "true"];
 
         PandoraPay.events.on("wallet/loaded", wallet => this.readWallet() );
 

@@ -19,7 +19,7 @@
                         <destination-address v-for="(destination, index) in destinations"
                                              :key="`destinationAddress-${index}`"
                                              :index="index"
-                                             :type="WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT"
+                                             :type="WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER"
                                              :balances="balances" @changed="e => changedDestination(index, e)">
                         </destination-address>
 
@@ -143,7 +143,6 @@ export default {
                     destination.amountUnits = PandoraPay.argv.transactions.coins.convertToUnits( Number.parseInt(destination.amount) );
                 }
 
-                this.destination.amountUnits = PandoraPay.argv.transactions.coins.convertToUnits( this.destination.amount );
                 const feeUnits = PandoraPay.argv.transactions.coins.convertToUnits( this.fee );
 
                 const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );

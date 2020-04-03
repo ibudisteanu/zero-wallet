@@ -162,6 +162,7 @@ export default {
                     memPoolValidateTxData: false,
                 });
 
+
                 if (!out) throw {message: "Transaction couldn't be made"};
 
                 const outConsensus = await Consensus._client.emitAsync("mem-pool/new-tx", {tx: out.tx.toBuffer() }, 0);

@@ -35,11 +35,11 @@
                     <template v-if="address.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER">
 
                         <span class="disabled wordwrap pd-top-20">
-                            <span v-if="!showZetherRegistration" class="pointer" @click="showZetherRegistration = true">
-                                View Zether Registration
+                            <span v-if="!showZetherAddressRegistration" class="pointer" @click="showZetherAddressRegistration = true">
+                                Zether Address with Registration
                             </span>
                             <span v-else >
-                                Zether Registration {{address.registration}} <i class="fa fa-copy pointer"  @click="copyAddress(address.registration)"/>
+                                Zether Address with Registration {{address.addressRegistration}} <i class="fa fa-copy pointer"  @click="copyAddress(address.addressRegistration)"/>
                             </span>
                         </span>
 
@@ -104,7 +104,7 @@ export default {
             showPublicKey: false,
             showPublicKeyHash: false,
             showZetherPublicKey: false,
-            showZetherRegistration: false,
+            showZetherAddressRegistration: false,
         }
     },
 
