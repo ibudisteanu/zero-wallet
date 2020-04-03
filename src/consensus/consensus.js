@@ -329,7 +329,7 @@ class Consensus extends BaseConsensus{
             this.emit('consensus/account-update-tx-count', {account, txCount, txCountPending});
 
             await this.downloadAccountTransactionsSpecific({account, limit: 10});
-            await this.downloadPendingTransactionsSpecific( {account})
+            await this.downloadPendingTransactionsSpecific( {account});
 
             return true;
         }

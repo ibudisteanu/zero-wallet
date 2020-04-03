@@ -16,10 +16,19 @@
 
                     <div v-if="address.loaded">
 
-                        <destination-address :balances="balances"
-                                             @changed="changedDestination"
-                                             :type="WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER"
-                        />
+                        <destination-address v-for="(destination, index) in destinations"
+                                             :key="`destinationAddress-${index}`"
+                                             :index="index"
+                                             :type="WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT"
+                                             :balances="balances" @changed="e => changedDestination(index, e)">
+                        </destination-address>
+
+                        <div class="centered">
+                            <button class="addMore" @click="addDestination">
+                                <i class="fa fa-plus"></i>
+                                Add another destination
+                            </button>
+                        </div>
 
                         <destination-amount text="Fee" :balances="balances" @changed="changedFee" />
 
@@ -70,12 +79,7 @@ export default {
     data(){
         return {
 
-            destination: {
-                destinationAddress: '',
-                validationError: 'Address is empty',
-                amount: 0,
-                tokenCurrency: '00',
-            },
+            destinations: [],
 
             fee: 0,
             feeTokenCurrency: '00',
@@ -101,9 +105,19 @@ export default {
 
     methods:{
 
-        changedDestination(data){
-            Vue.set(this, "destination", {
-                ...this.destination,
+        addDestination(){
+
+            this.destinations.push({
+                destinationAddress: '',
+                validationError: 'Address is empty',
+                amount: 0,
+                tokenCurrency: '00',
+            });
+        },
+
+        changedDestination(index, data){
+            Vue.set(this.destinations, index, {
+                ...this.destinations[index],
                 ...data
             });
         },
@@ -119,11 +133,15 @@ export default {
 
                 this.error = '';
 
-                if (this.destination.destinationAddress === this.address.address)
-                    throw {message: "Destination can not be the same with from"};
+                for (const destination of this.destinations) {
+                    if (destination.destinationAddress === this.address.address)
+                        throw {message: "Destination can not be the same with from"};
 
-                if (this.destination.validationError)
-                    throw {message: this.destination.validationError};
+                    if (destination.validationError)
+                        throw {message: destination.validationError};
+
+                    destination.amountUnits = PandoraPay.argv.transactions.coins.convertToUnits( Number.parseInt(destination.amount) );
+                }
 
                 this.destination.amountUnits = PandoraPay.argv.transactions.coins.convertToUnits( this.destination.amount );
                 const feeUnits = PandoraPay.argv.transactions.coins.convertToUnits( this.fee );
@@ -133,7 +151,11 @@ export default {
 
                 const out = await PandoraPay.wallet.transfer.zetherDepositSimple({
                     address: this.address.address,
-                    txDst: this.destination,
+                    txDsts: this.destinations.map( it => ({
+                        address: it.destinationAddress,
+                        amount: it.amountUnits,
+                        tokenCurrency: it.tokenCurrency,
+                    })),
                     fee: feeUnits,
                     feeTokenCurrency: this.feeTokenCurrency,
                     paymentId: this.paymentId,
@@ -170,6 +192,7 @@ export default {
     },
 
     mounted(){
+        this.addDestination();
     }
 
 }
