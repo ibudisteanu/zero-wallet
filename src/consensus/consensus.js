@@ -232,46 +232,54 @@ class Consensus extends BaseConsensus{
 
     async downloadAccountData(account){
 
+        let accountData = await this._client.emitAsync("account/get-account", { account }, 0);
+        if (!accountData) return false;
+
         const address = PandoraPay.cryptography.addressValidator.validateAddress( account );
         if ( address ){
 
-            let accountData = await this._client.emitAsync("account/get-account", {account }, 0);
-            if (!accountData) accountData = {};
+            console.log("address account", account, accountData);
 
             try{
 
-                const {balances, nonce, delegate} = accountData;
-                const publicKeyHash = address.publicKeyHash;
+                if (accountData.found){
 
-                //remove old balance
-                const balancesOld = await PandoraPay.mainChain.data.accountHashMap.getBalances(publicKeyHash);
-                const nonceOld = await PandoraPay.mainChain.data.accountHashMap.getNonce(publicKeyHash) || 0;
-                const delegateOld = await PandoraPay.mainChain.data.accountHashMap.getDelegate(publicKeyHash);
+                    const {balances, nonce, delegate} = accountData.account;
+                    const publicKeyHash = address.publicKeyHash;
 
-                if (balancesOld)
-                    for (const currencyToken in balancesOld)
-                        await PandoraPay.mainChain.data.accountHashMap.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
+                    //remove old balance
+                    const balancesOld = await PandoraPay.mainChain.data.accountHashMap.getBalances(publicKeyHash);
+                    const nonceOld = await PandoraPay.mainChain.data.accountHashMap.getNonce(publicKeyHash) || 0;
+                    const delegateOld = await PandoraPay.mainChain.data.accountHashMap.getDelegate(publicKeyHash);
 
-                //update with new balance
-                if (balances)
-                    for (const balance of balances) {
-                        await this.getTokenByHash(balance.tokenCurrency);
-                        await PandoraPay.mainChain.data.accountHashMap.updateBalance(publicKeyHash, balance.amount, balance.tokenCurrency,);
+                    if (balancesOld)
+                        for (const currencyToken in balancesOld)
+                            await PandoraPay.mainChain.data.accountHashMap.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
+
+                    //update with new balance
+                    if (balances)
+                        for (const balance of balances) {
+                            await this.getTokenByHash(balance.tokenCurrency);
+                            await PandoraPay.mainChain.data.accountHashMap.updateBalance(publicKeyHash, balance.amount, balance.tokenCurrency,);
+                        }
+
+                    if (nonce) {
+                        const diffNonce = nonce - nonceOld;
+                        for (let i = 0; i < Math.abs(diffNonce); i++)
+                            await PandoraPay.mainChain.data.accountHashMap.updateNonce(publicKeyHash, diffNonce > 0 ? 1 : -1);
                     }
 
-                if (nonce) {
-                    const diffNonce = nonce - nonceOld;
-                    for (let i = 0; i < Math.abs(diffNonce); i++)
-                        await PandoraPay.mainChain.data.accountHashMap.updateNonce(publicKeyHash, diffNonce > 0 ? 1 : -1);
+                    if (delegate) {
+                        const diffDelegateNonce = delegate.delegateNonce - (delegateOld ? -delegateOld.delegateNonce : 0);
+                        for (let i = 0; i < Math.abs(diffDelegateNonce); i++)
+                            await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegatePublicKey, delegate.delegateFee);
+                    }
+
+                    this.emit('consensus/account-transparent-update', { account, balances, nonce, delegate  } );
+
                 }
 
-                if (delegate) {
-                    const diffDelegateNonce = delegate.delegateNonce - (delegateOld ? -delegateOld.delegateNonce : 0);
-                    for (let i = 0; i < Math.abs(diffDelegateNonce); i++)
-                        await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegatePublicKey, delegate.delegateFee);
-                }
-
-                this.emit('consensus/account-update', { account, balances, nonce, delegate  } );
+                this.emit('consensus/account-update-loaded', { account, loaded: true  } );
 
             }catch(err){
                 console.error(err);
@@ -282,6 +290,20 @@ class Consensus extends BaseConsensus{
 
         const zetherAddress = PandoraPay.cryptography.zetherAddressValidator.validateAddress( account  );
         if (zetherAddress){
+
+            console.log("zether account", account, accountData);
+
+            try{
+
+                if (accountData.found){
+
+                }
+
+                this.emit('consensus/account-update-loaded', { account, loaded: true  } );
+
+            }catch(err){
+                console.error(err);
+            }
 
             return true;
         }

@@ -75,7 +75,17 @@ export default {
 
     },
 
-    setAddressUpdate(context, {account, balances, nonce, delegate}){
+    setAddressLoaded(context, {account, loaded}){
+
+        const address = { ... context.list[account]  };
+
+        address.loaded = loaded;
+
+        Vue.set(context.list, account, address );
+
+    },
+
+    setTransparentAddressUpdate(context, {account, balances, nonce, delegate}){
 
         const address = { ... context.list[account]  };
 
@@ -88,7 +98,24 @@ export default {
         address.balances = balancesObj;
         address.nonce = nonce;
         address.delegate = delegate;
-        address.loaded = true;
+
+        Vue.set(context.list, account, address );
+
+    },
+
+    setZetherAddressUpdate(context, {account, registered, simulatednonce, delegate}){
+
+        const address = { ... context.list[account]  };
+
+        const balancesObj = {};
+
+        if (balances)
+            for (const balance of balances)
+                balancesObj[ balance.tokenCurrency.toString("hex") ] = balance.amount;
+
+        address.balances = balancesObj;
+        address.nonce = nonce;
+        address.delegate = delegate;
 
         Vue.set(context.list, account, address );
 

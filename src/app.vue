@@ -51,7 +51,7 @@ export default {
 
         if (typeof window === "undefined") return;
 
-        PandoraPay._scope.argvBrowser = ["--testnet:activated", "true", '--testnet:createNewTestNet', "true"];
+        PandoraPay._scope.argvBrowser = ["--testnet:activated", "true", "--testnet:createNewTestNet", "true"];
 
         PandoraPay.events.on("wallet/loaded", wallet => this.readWallet() );
 
@@ -91,7 +91,11 @@ export default {
 
         Consensus.on("consensus/block-deleted", data => this.$store.commit('deleteBlockchainBlock', data ) );
 
-        Consensus.on("consensus/account-update", data => this.$store.commit('setAddressUpdate', data ) );
+        Consensus.on("consensus/account-update-loaded", data => this.$store.commit('setAddressLoaded', data ) );
+
+        Consensus.on("consensus/account-transparent-update", data => this.$store.commit('setTransparentAddressUpdate', data ) );
+
+        Consensus.on("consensus/account-zether-update", data => this.$store.commit('setZetherAddressUpdate', data ) );
 
         Consensus.on("consensus/account-update-tx-count", data => this.$store.commit('setAddressTxCounts', data ) );
 
