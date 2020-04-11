@@ -93,7 +93,7 @@ export default {
 
         if (balances)
             for (const balance of balances)
-                balancesObj[ balance.tokenCurrency.toString("hex") ] = balance.amount;
+                balancesObj[ balance.tokenCurrency.toString("hex") ] = balance;
 
         address.balances = balancesObj;
         address.nonce = nonce;
@@ -111,7 +111,7 @@ export default {
 
         if (balances)
             for (const balance of balances)
-                balancesObj[ balance.tokenCurrency.toString("hex") ] = balance.amount;
+                balancesObj[ balance.tokenCurrency.toString("hex") ] = balance;
 
         address.balances = balancesObj;
         address.registered = registered;

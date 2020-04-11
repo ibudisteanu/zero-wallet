@@ -14,7 +14,7 @@
                     <div v-for="(balance, token) in balances"
                          :key="`balance-token-${token}`">
                         <span class="balance thick" >
-                            {{formatMoney( convertToBase(balance) ) }}
+                            {{formatMoney( convertToBase( balance.amount ) ) }}
                         </span>
                         <span class="currency thick">
                             {{getToken(token).name}}

@@ -151,6 +151,8 @@ class Consensus extends BaseConsensus{
 
         this._data.chainwork = MarshalData.decompressBigNumber( data.chainwork );
 
+        PandoraPay.mainChain.data.end = data.blocks;
+
         this.emit('consensus/blockchain-info-updated', this._data );
 
         await this._downloadLastBlocksHashes();
@@ -237,11 +239,13 @@ class Consensus extends BaseConsensus{
         let accountData = await this._client.emitAsync("account/get-account", { account }, 0);
         if (!accountData) return false;
 
+        const acc = this._data.accounts[account];
+
+
         const address = PandoraPay.cryptography.addressValidator.validateAddress( account );
         if ( address ){
 
             const type = WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT;
-            console.log("address account", account, accountData);
 
             try{
 
@@ -250,35 +254,44 @@ class Consensus extends BaseConsensus{
                     const {balances, nonce, delegate} = accountData.account;
                     const publicKeyHash = address.publicKeyHash;
 
-                    //remove old balance
-                    const balancesOld = await PandoraPay.mainChain.data.accountHashMap.getBalances(publicKeyHash);
-                    const nonceOld = await PandoraPay.mainChain.data.accountHashMap.getNonce(publicKeyHash) || 0;
-                    const delegateOld = await PandoraPay.mainChain.data.accountHashMap.getDelegate(publicKeyHash);
+                    const newAcc = {
+                        balances, nonce, delegate, publicKeyHash,
+                    };
 
-                    if (balancesOld)
-                        for (const currencyToken in balancesOld)
-                            await PandoraPay.mainChain.data.accountHashMap.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
+                    if ( JSON.stringify(acc) !== JSON.stringify(newAcc) ){
 
-                    //update with new balance
-                    if (balances)
-                        for (const balance of balances) {
-                            await this.getTokenByHash(balance.tokenCurrency);
-                            await PandoraPay.mainChain.data.accountHashMap.updateBalance(publicKeyHash, balance.amount, balance.tokenCurrency,);
+                        //remove old balance
+                        const balancesOld = await PandoraPay.mainChain.data.accountHashMap.getBalances(publicKeyHash);
+                        const nonceOld = await PandoraPay.mainChain.data.accountHashMap.getNonce(publicKeyHash) || 0;
+                        const delegateOld = await PandoraPay.mainChain.data.accountHashMap.getDelegate(publicKeyHash);
+
+                        if (balancesOld)
+                            for (const currencyToken in balancesOld)
+                                await PandoraPay.mainChain.data.accountHashMap.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
+
+                        //update with new balance
+                        if (balances && delegate !== acc.delegate)
+                            for (const balance of balances) {
+                                await this.getTokenByHash(balance.tokenCurrency);
+                                await PandoraPay.mainChain.data.accountHashMap.updateBalance(publicKeyHash, balance.amount, balance.tokenCurrency,);
+                            }
+
+                        if (nonce ) {
+                            const diffNonce = nonce - nonceOld;
+                            for (let i = 0; i < Math.abs(diffNonce); i++)
+                                await PandoraPay.mainChain.data.accountHashMap.updateNonce(publicKeyHash, diffNonce > 0 ? 1 : -1);
                         }
 
-                    if (nonce) {
-                        const diffNonce = nonce - nonceOld;
-                        for (let i = 0; i < Math.abs(diffNonce); i++)
-                            await PandoraPay.mainChain.data.accountHashMap.updateNonce(publicKeyHash, diffNonce > 0 ? 1 : -1);
-                    }
+                        if (delegate ) {
+                            const diffDelegateNonce = delegate.delegateNonce - (delegateOld ? -delegateOld.delegateNonce : 0);
+                            for (let i = 0; i < Math.abs(diffDelegateNonce); i++)
+                                await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegatePublicKey, delegate.delegateFee);
+                        }
 
-                    if (delegate) {
-                        const diffDelegateNonce = delegate.delegateNonce - (delegateOld ? -delegateOld.delegateNonce : 0);
-                        for (let i = 0; i < Math.abs(diffDelegateNonce); i++)
-                            await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegatePublicKey, delegate.delegateFee);
-                    }
+                        this._data.accounts[account] = newAcc;
+                        this.emit('consensus/account-transparent-update', { account, balances, nonce, delegate, type  } );
 
-                    this.emit('consensus/account-transparent-update', { account, balances, nonce, delegate, type  } );
+                    }
 
                 }
 
@@ -304,16 +317,40 @@ class Consensus extends BaseConsensus{
 
                     const {registered, balances } = accountData.account;
 
-                    const yHash = zether.utils.keccak256( zether.utils.encodedPackaged( zether.bn128.serialize( zetherAddress.publicKey ) ) );
+                    const newAcc = {
+                        registered, balances,
+                    };
 
-                    for (const balance of balances ){
-                        await this.getTokenByHash(balance.tokenCurrency);
-                        await PandoraPay.mainChain.data.zsc.setAccMapObject(yHash, balance.acc );
-                        await PandoraPay.mainChain.data.zsc.setPendingMapObject(yHash, balance.pending );
-                        await PandoraPay.mainChain.data.zsc.setLastRollOverMapObject(yHash, balance.lastRollOver );
+                    if ( JSON.stringify(acc) !== JSON.stringify(newAcc) ){
+
+                        const yHash = zether.utils.keccak256( zetherAddress.publicKey.toString('hex') );
+
+                        for (const balance of balances ){
+
+                            await this.getTokenByHash(balance.tokenCurrency);
+                            console.log( [ balance.acc.value0, balance.acc.value1 ]);
+                            await PandoraPay.mainChain.data.zsc.setAccMapObject(yHash, balance.acc );
+                            await PandoraPay.mainChain.data.zsc.setPendingMapObject(yHash, balance.pending );
+                            await PandoraPay.mainChain.data.zsc.setLastRollOverMapObject(yHash, balance.lastRollOver );
+
+                            const walletAddress = PandoraPay.wallet.manager.getWalletAddressByAddress( account, false );
+                            if (walletAddress) {
+                                const publicKey = walletAddress.keys.decryptPublicKey();
+                                const privateKey = walletAddress.keys.decryptPrivateKey();
+                                balance.amount = await PandoraPay.mainChain.data.zsc.getBalance(publicKey, privateKey, balance.tokenCurrency, async (i)=>{
+
+                                    if (i % 1000 === 0) {
+                                        await kernel.helpers.
+                                    }
+
+                                });
+                            }
+                        }
+
+                        this._data.accounts[account] = newAcc;
+                        this.emit('consensus/account-zether-update', { account, balances, registered, type } );
+
                     }
-
-                    this.emit('consensus/account-zether-update', { account, balances, registered, type } );
 
                 }
 
@@ -334,7 +371,9 @@ class Consensus extends BaseConsensus{
             this._data.accounts = {};
 
         for (const account in accounts)
-            this._data.accounts[account] = true;
+            this._data.accounts[account] = {
+
+            };
 
     }
 

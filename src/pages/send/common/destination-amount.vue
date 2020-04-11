@@ -2,7 +2,7 @@
     <div class="amount-row">
         <div>
             <span class="disabled">{{text}}</span> <br/>
-            <input type="number" v-model="amount" min="0">
+            <input type="number" v-model="amount" min="0" step="0.0001">
         </div>
         <div>
             <span class="disabled">Currency</span> <br/>
@@ -44,7 +44,7 @@ export default {
     watch: {
         'amount' (to, from) {
             return this.$emit('changed', {
-                amount: Number.parseInt(to),
+                amount: Math.floor( PandoraPay.argv.transactions.coins.convertToUnits( Number.parseFloat(to) ) ),
             });
         },
         'tokenCurrency' (to, from) {

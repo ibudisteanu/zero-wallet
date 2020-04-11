@@ -139,11 +139,7 @@ export default {
 
                     if (destination.validationError)
                         throw {message: destination.validationError};
-
-                    destination.amountUnits = PandoraPay.argv.transactions.coins.convertToUnits( Number.parseInt(destination.amount) );
                 }
-
-                const feeUnits = PandoraPay.argv.transactions.coins.convertToUnits( this.fee );
 
                 const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
                 if (nonce === undefined) throw {message: "The connection to the node was dropped"};
@@ -152,10 +148,10 @@ export default {
                     address: this.address.address,
                     txDsts: this.destinations.map( it => ({
                         address: it.destinationAddress,
-                        amount: it.amountUnits,
+                        amount: it.amount,
                         tokenCurrency: it.tokenCurrency,
                     })),
-                    fee: feeUnits,
+                    fee: this.fee,
                     feeTokenCurrency: this.feeTokenCurrency,
                     paymentId: this.paymentId,
                     nonce,
