@@ -2,12 +2,12 @@
     <div class="account">
 
         <account-identicon  :identicon="address.identicon" :size="60" :outer-size="20" :type="address.type" />
-        <div class="pd-top-10">
-            <span class="wordwrap ">{{address.name}}</span> <br/>
+        <div class="wordwrap pd-top-10">
+            <span class="">{{address.name}}</span> <br/>
             <span>{{type}}</span> <br/>
             <div class="pd-top-20">
                 Address: <br/>
-                <span class="wordwrap thick">{{address.address}} </span> <i class="fa fa-copy pointer"  @click="copyAddress(address.address)"/> <br/> <br/>
+                <span class=" thick">{{getAddress}} </span> <i class="fa fa-copy pointer"  @click="copyAddress(getAddress)"/> <br/> <br/>
             </div>
         </div>
 
@@ -31,7 +31,16 @@ export default {
         type(){
             if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return 'Transparent';
             if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER) return 'Zether';
+        },
+
+        getAddress(){
+            if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return this.address.address;
+            if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER){
+                if (this.address.registered) return this.address.address;
+                return this.address.addressRegistration;
+            }
         }
+
     },
 
     methods: {

@@ -37,6 +37,7 @@
 <script>
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
+const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 export default {
 
@@ -123,9 +124,20 @@ export default {
             return this.$emit('showImportPrivateKey');
         },
 
-        copyAddress( address){
+        copyAddress( address ){
 
-            this.$copyText(address.address).then( e =>
+            const type = address.type;
+
+            let addr;
+            if (type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) addr = address.address; else
+            if (type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER){
+                if (address.registered) addr = address.address;
+                else addr = address.addressRegistration;
+            }
+
+            console.log("copy address", addr, address.registered );
+
+            this.$copyText(addr).then( e =>
                 this.$notify({
                     type: 'success',
                     title: `Copied to clipboard successfully`,

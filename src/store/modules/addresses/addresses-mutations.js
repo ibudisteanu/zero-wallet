@@ -103,7 +103,7 @@ export default {
 
     },
 
-    setZetherAddressUpdate(context, {account, registered, simulatednonce, delegate}){
+    setZetherAddressUpdate(context, {account, registered, balances}){
 
         const address = { ... context.list[account]  };
 
@@ -114,8 +114,7 @@ export default {
                 balancesObj[ balance.tokenCurrency.toString("hex") ] = balance.amount;
 
         address.balances = balancesObj;
-        address.nonce = nonce;
-        address.delegate = delegate;
+        address.registered = registered;
 
         Vue.set(context.list, account, address );
 

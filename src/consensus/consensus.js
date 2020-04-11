@@ -13,6 +13,8 @@ const {MarshalData} = global.kernel.marshal;
 const {Block} = global.blockchain.blockchain.block;
 const {TokenHashMapData} = global.blockchain.blockchain.chain.token;
 const {ExchangeOffer} = global.blockchain.exchange;
+const {zether} = global.cryptography;
+const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 class Consensus extends BaseConsensus{
 
@@ -238,6 +240,7 @@ class Consensus extends BaseConsensus{
         const address = PandoraPay.cryptography.addressValidator.validateAddress( account );
         if ( address ){
 
+            const type = WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT;
             console.log("address account", account, accountData);
 
             try{
@@ -275,7 +278,7 @@ class Consensus extends BaseConsensus{
                             await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegatePublicKey, delegate.delegateFee);
                     }
 
-                    this.emit('consensus/account-transparent-update', { account, balances, nonce, delegate  } );
+                    this.emit('consensus/account-transparent-update', { account, balances, nonce, delegate, type  } );
 
                 }
 
@@ -293,9 +296,24 @@ class Consensus extends BaseConsensus{
 
             console.log("zether account", account, accountData);
 
+            const type = WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER;
+
             try{
 
                 if (accountData.found){
+
+                    const {registered, balances } = accountData.account;
+
+                    const yHash = zether.utils.keccak256( zether.utils.encodedPackaged( zether.bn128.serialize( zetherAddress.publicKey ) ) );
+
+                    for (const balance of balances ){
+                        await this.getTokenByHash(balance.tokenCurrency);
+                        await PandoraPay.mainChain.data.zsc.setAccMapObject(yHash, balance.acc );
+                        await PandoraPay.mainChain.data.zsc.setPendingMapObject(yHash, balance.pending );
+                        await PandoraPay.mainChain.data.zsc.setLastRollOverMapObject(yHash, balance.lastRollOver );
+                    }
+
+                    this.emit('consensus/account-zether-update', { account, balances, registered, type } );
 
                 }
 

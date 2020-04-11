@@ -198,7 +198,7 @@ export default {
 
                 const address = publicAddress.calculateAddress();
 
-                addresses[address] = {
+                const addr = {
                     address,
                     type: type,
                     publicKey: publicKey.toString("hex"),
@@ -208,17 +208,21 @@ export default {
                     loaded: false,
                 };
 
+
                 if (type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT){ //transparent
-                    addresses[address].publicKeyHash = publicAddress.publicKeyHash.toString("hex");
+                    addr.publicKeyHash = publicAddress.publicKeyHash.toString("hex");
                 }else
                 if (type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER){ //zether
                     const registration = wallet.addresses[i].keys.decryptRegistration();
-                    addresses[address].registration = registration.c.toString('hex')+registration.s.toString('hex');
+                    addr.registration = registration.c.toString('hex')+registration.s.toString('hex');
+                    addr.registered = false;
 
                     const zetherPublicAddress =  wallet.addresses[i].keys.decryptPublicAddress(true);
-                    addresses[address].addressRegistration = zetherPublicAddress.calculateAddress();
+                    addr.addressRegistration = zetherPublicAddress.calculateAddress();
 
                 }
+
+                addresses[address] = addr;
 
                 if (i === 0)
                     firstAddress = address;
