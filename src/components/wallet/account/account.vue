@@ -4,7 +4,7 @@
         <account-identicon  :identicon="address.identicon" :size="60" :outer-size="20" :type="address.type" />
         <div class="wordwrap pd-top-10">
             <span class="">{{address.name}}</span> <br/>
-            <span>{{type}}</span> <br/>
+            <span>{{typeName}}</span> <br/>
             <div class="pd-top-20">
                 Address: <br/>
                 <span class=" thick">{{getAddress}} </span> <i class="fa fa-copy pointer"  @click="copyAddress(getAddress)"/> <br/> <br/>
@@ -28,7 +28,8 @@ export default {
     },
 
     computed:{
-        type(){
+
+        typeName(){
             if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return 'Transparent';
             if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER) return 'Zether';
         },

@@ -1,60 +1,34 @@
 <template>
 
-    <div class="container">
-        <div class="boxed centered pd-top-30 pd-bottom-30">
-
-            <span class="title">Account Balance</span> <br/>
-
-            <div v-if="address">
-
-                <loading-spinner v-if="!address.loaded" />
-
-                <div v-else>
-
-                    <div v-for="(balance, token) in balances"
-                         :key="`balance-token-${token}`">
-                        <span class="balance thick" >
-                            {{formatMoney( convertToBase( balance.amount ) ) }}
-                        </span>
-                        <span class="currency thick">
-                            {{getToken(token).name}}
-                        </span>
-                        <router-link :to="`/tokens/token/${token}`">
-                            <i class="fa fa-info"></i>
-                        </router-link>
-                        <br/>
-                    </div>
-
-                </div>
-
-
-            </div>
-
-        </div>
+    <div>
+        <span class="balance thick" >
+            {{formatMoney( convertToBase( balance.amount ) ) }}
+        </span>
+        <span class="currency thick">
+            {{getToken(token).name}}
+        </span>
+        <router-link :to="`/tokens/token/${token}`">
+            <i class="fa fa-info"></i>
+        </router-link>
+        <br/>
     </div>
+
 
 </template>
 
 <script>
-import LoadingSpinner from "src/components/utils/loading-spinner";
+
+const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 export default {
 
-    components: {LoadingSpinner},
-
     props: {
-        address: null
+        type: {default: WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT},
+        token: {default: '00'},
+        balance: {default: null},
     },
 
-    computed:{
-
-        balances(){
-            return this.address.balances || {"00": 0};
-        },
-
-    },
-
-    methods:{
+    methods: {
 
         convertToBase(number){
             return PandoraPay.argv.transactions.coins.convertToBase(number);
@@ -69,23 +43,13 @@ export default {
             return this.$store.state.tokens.list[token];
         }
 
+
     }
 
 }
 </script>
 
 <style scoped>
-
-    .container{
-    }
-
-    .boxed{
-
-    }
-
-    .title{
-        font-size: 20px;
-    }
 
     .balance{
         font-size: 30px;
@@ -94,9 +58,6 @@ export default {
     .currency{
         font-size: 20px;
     }
-
-
-
 
 
 </style>

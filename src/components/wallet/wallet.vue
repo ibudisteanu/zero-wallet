@@ -2,7 +2,7 @@
 
     <div>
 
-        <balance :address="address"> </balance>
+        <balances :address="address"> </balances>
         <transactions :address="address"> </transactions>
 
     </div>
@@ -11,12 +11,12 @@
 
 <script>
 
-import Balance from "./balance/balance";
+import Balances from "./balance/balances";
 import Transactions from "./transactions/transactions";
 
 export default {
 
-    components: {Balance, Transactions},
+    components: {Balances, Transactions},
 
     computed:{
         address(){

@@ -239,8 +239,7 @@ class Consensus extends BaseConsensus{
         let accountData = await this._client.emitAsync("account/get-account", { account }, 0);
         if (!accountData) return false;
 
-        const acc = this._data.accounts[account];
-
+        const prevAcc = this._data.accounts[account];
 
         const address = PandoraPay.cryptography.addressValidator.validateAddress( account );
         if ( address ){
@@ -255,10 +254,12 @@ class Consensus extends BaseConsensus{
                     const publicKeyHash = address.publicKeyHash;
 
                     const newAcc = {
-                        balances, nonce, delegate, publicKeyHash,
+                        data: {
+                            balances, nonce, delegate, publicKeyHash,
+                        }
                     };
 
-                    if ( JSON.stringify(acc) !== JSON.stringify(newAcc) ){
+                    if ( !!prevAcc.balances || JSON.stringify(prevAcc.data) !== JSON.stringify(newAcc.data) ){
 
                         //remove old balance
                         const balancesOld = await PandoraPay.mainChain.data.accountHashMap.getBalances(publicKeyHash);
@@ -270,7 +271,7 @@ class Consensus extends BaseConsensus{
                                 await PandoraPay.mainChain.data.accountHashMap.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
 
                         //update with new balance
-                        if (balances && delegate !== acc.delegate)
+                        if (balances )
                             for (const balance of balances) {
                                 await this.getTokenByHash(balance.tokenCurrency);
                                 await PandoraPay.mainChain.data.accountHashMap.updateBalance(publicKeyHash, balance.amount, balance.tokenCurrency,);
@@ -318,17 +319,29 @@ class Consensus extends BaseConsensus{
                     const {registered, balances } = accountData.account;
 
                     const newAcc = {
-                        registered, balances,
+                        data: {
+                            registered, balances,
+                        },
+                        scan: {
+                            done: false,
+                            balances: {
+
+                            },
+                        }
                     };
 
-                    if ( JSON.stringify(acc) !== JSON.stringify(newAcc) ){
+                    if ( !prevAcc || JSON.stringify(prevAcc.data) !== JSON.stringify(newAcc.data)){
+
+                        if (prevAcc.scan)
+                            prevAcc.scan.done = true;
 
                         const yHash = zether.utils.keccak256( zetherAddress.publicKey.toString('hex') );
 
                         for (const balance of balances ){
 
+                            newAcc[balance.tokenCurrency.toString('hex')] = {};
+
                             await this.getTokenByHash(balance.tokenCurrency);
-                            console.log( [ balance.acc.value0, balance.acc.value1 ]);
                             await PandoraPay.mainChain.data.zsc.setAccMapObject(yHash, balance.acc );
                             await PandoraPay.mainChain.data.zsc.setPendingMapObject(yHash, balance.pending );
                             await PandoraPay.mainChain.data.zsc.setLastRollOverMapObject(yHash, balance.lastRollOver );
@@ -337,11 +350,29 @@ class Consensus extends BaseConsensus{
                             if (walletAddress) {
                                 const publicKey = walletAddress.keys.decryptPublicKey();
                                 const privateKey = walletAddress.keys.decryptPrivateKey();
-                                balance.amount = await PandoraPay.mainChain.data.zsc.getBalance(publicKey, privateKey, balance.tokenCurrency, async (i)=>{
 
-                                    if (i % 1000 === 0) {
-                                        await kernel.helpers.
+                                PandoraPay.mainChain.data.zsc.getBalance(publicKey, privateKey, balance.tokenCurrency, async (index)=>{
+
+                                    if (index % 1000 === 0) {
+                                        await kernel.helpers.Helper.sleep(1000);
+
+                                        newAcc[balance.tokenCurrency.toString('hex')].index = index;
+
+                                        if (newAcc.scan.done)
+                                            return false;
+
+                                        console.log("index", index);
+
+                                        this.emit('consensus/account-zether-scan-index-update', {account, tokenCurrency: balance.tokenCurrency, index });
                                     }
+
+                                    return true;
+                                }).then( answer => {
+
+                                    if (!newAcc.scan.done)
+                                        this.emit('consensus/account-zether-scan-amount-update', {account, tokenCurrency: balance.tokenCurrency, amount: answer });
+                                    else
+                                        this.emit('consensus/account-zether-scan-stopped-update', {account, tokenCurrency: balance.tokenCurrency, scanStopped: true });
 
                                 });
                             }

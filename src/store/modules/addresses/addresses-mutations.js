@@ -85,7 +85,7 @@ export default {
 
     },
 
-    setTransparentAddressUpdate(context, {account, balances, nonce, delegate}){
+    setTransparentAddressUpdate(context, {account, balances, nonce, delegate, type}){
 
         const address = { ... context.list[account]  };
 
@@ -98,12 +98,13 @@ export default {
         address.balances = balancesObj;
         address.nonce = nonce;
         address.delegate = delegate;
+        address.type = type;
 
         Vue.set(context.list, account, address );
 
     },
 
-    setZetherAddressUpdate(context, {account, registered, balances}){
+    setZetherAddressUpdate(context, {account, registered, balances, type}){
 
         const address = { ... context.list[account]  };
 
@@ -115,11 +116,38 @@ export default {
 
         address.balances = balancesObj;
         address.registered = registered;
+        address.type = type;
 
         Vue.set(context.list, account, address );
 
     },
 
+    setZetherAddressScanIndexUpdate(context, {account, tokenCurrency, index}){
+
+        const address = { ... context.list[account]  };
+
+        address.balances[tokenCurrency].scanIndex = index;
+
+        Vue.set(context.list, account, address );
+    },
+
+    setZetherAddressScanAmountUpdate(context, {account, tokenCurrency, amount}){
+
+        const address = { ... context.list[account]  };
+
+        address.balances[tokenCurrency].amount = amount;
+
+        Vue.set(context.list, account, address );
+    },
+
+    setZetherAddressScanStoppedUpdate(context, {account, tokenCurrency, scanStopped}){
+
+        const address = { ... context.list[account]  };
+
+        address.balances[tokenCurrency].scanStopped = scanStopped;
+
+        Vue.set(context.list, account, address );
+    }
 
 
 }

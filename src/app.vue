@@ -97,6 +97,11 @@ export default {
 
         Consensus.on("consensus/account-zether-update", data => this.$store.commit('setZetherAddressUpdate', data ) );
 
+        Consensus.on("consensus/account-zether-scan-index-update", data => this.$store.commit('setZetherAddressScanIndexUpdate', data ) );
+
+        Consensus.on("consensus/account-zether-scan-amount-update", data => this.$store.commit('setZetherAddressScanAmountUpdate', data ) );
+        Consensus.on("consensus/account-zether-scan-stopped-update", data => this.$store.commit('setZetherAddressScanStoppedUpdate', data ) );
+
         Consensus.on("consensus/account-update-tx-count", data => this.$store.commit('setAddressTxCounts', data ) );
 
         Consensus.on("consensus/account-update-txs", data => this.$store.commit('setAddressTxs', data ) );
