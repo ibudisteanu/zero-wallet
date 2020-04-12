@@ -250,6 +250,7 @@ class Consensus extends BaseConsensus{
 
                 if (accountData.found){
 
+
                     const {balances, nonce, delegate} = accountData.account;
                     const publicKeyHash = address.publicKeyHash;
 
@@ -260,6 +261,8 @@ class Consensus extends BaseConsensus{
                     };
 
                     if ( !!prevAcc.balances || JSON.stringify(prevAcc.data) !== JSON.stringify(newAcc.data) ){
+
+                        this._data.accounts[account] = newAcc;
 
                         //remove old balance
                         const balancesOld = await PandoraPay.mainChain.data.accountHashMap.getBalances(publicKeyHash);
@@ -289,7 +292,6 @@ class Consensus extends BaseConsensus{
                                 await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegatePublicKey, delegate.delegateFee);
                         }
 
-                        this._data.accounts[account] = newAcc;
                         this.emit('consensus/account-transparent-update', { account, balances, nonce, delegate, type  } );
 
                     }
@@ -332,14 +334,18 @@ class Consensus extends BaseConsensus{
 
                     if ( !prevAcc || JSON.stringify(prevAcc.data) !== JSON.stringify(newAcc.data)){
 
+                        this._data.accounts[account] = newAcc;
+
                         if (prevAcc.scan)
                             prevAcc.scan.done = true;
+
+                        this.emit('consensus/account-zether-update', { account, balances, registered, type } );
 
                         const yHash = zether.utils.keccak256( zetherAddress.publicKey.toString('hex') );
 
                         for (const balance of balances ){
 
-                            newAcc[balance.tokenCurrency.toString('hex')] = {};
+                            newAcc.scan.balances[balance.tokenCurrency.toString('hex')] = {};
 
                             await this.getTokenByHash(balance.tokenCurrency);
                             await PandoraPay.mainChain.data.zsc.setAccMapObject(yHash, balance.acc );
@@ -351,20 +357,20 @@ class Consensus extends BaseConsensus{
                                 const publicKey = walletAddress.keys.decryptPublicKey();
                                 const privateKey = walletAddress.keys.decryptPrivateKey();
 
+                                this.emit('consensus/account-zether-scan-status-update', {account, tokenCurrency: balance.tokenCurrency, scanStatus: 'started' });
+
                                 PandoraPay.mainChain.data.zsc.getBalance(publicKey, privateKey, balance.tokenCurrency, async (index)=>{
 
-                                    if (index % 1000 === 0) {
-                                        await kernel.helpers.Helper.sleep(1000);
+                                    await kernel.helpers.Helper.sleep(100);
 
-                                        newAcc[balance.tokenCurrency.toString('hex')].index = index;
+                                    newAcc.scan.balances[balance.tokenCurrency.toString('hex')].index = index;
 
-                                        if (newAcc.scan.done)
-                                            return false;
+                                    if (newAcc.scan.done)
+                                        return false;
 
-                                        console.log("index", index);
+                                    console.log("index", index);
 
-                                        this.emit('consensus/account-zether-scan-index-update', {account, tokenCurrency: balance.tokenCurrency, index });
-                                    }
+                                    this.emit('consensus/account-zether-scan-index-update', {account, tokenCurrency: balance.tokenCurrency, index });
 
                                     return true;
                                 }).then( answer => {
@@ -372,14 +378,12 @@ class Consensus extends BaseConsensus{
                                     if (!newAcc.scan.done)
                                         this.emit('consensus/account-zether-scan-amount-update', {account, tokenCurrency: balance.tokenCurrency, amount: answer });
                                     else
-                                        this.emit('consensus/account-zether-scan-stopped-update', {account, tokenCurrency: balance.tokenCurrency, scanStopped: true });
+                                        this.emit('consensus/account-zether-scan-status-update', {account, tokenCurrency: balance.tokenCurrency, scanStatus: 'stopped' });
 
                                 });
                             }
                         }
 
-                        this._data.accounts[account] = newAcc;
-                        this.emit('consensus/account-zether-update', { account, balances, registered, type } );
 
                     }
 

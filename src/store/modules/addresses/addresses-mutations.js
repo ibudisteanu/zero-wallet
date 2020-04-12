@@ -112,7 +112,7 @@ export default {
 
         if (balances)
             for (const balance of balances)
-                balancesObj[ balance.tokenCurrency.toString("hex") ] = balance;
+                balancesObj[ balance.tokenCurrency.toString("hex") ] = {...balance};
 
         address.balances = balancesObj;
         address.registered = registered;
@@ -124,29 +124,19 @@ export default {
 
     setZetherAddressScanIndexUpdate(context, {account, tokenCurrency, index}){
 
-        const address = { ... context.list[account]  };
-
-        address.balances[tokenCurrency].scanIndex = index;
-
-        Vue.set(context.list, account, address );
+        Vue.set(context.list[account].balances[tokenCurrency], 'scanIndex', index );
     },
 
     setZetherAddressScanAmountUpdate(context, {account, tokenCurrency, amount}){
 
-        const address = { ... context.list[account]  };
+        Vue.set(context.list[account].balances[tokenCurrency], 'amount', amount );
+        Vue.set(context.list[account].balances[tokenCurrency], 'scanStatus', 'finished' );
 
-        address.balances[tokenCurrency].amount = amount;
-
-        Vue.set(context.list, account, address );
     },
 
-    setZetherAddressScanStoppedUpdate(context, {account, tokenCurrency, scanStopped}){
+    setZetherAddressScanStatusUpdate(context, {account, tokenCurrency, scanStatus}){
 
-        const address = { ... context.list[account]  };
-
-        address.balances[tokenCurrency].scanStopped = scanStopped;
-
-        Vue.set(context.list, account, address );
+        Vue.set(context.list[account].balances[tokenCurrency], 'scanStatus', scanStatus );
     }
 
 
