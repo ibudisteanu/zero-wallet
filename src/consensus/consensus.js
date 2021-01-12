@@ -12,7 +12,6 @@ const {MarshalData} = global.kernel.marshal;
 
 const {Block} = global.blockchain.blockchain.block;
 const {TokenHashMapData} = global.blockchain.blockchain.chain.token;
-const {ExchangeOffer} = global.blockchain.exchange;
 const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 class Consensus extends BaseConsensus{
@@ -64,7 +63,6 @@ class Consensus extends BaseConsensus{
         };
 
         this._downloadPendingTransactionsEnabled = false;
-        this._downloadExchangeOffersEnabled = false;
 
     }
 
@@ -160,7 +158,6 @@ class Consensus extends BaseConsensus{
         await this._downloadAccountsTransactions();
 
         await this.downloadPendingTransactions();
-        await this.downloadExchangeOffersAll();
 
     }
 
@@ -397,71 +394,6 @@ class Consensus extends BaseConsensus{
         for (const hash in data.out)
             this.getTransactionByHash(hash, true);
 
-    }
-
-    /**
-     * EXCHANGE
-     */
-
-    async downloadExchangeOffersAll(){
-
-        if (!this._downloadExchangeOffersEnabled) return;
-
-        for (let i=0; i <= 1; i++)
-            await this.downloadExchangeOffers({type: i});
-
-    }
-
-    async downloadExchangeOffers({type, index = 0}){
-
-        const offersCount = await this._client.emitAsync("exchange/content-count", { offerType: type, }, 0);
-        if (!offersCount) return;
-
-        this.emit('consensus/exchange-offers-count', {type, count: offersCount});
-
-        await this._downloadExchangeOffersSpecific({type, index});
-
-    }
-
-    async _downloadExchangeOffersSpecific({type, index, limit}){
-
-        const offersData = await this._client.emitAsync("exchange/content", {offerType: type, index, type: 'buffer' }, 0);
-        if (!offersData) return;
-
-        const offers = [];
-        const offersIds = {};
-
-        for (let i=0; i < offersData.out.length; i++ ){
-
-            const data = offersData.out[i];
-            const offer = new ExchangeOffer( {
-                ...PandoraPay._scope,
-                chain: PandoraPay._scope.mainChain
-            }, undefined, Buffer.from(data) );
-
-            offer.id = offer.publicKeyHash.toString('hex');
-
-            offers.push(offer);
-            offersIds[offer.id] = offer;
-
-        }
-
-        this.emit('consensus/exchange-offers-ids', {type, offers: offersIds, next: offers.next, clear: index === 0 });
-        this.emit('consensus/exchange-offers', {type, offers: offers });
-
-    }
-
-
-    async startDownloadingExchangeOffers(){
-
-        if (this._downloadExchangeOffersEnabled) return;
-
-        this._downloadExchangeOffersEnabled = true;
-        return this.downloadExchangeOffersAll();
-    }
-
-    async stopDownloadingExchangeOffers(){
-        this._downloadExchangeOffersEnabled = false;
     }
 
     /**

@@ -117,13 +117,6 @@ export default {
 
         Consensus.on("consensus/tokens-deleted", data => this.$store.commit('deleteTokens', data ) );
 
-        Consensus.on("consensus/exchange-offers-count", data => this.$store.commit('setExchangeOffersCount', data ) );
-
-        Consensus.on("consensus/exchange-offers-ids", data => this.$store.commit('setExchangeOffersIds', data ) );
-
-        Consensus.on("consensus/exchange-offers", data => this.$store.commit('setExchangeOffers', data ) );
-
-
         Chat.on("encrypted-chat/chat-info-updated", info => this.$store.commit('setChatInfo', info));
 
         Chat.on("encrypted-chat/status-update", status =>  this.$store.commit('setChatStatus', status) );

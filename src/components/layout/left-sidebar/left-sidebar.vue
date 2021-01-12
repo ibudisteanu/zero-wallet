@@ -42,11 +42,6 @@
                 <span>Explorer</span>
             </router-link>
 
-            <router-link to="/exchange/buy" :class="`${route.indexOf('/exchange') === 0 ? 'selected' : ''}`"  >
-                <i class="fa fa-coins"></i>
-                <span>Exchange</span>
-            </router-link>
-
             <router-link to="/tokens" :class="`${route.indexOf('/tokens') === 0 ? 'selected' : ''}`"  >
                 <i class="fa fa-file-invoice-dollar"></i>
                 <span>Tokens</span>

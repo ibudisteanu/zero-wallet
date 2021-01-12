@@ -14,11 +14,6 @@ import BlockExplorerPage from "src/pages/explorer/block-explorer.page"
 import TransactionExplorerPage from "src/pages/explorer/transaction-explorer.page"
 import TokenExplorerPage from "src/pages/explorer/token-explorer.page.vue"
 import PendingTransactionsExplorerPage from "src/pages/explorer/pending-transactions-explorer.page"
-import ExchangeBuyPage from "src/pages/exchange/buy/exchange-buy.page"
-import ExchangeBuyAddOfferPage from "src/pages/exchange/buy/exchange-buy-add-offer.page"
-import ExchangeSellAddOfferPage from "src/pages/exchange/sell/exchange-sell-add-offer.page"
-import ExchangeSellPage from "src/pages/exchange/sell/exchange-sell.page"
-import ExchangePortfolioPage from "src/pages/exchange/portfolio/exchange-portfolio.page"
 import TokensPage from "src/pages/tokens/tokens.page.vue"
 import ChatPage from "src/pages/chat/chat.page"
 import ChatConversationPage from "src/pages/chat/chat-conversation.page"
@@ -60,16 +55,8 @@ const routes = [
     {path: '/explorer', component: BlockchainExplorerPage },
     {path: '/explorer/pending-transactions', component: PendingTransactionsExplorerPage },
 
-    {path: '/exchange/buy', component: ExchangeBuyPage },
-    {path: '/exchange/buy/add-offer', component: ExchangeBuyAddOfferPage },
-
-    {path: '/exchange/sell', component: ExchangeSellPage },
-    {path: '/exchange/sell/add-offer', component: ExchangeSellAddOfferPage },
-
     {path: '/tokens', component: TokensPage},
     {path: '/tokens/token/:hash', component: TokenExplorerPage },
-
-    {path: '/exchange/portfolio', component: ExchangePortfolioPage },
 
     {path: '/delegate-stake', component: DelegateStakePage },
 
