@@ -19,14 +19,6 @@
                     <span>Cold Staking</span>
                 </div>
 
-                <div class="col-xs-6 category pointer link" @click="select(1)">
-                    <i class="fa fa-eye-slash "></i>
-                    <span class="thick">Zether</span>
-                    <span>Address is Anonymous</span>
-                    <span>All amounts are confidential (hidden)</span>
-                    <span>Transfers are anonymous using Ring Confidential signatures</span>
-                </div>
-
             </div>
 
         </modal>

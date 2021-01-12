@@ -10,12 +10,6 @@
                     Transfer Transparently
                 </router-link>
 
-                <router-link to="/send/transparent/deposit" :class="`${route.indexOf('/send/transparent/deposit') === 0 ? 'selected' : ''}`">
-                    <i class="fa fa-donate"></i>
-                    Deposit to Zether Account
-                </router-link>
-
-
             </div>
 
         </div>

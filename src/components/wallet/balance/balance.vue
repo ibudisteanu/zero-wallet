@@ -57,11 +57,11 @@ export default {
         },
 
         isAmountAvailable(){
-            return this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT || ( this.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER && this.balance.scanStatus === 'finished' )
+            return this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT
         },
 
         isScanning(){
-            return this.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER && this.balance.scanStatus === 'started';
+            return false;
         },
 
         getToken(){

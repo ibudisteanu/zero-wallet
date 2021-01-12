@@ -5,7 +5,6 @@
         <div v-if="address">
 
             <send-transparent-top-bar v-if="address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT " />
-            <send-zether-top-bar v-if="address.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER" />
 
             <div class="container pd-top-20">
                 <div class="boxed ">
@@ -66,7 +65,6 @@ import LoadingSpinner from "src/components/utils/loading-spinner";
 import LoadingButton from "src/components/utils/loading-button.vue"
 
 import SendTransparentTopBar from "../common/send-transparent-top-bar.vue"
-import SendZetherTopBar from "../common/send-zether-top-bar.vue"
 
 import DestinationAddress from "../common/destination-address.vue"
 import DestinationAmount from "../common/destination-amount.vue"
@@ -74,7 +72,7 @@ import Vue from 'vue'
 
 export default {
 
-    components: {Layout, Account, LoadingSpinner, LoadingButton, SendTransparentTopBar, SendZetherTopBar, DestinationAddress, DestinationAmount },
+    components: {Layout, Account, LoadingSpinner, LoadingButton, SendTransparentTopBar, DestinationAddress, DestinationAmount },
 
     data(){
         return {

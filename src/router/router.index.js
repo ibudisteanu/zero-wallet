@@ -4,7 +4,6 @@ import Vue from "vue";
 import WalletPage from "src/pages/wallet/wallet.page"
 import LoginPage from "src/pages/login/login.page"
 import SendTransparentTransferPage from "src/pages/send/transparent/send-transparent-transfer.page"
-import SendTransparentDepositPage from "src/pages/send/transparent/send-transparent-deposit.page"
 import ReceivePage from "src/pages/receive/receive.page"
 import AccountInfoPage from "src/pages/account-info/account-info.page"
 import DelegateStakePage from "src/pages/delegate-stake/delegate-stake.page.vue"
@@ -49,7 +48,6 @@ const guardLogin = (to, from, next) =>{
 const routes = [
 
     {path: '/send/transparent/transfer', component: SendTransparentTransferPage, beforeEnter: guardDecrypted },
-    {path: '/send/transparent/deposit', component: SendTransparentDepositPage, beforeEnter: guardDecrypted },
 
     {path: '/receive', component: ReceivePage, beforeEnter: guardDecrypted },
     {path: '/account', component: AccountInfoPage, beforeEnter: guardDecrypted },

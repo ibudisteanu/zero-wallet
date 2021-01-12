@@ -95,14 +95,6 @@ export default {
 
         Consensus.on("consensus/account-transparent-update", data => this.$store.commit('setTransparentAddressUpdate', data ) );
 
-        Consensus.on("consensus/account-zether-update", data => this.$store.commit('setZetherAddressUpdate', data ) );
-
-        Consensus.on("consensus/account-zether-scan-index-update", data => this.$store.commit('setZetherAddressScanIndexUpdate', data ) );
-
-        Consensus.on("consensus/account-zether-scan-amount-update", data => this.$store.commit('setZetherAddressScanAmountUpdate', data ) );
-
-        Consensus.on("consensus/account-zether-scan-status-update", data => this.$store.commit('setZetherAddressScanStatusUpdate', data ) );
-
         Consensus.on("consensus/account-update-tx-count", data => this.$store.commit('setAddressTxCounts', data ) );
 
         Consensus.on("consensus/account-update-txs", data => this.$store.commit('setAddressTxs', data ) );
@@ -217,15 +209,6 @@ export default {
 
                 if (type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT){ //transparent
                     addr.publicKeyHash = publicAddress.publicKeyHash.toString("hex");
-                }else
-                if (type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER){ //zether
-                    const registration = wallet.addresses[i].keys.decryptRegistration();
-                    addr.registration = registration.c.toString('hex')+registration.s.toString('hex');
-                    addr.registered = false;
-
-                    const zetherPublicAddress =  wallet.addresses[i].keys.decryptPublicAddress(true);
-                    addr.addressRegistration = zetherPublicAddress.calculateAddress();
-
                 }
 
                 addresses[address] = addr;

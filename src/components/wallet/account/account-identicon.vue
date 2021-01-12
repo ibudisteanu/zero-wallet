@@ -14,7 +14,6 @@ export default {
         size: 40,
         outerSize: 34,
         outerColor: {default: "white;"},
-        outerZetherColor: {default: "antiquewhite;"},
         identicon: "",
 
         address: {default: ""},
@@ -27,8 +26,7 @@ export default {
     computed:{
 
         background(){
-            if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER) return this.outerZetherColor;
-            else return this.outerColor;
+            return this.outerColor;
         },
 
         addressIdenticon(){

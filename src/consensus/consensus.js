@@ -13,7 +13,6 @@ const {MarshalData} = global.kernel.marshal;
 const {Block} = global.blockchain.blockchain.block;
 const {TokenHashMapData} = global.blockchain.blockchain.chain.token;
 const {ExchangeOffer} = global.blockchain.exchange;
-const {zether} = global.cryptography;
 const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 class Consensus extends BaseConsensus{
@@ -307,97 +306,6 @@ class Consensus extends BaseConsensus{
             return true;
         }
 
-        const zetherAddress = PandoraPay.cryptography.zetherAddressValidator.validateAddress( account  );
-        if (zetherAddress){
-
-            console.log("zether account", account, accountData);
-
-            const type = WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER;
-
-            try{
-
-                if (accountData.found){
-
-                    const {registered, balances } = accountData.account;
-
-                    const newAcc = {
-                        data: {
-                            registered, balances,
-                        },
-                        scan: {
-                            done: false,
-                            balances: {
-
-                            },
-                        }
-                    };
-
-                    if ( !prevAcc || JSON.stringify(prevAcc.data) !== JSON.stringify(newAcc.data)){
-
-                        this._data.accounts[account] = newAcc;
-
-                        if (prevAcc.scan)
-                            prevAcc.scan.done = true;
-
-                        this.emit('consensus/account-zether-update', { account, balances, registered, type } );
-
-                        const yHash = zether.utils.keccak256( zetherAddress.publicKey.toString('hex') );
-
-                        for (const balance of balances ){
-
-                            newAcc.scan.balances[balance.tokenCurrency.toString('hex')] = {};
-
-                            await this.getTokenByHash(balance.tokenCurrency);
-                            await PandoraPay.mainChain.data.zsc.setAccMapObject(yHash, balance.acc );
-                            await PandoraPay.mainChain.data.zsc.setPendingMapObject(yHash, balance.pending );
-                            await PandoraPay.mainChain.data.zsc.setLastRollOverMapObject(yHash, balance.lastRollOver );
-
-                            const walletAddress = PandoraPay.wallet.manager.getWalletAddressByAddress( account, false );
-                            if (walletAddress) {
-                                const publicKey = walletAddress.keys.decryptPublicKey();
-                                const privateKey = walletAddress.keys.decryptPrivateKey();
-
-                                this.emit('consensus/account-zether-scan-status-update', {account, tokenCurrency: balance.tokenCurrency, scanStatus: 'started' });
-
-                                PandoraPay.mainChain.data.zsc.getBalance(publicKey, privateKey, balance.tokenCurrency, async (index)=>{
-
-                                    await kernel.helpers.Helper.sleep(100);
-
-                                    newAcc.scan.balances[balance.tokenCurrency.toString('hex')].index = index;
-
-                                    if (newAcc.scan.done)
-                                        return false;
-
-                                    console.log("index", index);
-
-                                    this.emit('consensus/account-zether-scan-index-update', {account, tokenCurrency: balance.tokenCurrency, index });
-
-                                    return true;
-                                }).then( answer => {
-
-                                    if (!newAcc.scan.done)
-                                        this.emit('consensus/account-zether-scan-amount-update', {account, tokenCurrency: balance.tokenCurrency, amount: answer });
-                                    else
-                                        this.emit('consensus/account-zether-scan-status-update', {account, tokenCurrency: balance.tokenCurrency, scanStatus: 'stopped' });
-
-                                });
-                            }
-                        }
-
-
-                    }
-
-                }
-
-                this.emit('consensus/account-update-loaded', { account, loaded: true  } );
-
-            }catch(err){
-                console.error(err);
-            }
-
-            return true;
-        }
-
     }
 
     setAccounts( accounts, deletePrevAccounts = false ){
@@ -444,12 +352,6 @@ class Consensus extends BaseConsensus{
 
             await this.downloadAccountTransactionsSpecific({account, limit: 10});
             await this.downloadPendingTransactionsSpecific( {account});
-
-            return true;
-        }
-
-        const zetherAddress = PandoraPay.cryptography.zetherAddressValidator.validateAddress( account  );
-        if (zetherAddress){
 
             return true;
         }

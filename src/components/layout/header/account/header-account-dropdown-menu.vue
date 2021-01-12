@@ -130,10 +130,6 @@ export default {
 
             let addr;
             if (type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) addr = address.address; else
-            if (type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER){
-                if (address.registered) addr = address.address;
-                else addr = address.addressRegistration;
-            }
 
             console.log("copy address", addr, address.registered );
 

@@ -43,7 +43,6 @@ export default {
 
         title(){
           if (this.address === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return 'Transparent';
-          if (this.address === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER) return 'Zether';
         },
 
         address(){

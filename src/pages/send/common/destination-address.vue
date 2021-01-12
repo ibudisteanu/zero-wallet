@@ -55,7 +55,6 @@ export default {
                 let address;
 
                 if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) address = PandoraPay.cryptography.addressValidator.validateAddress( this.destinationAddress );
-                if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER) address = PandoraPay.cryptography.zetherAddressValidator.validateAddress( this.destinationAddress );
 
                 if (!address) throw {message: `Address ${this.destinationAddress} is invalid`};
 
@@ -72,7 +71,6 @@ export default {
 
                 let address;
                 if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) address = PandoraPay.cryptography.addressValidator.validateAddress( this.destinationAddress );
-                if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER) address = PandoraPay.cryptography.zetherAddressValidator.validateAddress( this.destinationAddress );
 
                 return address.identiconImg();
 

@@ -31,15 +31,11 @@ export default {
 
         typeName(){
             if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return 'Transparent';
-            if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER) return 'Zether';
         },
 
         getAddress(){
             if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return this.address.address;
-            if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_ZETHER){
-                if (this.address.registered) return this.address.address;
-                return this.address.addressRegistration;
-            }
+
         }
 
     },
