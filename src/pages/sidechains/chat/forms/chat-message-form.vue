@@ -40,7 +40,7 @@ import Chat from "src/chat/chat"
 import LoadingButton from "src/components/utils/loading-button.vue"
 import CaptchaModal from "src/components/utils/captcha/captcha.modal.vue"
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import ChatAttachment from "./../common/chat-attachment.vue"
+import ChatAttachment from "../common/chat-attachment.vue"
 
 export default {
 

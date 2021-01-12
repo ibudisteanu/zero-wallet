@@ -12,7 +12,7 @@
                 <span>Wallet</span>
             </router-link>
 
-            <router-link :to="sendUrl" :class="`${route === sendUrl ? 'selected' : ''}`" >
+            <router-link to="/send" :class="`${route === '/send' ? 'selected' : ''}`" >
                 <i class="fa fa-money-bill-alt"></i>
                 <span>Send</span>
             </router-link>
@@ -20,11 +20,6 @@
             <router-link to="/receive" :class="`${route === '/receive' ? 'selected' : ''}`" >
                 <i class="fa fa-hand-holding-usd"></i>
                 <span>Receive</span>
-            </router-link>
-
-            <router-link to="/account" :class="`${route === '/account' ? 'selected' : ''}`"  >
-                <i class="fa fa-file-invoice"></i>
-                <span>Account</span>
             </router-link>
 
             <router-link to="/set-password" v-if="!encrypted" :class="`${route === '/set-password' ? 'selected' : ''}`"  >
@@ -47,17 +42,9 @@
                 <span>Tokens</span>
             </router-link>
 
-            <router-link to="/chat" :class="`${route.indexOf('/chat') === 0 ? 'selected' : ''}`" >
-                <div class="badge-div">
-                    <span v-if="conversationsNewNotifications" class="badge badge-smaller badge-warning">{{conversationsNewNotifications}}</span>
-                </div>
-                <i class="fa fa-comments"></i>
-                <span>Chat</span>
-            </router-link>
-
-            <router-link to="/shop" :class="`${route.indexOf('/shop') === 0 ? 'selected' : ''}`"  >
-                <i class="fa fa-shopping-cart"></i>
-                <span>Shop</span>
+            <router-link to="/sidechains" :class="`${route === '/sidechains' ? 'selected' : ''}`"  >
+                <i class="fa fa-link"></i>
+                <span>Sidechains</span>
             </router-link>
 
         </div>
@@ -173,7 +160,7 @@ export default {
         box-shadow: 5px 0 5px -5px #BBB;
         background-color: white;
 
-        width: 70px;
+        width: 85px;
     }
 
     .sidebar a {
@@ -232,7 +219,7 @@ export default {
 
         .sidebar {
             padding-top: 15px;
-            width: 64px;
+            width: 85px;
             display: none;
         }
         .sidebar a {

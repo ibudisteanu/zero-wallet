@@ -41,7 +41,7 @@ export default {
 
     data(){
         return {
-            marginLeft: '70px',
+            marginLeft: '85px',
             width: '100%',
         }
     },

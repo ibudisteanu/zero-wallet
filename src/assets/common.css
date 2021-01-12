@@ -309,7 +309,29 @@ input[type=submit]:disabled {
     color:white;
 }
 
+.topbar .header {
+    width: 100%;
+    background-color: #EEEEEE;
+}
+
+.topbar .row{
+    font-size: 15px;
+    display: inline-block;
+}
+
+.topbar .row a,
+.topbar .row span{
+    color: black;
+    margin-right: 15px;
+}
+
+.topbar .row .selected{
+    color: #6c6ce0;
+}
+
 @media (max-width: 767px) {
 
 }
+
+
 
