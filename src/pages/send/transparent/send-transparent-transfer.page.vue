@@ -4,7 +4,7 @@
 
         <div v-if="address">
 
-            <send-transparent-top-bar v-if="address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT " />
+            <send-top-bar v-if="address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT " />
 
             <div class="container pd-top-20">
                 <div class="boxed ">
@@ -64,7 +64,7 @@ const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import LoadingButton from "src/components/utils/loading-button.vue"
 
-import SendTransparentTopBar from "../common/send-transparent-top-bar.vue"
+import SendTopBar from "../common/send-top-bar.vue"
 
 import DestinationAddress from "../common/destination-address.vue"
 import DestinationAmount from "../common/destination-amount.vue"
@@ -72,7 +72,7 @@ import Vue from 'vue'
 
 export default {
 
-    components: {Layout, Account, LoadingSpinner, LoadingButton, SendTransparentTopBar, DestinationAddress, DestinationAmount },
+    components: {Layout, Account, LoadingSpinner, LoadingButton, SendTopBar, DestinationAddress, DestinationAmount },
 
     data(){
         return {

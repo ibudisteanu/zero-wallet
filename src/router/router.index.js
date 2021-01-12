@@ -44,7 +44,7 @@ const guardLogin = (to, from, next) =>{
 
 const routes = [
 
-    {path: '/send/transparent/transfer', component: SendTransparentTransferPage, beforeEnter: guardDecrypted },
+    {path: '/send', component: SendTransparentTransferPage, beforeEnter: guardDecrypted },
 
     {path: '/receive', component: ReceivePage, beforeEnter: guardDecrypted },
     {path: '/account', component: AccountInfoPage, beforeEnter: guardDecrypted },
