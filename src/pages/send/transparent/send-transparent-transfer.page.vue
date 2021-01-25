@@ -83,6 +83,7 @@ export default {
 
             paymentId: '',
             error: '',
+
         }
     },
 

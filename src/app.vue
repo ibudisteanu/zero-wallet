@@ -78,6 +78,10 @@ export default {
 
         await PandoraPay.start();
 
+        this.$store.commit('setNetworkByte', {
+            networkByte: PandoraPay._scope.argv.crypto.addresses.publicAddress.networkByte,
+            networkPrefix: PandoraPay._scope.argv.crypto.addresses.publicAddress.networkPrefix,
+        })
 
         Consensus.on("consensus/blockchain-info-updated", info => this.$store.commit('setBlockchainInfo', info) );
 

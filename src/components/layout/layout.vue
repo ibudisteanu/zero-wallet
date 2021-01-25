@@ -6,7 +6,7 @@
 
         <div class="layout" :style="{paddingLeft: marginLeft }">
 
-            <warning-bar />
+            <warning-bar v-if="$store.getters.isTestnet" />
 
             <layout-header > </layout-header>
 

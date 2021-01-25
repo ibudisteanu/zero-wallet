@@ -6,6 +6,7 @@ import BlockchainStore from "./modules/blockchain/blockchain-store"
 import PageStore from "./modules/page/page-store"
 import TransactionsStore from "./modules/transactions/transactions-store"
 import TokensStore from "./modules/tokens/tokens-store"
+import NetworkStore from "./modules/network/network-store"
 
 import ChatStore from "./modules/chat/chat-store"
 import ChatMessagesStore from "./modules/chat-messages/chat-messages-store"
@@ -24,9 +25,12 @@ const store = new Vuex.Store({
         transactions: TransactionsStore,
         tokens: TokensStore,
         addresses: AddressesStore,
+
         chat: ChatStore,
         chatMessages: ChatMessagesStore,
         captcha: CaptchaStore,
+
+        network: NetworkStore,
 
     },
 

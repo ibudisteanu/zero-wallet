@@ -89,8 +89,6 @@ export default {
 
 
     .account{
-        margin-left:auto;
-        margin-right:0;
         width: 70px;
     }
 

@@ -10,7 +10,7 @@
 
             <div class="pd-top-20 options">
 
-                <div class="col-xs-6 category pointer link" @click="select(0)">
+                <div class="category pointer link" @click="select(0)">
                     <i class="fa fa-money-bill-alt"></i>
                     <span class="thick" >Transparent</span>
                     <span>Address is public.</span>
