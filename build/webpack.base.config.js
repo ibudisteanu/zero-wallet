@@ -3,16 +3,14 @@ const webpack = require('webpack');
 const vueConfig = require('./vue-loader.config');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
-var BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
-    .BundleAnalyzerPlugin;
-var WebpackDevServer = require('webpack-dev-server');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 
 const isProd = process.env.NODE_ENV === 'production';
 const isAnalyze = process.argv.includes('--analyze') || process.argv.includes('--analyse');
 
-//const isAnalyze = false;
+//const isAnalyze = true;
 
 
 let webpackConfig = {

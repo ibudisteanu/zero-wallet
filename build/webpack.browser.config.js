@@ -6,7 +6,6 @@ const config = merge(base, {
     target: 'web',
 
     node: {
-        console: false,
         child_process: "empty",
         dgram: "empty",
         fs: 'empty',
@@ -21,11 +20,6 @@ const config = merge(base, {
     },
     output: {
         filename: 'Wallet-User-Interface-bundle.js',
-    },
-    resolve: {
-        alias: {
-
-        }
     },
 
     plugins: [

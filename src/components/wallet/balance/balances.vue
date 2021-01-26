@@ -11,11 +11,16 @@
 
                 <div v-else>
 
-                    <balance v-for="(balance, token) in balances"
-                         :key="`balance-token-${token}`"
-                         :balance="balance"
-                         :type="address.type">
-                    </balance>
+                    <div v-if="isEmpty" class="pd-top-20">
+                        <strong>Empty address</strong>
+                    </div>
+                    <div v-else>
+                        <balance v-for="(balance, token) in balances"
+                                 :key="`balance-token-${token}`"
+                                 :balance="balance"
+                                 :type="address.type">
+                        </balance>
+                    </div>
 
                 </div>
 
@@ -42,8 +47,14 @@ export default {
     computed:{
 
         balances(){
-            return this.address.balances || {"00": 0};
+            return this.address.balances;
         },
+
+        isEmpty(){
+            for (const key in this.address.balances)
+                return false;
+            return true;
+        }
 
     },
 

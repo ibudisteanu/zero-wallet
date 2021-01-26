@@ -6,8 +6,9 @@
     "DEX"
   ],
   "scripts": {
-    "build_browser": "webpack --config build/deploy/webpack.browser-frontend.config.js",
-    "build_user_interface": "webpack --config build/webpack.browser.config.js",
+    "build-browser": "webpack --config build/deploy/webpack.browser-frontend.config.js",
+    "build-browser-analyzer": "webpack --config build/deploy/webpack.browser-frontend.config.js --mode development --analyzer",
+    "build-user-interface": "webpack --config build/webpack.browser.config.js",
     "build": "npm run build_browser && npm run build_user_interface",
     "test": "npm run build_browser",
     "dev": "webpack-dev-server --config=./build/webpack.browser-hot-loader.config.js --content-base dist --hot --inline --host 0.0.0.0"
