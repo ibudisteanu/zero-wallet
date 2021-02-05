@@ -10,13 +10,6 @@
                 <span class="color">#{{blockHeight}}</span>
             </div>
 
-            <div class="row pd-bottom-10 disabled">
-                <span>Encrypted Chat</span>
-                <span class="color">{{chatStatus}}</span>
-                <span>Chat Index</span>
-                <span class="color">#{{chatIndex}}</span>
-            </div>
-
             <div class="row disabled">
                 <span>2019 -2020 <a href="http://PandoraPay.org" target="_blank">{{entity}}</a> - Wallet v {{version}}</span>
             </div>

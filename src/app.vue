@@ -22,7 +22,6 @@
 <script>
 
 import Consensus from "./consensus/consensus"
-import Chat from "./chat/chat"
 const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 export default {
@@ -121,26 +120,7 @@ export default {
 
         Consensus.on("consensus/tokens-deleted", data => this.$store.commit('deleteTokens', data ) );
 
-        Chat.on("encrypted-chat/chat-info-updated", info => this.$store.commit('setChatInfo', info));
-
-        Chat.on("encrypted-chat/status-update", status =>  this.$store.commit('setChatStatus', status) );
-
-        Chat.on("encrypted-chat/conversation-messages-count-update", data => this.$store.commit('setChatConversationMessagesCount', data));
-
-        Chat.on("encrypted-chat/conversation-messages-ids-update", data => this.$store.commit('setChatConversationMessagesIds', data));
-
-        Chat.on("encrypted-chat/message-downloaded", data => this.$store.commit('setChatEncryptedMessage', data));
-
-        Chat.on("encrypted-chat/conversations-count-update", data => this.$store.commit('setChatConversationsCount', data));
-
-        Chat.on("encrypted-chat/conversations-update", data => this.$store.commit('setChatConversations', data));
-
-        Chat.on("encrypted-chat/set-captcha", data => this.$store.commit('setCaptcha', data));
-        Chat.on("encrypted-chat/set-captcha-loading", data => this.$store.commit('setCaptchaLoading', data));
-
         await Consensus.start();
-
-        await Chat.start();
 
     },
 
@@ -228,7 +208,6 @@ export default {
 
             //subscribe addresses
             Consensus.setAccounts( addresses, true );
-            Chat.setAccounts( addresses, true );
 
             Consensus.getBlockchain();
 

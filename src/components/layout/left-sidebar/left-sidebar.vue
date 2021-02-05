@@ -42,9 +42,9 @@
                 <span>Tokens</span>
             </router-link>
 
-            <router-link to="/sidechains" :class="`${route === '/sidechains' ? 'selected' : ''}`"  >
-                <i class="fa fa-link"></i>
-                <span>Sidechains</span>
+            <router-link to="/kad" :class="`${route === '/kad' ? 'selected' : ''}`"  >
+                <i class="fa fa-globe"></i>
+                <span>KAD</span>
             </router-link>
 
         </div>

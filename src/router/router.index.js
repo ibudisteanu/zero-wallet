@@ -15,13 +15,9 @@ import TransactionExplorerPage from "src/pages/explorer/transaction-explorer.pag
 import TokenExplorerPage from "src/pages/explorer/token-explorer.page.vue"
 import PendingTransactionsExplorerPage from "src/pages/explorer/pending-transactions-explorer.page"
 import TokensPage from "src/pages/tokens/tokens.page.vue"
-import ChatPage from "src/pages/sidechains/chat/chat.page"
-import ChatConversationPage from "src/pages/sidechains/chat/chat-conversation.page"
-import ChatConversationStartPage from "src/pages/sidechains/chat/chat-conversation-start.page"
-import ShopPage from "src/pages/sidechains/shop/shop.page"
 import NotFoundPage from "src/pages/not-found/not-found.page"
 
-import SidechainsPage from "src/pages/sidechains/sidechains.page"
+import KadPage from "src/pages/kad/kad.page"
 
 Vue.use(VueRouter);
 
@@ -62,13 +58,7 @@ const routes = [
 
     {path: '/delegate-stake', component: DelegateStakePage },
 
-    {path: '/sidechains', component: SidechainsPage },
-
-    {path: '/shop', component: ShopPage },
-
-    {path: '/chat', component: ChatPage },
-    {path: '/chat/conversation/start', component: ChatConversationStartPage },
-    {path: '/chat/conversation/:publicKey', component: ChatConversationPage },
+    {path: '/kad', component: KadPage },
 
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
 
