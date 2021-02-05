@@ -13,6 +13,10 @@ export default {
         context.version = value;
     },
 
+    setLoaded(context, value){
+        context.loaded = value;
+    },
+
     walletClear(context){
 
         context.loaded = false;

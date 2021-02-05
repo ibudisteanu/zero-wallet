@@ -40,7 +40,7 @@ export default {
 
     props:{
         index: {default: null},
-        type: 0,
+        type: {default: 0},
         balances: {default: null },
     },
 

@@ -19,7 +19,7 @@ export default {
     components: { qrcodeVue },
 
     props: {
-        data: '',
+        data: {default: ''},
     },
 
     data(){

@@ -59,7 +59,7 @@ export default {
     },
 
     props:{
-        address: null,
+        address: {default: null},
     },
 
     computed:{

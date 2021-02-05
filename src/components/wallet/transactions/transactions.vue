@@ -40,7 +40,7 @@ export default {
     components: { LoadingSpinner, ShowTransactions, LoadingButton},
 
     props: {
-        address: null
+        address: {default: null}
     },
 
     computed:{

@@ -49,7 +49,7 @@ export default {
     components: {AccountIdenticon},
 
     props:{
-        transactions: null,
+        transactions: {default: null},
     },
 
     methods:{

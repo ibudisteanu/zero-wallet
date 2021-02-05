@@ -59,7 +59,7 @@ export default {
     components: {AccountIdenticon},
 
     props:{
-        tokens: null,
+        tokens: {default: null},
     },
 
     methods: {

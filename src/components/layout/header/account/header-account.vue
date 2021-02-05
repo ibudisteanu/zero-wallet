@@ -48,7 +48,8 @@ export default {
         },
 
         identicon(){
-            return this.address.identicon;
+            if (!this.address) return null;
+            else return this.address.identicon;
         }
 
     },

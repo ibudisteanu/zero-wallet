@@ -41,7 +41,7 @@ export default {
     components: {LoadingSpinner, Balance},
 
     props: {
-        address: null
+        address: {default: null}
     },
 
     computed:{

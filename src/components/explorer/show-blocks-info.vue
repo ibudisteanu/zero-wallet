@@ -52,7 +52,7 @@ export default {
     components: {AccountIdenticon},
 
     props:{
-        blocksInfo: null,
+        blocksInfo: {default: null},
     },
 
     methods: {

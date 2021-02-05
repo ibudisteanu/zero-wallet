@@ -7,20 +7,19 @@
 </template>
 
 <script>
-const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
+const {WalletAddressTypeEnum} = global.blockchain.enums;
 export default {
 
     props:{
-        size: 40,
-        outerSize: 34,
+        size: {default: 40},
+        outerSize: {default: 34},
         outerColor: {default: "white;"},
-        identicon: "",
+        identicon: {default: ""},
 
         address: {default: ""},
-        publicKey: null,
-        publicKeyHash: null,
+        publicKey: {default: null},
+        publicKeyHash: {default: null},
         type: {default: 0},
-
     },
 
     computed:{
@@ -44,12 +43,12 @@ export default {
 
                 if (this.publicKey){
                     address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKey( this.publicKey );
-                    if (!address) throw {message: "Invalid address"};
+                    if (!address) throw {message: "Invalid publicKey"};
                 }
 
                 if (this.publicKeyHash){
                     address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKeyHash( this.publicKeyHash );
-                    if (!address) throw {message: "Invalid address"};
+                    if (!address) throw {message: "Invalid publicKeyHash"};
                 }
 
                 return address ? address.identiconImg() : undefined;
