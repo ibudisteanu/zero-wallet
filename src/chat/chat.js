@@ -6,7 +6,7 @@ const {client} = global.blockchain.sockets.client;
 const {BasicSocket} = global.blockchain.sockets.basic;
 const {Helper} = global.kernel.helpers;
 
-const {NodeConsensusTypeEnum} = global.blockchain.sockets.schemas.types;
+const {NodeConsensusTypeEnum} = global.blockchain.enums;
 const {BigNumber} = global.kernel.utils;
 const {MarshalData} = global.kernel.marshal;
 

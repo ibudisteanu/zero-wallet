@@ -58,7 +58,7 @@ import Layout from "src/components/layout/layout"
 import Account from "src/components/wallet/account/account"
 import Consensus from "src/consensus/consensus"
 
-const {TransactionTokenCurrencyTypeEnum} = global.cryptography.transactions;
+const {TxTokenCurrencyTypeEnum} = global.cryptography.transactions;
 const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 import LoadingSpinner from "src/components/utils/loading-spinner";

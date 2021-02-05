@@ -56,14 +56,6 @@ let webpackConfig = {
                         fallback: 'vue-style-loader'
                     })
                     : ['vue-style-loader', 'css-loader']
-            },
-            {
-                test: /\.js$/,
-                loader: 'babel-loader',
-                exclude: [/node_modules/],
-                query: {
-                    presets: ['@babel/preset-env']
-                }
             }
         ]
     },

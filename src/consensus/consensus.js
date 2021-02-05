@@ -6,7 +6,7 @@ const {client} = global.blockchain.sockets.client;
 const {BasicSocket} = global.blockchain.sockets.basic;
 const {Helper} = global.kernel.helpers;
 
-const {NodeConsensusTypeEnum} = global.blockchain.sockets.schemas.types;
+const {NodeConsensusTypeEnum} = global.blockchain.enums;
 const {BigNumber} = global.kernel.utils;
 const {MarshalData} = global.kernel.marshal;
 
@@ -251,12 +251,10 @@ class Consensus extends BaseConsensus{
                     const publicKeyHash = address.publicKeyHash;
 
                     const newAcc = {
-                        data: {
-                            balances, nonce, delegate, publicKeyHash,
-                        }
+                        balances, nonce, delegate, publicKeyHash,
                     };
 
-                    if ( !!prevAcc.balances || JSON.stringify(prevAcc.data) !== JSON.stringify(newAcc.data) ){
+                    if ( !!prevAcc.balances || JSON.stringify(prevAcc) !== JSON.stringify(newAcc) ){
 
                         this._data.accounts[account] = newAcc;
 

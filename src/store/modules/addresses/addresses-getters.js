@@ -1,13 +1,13 @@
-const {TransactionTypeEnum} = global.cryptography.transactions;
+const {TxTypeEnum} = global.cryptography.transactions;
 
 export default {
 
     addressesContains: (state)=>(tx)=>{
 
-        if (tx.script === TransactionTypeEnum.PUBLIC_TRANSACTION ||
-            tx.script === TransactionTypeEnum.TX_SCRIPT_DELEGATE_STAKE_TRANSACTION ||
-            tx.script === TransactionTypeEnum.TX_SCRIPT_TOKEN_CREATE_TRANSACTION ||
-            tx.script === TransactionTypeEnum.TX_SCRIPT_TOKEN_UPDATE_SUPPLY_TRANSACTION ) return true;
+        if (tx.script === TxTypeEnum.PUBLIC_TRANSACTION ||
+            tx.script === TxTypeEnum.TX_SCRIPT_DELEGATE_STAKE_TRANSACTION ||
+            tx.script === TxTypeEnum.TX_SCRIPT_TOKEN_CREATE_TRANSACTION ||
+            tx.script === TxTypeEnum.TX_SCRIPT_TOKEN_UPDATE_SUPPLY_TRANSACTION ) return true;
 
         for (let i=0; i < tx.vin.length; i++)
             for (const address in state.list)

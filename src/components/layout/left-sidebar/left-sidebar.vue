@@ -129,7 +129,7 @@ export default {
             else {
                 this.show = true;
                 this.fullWidth = true;
-                this.$emit('onUpdateMarginLeft', {marginLeft: '70px' });
+                this.$emit('onUpdateMarginLeft', {marginLeft: '85px' });
             }
 
 

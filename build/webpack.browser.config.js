@@ -1,6 +1,7 @@
 const webpack = require('webpack')
 const base = require('./webpack.base.config')
 const merge = require('webpack-merge')
+const path = require('path')
 
 const config = merge(base, {
     target: 'web',
@@ -19,7 +20,9 @@ const config = merge(base, {
         app: "./src/main.js",
     },
     output: {
-        filename: 'Wallet-User-Interface-bundle.js',
+        path: path.resolve(__dirname, "dist/build"),
+        publicPath: "/",
+        filename: "Wallet-User-Interface-bundle.js"
     },
 
     plugins: [

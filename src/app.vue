@@ -188,7 +188,7 @@ export default {
                 const publicAddress =  wallet.addresses[i].keys.decryptPublicAddress();
                 const publicKey = wallet.addresses[i].keys.decryptPublicKey();
 
-                const mnemonicSequenceIndex =  wallet.addresses[i].decryptMonemonicSequenceIndex();
+                const mnemonicSequenceIndex =  wallet.addresses[i].decryptMnemonicSequenceIndex();
                 const mnemonicSequenceIndexValue = Number.parseInt( mnemonicSequenceIndex.toString("hex"), 16);
 
                 const address = publicAddress.calculateAddress();
