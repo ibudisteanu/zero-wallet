@@ -64,10 +64,10 @@ const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import LoadingButton from "src/components/utils/loading-button.vue"
 
-import SendTopBar from "../common/send-top-bar.vue"
+import SendTopBar from "../send-top-bar.vue"
 
-import DestinationAddress from "../common/destination-address.vue"
-import DestinationAmount from "../common/destination-amount.vue"
+import DestinationAddress from "src/components/send/destination-address.vue"
+import DestinationAmount from "src/components/send/destination-amount.vue"
 import Vue from 'vue'
 
 export default {
@@ -79,7 +79,7 @@ export default {
 
             destinations: [],
             fee: 0,
-            feeTokenCurrency: '00',
+            feeTokenCurrency: '',
 
             paymentId: '',
             error: '',
@@ -92,7 +92,7 @@ export default {
         WalletAddressTypeEnum: () => WalletAddressTypeEnum,
 
         balances(){
-            return this.address.balances || {"00": 0};
+            return this.address.balances || {"": 0};
         },
 
         address(){
@@ -110,7 +110,7 @@ export default {
                 destinationAddress: '',
                 validationError: 'Address is empty',
                 amount: 0,
-                tokenCurrency: '00',
+                tokenCurrency: '',
             });
         },
 

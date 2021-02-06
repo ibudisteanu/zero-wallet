@@ -12,7 +12,7 @@
 <script>
 
 import Balances from "./balance/balances";
-import Transactions from "./transactions/transactions";
+import Transactions from "src/components/wallet/transactions/transactions";
 
 export default {
 

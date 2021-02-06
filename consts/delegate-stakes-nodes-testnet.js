@@ -1,5 +1,5 @@
 export default [ {
-        address: 'http://127.0.0.1:8084',
+        address: 'http://0.0.0.1:8085',
         fee: 0,
     },
 ]

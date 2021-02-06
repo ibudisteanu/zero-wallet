@@ -3,7 +3,7 @@
     <modal ref="modal" title="Delegate Stake">
 
         <span class="disabled">Delegate Public Key</span> <br/>
-        <input type="text" v-model="delegatePublicKey">
+        <input type="text" v-model="delegatePublicKeyHash">
 
         <div class="btn-round" @click="handleDelegatePublicKey" v-tooltip.bottom="'Generate your own delegate public key'" >
             <i class="fa fa-tools"></i>
@@ -47,7 +47,7 @@ export default {
         return {
             delegate: null,
 
-            delegatePublicKey: '',
+            delegatePublicKeyHash: '',
             delegateNonce: 0,
             delegateFee: 0,
             walletPassword: '',
@@ -95,7 +95,7 @@ export default {
                 const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false, this.walletPassword );
                 const delegatePrivateAddress = addressWallet.decryptDelegateStakePrivateAddress(this.delegateNonce + 1, this.walletPassword);
 
-                this.delegatePublicKey = delegatePrivateAddress.publicKey.toString("hex");
+                this.delegatePublicKeyHash = delegatePrivateAddress.publicKey.toString("hex");
 
             }catch(err){
                 this.error = err;
@@ -113,8 +113,8 @@ export default {
                 if (!checkPassword)
                     throw {message: "Your wallet password is invalid"};
 
-                if (this.delegatePublicKey.length !== 66  ) throw {message: "Delegate Public Key is not 66 hex digits"};
-                if ( !blockchain.helpers.StringHelper.isHex(this.delegatePublicKey) ) throw {message: "Delegate Public key is invalid"};
+                if (this.delegatePublicKeyHash.length !== 66  ) throw {message: "Delegate Public Key is not 66 hex digits"};
+                if ( !blockchain.helpers.StringHelper.isHex(this.delegatePublicKeyHash) ) throw {message: "Delegate Public key is invalid"};
 
                 if (this.delegateFee < 0 || this.delegateFee > 100) throw {message: "DelegateFee must be between 0 and 100"};
                 const delegateFee = Math.floor( this.delegateFee / 100 * PandoraPay.argv.transactions.staking.delegateStakingFeePercentage );
@@ -123,7 +123,7 @@ export default {
 
                 const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false, this.walletPassword );
                 const delegatePrivateAddress = addressWallet.decryptDelegateStakePrivateAddress(this.delegateNonce + 1, this.walletPassword);
-                if (this.delegatePublicKey === delegatePrivateAddress.publicKey.toString("hex") ){
+                if (this.delegatePublicKeyHash === delegatePrivateAddress.publicKey.toString("hex") ){
                     delegateNonce += 1;
                 }
 
@@ -136,7 +136,7 @@ export default {
                     nonce,
                     delegate:{
                         delegateNonce: delegateNonce,
-                        delegatePublicKey: this.delegatePublicKey,
+                        delegatePublicKeyHash: this.delegatePublicKeyHash,
                         delegateFee: delegateFee,
                     },
                     memPoolValidateTxData: false,

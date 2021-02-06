@@ -100,32 +100,32 @@ export default {
                 console.log("this.delegate", this.delegate);
 
                 const publicKey = Buffer.from( this.address.publicKey, "hex");
-                let delegatePublicKey = Buffer.from( this.delegate.delegatePublicKey, "hex");
+                let delegatePublicKeyHash = Buffer.from( this.delegate.delegatePublicKeyHash, "hex");
 
                 //getting private key
                 const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false, this.walletPassword );
                 const delegatePrivateAddress = addressWallet.decryptDelegateStakePrivateAddress( this.delegate.delegateNonce, this.walletPassword );
 
                 let delegatePrivateKey;
-                if (delegatePrivateAddress.publicKey.toString("hex") === this.delegate.delegatePublicKey)
+                if (delegatePrivateAddress.publicKey.toString("hex") === this.delegate.delegatePublicKeyHash)
                     delegatePrivateKey = delegatePrivateAddress.privateKey;
 
                 const concat = Buffer.concat([
                     challenge,
                     publicKey,
-                    delegatePublicKey,
+                    delegatePublicKeyHash,
                     delegatePrivateKey ? delegatePrivateKey : Buffer.alloc(0),
                 ]);
 
                 const signature = addressWallet.sign( concat, this.walletPassword );
                 if (!signature) throw "message couldn't be signed";
 
-                console.log( {publicKey, signature, delegatePublicKey, delegatePrivateKey} );
+                console.log( {publicKey, signature, delegatePublicKeyHash, delegatePrivateKey} );
 
                 const out = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/import-wallet-stake', {
                     publicKey: publicKey.toString("hex"),
                     signature: signature.toString("hex"),
-                    delegatePublicKey: delegatePublicKey.toString('hex'),
+                    delegatePublicKeyHash: delegatePublicKeyHash.toString('hex'),
                     delegatePrivateKey: delegatePrivateKey ? delegatePrivateKey.toString('hex') : undefined
                 });
 

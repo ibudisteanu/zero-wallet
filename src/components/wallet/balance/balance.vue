@@ -45,7 +45,7 @@ export default {
 
     props: {
         type: {default: WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT},
-        token: {default: '00'},
+        token: {default: ''},
         balance: {default: null},
     },
 

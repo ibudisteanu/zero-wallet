@@ -12,6 +12,11 @@
                 <span>Wallet</span>
             </router-link>
 
+            <router-link to="/staking" :class="`${route === '/staking' ? 'selected' : ''}`" >
+                <i class="fa fa-piggy-bank"></i>
+                <span>Staking</span>
+            </router-link>
+
             <router-link to="/send" :class="`${route === '/send' ? 'selected' : ''}`" >
                 <i class="fa fa-money-bill-alt"></i>
                 <span>Send</span>

@@ -6,7 +6,7 @@ import LoginPage from "src/pages/login/login.page"
 import SendTransparentTransferPage from "src/pages/send/transparent/send-transparent-transfer.page"
 import ReceivePage from "src/pages/receive/receive.page"
 import AccountInfoPage from "src/pages/account-info/account-info.page"
-import DelegateStakePage from "src/pages/delegate-stake/delegate-stake.page.vue"
+import StakingPage from "src/pages/staking/staking.page"
 import SetPasswordPage from "src/pages/encryption/set-password.page"
 import RemovePasswordPage from "src/pages/encryption/remove-password.page"
 import BlockchainExplorerPage from "src/pages/explorer/blockchain-explorer.page"
@@ -55,8 +55,9 @@ const routes = [
 
     {path: '/tokens', component: TokensPage},
     {path: '/tokens/token/:hash', component: TokenExplorerPage },
+    {path: '/tokens/token/', component: TokenExplorerPage },
 
-    {path: '/delegate-stake', component: DelegateStakePage },
+    {path: '/staking', component: StakingPage },
 
     {path: '/kad', component: KadPage },
 

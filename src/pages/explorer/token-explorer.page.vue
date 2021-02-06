@@ -44,9 +44,12 @@
                                 <span class="col-xs-7 col-sm-9 wordwrap">{{token.decimalSeparator}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Printer Public Key</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">
-                                    <account-identicon :publicKeyHash="token.printerPublicKeyHash" size="20" outer-size="5" />
+                                <span class="col-xs-5 col-sm-3 wordwrap">Verification Public Key Hash</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap" >
+                                    <account-identicon v-if="token.ticker !== 'PAND'" :publicKeyHash="token.verificationPublicKeyHash" size="20" outer-size="5" />
+                                    <span v-else>
+                                        na
+                                    </span>
                                 </span>
                             </div>
                             <div class="row pd-top-40 pd-bottom-10">
@@ -76,27 +79,25 @@ export default {
 
     components: {Layout, LoadingSpinner, AccountIdenticon},
 
+    data(){
+        return{
+            error: ''
+        }
+    },
+
     computed:{
+
         hash(){
-            return this.$route.params.hash;
+            return this.$route.params.hash||'';
         },
-
-
         token(){
-
             return this.$store.state.tokens.list[this.hash];
-
         },
     },
 
     methods: {
 
         async loadToken() {
-
-            if (!this.hash) {
-                this.error = 'Token hash was not specified';
-                return;
-            }
 
             await Consensus.initPromise;
 

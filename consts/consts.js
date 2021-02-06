@@ -8,7 +8,7 @@ export default {
     entity: 'PandoraPay',
     version: '0.125',
 
-    fallback: 'http://helloworldx.ddns.net:8083',
+    fallback: 'http://0.0.0.0:8085',
     delegateStakesNodes: DelegateStakesNodesMainnet,
 
 }

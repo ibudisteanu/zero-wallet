@@ -4,7 +4,8 @@
         <div class="container pd-top-20">
             <div class="boxed ">
 
-                <h1>Delegate Stake</h1>
+                <h1>Staking</h1>
+                <span>In browser, you can only delegate your stakes</span>
 
                 <div class="account-info" v-if="address">
 
@@ -27,7 +28,7 @@
 
                             <div v-else>
                                 <span>Delegated nonce {{address.delegate.delegateNonce}}</span> <br/>
-                                <span>Delegated public key {{address.delegate.delegatePublicKey}}</span> <br/>
+                                <span>Delegated public key {{address.delegate.delegatePublicKeyHash}}</span> <br/>
                                 <span>Delegated fee {{delegateFeePercentage}} %</span> <br/>
 
                                 <div class="buttons-row pd-top-20">
@@ -84,10 +85,10 @@ import Account from "src/components/wallet/account/account"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import Consensus from "src/consensus/consensus"
 
-import DelegateStakeModal from "src/components/wallet/delegate-stake/delegate-stake.modal.vue"
-import StopDelegateStakeModal from "src/components/wallet/delegate-stake/stop-delegate-stake.modal.vue"
-import DelegateStakePrivateKeyModal from "src/components/wallet/delegate-stake/delegate-stake-private-key.modal.vue"
-import DelegateStakeNodeModal from "src/components/wallet/delegate-stake/delegate-stake-node.modal.vue"
+import DelegateStakeModal from "src/components/staking/delegate-stake.modal.vue"
+import StopDelegateStakeModal from "src/components/staking/stop-delegate-stake.modal.vue"
+import DelegateStakePrivateKeyModal from "src/components/staking/delegate-stake-private-key.modal.vue"
+import DelegateStakeNodeModal from "src/components/staking/delegate-stake-node.modal.vue"
 
 export default {
 
@@ -107,9 +108,8 @@ export default {
         },
 
         balance(){
-            const balances = this.address.balances || {"00": 0};
-            console.log(balances["00"]||0);
-            return PandoraPay.argv.transactions.coins.convertToBase( balances["00"]||0 );
+            const balances = this.address.balances || {"": 0};
+            return PandoraPay.argv.transactions.coins.convertToBase( balances[""]||0 );
         },
 
         minimumForStaking(){
@@ -117,7 +117,7 @@ export default {
         },
 
         isDelegated(){
-            return this.address.delegate ? this.address.delegate.delegatePublicKey !== "00" : false;
+            return this.address.delegate ? this.address.delegate.delegatePublicKeyHash !== "" : false;
         },
 
         delegateFeePercentage(){

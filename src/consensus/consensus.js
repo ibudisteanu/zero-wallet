@@ -10,8 +10,8 @@ const {NodeConsensusTypeEnum} = global.blockchain.enums;
 const {BigNumber} = global.kernel.utils;
 const {MarshalData} = global.kernel.marshal;
 
-const {Block} = global.blockchain.blockchain.block;
-const {TokenHashMapData} = global.blockchain.blockchain.chain.token;
+const {BlockModel} = global.blockchain.blockchain.block;
+const {TokenHashMapElementModel} = global.blockchain.blockchain.chain.token;
 const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 class Consensus extends BaseConsensus{
@@ -283,7 +283,7 @@ class Consensus extends BaseConsensus{
                         if (delegate ) {
                             const diffDelegateNonce = delegate.delegateNonce - (delegateOld ? -delegateOld.delegateNonce : 0);
                             for (let i = 0; i < Math.abs(diffDelegateNonce); i++)
-                                await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegatePublicKey, delegate.delegateFee);
+                                await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegatePublicKeyHash, delegate.delegateFee);
                         }
 
                         this.emit('consensus/account-transparent-update', { account, balances, nonce, delegate, type  } );
@@ -461,14 +461,7 @@ class Consensus extends BaseConsensus{
         const blockData = await this._client.emitAsync("blockchain/get-block", { hash, type: "buffer"}, 0  );
         if (!blockData) return; //disconnected
 
-        const block = new Block( {
-            ...PandoraPay._scope,
-            chain: PandoraPay._scope.mainChain
-        }, undefined, Buffer.from(blockData) );
-
-        await this._includeBlock(block);
-
-        return block;
+        return this._includeBlock( Buffer.from(blockData) );
 
     }
 
@@ -479,16 +472,17 @@ class Consensus extends BaseConsensus{
         const blockData = await this._client.emitAsync("blockchain/get-block-by-height", {index: height, type: "buffer"}, 0  );
         if (!blockData) return; //disconnected
 
-        const block = new Block({
-            ...PandoraPay._scope,
-            chain: PandoraPay._scope.mainChain
-        }, undefined, Buffer.from(blockData));
-
-        return this._includeBlock(block);
+        return this._includeBlock(Buffer.from(blockData));
 
     }
 
     async _includeBlock(block){
+
+        if (Buffer.isBuffer(block))
+            block = new BlockModel( {
+                ...PandoraPay._scope,
+                chain: PandoraPay._scope.mainChain
+            }, undefined, block );
 
         this.emit('consensus/block-downloaded', block );
 
@@ -584,7 +578,7 @@ class Consensus extends BaseConsensus{
             if (!tokenData)
                 throw "token fetch failed";
 
-            token = new TokenHashMapData({
+            token = new TokenHashMapElementModel({
                 ...PandoraPay._scope,
                 chain: PandoraPay._scope.mainChain
             }, undefined, tokenData );

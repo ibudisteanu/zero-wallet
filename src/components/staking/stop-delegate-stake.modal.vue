@@ -88,7 +88,7 @@ export default {
                     nonce,
                     delegate:{
                         delegateNonce: this.delegateNonce,
-                        delegatePublicKey: Buffer.alloc(33),
+                        delegatePublicKeyHash: Buffer.alloc(20),
                         delegateFee: 0,
                     },
                     memPoolValidateTxData: false,

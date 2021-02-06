@@ -1,5 +1,5 @@
 export default [ {
-        address: 'http://helloworldx.ddns.net:8083',
+        address: 'http://0.0.0.0:8085',
         fee: 0,
     },
 ]

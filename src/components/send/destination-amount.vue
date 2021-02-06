@@ -23,7 +23,7 @@ export default {
     data(){
         return {
             amount: 0,
-            tokenCurrency: '00',
+            tokenCurrency: '',
         }
     },
 
