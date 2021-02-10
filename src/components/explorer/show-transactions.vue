@@ -2,8 +2,8 @@
 
     <div>
         <div class="row pd-top-10 pd-bottom-10">
-            <span class="col-xs-6 col-sm-3 wordwrap">Hash</span>
-            <span class="col-xs-6 col-sm-1 wordwrap">Time</span>
+            <span class="col-xs-6 col-sm-2 wordwrap">Hash</span>
+            <span class="col-xs-6 col-sm-2 wordwrap">Time</span>
             <span class="col-xs-12 col-sm-8 wordwrap">Data</span>
         </div>
         <div v-for="(tx, key) in transactions"
@@ -12,8 +12,8 @@
 
             <router-link :to="`/explorer/tx/hash/${tx.hash().toString('hex')}`">
 
-                <span class="col-xs-6 col-sm-3 wordwrap"><router-link :to="`/explorer/tx/hash/${tx.hash().toString('hex')}`">{{tx.hash().toString("hex").substr(0,10)+'...'}}</router-link></span>
-                <span class="col-xs-6 col-sm-1 wordwrap">
+                <span class="col-xs-6 col-sm-2 wordwrap"><router-link :to="`/explorer/tx/hash/${tx.hash().toString('hex')}`">{{tx.hash().toString("hex").substr(0,10)+'...'}}</router-link></span>
+                <span class="col-xs-6 col-sm-2 wordwrap">
                     <template v-if="!isPending(tx)">
                         {{ timeAgo( $store.state.blockchain.genesisTimestamp +  tx.__extra.timestamp) }}
                     </template>
@@ -82,6 +82,7 @@ export default {
 
     .input, .output{
         display: inline-block;
+        padding-right: 10px;
     }
 
     .amount {

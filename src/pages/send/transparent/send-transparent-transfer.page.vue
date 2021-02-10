@@ -31,8 +31,7 @@
 
                         <destination-amount text="Fee" :balances="balances" @changed="changedFee" />
 
-                        <div v-if="error || validation" class="danger centered">
-                            {{validation}}
+                        <div v-if="error" class="danger centered">
                             {{error}}
                         </div>
 

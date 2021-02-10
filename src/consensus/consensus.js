@@ -171,7 +171,7 @@ class Consensus extends BaseConsensus{
 
             const blockInfo = await this._client.emitAsync("blockchain/get-block-info", {index: i}, 0);
 
-            if(!blockInfo) return; //disconnected
+            if (!blockInfo || !blockInfo.hash) return; //disconnected
 
             blockInfo.hash = Buffer.from(blockInfo.hash);
             blockInfo.kernelHash = Buffer.from(blockInfo.kernelHash);
@@ -523,11 +523,11 @@ class Consensus extends BaseConsensus{
         let tx;
         try{
 
-            const txData = await this._client.emitAsync("transactions/get-transaction", { hash }, 0  );
+            const txData = await this._client.emitAsync("transactions/get-transaction", { hash, type: "buffer" }, 0  );
             if (!txData) //disconnected
                 throw "tx fetch failed";
 
-            tx = PandoraPay._scope.mainChain.transactionsValidator.validateTx( txData.tx );
+            tx = PandoraPay._scope.mainChain.transactionsValidator.cloneTx( txData.tx );
 
             if (tx.hash().toString('hex') !== hash )
                 throw "Transaction hash is invalid";

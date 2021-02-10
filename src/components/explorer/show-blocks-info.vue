@@ -34,7 +34,7 @@
                 {{blockInfo.txCount}}
             </span>
             <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">
-                <account-identicon  :address="blockInfo.forgedBy" :size="20" :outer-size="5"  />
+                <account-identicon  :publicKey="blockInfo.forgedBy" :size="20" :outer-size="5"  />
             </span>
 
         </div>
