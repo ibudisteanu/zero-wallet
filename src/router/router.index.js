@@ -54,8 +54,8 @@ const routes = [
     {path: '/explorer/pending-transactions', component: PendingTransactionsExplorerPage },
 
     {path: '/tokens', component: TokensPage},
-    {path: '/tokens/token/:hash', component: TokenExplorerPage },
-    {path: '/tokens/token/', component: TokenExplorerPage },
+    {path: '/tokens/PBOX', component: TokenExplorerPage },
+    {path: '/tokens/:hash', component: TokenExplorerPage },
 
     {path: '/staking', component: StakingPage },
 

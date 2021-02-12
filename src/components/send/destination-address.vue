@@ -66,18 +66,11 @@ export default {
         },
 
         destinationAddressIdenticon(){
-
             try{
-
-                let address;
-                if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) address = PandoraPay.cryptography.addressValidator.validateAddress( this.destinationAddress );
-
-                return address.identiconImg();
-
+                if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return PandoraPay.cryptography.addressValidator.validateAddress( this.destinationAddress ).identiconImg();
             }catch(err){
 
             }
-
         },
     },
 
@@ -114,7 +107,4 @@ export default {
         grid-template-columns: 50px 1fr;
         grid-column-gap: 10px;
     }
-
-
-
 </style>

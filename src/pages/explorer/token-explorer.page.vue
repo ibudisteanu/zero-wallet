@@ -33,11 +33,11 @@
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Max Supply</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{token.maxSupply}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{token.maxSupply / Math.pow(10, token.decimalSeparator)}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Supply</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{token.supply}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{token.supply / Math.pow(10, token.decimalSeparator) }}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Decimal Separator</span>
@@ -46,7 +46,7 @@
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Verification Public Key Hash</span>
                                 <span class="col-xs-7 col-sm-9 wordwrap" >
-                                    <account-identicon v-if="token.ticker !== 'PAND'" :publicKeyHash="token.verificationPublicKeyHash" size="20" outer-size="5" />
+                                    <account-identicon v-if="token.ticker !== 'PBOX'" :publicKeyHash="token.verificationPublicKeyHash" size="20" outer-size="5" />
                                     <span v-else>
                                         na
                                     </span>

@@ -60,7 +60,7 @@ export default {
 <style scoped>
     .amount-row{
         display: grid;
-        grid-template-columns: 1fr 200px;
+        grid-template-columns: 1fr 400px;
         grid-column-gap: 10px;
     }
 </style>

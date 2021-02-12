@@ -11,7 +11,7 @@ const {BigNumber} = global.kernel.utils;
 const {MarshalData} = global.kernel.marshal;
 
 const {BlockModel} = global.blockchain.blockchain.block;
-const {TokenHashMapElementModel} = global.blockchain.blockchain.chain.token;
+const {TokenDataModel} = global.blockchain.blockchain.chain.token;
 const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 class Consensus extends BaseConsensus{
@@ -574,16 +574,15 @@ class Consensus extends BaseConsensus{
         let token;
         try{
 
-            const tokenData = await this._client.emitAsync("tokens/get-token", { token: hash }, 0  );
+            const tokenData = await this._client.emitAsync("tokens/get-token", { token: hash, type: "json" }, 0  );
+
             if (!tokenData)
                 throw "token fetch failed";
 
-            token = new TokenHashMapElementModel({
+            token = new TokenDataModel({
                 ...PandoraPay._scope,
                 chain: PandoraPay._scope.mainChain
             }, undefined, tokenData );
-
-            await PandoraPay.mainChain.data.tokenHashMap.addMap( hash, token );
 
             const data = {};
             data[hash] = token;

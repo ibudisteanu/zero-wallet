@@ -16,7 +16,7 @@
                     </div>
                 </div>
                 <span>
-                    Scan {{balance.scanIndex / Math.pow(10, getToken.decimalSeparator-1) }}
+                    Scan {{balance.scanIndex / Math.pow(10, getToken.decimalSeparator) }}
                 </span>
             </div>
 

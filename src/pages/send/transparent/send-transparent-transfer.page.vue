@@ -9,7 +9,7 @@
             <div class="container pd-top-20">
                 <div class="boxed ">
 
-                    <h1>Send Funds Publicly</h1>
+                    <h1>Send Transparent Funds</h1>
 
                     <loading-spinner v-if="!address.loaded" />
 
@@ -22,12 +22,16 @@
                                              :balances="balances" @changed="e => changedDestination(index, e)">
                         </destination-address>
 
-                        <div class="centered">
+                        <div class="right">
                             <button class="addMore" @click="addDestination">
                                 <i class="fa fa-plus"></i>
                                 Add another destination
                             </button>
                         </div>
+
+                        <extra-message :destinations="destinations"
+                                       :type="WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT"
+                                       @changed="changedExtra" />
 
                         <destination-amount text="Fee" :balances="balances" @changed="changedFee" />
 
@@ -35,8 +39,8 @@
                             {{error}}
                         </div>
 
-                        <div class="pd-top-20">
-                            <loading-button text="Send Money Publicly" @submit="handleSendFunds" icon="fa fa-money-bill-alt"  />
+                        <div class="centered pd-top-20">
+                            <loading-button text="Send Money Publicly" @submit="handleSendFunds" icon="fa fa-money-bill-alt" />
                         </div>
 
                     </div>
@@ -67,11 +71,12 @@ import SendTopBar from "../send-top-bar.vue"
 
 import DestinationAddress from "src/components/send/destination-address.vue"
 import DestinationAmount from "src/components/send/destination-amount.vue"
+import ExtraMessage from "src/components/send/extra-message"
 import Vue from 'vue'
 
 export default {
 
-    components: {Layout, Account, LoadingSpinner, LoadingButton, SendTopBar, DestinationAddress, DestinationAmount },
+    components: {Layout, Account, LoadingSpinner, LoadingButton, SendTopBar, DestinationAddress, DestinationAmount, ExtraMessage },
 
     data(){
         return {
@@ -79,6 +84,9 @@ export default {
             destinations: [],
             fee: 0,
             feeTokenCurrency: '',
+
+            extraMessage: '',
+            extraEncryptionOption: '',
 
             paymentId: '',
             error: '',
@@ -121,6 +129,11 @@ export default {
         },
 
         changedFee(data){
+            if (data.amount !== undefined) this.fee = data.amount;
+            if (data.tokenCurrency) this.feeTokenCurrency = data.tokenCurrency;
+        },
+
+        changedExtra(data){
             if (data.amount !== undefined) this.fee = data.amount;
             if (data.tokenCurrency) this.feeTokenCurrency = data.tokenCurrency;
         },
@@ -196,4 +209,5 @@ export default {
     .addMore{
         max-width: 200px;
     }
+
 </style>
