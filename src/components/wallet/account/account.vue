@@ -7,12 +7,21 @@
                 <span>{{typeName}}</span> <br/>
                 <div class="pd-top-20">
                     Address: <br/>
-                    <span class=" thick">{{getAddress}} </span> <i class="fa fa-copy pointer"  @click="copyAddress(getAddress)"/> <br/> <br/>
+                    <span class=" thick">{{getAddress}} </span>
+                    <i class="fa fa-2x fa-copy pointer"  @click="copyAddress(getAddress)"/>
+                    <i class="fa fa-2x fa-qrcode pointer" @click="showAccountQRCode(getAddress, 'Address')" />
+                    <br/> <br/>
                 </div>
                 <div class="pd-top-20">
-                    Public Key (to receive encrypted messages too): <br/>
-                    <span class=" thick">{{getAddressPublicKey}} </span> <i class="fa fa-copy pointer"  @click="copyAddress(getAddressPublicKey)"/> <br/> <br/>
+                    Address Public Key (to receive encrypted messages too): <br/>
+                    <span class=" thick">{{getAddressPublicKey}} </span>
+                    <i class="fa fa-2x fa-copy pointer"  @click="copyAddress(getAddressPublicKey)"/>
+                    <i class="fa fa-2x fa-qrcode pointer" @click="showAccountQRCode(getAddressPublicKey, 'Address Public Key')"/>
+                    <br/> <br/>
                 </div>
+
+                <account-qr-code-modal ref="refAccountQRCodeModal"/>
+
             </div>
         </div>
 
@@ -21,12 +30,13 @@
 
 <script>
 
-import AccountIdenticon from "../account/account-identicon";
+import AccountIdenticon from "./account-identicon";
+import AccountQRCodeModal from "./account-qr-code.modal"
 const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 export default {
 
-    components: { AccountIdenticon },
+    components: { AccountIdenticon, 'accountQrCodeModal': AccountQRCodeModal,  },
 
     props: {
         address: {default: null},
@@ -68,7 +78,12 @@ export default {
                 })
             )
 
+        },
+
+        showAccountQRCode(address, title){
+            this.$refs.refAccountQRCodeModal.showModal(address, title);
         }
+
     },
 
 }

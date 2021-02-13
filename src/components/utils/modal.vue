@@ -88,8 +88,6 @@ export default{
         width: 50%;
         height: auto;
         border-radius: 5px;
-        max-width: 550px;
-        min-width: 450px;
         position: fixed;
         margin: 0 auto;
         border: solid 1px #313131;
