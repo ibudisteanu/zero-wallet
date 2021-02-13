@@ -2,14 +2,14 @@
     <div>
         <span class="disabled">Extra message</span> <br/>
 
-        <div :class="`extra-message-row ${destinationAddressIdenticon ? 'identicon':''}`">
+        <div :class="`extra-message-row ${extraEncryptionOptionDestinationAddressIdenticon ? 'identicon':''}`">
 
-            <account-identicon v-if="destinationAddressIdenticon" :identicon="destinationAddressIdenticon" size="35" outer-size="8" :type="type" />
+            <account-identicon v-if="extraEncryptionOptionDestinationAddressIdenticon" :identicon="extraEncryptionOptionDestinationAddressIdenticon" size="35" outer-size="8" :type="type" />
             <select v-model="extraEncryptionOption">
                 <option v-for="(encryptionOption, id) in encryptionOptions"
                         :key="`extra-encryption-${id}`"
-                        :value="encryptionOption">
-                    {{encryptionOption}}
+                        :value="encryptionOption.value">
+                    {{encryptionOption.text}}
                 </option>
             </select>
 
@@ -35,25 +35,35 @@ export default {
         return {
             error: '',
             extraMessage: '',
-            extraEncryptionOption: 'public message',
+            extraEncryptionOption: null,
         }
     },
 
     computed:{
 
         encryptionOptions(){
-            const out = [ 'public message' ];
+            const out = [ {
+                text: 'public message',
+                value: '',
+            }];
             for (let i=0; i < this.destinations.length; i++)
-                out.push(this.destinations[i].destinationAddress );
+                out.push( {
+                    text: this.destinations[i].destination,
+                    value: this.destinations[i].destination,
+                } );
             return out;
         },
 
-        destinationAddressIdenticon(){
-            try{
-                if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return PandoraPay.cryptography.addressValidator.validateAddress( this.extraEncryptionOption ).identiconImg();
-            }catch(err){
-            }
+        extraEncryptionOptionDestinationAddressIdenticon(){
+            const out = this.extraEncryptionOptionDestinationAddress;
+            if (out) return out.identiconImg();
         },
+
+        extraEncryptionOptionDestinationAddress(){
+            for (const destination of this.destinations)
+                if (this.extraEncryptionOption === destination.destination)
+                    return destination.destinationAddress;
+        }
 
     },
 
@@ -65,7 +75,7 @@ export default {
         },
         'extraEncryptionOption' (to, from) {
             return this.$emit('changed', {
-                extraEncryptionOption: to,
+                extraEncryptionOption: this.extraEncryptionOptionDestinationAddress.publicKeyHash,
             });
         },
     },

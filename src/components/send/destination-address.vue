@@ -8,7 +8,7 @@
             <account-identicon v-if="destinationAddressIdenticon" :identicon="destinationAddressIdenticon" size="35" outer-size="8" :type="type" />
 
             <div class="input-toggle-group">
-                <input type="text" v-model="destinationAddress">
+                <input type="text" v-model="destination">
                 <i class="fa fa-qrcode input-toggle" @click="qrCodeScanner"></i>
             </div>
 
@@ -34,7 +34,7 @@ export default {
 
     data(){
         return {
-            destinationAddress: '',
+            destination: '',
         }
     },
 
@@ -46,37 +46,28 @@ export default {
 
     computed:{
 
-        validationError(){
-
+        addressValidated(){
             try{
-
-                if (!this.destinationAddress) throw {message: `Destination ${this.destinationAddress} Address not specified`};
-
-                let address;
-
-                if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) address = PandoraPay.cryptography.addressValidator.validateAddress( this.destinationAddress );
-
-                if (!address) throw {message: `Address ${this.destinationAddress} is invalid`};
-
-                return '';
-
+                if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return PandoraPay.cryptography.addressValidator.validateAddress( this.destination );
             }catch(err){
-                return err.message;
+
             }
         },
 
-        destinationAddressIdenticon(){
-            try{
-                if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return PandoraPay.cryptography.addressValidator.validateAddress( this.destinationAddress ).identiconImg();
-            }catch(err){
+        validationError(){
+            if (!this.destination) return`Destination ${this.destination} Address not specified`;
+            if (!this.addressValidated) return `Address ${this.destination} is invalid`;
+        },
 
-            }
+        destinationAddressIdenticon(){
+            if (this.addressValidated) return this.addressValidated.identiconImg();
         },
     },
 
     watch: {
-        'destinationAddress' (to, from) {
+        'addressValidated' (to, from) {
             return this.$emit('changed', {
+                destination: to.calculateAddress(),
                 destinationAddress: to,
                 validationError: this.validationError,
             });
@@ -92,7 +83,6 @@ export default {
         changedDestinationAmount(data){
             return this.$emit('changed', {
                 ...data,
-                validationError: this.validationError,
             });
         }
 

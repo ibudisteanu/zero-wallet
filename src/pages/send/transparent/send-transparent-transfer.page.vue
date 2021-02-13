@@ -88,7 +88,6 @@ export default {
             extraMessage: '',
             extraEncryptionOption: '',
 
-            paymentId: '',
             error: '',
 
         }
@@ -112,9 +111,9 @@ export default {
     methods:{
 
         addDestination(){
-
             this.destinations.push({
-                destinationAddress: '',
+                destinationAddress: null,
+                destination: '',
                 validationError: 'Address is empty',
                 amount: 0,
                 tokenCurrency: '',
@@ -134,8 +133,8 @@ export default {
         },
 
         changedExtra(data){
-            if (data.amount !== undefined) this.fee = data.amount;
-            if (data.tokenCurrency) this.feeTokenCurrency = data.tokenCurrency;
+            if (data.extraMessage !== undefined) this.extraMessage = data.extraMessage;
+            if (data.extraEncryptionOption) this.extraEncryptionOption = data.extraEncryptionOption;
         },
 
         async handleSendFunds(resolve){
@@ -145,7 +144,7 @@ export default {
                 this.error = '';
 
                 for (const destination of this.destinations) {
-                    if (destination.destinationAddress === this.address.address)
+                    if (destination.destination === this.address.address)
                         throw {message: "Destination can not be the same with from"};
 
                     if (destination.validationError)
@@ -155,16 +154,20 @@ export default {
                 const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
                 if (nonce === undefined) throw {message: "The connection to the node was dropped"};
 
+                //compute extra
                 const out = await PandoraPay.wallet.transfer.transferSimple({
                     address: this.address.address,
                     txDsts: this.destinations.map( it => ({
-                        address: it.destinationAddress,
+                        address: it.destination,
                         amount: it.amount,
                         tokenCurrency: it.tokenCurrency,
                     })),
                     fee: this.fee,
                     feeTokenCurrency: this.feeTokenCurrency,
-                    paymentId: this.paymentId,
+                    extra:{
+                        extraMessage: this.extraMessage,
+                        extraEncryptionOption: this.extraEncryptionOption,
+                    },
                     nonce,
                     memPoolValidateTxData: false,
                 });
