@@ -165,27 +165,30 @@ export default {
 
                 const type = wallet.addresses[i].type;
 
-                const publicAddress =  wallet.addresses[i].keys.decryptPublicAddress();
+                const addressModel =  wallet.addresses[i].keys.decryptAddress();
+                const addressPublicKeyModel =  wallet.addresses[i].keys.decryptAddressPublicKey();
                 const publicKey = wallet.addresses[i].keys.decryptPublicKey();
 
                 const mnemonicSequenceIndex =  wallet.addresses[i].decryptMnemonicSequenceIndex();
                 const mnemonicSequenceIndexValue = Number.parseInt( mnemonicSequenceIndex.toString("hex"), 16);
 
-                const address = publicAddress.calculateAddress();
+                const address = addressModel.calculateAddress();
+                const addressPublicKey = addressPublicKeyModel.calculateAddress();
 
                 const addr = {
                     address,
+                    addressPublicKey,
                     type: type,
                     publicKey: publicKey.toString("hex"),
                     name: wallet.addresses[i].name,
                     mnemonicSequenceIndex: mnemonicSequenceIndexValue ,
-                    identicon: publicAddress.identiconImg(),
+                    identicon: addressModel.identiconImg(),
                     loaded: false,
                 };
 
 
                 if (type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT){ //transparent
-                    addr.publicKeyHash = publicAddress.publicKeyHash.toString("hex");
+                    addr.publicKeyHash = addressModel.publicKeyHash.toString("hex");
                 }
 
                 addresses[address] = addr;

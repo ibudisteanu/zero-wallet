@@ -6,10 +6,14 @@
 
                 <h1>Receive Money {{ title }}</h1>
 
-                <account :address="address" />
+                <div v-if="address">
 
-                <div class="qr-code pd-top-20">
-                    <qr-code :data="address.address" />
+                    <account :address="address" />
+
+                    <div class="qr-code pd-top-20">
+                        <qr-code :data="address.address" />
+                    </div>
+
                 </div>
 
             </div>

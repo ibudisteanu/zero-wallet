@@ -1,13 +1,18 @@
 <template>
-    <div class="account">
-
-        <account-identicon  :identicon="address.identicon" :size="60" :outer-size="20" :type="address.type" />
-        <div class="wordwrap pd-top-10">
-            <span class="">{{address.name}}</span> <br/>
-            <span>{{typeName}}</span> <br/>
-            <div class="pd-top-20">
-                Address: <br/>
-                <span class=" thick">{{getAddress}} </span> <i class="fa fa-copy pointer"  @click="copyAddress(getAddress)"/> <br/> <br/>
+    <div>
+        <div v-if="address" class="account">
+            <account-identicon  :identicon="address.identicon" :size="60" :outer-size="20" :type="address.type" />
+            <div class="wordwrap pd-top-10">
+                <span class="">{{address.name}}</span> <br/>
+                <span>{{typeName}}</span> <br/>
+                <div class="pd-top-20">
+                    Address: <br/>
+                    <span class=" thick">{{getAddress}} </span> <i class="fa fa-copy pointer"  @click="copyAddress(getAddress)"/> <br/> <br/>
+                </div>
+                <div class="pd-top-20">
+                    Public Key (to receive encrypted messages too): <br/>
+                    <span class=" thick">{{getAddressPublicKey}} </span> <i class="fa fa-copy pointer"  @click="copyAddress(getAddressPublicKey)"/> <br/> <br/>
+                </div>
             </div>
         </div>
 
@@ -30,12 +35,18 @@ export default {
     computed:{
 
         typeName(){
+            if (!this.address) return '';
             if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return 'Transparent';
         },
 
         getAddress(){
+            if (!this.address) return '';
             if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return this.address.address;
+        },
 
+        getAddressPublicKey(){
+            if (!this.address) return '';
+            if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return this.address.addressPublicKey;
         }
 
     },
