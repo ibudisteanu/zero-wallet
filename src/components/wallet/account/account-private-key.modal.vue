@@ -16,7 +16,7 @@
 
         <div v-if="!privateKey">
 
-            <span class="disabled" >Enter the password to view the wallet seed</span> <br/>
+            <span class="disabled" >Enter the password to view the wallet seed</span>
             <password-input v-model="walletPassword" />
 
 

@@ -3,21 +3,19 @@
         <div v-if="address" class="account">
             <account-identicon  :identicon="address.identicon" :size="60" :outer-size="20" :type="address.type" />
             <div class="wordwrap pd-top-10">
-                <span class="">{{address.name}}</span> <br/>
-                <span>{{typeName}}</span> <br/>
+                <span class="">{{address.name}}</span>
+                <span>{{typeName}}</span>
                 <div class="pd-top-20">
-                    Address: <br/>
-                    <span class=" thick">{{getAddress}} </span>
+                    <span>Address:</span>
+                    <span class="thick address" >{{getAddress}} </span>
                     <i class="fa fa-2x fa-copy pointer"  @click="copyAddress(getAddress)"/>
                     <i class="fa fa-2x fa-qrcode pointer" @click="showAccountQRCode(getAddress, 'Address')" />
-                    <br/> <br/>
                 </div>
-                <div class="pd-top-20">
-                    Address Public Key (to receive encrypted messages too): <br/>
-                    <span class=" thick">{{getAddressPublicKey}} </span>
+                <div class="pd-top-40">
+                    <span>Address Public Key (to receive encrypted messages too):</span>
+                    <span class="thick address">{{getAddressPublicKey}} </span>
                     <i class="fa fa-2x fa-copy pointer"  @click="copyAddress(getAddressPublicKey)"/>
                     <i class="fa fa-2x fa-qrcode pointer" @click="showAccountQRCode(getAddressPublicKey, 'Address Public Key')"/>
-                    <br/> <br/>
                 </div>
 
                 <account-qr-code-modal ref="refAccountQRCodeModal"/>
@@ -89,7 +87,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
     .account{
         display: grid;
@@ -97,12 +95,14 @@ export default {
         grid-column-gap: 10px;
     }
 
-    .account span{
+    .account .address{
         display: inline-block;
     }
 
     .account i{
         display: inline-block;
+        padding-right: 5px;
+        padding-left: 5px;
     }
 
 </style>

@@ -110,7 +110,11 @@ export default {
         async downloadAddress(){
 
             if ( !Blob)
-                return alert('Blob is not supported by your Browser');
+                return this.$notify({
+                    type: 'error',
+                    title: `Blob is not supported by your Browser`,
+                    text: `Update your browser`,
+                })
 
             const address = await PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address );
             if (!address) return false;

@@ -17,17 +17,17 @@
 
         <div v-if="address">
 
-            <span class="thick">Wallet to import </span> <br/>
-            <span>Name: {{address.name}}</span> <br/>
-            <span>Encrypted: {{this.isAddressEncrypted}}</span> <br/>
+            <span class="thick">Wallet to import </span>
+            <span>Name: {{address.name}}</span>
+            <span>Encrypted: {{this.isAddressEncrypted}}</span>
 
             <div v-if="isAddressEncrypted" class="pd-top-40">
-                <span class="disabled">Address password</span> <br/>
+                <span class="disabled">Address password</span>
                 <password-input v-model="addressPassword"></password-input>
             </div>
 
             <div v-if="isWalletEncrypted" class="pd-top-40">
-                <span class="disabled">Wallet password</span> <br/>
+                <span class="disabled">Wallet password</span>
                 <password-input v-model="walletPassword"></password-input>
             </div>
 

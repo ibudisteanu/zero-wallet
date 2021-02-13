@@ -14,7 +14,7 @@
                     <h2 class="sub-title disabled mg-top-0 pd-bottom-40">The Anonymous Cash awaits</h2>
 
                     <div class="left">
-                        <span class="disabled" >Password</span> <br/>
+                        <span class="disabled" >Password</span
                         <password-input v-model="password"/>
                         <span v-if="error" class="danger">
                             {{error}}

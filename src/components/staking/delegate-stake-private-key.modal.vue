@@ -18,7 +18,7 @@
 
             <div v-if="!errorMismatch">
 
-                <span class="disabled" >Enter the password to view the wallet seed</span> <br/>
+                <span class="disabled" >Enter the password to view the wallet seed</span>
                 <password-input v-model="walletPassword" />
 
                 <loading-button text="Show Private Key" @submit="handleShowPrivateKey" icon="fa fa-eye"  :disabled="walletPassword.length === 0" />

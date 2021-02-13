@@ -2,21 +2,21 @@
 
     <modal ref="modal" title="Delegate Stake">
 
-        <span class="disabled">Delegate Public Key</span> <br/>
+        <span class="disabled">Delegate Public Key</span>
         <input type="text" v-model="delegatePublicKeyHash">
 
         <div class="btn-round" @click="handleDelegatePublicKey" v-tooltip.bottom="'Generate your own delegate public key'" >
             <i class="fa fa-tools"></i>
         </div>
 
-        <span class="disabled">Delegate Nonce</span> <br/>
+        <span class="disabled">Delegate Nonce</span>
         <input type="number" v-model="delegateNonce" min="0" disabled="true" >
 
-        <span class="disabled">Delegate Fee in Percentage</span> <br/>
+        <span class="disabled">Delegate Fee in Percentage</span>
         <input type="number" v-model="delegateFee" min="0" max="100" step="0.01">
 
         <div v-if="isWalletEncrypted" class="pd-top-40">
-            <span class="disabled">Wallet password</span> <br/>
+            <span class="disabled">Wallet password</span>
             <password-input v-model="walletPassword"></password-input>
         </div>
 
@@ -174,6 +174,6 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
 </style>

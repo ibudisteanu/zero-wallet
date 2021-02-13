@@ -2,11 +2,11 @@
 
     <modal ref="modal" title="Import Private Key">
 
-        <span class="disabled">Private Key</span> <br/>
+        <span class="disabled">Private Key</span>
         <input type="text" v-model="privateKey">
 
         <div v-if="isWalletEncrypted" class="pd-top-40">
-            <span class="disabled">Wallet password</span> <br/>
+            <span class="disabled">Wallet password</span>
             <password-input v-model="walletPassword"></password-input>
         </div>
 

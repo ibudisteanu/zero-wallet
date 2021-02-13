@@ -15,7 +15,7 @@
                 </span>
 
                 <div class="pd-top-40">
-                    <span>Proposed future hard forks:</span> <br/>
+                    <span>Proposed future hard forks:</span>
                     <p>
                         PandoraPay <strong>ZETHER Hardfork</strong> will allow confidential and unlikable transactions. <br/>
                         PandoraPay <strong>DEX Hardfork</strong> will allow dex. <br/>

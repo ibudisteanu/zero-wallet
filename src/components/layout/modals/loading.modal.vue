@@ -3,7 +3,7 @@
     <div>
         <modal ref="modal" title="Loading..."  :close-button="false" >
 
-            <span class="thick">Please wait... Don't close the page</span> <br/>
+            <span class="thick">Please wait... Don't close the page</span>
 
             <div class="centered pd-top-40">
                 <loading-spinner />

@@ -3,7 +3,7 @@
     <div class="container">
         <div class="boxed centered pd-top-30 pd-bottom-30">
 
-            <span class="title">Account Balance</span> <br/>
+            <span class="title">Account Balance</span>
 
             <div v-if="address">
 

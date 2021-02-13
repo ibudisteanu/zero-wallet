@@ -2,11 +2,11 @@
 
     <modal ref="modal" title="Stop Delegate Stake">
 
-        <span class="disabled">Delegate Nonce</span> <br/>
+        <span class="disabled">Delegate Nonce</span>
         <input type="number" v-model="delegateNonce" min="0" disabled="true" >
 
         <div v-if="isWalletEncrypted" class="pd-top-40">
-            <span class="disabled">Wallet password</span> <br/>
+            <span class="disabled">Wallet password</span>
             <password-input v-model="walletPassword"></password-input>
         </div>
 
@@ -124,6 +124,6 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
 </style>

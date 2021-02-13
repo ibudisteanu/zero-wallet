@@ -4,8 +4,8 @@
         <modal ref="modal" title="Account type"  >
 
             <div class="">
-                <span class="thick">Select an Account Type</span> <br/>
-                <span>Select either a Transparent or an Anonymous account</span> <br/>
+                <span class="thick">Select an Account Type</span>
+                <span>Select either a Transparent or an Anonymous account</span>
             </div>
 
             <div class="pd-top-20 options">

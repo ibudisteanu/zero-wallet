@@ -13,7 +13,7 @@
                 <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" :type="address.type" />
 
                 <div>
-                    <span>{{address.name}}</span> <span class="disabled right-float" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : ''}}</span><br/>
+                    <span>{{address.name}}</span> <span class="disabled right-float" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : ''}}</span>
                     <span class="disabled">{{address.address.substr(0, 15)+'...'}} <i class="fa fa-copy pointer"  @click.stop=" copyAddress( address)" /> </span>
                 </div>
 

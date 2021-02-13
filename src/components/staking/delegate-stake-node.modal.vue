@@ -2,7 +2,7 @@
 
     <modal ref="modal" title="Delegate Stake">
 
-        <span class="disabled">Node address</span> <br/>
+        <span class="disabled">Node address</span>
         <select v-model="nodeAddress">
             <option v-for="(node, key) in delegateStakesNodes"
                     :key="`node-${key}`"
@@ -12,7 +12,7 @@
         </select>
 
         <div v-if="isWalletEncrypted" class="pd-top-40">
-            <span class="disabled">Wallet password</span> <br/>
+            <span class="disabled">Wallet password</span>
             <password-input v-model="walletPassword"></password-input>
         </div>
 

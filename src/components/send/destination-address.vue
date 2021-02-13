@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <span class="disabled">Destination Address {{index !== null ? index+1 : ''}}</span> <br/>
+        <span class="disabled">Destination Address {{index !== null ? index+1 : ''}}</span>
 
         <div :class="`${destinationAddressIdenticon ? 'destination': ''}-row`">
 

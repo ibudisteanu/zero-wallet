@@ -1,8 +1,9 @@
 <template>
     <div>
-        <span class="disabled">Extra message</span> <br/>
 
+        <span class="disabled">Extra message</span>
         <div :class="`extra-message-row ${extraEncryptionOptionDestinationAddressIdenticon ? 'identicon':''}`">
+
 
             <account-identicon v-if="extraEncryptionOptionDestinationAddressIdenticon" :identicon="extraEncryptionOptionDestinationAddressIdenticon" size="35" outer-size="8" :type="type" />
             <select v-model="extraEncryptionOption">

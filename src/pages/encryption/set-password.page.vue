@@ -5,11 +5,12 @@
             <div class="boxed ">
 
                 <h1>Set Password</h1>
+                <span class="pd-bottom-20">Encrypting your wallet. Use a strong password to avoid brute forcing</span>
 
-                <span class="disabled" >Password</span> <br/>
+                <span class="disabled" >Password</span>
                 <password-input v-model="password"/>
 
-                <span class="disabled" >Retype Password</span> <br/>
+                <span class="disabled" >Retype Password</span>
                 <password-input v-model="retypePassword"/>
 
                 <span v-if="error" class="danger">
@@ -113,9 +114,6 @@ export default {
 </script>
 
 <style scoped>
-    span{
-        display: inline-block
-    }
     .wordwrap{
         display: block;
     }

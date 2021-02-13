@@ -15,21 +15,21 @@
 
                     <div v-else>
 
-                        <span>Available coins for Staking <strong>{{balance}}</strong></span> <br/>
-                        <span v-if="balance < minimumForStaking" class="danger">Minimum required for Staking {{minimumForStaking}}</span> <br/>
+                        <span>Available coins for Staking <strong>{{balance}}</strong></span>
+                        <span v-if="balance < minimumForStaking" class="danger">Minimum required for Staking {{minimumForStaking}}</span>
 
                         <div class="pd-bottom-20"></div>
 
-                        <span>Delegated: <strong>{{isDelegated}}</strong> </span> <br/>
+                        <span>Delegated: <strong>{{isDelegated}}</strong> </span>
 
                         <div v-if="address.delegate">
 
                             <loading-spinner v-if="isDelegateStakeInPending"/>
 
                             <div v-else>
-                                <span>Delegated nonce {{address.delegate.delegateNonce}}</span> <br/>
-                                <span>Delegated public key {{address.delegate.delegatePublicKeyHash}}</span> <br/>
-                                <span>Delegated fee {{delegateFeePercentage}} %</span> <br/>
+                                <span>Delegated nonce {{address.delegate.delegateNonce}}</span>
+                                <span>Delegated public key {{address.delegate.delegatePublicKeyHash}}</span>
+                                <span>Delegated fee {{delegateFeePercentage}} %</span>
 
                                 <div class="buttons-row pd-top-20">
 
