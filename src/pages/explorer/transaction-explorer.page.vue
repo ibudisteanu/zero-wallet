@@ -59,7 +59,7 @@
                                 <div class="col-xs-7 col-sm-9 wordwrap">
                                     <div v-for="(vin, index) in tx.vin" class="input"
                                          :key="`transaction-explorer-vin-${index}`">
-                                        <account-identicon :publicKey="vin.publicKey" size="20" outer-size="5" />
+                                        <account-identicon :publicKeyHash="vin.publicKeyHash" size="20" outer-size="5" />
                                         <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(-vin.amount) : '?'}} {{vin.tokenCurrency.toString('hex')}} </span>
                                     </div>
                                     <div v-for="(vout, index) in tx.vout" class="input"

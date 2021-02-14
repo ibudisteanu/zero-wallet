@@ -5,7 +5,7 @@
             <div class="boxed ">
 
                 <h1>Account Details</h1>
-
+                <span>Your account</span>
                 <div class="account-info" v-if="address">
 
                     <account :address="address" />

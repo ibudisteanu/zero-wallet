@@ -39,7 +39,6 @@ h1,h2,h3,h4,h5,h6,span{
 
 .disabled,
 i[disabled]{
-    pointer-events: none;
     color: #aeaeae;
 }
 
@@ -218,6 +217,10 @@ input[type=submit]:hover {
 button:disabled,
 input[type=submit]:disabled {
     background: #dddddd;
+}
+
+[v-cloak] {
+    display:none
 }
 
 .tooltip {

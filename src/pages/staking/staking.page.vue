@@ -110,12 +110,13 @@ export default {
         },
 
         balance(){
-            const balances = this.address.balances || {"": 0};
-            return PandoraPay.argv.transactions.coins.convertToBase( balances[""]||0 );
+            const balances = this.address.balances || {"": {amount: 0}};
+            const amount = balances[""].amount || 0;
+            return PandoraPay.argv.transactions.coins.convertToBase( amount );
         },
 
         minimumForStaking(){
-            return PandoraPay.argv.transactions.staking.stakingMinimumStake;
+            return PandoraPay.argv.transactions.coins.convertToBase( PandoraPay.argv.transactions.staking.getMinimumStakeRequiredForForging( this.$store.state.blockchain.end ) );
         },
 
         isDelegated(){

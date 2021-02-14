@@ -3,6 +3,8 @@
     <div>
 
         <balances :address="address"> </balances>
+
+        
         <transactions :address="address"> </transactions>
 
     </div>
