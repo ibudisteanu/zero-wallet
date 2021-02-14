@@ -53,7 +53,7 @@
                         </div>
 
                         <div class="btn" v-if="address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT">
-                            <router-link to="/delegate-stake">
+                            <router-link to="/staking">
                                 <div class="btn-round" v-tooltip.bottom="'Delegate stake'" >
                                     <i class="fa fa-piggy-bank"></i>
                                 </div>

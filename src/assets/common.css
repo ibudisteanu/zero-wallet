@@ -15,6 +15,10 @@ h1,h2,h3,h4,h5,h6,span{
     display: block;
 }
 
+.display-inline-block{
+    display: inline-block;
+}
+
 .link, a:link,a:visited {
     color: #0000A0;
     text-decoration: none;
@@ -33,7 +37,9 @@ h1,h2,h3,h4,h5,h6,span{
     padding: 10px;
 }
 
-.disabled{
+.disabled,
+i[disabled]{
+    pointer-events: none;
     color: #aeaeae;
 }
 
@@ -135,10 +141,13 @@ h1,h2,h3,h4,h5,h6,span{
     box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
     line-height: 1;
     position: relative;
-    cursor: pointer;
     font-size: 20px;
     margin-bottom: 10px;
     margin-right: 15px;
+}
+
+.btn-round[disabled]{
+    pointer-events: none;
 }
 
 .btn-round i{

@@ -11,7 +11,7 @@
                     <i class="fa fa-2x fa-copy pointer"  @click="copyAddress(getAddress)"/>
                     <i class="fa fa-2x fa-qrcode pointer" @click="showAccountQRCode(getAddress, 'Address')" />
                 </div>
-                <div class="pd-top-40">
+                <div class="pd-top-20">
                     <span>Address Public Key (to receive encrypted messages too):</span>
                     <span class="thick address">{{getAddressPublicKey}} </span>
                     <i class="fa fa-2x fa-copy pointer"  @click="copyAddress(getAddressPublicKey)"/>

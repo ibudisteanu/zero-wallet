@@ -5,7 +5,7 @@
         <div class="toggle" @click="toggleMenu" v-on-clickaway="closeMenu">
             <account-identicon :identicon="identicon" :size="40" :outer-size="10" :type="address.type" />
 
-            <i class="chevron-down fa fa-chevron-down"></i>
+            <i class="right-float chevron-down fa fa-chevron-down"></i>
         </div>
 
         <div class="menu" >

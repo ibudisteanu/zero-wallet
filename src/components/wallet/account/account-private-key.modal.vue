@@ -1,15 +1,15 @@
 <template>
 
-    <modal ref="modal" :title="`${ address ? address.name : '' }`" >
+    <modal ref="modal" :title="`Private Key of ${ address ? address.name : '' }`" >
 
         <div v-if="privateKey">
-            <span class="thick pd-bottom-40">Private Key of Address</span>
+            <span class="thick">Private Key of Your Address "{{address.name}}"</span>
 
-            <div class="pd-bottom-40">
+            <div class="pd-top-20">
                 <span class="font-medium-size wordwrap " >{{privateKey}} <i class="fa fa-copy pointer"  @click="copyPrivateKey"/> </span>
             </div>
 
-            <div class="centered">
+            <div class="centered pd-top-20">
                 <span class="danger">Warning: Never disclose this key. Anyone with your private keys can steal any assets held in your account.</span>
             </div>
         </div>

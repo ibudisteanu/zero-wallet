@@ -8,8 +8,13 @@
         <div v-if="show" class="sidebar" :style="{display: show ? 'inherit' : 'none' }" v-on-clickaway="closeMenu" >
 
             <router-link to="/" :class="`${route === '/' ? 'selected' : ''}`">
-                <i class="fa fa-wallet" ></i>
+                <i class="fa fa-money-bill-alt" ></i>
                 <span>Wallet</span>
+            </router-link>
+
+            <router-link to="/account" :class="`${route === '/account' ? 'selected' : ''}`">
+                <i class="fa fa-wallet" ></i>
+                <span>Account</span>
             </router-link>
 
             <router-link to="/staking" :class="`${route === '/staking' ? 'selected' : ''}`" >
@@ -18,7 +23,7 @@
             </router-link>
 
             <router-link to="/send" :class="`${route === '/send' ? 'selected' : ''}`" >
-                <i class="fa fa-money-bill-alt"></i>
+                <i class="fa fa-money-check-alt"></i>
                 <span>Send</span>
             </router-link>
 

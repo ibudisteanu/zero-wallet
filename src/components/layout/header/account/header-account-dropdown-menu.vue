@@ -13,7 +13,10 @@
                 <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" :type="address.type" />
 
                 <div>
-                    <span>{{address.name}}</span> <span class="disabled right-float" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : ''}}</span>
+                    <div class="account-title">
+                        <span>{{address.name}}</span>
+                        <span class="disabled right-float" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : ''}}</span>
+                    </div>
                     <span class="disabled">{{address.address.substr(0, 15)+'...'}} <i class="fa fa-copy pointer"  @click.stop=" copyAddress( address)" /> </span>
                 </div>
 
@@ -169,7 +172,7 @@ export default {
         left: -160px;
 
         position: absolute;
-        top: 80px;
+        top: 20px;
         border: 1px solid #ccc;
         border-radius: 4px;
         padding: 0;
@@ -185,6 +188,10 @@ export default {
         padding: 10px 20px;
         cursor: pointer;
         white-space: nowrap;
+    }
+
+    .dd-menu li .account-title span{
+        display: inline-block;
     }
 
     .dd-menu li:hover {
