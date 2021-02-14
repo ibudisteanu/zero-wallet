@@ -6,7 +6,7 @@
             <span class="thick">Private Key of Your Address "{{address.name}}"</span>
 
             <div class="pd-top-20">
-                <span class="font-medium-size wordwrap " >{{privateKey}} <i class="fa fa-copy pointer"  @click="copyPrivateKey"/> </span>
+                <span class="font-medium-size wordwrap " >{{privateKey}} <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Private Key'" @click="copyPrivateKey"/> </span>
             </div>
 
             <div class="centered pd-top-20">

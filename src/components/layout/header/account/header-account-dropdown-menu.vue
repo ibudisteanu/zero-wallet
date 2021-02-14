@@ -17,7 +17,7 @@
                         <span>{{address.name}}</span>
                         <span class="disabled right-float" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : ''}}</span>
                     </div>
-                    <span class="disabled">{{address.address.substr(0, 15)+'...'}} <i class="fa fa-copy pointer"  @click.stop=" copyAddress( address)" /> </span>
+                    <span class="disabled">{{address.address.substr(0, 15)+'...'}} <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( address)" /> </span>
                 </div>
 
             </li>

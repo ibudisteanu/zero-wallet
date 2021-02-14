@@ -5,7 +5,7 @@
         <div v-if="seed">
 
             <div class="pd-bottom-40 seed">
-                <span class="font-medium-size wordwrap thick" >{{seed}} <i class="fa fa-copy pointer"  @click="copySeed"/></span>
+                <span class="font-medium-size wordwrap thick" >{{seed}} <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Seed'"  @click="copySeed"/></span>
             </div>
             <div class="centered">
                 <span class="danger">Warning: DO NOT share this phrase with anyone! These words can be used to steal all your accounts.</span>

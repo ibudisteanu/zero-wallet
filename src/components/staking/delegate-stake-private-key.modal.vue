@@ -6,7 +6,7 @@
             <span class="thick pd-bottom-40">Private Key of Delegate Stake</span>
 
             <div class="pd-bottom-40">
-                <span class="font-medium-size wordwrap " >{{privateKey}} <i class="fa fa-copy pointer"  @click="copyPrivateKey"/> </span>
+                <span class="font-medium-size wordwrap " >{{privateKey}} <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Private Key'" @click="copyPrivateKey"/> </span>
             </div>
 
             <div class="centered">

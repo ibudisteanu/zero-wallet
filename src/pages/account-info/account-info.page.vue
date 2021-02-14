@@ -15,7 +15,7 @@
                             View Public Key
                         </span>
                         <span v-else >
-                            Public Key {{address.publicKey}} <i class="fa fa-copy pointer"  @click="copyAddress(address.publicKey)"/>
+                            Public Key {{address.publicKey}} <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Public Key'"  @click="copyAddress(address.publicKey)"/>
                         </span>
                     </span>
 
@@ -26,7 +26,7 @@
                                 View Public Key Hash
                             </span>
                             <span v-else >
-                                Public Key Hash {{address.publicKeyHash}} <i class="fa fa-copy pointer"  @click="copyAddress(address.publicKeyHash)"/>
+                                Public Key Hash {{address.publicKeyHash}} <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Public Key Hash'" @click="copyAddress(address.publicKeyHash)"/>
                             </span>
                         </span>
 

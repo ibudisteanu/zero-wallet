@@ -14,12 +14,12 @@ export default {
         size: {default: 40},
         outerSize: {default: 34},
         outerColor: {default: "white;"},
-        identicon: {default: ""},
+        type: {default: 0},
 
+        identicon: {default: ""},
         address: {default: ""},
         publicKey: {default: null},
         publicKeyHash: {default: null},
-        type: {default: 0},
     },
 
     computed:{
@@ -30,33 +30,32 @@ export default {
 
         addressIdenticon(){
 
-            try{
+                try {
 
-                if (this.identicon) return this.identicon;
+                    if (this.identicon) return this.identicon;
 
-                let address;
+                    let address;
 
-                if (this.address) {
-                    address = PandoraPay.cryptography.addressValidator.validateAddress(this.address);
-                    if (!address) throw {message: "Invalid address"};
+                    if (this.address) {
+                        address = PandoraPay.cryptography.addressValidator.validateAddress(this.address);
+                        if (!address) throw {message: "Invalid address"};
+                    }
+
+                    if (this.publicKey) {
+                        address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKey(this.publicKey);
+                        if (!address) throw {message: "Invalid publicKey"};
+                    }
+
+                    if (this.publicKeyHash) {
+                        address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKeyHash(this.publicKeyHash);
+                        if (!address) throw {message: "Invalid publicKeyHash"};
+                    }
+
+                    return address ? address.identiconImg() : undefined;
+
+                } catch(err){
+
                 }
-
-                if (this.publicKey){
-                    address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKey( this.publicKey );
-                    if (!address) throw {message: "Invalid publicKey"};
-                }
-
-                if (this.publicKeyHash){
-                    address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKeyHash( this.publicKeyHash );
-                    if (!address) throw {message: "Invalid publicKeyHash"};
-                }
-
-                return address ? address.identiconImg() : undefined;
-
-
-            }catch(err){
-                console.error("Identicon error", err);
-            }
 
         },
 

@@ -14,9 +14,7 @@
 
                     <h3 class="wordwrap">Transaction {{height ? height : hash}} </h3>
 
-                    <div v-if="!tx">
-                        <loading-spinner/>
-                    </div>
+                    <loading-spinner v-if="!tx"/>
                     <div v-else>
                         <div class="table">
                             <div class="row pd-top-10 pd-bottom-10">

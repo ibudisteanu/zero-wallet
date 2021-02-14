@@ -8,8 +8,7 @@
 
                 <span class="title row pd-bottom-20">TRANSACTIONS {{ !address.loaded ? '' : txCount + txCountPending }}</span>
 
-                <loading-spinner v-if="!address.loaded" />
-
+                <loading-spinner v-if="!address.loaded || !this.ready" />
                 <div v-else>
 
                     <show-transactions :transactions="transactionsAll "/>
@@ -43,6 +42,12 @@ export default {
         address: {default: null}
     },
 
+    data(){
+        return {
+            ready: false,
+        }
+    },
+
     computed:{
 
         txCount(){
@@ -70,7 +75,7 @@ export default {
                 if (this.$store.state.transactions.list[txs[key]])
                     out.push( this.$store.state.transactions.list[txs[key]] );
 
-                return out;
+            return out;
         },
 
         transactions(){
@@ -102,6 +107,10 @@ export default {
 
 
         }
+    },
+
+    mounted(){
+        setTimeout(()=>this.ready = true, 100 );
     }
 
 }
