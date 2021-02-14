@@ -6,6 +6,7 @@ const merge = require('webpack-merge');
 const config = merge(base, {
 
     devtool: 'cheap-module-eval-source-map',
+    mode: 'development',
 
     entry: [
         'webpack-hot-middleware/client',
@@ -13,13 +14,12 @@ const config = merge(base, {
     ],
 
     output: {
-        path: path.resolve(__dirname, "dist"),
+        path: path.resolve(__dirname, "dist/dev"),
         publicPath: "/",
-        filename: "Wallet-User-Interface-bundle.js"
+        filename: "Wallet-User-Interface-dev.js"
     },
 
     devServer: {
-        compress: true,
         historyApiFallback: true,
         hot: true,
         open: true,
@@ -34,10 +34,10 @@ const config = merge(base, {
 
         new webpack.DefinePlugin({
             "process.env": {
-                DEV_SERVER: 'true'
+                DEV_SERVER: 'true',
+                BROWSER: 'true'
             }
         }),
-
 
     ]
 

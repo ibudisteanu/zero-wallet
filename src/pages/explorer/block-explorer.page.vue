@@ -94,6 +94,10 @@
                                 <span class="col-xs-5 col-sm-3 wordwrap">JSON</span>
                                 <textarea class="col-xs-7 col-sm-9" rows="20">{{ block.toJSON() }}</textarea>
                             </div>
+                            <div class="row pd-top-40 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Hex Serialized</span>
+                                <textarea class="col-xs-7 col-sm-9" rows="8">{{ block.toHex() }}</textarea>
+                            </div>
                         </div>
 
                         <h4>Transactions</h4>

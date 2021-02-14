@@ -3,7 +3,7 @@
         <div class="container pd-top-20">
             <div class="centered">
 
-                    <img :src="require('src/assets/pandora-pay-logo.png').default"  class="logo"> <br/>
+                    <img :src="require('src/assets/pandora-pay-logo.png').default"  class="logo">
 
                     <h1 class="title ">404 Not found!</h1>
 

@@ -3,9 +3,9 @@
     <div class="account" v-if="address">
 
         <div class="toggle" @click="toggleMenu" v-on-clickaway="closeMenu">
-            <account-identicon :identicon="identicon" :size="40" :outer-size="10" />
+            <account-identicon :identicon="identicon" :size="40" :outer-size="10" :type="address.type" />
 
-            <i class="chevron-down fa fa-chevron-down"></i>
+            <i class="right-float chevron-down fa fa-chevron-down"></i>
         </div>
 
         <div class="menu" >
@@ -48,7 +48,8 @@ export default {
         },
 
         identicon(){
-            return this.address.identicon;
+            if (!this.address) return null;
+            else return this.address.identicon;
         }
 
     },
@@ -71,8 +72,12 @@ export default {
             this.$refs.refImportAccountModal.showModal( );
         },
 
-        showImportPrivateKey(){
-            this.$refs.refImportPrivateKeyModal.showModal( );
+        async showImportPrivateKey(){
+
+            const account = await this.$store.state.page.refAccountTypeModal.showModal();
+            if (account.selectedType === -1) return;
+
+            this.$refs.refImportPrivateKeyModal.showModal( account.selectedType );
         },
 
     },
@@ -85,8 +90,6 @@ export default {
 
 
     .account{
-        margin-left:auto;
-        margin-right:0;
         width: 70px;
     }
 

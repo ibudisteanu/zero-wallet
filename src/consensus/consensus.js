@@ -6,13 +6,13 @@ const {client} = global.blockchain.sockets.client;
 const {BasicSocket} = global.blockchain.sockets.basic;
 const {Helper} = global.kernel.helpers;
 
-const {NodeConsensusTypeEnum} = global.blockchain.sockets.schemas.types;
+const {NodeConsensusTypeEnum} = global.blockchain.enums;
 const {BigNumber} = global.kernel.utils;
 const {MarshalData} = global.kernel.marshal;
 
-const {Block} = global.blockchain.blockchain.block;
-const {TokenHashMapData} = global.blockchain.blockchain.chain.token;
-const {ExchangeOffer} = global.blockchain.exchange;
+const {BlockModel} = global.blockchain.blockchain.block;
+const {TokenDataModel} = global.blockchain.blockchain.chain.token;
+const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 class Consensus extends BaseConsensus{
 
@@ -63,7 +63,6 @@ class Consensus extends BaseConsensus{
         };
 
         this._downloadPendingTransactionsEnabled = false;
-        this._downloadExchangeOffersEnabled = false;
 
     }
 
@@ -149,6 +148,8 @@ class Consensus extends BaseConsensus{
 
         this._data.chainwork = MarshalData.decompressBigNumber( data.chainwork );
 
+        PandoraPay.mainChain.data.end = data.blocks;
+
         this.emit('consensus/blockchain-info-updated', this._data );
 
         await this._downloadLastBlocksHashes();
@@ -157,7 +158,6 @@ class Consensus extends BaseConsensus{
         await this._downloadAccountsTransactions();
 
         await this.downloadPendingTransactions();
-        await this.downloadExchangeOffersAll();
 
     }
 
@@ -171,7 +171,7 @@ class Consensus extends BaseConsensus{
 
             const blockInfo = await this._client.emitAsync("blockchain/get-block-info", {index: i}, 0);
 
-            if(!blockInfo) return; //disconnected
+            if (!blockInfo || !blockInfo.hash) return; //disconnected
 
             blockInfo.hash = Buffer.from(blockInfo.hash);
             blockInfo.kernelHash = Buffer.from(blockInfo.kernelHash);
@@ -232,52 +232,74 @@ class Consensus extends BaseConsensus{
 
     async downloadAccountData(account){
 
-        let accountData = await this._client.emitAsync("account/get-account", {account }, 0);
-        if (!accountData) accountData = {};
+        let accountData = await this._client.emitAsync("account/get-account", { account }, 0);
+        if (!accountData) return false;
 
-        try{
+        const prevAcc = this._data.accounts[account];
+
+        const address = PandoraPay.cryptography.addressValidator.validateAddress( account );
+        if ( address ){
+
+            const type = WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT;
+
+            try{
+
+                if (accountData.found){
 
 
-            const {balances, nonce, delegate} = accountData;
+                    const {balances, nonce, delegate} = accountData.account;
+                    const publicKeyHash = address.publicKeyHash;
 
-            const address = PandoraPay.cryptography.addressValidator.validateAddress( account );
-            const publicKeyHash = address.publicKeyHash;
+                    const newAcc = {
+                        balances, nonce, delegate, publicKeyHash,
+                    };
 
-            //remove old balance
-            const balancesOld = await PandoraPay.mainChain.data.accountHashMap.getBalances(publicKeyHash);
-            const nonceOld = await PandoraPay.mainChain.data.accountHashMap.getNonce(publicKeyHash) || 0;
-            const delegateOld = await PandoraPay.mainChain.data.accountHashMap.getDelegate(publicKeyHash);
+                    if ( !!prevAcc.balances || JSON.stringify(prevAcc) !== JSON.stringify(newAcc) ){
 
-            if (balancesOld)
-                for (const currencyToken in balancesOld)
-                    await PandoraPay.mainChain.data.accountHashMap.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
+                        this._data.accounts[account] = newAcc;
 
-            //update with new balance
-            if (balances)
-                for (const balance of balances) {
-                    await this.getTokenByHash(balance.tokenCurrency);
-                    await PandoraPay.mainChain.data.accountHashMap.updateBalance(publicKeyHash, balance.amount, balance.tokenCurrency,);
+                        //remove old balance
+                        const balancesOld = await PandoraPay.mainChain.data.accountHashMap.getBalances(publicKeyHash);
+                        const nonceOld = await PandoraPay.mainChain.data.accountHashMap.getNonce(publicKeyHash) || 0;
+                        const delegateOld = await PandoraPay.mainChain.data.accountHashMap.getDelegate(publicKeyHash);
+
+                        if (balancesOld)
+                            for (const currencyToken in balancesOld)
+                                await PandoraPay.mainChain.data.accountHashMap.updateBalance( publicKeyHash, - balancesOld[currencyToken], currencyToken, );
+
+                        //update with new balance
+                        if (balances )
+                            for (const balance of balances) {
+                                await this.getTokenByHash(balance.tokenCurrency);
+                                await PandoraPay.mainChain.data.accountHashMap.updateBalance(publicKeyHash, balance.amount, balance.tokenCurrency,);
+                            }
+
+                        if (nonce ) {
+                            const diffNonce = nonce - nonceOld;
+                            for (let i = 0; i < Math.abs(diffNonce); i++)
+                                await PandoraPay.mainChain.data.accountHashMap.updateNonce(publicKeyHash, diffNonce > 0 ? 1 : -1);
+                        }
+
+                        if (delegate ) {
+                            const diffDelegateNonce = delegate.delegateNonce - (delegateOld ? -delegateOld.delegateNonce : 0);
+                            for (let i = 0; i < Math.abs(diffDelegateNonce); i++)
+                                await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegatePublicKeyHash, delegate.delegateFee);
+                        }
+
+                        this.emit('consensus/account-transparent-update', { account, balances, nonce, delegate, type  } );
+
+                    }
+
                 }
 
-            if (nonce) {
-                const diffNonce = nonce - nonceOld;
-                for (let i = 0; i < Math.abs(diffNonce); i++)
-                    await PandoraPay.mainChain.data.accountHashMap.updateNonce(publicKeyHash, diffNonce > 0 ? 1 : -1);
+                this.emit('consensus/account-update-loaded', { account, loaded: true  } );
+
+            }catch(err){
+                console.error(err);
             }
 
-            if (delegate) {
-                const diffDelegateNonce = delegate.delegateNonce - (delegateOld ? -delegateOld.delegateNonce : 0);
-                for (let i = 0; i < Math.abs(diffDelegateNonce); i++)
-                    await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegatePublicKey, delegate.delegateFee);
-            }
-
-            this.emit('consensus/account-update', { account, balances, nonce, delegate  } );
-
-        }catch(err){
-            console.error(err);
+            return true;
         }
-
-
 
     }
 
@@ -287,7 +309,9 @@ class Consensus extends BaseConsensus{
             this._data.accounts = {};
 
         for (const account in accounts)
-            this._data.accounts[account] = true;
+            this._data.accounts[account] = {
+
+            };
 
     }
 
@@ -311,15 +335,21 @@ class Consensus extends BaseConsensus{
 
     async downloadAccountTransactions(account) {
 
-        const txCount = await this._client.emitAsync("transactions/account/get-transaction-count", {account }, 0);
-        const txCountPending = await this._client.emitAsync("mem-pool/content-count", {account }, 0);
+        const address = PandoraPay.cryptography.addressValidator.validateAddress( account );
+        if (address){
 
-        if (!txCountPending && !txCount) return;
+            const txCount = await this._client.emitAsync("transactions/account/get-transaction-count", {account }, 0);
+            const txCountPending = await this._client.emitAsync("mem-pool/content-count", {account }, 0);
 
-        this.emit('consensus/account-update-tx-count', {account, txCount, txCountPending});
+            if (!txCountPending && !txCount) return;
 
-        await this.downloadAccountTransactionsSpecific({account, limit: 10});
-        await this.downloadPendingTransactionsSpecific( {account})
+            this.emit('consensus/account-update-tx-count', {account, txCount, txCountPending});
+
+            await this.downloadAccountTransactionsSpecific({account, limit: 10});
+            await this.downloadPendingTransactionsSpecific( {account});
+
+            return true;
+        }
 
     }
 
@@ -364,70 +394,47 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async downloadExchangeOffersAll(){
+    /**
+     * TOKENS
+     */
 
-        if (!this._downloadExchangeOffersEnabled) return;
+    async downloadTokens({index}){
 
-        for (let i=0; i <= 1; i++)
-            await this.downloadExchangeOffers({type: i});
+        const tokensCount = await this._client.emitAsync("tokens/content-count", 0);
+        if (!tokensCount) return;
 
-    }
+        this.emit('consensus/tokens-count', { count: tokensCount});
 
-    async downloadExchangeOffers({type, index}){
-
-        const offersCount = await this._client.emitAsync("exchange/content-count", { offerType: type, }, 0);
-        if (!offersCount) return;
-
-        this.emit('consensus/exchange-offers-count', {type, count: offersCount});
-
-        await this._downloadExchangeOffersSpecific({type, index});
+        await this._downloadTokensSpecific({index});
 
     }
 
-    async _downloadExchangeOffersSpecific({type, index, limit}){
+    async _downloadTokensSpecific({index, limit}){
 
-        const offers = await this._client.emitAsync("exchange/content-ids", {offerType: type}, 0);
-        if (!offers) return;
+        const tokens = await this._client.emitAsync("tokens/content-ids", { index, limit}, 0);
+        if (!tokens) return;
 
-        this.emit('consensus/exchange-offers-ids', {type, offers: offers.out, next: offers.next, clear: index === undefined });
+        this.emit('consensus/tokens-ids', { tokens: tokens.out, next: tokens.next });
 
-        for (const hash in offers.out)
-            await this.getExchangeOffer(hash, type);
-
-    }
-
-    async getExchangeOffer(hash, type){
-
-        if (this._data.offers[type+'_'+hash]) return this._data.offers[type+'_'+hash];
-
-        const data = await this._client.emitAsync("exchange/get-offer", {offerHash: hash, offerType: type}, 0);
-
-        if (!data) return;
-
-        const offer = new ExchangeOffer( {
-            ...PandoraPay._scope,
-            chain: PandoraPay._scope.mainChain
-        }, undefined, Buffer.from(data) );
-
-        offer.id = hash;
-
-        this._data.offers[hash] = offer;
-
-        this.emit('consensus/exchange-offers', {type, offers: [offer] });
+        for (const token of tokens.out)
+            await this.getTokenByHash(token);
 
     }
 
-    async startDownloadingExchangeOffers(){
+    async startDownloadingTokens(){
+        if (this._downloadTokensEnabled ) return;
 
-        if (this._downloadExchangeOffersEnabled) return;
-
-        this._downloadExchangeOffersEnabled = true;
-        return this.downloadExchangeOffersAll();
+        this._downloadTokensEnabled = true;
+        return this.downloadTokens({index: 0});
     }
 
-    async stopDownloadingExchangeOffers(){
-        this._downloadExchangeOffersEnabled = false;
+    async stopDownloadingTokens(){
+        this._downloadTokensEnabled = false;
     }
+
+    /**
+     * PENDING TRANSACTIONS
+     */
 
     async startDownloadPendingTransactions(){
 
@@ -454,15 +461,7 @@ class Consensus extends BaseConsensus{
         const blockData = await this._client.emitAsync("blockchain/get-block", { hash, type: "buffer"}, 0  );
         if (!blockData) return; //disconnected
 
-        const block = new Block( {
-            ...PandoraPay._scope,
-            chain: PandoraPay._scope.mainChain
-        }, undefined, Buffer.from(blockData) );
-
-        await this._includeBlock(block);
-
-        return block;
-
+        return this._includeBlock( Buffer.from(blockData) );
 
     }
 
@@ -473,16 +472,17 @@ class Consensus extends BaseConsensus{
         const blockData = await this._client.emitAsync("blockchain/get-block-by-height", {index: height, type: "buffer"}, 0  );
         if (!blockData) return; //disconnected
 
-        const block = new Block({
-            ...PandoraPay._scope,
-            chain: PandoraPay._scope.mainChain
-        }, undefined, Buffer.from(blockData));
-
-        return this._includeBlock(block);
+        return this._includeBlock(Buffer.from(blockData));
 
     }
 
     async _includeBlock(block){
+
+        if (Buffer.isBuffer(block))
+            block = new BlockModel( {
+                ...PandoraPay._scope,
+                chain: PandoraPay._scope.mainChain
+            }, undefined, block );
 
         this.emit('consensus/block-downloaded', block );
 
@@ -492,8 +492,6 @@ class Consensus extends BaseConsensus{
         const data = {};
         const txs = await block.getTransactions();
         for (const tx of txs) {
-
-            console.log("_includeTxInBlock", tx.hash().toString("hex"), block.height);
 
             tx.__extra = {
                 height: block.height,
@@ -523,11 +521,11 @@ class Consensus extends BaseConsensus{
         let tx;
         try{
 
-            const txData = await this._client.emitAsync("transactions/get-transaction", { hash }, 0  );
+            const txData = await this._client.emitAsync("transactions/get-transaction", { hash, type: "buffer" }, 0  );
             if (!txData) //disconnected
                 throw "tx fetch failed";
 
-            tx = PandoraPay._scope.mainChain.transactionsValidator.validateTx( txData.tx );
+            tx = PandoraPay._scope.mainChain.transactionsValidator.cloneTx( txData.tx );
 
             if (tx.hash().toString('hex') !== hash )
                 throw "Transaction hash is invalid";
@@ -574,16 +572,15 @@ class Consensus extends BaseConsensus{
         let token;
         try{
 
-            const tokenData = await this._client.emitAsync("token/get-token", { token: hash }, 0  );
+            const tokenData = await this._client.emitAsync("tokens/get-token", { token: hash, type: "json" }, 0  );
+
             if (!tokenData)
                 throw "token fetch failed";
 
-            token = new TokenHashMapData({
+            token = new TokenDataModel({
                 ...PandoraPay._scope,
                 chain: PandoraPay._scope.mainChain
             }, undefined, tokenData );
-
-            await PandoraPay.mainChain.data.tokenHashMap.addMap( hash, token );
 
             const data = {};
             data[hash] = token;

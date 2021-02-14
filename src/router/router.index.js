@@ -3,10 +3,10 @@ import Vue from "vue";
 
 import WalletPage from "src/pages/wallet/wallet.page"
 import LoginPage from "src/pages/login/login.page"
-import SendMoneyPage from "src/pages/send-money/send-money.page"
-import ReceiveMoneyPage from "src/pages/receive-page/receive-money.page"
+import SendTransparentTransferPage from "src/pages/send/transparent/send-transparent-transfer.page"
+import ReceivePage from "src/pages/receive/receive.page"
 import AccountInfoPage from "src/pages/account-info/account-info.page"
-import DelegateStakePage from "src/pages/delegate-stake/delegate-stake.page.vue"
+import StakingPage from "src/pages/staking/staking.page"
 import SetPasswordPage from "src/pages/encryption/set-password.page"
 import RemovePasswordPage from "src/pages/encryption/remove-password.page"
 import BlockchainExplorerPage from "src/pages/explorer/blockchain-explorer.page"
@@ -14,16 +14,10 @@ import BlockExplorerPage from "src/pages/explorer/block-explorer.page"
 import TransactionExplorerPage from "src/pages/explorer/transaction-explorer.page"
 import TokenExplorerPage from "src/pages/explorer/token-explorer.page.vue"
 import PendingTransactionsExplorerPage from "src/pages/explorer/pending-transactions-explorer.page"
-import ExchangeBuyPage from "src/pages/exchange/buy/exchange-buy.page"
-import ExchangeBuyAddOfferPage from "src/pages/exchange/buy/exchange-buy-add-offer.page"
-import ExchangeSellAddOfferPage from "src/pages/exchange/sell/exchange-sell-add-offer.page"
-import ExchangeSellPage from "src/pages/exchange/sell/exchange-sell.page"
-import ExchangePortfolioPage from "src/pages/exchange/portfolio/exchange-portfolio.page"
-import ChatPage from "src/pages/chat/chat.page"
-import ChatConversationPage from "src/pages/chat/chat-conversation.page"
-import ChatConversationStartPage from "src/pages/chat/chat-conversation-start.page"
-import ShopPage from "src/pages/shop/shop.page"
+import TokensPage from "src/pages/tokens/tokens.page.vue"
 import NotFoundPage from "src/pages/not-found/not-found.page"
+
+import KadPage from "src/pages/kad/kad.page"
 
 Vue.use(VueRouter);
 
@@ -46,10 +40,9 @@ const guardLogin = (to, from, next) =>{
 
 const routes = [
 
-    {path: '/send-money', component: SendMoneyPage, beforeEnter: guardDecrypted, },
-    {path: '/send', component: SendMoneyPage, beforeEnter: guardDecrypted },
-    {path: '/receive-money', component: ReceiveMoneyPage, beforeEnter: guardDecrypted },
-    {path: '/receive', component: ReceiveMoneyPage, beforeEnter: guardDecrypted },
+    {path: '/send', component: SendTransparentTransferPage, beforeEnter: guardDecrypted },
+
+    {path: '/receive', component: ReceivePage, beforeEnter: guardDecrypted },
     {path: '/account', component: AccountInfoPage, beforeEnter: guardDecrypted },
     {path: '/set-password', component: SetPasswordPage , beforeEnter: guardDecrypted},
     {path: '/remove-password', component: RemovePasswordPage, beforeEnter: guardDecrypted },
@@ -57,26 +50,16 @@ const routes = [
     {path: '/explorer/block/height/:height', component: BlockExplorerPage },
     {path: '/explorer/block/hash/:hash', component: BlockExplorerPage },
     {path: '/explorer/tx/hash/:hash', component: TransactionExplorerPage },
-    {path: '/explorer/token/:hash', component: TokenExplorerPage },
     {path: '/explorer', component: BlockchainExplorerPage },
     {path: '/explorer/pending-transactions', component: PendingTransactionsExplorerPage },
 
-    {path: '/exchange/buy', component: ExchangeBuyPage },
-    {path: '/exchange/buy/add-offer', component: ExchangeBuyAddOfferPage },
+    {path: '/tokens', component: TokensPage},
+    {path: '/tokens/PBOX', component: TokenExplorerPage },
+    {path: '/tokens/:hash', component: TokenExplorerPage },
 
-    {path: '/exchange/sell', component: ExchangeSellPage },
-    {path: '/exchange/sell/add-offer', component: ExchangeSellAddOfferPage },
+    {path: '/staking', component: StakingPage },
 
-    {path: '/exchange/portfolio', component: ExchangePortfolioPage },
-
-    {path: '/delegate-stake', component: DelegateStakePage },
-
-    {path: '/shop', component: ShopPage },
-
-    {path: '/chat', component: ChatPage },
-
-    {path: '/chat/conversation/start', component: ChatConversationStartPage },
-    {path: '/chat/conversation/:publicKey', component: ChatConversationPage },
+    {path: '/kad', component: KadPage },
 
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
 

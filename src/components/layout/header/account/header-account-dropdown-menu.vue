@@ -10,10 +10,13 @@
                 :key="`header-account-dropdown-li-${index}`"
                 @click="setMainAddress(address.address)" >
 
-                <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" />
+                <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" :type="address.type" />
 
                 <div>
-                    <span>{{address.name}}</span> <span class="disabled right-float" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : ''}}</span><br/>
+                    <div class="account-title">
+                        <span>{{address.name}}</span>
+                        <span class="disabled right-float" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : ''}}</span>
+                    </div>
                     <span class="disabled">{{address.address.substr(0, 15)+'...'}} <i class="fa fa-copy pointer"  @click.stop=" copyAddress( address)" /> </span>
                 </div>
 
@@ -21,11 +24,11 @@
 
             <li class="divider"></li>
 
-            <li @click="createAccount"> <i class="fa fa-plus"></i> Create account </li>
-            <li @click="importAccount"><i class="fa fa-upload"></i> Import account</li>
-            <li @click="importPrivateKey"><i class="fa fa-upload"></i> Import Private Key</li>
+            <li @click="createAccount" v-tooltip.left="'Create a new Address'" > <i class="fa fa-plus"></i> Create Account </li>
+            <li @click="importAccount" v-tooltip.left="'Import an address from json file'" ><i class="fa fa-upload"></i> Import Account (json)</li>
+            <li @click="importPrivateKey" v-tooltip.left="'Import an address from Private Key'" ><i class="fa fa-upload"></i> Import Private Key</li>
             <li class="divider"></li>
-            <li @click="viewMnemonic"><i class="fa fa-key"></i>  View Seed Words</li>
+            <li @click="viewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" ><i class="fa fa-key"></i>  View Seed Words</li>
             <li v-if="encrypted" @click="logout"><i class="fa fa-sign-out-alt"></i>  Logout</li>
         </ul>
 
@@ -37,6 +40,7 @@
 <script>
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
+const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 export default {
 
@@ -68,11 +72,14 @@ export default {
 
         async createAccount(){
 
-            this.$store.commit('setIsLoading', true);
+            const account = await this.$store.state.page.refAccountTypeModal.showModal();
+            if (account.selectedType === -1) return;
 
             try{
 
-                const out = await PandoraPay.wallet.manager.createNewAddress();
+                this.$store.state.page.refLoadingModal.showModal();
+
+                const out = await PandoraPay.wallet.manager.createNewAddress(account.selectedType);
                 if (out)
                     this.$notify({
                         type: 'success',
@@ -81,10 +88,10 @@ export default {
                     });
 
             }catch(err){
-
+                console.error(err);
+            }finally{
+                this.$store.state.page.refLoadingModal.closeModal();
             }
-
-            this.$store.commit('setIsLoading', false);
 
         },
 
@@ -120,9 +127,16 @@ export default {
             return this.$emit('showImportPrivateKey');
         },
 
-        copyAddress( address){
+        copyAddress( address ){
 
-            this.$copyText(address.address).then( e =>
+            const type = address.type;
+
+            let addr;
+            if (type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) addr = address.address; else
+
+            console.log("copy address", addr, address.registered );
+
+            this.$copyText(addr).then( e =>
                 this.$notify({
                     type: 'success',
                     title: `Copied to clipboard successfully`,
@@ -158,7 +172,7 @@ export default {
         left: -160px;
 
         position: absolute;
-        top: 80px;
+        top: 20px;
         border: 1px solid #ccc;
         border-radius: 4px;
         padding: 0;
@@ -174,6 +188,10 @@ export default {
         padding: 10px 20px;
         cursor: pointer;
         white-space: nowrap;
+    }
+
+    .dd-menu li .account-title span{
+        display: inline-block;
     }
 
     .dd-menu li:hover {

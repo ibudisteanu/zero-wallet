@@ -6,6 +6,9 @@ export default {
 
         list: {},
 
+        next: null,
+        count: 0,
+
     },
 
     mutations,

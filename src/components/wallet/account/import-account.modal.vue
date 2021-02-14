@@ -17,21 +17,21 @@
 
         <div v-if="address">
 
-            <span class="thick">Wallet to import </span> <br/>
-            <span>Name: {{address.name}}</span> <br/>
-            <span>Encrypted: {{this.isAddressEncrypted}}</span> <br/>
+            <span class="thick">Wallet to import </span>
+            <span>Name: {{address.name}}</span>
+            <span>Encrypted: {{this.isAddressEncrypted}}</span>
 
             <div v-if="isAddressEncrypted" class="pd-top-40">
-                <span class="disabled">Address password</span> <br/>
+                <span class="disabled">Address password</span>
                 <password-input v-model="addressPassword"></password-input>
             </div>
 
             <div v-if="isWalletEncrypted" class="pd-top-40">
-                <span class="disabled">Wallet password</span> <br/>
+                <span class="disabled">Wallet password</span>
                 <password-input v-model="walletPassword"></password-input>
             </div>
 
-            <loading-button text="Import Account" @submit="handleProcess" icon="fa fa-upload"  :disabled="password.length === 0" />
+            <loading-button text="Import Account" @submit="handleProcess" icon="fa fa-upload"  :disabled="(isAddressEncrypted && !walletPassword.length) || (isWalletEncrypted && !walletPassword.length ) " />
 
         </div>
 
@@ -150,7 +150,7 @@ export default {
 
             try{
 
-                this.$store.commit('setIsLoading', true);
+                this.$store.state.page.refLoadingModal.showModal();
 
                 const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
                 if (!checkPassword)
@@ -175,6 +175,9 @@ export default {
                 this.closeModal();
 
             }catch(err){
+
+                console.error(err);
+
                 this.$notify({
                     type: 'error',
                     title: `Import Error`,
@@ -182,7 +185,7 @@ export default {
                 });
 
             }finally{
-                this.$store.commit('setIsLoading', false);
+                this.$store.state.page.refLoadingModal.closeModal();
                 resolve(true);
             }
 

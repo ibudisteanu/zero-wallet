@@ -6,7 +6,7 @@
 
                 <h1>Remove Password</h1>
 
-                <span class="disabled" >Password</span> <br/>
+                <span class="disabled" >Password</span>
                 <password-input v-model="password"/>
 
                 <span v-if="error" class="danger">
@@ -50,7 +50,7 @@ export default {
 
                 this.error = '';
 
-                this.$store.commit('setIsLoading', true);
+                this.$store.state.page.refLoadingModal.showModal();
 
 
                 const out = await PandoraPay.wallet.encryption.removeEncryptionWallet( this.password );
@@ -73,7 +73,7 @@ export default {
                 else
                     this.error = err;
             }finally{
-                this.$store.commit('setIsLoading', false);
+                this.$store.state.page.refLoadingModal.closeModal();
                 resolve(true);
             }
 

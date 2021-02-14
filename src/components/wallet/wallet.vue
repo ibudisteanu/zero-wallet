@@ -2,7 +2,9 @@
 
     <div>
 
-        <balance :address="address"> </balance>
+        <balances :address="address"> </balances>
+
+        
         <transactions :address="address"> </transactions>
 
     </div>
@@ -11,12 +13,12 @@
 
 <script>
 
-import Balance from "./balance/balance";
-import Transactions from "./transactions/transactions";
+import Balances from "./balance/balances";
+import Transactions from "src/components/wallet/transactions/transactions";
 
 export default {
 
-    components: {Balance, Transactions},
+    components: {Balances, Transactions},
 
     computed:{
         address(){
@@ -27,6 +29,6 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
 </style>

@@ -6,7 +6,7 @@
 
             <div v-if="address">
 
-                <span class="title row ">TRANSACTIONS {{ !address.loaded ? '' : txCount + txCountPending }}</span>  <br/>
+                <span class="title row pd-bottom-20">TRANSACTIONS {{ !address.loaded ? '' : txCount + txCountPending }}</span>
 
                 <loading-spinner v-if="!address.loaded" />
 
@@ -40,7 +40,7 @@ export default {
     components: { LoadingSpinner, ShowTransactions, LoadingButton},
 
     props: {
-        address: null
+        address: {default: null}
     },
 
     computed:{

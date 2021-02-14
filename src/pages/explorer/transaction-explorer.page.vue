@@ -51,10 +51,6 @@
                                 <span class="col-xs-7 col-sm-9 wordwrap">{{tx.nonce}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Token Currency </span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.tokenCurrency.toString("hex")}}</span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Unlock Time</span>
                                 <span class="col-xs-7 col-sm-9 wordwrap">{{tx.unlockTime}}</span>
                             </div>
@@ -63,15 +59,19 @@
                                 <div class="col-xs-7 col-sm-9 wordwrap">
                                     <div v-for="(vin, index) in tx.vin" class="input"
                                          :key="`transaction-explorer-vin-${index}`">
-                                        <account-identicon :publicKey="vin.publicKey" size="20" outer-size="5" />
-                                        <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(-vin.amount) : '?'}}</span>
+                                        <account-identicon :publicKeyHash="vin.publicKeyHash" size="20" outer-size="5" />
+                                        <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(-vin.amount) : '?'}} {{vin.tokenCurrency.toString('hex')}} </span>
                                     </div>
                                     <div v-for="(vout, index) in tx.vout" class="input"
                                          :key="`transaction-explorer-vout-${index}`">
                                         <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="5" />
-                                        <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(vout.amount) : '?'}}</span>
+                                        <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(vout.amount) : '?'}} {{vout.tokenCurrency.toString('hex')}}</span>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Extra Message</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.__extra.extra}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Version</span>

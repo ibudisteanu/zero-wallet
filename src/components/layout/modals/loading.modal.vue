@@ -1,9 +1,9 @@
 <template>
 
     <div>
-        <modal ref="modal" title="Loading..." v-if="isLoading" :open-always="true" :close-button="false" >
+        <modal ref="modal" title="Loading..."  :close-button="false" >
 
-            <span class="thick">Please wait... Don't close the page</span> <br/>
+            <span class="thick">Please wait... Don't close the page</span>
 
             <div class="centered pd-top-40">
                 <loading-spinner />
@@ -22,22 +22,25 @@ export default {
 
     components: {LoadingSpinner, Modal},
 
-    computed:{
+    data(){
+        return {
 
-        isLoading(){
-            return this.$store.state.wallet.isLoading;
         }
+    },
+
+    computed:{
 
     },
 
     methods: {
 
         showModal() {
-            this.$refs.modal.showModal();
+            Object.assign(this.$data, this.$options.data());
+            return this.$refs.modal.showModal();
         },
 
         closeModal() {
-            this.$refs.modal.closeModal();
+            return this.$refs.modal.closeModal();
         },
 
     }

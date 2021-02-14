@@ -1,22 +1,22 @@
 <template>
 
-    <modal ref="modal" :title="`${ address ? address.name : '' }`" >
+    <modal ref="modal" :title="`Private Key of ${ address ? address.name : '' }`" >
 
         <div v-if="privateKey">
-            <span class="thick pd-bottom-40">Private Key of Address</span>
+            <span class="thick">Private Key of Your Address "{{address.name}}"</span>
 
-            <div class="pd-bottom-40">
+            <div class="pd-top-20">
                 <span class="font-medium-size wordwrap " >{{privateKey}} <i class="fa fa-copy pointer"  @click="copyPrivateKey"/> </span>
             </div>
 
-            <div class="centered">
+            <div class="centered pd-top-20">
                 <span class="danger">Warning: Never disclose this key. Anyone with your private keys can steal any assets held in your account.</span>
             </div>
         </div>
 
         <div v-if="!privateKey">
 
-            <span class="disabled" >Enter the password to view the wallet seed</span> <br/>
+            <span class="disabled" >Enter the password to view the wallet seed</span>
             <password-input v-model="walletPassword" />
 
 
@@ -52,7 +52,7 @@ export default {
     },
 
     props:{
-        address: null,
+        address: {default: null},
     },
 
     computed:{
@@ -94,7 +94,7 @@ export default {
                 const address = await PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address );
                 if (!address) throw {message: "Address not found"};
 
-                const privateKey = address.decryptPrivateKey();
+                const privateKey = address.keys.decryptPrivateKey();
                 this.privateKey = privateKey.toString("hex");
 
             }catch(err){

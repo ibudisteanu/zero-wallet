@@ -5,11 +5,10 @@
             <div class="boxed ">
 
                 <h1>Account Details</h1>
-
+                <span>Your account</span>
                 <div class="account-info" v-if="address">
 
-                    <account :identicon="address.identicon" :name="address.name" :address="address.address" />
-
+                    <account :address="address" />
 
                     <span class="disabled wordwrap pd-top-20">
                         <span v-if="!showPublicKey" class="pointer" @click="showPublicKey = true">
@@ -20,14 +19,18 @@
                         </span>
                     </span>
 
-                    <span class="disabled wordwrap pd-top-20">
-                        <span v-if="!showPublicKeyHash" class="pointer" @click="showPublicKeyHash = true">
-                            View Public Key Hash
+                    <template v-if="address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT">
+
+                        <span class="disabled wordwrap pd-top-20">
+                            <span v-if="!showPublicKeyHash" class="pointer" @click="showPublicKeyHash = true">
+                                View Public Key Hash
+                            </span>
+                            <span v-else >
+                                Public Key Hash {{address.publicKeyHash}} <i class="fa fa-copy pointer"  @click="copyAddress(address.publicKeyHash)"/>
+                            </span>
                         </span>
-                        <span v-else >
-                            Public Key Hash {{address.publicKeyHash}} <i class="fa fa-copy pointer"  @click="copyAddress(address.publicKeyHash)"/>
-                        </span>
-                    </span>
+
+                    </template>
 
                     <div class="buttons-row pd-top-20">
 
@@ -38,7 +41,7 @@
                         </div>
 
                         <div class="btn">
-                            <div class="btn-round" @click="deleteAddress" v-tooltip.bottom="'Delete'" >
+                            <div class="btn-round" @click="deleteAddress" v-tooltip.bottom="'Delete Account'" >
                                 <i class="danger fa fa-times"></i>
                             </div>
                         </div>
@@ -47,6 +50,14 @@
                             <div class="btn-round" @click="showPrivateKey" v-tooltip.bottom="'View Private Key'" >
                                 <i class="fa fa-eye"></i>
                             </div>
+                        </div>
+
+                        <div class="btn" v-if="address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT">
+                            <router-link to="/staking">
+                                <div class="btn-round" v-tooltip.bottom="'Delegate stake'" >
+                                    <i class="fa fa-piggy-bank"></i>
+                                </div>
+                            </router-link>
                         </div>
 
 
@@ -70,7 +81,7 @@ import consts from 'consts/consts';
 import AccountPrivateKeyModal from "src/components/wallet/account/account-private-key.modal"
 import Layout from "src/components/layout/layout"
 import Account from "src/components/wallet/account/account"
-
+const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 export default {
 
     components: {AccountIdenticon, AccountPrivateKeyModal, Layout, Account},
@@ -85,6 +96,8 @@ export default {
 
     computed:{
 
+        WalletAddressTypeEnum: () => WalletAddressTypeEnum,
+
         address(){
             return this.$store.state.addresses.list[this.$store.state.wallet.mainAddress] ;
         }
@@ -97,7 +110,11 @@ export default {
         async downloadAddress(){
 
             if ( !Blob)
-                return alert('Blob is not supported by your Browser');
+                return this.$notify({
+                    type: 'error',
+                    title: `Blob is not supported by your Browser`,
+                    text: `Update your browser`,
+                })
 
             const address = await PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address );
             if (!address) return false;
@@ -129,7 +146,7 @@ export default {
             const confirmation = confirm( `Are you sure you want to Delete ${this.address.name} ${ this.address.address } `);
             if (!confirmation) return;
 
-            this.$store.commit('setIsLoading', true);
+            this.$store.state.page.refLoadingModal.showModal();
 
 
             try{
@@ -144,10 +161,10 @@ export default {
 
             }catch(err){
 
+            }finally{
+                this.$store.state.page.refLoadingModal.closeModal();
             }
 
-
-            this.$store.commit('setIsLoading', false);
 
         },
 

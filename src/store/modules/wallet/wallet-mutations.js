@@ -17,10 +17,6 @@ export default {
         context.loaded = value;
     },
 
-    setIsLoading(context, value){
-        context.isLoading = value;
-    },
-
     walletClear(context){
 
         context.loaded = false;
@@ -29,7 +25,7 @@ export default {
         context.version = null;
         context.mainAddress = null;
 
-        context.isLoading = false;
+        this.$store.state.page.refLoadingModal.closeModal();
 
         localStorage.removeItem('mainAddress');
     },

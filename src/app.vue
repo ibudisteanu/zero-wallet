@@ -22,7 +22,7 @@
 <script>
 
 import Consensus from "./consensus/consensus"
-import Chat from "./chat/chat"
+const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 export default {
 
@@ -50,7 +50,7 @@ export default {
 
         if (typeof window === "undefined") return;
 
-        PandoraPay._scope.argvBrowser = ["--blockchain:genesisTestNet:createNewTestNet", "true", "--settings:networkType", "1"];
+        PandoraPay._scope.argvBrowser = ["--testnet:activated", "true", "--testnet:createNewTestNet", "true"];
 
         PandoraPay.events.on("wallet/loaded", wallet => this.readWallet() );
 
@@ -77,6 +77,10 @@ export default {
 
         await PandoraPay.start();
 
+        this.$store.commit('setNetworkByte', {
+            networkByte: PandoraPay._scope.argv.crypto.addresses.publicAddress.networkByte,
+            networkPrefix: PandoraPay._scope.argv.crypto.addresses.publicAddress.networkPrefix,
+        })
 
         Consensus.on("consensus/blockchain-info-updated", info => this.$store.commit('setBlockchainInfo', info) );
 
@@ -90,7 +94,9 @@ export default {
 
         Consensus.on("consensus/block-deleted", data => this.$store.commit('deleteBlockchainBlock', data ) );
 
-        Consensus.on("consensus/account-update", data => this.$store.commit('setAddressUpdate', data ) );
+        Consensus.on("consensus/account-update-loaded", data => this.$store.commit('setAddressLoaded', data ) );
+
+        Consensus.on("consensus/account-transparent-update", data => this.$store.commit('setTransparentAddressUpdate', data ) );
 
         Consensus.on("consensus/account-update-tx-count", data => this.$store.commit('setAddressTxCounts', data ) );
 
@@ -102,41 +108,28 @@ export default {
 
         Consensus.on("consensus/pending-transactions-count", data => this.$store.commit('setPendingTransactionsCount', data ) );
 
-        Consensus.on("consensus/tx-downloaded", data => this.$store.commit('setTransactions', data  ) );
+        Consensus.on("consensus/tx-downloaded", async data => {
+
+            for (const key in data.transactions){
+                const tx = data.transactions[key];
+                tx.__extra.extra = await PandoraPay.wallet.manager.decryptTxExtra(tx);
+            }
+
+            this.$store.commit('setTransactions', data  )
+
+        } );
 
         Consensus.on("consensus/tx-deleted", data => this.$store.commit('deleteTransactions', data ) );
+
+        Consensus.on("consensus/tokens-ids", data => this.$store.commit('setTokensIds', data  ) );
+
+        Consensus.on("consensus/tokens-count", data => this.$store.commit('setTokensCount', data  ) );
 
         Consensus.on("consensus/tokens-downloaded", data => this.$store.commit('setTokens', data  ) );
 
         Consensus.on("consensus/tokens-deleted", data => this.$store.commit('deleteTokens', data ) );
 
-        Consensus.on("consensus/exchange-offers-count", data => this.$store.commit('setExchangeOffersCount', data ) );
-
-        Consensus.on("consensus/exchange-offers-ids", data => this.$store.commit('setExchangeOffersIds', data ) );
-
-        Consensus.on("consensus/exchange-offers", data => this.$store.commit('setExchangeOffers', data ) );
-
-
-        Chat.on("encrypted-chat/chat-info-updated", info => this.$store.commit('setChatInfo', info));
-
-        Chat.on("encrypted-chat/status-update", status =>  this.$store.commit('setChatStatus', status) );
-
-        Chat.on("encrypted-chat/conversation-messages-count-update", data => this.$store.commit('setChatConversationMessagesCount', data));
-
-        Chat.on("encrypted-chat/conversation-messages-ids-update", data => this.$store.commit('setChatConversationMessagesIds', data));
-
-        Chat.on("encrypted-chat/message-downloaded", data => this.$store.commit('setChatEncryptedMessage', data));
-
-        Chat.on("encrypted-chat/conversations-count-update", data => this.$store.commit('setChatConversationsCount', data));
-
-        Chat.on("encrypted-chat/conversations-update", data => this.$store.commit('setChatConversations', data));
-
-        Chat.on("encrypted-chat/set-captcha", data => this.$store.commit('setCaptcha', data));
-        Chat.on("encrypted-chat/set-captcha-loading", data => this.$store.commit('setCaptchaLoading', data));
-
         await Consensus.start();
-
-        await Chat.start();
 
     },
 
@@ -179,23 +172,37 @@ export default {
             const addresses = {};
             for (let i=0; i < wallet.addresses.length; i++ ){
 
-                const publicAddress =  wallet.addresses[i].decryptPublicAddress();
-                const publicKey = wallet.addresses[i].decryptPublicKey();
+                const type = wallet.addresses[i].type;
 
-                const mnemonicSequenceIndex =  wallet.addresses[i].decryptMonemonicSequenceIndex();
+                const addressModel =  wallet.addresses[i].keys.decryptAddress();
+                const addressPublicKeyModel =  wallet.addresses[i].keys.decryptAddressPublicKey();
+                const publicKey = wallet.addresses[i].keys.decryptPublicKey();
+                const publicKeyHash = wallet.addresses[i].keys.decryptPublicKeyHash();
+
+                const mnemonicSequenceIndex =  wallet.addresses[i].decryptMnemonicSequenceIndex();
                 const mnemonicSequenceIndexValue = Number.parseInt( mnemonicSequenceIndex.toString("hex"), 16);
 
-                const address = publicAddress.calculateAddress();
+                const address = addressModel.calculateAddress();
+                const addressPublicKey = addressPublicKeyModel.calculateAddress();
 
-                addresses[address] = {
-                    address: address,
+                const addr = {
+                    address,
+                    addressPublicKey,
+                    type: type,
                     publicKey: publicKey.toString("hex"),
-                    publicKeyHash: publicAddress.publicKeyHash.toString("hex"),
+                    publicKeyHash: publicKeyHash.toString('hex'),
                     name: wallet.addresses[i].name,
                     mnemonicSequenceIndex: mnemonicSequenceIndexValue ,
-                    identicon: publicAddress.identiconImg(),
+                    identicon: addressModel.identiconImg(),
                     loaded: false,
                 };
+
+
+                if (type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT){ //transparent
+                    addr.publicKeyHash = addressModel.publicKeyHash.toString("hex");
+                }
+
+                addresses[address] = addr;
 
                 if (i === 0)
                     firstAddress = address;
@@ -215,7 +222,6 @@ export default {
 
             //subscribe addresses
             Consensus.setAccounts( addresses, true );
-            Chat.setAccounts( addresses, true );
 
             Consensus.getBlockchain();
 
@@ -228,3 +234,8 @@ export default {
 
 }
 </script>
+
+
+<style scoped>
+
+</style>

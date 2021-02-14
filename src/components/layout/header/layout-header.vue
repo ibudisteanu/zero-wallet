@@ -10,7 +10,15 @@
                <img :src="require('src/assets/pandora-pay-logo-inline.png').default" class="logo" >
             </router-link>
 
-            <header-account />
+            <div class="header-right-menu">
+               <div class="inline">
+                  <div class="network-text">
+                     {{$store.getters.networkName}}
+                  </div>
+                  <header-account />
+               </div>
+
+            </div>
 
          </div>
 
@@ -35,7 +43,6 @@ export default {
         title(){
             return consts.title;
         },
-
 
 
     },
@@ -63,6 +70,21 @@ export default {
    .layout-row a{
       color: black;
       align-items: center;
+   }
+
+   .header-right-menu{
+      margin-left:auto;
+      margin-right:0;
+   }
+
+   .header-right-menu .inline{
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+   }
+
+   .header-right-menu .network-text{
+      padding-right: 10px;
    }
 
 </style>

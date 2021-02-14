@@ -50,3 +50,9 @@ export default{
     }
 }
 </script>
+
+<style scoped>
+    span{
+        display: inline-block;
+    }
+</style>

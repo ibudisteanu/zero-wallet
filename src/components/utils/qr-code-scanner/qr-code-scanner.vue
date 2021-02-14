@@ -53,7 +53,7 @@ export default {
             const result = decodedString;
             if (this.onDecoded) {
                 this.onDecoded(decodedString);
-                this.$refs['refModal'].closeModal();
+                this.$refs.refModal.closeModal();
             }
         },
 

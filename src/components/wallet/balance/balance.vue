@@ -1,60 +1,77 @@
 <template>
 
-    <div class="container">
-        <div class="boxed centered pd-top-30 pd-bottom-30">
+    <div class="row pd-top-30">
 
-            <span class="title">Account Balance</span> <br/>
+        <div class="col-xs-6 col-sm-8">
 
-            <div v-if="address">
-
-                <loading-spinner v-if="!address.loaded" />
-
-                <div v-else>
-
-                    <div v-for="(balance, token) in balances"
-                         :key="`balance-token-${token}`">
-                        <span class="balance thick" >
-                            {{formatMoney( convertToBase(balance) ) }}
-                        </span>
-                        <span class="currency thick">
-                            {{getToken(token).name}}
-                        </span>
-                        <router-link :to="`/explorer/token/${token}`">
-                            <i class="fa fa-info"></i>
-                        </router-link>
-                        <br/>
-                    </div>
-
-                </div>
-
-
+            <div class="balance thick" v-if="isAmountAvailable">
+                <span>
+                    {{formatMoney( convertToBase( balance.amount ) ) }}
+                </span>
             </div>
+            <div v-else-if="isScanning">
+                <span>Scanning... {{scanPercent}}%</span>
+                <div class="progress">
+                    <div class="bar" :style="`width:${scanPercent}%`">
+                    </div>
+                </div>
+                <span>
+                    Scan {{balance.scanIndex / Math.pow(10, getToken.decimalSeparator) }}
+                </span>
+            </div>
+
+        </div>
+
+        <div class="col-xs-6 col-sm-4">
+
+            <span class="currency thick">
+                {{getToken.name}}
+            </span>
+            <router-link :to="`/tokens/token/${token}`">
+                <i class="fa fa-info"></i>
+            </router-link>
 
         </div>
     </div>
 
+
 </template>
 
 <script>
-import LoadingSpinner from "src/components/utils/loading-spinner";
+
+const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 export default {
 
-    components: {LoadingSpinner},
-
     props: {
-        address: null
+        type: {default: WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT},
+        token: {default: ''},
+        balance: {default: null},
     },
 
-    computed:{
+    computed: {
+        WalletAddressTypeEnum: () => WalletAddressTypeEnum,
 
-        balances(){
-            return this.address.balances || {"00": 0};
+        scanPercent(){
+            return ((this.balance.scanIndex || 0) / Number.MAX_SAFE_INTEGER * 100).toFixed(3);
         },
 
+        isAmountAvailable(){
+            return this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT
+        },
+
+        isScanning(){
+            return false;
+        },
+
+        getToken(){
+            return this.$store.state.tokens.list[this.token];
+        }
+
+
     },
 
-    methods:{
+    methods: {
 
         convertToBase(number){
             return PandoraPay.argv.transactions.coins.convertToBase(number);
@@ -65,10 +82,6 @@ export default {
             return amount;
         },
 
-        getToken(token){
-            return this.$store.state.tokens.list[token];
-        }
-
     }
 
 }
@@ -76,27 +89,14 @@ export default {
 
 <style scoped>
 
-    .container{
-    }
-
-    .boxed{
-
-    }
-
-    .title{
-        font-size: 20px;
-    }
-
     .balance{
         font-size: 30px;
+        display: inline-block;
     }
 
     .currency{
         font-size: 20px;
     }
-
-
-
 
 
 </style>

@@ -12,7 +12,6 @@ export default {
 
         mainAddress: null,
 
-        isLoading: false,
     },
 
     mutations,

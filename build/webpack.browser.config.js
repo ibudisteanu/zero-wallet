@@ -1,12 +1,12 @@
 const webpack = require('webpack')
 const base = require('./webpack.base.config')
 const merge = require('webpack-merge')
+const path = require('path')
 
 const config = merge(base, {
     target: 'web',
 
     node: {
-        console: false,
         child_process: "empty",
         dgram: "empty",
         fs: 'empty',
@@ -20,12 +20,9 @@ const config = merge(base, {
         app: "./src/main.js",
     },
     output: {
-        filename: 'Wallet-User-Interface-bundle.js',
-    },
-    resolve: {
-        alias: {
-
-        }
+        path: path.resolve(__dirname, "dist/build"),
+        publicPath: "/",
+        filename: "Wallet-User-Interface-bundle.js"
     },
 
     plugins: [

@@ -75,7 +75,17 @@ export default {
 
     },
 
-    setAddressUpdate(context, {account, balances, nonce, delegate}){
+    setAddressLoaded(context, {account, loaded}){
+
+        const address = { ... context.list[account]  };
+
+        address.loaded = loaded;
+
+        Vue.set(context.list, account, address );
+
+    },
+
+    setTransparentAddressUpdate(context, {account, balances, nonce, delegate, type}){
 
         const address = { ... context.list[account]  };
 
@@ -83,17 +93,15 @@ export default {
 
         if (balances)
             for (const balance of balances)
-                balancesObj[ balance.tokenCurrency.toString("hex") ] = balance.amount;
+                balancesObj[ balance.tokenCurrency.toString("hex") ] = balance;
 
         address.balances = balancesObj;
         address.nonce = nonce;
         address.delegate = delegate;
-        address.loaded = true;
+        address.type = type;
 
         Vue.set(context.list, account, address );
 
     },
-
-
 
 }

@@ -5,11 +5,12 @@
             <div class="boxed ">
 
                 <h1>Set Password</h1>
+                <span class="pd-bottom-20">Encrypting your wallet. Use a strong password to avoid brute forcing</span>
 
-                <span class="disabled" >Password</span> <br/>
+                <span class="disabled" >Password</span>
                 <password-input v-model="password"/>
 
-                <span class="disabled" >Retype Password</span> <br/>
+                <span class="disabled" >Retype Password</span>
                 <password-input v-model="retypePassword"/>
 
                 <span v-if="error" class="danger">
@@ -21,7 +22,10 @@
                 <span class="thick pd-top-20 pd-bottom-20">Tip: Write down your password.</span>
 
                 <div class="centered">
-                    <span class="danger">Warning: In case you lose your password, you will need your <strong>seed to recover your seed accounts!</strong>. Imported accounts generated from a different seed can not be recovered by using your seed.</span>
+                    <span class="danger">
+                        <strong>Warning:</strong> In case you lose your password, you will need your <strong>seed to recover your seed accounts!</strong>. <br/>
+                        Imported accounts generated from a different seed can not be recovered by using your seed.
+                    </span>
                 </div>
 
             </div>
@@ -54,7 +58,7 @@ export default {
 
             try{
 
-                this.$store.commit('setIsLoading', true);
+                this.$store.state.page.refLoadingModal.showModal();
 
                 const promise = new Promise((resolve)=>{
 
@@ -100,7 +104,7 @@ export default {
 
 
             }finally{
-                this.$store.commit('setIsLoading', false);
+                this.$store.state.page.refLoadingModal.closeModal();
                 resolve(true);
             }
 
@@ -113,9 +117,6 @@ export default {
 </script>
 
 <style scoped>
-    span{
-        display: inline-block
-    }
     .wordwrap{
         display: block;
     }
