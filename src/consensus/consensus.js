@@ -493,8 +493,6 @@ class Consensus extends BaseConsensus{
         const txs = await block.getTransactions();
         for (const tx of txs) {
 
-            console.log("_includeTxInBlock", tx.hash().toString("hex"), block.height);
-
             tx.__extra = {
                 height: block.height,
                 timestamp: block.timestamp,

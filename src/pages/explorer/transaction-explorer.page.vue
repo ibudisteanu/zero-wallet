@@ -70,6 +70,10 @@
                                 </div>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Extra Message</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.__extra.extra}}</span>
+                            </div>
+                            <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Version</span>
                                 <span class="col-xs-7 col-sm-9 wordwrap">{{tx.version}}</span>
                             </div>

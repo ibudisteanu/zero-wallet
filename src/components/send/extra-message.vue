@@ -77,7 +77,7 @@ export default {
         },
         'extraEncryptionOption' (to, from) {
             return this.$emit('changed', {
-                extraEncryptionOption: this.selectedDestinationAddressModel.publicKey,
+                extraEncryptionOption: this.selectedDestinationAddressModel ? this.selectedDestinationAddressModel.publicKey : '',
             });
         },
     },

@@ -74,7 +74,7 @@ export default {
 
                 this.$store.state.page.refLoadingModal.showModal();
 
-                const out = await PandoraPay.wallet.manager.importPrivateKeyAddress( this.privateKey, this.selectedType );
+                const out = await PandoraPay.wallet.manager.importPrivateKeyModel( this.privateKey, this.selectedType );
 
                 if (out)
                     this.$notify({

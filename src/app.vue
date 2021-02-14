@@ -108,7 +108,16 @@ export default {
 
         Consensus.on("consensus/pending-transactions-count", data => this.$store.commit('setPendingTransactionsCount', data ) );
 
-        Consensus.on("consensus/tx-downloaded", data => this.$store.commit('setTransactions', data  ) );
+        Consensus.on("consensus/tx-downloaded", async data => {
+
+            for (const key in data.transactions){
+                const tx = data.transactions[key];
+                tx.__extra.extra = await PandoraPay.wallet.manager.decryptTxExtra(tx);
+            }
+
+            this.$store.commit('setTransactions', data  )
+
+        } );
 
         Consensus.on("consensus/tx-deleted", data => this.$store.commit('deleteTransactions', data ) );
 
@@ -168,6 +177,7 @@ export default {
                 const addressModel =  wallet.addresses[i].keys.decryptAddress();
                 const addressPublicKeyModel =  wallet.addresses[i].keys.decryptAddressPublicKey();
                 const publicKey = wallet.addresses[i].keys.decryptPublicKey();
+                const publicKeyHash = wallet.addresses[i].keys.decryptPublicKeyHash();
 
                 const mnemonicSequenceIndex =  wallet.addresses[i].decryptMnemonicSequenceIndex();
                 const mnemonicSequenceIndexValue = Number.parseInt( mnemonicSequenceIndex.toString("hex"), 16);
@@ -180,6 +190,7 @@ export default {
                     addressPublicKey,
                     type: type,
                     publicKey: publicKey.toString("hex"),
+                    publicKeyHash: publicKeyHash.toString('hex'),
                     name: wallet.addresses[i].name,
                     mnemonicSequenceIndex: mnemonicSequenceIndexValue ,
                     identicon: addressModel.identiconImg(),
