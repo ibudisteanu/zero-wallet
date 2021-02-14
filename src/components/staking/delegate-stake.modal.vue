@@ -3,7 +3,6 @@
     <modal ref="modal" title="Delegate Stake">
 
         <span class="disabled">Delegate Public Key</span>
-
         <div class="delegate-pub-key">
             <input type="text" v-model="delegatePublicKeyHash">
             <div class="btn">
