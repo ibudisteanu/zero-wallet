@@ -3,9 +3,9 @@
     <div>
         <span class="disabled">Destination Address {{index !== null ? index+1 : ''}}</span>
 
-        <div :class="`${destinationAddressIdenticon ? 'destination': ''}-row`">
+        <div :class="`${identicon ? 'destination': ''}-row`">
 
-            <account-identicon v-if="destinationAddressIdenticon" :identicon="destinationAddressIdenticon" size="35" outer-size="8" :type="type" />
+            <account-identicon v-if="identicon" :identicon="identicon" size="35" outer-size="8" :type="type" />
 
             <div class="input-toggle-group">
                 <input type="text" v-model="destination">
@@ -48,10 +48,18 @@ export default {
 
         addressValidated(){
             try{
-                if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return PandoraPay.cryptography.addressValidator.validateAddress( this.destination );
+                if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return PandoraPay.cryptography.addressValidator.validateAnyAddress( this.destination );
             }catch(err){
-
             }
+        },
+
+        address(){
+            if (!this.addressValidated) return '';
+
+            if (this.addressValidated.publicKey)
+                return this.addressValidated.generateAddress().calculateAddress();
+
+            return this.addressValidated.calculateAddress();
         },
 
         validationError(){
@@ -59,7 +67,7 @@ export default {
             if (!this.addressValidated) return `Address ${this.destination} is invalid`;
         },
 
-        destinationAddressIdenticon(){
+        identicon(){
             if (this.addressValidated) return this.addressValidated.identiconImg();
         },
     },
@@ -67,8 +75,8 @@ export default {
     watch: {
         'addressValidated' (to, from) {
             return this.$emit('changed', {
-                destination: to.calculateAddress(),
-                destinationAddress: to,
+                addressModel: to,
+                address: this.address,
                 validationError: this.validationError,
             });
         }

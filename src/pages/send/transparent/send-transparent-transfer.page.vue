@@ -112,8 +112,7 @@ export default {
 
         addDestination(){
             this.destinations.push({
-                destinationAddress: null,
-                destination: '',
+                address: null,
                 validationError: 'Address is empty',
                 amount: 0,
                 tokenCurrency: '',
@@ -144,7 +143,7 @@ export default {
                 this.error = '';
 
                 for (const destination of this.destinations) {
-                    if (destination.destination === this.address.address)
+                    if (destination.address === this.address.address)
                         throw {message: "Destination can not be the same with from"};
 
                     if (destination.validationError)
@@ -158,7 +157,7 @@ export default {
                 const out = await PandoraPay.wallet.transfer.transferSimple({
                     address: this.address.address,
                     txDsts: this.destinations.map( it => ({
-                        address: it.destination,
+                        address: it.address,
                         amount: it.amount,
                         tokenCurrency: it.tokenCurrency,
                     })),

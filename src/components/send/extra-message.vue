@@ -2,10 +2,10 @@
     <div>
 
         <span class="disabled">Extra message</span>
-        <div :class="`extra-message-row ${extraEncryptionOptionDestinationAddressIdenticon ? 'identicon':''}`">
+        <div :class="`extra-message-row ${identicon ? 'identicon':''}`">
 
 
-            <account-identicon v-if="extraEncryptionOptionDestinationAddressIdenticon" :identicon="extraEncryptionOptionDestinationAddressIdenticon" size="35" outer-size="8" :type="type" />
+            <account-identicon v-if="identicon" :identicon="identicon" size="35" outer-size="8" :type="type" />
             <select v-model="extraEncryptionOption">
                 <option v-for="(encryptionOption, id) in encryptionOptions"
                         :key="`extra-encryption-${id}`"
@@ -48,22 +48,23 @@ export default {
                 value: '',
             }];
             for (let i=0; i < this.destinations.length; i++)
-                out.push( {
-                    text: this.destinations[i].destination,
-                    value: this.destinations[i].destination,
-                } );
+                if (this.destinations[i].addressModel && this.destinations[i].addressModel.publicKey)
+                    out.push( {
+                        text: this.destinations[i].addressModel.calculateAddress(),
+                        value: this.destinations[i].address,
+                    } );
             return out;
         },
 
-        extraEncryptionOptionDestinationAddressIdenticon(){
-            const out = this.extraEncryptionOptionDestinationAddress;
+        identicon(){
+            const out = this.selectedDestinationAddressModel;
             if (out) return out.identiconImg();
         },
 
-        extraEncryptionOptionDestinationAddress(){
+        selectedDestinationAddressModel(){
             for (const destination of this.destinations)
-                if (this.extraEncryptionOption === destination.destination)
-                    return destination.destinationAddress;
+                if (this.extraEncryptionOption === destination.address)
+                    return destination.addressModel;
         }
 
     },
@@ -76,7 +77,7 @@ export default {
         },
         'extraEncryptionOption' (to, from) {
             return this.$emit('changed', {
-                extraEncryptionOption: this.extraEncryptionOptionDestinationAddress.publicKeyHash,
+                extraEncryptionOption: this.selectedDestinationAddressModel.publicKey,
             });
         },
     },
