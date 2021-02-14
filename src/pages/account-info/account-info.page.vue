@@ -41,7 +41,7 @@
                         </div>
 
                         <div class="btn">
-                            <div class="btn-round" @click="deleteAddress" v-tooltip.bottom="'Delete'" >
+                            <div class="btn-round" @click="deleteAddress" v-tooltip.bottom="'Delete Account'" >
                                 <i class="danger fa fa-times"></i>
                             </div>
                         </div>

@@ -24,11 +24,11 @@
 
             <li class="divider"></li>
 
-            <li @click="createAccount"> <i class="fa fa-plus"></i> Create Account </li>
-            <li @click="importAccount"><i class="fa fa-upload"></i> Import Account (json)</li>
-            <li @click="importPrivateKey"><i class="fa fa-upload"></i> Import Private Key</li>
+            <li @click="createAccount" v-tooltip.left="'Create a new Address'" > <i class="fa fa-plus"></i> Create Account </li>
+            <li @click="importAccount" v-tooltip.left="'Import an address from json file'" ><i class="fa fa-upload"></i> Import Account (json)</li>
+            <li @click="importPrivateKey" v-tooltip.left="'Import an address from Private Key'" ><i class="fa fa-upload"></i> Import Private Key</li>
             <li class="divider"></li>
-            <li @click="viewMnemonic"><i class="fa fa-key"></i>  View Seed Words</li>
+            <li @click="viewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" ><i class="fa fa-key"></i>  View Seed Words</li>
             <li v-if="encrypted" @click="logout"><i class="fa fa-sign-out-alt"></i>  Logout</li>
         </ul>
 

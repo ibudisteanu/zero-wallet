@@ -22,7 +22,10 @@
                 <span class="thick pd-top-20 pd-bottom-20">Tip: Write down your password.</span>
 
                 <div class="centered">
-                    <span class="danger">Warning: In case you lose your password, you will need your <strong>seed to recover your seed accounts!</strong>. Imported accounts generated from a different seed can not be recovered by using your seed.</span>
+                    <span class="danger">
+                        <strong>Warning:</strong> In case you lose your password, you will need your <strong>seed to recover your seed accounts!</strong>. <br/>
+                        Imported accounts generated from a different seed can not be recovered by using your seed.
+                    </span>
                 </div>
 
             </div>

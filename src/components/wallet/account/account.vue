@@ -8,14 +8,14 @@
                 <div class="pd-top-20">
                     <span>Address:</span>
                     <span class="thick address" >{{getAddress}} </span>
-                    <i class="fa fa-2x fa-copy pointer"  @click="copyAddress(getAddress)"/>
-                    <i class="fa fa-2x fa-qrcode pointer" @click="showAccountQRCode(getAddress, 'Address')" />
+                    <i class="fa fa-2x fa-copy pointer"  @click="copyAddress(getAddress)"  v-tooltip.bottom="'Copy Address'" />
+                    <i class="fa fa-2x fa-qrcode pointer" @click="showAccountQRCode(getAddress, 'Address')" v-tooltip.bottom="'Show Address QR Code'" />
                 </div>
                 <div class="pd-top-20">
                     <span>Address Public Key (to receive encrypted messages too):</span>
                     <span class="thick address">{{getAddressPublicKey}} </span>
-                    <i class="fa fa-2x fa-copy pointer"  @click="copyAddress(getAddressPublicKey)"/>
-                    <i class="fa fa-2x fa-qrcode pointer" @click="showAccountQRCode(getAddressPublicKey, 'Address Public Key')"/>
+                    <i class="fa fa-2x fa-copy pointer"  @click="copyAddress(getAddressPublicKey)" v-tooltip.bottom="'Copy Address Public Key'" />
+                    <i class="fa fa-2x fa-qrcode pointer" @click="showAccountQRCode(getAddressPublicKey, 'Address Public Key')" v-tooltip.bottom="'Show Address Public Key QR Code'" />
                 </div>
 
                 <account-qr-code-modal ref="refAccountQRCodeModal"/>

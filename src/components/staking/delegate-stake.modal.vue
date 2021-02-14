@@ -3,10 +3,14 @@
     <modal ref="modal" title="Delegate Stake">
 
         <span class="disabled">Delegate Public Key</span>
-        <input type="text" v-model="delegatePublicKeyHash">
 
-        <div class="btn-round" @click="handleDelegatePublicKey" v-tooltip.bottom="'Generate your own delegate public key'" >
-            <i class="fa fa-tools"></i>
+        <div class="delegate-pub-key">
+            <input type="text" v-model="delegatePublicKeyHash">
+            <div class="btn">
+                <div class="btn-round" @click="handleDelegatePublicKey" v-tooltip.bottom="'Generate delegate public key'" >
+                    <i class="fa fa-tools"></i>
+                </div>
+            </div>
         </div>
 
         <span class="disabled">Delegate Nonce</span>
@@ -175,5 +179,11 @@ export default {
 </script>
 
 <style scoped>
+
+    .delegate-pub-key {
+        display: grid;
+        grid-template-columns: 1fr 50px;
+        grid-column-gap: 10px;
+    }
 
 </style>
