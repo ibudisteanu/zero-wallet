@@ -523,12 +523,12 @@ class Consensus extends BaseConsensus{
 
             const txData = await this._client.emitAsync("transactions/get-transaction", { hash, type: "buffer" }, 0  );
             if (!txData) //disconnected
-                throw "tx fetch failed";
+                throw Error("tx fetch failed");
 
             tx = PandoraPay._scope.mainChain.transactionsValidator.cloneTx( txData.tx );
 
             if (tx.hash().toString('hex') !== hash )
-                throw "Transaction hash is invalid";
+                throw Error("Transaction hash is invalid");
 
             tx.__extra = {
                 height: txData.block,
@@ -575,7 +575,7 @@ class Consensus extends BaseConsensus{
             const tokenData = await this._client.emitAsync("tokens/get-token", { token: hash, type: "json" }, 0  );
 
             if (!tokenData)
-                throw "token fetch failed";
+                throw Error("token fetch failed");
 
             token = new TokenDataModel({
                 ...PandoraPay._scope,

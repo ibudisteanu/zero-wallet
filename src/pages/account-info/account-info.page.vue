@@ -160,7 +160,11 @@ export default {
                     });
 
             }catch(err){
-
+                this.$notify({
+                    type: 'error',
+                    title: `Address ${this.address.address} could not been removed`,
+                    text: `Raised an error ${err.message}`,
+                })
             }finally{
                 this.$store.state.page.refLoadingModal.closeModal();
             }

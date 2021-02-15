@@ -87,7 +87,7 @@ export default {
                 this.seed = out.join(' ');
 
             }catch(err){
-                this.error = err;
+                this.error = err.message;
             }finally{
                 resolve(true);
             }
@@ -99,7 +99,7 @@ export default {
                 this.$notify({
                     type: 'success',
                     title: `Copied to clipboard successfully`,
-                    text: `Wallet Seed ${this.seed} copied to clipboard`,
+                    text: `The <strong>wallet seed has been copied</strong> to clipboard.`,
                 }),
                 e =>
                 this.$notify({

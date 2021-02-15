@@ -86,14 +86,10 @@ export default {
 
             try{
 
-                const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
-                if (!checkPassword)
-                    throw {message: "Your wallet password is invalid"};
-
-                if (!this.nodeAddress) throw "Node Address is not selected";
+                if (!this.nodeAddress) throw Error("Node Address is not selected");
 
                 let challenge = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/challenge', );
-                if (!challenge ) throw "Challenge couldn't be get. Maybe node is offline";
+                if (!challenge ) throw Error("Challenge couldn't be get. Maybe node is offline");
 
                 if (typeof challenge === "string") challenge = Buffer.from(challenge, "hex");
 
@@ -118,7 +114,7 @@ export default {
                 ]);
 
                 const signature = addressWallet.sign( concat, this.walletPassword );
-                if (!signature) throw "message couldn't be signed";
+                if (!signature) throw Error("Message couldn't be signed");
 
                 console.log( {publicKey, signature, delegatePublicKeyHash, delegatePrivateKey} );
 
@@ -129,7 +125,7 @@ export default {
                     delegatePrivateKey: delegatePrivateKey ? delegatePrivateKey.toString('hex') : undefined
                 });
 
-                if (!out) throw "An error has occurred";
+                if (!out) throw Error("An error has occurred");
 
                 if ( !out.result && out.error ){
 
@@ -154,7 +150,7 @@ export default {
 
             }catch(err){
                 console.error(err);
-                this.error = err;
+                this.error = err.message;
             }finally{
                 resolve(true);
             }

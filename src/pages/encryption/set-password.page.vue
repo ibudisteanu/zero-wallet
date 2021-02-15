@@ -89,8 +89,8 @@ export default {
 
                         try{
 
-                            //if (this.password.length < 6) throw {message: "password is too weak"};
-                            if (this.password !== this.retypePassword) throw {message: "passwords are not matching"};
+                            //if (this.password.length < 6) throw Error("password is too weak");
+                            if (this.password !== this.retypePassword) throw Error("passwords are not matching");
 
                             const out = await PandoraPay.wallet.encryption.encryptWallet( undefined, this.password );
 
@@ -106,11 +106,11 @@ export default {
 
                             }
                             else
-                                throw {message: "Result is not true"};
+                                throw Error("Result is not true");
 
 
                         }catch(err){
-                            this.error = err;
+                            this.error = err.message;
                         }
 
                         resolve(true);

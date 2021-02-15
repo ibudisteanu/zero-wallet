@@ -66,7 +66,7 @@ export default {
                 const out = await PandoraPay.wallet.encryption.decryptWallet(this.password);
 
                 if (!out)
-                    throw {message: "An error encountered"};
+                    throw Error("An error was encountered");
 
                 if (this.$router.currentRoute.path !== '/')
                     this.$router.push('/');

@@ -16,7 +16,7 @@
 
         <loading-button text="Stop Delegate Stake" @submit="handleStopDelegateStake" icon="fa fa-unlink"  />
 
-        <span class="center">A transaction will be created in order to delegate your funds for staking to a third party. You will need to wait for the transaction to be confirmed.</span>
+        <span class="center">A transaction will be created in order to stop delegating your funds for staking. You will need to wait for the transaction to be confirmed.</span>
 
     </modal>
 
@@ -75,12 +75,8 @@ export default {
 
             try {
 
-                const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
-                if (!checkPassword)
-                    throw {message: "Your wallet password is invalid"};
-
                 const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
-                if (nonce === undefined) throw {message: "The connection to the node was dropped"};
+                if (nonce === undefined) throw Error("The connection to the node was dropped");
 
                 const out = await PandoraPay.wallet.transfer.changeDelegate({
                     address: this.address.address,
@@ -94,10 +90,10 @@ export default {
                     memPoolValidateTxData: false,
                 });
 
-                if (!out) throw {message: "Transaction couldn't be made"};
+                if (!out) throw Error("Transaction couldn't be made");
 
                 const outConsensus = await Consensus._client.emitAsync("mem-pool/new-tx", {tx: out.tx.toBuffer() }, 0);
-                if (!outConsensus) throw {message: "Transaction was not included in MemPool"};
+                if (!outConsensus) throw Error("Transaction was not included in MemPool");
 
                 await Consensus.downloadAccountTransactions(this.address.address);
 

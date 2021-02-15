@@ -64,7 +64,7 @@ export default {
                     this.$router.push('/');
 
                 }else
-                    throw {message: "Result is not true"};
+                    throw Error("Result is not true");
 
             }catch(err){
 

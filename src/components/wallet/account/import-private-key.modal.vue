@@ -70,7 +70,7 @@ export default {
             try{
 
 
-                if (this.privateKey.length !== 64) throw {message: "Private key must be 64 hex numbers"};
+                if (this.privateKey.length !== 64) throw Error("Private key must be 64 hex numbers");
 
                 this.$store.state.page.refLoadingModal.showModal();
 

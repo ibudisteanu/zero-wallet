@@ -144,14 +144,14 @@ export default {
 
                 for (const destination of this.destinations) {
                     if (destination.address === this.address.address)
-                        throw {message: "Destination can not be the same with from"};
+                        throw Error("Destination can not be the same with from");
 
                     if (destination.validationError)
-                        throw {message: destination.validationError};
+                        throw Error(destination.validationError);
                 }
 
                 const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
-                if (nonce === undefined) throw {message: "The connection to the node was dropped"};
+                if (nonce === undefined) throw Error("The connection to the node was dropped");
 
                 //compute extra
                 const out = await PandoraPay.wallet.transfer.transferSimple({
@@ -172,21 +172,23 @@ export default {
                 });
 
 
-                if (!out) throw {message: "Transaction couldn't be made"};
+                if (!out) throw Error("Transaction couldn't be made");
 
                 const outConsensus = await Consensus._client.emitAsync("mem-pool/new-tx", {tx: out.tx.toBuffer() }, 0);
                 if (!outConsensus)
-                    throw {message: "Transaction was not included in MemPool"};
+                    throw Error("Transaction was not included in MemPool");
 
                 await Consensus.downloadAccountTransactions(this.address.address);
+
+                const hash = out.tx.hash().toString("hex");
 
                 this.$notify({
                     type: 'success',
                     title: `Transaction created`,
-                    text: `A transaction has been made. \n TxId ${out.tx.hash().toString("hex")}`,
+                    text: `A transaction has been made. \n TxId <strong>${hash}</strong>`,
                 });
 
-                this.$router.push(`/explorer/tx/hash/${out.tx.hash().toString('hex')}`);
+                this.$router.push(`/explorer/tx/hash/${hash}`);
 
             }catch(err){
                 console.error(err);

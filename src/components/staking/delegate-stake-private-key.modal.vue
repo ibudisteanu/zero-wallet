@@ -95,11 +95,6 @@ export default {
 
             try{
 
-                const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.password);
-                if (!checkPassword)
-                    throw 'Password invalid';
-
-
                 const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false, this.walletPassword );
                 const delegatePrivateAddress = addressWallet.decryptDelegateStakePrivateAddress( this.delegate.delegateNonce, this.walletPassword );
 
@@ -113,7 +108,7 @@ export default {
                 this.privateKey = privateKey.toString("hex");
 
             }catch(err){
-                this.error = err;
+                this.error = err.message;
             }finally{
                 resolve(true);
             }

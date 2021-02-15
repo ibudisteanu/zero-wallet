@@ -2,11 +2,11 @@
 
     <modal ref="modal" title="Delegate Stake">
 
-        <span class="disabled">Delegate Public Key</span>
+        <span class="disabled">Delegate PublicKeyHash</span>
         <div class="delegate-pub-key">
             <input type="text" v-model="delegatePublicKeyHash">
             <div class="btn">
-                <div class="btn-round" @click="handleDelegatePublicKey" v-tooltip.bottom="'Generate delegate public key'" >
+                <div class="btn-round" @click="handleGenerateDelegatePublicKey" v-tooltip.bottom="'Generate delegate public key'" >
                     <i class="fa fa-tools"></i>
                 </div>
             </div>
@@ -18,18 +18,13 @@
         <span class="disabled">Delegate Fee in Percentage</span>
         <input type="number" v-model="delegateFee" min="0" max="100" step="0.01">
 
-        <div v-if="isWalletEncrypted" class="pd-top-40">
-            <span class="disabled">Wallet password</span>
-            <password-input v-model="walletPassword"></password-input>
-        </div>
-
         <span v-if="error" class="danger">
             {{error}}
         </span>
 
         <loading-button text="Delegate Stake" @submit="handleDelegateStake" icon="fa fa-link"  />
 
-        <span class="center">A transaction will be created in order to delegate your funds for staking to a third party. You will need to wait for the transaction to be confirmed.</span>
+        <span class="center">A transaction will be created in order to delegate your funds for staking. You will need to wait for the transaction to be confirmed.</span>
 
     </modal>
 
@@ -85,23 +80,19 @@ export default {
             this.$refs.modal.closeModal();
         },
 
-        async handleDelegatePublicKey(){
+        async handleGenerateDelegatePublicKey(){
 
             this.error = '';
 
             try {
 
-                const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
-                if (!checkPassword)
-                    throw {message: "Your wallet password is invalid"};
-
-                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false, this.walletPassword );
-                const delegatePrivateAddress = addressWallet.decryptDelegateStakePrivateAddress(this.delegateNonce + 1, this.walletPassword);
-
-                this.delegatePublicKeyHash = delegatePrivateAddress.publicKey.toString("hex");
+                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false);
+                const delegatePrivateModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegateNonce + 1 );
+                const addressModel = delegatePrivateModel.getAddressPublicKey();
+                this.delegatePublicKeyHash = addressModel.publicKeyHash.toString("hex");
 
             }catch(err){
-                this.error = err;
+                this.error = err.message;
             }finally{
             }
 
@@ -112,28 +103,24 @@ export default {
 
             try {
 
-                const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
-                if (!checkPassword)
-                    throw {message: "Your wallet password is invalid"};
+                if (this.delegatePublicKeyHash.length !== 40  ) throw new Error("Delegate Public Key Hash is not 40 hex digits");
+                if ( !kernel.helpers.StringHelper.isHex(this.delegatePublicKeyHash) ) throw Error("Delegate Public key is invalid");
 
-                if (this.delegatePublicKeyHash.length !== 66  ) throw {message: "Delegate Public Key is not 66 hex digits"};
-                if ( !blockchain.helpers.StringHelper.isHex(this.delegatePublicKeyHash) ) throw {message: "Delegate Public key is invalid"};
-
-                if (this.delegateFee < 0 || this.delegateFee > 100) throw {message: "DelegateFee must be between 0 and 100"};
+                if (this.delegateFee < 0 || this.delegateFee > 100) throw Error("DelegateFee must be between 0 and 100");
                 const delegateFee = Math.floor( this.delegateFee / 100 * PandoraPay.argv.transactions.staking.delegateStakingFeePercentage );
 
                 let delegateNonce = this.delegateNonce;
 
-                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false, this.walletPassword );
-                const delegatePrivateAddress = addressWallet.decryptDelegateStakePrivateAddress(this.delegateNonce + 1, this.walletPassword);
-                if (this.delegatePublicKeyHash === delegatePrivateAddress.publicKey.toString("hex") ){
+                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false);
+                const delegatePrivateModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegateNonce + 1 );
+                const addressModel = delegatePrivateModel.getAddressPublicKey();
+                if (this.delegatePublicKeyHash === addressModel.publicKeyHash.toString("hex") )
                     delegateNonce += 1;
-                }
 
                 const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
-                if (nonce === undefined) throw {message: "The connection to the node was dropped"};
+                if (nonce === undefined) throw Error("The connection to the node was dropped");
 
-                const out = await PandoraPay.wallet.transfer.changeDelegate({
+                const out = await PandoraPay.wallet.transfer.delegateStake({
                     address: this.address.address,
                     fee: 1,
                     nonce,
@@ -145,10 +132,10 @@ export default {
                     memPoolValidateTxData: false,
                 });
 
-                if (!out) throw {message: "Transaction couldn't be made"};
+                if (!out) throw Error("Transaction couldn't be made");
 
                 const outConsensus = await Consensus._client.emitAsync("mem-pool/new-tx", {tx: out.tx.toBuffer() }, 0);
-                if (!outConsensus) throw {message: "Transaction was not included in MemPool"};
+                if (!outConsensus) throw Error("Transaction was not included in MemPool");
 
                 await Consensus.downloadAccountTransactions(this.address.address);
 
@@ -164,7 +151,7 @@ export default {
 
             }catch(err){
                 console.error(err);
-                this.error = err;
+                this.error = err.message;
             }finally{
                 resolve(true);
             }

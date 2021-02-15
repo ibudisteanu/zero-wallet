@@ -38,17 +38,17 @@ export default {
 
                     if (this.address) {
                         address = PandoraPay.cryptography.addressValidator.validateAddress(this.address);
-                        if (!address) throw {message: "Invalid address"};
+                        if (!address) throw Error("Invalid address");
                     }
 
                     if (this.publicKey) {
                         address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKey(this.publicKey);
-                        if (!address) throw {message: "Invalid publicKey"};
+                        if (!address) throw Error("Invalid publicKey");
                     }
 
                     if (this.publicKeyHash) {
                         address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKeyHash(this.publicKeyHash);
-                        if (!address) throw {message: "Invalid publicKeyHash"};
+                        if (!address) throw Error("Invalid publicKeyHash");
                     }
 
                     return address ? address.identiconImg() : undefined;

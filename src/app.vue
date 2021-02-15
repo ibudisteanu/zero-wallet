@@ -148,11 +148,10 @@ export default {
             this.readAddresses();
 
             const route = this.$router.currentRoute.path;
-            if (!loggedIn ){
+            if (!loggedIn && route.indexOf('/login') === -1 ){
 
-                if (route.indexOf('/login') === -1 )
-                    if (route.indexOf('/explorer') === -1 )
-                        this.$router.push('/login');
+                if ( route.indexOf('/explorer') === -1 && route.indexOf('/tokens') === -1 && route.indexOf('kad') === -1 )
+                    this.$router.push('/login');
 
             }
             if (loggedIn && route.indexOf('/login') >= 0) this.$router.push('/');

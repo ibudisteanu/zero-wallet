@@ -7,12 +7,12 @@
 
         <div v-if="show" class="sidebar" :style="{display: show ? 'inherit' : 'none' }" v-on-clickaway="closeMenu" >
 
-            <router-link to="/" :class="`${route === '/' ? 'selected' : ''}`">
+            <router-link to="/" :class="`${route === '/'  || route === '/login' ? 'selected' : ''}`">
                 <i class="fa fa-money-bill-alt" ></i>
                 <span>Wallet</span>
             </router-link>
 
-            <router-link :disabled="!isWalletDecrypted" to="/account" :class="`${route === '/account' ? 'selected' : ''}`">
+            <router-link :disabled="!isWalletDecrypted" to="/account" :class="`${ route === '/account' ? 'selected' : ''}`">
                 <i class="fa fa-wallet" ></i>
                 <span>Account</span>
             </router-link>
