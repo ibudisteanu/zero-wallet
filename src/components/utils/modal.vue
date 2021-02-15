@@ -52,7 +52,11 @@ export default{
             if ( e ) e.stopPropagation();
 
             this.open = false;
-            this.resolver(this);
+            if (this.resolver) {
+                this.resolver(this);
+                delete this.promise;
+                delete this.resolver;
+            }
 
             this.$emit('closed');
 

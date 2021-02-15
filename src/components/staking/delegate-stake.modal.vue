@@ -23,7 +23,7 @@
             <password-input v-model="walletPassword"></password-input>
         </div>
 
-        <span v-if="error" class="centered danger">
+        <span v-if="error" class="danger">
             {{error}}
         </span>
 

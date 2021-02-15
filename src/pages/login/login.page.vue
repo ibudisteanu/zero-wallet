@@ -14,7 +14,7 @@
                     <h2 class="sub-title disabled mg-top-0 pd-bottom-40">The Anonymous Cash awaits</h2>
 
                     <div class="left">
-                        <span class="disabled" >Password</span
+                        <span class="disabled" >Password</span>
                         <password-input v-model="password"/>
                         <span v-if="error" class="danger">
                             {{error}}
@@ -65,17 +65,18 @@ export default {
 
                 const out = await PandoraPay.wallet.encryption.decryptWallet(this.password);
 
-                if (out)
-                    this.$router.push('/');
-                else
+                if (!out)
                     throw {message: "An error encountered"};
+
+                if (this.$router.currentRoute.path !== '/')
+                    this.$router.push('/');
 
             }catch(err){
 
                 if (err.message === "Invalid password")
                     this.error = 'Password is invalid';
                 else
-                    this.error = err;
+                    this.error = err.message;
 
             }finally{
                 resolve(true);

@@ -35,9 +35,9 @@
 
                         <destination-amount text="Fee" :balances="balances" @changed="changedFee" />
 
-                        <div v-if="error" class="danger centered">
+                        <span v-if="error" class="danger">
                             {{error}}
-                        </div>
+                        </span>
 
                         <div class="centered pd-top-20">
                             <loading-button text="Send Money Publicly" @submit="handleSendFunds" icon="fa fa-money-bill-alt" />

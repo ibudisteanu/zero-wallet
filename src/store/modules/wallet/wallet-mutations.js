@@ -25,8 +25,6 @@ export default {
         context.version = null;
         context.mainAddress = null;
 
-        this.$store.state.page.refLoadingModal.closeModal();
-
         localStorage.removeItem('mainAddress');
     },
 

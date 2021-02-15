@@ -8,7 +8,6 @@
                 <span class="pd-bottom-20">Encrypting your wallet. Use a strong password to avoid brute forcing</span>
 
                 <span class="disabled">Password Strength</span>
-                {{strengthPassword}}
                 <progress-bar :value="strengthPassword*20" :text="strengthPasswordMessage" />
 
                 <span class="disabled pd-top-20" >Password</span>
@@ -64,10 +63,10 @@ export default {
         },
         strengthPasswordMessage(){
             const strength = this.strengthPassword;
-            if (strength <= 1) return 'invalid';
+            if (strength <= 1) return 'guessable';
             if (strength <= 2) return 'weak';
-            if (strength <= 3) return 'easy';
-            if (strength <= 4) return 'normal';
+            if (strength <= 3) return 'breakable';
+            if (strength <= 4) return 'okish';
             if (strength <= 5) return 'strong';
             if (strength === 5) return 'great!';
         }
@@ -79,14 +78,14 @@ export default {
 
             try{
 
+                this.error = '';
+
                 this.$store.state.page.refLoadingModal.showModal();
 
                 const promise = new Promise((resolve)=>{
 
 
                     setTimeout( async ()=>{
-
-                        this.error = '';
 
                         try{
 

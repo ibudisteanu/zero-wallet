@@ -10,8 +10,8 @@
             <password-input v-model="walletPassword"></password-input>
         </div>
 
-        <span v-if="error" class="centered danger">
-                {{error}}
+        <span v-if="error" class="danger">
+            {{error}}
         </span>
 
         <loading-button text="Import Private Key" @submit="importPrivateKey" icon="fa fa-file-upload"  />

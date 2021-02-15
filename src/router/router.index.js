@@ -57,13 +57,14 @@ const routes = [
     {path: '/tokens/PBOX', component: TokenExplorerPage },
     {path: '/tokens/:hash', component: TokenExplorerPage },
 
-    {path: '/staking', component: StakingPage },
+    {path: '/staking', component: StakingPage, beforeEnter: guardDecrypted },
 
     {path: '/kad', component: KadPage },
 
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
 
     {path: '/', component: WalletPage, beforeEnter: guardDecrypted },
+    {path: '/address/:address', component: WalletPage },
 
     { path: '*', name: 'not-found', component: NotFoundPage,}
 

@@ -12,32 +12,32 @@
                 <span>Wallet</span>
             </router-link>
 
-            <router-link to="/account" :class="`${route === '/account' ? 'selected' : ''}`">
+            <router-link :disabled="!isWalletDecrypted" to="/account" :class="`${route === '/account' ? 'selected' : ''}`">
                 <i class="fa fa-wallet" ></i>
                 <span>Account</span>
             </router-link>
 
-            <router-link to="/staking" :class="`${route === '/staking' ? 'selected' : ''}`" >
+            <router-link :disabled="!isWalletDecrypted" to="/staking" :class="`${route === '/staking' ? 'selected' : ''}`" >
                 <i class="fa fa-piggy-bank"></i>
                 <span>Staking</span>
             </router-link>
 
-            <router-link to="/send" :class="`${route === '/send' ? 'selected' : ''}`" >
+            <router-link :disabled="!isWalletDecrypted" to="/send" :class="`${route === '/send' ? 'selected' : ''}`" >
                 <i class="fa fa-money-check-alt"></i>
                 <span>Send</span>
             </router-link>
 
-            <router-link to="/receive" :class="`${route === '/receive' ? 'selected' : ''}`" >
+            <router-link :disabled="!isWalletDecrypted" to="/receive" :class="`${route === '/receive' ? 'selected' : ''}`" >
                 <i class="fa fa-hand-holding-usd"></i>
                 <span>Receive</span>
             </router-link>
 
-            <router-link to="/set-password" v-if="!encrypted" :class="`${route === '/set-password' ? 'selected' : ''}`"  >
+            <router-link :disabled="!isWalletDecrypted" to="/set-password" v-if="!encrypted" :class="`${route === '/set-password' ? 'selected' : ''}`"  >
                 <i class="fa fa-unlock-alt"></i>
                 <span>Encrypt</span>
             </router-link>
 
-            <router-link to="/remove-password" v-if="encrypted" :class="`${route === '/remove-password' ? 'selected' : ''}`"  >
+            <router-link :disabled="!isWalletDecrypted" to="/remove-password" v-if="encrypted" :class="`${route === '/remove-password' ? 'selected' : ''}`"  >
                 <i class="fa fa-lock"></i>
                 <span>Decrypt</span>
             </router-link>
@@ -63,6 +63,7 @@
 
 <script>
 import { mixin as clickaway } from 'vue-clickaway'
+import store from "../../../store/store";
 const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
 
 export default {
@@ -85,8 +86,6 @@ export default {
             if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return '/send/transparent/transfer';
         },
 
-        WalletAddressTypeEnum: () => WalletAddressTypeEnum,
-
         encrypted(){
             return this.$store.state.wallet.encrypted;
         },
@@ -104,7 +103,12 @@ export default {
             if (!this.address) return 0;
             return this.$store.getters.conversationsNewNotifications(this.address.publicKey)
 
-        }
+        },
+
+        isWalletDecrypted(){
+            if (this.$store.state.wallet.loaded && !this.$store.state.wallet.loggedIn ) return false;
+            return true;
+        },
 
     },
 
