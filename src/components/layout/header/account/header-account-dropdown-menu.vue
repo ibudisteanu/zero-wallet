@@ -7,12 +7,11 @@
 
             <li v-for="(address, index) in addresses"
                 :class="`address ${ address.address === mainAddress  ? 'focused' : ''} ` "
-                :key="`header-account-dropdown-li-${index}`"
-                @click="setMainAddress(address.address)" >
+                :key="`header-account-dropdown-li-${index}`">
 
                 <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" :type="address.type" />
 
-                <div class="account-title">
+                <div class="account-title pointer" @click="setMainAddress(address.address)" >
                     <span>{{address.name}}</span>
                     <span class="disabled">{{address.address.substr(0, 15)+'...'}} </span>
                 </div>
@@ -192,7 +191,6 @@ export default {
         grid-column-gap: 10px;
 
         padding: 10px 20px;
-        cursor: pointer;
         white-space: nowrap;
     }
 

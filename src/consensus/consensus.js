@@ -333,6 +333,25 @@ class Consensus extends BaseConsensus{
 
     }
 
+    includeTransactionToPending(tx){
+
+        const txs = {};
+        txs[tx.hash().toString('hex')] = {
+            queued: false,
+        }
+
+        for (const account in this._data.accounts)
+            for (const text of ['vin','vout'])
+                if (tx[text])
+                    for (const vin of tx[text])
+                        if (vin.publicKeyHash && vin.publicKeyHash.equals( this._data.accounts[account].publicKeyHash)  ){
+
+                            this.emit('consensus/account-update-tx-count', { account, txCount: 0, txCountPending: 1, clear: false});
+                            this.emit('consensus/account-update-pending-txs', { account, txs: txs, next: undefined, clear: false } )
+                        }
+
+    }
+
     async downloadAccountTransactions(account) {
 
         const address = PandoraPay.cryptography.addressValidator.validateAddress( account );
@@ -343,10 +362,10 @@ class Consensus extends BaseConsensus{
 
             if (!txCountPending && !txCount) return;
 
-            this.emit('consensus/account-update-tx-count', {account, txCount, txCountPending});
+            this.emit('consensus/account-update-tx-count', {account, txCount, txCountPending, clear: true });
 
-            await this.downloadAccountTransactionsSpecific({account, limit: 10});
-            await this.downloadPendingTransactionsSpecific( {account});
+            await this.downloadAccountTransactionsSpecific( {account, limit: 10} );
+            await this.downloadPendingTransactionsSpecific( {account} );
 
             return true;
         }

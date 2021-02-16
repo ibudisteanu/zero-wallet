@@ -6,9 +6,14 @@ export default {
         context.list = value;
     },
 
-    setAddressTxCounts(context, {account, txCount = 0, txCountPending = 0}){
+    setAddressTxCounts(context, {account, txCount = 0, txCountPending = 0, clear = false }){
 
         const address = { ... context.list[account]  };
+
+        if (!clear){
+            txCount += address.txCount || 0;
+            txCountPending += address.txCountPending || 0;
+        }
 
         address.txCount = txCount;
         address.txCountPending = txCountPending;
@@ -29,7 +34,8 @@ export default {
         for (const key in txs)
             address.pendingTxs[key] = key;
 
-        address.pendingTxsNext = next;
+        if (next !== undefined)
+            address.pendingTxsNext = next;
 
         Vue.set(context.list, account, address );
 

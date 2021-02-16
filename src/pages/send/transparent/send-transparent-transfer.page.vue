@@ -178,7 +178,7 @@ export default {
                 if (!outConsensus)
                     throw Error("Transaction was not included in MemPool");
 
-                await Consensus.downloadAccountTransactions(this.address.address);
+                Consensus.includeTransactionToPending(out.tx);
 
                 const hash = out.tx.hash().toString("hex");
 

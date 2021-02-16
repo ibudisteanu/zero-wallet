@@ -103,7 +103,7 @@ export default {
 
             try {
 
-                if (this.delegatePublicKeyHash.length !== 40  ) throw new Error("Delegate Public Key Hash is not 40 hex digits");
+                if (this.delegatePublicKeyHash.length !== 40  ) throw Error("Delegate Public Key Hash is not 40 hex digits");
                 if ( !kernel.helpers.StringHelper.isHex(this.delegatePublicKeyHash) ) throw Error("Delegate Public key is invalid");
 
                 if (this.delegateFee < 0 || this.delegateFee > 100) throw Error("DelegateFee must be between 0 and 100");
@@ -137,7 +137,7 @@ export default {
                 const outConsensus = await Consensus._client.emitAsync("mem-pool/new-tx", {tx: out.tx.toBuffer() }, 0);
                 if (!outConsensus) throw Error("Transaction was not included in MemPool");
 
-                await Consensus.downloadAccountTransactions(this.address.address);
+                Consensus.includeTransactionToPending(out.tx);
 
                 this.$notify({
                     type: 'success',

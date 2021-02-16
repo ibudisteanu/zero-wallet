@@ -95,7 +95,7 @@ export default {
                 const outConsensus = await Consensus._client.emitAsync("mem-pool/new-tx", {tx: out.tx.toBuffer() }, 0);
                 if (!outConsensus) throw Error("Transaction was not included in MemPool");
 
-                await Consensus.downloadAccountTransactions(this.address.address);
+                Consensus.includeTransactionToPending(out.tx);
 
                 this.$notify({
                     type: 'success',
