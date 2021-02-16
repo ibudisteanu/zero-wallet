@@ -77,7 +77,7 @@ export default {
 
                 const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.password);
                 if (!checkPassword)
-                    throw 'Password invalid';
+                    throw Error('Password invalid');
 
                 const out = await PandoraPay.wallet.encryption.decryptMnemonic();
                 this.seed = out.join(' ');

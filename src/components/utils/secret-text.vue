@@ -10,7 +10,7 @@
             </span>
         </div>
         <div class="centered pd-top-40">
-            <span class="danger">{{warning}}</span>
+            <span class="danger">Warning: DO NOT share this phrase with anyone! These words can be used to <strong>{{warning}}</strong></span>
         </div>
     </div>
 </template>
@@ -27,7 +27,7 @@ export default {
     props:{
         text: {default: ''},
         title: {default: ''},
-        warning: {default: 'Warning: DO NOT share this phrase with anyone! These words can be used to steal all your accounts.'},
+        warning: {default: 'STEAL ALL YOUR ACCOUNTS.'},
     },
 
     methods:{

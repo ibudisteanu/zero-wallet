@@ -2,34 +2,13 @@
 
     <modal ref="modal" title="View Delegate Stake Private key" >
 
-        <div v-if="privateKey">
-            <span class="thick pd-bottom-40">Private Key of Delegate Stake</span>
+        <span class="thick">Private Key of Delegate Stake</span>
 
-            <div class="pd-bottom-40">
-                <span class="font-medium-size wordwrap " >{{privateKey}} <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Private Key'" @click="copyPrivateKey"/> </span>
-            </div>
+        <secret-text v-if="privateKey" class="pd-top-20" :text="privateKey" title="Private Key" warning="STAKE ON YOUR BEHALF" />
 
-            <div class="centered">
-                <span class="danger">Warning: Anyone with your delegate private key can stake with your account.</span>
-            </div>
-        </div>
-
-        <div v-if="!privateKey">
-
-            <div v-if="!errorMismatch">
-
-                <span class="disabled" >Enter the password to view the wallet seed</span>
-                <password-input v-model="walletPassword" />
-
-                <loading-button text="Show Private Key" @submit="handleShowPrivateKey" icon="fa fa-eye"  :disabled="walletPassword.length === 0" />
-
-            </div>
-
-            <span v-if="error" class="danger">
-                {{error}}
-            </span>
-
-        </div>
+        <span v-if="error" class="danger">
+            {{error}}
+        </span>
 
     </modal>
 
@@ -38,19 +17,18 @@
 <script>
 
 import Modal from "src/components/utils/modal"
-import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
+import SecretText from "src/components/utils/secret-text"
 
 export default {
 
-    components: { Modal, PasswordInput, LoadingButton },
+    components: { Modal, LoadingButton, SecretText },
 
     data(){
         return {
 
             delegate: null,
 
-            walletPassword: '',
             privateKey: '',
 
             error:'',
@@ -64,10 +42,6 @@ export default {
 
     computed:{
 
-        encrypted(){
-            return this.$store.state.wallet.encrypted;
-        }
-
     },
 
     methods: {
@@ -80,8 +54,7 @@ export default {
 
             this.$refs.modal.showModal();
 
-            if (!this.encrypted)
-                return this.handleShowPrivateKey( () => { });
+            return this.handleShowPrivateKey( () => { });
 
         },
 
@@ -95,16 +68,15 @@ export default {
 
             try{
 
-                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false, this.walletPassword );
-                const delegatePrivateAddress = addressWallet.decryptDelegateStakePrivateAddress( this.delegate.delegateNonce, this.walletPassword );
+                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false);
+                const delegatePrivateModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegate.delegateNonce );
+                const delegateAddressModel = delegatePrivateModel.getAddressPublicKey();
 
-                const delegatePublicKeyHash = delegatePrivateAddress.publicKey.toString("hex");
-                if (delegatePublicKeyHash !== this.delegate.delegatePublicKeyHash) {
-                    this.errorMismatch = true;
-                    throw 'Either the (delegateNonce, delegatePublicKeyHash) are not right or the delegatePublicKeyHash was set manually';
-                }
+                const delegatePublicKeyHash = delegateAddressModel.publicKeyHash.toString("hex");
+                if (delegatePublicKeyHash !== this.delegate.delegatePublicKeyHash)
+                    throw Error('Either the (delegateNonce, delegatePublicKeyHash) are not right or the delegatePublicKeyHash was set manually');
 
-                const privateKey = delegatePrivateAddress.privateKey;
+                const privateKey = delegatePrivateModel.privateKey;
                 this.privateKey = privateKey.toString("hex");
 
             }catch(err){

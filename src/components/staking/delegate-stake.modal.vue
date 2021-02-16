@@ -88,8 +88,8 @@ export default {
 
                 const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false);
                 const delegatePrivateModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegateNonce + 1 );
-                const addressModel = delegatePrivateModel.getAddressPublicKey();
-                this.delegatePublicKeyHash = addressModel.publicKeyHash.toString("hex");
+                const delegateAddressModel = delegatePrivateModel.getAddressPublicKey();
+                this.delegatePublicKeyHash = delegateAddressModel.publicKeyHash.toString("hex");
 
             }catch(err){
                 this.error = err.message;
@@ -113,8 +113,8 @@ export default {
 
                 const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false);
                 const delegatePrivateModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegateNonce + 1 );
-                const addressModel = delegatePrivateModel.getAddressPublicKey();
-                if (this.delegatePublicKeyHash === addressModel.publicKeyHash.toString("hex") )
+                const delegateAddressModel = delegatePrivateModel.getAddressPublicKey();
+                if (this.delegatePublicKeyHash === delegateAddressModel.publicKeyHash.toString("hex") )
                     delegateNonce += 1;
 
                 const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );

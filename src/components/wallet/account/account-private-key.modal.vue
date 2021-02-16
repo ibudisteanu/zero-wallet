@@ -3,7 +3,7 @@
     <modal ref="modal" :title="`Private Key of ${ address ? address.name : '' }`" >
 
         <span class="thick">Private Key of Your Address "{{address.name}}"</span>
-        <secret-key class="pd-top-20" :text="privateKey" title="Private Key" />
+        <secret-key class="pd-top-20" :text="privateKey" title="Private Key" warning="STEAL YOUR FUNDS" />
 
     </modal>
 
