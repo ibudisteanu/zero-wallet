@@ -1,4 +1,4 @@
-const {TxTypeEnum} = global.cryptography.transactions;
+const {TxTypeEnum} = PandoraLibrary.transactions;
 
 export default {
 

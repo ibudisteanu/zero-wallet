@@ -64,7 +64,7 @@
 <script>
 import { mixin as clickaway } from 'vue-clickaway'
 import store from "../../../store/store";
-const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
+const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
 
 export default {
 

@@ -61,8 +61,8 @@ import Layout from "src/components/layout/layout"
 import Account from "src/components/wallet/account/account"
 import Consensus from "src/consensus/consensus"
 
-const {TxTokenCurrencyTypeEnum} = global.cryptography.transactions;
-const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
+const {TxTokenCurrencyTypeEnum} = PandoraLibrary.transactions;
+const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
 
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import LoadingButton from "src/components/utils/loading-button.vue"

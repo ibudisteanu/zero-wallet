@@ -40,7 +40,7 @@
 <script>
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
-const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
+const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
 
 export default {
 

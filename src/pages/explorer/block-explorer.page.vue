@@ -185,7 +185,7 @@ export default {
     methods: {
 
         timeAgo(timestamp){
-            return kernel.helpers.StringHelper.timeSince( timestamp*1000 );
+            return PandoraLibrary.helpers.StringHelper.timeSince( timestamp*1000 );
         },
 
         async loadBlock(){

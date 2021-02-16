@@ -39,7 +39,7 @@
 
 <script>
 
-const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
+const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
 
 export default {
 
@@ -78,7 +78,7 @@ export default {
         },
 
         formatMoney(amount){
-            //return kernel.helpers.StringHelper.formatMoney(amount, 2);
+            //return PandoraLibrary.helpers.StringHelper.formatMoney(amount, 2);
             return amount;
         },
 

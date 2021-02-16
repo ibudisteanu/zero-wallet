@@ -22,7 +22,7 @@
 <script>
 
 import Consensus from "./consensus/consensus"
-const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
+const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
 
 export default {
 

@@ -7,7 +7,7 @@
 </template>
 
 <script>
-const {WalletAddressTypeEnum} = global.blockchain.enums;
+const {WalletAddressTypeEnum} = PandoraLibrary.enums;
 export default {
 
     props:{

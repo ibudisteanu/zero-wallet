@@ -104,7 +104,7 @@ export default {
             try {
 
                 if (this.delegatePublicKeyHash.length !== 40  ) throw Error("Delegate Public Key Hash is not 40 hex digits");
-                if ( !kernel.helpers.StringHelper.isHex(this.delegatePublicKeyHash) ) throw Error("Delegate Public key is invalid");
+                if ( !PandoraLibrary.helpers.StringHelper.isHex(this.delegatePublicKeyHash) ) throw Error("Delegate Public key is invalid");
 
                 if (this.delegateFee < 0 || this.delegateFee > 100) throw Error("DelegateFee must be between 0 and 100");
                 const delegateFee = Math.floor( this.delegateFee / 100 * PandoraPay.argv.transactions.staking.delegateStakingFeePercentage );

@@ -2,17 +2,17 @@ import BaseConsensus from "./consensus-base";
 
 import consts from "consts/consts"
 
-const {client} = global.blockchain.sockets.client;
-const {BasicSocket} = global.blockchain.sockets.basic;
-const {Helper} = global.kernel.helpers;
+const {client} = PandoraLibrary.sockets.client;
+const {BasicSocket} = PandoraLibrary.sockets.basic;
+const {Helper} = PandoraLibrary.helpers;
 
-const {NodeConsensusTypeEnum} = global.blockchain.enums;
-const {BigNumber} = global.kernel.utils;
-const {MarshalData} = global.kernel.marshal;
+const {NodeConsensusTypeEnum} = PandoraLibrary.enums;
+const {BigNumber} = PandoraLibrary.utils;
+const {MarshalData} = PandoraLibrary.marshal;
 
-const {BlockModel} = global.blockchain.blockchain.block;
-const {TokenDataModel} = global.blockchain.blockchain.chain.token;
-const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
+const {BlockModel} = PandoraLibrary.blockchain.block;
+const {TokenDataModel} = PandoraLibrary.blockchain.chain.token;
+const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
 
 class Consensus extends BaseConsensus{
 

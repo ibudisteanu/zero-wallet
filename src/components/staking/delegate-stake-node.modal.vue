@@ -129,10 +129,10 @@ export default {
 
                 if ( !out.result && out.error ){
 
-                    if (out.error === "Your stake delegate's public key is not matching with the private key" && kernel.helpers.StringHelper.isHex(out.errorData) )
+                    if (out.error === "Your stake delegate's public key is not matching with the private key" && PandoraLibrary.helpers.StringHelper.isHex(out.errorData) )
                         throw out.error + " " + out.errorData;
 
-                    if (out.error === "You need to delegate your stake to the following public key" && kernel.helpers.StringHelper.isHex(out.errorData) )
+                    if (out.error === "You need to delegate your stake to the following public key" && PandoraLibrary.helpers.StringHelper.isHex(out.errorData) )
                         throw out.error + " " + out.errorData;
 
                     throw out.error;

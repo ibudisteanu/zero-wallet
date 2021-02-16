@@ -81,7 +81,7 @@ import consts from 'consts/consts';
 import AccountPrivateKeyModal from "src/components/wallet/account/account-private-key.modal"
 import Layout from "src/components/layout/layout"
 import Account from "src/components/wallet/account/account"
-const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
+const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
 export default {
 
     components: {AccountIdenticon, AccountPrivateKeyModal, Layout, Account},
