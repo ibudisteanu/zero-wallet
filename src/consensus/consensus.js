@@ -310,7 +310,7 @@ class Consensus extends BaseConsensus{
 
         for (const account in accounts)
             this._data.accounts[account] = {
-
+                publicKeyHash: account.publicKeyHash,
             };
 
     }

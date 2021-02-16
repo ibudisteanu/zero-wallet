@@ -4,12 +4,7 @@
 
         <div v-if="seed">
 
-            <div class="pd-bottom-40 seed">
-                <span class="font-medium-size wordwrap thick" >{{seed}} <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Seed'"  @click="copySeed"/></span>
-            </div>
-            <div class="centered">
-                <span class="danger">Warning: DO NOT share this phrase with anyone! These words can be used to steal all your accounts.</span>
-            </div>
+            <secret-text :text="seed" title="Seed"  />
 
         </div>
 
@@ -35,10 +30,11 @@
 import Modal from "src/components/utils/modal"
 import PasswordInput from "../../utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
+import SecretText from "src/components/utils/secret-text"
 
 export default {
 
-    components: {PasswordInput, Modal, LoadingButton},
+    components: {PasswordInput, Modal, LoadingButton, SecretText},
 
     data(){
         return {
