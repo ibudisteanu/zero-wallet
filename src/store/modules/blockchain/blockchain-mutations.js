@@ -24,6 +24,8 @@ export default {
 
     setBlockchainBlockInfo(context, blockInfo ){
         Vue.set(context.blocksInfo, blockInfo.height, blockInfo);
+
+        context.next = Math.min( blockInfo.height ? blockInfo.height - 1 : 0, context.next !== null ? context.next : Number.MAX_SAFE_INTEGER ) ;
     },
 
     deleteBlockchainBlock(context, {height, hash} ){

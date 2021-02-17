@@ -152,7 +152,7 @@ class Consensus extends BaseConsensus{
 
         this.emit('consensus/blockchain-info-updated', this._data );
 
-        await this._downloadLastBlocksHashes();
+        await this.downloadBlocksHashes();
 
         await this._downloadAccountsData();
         await this._downloadAccountsTransactions();
@@ -161,10 +161,7 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async _downloadLastBlocksHashes(){
-
-        const starting = this.starting;
-        const ending =  this.ending-1;
+    async downloadBlocksHashes(starting = this.starting, ending = this.ending-1){
 
         let i, done = false;
         for (i = ending; i >= starting && !done ; i-- ){
