@@ -23,17 +23,10 @@ class Consensus extends BaseConsensus{
         this._settings.address = consts.fallback;
 
         this._promises = {
-            blocks: {
-
-            },
-
-            blocksByHash:{
-
-            },
-
-            transactions : {
-
-            },
+            blocks: { },
+            blocksByHash:{ },
+            transactions : { },
+            tokens: {},
         };
 
         this._data = {
@@ -46,34 +39,12 @@ class Consensus extends BaseConsensus{
             prevKernelHash: Buffer.alloc(32),
             chainwork: BigNumber(0),
 
-            blocksInfo:{
-
-            },
-
-            blocks: {
-
-            },
-
-            blocksByHash:{
-
-            },
-
-            transactions : {
-
-            },
-
-            accounts: {
-
-            },
-
-            tokens:{
-
-            },
-
-            offers:{
-
-            },
-
+            blocksInfo:{ },
+            blocks: { },
+            blocksByHash:{ },
+            transactions : { },
+            accounts: { },
+            tokens:{ },
         };
 
         this._downloadPendingTransactionsEnabled = false;
@@ -320,7 +291,7 @@ class Consensus extends BaseConsensus{
 
         for (const account in accounts)
             this._data.accounts[account] = {
-                publicKeyHash: account.publicKeyHash,
+                publicKeyHash: accounts[account].publicKeyHash,
             };
 
     }
@@ -548,7 +519,6 @@ class Consensus extends BaseConsensus{
         const data = {};
         const txs = await block.getTransactions();
         for (const tx of txs) {
-
             tx.__extra = {
                 height: block.height,
                 timestamp: block.timestamp,
@@ -563,8 +533,12 @@ class Consensus extends BaseConsensus{
 
     async getTransactionByHash(hash, isPending = false ){
 
-        if (this._data.transactions[hash]) return this._data.transactions[hash];
-        if (this._promises.transactions[hash]) return this._promises.transactions[hash];
+        let tx = this._data.transactions[hash] || this._promises.transactions[hash];
+        if (tx){
+            tx = await tx;
+            if ((isPending && !tx.__extra.height ) || (!isPending && tx.__extra.height ))
+                return tx;
+        }
 
         this._promises.transactions[hash] = new Promise( async (resolve, reject ) => {
 
@@ -611,38 +585,38 @@ class Consensus extends BaseConsensus{
 
     async getTokenByHash(hash){
 
-        if (this._data.tokens[hash])
-            return this._data.tokens[hash];
+        if (this._data.tokens[hash]) return this._data.tokens[hash];
 
-        let resolver;
-        this._data.tokens[hash] = new Promise( resolve => resolver = resolve);
+        this._promises.tokens[hash] = new Promise( async (resolve, reject) =>{
 
-        let token;
-        try{
+            let token;
+            try{
 
-            const tokenData = await this._client.emitAsync("tokens/get-token", { token: hash, type: "json" }, 0  );
+                const tokenData = await this._client.emitAsync("tokens/get-token", { token: hash, type: "json" }, 0  );
 
-            if (!tokenData)
-                throw Error("token fetch failed");
+                if (!tokenData) throw Error("token fetch failed");
 
-            token = new TokenDataModel({
-                ...PandoraPay._scope,
-                chain: PandoraPay._scope.mainChain
-            }, undefined, tokenData );
+                token = new TokenDataModel({
+                    ...PandoraPay._scope,
+                    chain: PandoraPay._scope.mainChain
+                }, undefined, tokenData );
 
-            const data = {};
-            data[hash] = token;
-            this.emit('consensus/tokens-downloaded', {tokens: data} );
+                const data = {};
+                data[hash] = token;
+                this.emit('consensus/tokens-downloaded', {tokens: data} );
 
-        }catch(err){
-            console.error(err);
-        }finally{
-            resolver(token);
-            this._data.tokens[hash] = token;
-        }
+                this._data.tokens[hash] = token;
+                resolve(token);
 
-        return token;
+            }catch(err){
+                reject(err);
+            }finally{
+                delete this._promises.tokens[hash];
+            }
 
+        });
+
+        return this._promises.tokens[hash];
     }
 
     get starting(){

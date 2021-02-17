@@ -120,7 +120,8 @@ export default {
         },
 
         isDelegated(){
-            return this.address.delegate ? this.address.delegate.delegatePublicKeyHash !== "0000000000000000000000000000000000000000" : false;
+            if (this.address.delegate && this.address.delegate.delegatePublicKeyHash && this.address.delegate.delegatePublicKeyHash !== "0000000000000000000000000000000000000000") return true;
+            return false;
         },
 
         delegateFeePercentage(){

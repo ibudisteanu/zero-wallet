@@ -12,12 +12,11 @@
             <span class="disabled" >Enter the password to view the wallet seed</span>
             <password-input v-model="password" />
 
-
             <span v-if="error" class="danger">
                 {{error}}
             </span>
 
-            <loading-button text="Show Wallet Seed" @submit="handleShowSeed" icon="fa fa-key"  :disabled="password.length === 0" />
+            <loading-button text="Show Wallet Seed" @submit="handleShowSeed" icon="fa fa-key"  :disabled="!password.length " />
 
         </div>
 
