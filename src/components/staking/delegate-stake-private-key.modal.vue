@@ -4,7 +4,7 @@
 
         <span class="thick">Private Key of Delegate Stake</span>
 
-        <secret-text v-if="privateKey" class="pd-top-20" :text="privateKey" title="Private Key" warning="STAKE ON YOUR BEHALF" />
+        <secret-text v-if="privateKey" class="pd-top-20" :text="privateKey" title="Private Key" warning="STAKE ON YOUR BEHALF AND TAKE YOUR REWARDS" />
 
         <span v-if="error" class="danger">
             {{error}}

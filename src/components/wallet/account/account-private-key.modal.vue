@@ -2,8 +2,12 @@
 
     <modal ref="modal" :title="`Private Key of ${ address ? address.name : '' }`" >
 
-        <span class="thick">Private Key of Your Address "{{address.name}}"</span>
-        <secret-key class="pd-top-20" :text="privateKey" title="Private Key" warning="STEAL YOUR FUNDS" />
+        <span class="thick">Private Key of Your Address "{{address ? address.name: ''}}"</span>
+        <secret-key v-if="privateKey" class="pd-top-20" :text="privateKey" title="Private Key" warning="STEAL YOUR FUNDS FROM THIS ACCOUNT" />
+
+        <span v-if="error" class="danger">
+            {{error}}
+        </span>
 
     </modal>
 

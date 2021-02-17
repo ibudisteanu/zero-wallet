@@ -78,7 +78,7 @@ export default {
                 const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
                 if (nonce === undefined) throw Error("The connection to the node was dropped");
 
-                const out = await PandoraPay.wallet.transfer.changeDelegate({
+                const out = await PandoraPay.wallet.transfer.delegateStake({
                     address: this.address.address,
                     fee: 1,
                     nonce,

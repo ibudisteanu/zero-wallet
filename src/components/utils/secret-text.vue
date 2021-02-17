@@ -10,7 +10,7 @@
             </span>
         </div>
         <div class="centered pd-top-40">
-            <span class="danger">Warning: DO NOT share this phrase with anyone! These words can be used to <strong>{{warning}}</strong></span>
+            <span class="danger">Warning: DO NOT share this phrase with anyone! These words can be used to <strong>{{warning}} !</strong></span>
         </div>
     </div>
 </template>
