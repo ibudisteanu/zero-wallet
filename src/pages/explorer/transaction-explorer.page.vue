@@ -146,8 +146,12 @@ export default {
 
             await Consensus.initPromise;
 
-            if (this.height !== undefined)  return Consensus.getTransaction(this.height);
-            if (this.hash ) return Consensus.getTransactionByHash(this.hash);
+            try{
+                if (this.height !== undefined) await Consensus.getTransaction(this.height);
+                if (this.hash ) await Consensus.getTransactionByHash(this.hash);
+            }catch(err){
+                this.error = err.message;
+            }
 
         },
 

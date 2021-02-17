@@ -203,11 +203,6 @@ export default {
                     loaded: false,
                 };
 
-
-                if (type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT){ //transparent
-                    addr.publicKeyHash = addressModel.publicKeyHash.toString("hex");
-                }
-
                 addresses[address] = addr;
 
                 if (i === 0)

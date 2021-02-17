@@ -18,7 +18,6 @@
                     {{error}}
                 </span>
 
-                {{next}}
                 <div class="centered" v-if="next">
                     <loading-button class="button-width-inherit" @submit="handleViewMore" icon="fa fa-cloud-download-alt" text="View more..."/>
                 </div>
