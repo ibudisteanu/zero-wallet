@@ -8,7 +8,7 @@ export default {
     entity: 'PandoraPay',
     version: '0.125',
 
-    fallback: 'http://0.0.0.0:8085',
+    fallback: 'http://0.0.0.0:808'+(5+Math.floor(Math.random()*2)).toString(),
     delegateStakesNodes: DelegateStakesNodesMainnet,
 
 }

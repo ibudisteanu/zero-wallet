@@ -15,7 +15,7 @@
                     <div class="bar" :style="`width:${scanPercent}%`">
                     </div>
                 </div>
-                <span>
+                <span v-if="getToken">
                     Scan {{balance.scanIndex / Math.pow(10, getToken.decimalSeparator) }}
                 </span>
             </div>
@@ -24,7 +24,7 @@
 
         <div class="col-xs-6 col-sm-4">
 
-            <span class="currency thick">
+            <span v-if="getToken" class="currency thick">
                 {{getToken.name}}
             </span>
             <router-link :to="`/tokens/token/${token}`">

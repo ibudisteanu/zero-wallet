@@ -2,49 +2,63 @@
 
     <modal ref="modal" title="Delegate Stake">
 
-        <span class="disabled">Node address</span>
-        <select v-model="nodeAddress">
-            <option v-for="(node, key) in delegateStakesNodes"
-                    :key="`node-${key}`"
-                    :value="node.address">
-                {{node.address}} Fee: {{node.fee}} %
-            </option>
-        </select>
+        <steps-bar :length="3" :active="step" />
 
-        <div v-if="isWalletEncrypted" class="pd-top-40">
-            <span class="disabled">Wallet password</span>
-            <password-input v-model="walletPassword"></password-input>
-        </div>
+        <template v-if="step === 1">
+            <span class="disabled">Node address</span>
+            <select v-model="nodeAddress">
+                <option v-for="(node, key) in delegateStakesNodes"
+                        :key="`node-${key}`"
+                        :value="node.address">
+                    {{node.address}} Fee: {{node.fee}} %
+                </option>
+            </select>
+            <loading-button text="Connect to delegated node" @submit="handleConnectNode" icon="fa fa-laptop-code"  />
+        </template>
+        <template v-if="step === 2">
+            <div v-if="nodeInfo">
+                <span>Allow Delegating: <strong>{{nodeInfo.allowDelegating}}</strong></span>
+                <span>Already included: <strong>{{nodeInfo.alreadyIncluded}}</strong></span>
+                <span>Available slots: <strong>{{nodeInfo.maximumDelegates - nodeInfo.availableSlots}}</strong>  / {{nodeInfo.maximumDelegates}} </span>
+                <span>Minimum Fee: <strong>{{nodeInfo.minimumFeePercentage}}</strong></span>
+            </div>
+
+            <loading-button text="Delegate your stake to node" @submit="handleDelegateStake" icon="fa fa-laptop-code"  />
+        </template>
 
         <span v-if="error" class="danger">
             {{error}}
         </span>
 
-        <loading-button text="Delegate your stake to node" @submit="handleDelegateStake" icon="fa fa-laptop-code"  />
 
     </modal>
 
 </template>
 
 <script>
+import consts from "consts/consts"
 import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
-import consts from "consts/consts"
+import StepsBar from "src/components/utils/steps-bar"
 import HttpHelper from "src/utils/http-helper"
 
 export default {
 
-    components: {Modal, PasswordInput, LoadingButton},
+    components: {Modal, PasswordInput, LoadingButton, StepsBar},
 
 
     data() {
         return {
+
+            step: 1,
+
             delegate: null,
             delegateNonce: 0,
             error: '',
 
             nodeAddress:'',
+            nodeInfo: null,
         }
     },
 
@@ -80,6 +94,39 @@ export default {
             this.$refs.modal.closeModal();
         },
 
+        async handleConnectNode(resolve){
+
+            this.error = ''
+            this.nodeInfo = null;
+
+            try{
+
+                const out = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/is-delegating-open', {
+                    address: this.address.address,
+                } );
+                if (!out ) throw Error("Node is offline");
+
+                if (typeof out.allowDelegating !== "boolean") throw Error("allowDelegating is not Bool");
+                if (typeof out.alreadyIncluded !== "boolean") throw Error("alreadyIncluded is not Bool");
+                if (typeof out.availableSlots !== "number") throw Error("availableSlots is not Number");
+                if (typeof out.maximumDelegates !== "number") throw Error("maximumDelegates is not Number");
+                if (typeof out.minimumFeePercentage !== "number") throw Error("minimumFeePercentage is not Number");
+
+                if (!out.allowDelegating) this.error = "Your selected node doesn't accept delegations";
+                if (out.alreadyIncluded) this.error = "You already delegated to this node";
+                if (!out.availableSlots) this.error = "The node is completely full";
+
+                this.nodeInfo = out;
+                this.step = 2;
+
+            }catch(err){
+                this.error = err.message;
+            }finally{
+                resolve(true);
+            }
+
+        },
+
         async handleDelegateStake(resolve){
 
             this.error = '';
@@ -93,36 +140,32 @@ export default {
 
                 if (typeof challenge === "string") challenge = Buffer.from(challenge, "hex");
 
-                console.log("this.delegate", this.delegate);
-
                 const publicKey = Buffer.from( this.address.publicKey, "hex");
-                let delegatePublicKeyHash = Buffer.from( this.delegate.delegatePublicKeyHash, "hex");
 
                 //getting private key
-                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false, this.walletPassword );
-                const delegatePrivateAddress = addressWallet.decryptDelegateStakePrivateAddress( this.delegate.delegateNonce, this.walletPassword );
+                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false);
+                const delegatePrivateModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegate.delegateNonce );
+                const delegateAddressModel = delegatePrivateModel.getAddressPublicKey();
 
-                let delegatePrivateKey;
-                if (delegatePrivateAddress.publicKey.toString("hex") === this.delegate.delegatePublicKeyHash)
-                    delegatePrivateKey = delegatePrivateAddress.privateKey;
+                const delegatePublicKeyHash = delegateAddressModel.publicKeyHash;
+                if (!delegatePublicKeyHash.equals( Buffer.from(this.delegate.delegatePublicKeyHash, 'hex') ))
+                    throw Error("Delegated Private Key is different")
 
                 const concat = Buffer.concat([
                     challenge,
                     publicKey,
                     delegatePublicKeyHash,
-                    delegatePrivateKey ? delegatePrivateKey : Buffer.alloc(0),
+                    delegatePrivateModel.privateKey,
                 ]);
 
-                const signature = addressWallet.sign( concat, this.walletPassword );
+                const signature = addressWallet.keys.sign( concat );
                 if (!signature) throw Error("Message couldn't be signed");
-
-                console.log( {publicKey, signature, delegatePublicKeyHash, delegatePrivateKey} );
 
                 const out = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/import-wallet-stake', {
                     publicKey: publicKey.toString("hex"),
                     signature: signature.toString("hex"),
                     delegatePublicKeyHash: delegatePublicKeyHash.toString('hex'),
-                    delegatePrivateKey: delegatePrivateKey ? delegatePrivateKey.toString('hex') : undefined
+                    delegatePrivateKey: delegatePrivateModel.privateKey.toString('hex'),
                 });
 
                 if (!out) throw Error("An error has occurred");
