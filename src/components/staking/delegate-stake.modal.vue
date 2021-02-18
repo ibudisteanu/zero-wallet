@@ -4,7 +4,7 @@
 
         <span class="disabled">Delegate PublicKeyHash</span>
         <div class="delegate-pub-key">
-            <input type="text" v-model="delegatePublicKeyHash">
+            <input type="text" v-model="delegateStakePublicKeyHash">
             <div class="btn">
                 <div class="btn-round" @click="handleGenerateDelegatePublicKey" v-tooltip.bottom="'Generate delegate public key'" >
                     <i class="fa fa-tools"></i>
@@ -13,10 +13,10 @@
         </div>
 
         <span class="disabled">Delegate Nonce</span>
-        <input type="number" v-model="delegateNonce" min="0" disabled="true" >
+        <input type="number" v-model="delegateStakeNonce" min="0" disabled="true" >
 
         <span class="disabled">Delegate Fee in Percentage</span>
-        <input type="number" v-model="delegateFee" min="0" max="100" step="0.01">
+        <input type="number" v-model="delegateStakeFee" min="0" max="100" step="0.01">
 
         <span v-if="error" class="danger">
             {{error}}
@@ -45,10 +45,9 @@ export default {
         return {
             delegate: null,
 
-            delegatePublicKeyHash: '',
-            delegateNonce: 0,
-            delegateFee: 0,
-            walletPassword: '',
+            delegateStakePublicKeyHash: '',
+            delegateStakeNonce: 0,
+            delegateStakeFee: 0,
             error: '',
         }
     },
@@ -71,7 +70,7 @@ export default {
             Object.assign(this.$data, this.$options.data());
 
             this.delegate = delegate;
-            this.delegateNonce = delegate ? delegate.delegateNonce : 0;
+            this.delegateStakeNonce = delegate ? delegate.delegateStakeNonce : 0;
 
             this.$refs.modal.showModal();
         },
@@ -87,9 +86,9 @@ export default {
             try {
 
                 const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false);
-                const delegatePrivateModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegateNonce + 1 );
-                const delegateAddressModel = delegatePrivateModel.getAddressPublicKey();
-                this.delegatePublicKeyHash = delegateAddressModel.publicKeyHash.toString("hex");
+                const delegateStakePrivateKeyModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegateStakeNonce + 1 );
+                const delegateStakeAddressModel = delegateStakePrivateKeyModel.getAddressPublicKey();
+                this.delegateStakePublicKeyHash = delegateStakeAddressModel.publicKeyHash.toString("hex");
 
             }catch(err){
                 this.error = err.message;
@@ -103,19 +102,19 @@ export default {
 
             try {
 
-                if (this.delegatePublicKeyHash.length !== 40  ) throw Error("Delegate Public Key Hash is not 40 hex digits");
-                if ( !PandoraLibrary.helpers.StringHelper.isHex(this.delegatePublicKeyHash) ) throw Error("Delegate Public key is invalid");
+                if (this.delegateStakePublicKeyHash.length !== 40  ) throw Error("Delegate Public Key Hash is not 40 hex digits");
+                if ( !PandoraLibrary.helpers.StringHelper.isHex(this.delegateStakePublicKeyHash) ) throw Error("Delegate Public key is invalid");
 
-                if (this.delegateFee < 0 || this.delegateFee > 100) throw Error("DelegateFee must be between 0 and 100");
-                const delegateFee = Math.floor( this.delegateFee / 100 * PandoraPay.argv.transactions.staking.delegateStakingFeePercentage );
+                if (this.delegateStakeFee < 0 || this.delegateStakeFee > 100) throw Error("DelegateFee must be between 0 and 100");
+                const delegateStakeFee = Math.floor( this.delegateStakeFee / 100 * PandoraPay.argv.transactions.staking.delegateStakingFeePercentage );
 
-                let delegateNonce = this.delegateNonce;
+                let delegateStakeNonce = this.delegateStakeNonce;
 
                 const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false);
-                const delegatePrivateModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegateNonce + 1 );
-                const delegateAddressModel = delegatePrivateModel.getAddressPublicKey();
-                if (this.delegatePublicKeyHash === delegateAddressModel.publicKeyHash.toString("hex") )
-                    delegateNonce += 1;
+                const delegateStakePrivateKeyModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegateStakeNonce + 1 );
+                const delegateStakeAddressModel = delegateStakePrivateKeyModel.getAddressPublicKey();
+                if (this.delegateStakePublicKeyHash === delegateStakeAddressModel.publicKeyHash.toString("hex") )
+                    delegateStakeNonce += 1;
 
                 const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
                 if (nonce === undefined) throw Error("The connection to the node was dropped");
@@ -125,9 +124,9 @@ export default {
                     fee: 1,
                     nonce,
                     delegate:{
-                        delegateNonce: delegateNonce,
-                        delegatePublicKeyHash: this.delegatePublicKeyHash,
-                        delegateFee: delegateFee,
+                        delegateStakeNonce,
+                        delegateStakePublicKeyHash: this.delegateStakePublicKeyHash,
+                        delegateStakeFee: delegateStakeFee,
                     },
                     memPoolValidateTxData: false,
                 });

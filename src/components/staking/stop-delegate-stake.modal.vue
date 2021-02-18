@@ -3,12 +3,7 @@
     <modal ref="modal" title="Stop Delegate Stake">
 
         <span class="disabled">Delegate Nonce</span>
-        <input type="number" v-model="delegateNonce" min="0" disabled="true" >
-
-        <div v-if="isWalletEncrypted" class="pd-top-40">
-            <span class="disabled">Wallet password</span>
-            <password-input v-model="walletPassword"></password-input>
-        </div>
+        <input type="number" v-model="delegateStakeNonce" min="0" disabled="true" >
 
         <span v-if="error" class="danger">
             {{error}}
@@ -36,8 +31,7 @@ export default {
     data(){
         return {
             delegate: null,
-            delegateNonce: 0,
-            walletPassword: '',
+            delegateStakeNonce: 0,
             error: '',
         }
     },
@@ -48,10 +42,6 @@ export default {
 
     computed:{
 
-        isWalletEncrypted() {
-            return this.$store.state.wallet.encrypted;
-        },
-
     },
 
     methods:{
@@ -60,7 +50,7 @@ export default {
             Object.assign(this.$data, this.$options.data());
 
             this.delegate = delegate;
-            this.delegateNonce = delegate ? delegate.delegateNonce : 0;
+            this.delegateStakeNonce = delegate ? delegate.delegateStakeNonce : 0;
 
             this.$refs.modal.showModal();
         },
@@ -83,9 +73,9 @@ export default {
                     fee: 1,
                     nonce,
                     delegate:{
-                        delegateNonce: this.delegateNonce,
-                        delegatePublicKeyHash: Buffer.alloc(20),
-                        delegateFee: 0,
+                        delegateStakeNonce: this.delegateStakeNonce,
+                        delegateStakePublicKeyHash: Buffer.alloc(20),
+                        delegateStakeFee: 0,
                     },
                     memPoolValidateTxData: false,
                 });

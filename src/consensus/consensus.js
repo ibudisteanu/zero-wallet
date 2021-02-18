@@ -262,9 +262,9 @@ class Consensus extends BaseConsensus{
                         }
 
                         if (delegate ) {
-                            const diffDelegateNonce = delegate.delegateNonce - (delegateOld ? delegateOld.delegateNonce : 0);
+                            const diffDelegateNonce = delegate.delegateStakeNonce - (delegateOld ? delegateOld.delegateStakeNonce : 0);
                             for (let i = 0; i < Math.abs(diffDelegateNonce); i++)
-                                await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegatePublicKeyHash, delegate.delegateFee);
+                                await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegateStakePublicKeyHash, delegate.delegateStakeFee);
                         }
 
                         this.emit('consensus/account-transparent-update', { account, balances, nonce, delegate, type  } );

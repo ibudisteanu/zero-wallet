@@ -25,6 +25,9 @@
 
             <loading-button text="Delegate your stake to node" @submit="handleDelegateStake" icon="fa fa-laptop-code"  />
         </template>
+        <template v-if="step === 3">
+            <span>Your stake has been delegated!</span>
+        </template>
 
         <span v-if="error" class="danger">
             {{error}}
@@ -54,7 +57,7 @@ export default {
             step: 1,
 
             delegate: null,
-            delegateNonce: 0,
+            delegateStakeNonce: 0,
             error: '',
 
             nodeAddress:'',
@@ -84,7 +87,7 @@ export default {
             Object.assign(this.$data, this.$options.data());
 
             this.delegate = delegate;
-            this.delegateNonce = delegate ? delegate.delegateNonce : 0;
+            this.delegateStakeNonce = delegate ? delegate.delegateStakeNonce : 0;
 
             this.$refs.modal.showModal();
         },
@@ -144,28 +147,27 @@ export default {
 
                 //getting private key
                 const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false);
-                const delegatePrivateModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegate.delegateNonce );
-                const delegateAddressModel = delegatePrivateModel.getAddressPublicKey();
+                const delegateStakePrivateKeyModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegate.delegateStakeNonce );
+                const delegateStakeAddressModel = delegateStakePrivateKeyModel.getAddressPublicKey();
 
-                const delegatePublicKeyHash = delegateAddressModel.publicKeyHash;
-                if (!delegatePublicKeyHash.equals( Buffer.from(this.delegate.delegatePublicKeyHash, 'hex') ))
+                const delegateStakePublicKeyHash = delegateStakeAddressModel.publicKeyHash;
+                if (!delegateStakePublicKeyHash.equals( Buffer.from(this.delegate.delegateStakePublicKeyHash, 'hex') ))
                     throw Error("Delegated Private Key is different")
 
                 const concat = Buffer.concat([
                     challenge,
                     publicKey,
-                    delegatePublicKeyHash,
-                    delegatePrivateModel.privateKey,
+                    delegateStakePublicKeyHash,
+                    delegateStakePrivateKeyModel ? delegateStakePrivateKeyModel.privateKey : Buffer.alloc(0),
                 ]);
 
-                const signature = addressWallet.keys.sign( concat );
+                const signature = addressWallet.keys.sign( PandoraLibrary.helpers.crypto.CryptoHelper.dkeccak256(concat) );
                 if (!signature) throw Error("Message couldn't be signed");
 
                 const out = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/import-wallet-stake', {
                     publicKey: publicKey.toString("hex"),
                     signature: signature.toString("hex"),
-                    delegatePublicKeyHash: delegatePublicKeyHash.toString('hex'),
-                    delegatePrivateKey: delegatePrivateModel.privateKey.toString('hex'),
+                    delegateStakePrivateKey: delegateStakePrivateKeyModel.privateKey.toString('hex'),
                 });
 
                 if (!out) throw Error("An error has occurred");
@@ -182,12 +184,16 @@ export default {
 
                 }
 
-                if (out)
+                if (out) {
+
                     this.$notify({
                         type: 'success',
                         title: `Your stake was delegated successfully to Node `,
                         text: `Your stake was delegated successfully to node. \n node ${this.nodeAddress}`,
                     });
+                    this.step = 3;
+
+                }
 
                 console.log("out", out);
 
