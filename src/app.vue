@@ -9,9 +9,9 @@
 
         </div>
 
-        <div v-if="error">
+        <span v-if="error" class="danger">
             {{error}}
-        </div>
+        </span>
 
         <notifications position="bottom left" />
 
@@ -22,7 +22,7 @@
 <script>
 
 import Consensus from "./consensus/consensus"
-const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
+const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
 
 export default {
 
@@ -148,7 +148,12 @@ export default {
             this.readAddresses();
 
             const route = this.$router.currentRoute.path;
-            if (!loggedIn && route.indexOf('/explorer') === -1 ) this.$router.push('/login');
+            if (!loggedIn && route.indexOf('/login') === -1 ){
+
+                if ( route.indexOf('/explorer') === -1 && route.indexOf('/tokens') === -1 && route.indexOf('kad') === -1 )
+                    this.$router.push('/login');
+
+            }
             if (loggedIn && route.indexOf('/login') >= 0) this.$router.push('/');
 
             this.$store.commit('setLoaded', true);
@@ -157,7 +162,8 @@ export default {
         },
 
         clearWallet(){
-            return this.$store.commit('walletClear');
+            this.$store.commit('walletClear');
+            this.$store.state.page.refLoadingModal.closeModal();
         },
 
         readAddresses(){
@@ -196,11 +202,6 @@ export default {
                     identicon: addressModel.identiconImg(),
                     loaded: false,
                 };
-
-
-                if (type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT){ //transparent
-                    addr.publicKeyHash = addressModel.publicKeyHash.toString("hex");
-                }
 
                 addresses[address] = addr;
 

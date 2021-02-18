@@ -18,7 +18,7 @@
 
 import Account from "src/components/wallet/account/account"
 import Layout from "src/components/layout/layout"
-const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
+const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
 
 export default {
 

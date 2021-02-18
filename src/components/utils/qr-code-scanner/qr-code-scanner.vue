@@ -4,7 +4,7 @@
 
         <qrcode-stream class="qrcodeStream" @decode="onDecode" @init="onInit" />
 
-        <div class="danger centered">
+        <div v-if="error" class="centered">
             {{error}}
         </div>
 

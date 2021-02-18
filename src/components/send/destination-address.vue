@@ -26,7 +26,7 @@
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
 import DestinationAmount from "./destination-amount.vue"
 import QrCodeScanner from "src/components/utils/qr-code-scanner/qr-code-scanner";
-const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
+const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
 
 export default {
 

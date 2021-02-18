@@ -4,12 +4,7 @@
 
         <div v-if="seed">
 
-            <div class="pd-bottom-40 seed">
-                <span class="font-medium-size wordwrap thick" >{{seed}} <i class="fa fa-copy pointer"  @click="copySeed"/></span>
-            </div>
-            <div class="centered">
-                <span class="danger">Warning: DO NOT share this phrase with anyone! These words can be used to steal all your accounts.</span>
-            </div>
+            <secret-text :text="seed" title="Seed"  />
 
         </div>
 
@@ -17,12 +12,11 @@
             <span class="disabled" >Enter the password to view the wallet seed</span>
             <password-input v-model="password" />
 
-
-            <span v-if="error" class="centered danger">
+            <span v-if="error" class="danger">
                 {{error}}
             </span>
 
-            <loading-button text="Show Wallet Seed" @submit="handleShowSeed" icon="fa fa-key"  :disabled="password.length === 0" />
+            <loading-button text="Show Wallet Seed" @submit="handleShowSeed" icon="fa fa-key"  :disabled="!password.length " />
 
         </div>
 
@@ -35,10 +29,11 @@
 import Modal from "src/components/utils/modal"
 import PasswordInput from "../../utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
+import SecretText from "src/components/utils/secret-text"
 
 export default {
 
-    components: {PasswordInput, Modal, LoadingButton},
+    components: {PasswordInput, Modal, LoadingButton, SecretText},
 
     data(){
         return {
@@ -81,13 +76,13 @@ export default {
 
                 const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.password);
                 if (!checkPassword)
-                    throw 'Password invalid';
+                    throw Error('Password invalid');
 
                 const out = await PandoraPay.wallet.encryption.decryptMnemonic();
                 this.seed = out.join(' ');
 
             }catch(err){
-                this.error = err;
+                this.error = err.message;
             }finally{
                 resolve(true);
             }
@@ -99,7 +94,7 @@ export default {
                 this.$notify({
                     type: 'success',
                     title: `Copied to clipboard successfully`,
-                    text: `Wallet Seed ${this.seed} copied to clipboard`,
+                    text: `The <strong>wallet seed has been copied</strong> to clipboard.`,
                 }),
                 e =>
                 this.$notify({

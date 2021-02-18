@@ -10,7 +10,6 @@
              :class="`row pd-top-10 pd-bottom-10 ${isPending(tx) ? 'grid-primary' : ''} `"
              :key="`show-transaction-${key}`">
 
-
             <router-link :to="`/explorer/tx/hash/${tx.hash().toString('hex')}`">
 
                 <span class="col-xs-6 col-sm-2 wordwrap"><router-link :to="`/explorer/tx/hash/${tx.hash().toString('hex')}`">{{tx.hash().toString("hex").substr(0,10)+'...'}}</router-link></span>
@@ -56,7 +55,7 @@ export default {
     methods:{
 
         timeAgo(timestamp){
-            return kernel.helpers.StringHelper.timeSince( timestamp*1000, false );
+            return PandoraLibrary.helpers.StringHelper.timeSince( timestamp*1000, false );
         },
 
         convertToBase(amount){

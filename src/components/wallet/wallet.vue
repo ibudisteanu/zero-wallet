@@ -4,7 +4,6 @@
 
         <balances :address="address"> </balances>
 
-        
         <transactions :address="address"> </transactions>
 
     </div>
@@ -15,7 +14,6 @@
 
 import Balances from "./balance/balances";
 import Transactions from "src/components/wallet/transactions/transactions";
-
 export default {
 
     components: {Balances, Transactions},
@@ -25,6 +23,16 @@ export default {
             return this.$store.state.addresses.list[this.$store.state.wallet.mainAddress];
         }
     },
+
+    data(){
+        return {
+            loaded: false,
+        }
+    },
+
+    mounted(){
+        setTimeout(()=> this.loaded = true, 250)
+    }
 
 }
 </script>

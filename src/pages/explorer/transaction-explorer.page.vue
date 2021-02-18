@@ -14,9 +14,7 @@
 
                     <h3 class="wordwrap">Transaction {{height ? height : hash}} </h3>
 
-                    <div v-if="!tx">
-                        <loading-spinner/>
-                    </div>
+                    <loading-spinner v-if="!tx"/>
                     <div v-else>
                         <div class="table">
                             <div class="row pd-top-10 pd-bottom-10">
@@ -148,8 +146,12 @@ export default {
 
             await Consensus.initPromise;
 
-            if (this.height !== undefined)  return Consensus.getTransaction(this.height);
-            if (this.hash ) return Consensus.getTransactionByHash(this.hash);
+            try{
+                if (this.height !== undefined) await Consensus.getTransaction(this.height);
+                if (this.hash ) await Consensus.getTransactionByHash(this.hash);
+            }catch(err){
+                this.error = err.message;
+            }
 
         },
 
@@ -158,7 +160,7 @@ export default {
         },
 
         timeAgo(timestamp){
-            return kernel.helpers.StringHelper.timeSince( timestamp*1000 );
+            return PandoraLibrary.helpers.StringHelper.timeSince( timestamp*1000 );
         },
 
     },

@@ -30,7 +30,7 @@
 
 import AccountIdenticon from "./account-identicon";
 import AccountQRCodeModal from "./account-qr-code.modal"
-const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
+const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
 
 export default {
 

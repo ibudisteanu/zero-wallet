@@ -29,8 +29,8 @@
                         <div v-else >
 
                             <div v-if="address.delegate" >
-                                <span>Delegated nonce {{address.delegate.delegateNonce}}</span>
-                                <span>Delegated public key {{address.delegate.delegatePublicKeyHash}}</span>
+                                <span>Delegated nonce {{address.delegate.delegateStakeNonce}}</span>
+                                <span>Delegated public key {{address.delegate.delegateStakePublicKeyHash}}</span>
                                 <span>Delegated fee {{delegateFeePercentage}} %</span>
                             </div>
 
@@ -43,19 +43,19 @@
                                 </div>
 
                                 <div class="btn">
-                                    <div class="btn-round" @click="handleShowStopDelegateStake" v-tooltip.bottom="'Stop delegating your stake'" :disabled="!balance" >
-                                        <i class="fa fa-unlink danger" :disabled="!balance" />
+                                    <div class="btn-round pointer" @click="handleShowStopDelegateStake" v-tooltip.bottom="'Stop delegating your stake'" :disabled="!isDelegated || !balance" >
+                                        <i class="fa fa-unlink danger" :disabled="!isDelegated || !balance" />
                                     </div>
                                 </div>
 
                                 <div class="btn">
-                                    <div class="btn-round" @click="handleShowDelegatePrivateKey" v-tooltip.bottom="'View Delegate Stake private key'" :disabled="!balance">
+                                    <div class="btn-round pointer" @click="handleShowDelegatePrivateKey" v-tooltip.bottom="'View Delegate Stake private key'" :disabled="!balance">
                                         <i class="fa fa-eye" :disabled="!balance" />
                                     </div>
                                 </div>
 
                                 <div class="btn">
-                                    <div class="btn-round" @click="handleShowDelegateStakeNode" v-tooltip.bottom="'Delegate Stake to node'" :disabled="!balance" >
+                                    <div class="btn-round pointer" @click="handleShowDelegateStakeNode" v-tooltip.bottom="'Delegate Stake to node'" :disabled="!balance" >
                                         <i class="fa fa-laptop-code" :disabled="!balance" ></i>
                                     </div>
                                 </div>
@@ -120,11 +120,12 @@ export default {
         },
 
         isDelegated(){
-            return this.address.delegate ? this.address.delegate.delegatePublicKeyHash !== "" : false;
+            if (this.address.delegate && this.address.delegate.delegateStakePublicKeyHash && this.address.delegate.delegateStakePublicKeyHash !== "0000000000000000000000000000000000000000") return true;
+            return false;
         },
 
         delegateFeePercentage(){
-            return this.address.delegate.delegateFee / PandoraPay.argv.transactions.staking.delegateStakingFeePercentage * 100;
+            return this.address.delegate.delegateStakeFee / PandoraPay.argv.transactions.staking.delegateStakingFeePercentage * 100;
         },
 
         pendingTxs(){

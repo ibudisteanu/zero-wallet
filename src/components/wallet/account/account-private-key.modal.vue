@@ -2,31 +2,12 @@
 
     <modal ref="modal" :title="`Private Key of ${ address ? address.name : '' }`" >
 
-        <div v-if="privateKey">
-            <span class="thick">Private Key of Your Address "{{address.name}}"</span>
+        <span class="thick">Private Key of Your Address "{{address ? address.name: ''}}"</span>
+        <secret-key v-if="privateKey" class="pd-top-20" :text="privateKey" title="Private Key" warning="STEAL YOUR FUNDS FROM THIS ACCOUNT" />
 
-            <div class="pd-top-20">
-                <span class="font-medium-size wordwrap " >{{privateKey}} <i class="fa fa-copy pointer"  @click="copyPrivateKey"/> </span>
-            </div>
-
-            <div class="centered pd-top-20">
-                <span class="danger">Warning: Never disclose this key. Anyone with your private keys can steal any assets held in your account.</span>
-            </div>
-        </div>
-
-        <div v-if="!privateKey">
-
-            <span class="disabled" >Enter the password to view the wallet seed</span>
-            <password-input v-model="walletPassword" />
-
-
-            <span v-if="error" class="centered danger">
-                {{error}}
-            </span>
-
-            <loading-button text="Show Private Key" @submit="handleShowPrivateKey" icon="fa fa-eye"  :disabled="walletPassword.length === 0" />
-
-        </div>
+        <span v-if="error" class="danger">
+            {{error}}
+        </span>
 
     </modal>
 
@@ -37,16 +18,15 @@
 import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
+import SecretKey from "src/components/utils/secret-text"
 
 export default {
 
-    components: { Modal, PasswordInput, LoadingButton },
+    components: { Modal, PasswordInput, LoadingButton, SecretKey },
 
     data(){
         return {
-            walletPassword: '',
             privateKey: '',
-
             error:'',
         }
     },
@@ -70,10 +50,10 @@ export default {
             Object.assign(this.$data, this.$options.data());
 
             this.address = address;
-            this.$refs.modal.showModal();
 
-            if (!this.encrypted)
-                return this.handleShowPrivateKey( () => { });
+            this.handleShowPrivateKey();
+
+            this.$refs.modal.showModal();
 
         },
 
@@ -81,26 +61,21 @@ export default {
             this.$refs.modal.closeModal();
         },
 
-        async handleShowPrivateKey(resolve){
+        handleShowPrivateKey(){
 
             this.error = '';
 
             try{
 
-                const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
-                if (!checkPassword)
-                    throw 'Password invalid';
-
-                const address = await PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address );
-                if (!address) throw {message: "Address not found"};
+                const address = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address );
+                if (!address) throw Error("Address not found");
 
                 const privateKey = address.keys.decryptPrivateKey();
                 this.privateKey = privateKey.toString("hex");
 
             }catch(err){
-                this.error = err;
+                this.error = err.message;
             }finally{
-                resolve(true);
             }
 
         },

@@ -7,17 +7,17 @@
 
             <li v-for="(address, index) in addresses"
                 :class="`address ${ address.address === mainAddress  ? 'focused' : ''} ` "
-                :key="`header-account-dropdown-li-${index}`"
-                @click="setMainAddress(address.address)" >
+                :key="`header-account-dropdown-li-${index}`">
 
                 <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" :type="address.type" />
 
+                <div class="account-title pointer" @click="setMainAddress(address.address)" >
+                    <span>{{address.name}}</span>
+                    <span class="disabled">{{address.address.substr(0, 15)+'...'}} </span>
+                </div>
                 <div>
-                    <div class="account-title">
-                        <span>{{address.name}}</span>
-                        <span class="disabled right-float" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : ''}}</span>
-                    </div>
-                    <span class="disabled">{{address.address.substr(0, 15)+'...'}} <i class="fa fa-copy pointer"  @click.stop=" copyAddress( address)" /> </span>
+                    <span class="disabled" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : '&nbsp;'}}</span>
+                    <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( address)" />
                 </div>
 
             </li>
@@ -40,7 +40,7 @@
 <script>
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
-const {WalletAddressTypeEnum} = global.blockchain.blockchain.wallet;
+const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
 
 export default {
 
@@ -185,14 +185,15 @@ export default {
     }
 
     .dd-menu li {
+        width: 200px;
+        display: grid;
+        grid-template-columns: 30px 1fr 30px;
+        grid-column-gap: 10px;
+
         padding: 10px 20px;
-        cursor: pointer;
         white-space: nowrap;
     }
 
-    .dd-menu li .account-title span{
-        display: inline-block;
-    }
 
     .dd-menu li:hover {
         background-color: #f6f6f6;
@@ -205,6 +206,7 @@ export default {
     }
 
     .dd-menu li.divider{
+        width: 100%;
         padding: 0;
         border-bottom: 1px solid #cccccc;
     }

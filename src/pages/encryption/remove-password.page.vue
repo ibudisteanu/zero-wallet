@@ -16,7 +16,7 @@
                 <loading-button text="Remove password" @submit="handleRemovePassword" icon="fa fa-unlock-alt"  :disabled="password.length === 0" />
 
                 <div class="centered">
-                    <span class="danger">Warning: It will remove your password. You can set it again later.</span>
+                    <span class="danger">Warning: It will remove the password for your entire wallet. But, you can set it again later.</span>
                 </div>
 
             </div>
@@ -52,7 +52,6 @@ export default {
 
                 this.$store.state.page.refLoadingModal.showModal();
 
-
                 const out = await PandoraPay.wallet.encryption.removeEncryptionWallet( this.password );
 
                 if (out) {
@@ -65,13 +64,12 @@ export default {
                     this.$router.push('/');
 
                 }else
-                    throw {message: "Result is not true"};
+                    throw Error("Result is not true");
 
             }catch(err){
-                if (err.message === "Old password is not matching")
-                    this.error = "Password is invalid";
-                else
-                    this.error = err;
+
+                this.error = err.message;
+
             }finally{
                 this.$store.state.page.refLoadingModal.closeModal();
                 resolve(true);
@@ -87,9 +85,7 @@ export default {
 </script>
 
 <style scoped>
-    span{
-        display: inline-block
-    }
+
     .wordwrap{
         display: block;
     }
