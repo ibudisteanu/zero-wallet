@@ -30,7 +30,7 @@
 
                             <div v-if="address.delegate" >
                                 <span>Delegated nonce {{address.delegate.delegateStakeNonce}}</span>
-                                <span>Delegated public key {{address.delegate.delegateStakePublicKeyHash}}</span>
+                                <span>Delegated public key {{address.delegate.delegateStakePublicKey}}</span>
                                 <span>Delegated fee {{delegateFeePercentage}} %</span>
                             </div>
 
@@ -120,7 +120,7 @@ export default {
         },
 
         isDelegated(){
-            if (this.address.delegate && this.address.delegate.delegateStakePublicKeyHash && this.address.delegate.delegateStakePublicKeyHash !== "0000000000000000000000000000000000000000") return true;
+            if (this.address.delegate && this.address.delegateVersion === 1) return true;
             return false;
         },
 

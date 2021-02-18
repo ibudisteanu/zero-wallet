@@ -229,14 +229,15 @@ class Consensus extends BaseConsensus{
                 if (accountData.found){
 
 
-                    const {balances, nonce, delegate} = accountData.account;
+                    const {balances, nonce, delegate, delegateVersion} = accountData.account;
                     const publicKeyHash = address.publicKeyHash;
 
                     if ( JSON.stringify(prevAcc.balances) !== JSON.stringify(balances) || prevAcc.nonce !== nonce ||
-                         JSON.stringify(prevAcc.delegate) !== delegate ){
+                        prevAcc.delegateVersion !== delegateVersion || JSON.stringify(prevAcc.delegate) !== delegate ){
 
                         this._data.accounts[account].balances = balances;
                         this._data.accounts[account].nonce = nonce;
+                        this._data.accounts[account].delegateVersion = delegateVersion;
                         this._data.accounts[account].delegate = delegate;
 
                         //remove old balance
@@ -264,10 +265,10 @@ class Consensus extends BaseConsensus{
                         if (delegate ) {
                             const diffDelegateNonce = delegate.delegateStakeNonce - (delegateOld ? delegateOld.delegateStakeNonce : 0);
                             for (let i = 0; i < Math.abs(diffDelegateNonce); i++)
-                                await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegateStakePublicKeyHash, delegate.delegateStakeFee);
+                                await PandoraPay.mainChain.data.accountHashMap.updateDelegate(publicKeyHash, diffDelegateNonce > 0 ? 1 : -1, delegate.delegateStakePublicKey, delegate.delegateStakeFee);
                         }
 
-                        this.emit('consensus/account-transparent-update', { account, balances, nonce, delegate, type  } );
+                        this.emit('consensus/account-transparent-update', { account, balances, nonce, delegateVersion, delegate, type  } );
 
                     }
 

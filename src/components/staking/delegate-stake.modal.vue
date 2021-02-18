@@ -4,7 +4,7 @@
 
         <span class="disabled">Delegate PublicKeyHash</span>
         <div class="delegate-pub-key">
-            <input type="text" v-model="delegateStakePublicKeyHash">
+            <input type="text" v-model="delegateStakePublicKey">
             <div class="btn">
                 <div class="btn-round" @click="handleGenerateDelegatePublicKey" v-tooltip.bottom="'Generate delegate public key'" >
                     <i class="fa fa-tools"></i>
@@ -45,7 +45,7 @@ export default {
         return {
             delegate: null,
 
-            delegateStakePublicKeyHash: '',
+            delegateStakePublicKey: '',
             delegateStakeNonce: 0,
             delegateStakeFee: 0,
             error: '',
@@ -88,7 +88,7 @@ export default {
                 const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false);
                 const delegateStakePrivateKeyModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegateStakeNonce + 1 );
                 const delegateStakeAddressModel = delegateStakePrivateKeyModel.getAddressPublicKey();
-                this.delegateStakePublicKeyHash = delegateStakeAddressModel.publicKeyHash.toString("hex");
+                this.delegateStakePublicKey = delegateStakeAddressModel.publicKey.toString("hex");
 
             }catch(err){
                 this.error = err.message;
@@ -102,8 +102,8 @@ export default {
 
             try {
 
-                if (this.delegateStakePublicKeyHash.length !== 40  ) throw Error("Delegate Public Key Hash is not 40 hex digits");
-                if ( !PandoraLibrary.helpers.StringHelper.isHex(this.delegateStakePublicKeyHash) ) throw Error("Delegate Public key is invalid");
+                if (this.delegateStakePublicKey.length !== 66  ) throw Error("Delegate Public Key is not 66 hex digits");
+                if ( !PandoraLibrary.helpers.StringHelper.isHex(this.delegateStakePublicKey) ) throw Error("Delegate Public key is invalid");
 
                 if (this.delegateStakeFee < 0 || this.delegateStakeFee > 100) throw Error("DelegateFee must be between 0 and 100");
                 const delegateStakeFee = Math.floor( this.delegateStakeFee / 100 * PandoraPay.argv.transactions.staking.delegateStakingFeePercentage );
@@ -113,7 +113,7 @@ export default {
                 const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false);
                 const delegateStakePrivateKeyModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegateStakeNonce + 1 );
                 const delegateStakeAddressModel = delegateStakePrivateKeyModel.getAddressPublicKey();
-                if (this.delegateStakePublicKeyHash === delegateStakeAddressModel.publicKeyHash.toString("hex") )
+                if (this.delegateStakePublicKey === delegateStakeAddressModel.publicKey.toString("hex") )
                     delegateStakeNonce += 1;
 
                 const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
@@ -125,7 +125,7 @@ export default {
                     nonce,
                     delegate:{
                         delegateStakeNonce,
-                        delegateStakePublicKeyHash: this.delegateStakePublicKeyHash,
+                        delegateStakePublicKey: this.delegateStakePublicKey,
                         delegateStakeFee: delegateStakeFee,
                     },
                     memPoolValidateTxData: false,

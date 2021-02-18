@@ -72,9 +72,9 @@ export default {
                 const delegateStakePrivateKeyModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegate.delegateStakeNonce );
                 const delegateStakeAddressModel = delegateStakePrivateKeyModel.getAddressPublicKey();
 
-                const delegateStakePublicKeyHash = delegateStakeAddressModel.publicKeyHash.toString("hex");
-                if (delegateStakePublicKeyHash !== this.delegate.delegateStakePublicKeyHash)
-                    throw Error('Either the (delegateStakeNonce, delegateStakePublicKeyHash) are not right or the delegateStakePublicKeyHash was set manually');
+                const delegateStakePublicKey = delegateStakeAddressModel.publicKey.toString("hex");
+                if (delegateStakePublicKey !== this.delegate.delegateStakePublicKey)
+                    throw Error('Either the (delegateStakeNonce, delegateStakePublicKey) are not right or the delegateStakePublicKey was set manually');
 
                 const privateKey = delegateStakePrivateKeyModel.privateKey;
                 this.privateKey = privateKey.toString("hex");

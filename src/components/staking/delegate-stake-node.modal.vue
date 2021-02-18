@@ -150,14 +150,14 @@ export default {
                 const delegateStakePrivateKeyModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegate.delegateStakeNonce );
                 const delegateStakeAddressModel = delegateStakePrivateKeyModel.getAddressPublicKey();
 
-                const delegateStakePublicKeyHash = delegateStakeAddressModel.publicKeyHash;
-                if (!delegateStakePublicKeyHash.equals( Buffer.from(this.delegate.delegateStakePublicKeyHash, 'hex') ))
+                const delegateStakePublicKey = delegateStakeAddressModel.publicKey;
+                if (!delegateStakePublicKey.equals( Buffer.from(this.delegate.delegateStakePublicKey, 'hex') ))
                     throw Error("Delegated Private Key is different")
 
                 const concat = Buffer.concat([
                     challenge,
                     publicKey,
-                    delegateStakePublicKeyHash,
+                    delegateStakePublicKey,
                     delegateStakePrivateKeyModel ? delegateStakePrivateKeyModel.privateKey : Buffer.alloc(0),
                 ]);
 
