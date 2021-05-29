@@ -14,7 +14,7 @@ const config = merge(base, {
     ],
 
     output: {
-        path: path.resolve(__dirname, "dist/dev"),
+        path: path.resolve(__dirname, "./../dist/dev"),
         publicPath: "/",
         filename: "Wallet-User-Interface-dev.js"
     },

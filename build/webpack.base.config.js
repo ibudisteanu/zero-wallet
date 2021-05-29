@@ -19,8 +19,8 @@ let webpackConfig = {
     devtool: isProd ? false : '#cheap-module-source-map',
     // send to distribution
     output: {
-        path: path.resolve(__dirname, '../dist'),
-        publicPath: 'public/wallet-dist/',
+        path: path.resolve(__dirname, './../dist'),
+        publicPath: '/',
         filename: '[name].[chunkhash].js'
     },
     resolve: {

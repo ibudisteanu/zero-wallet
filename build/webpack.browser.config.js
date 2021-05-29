@@ -20,7 +20,7 @@ const config = merge(base, {
         app: "./src/main.js",
     },
     output: {
-        path: path.resolve(__dirname, "dist/build"),
+        path: path.resolve(__dirname, "./../dist/build"),
         publicPath: "/",
         filename: "Wallet-User-Interface-bundle.js"
     },
