@@ -58,10 +58,7 @@ export default {
             Object.assign(this.$data, this.$options.data());
             this.$refs.modal.showModal();
 
-            if (!this.encrypted)
-                return this.handleShowSeed( ()=>{} );
-
-
+            return this.handleShowSeed( ()=>{} );
         },
 
         closeModal() {
@@ -74,12 +71,11 @@ export default {
 
             try{
 
-                const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.password);
-                if (!checkPassword)
-                    throw Error('Password invalid');
+                // const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.password);
+                // if (!checkPassword)
+                //     throw Error('Password invalid');
 
-                const out = await PandoraPay.wallet.encryption.decryptMnemonic();
-                this.seed = out.join(' ');
+                this.seed = this.$store.state.wallet.mnemonic;
 
             }catch(err){
                 this.error = err.message;

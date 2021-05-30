@@ -85,7 +85,7 @@ export default {
 
             try {
 
-                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false);
+                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.addressEncoded, false);
                 const delegateStakePrivateKeyModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegateStakeNonce + 1 );
                 const delegateStakeAddressModel = delegateStakePrivateKeyModel.getAddressPublicKey();
                 this.delegateStakePublicKey = delegateStakeAddressModel.publicKey.toString("hex");
@@ -110,17 +110,17 @@ export default {
 
                 let delegateStakeNonce = this.delegateStakeNonce;
 
-                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false);
+                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.addressEncoded, false);
                 const delegateStakePrivateKeyModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegateStakeNonce + 1 );
                 const delegateStakeAddressModel = delegateStakePrivateKeyModel.getAddressPublicKey();
                 if (this.delegateStakePublicKey === delegateStakeAddressModel.publicKey.toString("hex") )
                     delegateStakeNonce += 1;
 
-                const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
+                const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.addressEncoded );
                 if (nonce === undefined) throw Error("The connection to the node was dropped");
 
                 const out = await PandoraPay.wallet.transfer.delegateStake({
-                    address: this.address.address,
+                    address: this.address.addressEncoded,
                     fee: 1,
                     nonce,
                     delegate:{

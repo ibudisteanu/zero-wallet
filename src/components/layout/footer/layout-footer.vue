@@ -11,7 +11,7 @@
             </div>
 
             <div class="row disabled">
-                <span>2019 -2020 <a href="http://PandoraPay.org" target="_blank">{{entity}}</a> - Wallet v {{version}}</span>
+                <span>2019 - 2021 <a href="http://PandoraPay.org" target="_blank">{{entity}}</a> - Wallet v {{version}}</span>
             </div>
             <div class="row disabled">
                 <span>Disclaimer</span>

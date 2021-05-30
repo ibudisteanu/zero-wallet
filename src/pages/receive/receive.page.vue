@@ -18,7 +18,7 @@
 
 import Account from "src/components/wallet/account/account"
 import Layout from "src/components/layout/layout"
-const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
+const {Version} = PandoraPay.enums.wallet.address;
 
 export default {
 
@@ -37,7 +37,7 @@ export default {
     computed:{
 
         title(){
-          if (this.address === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return 'Transparent';
+          if (this.address === Version.versionTransparent) return 'Transparent';
         },
 
         address(){

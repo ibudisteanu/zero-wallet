@@ -105,7 +105,7 @@ export default {
             try{
 
                 const out = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/is-delegating-open', {
-                    address: this.address.address,
+                    address: this.address.addressEncoded,
                 } );
                 if (!out ) throw Error("Node is offline");
 
@@ -146,7 +146,7 @@ export default {
                 const publicKey = Buffer.from( this.address.publicKey, "hex");
 
                 //getting private key
-                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false);
+                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.addressEncoded, false);
                 const delegateStakePrivateKeyModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegate.delegateStakeNonce );
                 const delegateStakeAddressModel = delegateStakePrivateKeyModel.getAddressPublicKey();
 

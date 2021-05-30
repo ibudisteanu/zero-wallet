@@ -9,8 +9,14 @@ export default {
     setEncrypted( context, value ){
         context.encrypted = value;
     },
-    setVersion( context, value){
-        context.version = value;
+
+    setWallet( context, data ){
+        context.version = data.version;
+        context.mnemonic = data.mnemonic;
+        context.seed = data.seed;
+        context.seedIndex = data.seedIndex;
+        context.count = data.count;
+        context.countIndex = data.countIndex;
     },
 
     setLoaded(context, value){
@@ -20,10 +26,13 @@ export default {
     walletClear(context){
 
         context.loaded = false;
-        context.loggedIn = false;
-        context.encrypted = null;
+
         context.version = null;
-        context.mainAddress = null;
+        context.mnemonic = null;
+        context.seed = null;
+        context.seedIndex = null;
+        context.count = null;
+        context.countIndex = null;
 
         localStorage.removeItem('mainAddress');
     },

@@ -38,7 +38,7 @@ export default {
                     this.$notify({
                         type: 'success',
                         title: `Copied to clipboard successfully`,
-                        text: `Copied ${title} to clipboard.`,
+                        text: `Copied ${this.title} to clipboard.`,
                     }),
                 e =>
                     this.$notify({

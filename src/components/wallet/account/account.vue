@@ -11,11 +11,9 @@
                     <i class="fa fa-2x fa-copy pointer"  @click="copyAddress(getAddress)"  v-tooltip.bottom="'Copy Address'" />
                     <i class="fa fa-2x fa-qrcode pointer" @click="showAccountQRCode(getAddress, 'Address')" v-tooltip.bottom="'Show Address QR Code'" />
                 </div>
+
                 <div class="pd-top-20">
-                    <span>Address Public Key (to receive encrypted messages too):</span>
-                    <span class="thick address">{{getAddressPublicKey}} </span>
-                    <i class="fa fa-2x fa-copy pointer"  @click="copyAddress(getAddressPublicKey)" v-tooltip.bottom="'Copy Address Public Key'" />
-                    <i class="fa fa-2x fa-qrcode pointer" @click="showAccountQRCode(getAddressPublicKey, 'Address Public Key')" v-tooltip.bottom="'Show Address Public Key QR Code'" />
+                    <span>TODO: Generate custom address</span>
                 </div>
 
                 <account-qr-code-modal ref="refAccountQRCodeModal"/>
@@ -30,7 +28,7 @@
 
 import AccountIdenticon from "./account-identicon";
 import AccountQRCodeModal from "./account-qr-code.modal"
-const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
+const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 
@@ -44,18 +42,13 @@ export default {
 
         typeName(){
             if (!this.address) return '';
-            if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return 'Transparent';
+            if (this.address.type === version.VERSION_TRANSPARENT) return 'Transparent';
         },
 
         getAddress(){
             if (!this.address) return '';
-            if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return this.address.address;
+            if (this.address.type === version.VERSION_TRANSPARENT) return this.address.addressEncoded;
         },
-
-        getAddressPublicKey(){
-            if (!this.address) return '';
-            if (this.address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return this.address.addressPublicKey;
-        }
 
     },
 

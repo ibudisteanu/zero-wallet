@@ -1,13 +1,13 @@
-const {TxTypeEnum} = PandoraLibrary.transactions;
+const {scriptType} = PandoraPay.enums.transactions.transactionSimple;
 
 export default {
 
     addressesContains: (state)=>(tx)=>{
 
-        if (tx.script === TxTypeEnum.PUBLIC_TRANSACTION ||
-            tx.script === TxTypeEnum.TX_SCRIPT_DELEGATE_STAKE_TRANSACTION ||
-            tx.script === TxTypeEnum.TX_SCRIPT_TOKEN_CREATE_TRANSACTION ||
-            tx.script === TxTypeEnum.TX_SCRIPT_TOKEN_UPDATE_SUPPLY_TRANSACTION ) return true;
+        if (tx.script === scriptType.SCRIPT_NORMAL ||
+            tx.script === scriptType.SCRIPT_UNSTAKE ||
+            tx.script === scriptType.SCRIPT_WITHDRAW ||
+            tx.script === scriptType.SCRIPT_DELEGATE ) return true;
 
         for (let i=0; i < tx.vin.length; i++)
             for (const address in state.list)

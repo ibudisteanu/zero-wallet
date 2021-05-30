@@ -1,8 +1,8 @@
 <template>
 
-    <modal ref="modal" title="Import Address" >
+    <modal ref="modal" title="Import Account" >
 
-        <input class="importAddresses" ref="refImportedAddresses" type="file" v-on:change="handleImportAccounts"  size="50" />
+        <input class="importAddresses" ref="refImportedAddresses" type="file" v-on:change="handleImportAccounts"  size="50" accept=".pandora" />
 
         <div v-if="!address">
 
@@ -60,7 +60,7 @@ export default {
     computed:{
 
         isAddressEncrypted(){
-            return Number.parseInt(this.address.keys.private.encryption) === 2;
+            return false;
         },
 
         isWalletEncrypted() {
@@ -110,38 +110,36 @@ export default {
 
             let extension = file.name.split('.').pop();
 
-            if (extension === "wallet") {
-                let reader = new FileReader();
-
-                try {
-                    reader.onload = async (e) => {
-
-                        const data = JSON.parse(reader.result);
-
-                        console.log("data", data);
-                        this.address = data;
-                        this.addressData = reader.result;
-
-
-                    }
-
-                } catch (exception){
-                    this.$notify({
-                        type: 'error',
-                        title: `Import Error`,
-                        text: `Your file is not a valid JSON file. Maybe wrong file? `,
-                    });
-                }
-
-                reader.readAsText(file);
-            } else {
-                this.$notify({
+            if (extension !== "pandora") {
+                return this.$notify({
                     type: 'error',
                     title: `Import Error`,
                     text: `File not supported. Maybe wrong file? `,
                 });
             }
 
+            let reader = new FileReader();
+
+            try {
+                reader.onload = async (e) => {
+
+                    const data = JSON.parse(reader.result);
+
+                    console.log("data", data);
+                    this.address = data;
+                    this.addressData = reader.result;
+
+                }
+
+            } catch (exception){
+                this.$notify({
+                    type: 'error',
+                    title: `Import Error`,
+                    text: `Your file is not a valid JSON file. Maybe wrong file? `,
+                });
+            }
+
+            reader.readAsText(file);
 
         },
 
@@ -152,11 +150,7 @@ export default {
 
                 this.$store.state.page.refLoadingModal.showModal();
 
-                const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
-                if (!checkPassword)
-                    throw Error("Your wallet password is invalid");
-
-                const out = await PandoraPay.wallet.manager.importJSON( JSON.parse(this.addressData), this.addressPassword );
+                const out = await PandoraPay.wallet.manager.importWalletAddressJSON( this.addressData, this.addressPassword );
 
                 if (out)
                     this.$notify({

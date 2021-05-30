@@ -26,7 +26,7 @@
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
 import DestinationAmount from "./destination-amount.vue"
 import QrCodeScanner from "src/components/utils/qr-code-scanner/qr-code-scanner";
-const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
+const {Version} = PandoraPay.enums.wallet.address;
 
 export default {
 
@@ -48,7 +48,7 @@ export default {
 
         addressValidated(){
             try{
-                if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return PandoraPay.cryptography.addressValidator.validateAnyAddress( this.destination );
+                if (this.type === Version.versionTransparent) return PandoraPay.cryptography.addressValidator.validateAnyAddress( this.destination );
             }catch(err){
             }
         },

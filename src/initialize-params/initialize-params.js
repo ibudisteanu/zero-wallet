@@ -12,12 +12,8 @@ class InitializeParams{
          * On Window Load
          */
 
-        document.addEventListener("DOMContentLoaded",  (event) => {
-
-            console.log("User-Interface-Loaded");
-            this.load();
-
-        });
+        console.log("User-Interface-Loaded");
+        this.load();
 
     }
 

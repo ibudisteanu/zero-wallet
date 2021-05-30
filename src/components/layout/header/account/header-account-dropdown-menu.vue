@@ -6,14 +6,14 @@
             <li>My accounts</li>
 
             <li v-for="(address, index) in addresses"
-                :class="`address ${ address.address === mainAddress  ? 'focused' : ''} ` "
+                :class="`address ${ address.addressEncoded === mainAddress  ? 'focused' : ''} ` "
                 :key="`header-account-dropdown-li-${index}`">
 
                 <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" :type="address.type" />
 
-                <div class="account-title pointer" @click="setMainAddress(address.address)" >
+                <div class="account-title pointer" @click="setMainAddress(address.addressEncoded)" >
                     <span>{{address.name}}</span>
-                    <span class="disabled">{{address.address.substr(0, 15)+'...'}} </span>
+                    <span class="disabled">{{address.addressEncoded.substr(0, 15)+'...'}} </span>
                 </div>
                 <div>
                     <span class="disabled" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : '&nbsp;'}}</span>
@@ -24,12 +24,12 @@
 
             <li class="divider"></li>
 
-            <li @click="createAccount" v-tooltip.left="'Create a new Address'" > <i class="fa fa-plus"></i> Create Account </li>
-            <li @click="importAccount" v-tooltip.left="'Import an address from json file'" ><i class="fa fa-upload"></i> Import Account (json)</li>
-            <li @click="importPrivateKey" v-tooltip.left="'Import an address from Private Key'" ><i class="fa fa-upload"></i> Import Private Key</li>
+            <li @click="createAccount" v-tooltip.left="'Create a new Address'" class="pointer"> <i class="fa fa-plus"></i> Create Account </li>
+            <li @click="importAccount" v-tooltip.left="'Import an address from json file'" class="pointer"><i class="fa fa-upload"></i> Import Account (json)</li>
+            <li @click="importPrivateKey" v-tooltip.left="'Import an address from Private Key'" class="pointer"><i class="fa fa-upload"></i> Import Private Key</li>
             <li class="divider"></li>
-            <li @click="viewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" ><i class="fa fa-key"></i>  View Seed Words</li>
-            <li v-if="encrypted" @click="logout"><i class="fa fa-sign-out-alt"></i>  Logout</li>
+            <li @click="viewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" class="pointer"><i class="fa fa-key"></i>  View Seed Words</li>
+            <li v-if="encrypted" @click="logout" class="pointer"><i class="fa fa-sign-out-alt"></i>  Logout</li>
         </ul>
 
 
@@ -40,7 +40,7 @@
 <script>
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
-const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
+const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 
@@ -79,7 +79,7 @@ export default {
 
                 this.$store.state.page.refLoadingModal.showModal();
 
-                const out = await PandoraPay.wallet.manager.createNewAddress(account.selectedType);
+                const out = await PandoraPay.wallet.manager.addNewWalletAddress(account.selectedType);
                 if (out)
                     this.$notify({
                         type: 'success',
@@ -132,15 +132,13 @@ export default {
             const type = address.type;
 
             let addr;
-            if (type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) addr = address.address; else
-
-            console.log("copy address", addr, address.registered );
+            if (type === version.VERSION_TRANSPARENT) addr = address.addressEncoded;
 
             this.$copyText(addr).then( e =>
                 this.$notify({
                     type: 'success',
                     title: `Copied to clipboard successfully`,
-                    text: `Address ${address.address} copied to clipboard`,
+                    text: `Address ${address.addressEncoded} copied to clipboard`,
                 }),
                 e =>
                 this.$notify({

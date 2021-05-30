@@ -21,9 +21,6 @@
 
 <script>
 
-import Consensus from "./consensus/consensus"
-const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
-
 export default {
 
     components: {  },
@@ -40,6 +37,7 @@ export default {
         pageActive(){
             return this.$store.state.page.pageActive;
         },
+
         loggedIn(){
             return this.$store.state.wallet.loggedIn;
         },
@@ -47,105 +45,52 @@ export default {
     },
 
     async mounted(){
-
         if (typeof window === "undefined") return;
 
-        PandoraPay._scope.argvBrowser = ["--testnet:activated", "true", "--testnet:createNewTestNet", "true"];
-
-        PandoraPay.events.on("wallet/loaded", wallet => this.readWallet() );
-
-        PandoraPay.events.on("wallet/address-removed", walletAddress => this.readAddresses() );
-
-        PandoraPay.events.on("wallet/address-pushed", walletAddress => this.readAddresses() );
-
-        PandoraPay.events.on("wallet/loaded-error", err => {
-            this.error = err;
-        });
-
-        PandoraPay.events.on("wallet/encrypted",async encrypted => this.$store.commit('setEncrypted', encrypted ) );
-
-        PandoraPay.events.on("wallet/loggedIn", loggedIn => {
-
-            if (loggedIn)
-                return this.readWallet();
-            else {
-                this.clearWallet();
-                return this.readWallet();
+        let initialized = false
+        PandoraPay.events.subscribe((name, data)=>{
+            if (name === "main") {
+                if (data === "initialized"){
+                    initialized = true
+                    this.readWallet()
+                }
             }
 
-        } );
-
-        await PandoraPay.start();
-
-        this.$store.commit('setNetworkByte', {
-            networkByte: PandoraPay._scope.argv.crypto.addresses.publicAddress.networkByte,
-            networkPrefix: PandoraPay._scope.argv.crypto.addresses.publicAddress.networkPrefix,
+            if (initialized) {
+                if (name === "wallet/added") {
+                    this.readWallet()
+                }
+                if (name === "wallet/removed") {
+                    this.readWallet()
+                }
+            }
+            console.log("JS NAME:", name, "data", data)
         })
 
-        Consensus.on("consensus/blockchain-info-updated", info => this.$store.commit('setBlockchainInfo', info) );
+        this.$store.commit('setNetworkByte', {
+            networkByte: PandoraPay.config.NETWORK_SELECTED,
+            networkPrefix: PandoraPay.config.NETWORK_SELECTED_NAME,
+            networkName: PandoraPay.config.NETWORK_SELECTED_NAME,
+        })
 
-        Consensus.on("consensus/blockchain-info-genesis-updated", info => this.$store.commit('setBlockchainInfoGenesis', info) );
+        PandoraPay.helpers.start().then(()=>{
 
-        Consensus.on("consensus/block-info-downloaded", data => this.$store.commit('setBlockchainBlockInfo', data) );
-
-        Consensus.on("consensus/status-update", status =>  this.$store.commit('setConsensusStatus', status) );
-
-        Consensus.on("consensus/block-downloaded", data => this.$store.commit('setBlockchainBlock', data ) );
-
-        Consensus.on("consensus/block-deleted", data => this.$store.commit('deleteBlockchainBlock', data ) );
-
-        Consensus.on("consensus/account-update-loaded", data => this.$store.commit('setAddressLoaded', data ) );
-
-        Consensus.on("consensus/account-transparent-update", data => this.$store.commit('setTransparentAddressUpdate', data ) );
-
-        Consensus.on("consensus/account-update-tx-count", data => this.$store.commit('setAddressTxCounts', data ) );
-
-        Consensus.on("consensus/account-update-txs", data => this.$store.commit('setAddressTxs', data ) );
-
-        Consensus.on("consensus/account-update-pending-txs", data => this.$store.commit('setAddressPendingTxs', data ) );
-
-        Consensus.on("consensus/pending-transactions", data => this.$store.commit('setPendingTransactions', data ) );
-
-        Consensus.on("consensus/pending-transactions-count", data => this.$store.commit('setPendingTransactionsCount', data ) );
-
-        Consensus.on("consensus/tx-downloaded", async data => {
-
-            for (const key in data.transactions){
-                const tx = data.transactions[key];
-                tx.__extra.extra = await PandoraPay.wallet.manager.decryptTxExtra(tx);
-            }
-
-            this.$store.commit('setTransactions', data  )
-
-        } );
-
-        Consensus.on("consensus/tx-deleted", data => this.$store.commit('deleteTransactions', data ) );
-
-        Consensus.on("consensus/tokens-ids", data => this.$store.commit('setTokensIds', data  ) );
-
-        Consensus.on("consensus/tokens-count", data => this.$store.commit('setTokensCount', data  ) );
-
-        Consensus.on("consensus/tokens-downloaded", data => this.$store.commit('setTokens', data  ) );
-
-        Consensus.on("consensus/tokens-deleted", data => this.$store.commit('deleteTokens', data ) );
-
-        await Consensus.start();
+        })
 
     },
 
     methods:{
 
-        readWallet(){
+        async readWallet(){
 
-            const wallet = PandoraPay.wallet;
+            const wallet = JSON.parse( await PandoraPay.wallet.getWallet() )
 
-            this.$store.commit('setEncrypted', wallet.encrypted );
-            this.$store.commit('setVersion', wallet.version );
-
-            const loggedIn = wallet.isLoggedIn();
+            const loggedIn = true;
             this.$store.commit('setLoggedIn', loggedIn );
 
-            this.readAddresses();
+            this.$store.commit('setWallet', wallet );
+
+            await this.readAddresses(wallet);
 
             const route = this.$router.currentRoute.path;
             if (!loggedIn && route.indexOf('/login') === -1 ){
@@ -158,7 +103,6 @@ export default {
 
             this.$store.commit('setLoaded', true);
 
-
         },
 
         clearWallet(){
@@ -166,52 +110,29 @@ export default {
             this.$store.state.page.refLoadingModal.closeModal();
         },
 
-        readAddresses(){
+        async readAddresses(wallet){
 
-            const wallet = PandoraPay.wallet;
-
-            if ( !wallet.isLoggedIn() ) return;
-
-            let minerAddress = localStorage.getItem('mainAddress') || null;
+            let mainAddress = localStorage.getItem('mainAddress') || null;
 
             let firstAddress;
             const addresses = {};
             for (let i=0; i < wallet.addresses.length; i++ ){
 
-                const type = wallet.addresses[i].type;
-
-                const addressModel =  wallet.addresses[i].keys.decryptAddress();
-                const addressPublicKeyModel =  wallet.addresses[i].keys.decryptAddressPublicKey();
-                const publicKey = wallet.addresses[i].keys.decryptPublicKey();
-                const publicKeyHash = wallet.addresses[i].keys.decryptPublicKeyHash();
-
-                const mnemonicSequenceIndex =  wallet.addresses[i].decryptMnemonicSequenceIndex();
-                const mnemonicSequenceIndexValue = Number.parseInt( mnemonicSequenceIndex.toString("hex"), 16);
-
-                const address = addressModel.calculateAddress();
-                const addressPublicKey = addressPublicKeyModel.calculateAddress();
-
                 const addr = {
-                    address,
-                    addressPublicKey,
-                    type: type,
-                    publicKey: publicKey.toString("hex"),
-                    publicKeyHash: publicKeyHash.toString('hex'),
-                    name: wallet.addresses[i].name,
-                    mnemonicSequenceIndex: mnemonicSequenceIndexValue ,
-                    identicon: addressModel.identiconImg(),
+                    ...wallet.addresses[i],
                     loaded: false,
+                    identicon: await PandoraPay.helpers.getIdenticon(wallet.addresses[i].publicKeyHash, 100, 100),
                 };
 
-                addresses[address] = addr;
+                addresses[addr.addressEncoded] = addr;
 
                 if (i === 0)
-                    firstAddress = address;
+                    firstAddress = addr.addressEncoded;
             }
 
             //localstorage
-            if (minerAddress && addresses[minerAddress])
-                this.$store.commit('setMainAddress', minerAddress);
+            if (mainAddress && addresses[mainAddress])
+                this.$store.commit('setMainAddress', mainAddress);
 
 
             if (this.$store.state.wallet.mainAddress && !addresses[this.$store.state.wallet.mainAddress])
@@ -221,13 +142,7 @@ export default {
             if (!this.$store.state.wallet.mainAddress && firstAddress )
                 this.$store.commit('setMainAddress', firstAddress );
 
-            //subscribe addresses
-            Consensus.setAccounts( addresses, true );
-
-            Consensus.getBlockchain();
-
             this.$store.commit('setAddresses', addresses );
-
 
         }
 

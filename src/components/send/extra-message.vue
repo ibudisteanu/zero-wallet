@@ -22,7 +22,8 @@
 
 <script>
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
-const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
+const {version} = PandoraPay.enums.wallet.address;
+
 export default {
 
     components: {AccountIdenticon},

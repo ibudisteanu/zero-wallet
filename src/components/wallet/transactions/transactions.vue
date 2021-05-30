@@ -100,7 +100,7 @@ export default {
         async handleViewMore(resolve){
 
             try{
-                await Consensus.downloadAccountTransactionsSpecific( {account: this.address.address, index: this.address.txsLowestIndex, limit: 10} )
+                await Consensus.downloadAccountTransactionsSpecific( {account: this.address.addressEncoded, index: this.address.txsLowestIndex, limit: 10} )
             }finally{
                 resolve(true);
             }

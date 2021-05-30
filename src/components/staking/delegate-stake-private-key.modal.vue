@@ -68,7 +68,7 @@ export default {
 
             try{
 
-                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false);
+                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.addressEncoded, false);
                 const delegateStakePrivateKeyModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegate.delegateStakeNonce );
                 const delegateStakeAddressModel = delegateStakePrivateKeyModel.getAddressPublicKey();
 

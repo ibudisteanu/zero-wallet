@@ -4,7 +4,7 @@
 
         <div v-if="address">
 
-            <send-top-bar v-if="address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT " />
+            <send-top-bar v-if="address.type === version.VERSION_TRANSPARENT" />
 
             <div class="container pd-top-20">
                 <div class="boxed ">
@@ -18,7 +18,7 @@
                         <destination-address v-for="(destination, index) in destinations"
                                              :key="`destinationAddress-${index}`"
                                              :index="index"
-                                             :type="WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT"
+                                             :type="version.VERSION_TRANSPARENT"
                                              :balances="balances" @changed="e => changedDestination(index, e)">
                         </destination-address>
 
@@ -30,7 +30,7 @@
                         </div>
 
                         <extra-message :destinations="destinations"
-                                       :type="WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT"
+                                       :type="version.VERSION_TRANSPARENT"
                                        @changed="changedExtra" />
 
                         <destination-amount text="Fee" :balances="balances" @changed="changedFee" />
@@ -61,8 +61,7 @@ import Layout from "src/components/layout/layout"
 import Account from "src/components/wallet/account/account"
 import Consensus from "src/consensus/consensus"
 
-const {TxTokenCurrencyTypeEnum} = PandoraLibrary.transactions;
-const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
+const {version} = PandoraPay.enums.wallet.address;
 
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import LoadingButton from "src/components/utils/loading-button.vue"
@@ -95,7 +94,7 @@ export default {
 
     computed:{
 
-        WalletAddressTypeEnum: () => WalletAddressTypeEnum,
+        version: () => version,
 
         balances(){
             return this.address.balances || {"": 0};
@@ -150,12 +149,12 @@ export default {
                         throw Error(destination.validationError);
                 }
 
-                const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
+                const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.addressEncoded );
                 if (nonce === undefined) throw Error("The connection to the node was dropped");
 
                 //compute extra
                 const out = await PandoraPay.wallet.transfer.transferSimple({
-                    address: this.address.address,
+                    address: this.address.addressEncoded,
                     txDsts: this.destinations.map( it => ({
                         address: it.address,
                         amount: it.amount,

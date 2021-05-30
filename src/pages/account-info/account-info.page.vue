@@ -10,23 +10,23 @@
 
                     <account :address="address" />
 
-                    <span class="disabled wordwrap pd-top-20">
+                    <span class="disabled-color wordwrap pd-top-20">
                         <span v-if="!showPublicKey" class="pointer" @click="showPublicKey = true">
                             View Public Key
                         </span>
                         <span v-else >
-                            Public Key {{address.publicKey}} <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Public Key'"  @click="copyAddress(address.publicKey)"/>
+                            Public Key: {{address.publicKey}} <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Public Key'"  @click="copyAddress(address.publicKey)"/>
                         </span>
                     </span>
 
-                    <template v-if="address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT">
+                    <template v-if="address.type === version.VERSION_TRANSPARENT">
 
-                        <span class="disabled wordwrap pd-top-20">
+                        <span class="disabled-color wordwrap pd-top-20">
                             <span v-if="!showPublicKeyHash" class="pointer" @click="showPublicKeyHash = true">
                                 View Public Key Hash
                             </span>
                             <span v-else >
-                                Public Key Hash {{address.publicKeyHash}} <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Public Key Hash'" @click="copyAddress(address.publicKeyHash)"/>
+                                Public Key Hash: {{address.publicKeyHash}} <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Public Key Hash'" @click="copyAddress(address.publicKeyHash)"/>
                             </span>
                         </span>
 
@@ -35,26 +35,26 @@
                     <div class="buttons-row pd-top-20">
 
                         <div class="btn">
-                            <div class="btn-round" @click="downloadAddress" v-tooltip.bottom="'Download Account'" >
+                            <div class="btn-round pointer" @click="downloadAddress" v-tooltip.bottom="'Download Account'" >
                                 <i class="fa fa-download"></i>
                             </div>
                         </div>
 
                         <div class="btn">
-                            <div class="btn-round" @click="deleteAddress" v-tooltip.bottom="'Delete Account'" >
+                            <div class="btn-round pointer" @click="deleteAddress" v-tooltip.bottom="'Delete Account'" >
                                 <i class="danger fa fa-times"></i>
                             </div>
                         </div>
 
                         <div class="btn">
-                            <div class="btn-round" @click="showPrivateKey" v-tooltip.bottom="'View Private Key'" >
+                            <div class="btn-round pointer" @click="showPrivateKey" v-tooltip.bottom="'View Private Key'" >
                                 <i class="fa fa-eye"></i>
                             </div>
                         </div>
 
-                        <div class="btn" v-if="address.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT">
+                        <div class="btn" v-if="address.type === version.VERSION_TRANSPARENT">
                             <router-link to="/staking">
-                                <div class="btn-round" v-tooltip.bottom="'Delegate stake'" >
+                                <div class="btn-round pointer" v-tooltip.bottom="'Delegate stake'" >
                                     <i class="fa fa-piggy-bank"></i>
                                 </div>
                             </router-link>
@@ -81,7 +81,8 @@ import consts from 'consts/consts';
 import AccountPrivateKeyModal from "src/components/wallet/account/account-private-key.modal"
 import Layout from "src/components/layout/layout"
 import Account from "src/components/wallet/account/account"
-const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
+const {version} = PandoraPay.enums.wallet.address;
+
 export default {
 
     components: {AccountIdenticon, AccountPrivateKeyModal, Layout, Account},
@@ -96,7 +97,7 @@ export default {
 
     computed:{
 
-        WalletAddressTypeEnum: () => WalletAddressTypeEnum,
+        version: () => version,
 
         address(){
             return this.$store.state.addresses.list[this.$store.state.wallet.mainAddress] ;
@@ -109,27 +110,25 @@ export default {
 
         async downloadAddress(){
 
-            if ( !Blob)
+            if ( typeof Blob === "undefined")
                 return this.$notify({
                     type: 'error',
                     title: `Blob is not supported by your Browser`,
                     text: `Update your browser`,
                 })
 
-            const address = await PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address );
-            if (!address) return false;
+            const json = await PandoraPay.wallet.manager.getWalletAddress( this.address.addressEncoded );
+            if (!json) return false;
 
-            const json = address.toJSON();
+            const fileName = consts.name + "_" +this.address.name + "_"+this.address.addressEncoded + ".pandora";
 
-            const fileName = consts.name + "_" +this.address.name + " "+this.address.address + ".wallet";
-
-            const file = new Blob([JSON.stringify(json)], {type: "application/json;charset=utf-8"});
+            const file = new Blob([json], {type: "application/json;charset=utf-8"});
             FileSaver.saveAs(file, fileName);
 
             this.$notify({
                 type: 'success',
                 title: `Address ${this.address.name} has been saved in your machine`,
-                text: `The address ${this.address.address} has been saved in the downloads folder.`,
+                text: `The address ${this.address.addressEncoded} has been saved in the downloads folder.`,
             });
 
 
@@ -143,26 +142,27 @@ export default {
 
         async deleteAddress(){
 
-            const confirmation = confirm( `Are you sure you want to Delete ${this.address.name} ${ this.address.address } `);
+            const confirmation = confirm( `Are you sure you want to Delete ${this.address.name} ${ this.address.addressEncoded } `);
             if (!confirmation) return;
 
             this.$store.state.page.refLoadingModal.showModal();
 
+            const address = this.address
 
             try{
 
-                const out = await PandoraPay.wallet.manager.deleteWalletAddressByAddress( this.address.address );
+                const out = await PandoraPay.wallet.manager.removeWalletAddress( address.addressEncoded );
                 if (out)
                     this.$notify({
                         type: 'success',
-                        title: `Address ${this.address.name} has been removed successfully`,
-                        text: `The address ${this.address.address} has been removed and deleted from your wallet`,
+                        title: `Address ${address.name} has been removed successfully`,
+                        text: `The address ${address.addressEncoded} has been removed and deleted from your wallet`,
                     });
 
             }catch(err){
                 this.$notify({
                     type: 'error',
-                    title: `Address ${this.address.address} could not been removed`,
+                    title: `Address ${address.addressEncoded} could not been removed`,
                     text: `Raised an error ${err.message}`,
                 })
             }finally{
