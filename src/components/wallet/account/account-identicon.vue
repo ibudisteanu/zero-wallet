@@ -33,24 +33,24 @@ export default {
 
                     if (this.identicon) return this.identicon;
 
-                    let address;
-
-                    if (this.address) {
-                        address = PandoraPay.cryptography.addressValidator.validateAddress(this.address);
-                        if (!address) throw Error("Invalid address");
-                    }
-
-                    if (this.publicKey) {
-                        address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKey(this.publicKey);
-                        if (!address) throw Error("Invalid publicKey");
-                    }
-
-                    if (this.publicKeyHash) {
-                        address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKeyHash(this.publicKeyHash);
-                        if (!address) throw Error("Invalid publicKeyHash");
-                    }
-
-                    return address ? address.identiconImg() : undefined;
+                    // let address;
+                    //
+                    // if (this.address) {
+                    //     address = PandoraPay.cryptography.addressValidator.validateAddress(this.address);
+                    //     if (!address) throw Error("Invalid address");
+                    // }
+                    //
+                    // if (this.publicKey) {
+                    //     address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKey(this.publicKey);
+                    //     if (!address) throw Error("Invalid publicKey");
+                    // }
+                    //
+                    // if (this.publicKeyHash) {
+                    //     address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKeyHash(this.publicKeyHash);
+                    //     if (!address) throw Error("Invalid publicKeyHash");
+                    // }
+                    //
+                    // return address ? address.identiconImg() : undefined;
 
                 } catch(err){
 

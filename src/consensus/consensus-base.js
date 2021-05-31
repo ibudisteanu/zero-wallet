@@ -6,7 +6,9 @@ export default class BaseConsensus extends EventEmitter{
 
         super();
 
-        this._settings = settings;
+        this._data = {
+            blocksInfo: {},
+        }
 
         this._startedStatus = false;
 
@@ -69,12 +71,12 @@ export default class BaseConsensus extends EventEmitter{
         this._starting = newValue;
     }
 
-    get ending(){
-        return this._ending;
+    get starting(){
+        return Math.max(0 , this._data.end - 15);
     }
 
-    set ending(newValue){
-        this._ending = newValue;
+    get ending(){
+        return this._data.end;
     }
 
     set status(newValue){

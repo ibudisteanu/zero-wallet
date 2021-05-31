@@ -46,7 +46,7 @@ export default {
             const status = this.$store.state.blockchain.status;
 
             if (status === 'sync') return 'Established';
-            if (status === 'syncing') return 'Synching';
+            if (status === 'syncing') return 'Syncing';
             if (status === 'offline') return 'Offline';
             if (status === 'online') return 'Connected';
 

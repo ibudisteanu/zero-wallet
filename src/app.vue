@@ -21,6 +21,8 @@
 
 <script>
 
+import Consensus from "src/consensus/consensus"
+
 export default {
 
     components: {  },
@@ -47,8 +49,15 @@ export default {
     async mounted(){
         if (typeof window === "undefined") return;
 
+        Consensus.on("consensus/blockchain-info-updated", info => this.$store.commit('setBlockchainInfo', info) )
+
+        Consensus.on("consensus/block-info-downloaded", data => this.$store.commit('setBlockchainBlockInfo', data) );
+
+        Consensus.on("consensus/block-deleted", data => this.$store.commit('deleteBlockchainBlock', data ) );
+
         let initialized = false
         PandoraPay.events.subscribe((name, data)=>{
+
             if (name === "main") {
                 if (data === "initialized"){
                     initialized = true
@@ -62,6 +71,9 @@ export default {
                 }
                 if (name === "wallet/removed") {
                     this.readWallet()
+                }
+                if (name === "consensus/update"){
+                    Consensus.processBlockchain(data)
                 }
             }
             console.log("JS NAME:", name, "data", data)

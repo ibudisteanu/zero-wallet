@@ -16,10 +16,10 @@
              :key="`show-block-${key}`">
 
             <span class="hidden-xs col-sm-6 col-md-3 wordwrap">
-                <router-link :to="`/explorer/block/hash/${blockInfo.hash.toString('hex')}`">{{blockInfo.hash.toString("hex").substr(0, 20)+'...'}}</router-link>
+                <router-link :to="`/explorer/block/hash/${blockInfo.hash}`">{{blockInfo.hash.substr(0, 20)+'...'}}</router-link>
             </span>
             <span class="hidden-xs hidden-sm col-md-3 wordwrap">
-                {{blockInfo.kernelHash.toString("hex").substr(0, 20)+'...'}}
+                {{blockInfo.kernelHash.substr(0, 20)+'...'}}
             </span>
             <span class="col-xs-4 col-sm-1 col-md-1 wordwrap">
                 <router-link :to="`/explorer/block/height/${blockInfo.height}`">{{blockInfo.height}}</router-link>
@@ -31,7 +31,7 @@
                 {{formatBytes(blockInfo.size)}}
             </span>
             <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">
-                {{blockInfo.txCount}}
+                {{blockInfo.txs}}
             </span>
             <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">
                 <account-identicon  :publicKeyHash="blockInfo.forgedBy" :size="20" :outer-size="5"  />
@@ -46,6 +46,7 @@
 <script>
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
+import StringHelper from "src/utils/string-helper"
 
 export default {
 
@@ -58,11 +59,11 @@ export default {
     methods: {
 
         timeAgo(timestamp){
-            return PandoraLibrary.helpers.StringHelper.timeSince( timestamp*1000, false );
+            return StringHelper.timeSince( timestamp*1000, false );
         },
 
         formatBytes(bytes){
-            return PandoraLibrary.helpers.StringHelper.formatBytes(bytes, 1);
+            return StringHelper.formatBytes(bytes, 1);
         }
 
     },
