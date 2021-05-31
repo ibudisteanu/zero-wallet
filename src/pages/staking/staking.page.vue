@@ -140,8 +140,8 @@ export default {
 
             const out = [];
             for (const key in txs)
-                if (this.$store.state.transactions.list[txs[key]])
-                    out.push( this.$store.state.transactions.list[txs[key]] );
+                if (this.$store.state.transactions.txsByHash[txs[key]])
+                    out.push( this.$store.state.transactions.txsByHash[txs[key]] );
 
             return out;
         },

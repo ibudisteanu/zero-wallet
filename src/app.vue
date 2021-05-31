@@ -65,6 +65,8 @@ export default {
             this.$store.commit('setTransactions', data  )
         } );
 
+        Consensus.on("consensus/status-update", status =>  this.$store.commit('setConsensusStatus', status) );
+
         let initialized = false
         PandoraPay.events.subscribe((name, data)=>{
 
@@ -72,20 +74,25 @@ export default {
                 if (data === "initialized"){
                     initialized = true
 
-                    setTimeout(()=>{
-                        Consensus.status = "sync"
-                    }, 1000)
                     this.readWallet()
+                }
+            }
+
+            if (name === "sockets/totalSocketsChanged"){
+                if (data > 0){
+                    Consensus.status = "sync"
+                } else {
+                    Consensus.status = "offline"
                 }
             }
 
             if (initialized) {
                 if (name === "wallet/added") {
                     this.readWallet()
-                }
+                } else
                 if (name === "wallet/removed") {
                     this.readWallet()
-                }
+                }else
                 if (name === "consensus/update"){
                     Consensus.processBlockchain(data)
                 }

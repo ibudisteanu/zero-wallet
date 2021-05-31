@@ -72,8 +72,8 @@ export default {
 
             const out = [];
             for (const key in txs)
-                if (this.$store.state.transactions.list[txs[key]])
-                    out.push( this.$store.state.transactions.list[txs[key]] );
+                if (this.$store.state.transactions.txsByHash[txs[key]])
+                    out.push( this.$store.state.transactions.txsByHash[txs[key]] );
 
             return out;
         },
@@ -83,8 +83,8 @@ export default {
 
             const out = [];
             for (const key in txs)
-                if (this.$store.state.transactions.list[txs[key]])
-                    out.push( this.$store.state.transactions.list[txs[key]] );
+                if (this.$store.state.transactions.txsByHash[txs[key]])
+                    out.push( this.$store.state.transactions.txsByHash[txs[key]] );
 
             return out.sort ( (a,b) => b.__extra.height - a.__extra.height );
         },

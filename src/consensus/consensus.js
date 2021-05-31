@@ -105,9 +105,8 @@ class Consensus extends BaseConsensus{
 
     getBlock(height){
 
-        if (typeof height === "string") {
+        if (typeof height === "string")
             height = Number.parseInt(height)
-        }
 
         if (this._data.blocks[height]) return this._data.blocks[height];
 
@@ -142,13 +141,12 @@ class Consensus extends BaseConsensus{
                 return tx;
         }
 
-        this._promises.transactions[hash] = new Promise( async (resolve, reject ) => {
+        return this._promises.transactions[hash] = new Promise( async (resolve, reject ) => {
 
             try{
 
                 const txData = await PandoraPay.network.getNetworkTransaction( hash );
-                if (!txData) //disconnected
-                    throw Error("tx fetch failed");
+                if (!txData) throw Error("tx fetch failed"); //disconnected
 
                 const txJSON = JSON.parse(txData)
                 const tx = txJSON.tx
@@ -174,11 +172,46 @@ class Consensus extends BaseConsensus{
                 delete this._promises.transactions[hash];
             }
         } );
-
-        return this._promises.transactions[hash];
     }
 
-    getTransaction(){
+    getTransaction(height){
+
+        if (typeof height === "string")
+            height = Number.parseInt(height)
+
+        let tx = this._data.transactions[height] || this._promises.transactions[height];
+        if (tx){
+            return tx;
+        }
+
+        return this._promises.transactions[height] = new Promise( async (resolve, reject ) => {
+
+            try{
+
+                const txData = await PandoraPay.network.getNetworkTransaction( height );
+                if (!txData) throw Error("tx fetch failed"); //disconnected
+
+                const txJSON = JSON.parse(txData)
+                const tx = txJSON.tx
+
+                tx.__extra = {
+                    mempool: txJSON.mempool,
+                };
+
+                const data = {};
+                data[tx.bloom.hash] = tx;
+
+                this.emit('consensus/tx-downloaded', {transactions: data} );
+
+                this._data.transactions[tx.bloom.hash] = tx;
+                resolve(tx);
+            }catch(err){
+                this.emit('consensus/error', "Error getting block" );
+                reject(err);
+            } finally{
+                delete this._promises.transactions[height];
+            }
+        } );
 
     }
 

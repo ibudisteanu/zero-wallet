@@ -50,6 +50,7 @@ const routes = [
     {path: '/explorer/block/height/:height', component: BlockExplorerPage },
     {path: '/explorer/block/hash/:hash', component: BlockExplorerPage },
     {path: '/explorer/tx/hash/:hash', component: TransactionExplorerPage },
+    {path: '/explorer/tx/height/:height', component: TransactionExplorerPage },
     {path: '/explorer', component: BlockchainExplorerPage },
     {path: '/explorer/pending-transactions', component: PendingTransactionsExplorerPage },
 

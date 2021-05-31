@@ -83,8 +83,6 @@ export default class BaseConsensus extends EventEmitter{
 
         this.emitStatusUpdate(newValue);
 
-        console.log("new status: ", this._status);
-
     }
 
     get status(){

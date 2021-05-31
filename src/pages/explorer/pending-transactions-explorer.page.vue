@@ -58,8 +58,8 @@ export default {
 
             const out = [];
             for (const hash in txs)
-                if (this.$store.state.transactions.list[ hash ])
-                    out.push( this.$store.state.transactions.list[ hash ] );
+                if (this.$store.state.transactions.txsByHash[ hash ])
+                    out.push( this.$store.state.transactions.txsByHash[ hash ] );
 
             return out;
         },
