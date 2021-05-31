@@ -22,15 +22,15 @@
                 </template>
             </span>
                 <span class="col-xs-12 col-sm-8 wordwrap">
-                <div class="input" v-for="(vin, index) in tx.vin "
+                <div class="input" v-for="(vin, index) in tx.txBase.vin "
                      :key="`show-transaction-vin-${index}`">
-                    <account-identicon :publicKeyHash="vin.publicKeyHash" size="20" outer-size="7" />
-                    <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(-vin.amount) : '?'}} {{vin.tokenCurrency.toString("hex")}} </span>
+                    <account-identicon :publicKeyHash="vin.bloom.publicKeyHash" size="20" outer-size="7" />
+                    <span class="amount vertical-center">-{{$store.getters.addressesContains(tx) ? convertToBase(vin.amount) : '?'}} {{vin.token}} </span>
                 </div>
-                <div class="output" v-for="(vout, index) in tx.vout"
+                <div class="output" v-for="(vout, index) in tx.txBase.vout"
                      :key="`show-transaction-vout-${index}`">
                     <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="7" />
-                    <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(vout.amount) : '?'}} {{vout.tokenCurrency.toString("hex")}}</span>
+                    <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(vout.amount) : '?'}} {{vout.token}}</span>
                 </div>
             </span>
             </router-link>
@@ -61,7 +61,7 @@ export default {
         },
 
         convertToBase(amount){
-            return PandoraPay.config.coins.convertToBase( amount.String() );
+            return PandoraPay.config.coins.convertToBase( amount.toString() );
         },
 
         isPending(tx){

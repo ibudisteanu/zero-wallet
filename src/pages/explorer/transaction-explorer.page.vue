@@ -55,15 +55,15 @@
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Data</span>
                                 <div class="col-xs-7 col-sm-9 wordwrap">
-                                    <div v-for="(vin, index) in tx.vin" class="input"
+                                    <div v-for="(vin, index) in tx.txBase.vin" class="input"
                                          :key="`transaction-explorer-vin-${index}`">
-                                        <account-identicon :publicKeyHash="vin.publicKeyHash" size="20" outer-size="5" />
-                                        <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(-vin.amount) : '?'}} {{vin.tokenCurrency.toString('hex')}} </span>
+                                        <account-identicon :publicKeyHash="vin.bloom.publicKeyHash" size="20" outer-size="5" />
+                                        <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(-vin.amount) : '?'}} {{vin.token}} </span>
                                     </div>
-                                    <div v-for="(vout, index) in tx.vout" class="input"
+                                    <div v-for="(vout, index) in tx.txBase.vout" class="input"
                                          :key="`transaction-explorer-vout-${index}`">
                                         <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="5" />
-                                        <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(vout.amount) : '?'}} {{vout.tokenCurrency.toString('hex')}}</span>
+                                        <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(vout.amount) : '?'}} {{vout.token}}</span>
                                     </div>
                                 </div>
                             </div>
