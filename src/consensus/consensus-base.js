@@ -14,6 +14,7 @@ export default class BaseConsensus extends EventEmitter{
         }
         this._promises = {
             blocks: {},
+            transactions: {},
         }
 
         this._startedStatus = false;

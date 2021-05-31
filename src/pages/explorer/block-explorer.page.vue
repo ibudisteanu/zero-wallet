@@ -38,7 +38,7 @@
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Height</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.height}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.block.height}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Number of Transactions</span>

@@ -44,7 +44,7 @@ const {version} = PandoraPay.enums.wallet.address;
 export default {
 
     props: {
-        type: {default: version.VERSION_TRANSPARENT},
+        version: {default: version.VERSION_TRANSPARENT},
         token: {default: ''},
         balance: {default: null},
     },
@@ -58,7 +58,7 @@ export default {
         },
 
         isAmountAvailable(){
-            return this.type === version.VERSION_TRANSPARENT
+            return this.version === version.VERSION_TRANSPARENT
         },
 
         isScanning(){

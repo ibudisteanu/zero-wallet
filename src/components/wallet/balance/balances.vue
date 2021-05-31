@@ -18,7 +18,7 @@
                         <balance v-for="(balance, token) in balances"
                                  :key="`balance-token-${token}`"
                                  :balance="balance"
-                                 :type="address.type">
+                                 :type="address.version">
                         </balance>
                     </div>
 

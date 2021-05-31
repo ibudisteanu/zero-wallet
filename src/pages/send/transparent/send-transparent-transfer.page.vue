@@ -4,7 +4,7 @@
 
         <div v-if="address">
 
-            <send-top-bar v-if="address.type === version.VERSION_TRANSPARENT" />
+            <send-top-bar v-if="address.version === version.VERSION_TRANSPARENT" />
 
             <div class="container pd-top-20">
                 <div class="boxed ">

@@ -8,7 +8,7 @@
                 <span>Your account</span>
                 <div class="account-info" v-if="address">
 
-                    <account :address="address" />
+                    <account :account="address" />
 
                     <span class="disabled-color wordwrap pd-top-20">
                         <span v-if="!showPublicKey" class="pointer" @click="showPublicKey = true">
@@ -19,7 +19,7 @@
                         </span>
                     </span>
 
-                    <template v-if="address.type === version.VERSION_TRANSPARENT">
+                    <template v-if="address.version === version.VERSION_TRANSPARENT">
 
                         <span class="disabled-color wordwrap pd-top-20">
                             <span v-if="!showPublicKeyHash" class="pointer" @click="showPublicKeyHash = true">
@@ -52,7 +52,7 @@
                             </div>
                         </div>
 
-                        <div class="btn" v-if="address.type === version.VERSION_TRANSPARENT">
+                        <div class="btn" v-if="address.version === version.VERSION_TRANSPARENT">
                             <router-link to="/staking">
                                 <div class="btn-round pointer" v-tooltip.bottom="'Delegate stake'" >
                                     <i class="fa fa-piggy-bank"></i>

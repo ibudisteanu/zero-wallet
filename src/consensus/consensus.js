@@ -22,7 +22,8 @@ class Consensus extends BaseConsensus{
         let i, done = false;
         for (i = ending; i >= starting && !done ; i-- ){
 
-            const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( i, "" );
+            const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( i );
+
             const blockInfo = JSON.parse(blockInfoData)
 
             if (!blockInfo || !blockInfo.hash){
@@ -87,6 +88,7 @@ class Consensus extends BaseConsensus{
                 if (!blockData) throw Error("Block was not received")
 
                 const blkComplete = JSON.parse(blockData)
+                if (blkComplete.block.bloom.hash !== hash) throw Error("Block hash was not matching")
 
                 await this._includeBlock( blkComplete );
                 resolve(blkComplete);
@@ -112,15 +114,15 @@ class Consensus extends BaseConsensus{
         return this._promises.blocks[height] = new Promise( async (resolve, reject) => {
 
             try{
-                console.log(height, typeof height)
                 const blockData = await PandoraPay.network.getNetworkBlockComplete( height );
                 if (!blockData) throw Error("Block was not received")
 
                 const blkComplete = JSON.parse(blockData)
+                if (blkComplete.block.height !== height) throw Error("Block height was not matching")
+
 
                 await this._includeBlock( blkComplete );
                 resolve(blkComplete);
-
             }catch(err){
                 reject(err);
             }finally{
@@ -131,9 +133,51 @@ class Consensus extends BaseConsensus{
 
     }
 
-    getTransactionByHash(){
+    async getTransactionByHash(hash, isPending = false ){
 
+        let tx = this._data.transactions[hash] || this._promises.transactions[hash];
+        if (tx){
+            tx = await tx;
+            if ((isPending && !tx.__extra.height ) || (!isPending && tx.__extra.height ))
+                return tx;
+        }
+
+        this._promises.transactions[hash] = new Promise( async (resolve, reject ) => {
+
+            try{
+
+                const txData = await PandoraPay.network.getNetworkTransaction( hash );
+                if (!txData) //disconnected
+                    throw Error("tx fetch failed");
+
+                const txJSON = JSON.parse(txData)
+                const tx = txJSON.tx
+
+                if (tx.bloom.hash !== hash ) throw Error("Transaction hash is invalid");
+
+                tx.__extra = {
+                    mempool: txJSON.mempool,
+                };
+
+
+                const data = {};
+                data[hash] = tx;
+
+                this.emit('consensus/tx-downloaded', {transactions: data} );
+
+                this._data.transactions[hash] = tx;
+                resolve(tx);
+            }catch(err){
+                this.emit('consensus/error', "Error getting block" );
+                reject(err);
+            } finally{
+                delete this._promises.transactions[hash];
+            }
+        } );
+
+        return this._promises.transactions[hash];
     }
+
     getTransaction(){
 
     }

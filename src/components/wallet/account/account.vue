@@ -1,9 +1,9 @@
 <template>
     <div>
-        <div v-if="address" class="account">
-            <account-identicon  :identicon="address.identicon" :size="60" :outer-size="20" :type="address.type" />
+        <div v-if="account" class="account">
+            <account-identicon  :identicon="account.identicon" :size="60" :outer-size="20" :type="account.type" />
             <div class="wordwrap pd-top-10">
-                <span class="">{{address.name}}</span>
+                <span class="">{{account.name}}</span>
                 <span>{{typeName}}</span>
                 <div class="pd-top-20">
                     <span>Address:</span>
@@ -35,19 +35,19 @@ export default {
     components: { AccountIdenticon, 'accountQrCodeModal': AccountQRCodeModal,  },
 
     props: {
-        address: {default: null},
+        account: {default: null},
     },
 
     computed:{
 
         typeName(){
-            if (!this.address) return '';
-            if (this.address.type === version.VERSION_TRANSPARENT) return 'Transparent';
+            if (!this.account) return '';
+            if (this.account.version === version.VERSION_TRANSPARENT) return 'Transparent';
         },
 
         getAddress(){
-            if (!this.address) return '';
-            if (this.address.type === version.VERSION_TRANSPARENT) return this.address.addressEncoded;
+            if (!this.account) return '';
+            if (this.account.version === version.VERSION_TRANSPARENT) return this.account.addressEncoded;
         },
 
     },

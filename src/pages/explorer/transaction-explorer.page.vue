@@ -18,10 +18,6 @@
                     <div v-else>
                         <div class="table">
                             <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Hash</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.bloom.hash}}</span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Block Height</span>
                                 <span class="col-xs-7 col-sm-9 wordwrap" v-if="tx.__extra.height "><router-link :to="`/explorer/block/height/${tx.__extra.height}`">{{tx.__extra.height}}</router-link></span>
                                 <span class="col-xs-7 col-sm-9 wordwrap" v-else>-</span>
@@ -36,17 +32,13 @@
                                 <span class="col-xs-7 col-sm-9 wordwrap" v-if="tx.__extra.height">{{ $store.state.blockchain.end - tx.__extra.height -1 }}</span>
                                 <span class="col-xs-7 col-sm-9 wordwrap" v-else>-</span>
                             </div>
-                            <div v-if="tx.__extra.memPool" class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-7 col-sm-9 wordwrap">Mem Pool</span>
+                            <div v-if="tx.__extra.mempool" class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Mem Pool</span>
                                 <span class="col-xs-7 col-sm-9 wordwrap">Yes</span>
-                            </div>
-                            <div v-if="tx.__extra.memPool" class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Mem Pool Queued</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.__extra.memPoolQueued ? 'Yes' : 'No'}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Nonce</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.nonce}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.txBase.nonce}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Unlock Time</span>

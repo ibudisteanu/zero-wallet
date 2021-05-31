@@ -9,7 +9,7 @@
                 :class="`address ${ address.addressEncoded === mainAddress  ? 'focused' : ''} ` "
                 :key="`header-account-dropdown-li-${index}`">
 
-                <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" :type="address.type" />
+                <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" :type="address.version" />
 
                 <div class="account-title pointer" @click="setMainAddress(address.addressEncoded)" >
                     <span>{{address.name}}</span>
@@ -80,14 +80,20 @@ export default {
                 this.$store.state.page.refLoadingModal.showModal();
 
                 const out = await PandoraPay.wallet.manager.addNewWalletAddress(account.selectedType);
-                if (out)
-                    this.$notify({
-                        type: 'success',
-                        title: 'Address has been added successfully',
-                        text: 'A new address has been added and saved in your wallet'
-                    });
+                if (!out) throw "Result is false"
+
+                this.$notify({
+                    type: 'success',
+                    title: 'Address has been added successfully',
+                    text: 'A new address has been added and saved in your wallet'
+                });
 
             }catch(err){
+                this.$notify({
+                    type: 'error',
+                    title: 'Error creating an address',
+                    text: 'An error was encountered: ' + err.toString()
+                });
                 console.error(err);
             }finally{
                 this.$store.state.page.refLoadingModal.closeModal();
@@ -96,15 +102,11 @@ export default {
         },
 
         setMainAddress(address){
-
             return this.$store.commit('setMainAddress', address );
-
         },
 
         viewMnemonic(){
-
             return this.$emit('viewMnemonic', true);
-
         },
 
         logout(){
@@ -129,10 +131,8 @@ export default {
 
         copyAddress( address ){
 
-            const type = address.type;
-
             let addr;
-            if (type === version.VERSION_TRANSPARENT) addr = address.addressEncoded;
+            if (address.version === version.VERSION_TRANSPARENT) addr = address.addressEncoded;
 
             this.$copyText(addr).then( e =>
                 this.$notify({

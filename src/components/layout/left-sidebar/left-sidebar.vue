@@ -82,7 +82,7 @@ export default {
 
             if (!this.address) return '';
 
-            if (this.address.type === version.VERSION_TRANSPARENT) return '/send/transparent/transfer';
+            if (this.address.version === version.VERSION_TRANSPARENT) return '/send/transparent/transfer';
         },
 
         encrypted(){

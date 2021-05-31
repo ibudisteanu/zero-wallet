@@ -91,7 +91,7 @@ export default {
 
     },
 
-    setTransparentAddressUpdate(context, {account, balances, nonce, delegate, delegateVersion, type}){
+    setTransparentAddressUpdate(context, {account, balances, nonce, delegate, delegateVersion, version}){
 
         const address = { ... context.list[account]  };
 
@@ -105,7 +105,7 @@ export default {
         address.nonce = nonce;
         address.delegate = delegate;
         address.delegateVersion = delegateVersion;
-        address.type = type;
+        address.version = version;
 
         Vue.set(context.list, account, address );
 
