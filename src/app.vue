@@ -22,6 +22,7 @@
 <script>
 
 import Consensus from "src/consensus/consensus"
+import Identicons from "src/utils/identicons"
 
 export default {
 
@@ -146,7 +147,7 @@ export default {
                 const addr = {
                     ...wallet.addresses[i],
                     loaded: false,
-                    identicon: await PandoraPay.helpers.getIdenticon(wallet.addresses[i].publicKeyHash, 100, 100),
+                    identicon: await Identicons.getIdenticon(wallet.addresses[i].publicKeyHash),
                 };
 
                 addresses[addr.addressEncoded] = addr;
@@ -159,10 +160,8 @@ export default {
             if (mainAddress && addresses[mainAddress])
                 this.$store.commit('setMainAddress', mainAddress);
 
-
             if (this.$store.state.wallet.mainAddress && !addresses[this.$store.state.wallet.mainAddress])
                 this.$store.commit('setMainAddress', null );
-
 
             if (!this.$store.state.wallet.mainAddress && firstAddress )
                 this.$store.commit('setMainAddress', firstAddress );

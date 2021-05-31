@@ -46,6 +46,10 @@ h1,h2,h3,h4,h5,h6,span{
     color: #aeaeae !important;
 }
 
+.bold{
+    font-weight: bolder;
+}
+
 .disabled,
 i[disabled],
 a[disabled]{

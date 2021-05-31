@@ -7,6 +7,8 @@
                 <h1>Staking</h1>
                 <span>In browser, you can only delegate your stakes</span>
 
+                TODO
+
                 <div class="account-info" v-if="address">
 
                     <account :account="address" />

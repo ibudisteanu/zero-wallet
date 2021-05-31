@@ -5,7 +5,7 @@
         <div :class="`extra-message-row ${identicon ? 'identicon':''}`">
 
 
-            <account-identicon v-if="identicon" :identicon="identicon" size="35" outer-size="8" :type="type" />
+            <account-identicon v-if="identicon" :identicon="identicon" size="35" outer-size="8" :version="version" />
             <select v-model="extraEncryptionOption">
                 <option v-for="(encryptionOption, id) in encryptionOptions"
                         :key="`extra-encryption-${id}`"

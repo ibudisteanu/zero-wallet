@@ -7,6 +7,8 @@
                 <h1>Set Password</h1>
                 <span class="pd-bottom-20">Encrypting your wallet. Use a strong password to avoid brute forcing</span>
 
+                TODO
+
                 <span class="disabled">Password Strength</span>
                 <progress-bar :value="strengthPassword*20" :text="strengthPasswordMessage" />
 

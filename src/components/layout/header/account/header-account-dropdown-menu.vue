@@ -9,7 +9,7 @@
                 :class="`address ${ address.addressEncoded === mainAddress  ? 'focused' : ''} ` "
                 :key="`header-account-dropdown-li-${index}`">
 
-                <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" :type="address.version" />
+                <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" :version="address.version" />
 
                 <div class="account-title pointer" @click="setMainAddress(address.addressEncoded)" >
                     <span>{{address.name}}</span>

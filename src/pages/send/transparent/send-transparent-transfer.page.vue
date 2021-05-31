@@ -11,6 +11,8 @@
 
                     <h1>Send Transparent Funds</h1>
 
+                    TODO
+
                     <loading-spinner v-if="!address.loaded" />
 
                     <div v-if="address.loaded">

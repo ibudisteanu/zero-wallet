@@ -5,7 +5,7 @@
 
         <div :class="`${identicon ? 'destination': ''}-row`">
 
-            <account-identicon v-if="identicon" :identicon="identicon" size="35" outer-size="8" :type="type" />
+            <account-identicon v-if="identicon" :identicon="identicon" size="35" outer-size="8" :version="version" />
 
             <div class="input-toggle-group">
                 <input type="text" v-model="destination">

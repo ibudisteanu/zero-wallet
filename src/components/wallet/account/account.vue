@@ -1,9 +1,10 @@
 <template>
     <div>
         <div v-if="account" class="account">
-            <account-identicon  :identicon="account.identicon" :size="60" :outer-size="20" :type="account.type" />
+            <account-identicon  :identicon="account.identicon" :size="60" :outer-size="20" :version="account.version" />
             <div class="wordwrap pd-top-10">
-                <span class="">{{account.name}}</span>
+
+                <span class="bold">{{account.name}}</span>
                 <span>{{typeName}}</span>
                 <div class="pd-top-20">
                     <span>Address:</span>
