@@ -27,9 +27,9 @@ export default {
     },
 
 
-    setBlockchainBlock(context, block ){
-        Vue.set(context.blocks, block.height, block);
-        Vue.set(context.blocksByHash, block.hash().toString("hex"), block);
+    setBlockchainBlock(context, blkComplete ){
+        Vue.set(context.blocks, blkComplete.block.height, blkComplete);
+        Vue.set(context.blocksByHash, blkComplete.block.bloom.hash, blkComplete);
     },
 
 

@@ -144,7 +144,7 @@ export default {
             }
             this.error = '';
 
-            await Consensus.initPromise;
+            await Consensus.syncPromise;
 
             try{
                 if (this.height !== undefined) await Consensus.getTransaction(this.height);

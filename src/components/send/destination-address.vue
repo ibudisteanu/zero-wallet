@@ -48,7 +48,7 @@ export default {
 
         addressValidated(){
             try{
-                if (this.type === Version.versionTransparent) return PandoraPay.cryptography.addressValidator.validateAnyAddress( this.destination );
+                if (this.type === Version.VERSION_TRANSPARENT) return PandoraPay.cryptography.addressValidator.validateAnyAddress( this.destination );
             }catch(err){
             }
         },

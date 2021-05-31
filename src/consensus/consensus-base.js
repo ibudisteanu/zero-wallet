@@ -8,20 +8,18 @@ export default class BaseConsensus extends EventEmitter{
 
         this._data = {
             blocksInfo: {},
+            blocks: {},
+            blocksByHash: {},
+        }
+        this._promises = {
+            blocks: {},
         }
 
         this._startedStatus = false;
 
         this._status = "offline";
         this._createSyncPromise();
-        this._createInitPromise();
 
-    }
-
-    _createInitPromise(){
-        this.initPromise = new Promise( resolve => {
-            this._initPromiseResolve = resolve;
-        });
     }
 
     _createSyncPromise(){
@@ -53,16 +51,6 @@ export default class BaseConsensus extends EventEmitter{
     async _stopped(){
     }
 
-
-    async getBlock(height){
-
-    }
-
-    async getTransaction(txId){
-
-    }
-
-
     get starting(){
         return this._starting;
     }
@@ -83,10 +71,10 @@ export default class BaseConsensus extends EventEmitter{
 
         if (newValue === this._status) return;
 
-        if (this._status === "sync")
-            this._createSyncPromise();
-
         this._status = newValue;
+
+        if (this._status === "offline")
+            this._createSyncPromise();
 
         if (newValue === "sync")
             this._syncPromiseResolve(true);

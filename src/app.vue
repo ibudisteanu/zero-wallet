@@ -53,6 +53,7 @@ export default {
 
         Consensus.on("consensus/block-info-downloaded", data => this.$store.commit('setBlockchainBlockInfo', data) );
 
+        Consensus.on("consensus/block-downloaded", data => this.$store.commit('setBlockchainBlock', data ) );
         Consensus.on("consensus/block-deleted", data => this.$store.commit('deleteBlockchainBlock', data ) );
 
         let initialized = false
@@ -61,6 +62,10 @@ export default {
             if (name === "main") {
                 if (data === "initialized"){
                     initialized = true
+
+                    setTimeout(()=>{
+                        Consensus.status = "sync"
+                    }, 1000)
                     this.readWallet()
                 }
             }

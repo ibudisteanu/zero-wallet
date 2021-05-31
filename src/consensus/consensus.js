@@ -22,7 +22,7 @@ class Consensus extends BaseConsensus{
         let i, done = false;
         for (i = ending; i >= starting && !done ; i-- ){
 
-            const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( i );
+            const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( i, "" );
             const blockInfo = JSON.parse(blockInfoData)
 
             if (!blockInfo || !blockInfo.hash){
@@ -53,6 +53,44 @@ class Consensus extends BaseConsensus{
     }
 
     stopDownloadPendingTransactions(){
+
+    }
+
+    _includeBlock(block){
+        this.emit('consensus/block-downloaded', block );
+        this._data.blocks[block.height] = block;
+        this._data.blocksByHash[block.hash] = block;
+    }
+
+    getBlockByHash(hash){
+
+        if (this._data.blocks[hash]) return this._data.blocksByHash[hash];
+        if (this._promises.blocks[hash]) return this._promises.blocks[hash];
+
+        this._promises.blocks[hash] = new Promise( async (resolve, reject) => {
+            try{
+
+                const blockData = await PandoraPay.network.getNetworkBlockComplete( 0, hash);
+                if (!blockData) throw Error("Block was not received")
+
+                const block = JSON.parse(blockData)
+
+                console.log("block", block)
+
+                await this._includeBlock( block );
+                resolve(block);
+
+            }catch(err){
+                this.emit('consensus/error', "Error getting block" );
+                reject(err);
+            }finally{
+                delete this._promises.blocks[hash];
+            }
+
+        })
+    }
+
+    getBlock(){
 
     }
 

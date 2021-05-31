@@ -37,7 +37,7 @@ export default {
     computed:{
 
         title(){
-          if (this.address === Version.versionTransparent) return 'Transparent';
+          if (this.address === Version.VERSION_TRANSPARENT) return 'Transparent';
         },
 
         address(){

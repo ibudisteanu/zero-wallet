@@ -58,7 +58,7 @@ export default {
     methods: {
 
         async startDownloadingTokens() {
-            await Consensus.initPromise;
+            await Consensus.syncPromise;
             await Consensus.startDownloadingTokens();
         },
 

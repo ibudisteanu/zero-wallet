@@ -72,7 +72,7 @@ export default {
 
     methods:{
         async startDownloadPendingTransactions(){
-            await Consensus.initPromise;
+            await Consensus.syncPromise;
             await Consensus.startDownloadPendingTransactions();
         },
 

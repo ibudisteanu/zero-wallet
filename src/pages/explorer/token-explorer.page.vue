@@ -99,7 +99,7 @@ export default {
 
         async loadToken() {
 
-            await Consensus.initPromise;
+            await Consensus.syncPromise;
 
             return Consensus.getTokenByHash(this.hash);
 

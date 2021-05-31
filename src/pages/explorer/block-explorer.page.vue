@@ -19,22 +19,22 @@
                     </div>
                     <div v-else>
                         <div class="table">
-                            
+
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Hash</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.hash().toString("hex")}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.block.bloom.hash}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Kernel Hash</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.kernelHash().toString("hex")}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.block.bloom.kernelHash}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Confirmations</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{ $store.state.blockchain.end - block.height -1 }}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{ $store.state.blockchain.end - block.block.height -1 }}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Time</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{  timeAgo( $store.state.blockchain.genesisTimestamp + block.timestamp ) }} ago</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{  timeAgo( $store.state.blockchain.genesisTimestamp + block.block.timestamp ) }} ago</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Height</span>
@@ -42,61 +42,46 @@
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Number of Transactions</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.txCount()}}</span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Difficulty</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.difficulty.toString(10)}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.txs.length}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Merkle root</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.transactionsMerkleTree.hash().toString("hex")}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.block.merkleHash}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Previous Hash</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap"><router-link :to="`/explorer/block/hash/${block.prevHash.toString('hex')}`">{{block.prevHash.toString("hex")}}</router-link></span>
+                                <span class="col-xs-7 col-sm-9 wordwrap"><router-link :to="`/explorer/block/hash/${block.block.prevHash}`">{{block.block.prevHash}}</router-link></span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Previous Kernel Hash</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.prevKernelHash.toString("hex")}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.block.prevKernelHash}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Fees</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{fees}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap"><strong>TODO</strong></span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Reward</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.reward()}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap"><strong>TODO</strong></span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Version</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.version}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.block.version}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Size</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.size()}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{block.bloom.size}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Forger</span>
                                 <div class="col-xs-7 col-sm-9">
-                                    <account-identicon class="vertical-center" :address="block.pos.stakeForgerAddress" :size="20" :outer-size="5"  />
-                                    <span class="forger-address wordwrap">{{block.pos.stakeForgerAddress}}</span>
-                                </div>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Forger Delegate Reward</span>
-                                <div class="col-xs-7 col-sm-9" v-if="!block.pos.isStakeDelegateRewardPublicKeyHashEmpty">
-                                    <account-identicon class="vertical-center" :address="block.pos.stakeDelegateRewardAddress" :size="20" :outer-size="5"  />
-                                    <span class="forger-address wordwrap">{{block.pos.stakeDelegateRewardAddress}}</span>
+                                    <account-identicon class="vertical-center" :address="block.block.bloom.delegatedPublicPublicKeyHash" :size="20" :outer-size="5"  />
+                                    <span class="forger-address wordwrap">{{block.block.bloom.delegatedPublicPublicKeyHash}}</span>
                                 </div>
                             </div>
                             <div class="row pd-top-40 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">JSON</span>
-                                <textarea class="col-xs-7 col-sm-9" rows="20">{{ block.toJSON() }}</textarea>
-                            </div>
-                            <div class="row pd-top-40 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Hex Serialized</span>
-                                <textarea class="col-xs-7 col-sm-9" rows="8">{{ block.toHex() }}</textarea>
+                                <textarea class="col-xs-7 col-sm-9" rows="20">{{ block }}</textarea>
                             </div>
                         </div>
 
@@ -118,10 +103,12 @@
 
 import Layout from "src/components/layout/layout"
 import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
-import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import ShowTransactions from "src/components/explorer/show-transactions"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
+
+import Consensus from "src/consensus/consensus"
+import StringHelper from "src/utils/string-helper"
 
 export default {
 
@@ -157,8 +144,8 @@ export default {
             const asyncData = async ()=>{
 
                 if (block) {
-                    this.fees = await block.sumFees();
-                    this.transactions = await block.getTransactions();
+
+                    this.transactions = await block.txs;
 
                     for (let tx of this.transactions){
                         tx.__extra = {
@@ -185,7 +172,7 @@ export default {
     methods: {
 
         timeAgo(timestamp){
-            return PandoraLibrary.helpers.StringHelper.timeSince( timestamp*1000 );
+            return StringHelper.timeSince( timestamp*1000 );
         },
 
         async loadBlock(){
@@ -194,9 +181,10 @@ export default {
                 this.error = 'Block index was not specified';
                 return;
             }
+
             this.error = '';
 
-            await Consensus.initPromise;
+            await Consensus.syncPromise;
 
             if (this.height !== undefined)  return Consensus.getBlock(this.height);
             if (this.hash ) return Consensus.getBlockByHash(this.hash);
