@@ -74,8 +74,8 @@ export default {
 
     methods: {
 
-        convertToBase(number){
-            return PandoraPay.argv.transactions.coins.convertToBase(number);
+        convertToBase(amount){
+            return PandoraPay.config.coins.convertToBase( amount.toString() );
         },
 
         formatMoney(amount){

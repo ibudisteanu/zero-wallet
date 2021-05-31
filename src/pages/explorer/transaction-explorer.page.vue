@@ -19,7 +19,7 @@
                         <div class="table">
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Hash</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.hash().toString("hex")}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.bloom.hash}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Block Height</span>
@@ -58,7 +58,7 @@
                                     <div v-for="(vin, index) in tx.txBase.vin" class="input"
                                          :key="`transaction-explorer-vin-${index}`">
                                         <account-identicon :publicKeyHash="vin.bloom.publicKeyHash" size="20" outer-size="5" />
-                                        <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(-vin.amount) : '?'}} {{vin.token}} </span>
+                                        <span class="amount vertical-center">-{{$store.getters.addressesContains(tx) ? convertToBase(vin.amount) : '?'}} {{vin.token}} </span>
                                     </div>
                                     <div v-for="(vout, index) in tx.txBase.vout" class="input"
                                          :key="`transaction-explorer-vout-${index}`">
@@ -77,11 +77,11 @@
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Script Version</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.scriptVersion}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.txBase.txScript}}</span>
                             </div>
                             <div class="row pd-top-40 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">JSON</span>
-                                <textarea class="col-xs-7 col-sm-9" rows="20">{{ tx.toJSON() }}</textarea>
+                                <textarea class="col-xs-7 col-sm-9" rows="20">{{ tx }}</textarea>
                             </div>
                         </div>
 
@@ -102,6 +102,7 @@ import Layout from "src/components/layout/layout"
 import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
+import StringHelper from "src/utils/string-helper"
 
 export default {
 
@@ -156,7 +157,7 @@ export default {
         },
 
         convertToBase(amount){
-            return PandoraPay.argv.transactions.coins.convertToBase(amount);
+            return PandoraPay.config.coins.convertToBase( amount.toString() );
         },
 
         timeAgo(timestamp){

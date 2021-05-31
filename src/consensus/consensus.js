@@ -57,9 +57,22 @@ class Consensus extends BaseConsensus{
     }
 
     _includeBlock(blkComplete){
+
         this.emit('consensus/block-downloaded', blkComplete );
         this._data.blocks[blkComplete.block.height] = blkComplete;
         this._data.blocksByHash[blkComplete.block.hash] = blkComplete;
+
+        const data = {};
+        for (const tx of blkComplete.txs) {
+            tx.__extra = {
+                height: blkComplete.block.height,
+                timestamp: blkComplete.block.timestamp,
+            };
+            this._data.transactions[tx.bloom.hash] = tx;
+            data[tx.bloom.hash] = tx;
+        }
+        this.emit('consensus/tx-downloaded', {transactions: data} );
+
     }
 
     getBlockByHash(hash){
