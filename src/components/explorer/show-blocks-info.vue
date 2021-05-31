@@ -9,7 +9,7 @@
             <span class="col-xs-4 col-sm-1 col-md-1 wordwrap">Time</span>
             <span class="hidden-xs col-sm-2 col-md-2 wordwrap">Size</span>
             <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">TX</span>
-            <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">Forge</span>
+            <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">Forger</span>
         </div>
         <div v-for="(blockInfo, key) in blocksInfo"
              class="row pd-top-10 pd-bottom-10"
@@ -34,7 +34,7 @@
                 {{blockInfo.txs}}
             </span>
             <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">
-                <account-identicon  :publicKeyHash="blockInfo.forgedBy" :size="20" :outer-size="5"  />
+                <account-identicon  :publicKeyHash="blockInfo.forger" :size="20" :outer-size="5"  />
             </span>
 
         </div>
