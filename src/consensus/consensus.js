@@ -56,10 +56,10 @@ class Consensus extends BaseConsensus{
 
     }
 
-    _includeBlock(block){
-        this.emit('consensus/block-downloaded', block );
-        this._data.blocks[block.height] = block;
-        this._data.blocksByHash[block.hash] = block;
+    _includeBlock(blkComplete){
+        this.emit('consensus/block-downloaded', blkComplete );
+        this._data.blocks[blkComplete.block.height] = blkComplete;
+        this._data.blocksByHash[blkComplete.block.hash] = blkComplete;
     }
 
     getBlockByHash(hash){
@@ -67,18 +67,16 @@ class Consensus extends BaseConsensus{
         if (this._data.blocks[hash]) return this._data.blocksByHash[hash];
         if (this._promises.blocks[hash]) return this._promises.blocks[hash];
 
-        this._promises.blocks[hash] = new Promise( async (resolve, reject) => {
+        return this._promises.blocks[hash] = new Promise( async (resolve, reject) => {
             try{
 
-                const blockData = await PandoraPay.network.getNetworkBlockComplete( 0, hash);
+                const blockData = await PandoraPay.network.getNetworkBlockComplete( hash );
                 if (!blockData) throw Error("Block was not received")
 
-                const block = JSON.parse(blockData)
+                const blkComplete = JSON.parse(blockData)
 
-                console.log("block", block)
-
-                await this._includeBlock( block );
-                resolve(block);
+                await this._includeBlock( blkComplete );
+                resolve(blkComplete);
 
             }catch(err){
                 this.emit('consensus/error', "Error getting block" );
@@ -90,7 +88,40 @@ class Consensus extends BaseConsensus{
         })
     }
 
-    getBlock(){
+    getBlock(height){
+
+        if (typeof height === "string") {
+            height = Number.parseInt(height)
+        }
+
+        if (this._data.blocks[height]) return this._data.blocks[height];
+
+        return this._promises.blocks[height] = new Promise( async (resolve, reject) => {
+
+            try{
+                console.log(height, typeof height)
+                const blockData = await PandoraPay.network.getNetworkBlockComplete( height );
+                if (!blockData) throw Error("Block was not received")
+
+                const blkComplete = JSON.parse(blockData)
+
+                await this._includeBlock( blkComplete );
+                resolve(blkComplete);
+
+            }catch(err){
+                reject(err);
+            }finally{
+                delete this._promises.blocks[height];
+            }
+
+        });
+
+    }
+
+    getTransactionByHash(){
+
+    }
+    getTransaction(){
 
     }
 

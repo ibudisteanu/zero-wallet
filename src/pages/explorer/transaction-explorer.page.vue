@@ -160,7 +160,7 @@ export default {
         },
 
         timeAgo(timestamp){
-            return PandoraLibrary.helpers.StringHelper.timeSince( timestamp*1000 );
+            return StringHelper.timeSince( timestamp*1000 );
         },
 
     },

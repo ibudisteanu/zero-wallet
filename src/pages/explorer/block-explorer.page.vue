@@ -145,12 +145,12 @@ export default {
 
                 if (block) {
 
-                    this.transactions = await block.txs;
+                    this.transactions = block.txs;
 
                     for (let tx of this.transactions){
                         tx.__extra = {
-                            height: block.height,
-                            timestamp: block.timestamp,
+                            height: block.block.height,
+                            timestamp: block.block.timestamp,
                         }
                     }
 
