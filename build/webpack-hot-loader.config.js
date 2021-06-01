@@ -1,9 +1,9 @@
 const path = require('path')
 const webpack = require('webpack');
-const base = require('./webpack.browser.config');
+const base = require('./webpack-wallet.config');
 const merge = require('webpack-merge');
 
-const config = merge(base, {
+module.exports = merge(base, {
 
     devtool: 'cheap-module-eval-source-map',
     mode: 'development',
@@ -43,4 +43,3 @@ const config = merge(base, {
 
 });
 
-module.exports = config;

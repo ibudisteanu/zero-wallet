@@ -1,20 +1,19 @@
 const path = require('path')
 const webpack = require('webpack');
-const base = require('./../webpack.browser.config');
+const base = require('../webpack-wallet.config');
 const merge = require('webpack-merge');
 const CopyPlugin = require('copy-webpack-plugin');
 
 const config = merge(base, {
 
     output: {
-        path: path.resolve(__dirname, "../../../PandoraPay-website/public/wallet-dist"),
+        path: path.resolve(__dirname, "./../dist/build"),
         publicPath: "/",
-        filename: 'Wallet-User-Interface-bundle.js'
+        filename: 'Wallet-User-Interface.js'
     },
 
     plugins: [
         new CopyPlugin([
-            { from: './dist/build', to: '../../../PandoraPay-website/public/wallet-dist' }
         ])
     ]
 });
