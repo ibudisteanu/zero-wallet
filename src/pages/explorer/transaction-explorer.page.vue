@@ -118,7 +118,7 @@ export default {
         tx(){
 
             let tx;
-            if (this.height != undefined) tx = this.$store.state.transactions.txsByHeight[this.height];
+            if (this.height !== undefined) tx = this.$store.state.transactions.txsByHeight[this.height];
             if (this.hash) tx = this.$store.state.transactions.txsByHash[this.hash];
 
             return tx;
