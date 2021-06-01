@@ -39,7 +39,11 @@
 
             <div class="loading-div">
                 <span class="loading-text">
+                    <i v-if="isDownloading" class="fas fa-sync fa-spin"></i>
                     {{progressStatus}}
+                </span>
+                <span v-if="error" class="danger">
+                    {{error}}
                 </span>
             </div>
 
@@ -51,18 +55,23 @@
 <script>
 
 import consts from "consts/consts"
+import fetchProgress from 'fetch-progress'
 
 export default {
 
     data(){
         return {
             progressStatus: "Initialized",
+            isDownloading: false,
+            error: "",
         }
     },
 
     mounted(){
 
         if (typeof window === "undefined") return;
+
+        const self = this
 
         this.progressStatus = "WASM Handler loading...";
 
@@ -76,62 +85,38 @@ export default {
             go.argv = consts.goArgv
 
             this.progressStatus = "WASM GO created";
+            this.isDownloading = true;
 
-            const response = await fetch("./PandoraPay-wallet.wasm");
-            const contentLength = response.headers.get('Content-Length');
-            const total = parseInt(contentLength, 10);
-            var loaded = 0;
-            const progressHandler = (bytesLoaded, totalBytes) => {
-                this.progressStatus = 'Fetching WASM: ' + (bytesLoaded / totalBytes * 100).toFixed(2) + '%';
-            }
+            fetch("./PandoraPay-wallet.wasm")
+                .then(
+                    fetchProgress({
+                        // implement onProgress method
+                        onProgress(progress) {
+                            self.progressStatus = `WASM:  ${(progress.transferred/1024/1024).toFixed(2)}mb / ${(progress.total/1024/1024).toFixed(2)}mb... eta: ${progress.eta}s`
+                        },
+                    })
+                ).then((r)=> {
 
-            const res = new Response(new ReadableStream({
-                async start(controller) {
-                    const reader = response.body.getReader();
-                    for (;;) {
+                    this.isDownloading = false
 
-                        const {done, value} = await reader.read();
+                    // The response (res) can now be passed to any of the streaming methods as normal
+                    WebAssembly.instantiateStreaming(r, go.importObject).then(result => {
 
-                        if (done) {
-                            progressHandler(total, total)
-                            break
-                        }
+                        this.progressStatus = "PandoraPay WASM running...";
 
-                        loaded += value.byteLength;
-                        progressHandler(loaded, total)
-                        controller.enqueue(value);
+                        setTimeout(() => {
 
-                    }
-                    controller.close();
-                },
-            }, {
-                "status" : response.status,
-                "statusText" : response.statusText
-            }));
+                            go.run(result.instance)
 
-            // Make sure to copy the headers!
-            // Wasm is very picky with it's headers and it will fail to compile if they are not
-            // specified correctly.
-            for (const pair of response.headers.entries()) {
-                res.headers.set(pair[0], pair[1]);
-            }
+                            this.progressStatus = "PandoraPay WASM executed";
 
-            // The response (res) can now be passed to any of the streaming methods as normal
-            WebAssembly.instantiateStreaming(res, go.importObject).then( result =>{
+                            PandoraPayWallet.loadWallet()
 
-                this.progressStatus = "PandoraPay WASM running...";
+                        }, 20)
 
-                setTimeout(()=>{
+                    })
 
-                    go.run(result.instance)
-
-                    this.progressStatus = "PandoraPay WASM executed";
-
-                    PandoraPayWallet.loadWallet()
-
-                }, 10)
-
-            })
+                })
 
         }
         document.body.appendChild( script );

@@ -2,7 +2,6 @@
 
 PandoraPay wallet using Vue2. No SSR supported right now.
 
-
 ## Based on
 
 Simple Vue and Webpack boilerplate
