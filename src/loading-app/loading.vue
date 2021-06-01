@@ -3,15 +3,13 @@
 
         <div class="wrapper center">
 
-            <div class="logo-div center">
-                <img :src="require('src/assets/pandora-pay-logo-square.png').default" class="logo" >
-            </div>
+            <img :src="require('src/assets/pandora-pay-logo-square.png').default" class="logo" >
 
             <svg width="200px" height="200px" viewBox="0 0 35 35">
                 <polygon class="triangle" fill="none" stroke="#fff" stroke-width="1" points="16,1 32,32 1,32" />
             </svg>
 
-            <div>
+            <div class="loading-text-div">
                 <span class="loading-text">
                     <i v-if="isDownloading" class="fas fa-sync fa-spin"></i>
                     {{progressStatus}}
@@ -82,6 +80,8 @@ export default {
 
                             go.run(result.instance)
 
+                            return
+
                             this.progressStatus = "PandoraPay WASM executed";
 
                             PandoraPayWallet.loadWallet()
@@ -97,23 +97,28 @@ export default {
 
     }
 
+    //based on https://codepen.io/alexrmota/pen/NWqwGyJ
+
 }
 </script>
 
 <style scoped>
 
-    .logo-div{
-        margin-top: 20px;
-        margin-left: 50px;
-    }
-
     .logo{
         max-width: 60px;
-        margin-top: 30px;
-        margin-left: -20px;
+        position: absolute;
+        margin-top: 90px;
+        margin-left: 60px;
+    }
+
+    .loading-text-div{
+        text-align: center;
     }
 
     .loading-text{
+        font-family: sans-serif;
+        font-size: 12px;
+        animation: blink .9s ease-in-out infinite;
     }
 
     .container {
@@ -147,12 +152,6 @@ export default {
         to {
             stroke-dashoffset: 136;
         }
-    }
-
-    .loading {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 5px;
-        animation: blink .9s ease-in-out infinite;
     }
 
     @keyframes blink {
