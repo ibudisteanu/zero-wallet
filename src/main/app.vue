@@ -57,13 +57,7 @@ export default {
         Consensus.on("consensus/block-downloaded", data => this.$store.commit('setBlockchainBlock', data ) );
         Consensus.on("consensus/block-deleted", data => this.$store.commit('deleteBlockchainBlock', data ) );
 
-        Consensus.on("consensus/tx-downloaded", async data => {
-            // for (const key in data.transactions){
-            //     const tx = data.transactions[key];
-            //     tx.__extra.extra = await PandoraPay.wallet.manager.decryptTxExtra(tx);
-            // }
-            this.$store.commit('setTransactions', data  )
-        } );
+        Consensus.on("consensus/tx-downloaded", async data => this.$store.commit('setTransactions', data  ) );
 
         Consensus.on("consensus/status-update", status =>  this.$store.commit('setConsensusStatus', status) );
 

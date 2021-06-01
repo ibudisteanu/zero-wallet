@@ -1,17 +1,14 @@
 // Import Vue
 import Vue from 'vue';
-
-// Import Vue App, routes, store
 import App from './app';
 
-import store from "./store/store";
+import store from "../store/store";
+import router from "../router/router.index"
 
+import VueClipboard from 'vue-clipboard2'
 import Notification from 'vue-notification';
-
 import VTooltip from 'v-tooltip'
 
-import router from "./router/router.index"
-import VueClipboard from 'vue-clipboard2'
 Vue.use(VTooltip);
 Vue.use(Notification);
 Vue.use(VueClipboard);
