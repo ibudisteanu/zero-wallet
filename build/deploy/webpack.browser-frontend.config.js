@@ -14,7 +14,7 @@ const config = merge(base, {
 
     plugins: [
         new CopyPlugin([
-            { from: './dist/assets', to: '../../../PandoraPay-website/public/wallet-dist/assets' }
+            { from: './dist/build', to: '../../../PandoraPay-website/public/wallet-dist' }
         ])
     ]
 });
