@@ -80,8 +80,6 @@ export default {
 
                             go.run(result.instance)
 
-                            return
-
                             this.progressStatus = "PandoraPay WASM executed";
 
                             PandoraPayWallet.loadWallet()
