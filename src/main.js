@@ -2,36 +2,46 @@ class Main {
 
     constructor(){
 
-        if (!global.PandoraPayWalletOptions){
-            global.PandoraPayWalletOptions = {}
-        }
+        window.addEventListener("load", () => {
+            this.initialize()
+        } );
 
-        global.PandoraPayWalletOptions.wallet = {
-            activated: true,
-            style: "dark",
-            id: "Wallet",
-        };
+    }
+
+    initialize(){
+
+        if (!PandoraPayWalletOptions)
+            global.PandoraPayWalletOptions = {}
+
+        if (!PandoraPayWalletOptions.wallet)
+            global.PandoraPayWalletOptions.wallet = {
+                activated: true,
+                style: "dark",
+                id: "Wallet",
+            }
+
+        if (!PandoraPayWalletOptions.loading)
+            global.PandoraPayWalletOptions.loading = {
+            }
+
+
 
         /**
          * On Window Load
          */
 
-        console.log("User-Interface-Loaded");
-        //this.loadMain();
-
-        if (global.PandoraPayWalletOptions){
-            this.start()
-        }
+        this.start()
 
     }
 
     start(){
-
+        const mainVue = require('./loading-app/loading-vue').default;
+        mainVue(PandoraPayWalletOptions.loading);
     }
 
     _loadMain(){
-        const mainVue = require('./main/main-vue').default;
-        mainVue(global.PandoraPayWalletOptions.wallet);
+        const mainVue = require('./wallet-app/main-vue').default;
+        mainVue(PandoraPayWalletOptions.wallet);
     }
 
 }

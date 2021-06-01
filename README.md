@@ -40,3 +40,6 @@ Restart to apply
 
 Start nginx
 `sudo service nginx start`
+
+## Compute Resource Hashes
+https://www.srihash.org/
