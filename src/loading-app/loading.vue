@@ -92,7 +92,7 @@ export default {
                     fetchProgress({
                         // implement onProgress method
                         onProgress(progress) {
-                            self.progressStatus = `WASM:  ${(progress.transferred/1024/1024).toFixed(2)}mb / ${(progress.total/1024/1024).toFixed(2)}mb... eta: ${(progress.eta/1000000000).toFixed(1)}s`
+                            self.progressStatus = `WASM:  ${(progress.transferred/1024/1024).toFixed(2)}mb / ${(progress.total/1024/1024).toFixed(2)}mb... eta: ${(progress.eta/1000000000).toFixed(0)}s`
                         },
                     })
                 ).then((r)=> {
@@ -138,7 +138,7 @@ export default {
     }
 
     .loading-div{
-        padding-top: 30px;
+        padding-top: 40px;
     }
 
     .loading-text{
@@ -179,9 +179,9 @@ export default {
     li {
         width: 40px;
         height: 40px;
-        background: #651fff;
+        background: #277bff;
         border-radius: 4px;
-        box-shadow: 0 0 1px #fff, 0 0 5px #651fff, 0 0 10px #651fff, 0 0 15px #651fff, 0 0 25px #651fff, 0 0 55px #651fff;
+        box-shadow: 0 0 1px #fff, 0 0 5px #000000, 0 0 10px #bd9fff, 0 0 15px #bd9fff, 0 0 25px #bd9fff, 0 0 55px #bd9fff;
         animation: scale 0.8s linear alternate infinite;
     }
     @keyframes scale {
