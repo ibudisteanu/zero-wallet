@@ -21,10 +21,7 @@ class Main {
             }
 
         if (!PandoraPayWalletOptions.loading)
-            global.PandoraPayWalletOptions.loading = {
-            }
-
-
+            global.PandoraPayWalletOptions.loading = { }
 
         /**
          * On Window Load
@@ -35,13 +32,20 @@ class Main {
     }
 
     start(){
-        const mainVue = require('./loading-app/loading-vue').default;
-        mainVue(PandoraPayWalletOptions.loading);
+        const loadingVue = require('./loading-app/loading-vue').default;
+        this.loadingVueApp = loadingVue(PandoraPayWalletOptions.loading);
     }
 
-    _loadMain(){
+    loadWallet(){
+
+        if (this.loadingVueApp){
+            this.loadingVueApp.$destroy()
+            const elem = document.getElementById("pandora-wallet-loading");
+            document.getElementById("pandora-wallet-loading").parentNode.removeChild(elem);
+        }
+
         const mainVue = require('./wallet-app/main-vue').default;
-        mainVue(PandoraPayWalletOptions.wallet);
+        this.walletVueApp = mainVue(PandoraPayWalletOptions.wallet);
     }
 
 }

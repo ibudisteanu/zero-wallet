@@ -7,21 +7,17 @@ Vue.use(VueRouter);
 
 export default (params) => {
 
-    const app = new Vue({
+    return window.PandoraPayWalletLoading = new Vue({
         el: '#wallet-loading',
         render: (createElement) => {
 
-            const app = createElement( Loading, {
+            return createElement( Loading, {
                 props: {
                     startAutomatically: params.startAutomatically,
                 }
             });
 
-            return app;
-
         }
     });
-
-    window.PandoraPayWalletLoading = app;
 
 }

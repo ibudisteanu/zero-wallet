@@ -16,25 +16,25 @@ import Consensus from "src/consensus/consensus"
 
 export default (params) => {
 
-    // const app = new Vue({
-    //     el: '#wallet',
-    //     store,
-    //     router,
-    //     render: (createElement) => {
-    //
-    //         const app = createElement(App, {
-    //             props: {
-    //                 startAutomatically: params.startAutomatically,
-    //             }
-    //         });
-    //
-    //         return app;
-    //
-    //     }
-    // }).$mount('#wallet');
-    //
-    // window.PandoraPayWalletApp = app;
-    // window.PandoraPayConsensus = Consensus;
+    const app = new Vue({
+        el: '#wallet',
+        store,
+        router,
+        render: (createElement) => {
+
+            return createElement(App, {
+                props: {
+                    startAutomatically: params.startAutomatically,
+                }
+            });
+
+        }
+    }).$mount('#wallet');
+
+    window.PandoraPayWalletApp = app;
+    window.PandoraPayConsensus = Consensus;
+
+    return app
 
 }
 

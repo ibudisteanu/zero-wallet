@@ -1,39 +1,49 @@
 <template>
-    <div>
+    <div id="pandora-wallet-loading" class="container" >
 
-        <div>
-            <ul>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-                <li></li>
-            </ul>
+        <div class="wrapper center">
+
+            <div class="logo-div">
+                <img :src="require('src/assets/pandora-pay-logo-inline.png').default" class="logo" >
+            </div>
+
+            <div class="container-flex"  >
+                <ul>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+
+            <div class="loading-div">
+                <span class="loading-text">
+                    {{progressStatus}}
+                </span>
+            </div>
+
         </div>
-
-        <span class="loading">
-            {{progressStatus}}
-        </span>
 
     </div>
 </template>
@@ -93,6 +103,7 @@ export default {
                         loaded += value.byteLength;
                         progressHandler(loaded, total)
                         controller.enqueue(value);
+
                     }
                     controller.close();
                 },
@@ -110,8 +121,19 @@ export default {
 
             // The response (res) can now be passed to any of the streaming methods as normal
             WebAssembly.instantiateStreaming(res, go.importObject).then( result =>{
-                this.progressStatus = "PandoraPay WASM loaded";
-                go.run(result.instance)
+
+                this.progressStatus = "PandoraPay WASM running...";
+
+                setTimeout(()=>{
+
+                    go.run(result.instance)
+
+                    this.progressStatus = "PandoraPay WASM executed";
+
+                    PandoraPayWallet.loadWallet()
+
+                }, 10)
+
             })
 
         }
@@ -122,15 +144,41 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
-    body {
-        display: flex;
-        height: 100vh;
-        justify-content: center;
-        align-items: center;
-        background: #e4dfdf;
+    .logo{
+        width: 100%;
+        max-width: 200px;
     }
+
+    .logo-div{
+        padding-bottom: 20px;
+    }
+
+    .loading-div{
+        padding-top: 30px;
+    }
+
+    .loading-text{
+    }
+
+    .container {
+        height: 100%;
+    }
+
+    .center{
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+
+    .container-flex {
+        display: flex;
+    }
+
     .wrapper {
         width: auto;
         height: auto;
@@ -139,6 +187,7 @@ export default {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
         animation: rot 16s linear infinite;
+        list-style-type: none;
     }
     @keyframes rot {
         100% {
