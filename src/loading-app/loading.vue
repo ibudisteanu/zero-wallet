@@ -92,7 +92,7 @@ export default {
                     fetchProgress({
                         // implement onProgress method
                         onProgress(progress) {
-                            self.progressStatus = `WASM:  ${(progress.transferred/1024/1024).toFixed(2)}mb / ${(progress.total/1024/1024).toFixed(2)}mb... eta: ${progress.eta.toFixed(1)}s`
+                            self.progressStatus = `WASM:  ${(progress.transferred/1024/1024).toFixed(2)}mb / ${(progress.total/1024/1024).toFixed(2)}mb... eta: ${(progress.eta/1000000000).toFixed(1)}s`
                         },
                     })
                 ).then((r)=> {
