@@ -10,7 +10,7 @@
 
                     <account :account="address" />
 
-                    <span class="disabled-color wordwrap pd-top-20">
+                    <span class="gray wordwrap pd-top-20">
                         <span v-if="!showPublicKey" class="pointer" @click="showPublicKey = true">
                             View Public Key
                         </span>
@@ -21,7 +21,7 @@
 
                     <template v-if="address.version === version.VERSION_TRANSPARENT">
 
-                        <span class="disabled-color wordwrap pd-top-20">
+                        <span class="gray wordwrap pd-top-20">
                             <span v-if="!showPublicKeyHash" class="pointer" @click="showPublicKeyHash = true">
                                 View Public Key Hash
                             </span>

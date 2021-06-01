@@ -5,7 +5,7 @@
         <steps-bar :length="3" :active="step" />
 
         <template v-if="step === 1">
-            <span class="disabled">Node address</span>
+            <span class="gray">Node address</span>
             <select v-model="nodeAddress">
                 <option v-for="(node, key) in delegateStakesNodes"
                         :key="`node-${key}`"

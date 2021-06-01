@@ -9,7 +9,7 @@
         </div>
 
         <div v-if="!seed">
-            <span class="disabled" >Enter the password to view the wallet seed</span>
+            <span class="gray" >Enter the password to view the wallet seed</span>
             <password-input v-model="password" />
 
             <span v-if="error" class="danger">

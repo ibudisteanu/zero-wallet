@@ -2,7 +2,7 @@
 
     <modal ref="modal" title="Delegate Stake">
 
-        <span class="disabled">Delegate PublicKeyHash</span>
+        <span class="gray">Delegate PublicKeyHash</span>
         <div class="delegate-pub-key">
             <input type="text" v-model="delegateStakePublicKey">
             <div class="btn">
@@ -12,10 +12,10 @@
             </div>
         </div>
 
-        <span class="disabled">Delegate Nonce</span>
+        <span class="gray">Delegate Nonce</span>
         <input type="number" v-model="delegateStakeNonce" min="0" disabled="true" >
 
-        <span class="disabled">Delegate Fee in Percentage</span>
+        <span class="gray">Delegate Fee in Percentage</span>
         <input type="number" v-model="delegateStakeFee" min="0" max="100" step="0.01">
 
         <span v-if="error" class="danger">

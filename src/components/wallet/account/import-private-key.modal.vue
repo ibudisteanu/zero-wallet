@@ -2,7 +2,7 @@
 
     <modal ref="modal" title="Import Private Key">
 
-        <span class="disabled">Private Key</span>
+        <span class="gray">Private Key</span>
         <input type="text" v-model="privateKey">
 
         <span v-if="error" class="danger">

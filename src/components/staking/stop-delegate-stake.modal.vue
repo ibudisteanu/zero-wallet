@@ -2,7 +2,7 @@
 
     <modal ref="modal" title="Stop Delegate Stake">
 
-        <span class="disabled">Delegate Nonce</span>
+        <span class="gray">Delegate Nonce</span>
         <input type="number" v-model="delegateStakeNonce" min="0" disabled="true" >
 
         <span v-if="error" class="danger">

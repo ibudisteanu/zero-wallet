@@ -13,10 +13,10 @@
 
                 <div class="account-title pointer" @click="setMainAddress(address.addressEncoded)" >
                     <span>{{address.name}}</span>
-                    <span class="disabled">{{address.addressEncoded.substr(0, 15)+'...'}} </span>
+                    <span class="gray">{{address.addressEncoded.substr(0, 15)+'...'}} </span>
                 </div>
                 <div>
-                    <span class="disabled" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : '&nbsp;'}}</span>
+                    <span class="gray" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : '&nbsp;'}}</span>
                     <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( address)" />
                 </div>
 

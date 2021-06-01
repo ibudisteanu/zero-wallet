@@ -22,12 +22,12 @@
             <span>Encrypted: {{this.isAddressEncrypted}}</span>
 
             <div v-if="isAddressEncrypted" class="pd-top-40">
-                <span class="disabled">Address password</span>
+                <span class="gray">Address password</span>
                 <password-input v-model="addressPassword"></password-input>
             </div>
 
             <div v-if="isWalletEncrypted" class="pd-top-40">
-                <span class="disabled">Wallet password</span>
+                <span class="gray">Wallet password</span>
                 <password-input v-model="walletPassword"></password-input>
             </div>
 

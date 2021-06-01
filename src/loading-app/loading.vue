@@ -49,6 +49,9 @@
 </template>
 
 <script>
+
+import consts from "consts/consts"
+
 export default {
 
     data(){
@@ -70,13 +73,7 @@ export default {
             this.progressStatus = "WASM Handler loaded";
 
             const go = new Go();
-            go.argv = [
-                'js',
-                '--devnet',
-                '--new-devnet',
-                '--store-wallet-type=memory',
-                '--consensus=wallet',
-            ]
+            go.argv = consts.goArgv
 
             this.progressStatus = "WASM GO created";
 
