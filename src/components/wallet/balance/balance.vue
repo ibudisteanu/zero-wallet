@@ -39,25 +39,26 @@
 
 <script>
 
-const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
+const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 
     props: {
-        type: {default: WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT},
+        version: {default: version.VERSION_TRANSPARENT},
         token: {default: ''},
         balance: {default: null},
     },
 
     computed: {
-        WalletAddressTypeEnum: () => WalletAddressTypeEnum,
+
+        version: () => version,
 
         scanPercent(){
             return ((this.balance.scanIndex || 0) / Number.MAX_SAFE_INTEGER * 100).toFixed(3);
         },
 
         isAmountAvailable(){
-            return this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT
+            return this.version === version.VERSION_TRANSPARENT
         },
 
         isScanning(){
@@ -73,8 +74,8 @@ export default {
 
     methods: {
 
-        convertToBase(number){
-            return PandoraPay.argv.transactions.coins.convertToBase(number);
+        convertToBase(amount){
+            return PandoraPay.config.coins.convertToBase( amount.toString() );
         },
 
         formatMoney(amount){

@@ -5,18 +5,18 @@ export default {
     deleteTransactions(context, {transactions}){
 
         for (const key in transactions)
-            Vue.delete(context.list, key);
+            Vue.delete(context.txsByHash, key);
 
     },
 
     setTransactions(context, { transactions }) {
 
-        const list = {... ( context.list || {} ) };
+        const list = {... ( context.txsByHash || {} ) };
 
         for (const key in transactions)
             list[key] = transactions[key];
 
-        context.list = list;
+        context.txsByHash = list;
     },
 
     setPendingTransactionsCount(context, { count }) {

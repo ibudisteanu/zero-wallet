@@ -1,11 +1,11 @@
 <template>
     <div class="amount-row">
         <div>
-            <span class="disabled">{{text}}</span>
+            <span class="gray">{{text}}</span>
             <input type="number" v-model="amount" min="0" step="0.0001">
         </div>
         <div>
-            <span class="disabled">Currency</span>
+            <span class="gray">Currency</span>
             <select v-model="tokenCurrency">
                 <option v-for="(balance, token) in balances"
                         :key="`send-money-${token}`"

@@ -10,9 +10,9 @@
              :class="`row pd-top-10 pd-bottom-10 ${isPending(tx) ? 'grid-primary' : ''} `"
              :key="`show-transaction-${key}`">
 
-            <router-link :to="`/explorer/tx/hash/${tx.hash().toString('hex')}`">
+            <router-link :to="`/explorer/tx/hash/${tx.bloom.hash}`">
 
-                <span class="col-xs-6 col-sm-2 wordwrap"><router-link :to="`/explorer/tx/hash/${tx.hash().toString('hex')}`">{{tx.hash().toString("hex").substr(0,10)+'...'}}</router-link></span>
+                <span class="col-xs-6 col-sm-2 wordwrap"><router-link :to="`/explorer/tx/hash/${tx.bloom.hash}`">{{tx.bloom.hash.substr(0,10)+'...'}}</router-link></span>
                 <span class="col-xs-6 col-sm-2 wordwrap">
                 <template v-if="!isPending(tx)">
                     {{ timeAgo( $store.state.blockchain.genesisTimestamp +  tx.__extra.timestamp) }}
@@ -22,15 +22,15 @@
                 </template>
             </span>
                 <span class="col-xs-12 col-sm-8 wordwrap">
-                <div class="input" v-for="(vin, index) in tx.vin "
+                <div class="input" v-for="(vin, index) in tx.txBase.vin "
                      :key="`show-transaction-vin-${index}`">
-                    <account-identicon :publicKeyHash="vin.publicKeyHash" size="20" outer-size="7" />
-                    <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(-vin.amount) : '?'}} {{vin.tokenCurrency.toString("hex")}} </span>
+                    <account-identicon :publicKeyHash="vin.bloom.publicKeyHash" size="20" outer-size="7" />
+                    <span class="amount vertical-center">-{{$store.getters.addressesContains(tx) ? convertToBase(vin.amount) : '?'}} {{vin.token}} </span>
                 </div>
-                <div class="output" v-for="(vout, index) in tx.vout"
+                <div class="output" v-for="(vout, index) in tx.txBase.vout"
                      :key="`show-transaction-vout-${index}`">
                     <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="7" />
-                    <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(vout.amount) : '?'}} {{vout.tokenCurrency.toString("hex")}}</span>
+                    <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(vout.amount) : '?'}} {{vout.token}}</span>
                 </div>
             </span>
             </router-link>
@@ -42,7 +42,9 @@
 </template>
 
 <script>
+
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
+import StringHelper from "src/utils/string-helper"
 
 export default {
 
@@ -55,11 +57,11 @@ export default {
     methods:{
 
         timeAgo(timestamp){
-            return PandoraLibrary.helpers.StringHelper.timeSince( timestamp*1000, false );
+            return StringHelper.timeSince( timestamp*1000, false );
         },
 
         convertToBase(amount){
-            return PandoraPay.argv.transactions.coins.convertToBase(amount);
+            return PandoraPay.config.coins.convertToBase( amount.toString() );
         },
 
         isPending(tx){

@@ -1,21 +1,21 @@
-const {TxTypeEnum} = PandoraLibrary.transactions;
+const {scriptType} = PandoraPay.enums.transactions.transactionSimple;
 
 export default {
 
     addressesContains: (state)=>(tx)=>{
 
-        if (tx.script === TxTypeEnum.PUBLIC_TRANSACTION ||
-            tx.script === TxTypeEnum.TX_SCRIPT_DELEGATE_STAKE_TRANSACTION ||
-            tx.script === TxTypeEnum.TX_SCRIPT_TOKEN_CREATE_TRANSACTION ||
-            tx.script === TxTypeEnum.TX_SCRIPT_TOKEN_UPDATE_SUPPLY_TRANSACTION ) return true;
+        if (tx.txBase.txScript === scriptType.SCRIPT_NORMAL ||
+            tx.txBase.txScript === scriptType.SCRIPT_UNSTAKE ||
+            tx.txBase.txScript === scriptType.SCRIPT_WITHDRAW ||
+            tx.txBase.txScript === scriptType.SCRIPT_DELEGATE ) return true;
 
-        for (let i=0; i < tx.vin.length; i++)
+        for (const vin of tx.txBase.vin )
             for (const address in state.list)
-                if ( state.list[address].publicKey === tx.vin[i].publicKey.toString("hex") ) return true;
+                if ( state.list[address].publicKey === vin.bloom.publicKey ) return true;
 
-        for (let i = 0; i < tx.vout.length; i++)
+        for (const vout of tx.txBase.vout)
             for (const address in state.list)
-                if (state.list[address].publicKeyHash === tx.vout[i].publicKeyHash.toString("hex")) return true;
+                if (state.list[address].publicKeyHash === vout.publicKeyHash ) return true;
 
     },
 

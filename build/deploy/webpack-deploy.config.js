@@ -1,17 +1,19 @@
+const path = require('path')
 const webpack = require('webpack');
-const base = require('./../webpack.browser.config');
+const base = require('../webpack-wallet.config');
 const merge = require('webpack-merge');
 const CopyPlugin = require('copy-webpack-plugin');
 
 const config = merge(base, {
 
     output: {
-        filename: '../../Website/public/Zero-dist/Wallet-User-Interface-bundle.js'
+        path: path.resolve(__dirname, "./../dist/build"),
+        publicPath: "/",
+        filename: 'Wallet-User-Interface.js'
     },
 
     plugins: [
         new CopyPlugin([
-            { from: './dist/assets', to: '../../Website/public/Zero-dist/assets' }
         ])
     ]
 });

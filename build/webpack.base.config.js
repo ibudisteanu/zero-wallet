@@ -12,15 +12,24 @@ const isAnalyze = process.argv.includes('--analyze') || process.argv.includes('-
 
 //const isAnalyze = true;
 
+module.exports = webpackConfig = {
 
-let webpackConfig = {
+    node: {
+        child_process: "empty",
+        dgram: "empty",
+        fs: 'empty',
+        net: 'empty',
+        tls: 'empty',
+        uws: 'empty'
+    },
+
     //define entry point
     entry: ['babel-regenerator-runtime'],
     devtool: isProd ? false : '#cheap-module-source-map',
     // send to distribution
     output: {
-        path: path.resolve(__dirname, '../dist'),
-        publicPath: 'public/wallet-dist/',
+        path: path.resolve(__dirname, './../dist'),
+        publicPath: '/',
         filename: '[name].[chunkhash].js'
     },
     resolve: {
@@ -39,9 +48,12 @@ let webpackConfig = {
                 use: [
                     {
                         loader: 'file-loader',
-
-                    }
-                ]
+                        options: {
+                            name: 'assets/[contenthash].[ext]',
+                            publicPath: './',
+                        },
+                    },
+                ],
             },
             {
                 test: /\.vue$/,
@@ -77,5 +89,3 @@ let webpackConfig = {
             new VueLoaderPlugin(),
         ]
 };
-
-module.exports = webpackConfig;

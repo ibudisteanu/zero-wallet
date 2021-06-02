@@ -7,14 +7,12 @@ export default {
 
         genesisTimestamp: 0,
 
-        start: 0,
         end: 0,
         next: null,
 
         hash: '',
         prevHash: '',
         prevKernelHash: '',
-        chainWork: '',
 
         status: '',
 

@@ -6,7 +6,7 @@
 
                 <h1>Receive Money {{ title }}</h1>
 
-                <account :address="address" />
+                <account :account="address" />
 
             </div>
         </div>
@@ -18,7 +18,7 @@
 
 import Account from "src/components/wallet/account/account"
 import Layout from "src/components/layout/layout"
-const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
+const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 
@@ -37,7 +37,7 @@ export default {
     computed:{
 
         title(){
-          if (this.address === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return 'Transparent';
+          if (this.address === version.VERSION_TRANSPARENT) return 'Transparent';
         },
 
         address(){

@@ -1,25 +1,68 @@
 <template>
 
     <div class="identicon outer" :style="`padding: ${outerSize}px; background-color: ${background}`">
-        <img :src="addressIdenticon" class="identicon" :style="`width: ${size}px`" >
+        <img :src="identiconSrc" class="identicon" :style="`width: ${size}px`" >
     </div>
 
 </template>
 
 <script>
-const {WalletAddressTypeEnum} = PandoraLibrary.enums;
+
+import Identicons from "src/utils/identicons"
+
 export default {
 
     props:{
         size: {default: 40},
         outerSize: {default: 34},
         outerColor: {default: "white;"},
-        type: {default: 0},
+        version: {default: 0},
 
-        identicon: {default: ""},
+        identicon: {default: null},
         address: {default: ""},
         publicKey: {default: null},
         publicKeyHash: {default: null},
+    },
+
+    data(){
+        return{
+            identiconSrc: "",
+        }
+    },
+
+    watch:{
+        identicon: {
+            immediate: true,
+            handler: function(newVal, oldVal){
+                this.identiconSrc = newVal
+            }
+        },
+        publicKeyHash: {
+            immediate: true,
+            handler: async function(newVal, oldVal){
+                if (newVal) {
+                    this.identiconSrc = await Identicons.getIdenticon(newVal)
+                }
+            }
+        },
+        publicKey: {
+            immediate: true,
+            handler: async function(newVal, oldVal){
+                if (newVal){
+                    const publicKeyHash = await PandoraPay.cryptography.computePublicKeyHash(newVal)
+                    this.identiconSrc = await Identicons.getIdenticon(publicKeyHash)
+                }
+            }
+        },
+        address: {
+            immediate: true,
+            handler: async function(newVal, oldVal){
+                if (newVal) {
+                    const address = await PandoraPay.addresses.decodeAddress(newVal)
+                    this.identiconSrc = await Identicons.getIdenticon(address.publicKeyHash)
+                }
+            }
+        }
     },
 
     computed:{
@@ -30,32 +73,20 @@ export default {
 
         addressIdenticon(){
 
-                try {
+            if (this.identicon) return this.identicon;
 
-                    if (this.identicon) return this.identicon;
+            try {
 
-                    let address;
+                    // let address;
+                    //
+                    // if (this.address) {
+                    //     address = PandoraPay.cryptography.addressValidator.validateAddress(this.address);
+                    //     if (!address) throw Error("Invalid address");
+                    // }
 
-                    if (this.address) {
-                        address = PandoraPay.cryptography.addressValidator.validateAddress(this.address);
-                        if (!address) throw Error("Invalid address");
-                    }
+            } catch(err){
 
-                    if (this.publicKey) {
-                        address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKey(this.publicKey);
-                        if (!address) throw Error("Invalid publicKey");
-                    }
-
-                    if (this.publicKeyHash) {
-                        address = PandoraPay.cryptography.addressGenerator.generateAddressFromPublicKeyHash(this.publicKeyHash);
-                        if (!address) throw Error("Invalid publicKeyHash");
-                    }
-
-                    return address ? address.identiconImg() : undefined;
-
-                } catch(err){
-
-                }
+            }
 
         },
 

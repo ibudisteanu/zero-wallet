@@ -7,9 +7,11 @@
                 <h1>Staking</h1>
                 <span>In browser, you can only delegate your stakes</span>
 
+                TODO
+
                 <div class="account-info" v-if="address">
 
-                    <account :address="address" />
+                    <account :account="address" />
 
                     <loading-spinner v-if="!address.loaded" />
 
@@ -30,7 +32,7 @@
 
                             <div v-if="address.delegate" >
                                 <span>Delegated nonce {{address.delegate.delegateStakeNonce}}</span>
-                                <span>Delegated public key {{address.delegate.delegateStakePublicKeyHash}}</span>
+                                <span>Delegated public key {{address.delegate.delegateStakePublicKey}}</span>
                                 <span>Delegated fee {{delegateFeePercentage}} %</span>
                             </div>
 
@@ -120,7 +122,7 @@ export default {
         },
 
         isDelegated(){
-            if (this.address.delegate && this.address.delegate.delegateStakePublicKeyHash && this.address.delegate.delegateStakePublicKeyHash !== "0000000000000000000000000000000000000000") return true;
+            if (this.address.delegate && this.address.delegateVersion === 1) return true;
             return false;
         },
 
@@ -138,8 +140,8 @@ export default {
 
             const out = [];
             for (const key in txs)
-                if (this.$store.state.transactions.list[txs[key]])
-                    out.push( this.$store.state.transactions.list[txs[key]] );
+                if (this.$store.state.transactions.txsByHash[txs[key]])
+                    out.push( this.$store.state.transactions.txsByHash[txs[key]] );
 
             return out;
         },

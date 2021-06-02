@@ -1,44 +1,40 @@
 // Import Vue
 import Vue from 'vue';
-
-// Import Vue App, routes, store
 import App from './app';
+import store from "../store/store";
+import router from "../router/router.index"
 
-import store from "./store/store";
-
+import VueClipboard from 'vue-clipboard2'
 import Notification from 'vue-notification';
-
 import VTooltip from 'v-tooltip'
 
-import router from "./router/router.index"
-import VueClipboard from 'vue-clipboard2'
 Vue.use(VTooltip);
 Vue.use(Notification);
 Vue.use(VueClipboard);
 
 import Consensus from "src/consensus/consensus"
 
-export default (params)=> {
+export default (params) => {
 
     const app = new Vue({
-        el: '#app',
+        el: '#wallet',
         store,
         router,
         render: (createElement) => {
 
-            const app = createElement(App, {
+            return createElement(App, {
                 props: {
                     startAutomatically: params.startAutomatically,
                 }
             });
 
-            return app;
-
         }
-    }).$mount('#app');
+    }).$mount('#wallet');
 
-    window.PandoraWallet = app;
-    window.PandoraConsensus = Consensus;
+    window.PandoraPayWalletApp = app;
+    window.PandoraPayConsensus = Consensus;
+
+    return app
 
 }
 

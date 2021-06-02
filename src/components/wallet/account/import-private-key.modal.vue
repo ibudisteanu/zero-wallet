@@ -2,13 +2,8 @@
 
     <modal ref="modal" title="Import Private Key">
 
-        <span class="disabled">Private Key</span>
+        <span class="gray">Private Key</span>
         <input type="text" v-model="privateKey">
-
-        <div v-if="isWalletEncrypted" class="pd-top-40">
-            <span class="disabled">Wallet password</span>
-            <password-input v-model="walletPassword"></password-input>
-        </div>
 
         <span v-if="error" class="danger">
             {{error}}
@@ -34,7 +29,6 @@ export default {
         return {
             selectedType: 0,
             privateKey: '',
-            walletPassword: '',
             error: '',
         }
     },
@@ -61,20 +55,13 @@ export default {
 
         async importPrivateKey(resolve){
 
-            const checkPassword = await PandoraPay.wallet.encryption.checkPassword(this.walletPassword);
-            if (!checkPassword) {
-                resolve(true);
-                return this.error = "Your wallet password is invalid";
-            }
-
             try{
-
 
                 if (this.privateKey.length !== 64) throw Error("Private key must be 64 hex numbers");
 
                 this.$store.state.page.refLoadingModal.showModal();
 
-                const out = await PandoraPay.wallet.manager.importPrivateKeyModel( this.privateKey, this.selectedType );
+                const out = await PandoraPay.wallet.manager.importWalletPrivateKey( this.privateKey, this.selectedType );
 
                 if (out)
                     this.$notify({

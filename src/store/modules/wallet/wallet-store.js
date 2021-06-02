@@ -7,8 +7,14 @@ export default {
         loaded: false,
         loggedIn: false,
 
-        encrypted: null,
         version: null,
+        mnemonic: null,
+        seed: null,
+        seedIndex: null,
+        count: null,
+        countIndex: null,
+
+        encrypted: null,
 
         mainAddress: null,
 

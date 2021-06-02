@@ -1,11 +1,11 @@
 <template>
 
     <div>
-        <span class="disabled">Destination Address {{index !== null ? index+1 : ''}}</span>
+        <span class="gray">Destination Address {{index !== null ? index+1 : ''}}</span>
 
         <div :class="`${identicon ? 'destination': ''}-row`">
 
-            <account-identicon v-if="identicon" :identicon="identicon" size="35" outer-size="8" :type="type" />
+            <account-identicon v-if="identicon" :identicon="identicon" size="35" outer-size="8" :version="version" />
 
             <div class="input-toggle-group">
                 <input type="text" v-model="destination">
@@ -26,7 +26,7 @@
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
 import DestinationAmount from "./destination-amount.vue"
 import QrCodeScanner from "src/components/utils/qr-code-scanner/qr-code-scanner";
-const {WalletAddressTypeEnum} = PandoraLibrary.blockchain.wallet;
+const {Version} = PandoraPay.enums.wallet.address;
 
 export default {
 
@@ -48,7 +48,7 @@ export default {
 
         addressValidated(){
             try{
-                if (this.type === WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT) return PandoraPay.cryptography.addressValidator.validateAnyAddress( this.destination );
+                if (this.type === Version.VERSION_TRANSPARENT) return PandoraPay.cryptography.addressValidator.validateAnyAddress( this.destination );
             }catch(err){
             }
         },

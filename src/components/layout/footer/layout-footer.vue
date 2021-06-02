@@ -3,17 +3,17 @@
 
         <div class="boxed">
 
-            <div class="row pd-bottom-10 disabled">
+            <div class="row pd-bottom-10 gray">
                 <span>Consensus</span>
                 <span class="color">{{blockchainStatus}}</span>
                 <span>Block Height </span>
                 <span class="color">#{{blockHeight}}</span>
             </div>
 
-            <div class="row disabled">
-                <span>2019 -2020 <a href="http://PandoraPay.org" target="_blank">{{entity}}</a> - Wallet v {{version}}</span>
+            <div class="row gray">
+                <span>2019 - 2021 <a href="http://PandoraPay.org" target="_blank">{{entity}}</a> - Wallet v {{version}}</span>
             </div>
-            <div class="row disabled">
+            <div class="row gray">
                 <span>Disclaimer</span>
                 <span>Safety</span>
             </div>
@@ -46,7 +46,7 @@ export default {
             const status = this.$store.state.blockchain.status;
 
             if (status === 'sync') return 'Established';
-            if (status === 'syncing') return 'Synching';
+            if (status === 'syncing') return 'Syncing';
             if (status === 'offline') return 'Offline';
             if (status === 'online') return 'Connected';
 

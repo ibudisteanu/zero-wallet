@@ -9,17 +9,17 @@
             <span class="col-xs-4 col-sm-1 col-md-1 wordwrap">Time</span>
             <span class="hidden-xs col-sm-2 col-md-2 wordwrap">Size</span>
             <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">TX</span>
-            <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">Forge</span>
+            <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">Forger</span>
         </div>
         <div v-for="(blockInfo, key) in blocksInfo"
              class="row pd-top-10 pd-bottom-10"
              :key="`show-block-${key}`">
 
             <span class="hidden-xs col-sm-6 col-md-3 wordwrap">
-                <router-link :to="`/explorer/block/hash/${blockInfo.hash.toString('hex')}`">{{blockInfo.hash.toString("hex").substr(0, 20)+'...'}}</router-link>
+                <router-link :to="`/explorer/block/hash/${blockInfo.hash}`">{{blockInfo.hash.substr(0, 20)+'...'}}</router-link>
             </span>
             <span class="hidden-xs hidden-sm col-md-3 wordwrap">
-                {{blockInfo.kernelHash.toString("hex").substr(0, 20)+'...'}}
+                {{blockInfo.kernelHash.substr(0, 20)+'...'}}
             </span>
             <span class="col-xs-4 col-sm-1 col-md-1 wordwrap">
                 <router-link :to="`/explorer/block/height/${blockInfo.height}`">{{blockInfo.height}}</router-link>
@@ -31,10 +31,10 @@
                 {{formatBytes(blockInfo.size)}}
             </span>
             <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">
-                {{blockInfo.txCount}}
+                {{blockInfo.txs}}
             </span>
             <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">
-                <account-identicon  :publicKey="blockInfo.forgedBy" :size="20" :outer-size="5"  />
+                <account-identicon  :publicKeyHash="blockInfo.forger" :size="20" :outer-size="5"  />
             </span>
 
         </div>
@@ -46,6 +46,7 @@
 <script>
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
+import StringHelper from "src/utils/string-helper"
 
 export default {
 
@@ -58,11 +59,11 @@ export default {
     methods: {
 
         timeAgo(timestamp){
-            return PandoraLibrary.helpers.StringHelper.timeSince( timestamp*1000, false );
+            return StringHelper.timeSince( timestamp*1000, false );
         },
 
         formatBytes(bytes){
-            return PandoraLibrary.helpers.StringHelper.formatBytes(bytes, 1);
+            return StringHelper.formatBytes(bytes, 1);
         }
 
     },

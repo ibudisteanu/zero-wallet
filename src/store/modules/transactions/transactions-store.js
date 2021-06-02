@@ -4,7 +4,8 @@ export default {
 
     state: {
 
-        list: {},
+        txsByHash: {},
+        txsByHeight: {},
 
         pending: {},
         pendingNext: null,

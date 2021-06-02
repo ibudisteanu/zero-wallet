@@ -5,7 +5,7 @@
         <steps-bar :length="3" :active="step" />
 
         <template v-if="step === 1">
-            <span class="disabled">Node address</span>
+            <span class="gray">Node address</span>
             <select v-model="nodeAddress">
                 <option v-for="(node, key) in delegateStakesNodes"
                         :key="`node-${key}`"
@@ -105,7 +105,7 @@ export default {
             try{
 
                 const out = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/is-delegating-open', {
-                    address: this.address.address,
+                    address: this.address.addressEncoded,
                 } );
                 if (!out ) throw Error("Node is offline");
 
@@ -146,18 +146,18 @@ export default {
                 const publicKey = Buffer.from( this.address.publicKey, "hex");
 
                 //getting private key
-                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address, false);
+                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.addressEncoded, false);
                 const delegateStakePrivateKeyModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegate.delegateStakeNonce );
                 const delegateStakeAddressModel = delegateStakePrivateKeyModel.getAddressPublicKey();
 
-                const delegateStakePublicKeyHash = delegateStakeAddressModel.publicKeyHash;
-                if (!delegateStakePublicKeyHash.equals( Buffer.from(this.delegate.delegateStakePublicKeyHash, 'hex') ))
+                const delegateStakePublicKey = delegateStakeAddressModel.publicKey;
+                if (!delegateStakePublicKey.equals( Buffer.from(this.delegate.delegateStakePublicKey, 'hex') ))
                     throw Error("Delegated Private Key is different")
 
                 const concat = Buffer.concat([
                     challenge,
                     publicKey,
-                    delegateStakePublicKeyHash,
+                    delegateStakePublicKey,
                     delegateStakePrivateKeyModel ? delegateStakePrivateKeyModel.privateKey : Buffer.alloc(0),
                 ]);
 

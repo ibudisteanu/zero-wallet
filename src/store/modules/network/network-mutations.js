@@ -2,10 +2,11 @@ import Vue from 'vue';
 
 export default {
 
-    setNetworkByte(context, {networkByte, networkPrefix}) {
+    setNetworkByte(context, {networkByte, networkName, networkPrefix}) {
 
         context.networkByte = networkByte;
-        context.networkPrefix = networkPrefix;
+        context.networkName = networkName;
+        context.networkPrefix = networkPrefix
 
     },
 

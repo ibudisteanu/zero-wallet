@@ -13,7 +13,7 @@
             <div class="header-right-menu">
                <div class="inline">
                   <div class="network-text">
-                     {{$store.getters.networkName}}
+                     {{$store.state.network.networkName}}
                   </div>
                   <header-account />
                </div>

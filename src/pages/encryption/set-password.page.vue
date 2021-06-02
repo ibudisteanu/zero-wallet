@@ -7,13 +7,15 @@
                 <h1>Set Password</h1>
                 <span class="pd-bottom-20">Encrypting your wallet. Use a strong password to avoid brute forcing</span>
 
-                <span class="disabled">Password Strength</span>
+                TODO
+
+                <span class="gray">Password Strength</span>
                 <progress-bar :value="strengthPassword*20" :text="strengthPasswordMessage" />
 
-                <span class="disabled pd-top-20" >Password</span>
+                <span class="gray pd-top-20" >Password</span>
                 <password-input v-model="password"/>
 
-                <span class="disabled" >Retype Password</span>
+                <span class="gray" >Retype Password</span>
                 <password-input v-model="retypePassword"/>
 
                 <span v-if="error" class="danger">

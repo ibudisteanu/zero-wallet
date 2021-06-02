@@ -5,10 +5,6 @@
         <span class="thick">Private Key of Your Address "{{address ? address.name: ''}}"</span>
         <secret-key v-if="privateKey" class="pd-top-20" :text="privateKey" title="Private Key" warning="STEAL YOUR FUNDS FROM THIS ACCOUNT" />
 
-        <span v-if="error" class="danger">
-            {{error}}
-        </span>
-
     </modal>
 
 </template>
@@ -27,7 +23,6 @@ export default {
     data(){
         return {
             privateKey: '',
-            error:'',
         }
     },
 
@@ -63,20 +58,8 @@ export default {
 
         handleShowPrivateKey(){
 
-            this.error = '';
-
-            try{
-
-                const address = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.address );
-                if (!address) throw Error("Address not found");
-
-                const privateKey = address.keys.decryptPrivateKey();
-                this.privateKey = privateKey.toString("hex");
-
-            }catch(err){
-                this.error = err.message;
-            }finally{
-            }
+            const privateKey = this.address.privateKey.key;
+            this.privateKey = privateKey.toString("hex");
 
         },
 

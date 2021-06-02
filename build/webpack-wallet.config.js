@@ -2,37 +2,29 @@ const webpack = require('webpack')
 const base = require('./webpack.base.config')
 const merge = require('webpack-merge')
 const path = require('path')
+const CopyPlugin = require('copy-webpack-plugin');
 
-const config = merge(base, {
+module.exports = merge(base, {
     target: 'web',
-
-    node: {
-        child_process: "empty",
-        dgram: "empty",
-        fs: 'empty',
-        net: 'empty',
-        tls: 'empty',
-        uws: 'empty'
-    },
 
     //define entry point
     entry: {
         app: "./src/main.js",
     },
     output: {
-        path: path.resolve(__dirname, "dist/build"),
+        path: path.resolve(__dirname, "./../dist/build"),
         publicPath: "/",
-        filename: "Wallet-User-Interface-bundle.js"
+        filename: "Wallet-User-Interface.js"
     },
 
     plugins: [
         new webpack.DefinePlugin({
             "process.env": {
                 BROWSER: 'true'
-            }
-        })
+            },
+        }),
+        new CopyPlugin([
+        ])
     ]
 
 });
-
-module.exports = config

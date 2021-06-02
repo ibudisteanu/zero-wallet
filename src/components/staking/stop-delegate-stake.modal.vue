@@ -2,7 +2,7 @@
 
     <modal ref="modal" title="Stop Delegate Stake">
 
-        <span class="disabled">Delegate Nonce</span>
+        <span class="gray">Delegate Nonce</span>
         <input type="number" v-model="delegateStakeNonce" min="0" disabled="true" >
 
         <span v-if="error" class="danger">
@@ -74,7 +74,7 @@ export default {
                     nonce,
                     delegate:{
                         delegateStakeNonce: this.delegateStakeNonce,
-                        delegateStakePublicKeyHash: Buffer.alloc(20),
+                        delegateStakePublicKey: Buffer.alloc(20),
                         delegateStakeFee: 0,
                     },
                     memPoolValidateTxData: false,

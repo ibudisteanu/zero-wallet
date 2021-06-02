@@ -5,6 +5,7 @@ export default {
 
     state: {
         networkByte: 0,
+        networkName: '',
         networkPrefix: '',
     },
 
