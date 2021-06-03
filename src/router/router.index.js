@@ -73,7 +73,7 @@ const routes = [
 
 const router = new VueRouter({
     base: PandoraPayWalletOptions.router.base || '/',
-    mode: PandoraPayWalletOptions.router.mode || 'hash',
+    mode: PandoraPayWalletOptions.router.mode || 'history',
     scrollBehavior(to, from, savedPosition) {
         if (to.hash) {
             return { selector: to.hash }
