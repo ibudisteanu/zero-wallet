@@ -48,7 +48,7 @@ export default {
         this.progressStatus = "WASM Handler loading...";
 
         const script = document.createElement( 'script' );
-        script.setAttribute( 'src', './wasm_exec.js' );
+        script.setAttribute( 'src', PandoraPayWalletOptions.resPrefix + 'wasm_exec.js' );
         script.onload = async ()=>{
 
             this.progressStatus = "WASM Handler loaded";
@@ -59,7 +59,7 @@ export default {
             this.progressStatus = "WASM GO created";
             this.isDownloading = true;
 
-            fetch("./PandoraPay-wallet.wasm", {
+            fetch(PandoraPayWalletOptions.resPrefix+"PandoraPay-wallet.wasm", {
                 headers: {
                     'Content-Encoding': 'gzip',
                 }

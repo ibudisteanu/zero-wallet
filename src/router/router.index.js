@@ -71,14 +71,9 @@ const routes = [
 
 ];
 
-function options(){
-    if (!window.PandoraPayWalletOptions) return {}
-    return window.PandoraPayWalletOptions.router || {}
-}
-
 const router = new VueRouter({
-    base: options().base || '',
-    mode: options().mode || 'history',
+    base: PandoraPayWalletOptions.router.base || '/',
+    mode: PandoraPayWalletOptions.router.mode || 'hash',
     scrollBehavior(to, from, savedPosition) {
         if (to.hash) {
             return { selector: to.hash }
