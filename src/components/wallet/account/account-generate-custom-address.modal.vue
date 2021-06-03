@@ -37,7 +37,7 @@
                 </span>
             </div>
 
-<!--            <qr-code :data="address" />-->
+            <qr-code v-if="this.addressGenerated" :data="this.addressGenerated" />
         </div>
 
     </modal>
