@@ -1,8 +1,10 @@
 <template>
 
-    <div class="identicon outer" :style="`padding: ${outerSize}px; background-color: ${background}`">
-        <img :src="identiconSrc" class="identicon" :style="`width: ${size}px`" >
-    </div>
+    <router-link :to="`/address/${finalAddress}`" :disabled="!finalAddress && !disableRoute">
+        <div class="identicon outer" :style="`padding: ${outerSize}px; background-color: ${background}`">
+            <img :src="identiconSrc" class="identicon" :style="`width: ${size}px`" >
+        </div>
+    </router-link>
 
 </template>
 
@@ -16,17 +18,19 @@ export default {
         size: {default: 40},
         outerSize: {default: 34},
         outerColor: {default: "white;"},
-        version: {default: 0},
 
         identicon: {default: null},
         address: {default: ""},
         publicKey: {default: null},
         publicKeyHash: {default: null},
+
+        disableRoute: { default: false }
     },
 
     data(){
         return{
             identiconSrc: "",
+            finalAddress: "",
         }
     },
 
@@ -42,6 +46,8 @@ export default {
             handler: async function(newVal, oldVal){
                 if (newVal) {
                     this.identiconSrc = await Identicons.getIdenticon(newVal)
+                    const out = await PandoraPay.addresses.generateAddress(newVal)
+                    this.finalAddress = out[1]
                 }
             }
         },
@@ -51,6 +57,8 @@ export default {
                 if (newVal){
                     const publicKeyHash = await PandoraPay.cryptography.computePublicKeyHash(newVal)
                     this.identiconSrc = await Identicons.getIdenticon(publicKeyHash)
+                    const out = await PandoraPay.addresses.generateAddress(publicKeyHash)
+                    this.finalAddress = out[1]
                 }
             }
         },
@@ -60,6 +68,7 @@ export default {
                 if (newVal) {
                     const address = await PandoraPay.addresses.decodeAddress(newVal)
                     this.identiconSrc = await Identicons.getIdenticon(address.publicKeyHash)
+                    this.finalAddress = address
                 }
             }
         }

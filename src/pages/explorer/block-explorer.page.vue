@@ -62,7 +62,7 @@
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Reward</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap"><strong>{{this.reward}}</strong></span>
+                                <span class="col-xs-7 col-sm-9 wordwrap"><strong>{{formatMoney(this.reward)}}</strong></span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Version</span>
@@ -144,6 +144,7 @@ export default {
 
         timeAgo: (timestamp) => StringHelper.timeSince( timestamp*1000 ),
         formatBytes: (bytes) => StringHelper.formatBytes(bytes, 1),
+        formatMoney: (amount) => StringHelper.formatMoney(amount, 2),
 
         async loadBlock(){
 
