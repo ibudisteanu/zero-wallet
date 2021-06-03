@@ -1,6 +1,6 @@
 <template>
 
-    <modal ref="modal" :title="title" >
+    <modal ref="modal" :title="`QR Code: ${title}`" >
 
         <div class="qr-code pd-top-20">
             <qr-code :data="address" />

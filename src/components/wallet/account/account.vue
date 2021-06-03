@@ -1,25 +1,25 @@
 <template>
     <div>
-        <div v-if="account" class="account">
-            <account-identicon  :identicon="account.identicon" :size="60" :outer-size="20" :version="account.version" />
-            <div class="wordwrap pd-top-10">
+        <div v-if="account">
 
-                <span class="bold">{{account.name}}</span>
-                <span>{{typeName}}</span>
-                <div class="pd-top-20">
-                    <span>Address:</span>
-                    <span class="thick address" >{{getAddress}} </span>
-                    <i class="fa fa-2x fa-copy pointer"  @click="copyAddress(getAddress)"  v-tooltip.bottom="'Copy Address'" />
-                    <i class="fa fa-2x fa-qrcode pointer" @click="showAccountQRCode(getAddress, 'Address')" v-tooltip.bottom="'Show Address QR Code'" />
+            <div class="account">
+                <account-identicon  :identicon="account.identicon" :size="60" :outer-size="20" :version="account.version" />
+                <div class="wordwrap pd-top-10">
+                    <span class="bold">{{account.name}}</span>
+                    <span>{{typeName}}</span>
+                    <div class="pd-top-20">
+                        <span>Address:</span>
+                        <span class="thick address" >{{getAddress}} </span>
+                        <i class="fa fa-2x fa-copy pointer"  @click="copyAddress"  v-tooltip.bottom="'Copy Address'" />
+                        <i class="fa fa-2x fa-qrcode pointer" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'" />
+                        <i class="fa fa-2x fa-tools pointer"  @click="createCustomAddress"  v-tooltip.bottom="'Create custom address'" />
+                    </div>
                 </div>
-
-                <div class="pd-top-20">
-                    <span>TODO: Generate custom address</span>
-                </div>
-
-                <account-qr-code-modal ref="refAccountQRCodeModal"/>
-
             </div>
+
+            <account-qr-code-modal ref="refAccountQRCodeModal"/>
+            <account-generate-custom-address ref="refGenerateCustomAddress"/>
+
         </div>
 
     </div>
@@ -29,11 +29,12 @@
 
 import AccountIdenticon from "./account-identicon";
 import AccountQRCodeModal from "./account-qr-code.modal"
+import AccountGenerateCustomAddress from "./account-generate-custom-address.modal"
 const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 
-    components: { AccountIdenticon, 'accountQrCodeModal': AccountQRCodeModal,  },
+    components: { AccountGenerateCustomAddress, AccountIdenticon, 'accountQrCodeModal': AccountQRCodeModal,  },
 
     props: {
         account: {default: null},
@@ -54,13 +55,13 @@ export default {
     },
 
     methods: {
-        copyAddress(address){
+        copyAddress(){
 
-            this.$copyText(address).then( e =>
+            this.$copyText(this.getAddress).then( e =>
                 this.$notify({
                     type: 'success',
                     title: `Copied to clipboard successfully`,
-                    text: `Address ${address} copied to clipboard`,
+                    text: `Address ${this.getAddress} copied to clipboard`,
                 }),
                 e =>
                 this.$notify({
@@ -72,8 +73,12 @@ export default {
 
         },
 
-        showAccountQRCode(address, title){
-            this.$refs.refAccountQRCodeModal.showModal(address, title);
+        createCustomAddress(){
+            this.$refs.refGenerateCustomAddress.showModal(this.account);
+        },
+
+        showAccountQRCode(){
+            this.$refs.refAccountQRCodeModal.showModal(this.getAddress, this.account.name);
         }
 
     },
