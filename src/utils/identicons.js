@@ -22,7 +22,7 @@ class Identicons {
 
         const item = {
             key: key,
-            identicon: await PandoraPay.helpers.getIdenticon( key, 48, 48),
+            identicon: await PandoraPay.helpers.getIdenticon( key, 64, 64),
         }
 
         this.map[key] = item;

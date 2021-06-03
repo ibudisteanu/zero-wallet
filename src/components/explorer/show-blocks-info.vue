@@ -58,13 +58,8 @@ export default {
 
     methods: {
 
-        timeAgo(timestamp){
-            return StringHelper.timeSince( timestamp*1000, false );
-        },
-
-        formatBytes(bytes){
-            return StringHelper.formatBytes(bytes, 1);
-        }
+        timeAgo : (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
+        formatBytes: (bytes) => StringHelper.formatBytes(bytes, 1),
 
     },
 

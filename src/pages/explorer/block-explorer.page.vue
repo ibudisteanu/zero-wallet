@@ -14,7 +14,7 @@
 
                     <h3 class="wordwrap">Block {{height ? height : hash}} </h3>
 
-                    <div v-if="!blkComplete || !loaded">
+                    <div v-if="!loaded || !blk ">
                         <loading-spinner/>
                     </div>
                     <div v-else>
@@ -22,39 +22,39 @@
 
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Hash</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{blkComplete.block.bloom.hash}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{blk.bloom.hash}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Kernel Hash</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{blkComplete.block.bloom.kernelHash}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{blk.bloom.kernelHash}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Confirmations</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{ $store.state.blockchain.end - blkComplete.block.height -1 }}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{ $store.state.blockchain.end - blk.height -1 }}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Time</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{  timeAgo( $store.state.blockchain.genesisTimestamp + blkComplete.block.timestamp ) }} ago</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{  timeAgo( $store.state.blockchain.genesisTimestamp + blk.timestamp ) }} ago</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Height</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{blkComplete.block.height}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{blk.height}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Number of Transactions</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{blkComplete.txs.length}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{blk.txs.length}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Merkle root</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{blkComplete.block.merkleHash}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{blk.merkleHash}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Previous Hash</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap"><router-link :to="`/explorer/block/hash/${blkComplete.block.prevHash}`">{{blkComplete.block.prevHash}}</router-link></span>
+                                <span class="col-xs-7 col-sm-9 wordwrap"><router-link :to="`/explorer/block/hash/${blk.prevHash}`">{{blk.prevHash}}</router-link></span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Previous Kernel Hash</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{blkComplete.block.prevKernelHash}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{blk.prevKernelHash}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Fees</span>
@@ -62,31 +62,31 @@
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Reward</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap"><strong>TODO</strong></span>
+                                <span class="col-xs-7 col-sm-9 wordwrap"><strong>{{this.reward}}</strong></span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Version</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{blkComplete.block.version}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{blk.version}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Size</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{blkComplete.bloom.size}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{formatBytes( blk.bloomBlkComplete.size) }}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Forger</span>
                                 <div class="col-xs-7 col-sm-9">
-                                    <account-identicon class="vertical-center" :public-key-hash="blkComplete.block.bloom.delegatedPublicKeyHash" :size="20" :outer-size="5"  />
-                                    <span class="forger-address wordwrap">{{blkComplete.block.bloom.delegatedPublicKeyHash}}</span>
+                                    <account-identicon class="vertical-center" :public-key-hash="blk.bloom.delegatedPublicKeyHash" :size="20" :outer-size="5"  />
+                                    <span class="forger-address wordwrap">{{blk.bloom.delegatedPublicKeyHash}}</span>
                                 </div>
                             </div>
                             <div class="row pd-top-40 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">JSON</span>
-                                <textarea class="col-xs-7 col-sm-9" rows="20">{{ blkComplete }}</textarea>
+                                <textarea class="col-xs-7 col-sm-9" rows="20">{{ blk }}</textarea>
                             </div>
                         </div>
 
                         <h4>Transactions</h4>
-                        <show-transactions :transactions="transactions"/>
+                        <show-transactions :transactions="txs"/>
 
                     </div>
 
@@ -117,12 +117,14 @@ export default {
     data(){
         return {
 
-            fees: 'loading', //async data
-            transactions: 'loading',
+            fees: null, //async data
             loaded: false,
 
-            error: '',
+            blk: null,
+            txs: null,
+            reward: '',
 
+            error: '',
         }
     },
 
@@ -131,35 +133,21 @@ export default {
         height(){
             return this.$route.params.height;
         },
+
         hash(){
             return this.$route.params.hash;
-        },
-
-        blkComplete(){
-
-            let blkComplete;
-            if (this.height) blkComplete = this.$store.state.blockchain.blocks[this.height];
-            if (this.hash) blkComplete = this.$store.state.blockchain.blocksByHash[this.hash];
-
-            if (blkComplete) {
-                this.transactions = blkComplete.txs;
-                this.loaded = true;
-            } else {
-                Object.assign(this.$data, this.$options.data());
-            }
-
-            return blkComplete;
         },
 
     },
 
     methods: {
 
-        timeAgo(timestamp){
-            return StringHelper.timeSince( timestamp*1000 );
-        },
+        timeAgo: (timestamp) => StringHelper.timeSince( timestamp*1000 ),
+        formatBytes: (bytes) => StringHelper.formatBytes(bytes, 1),
 
         async loadBlock(){
+
+            this.loading = false
 
             if (this.height === undefined && !this.hash){
                 this.error = 'Block index was not specified';
@@ -170,10 +158,25 @@ export default {
 
             await Consensus.syncPromise;
 
-            if (this.height !== undefined)  return Consensus.getBlock(this.height);
-            if (this.hash ) return Consensus.getBlockByHash(this.hash);
+            let blk
+            try{
+                if (this.height !== undefined) blk = await  Consensus.getBlock(this.height);
+                if (this.hash ) blk = await Consensus.getBlockByHash(this.hash);
+            }catch(err){
+                this.error = err.toString()
+                return
+            }
+
+            this.blk = blk
+            this.txs = blk.txs
+
+            const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)
+            this.reward = await PandoraPay.config.coins.convertToBase( reward.toString() )
+
+            this.loaded = true
 
         },
+
 
     },
 
@@ -184,9 +187,7 @@ export default {
     },
 
     async mounted(){
-
         return this.loadBlock();
-
     }
 
 }

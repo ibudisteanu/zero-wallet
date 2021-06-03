@@ -40,6 +40,7 @@
 <script>
 
 const {version} = PandoraPay.enums.wallet.address;
+import StringHelper from "src/utils/string-helper"
 
 export default {
 
@@ -74,14 +75,8 @@ export default {
 
     methods: {
 
-        convertToBase(amount){
-            return PandoraPay.config.coins.convertToBase( amount.toString() );
-        },
-
-        formatMoney(amount){
-            //return PandoraLibrary.helpers.StringHelper.formatMoney(amount, 2);
-            return amount;
-        },
+        convertToBase: (amount) => PandoraPay.config.coins.convertToBase( amount.toString() ),
+        formatMoney: (amount) => StringHelper.formatMoney(amount, 2),
 
     }
 

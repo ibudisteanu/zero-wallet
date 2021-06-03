@@ -59,7 +59,11 @@ export default {
             this.progressStatus = "WASM GO created";
             this.isDownloading = true;
 
-            fetch("./PandoraPay-wallet.wasm")
+            fetch("./PandoraPay-wallet.wasm", {
+                headers: {
+                    'Content-Encoding': 'gzip',
+                }
+            })
                 .then(
                     fetchProgress({
                         // implement onProgress method

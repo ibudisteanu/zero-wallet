@@ -4,7 +4,7 @@ import consts from "consts/consts"
 
 class Consensus extends BaseConsensus{
 
-    processBlockchain(data){
+    async processBlockchain(data){
 
         data = JSON.parse(data)
 
@@ -13,7 +13,7 @@ class Consensus extends BaseConsensus{
         this._data.prevHash = data.prevHash;
 
         this.emit('consensus/blockchain-info-updated', this._data );
-        this.downloadBlocksHashes()
+        await this.downloadBlocksHashes()
 
     }
 
@@ -57,17 +57,17 @@ class Consensus extends BaseConsensus{
 
     }
 
-    _includeBlock(blkComplete){
+    _includeBlock(blk){
 
-        this.emit('consensus/block-downloaded', blkComplete );
-        this._data.blocks[blkComplete.block.height] = blkComplete;
-        this._data.blocksByHash[blkComplete.block.hash] = blkComplete;
+        this.emit('consensus/block-downloaded', blk );
+        this._data.blocks[blk.height] = blk;
+        this._data.blocksByHash[blk.hash] = blk;
 
         const data = {};
-        for (const tx of blkComplete.txs) {
+        for (const tx of blk.txs) {
             tx.__extra = {
-                height: blkComplete.block.height,
-                timestamp: blkComplete.block.timestamp,
+                height: blk.height,
+                timestamp: blk.timestamp,
             };
             this._data.transactions[tx.bloom.hash] = tx;
             data[tx.bloom.hash] = tx;
@@ -87,11 +87,11 @@ class Consensus extends BaseConsensus{
                 const blockData = await PandoraPay.network.getNetworkBlockComplete( hash );
                 if (!blockData) throw Error("Block was not received")
 
-                const blkComplete = JSON.parse(blockData)
-                if (blkComplete.block.bloom.hash !== hash) throw Error("Block hash was not matching")
+                const blk = JSON.parse(blockData)
+                if (blk.bloom.hash !== hash) throw Error("Block hash was not matching")
 
-                await this._includeBlock( blkComplete );
-                resolve(blkComplete);
+                await this._includeBlock( blk );
+                resolve(blk);
 
             }catch(err){
                 this.emit('consensus/error', "Error getting block" );
@@ -116,12 +116,12 @@ class Consensus extends BaseConsensus{
                 const blockData = await PandoraPay.network.getNetworkBlockComplete( height );
                 if (!blockData) throw Error("Block was not received")
 
-                const blkComplete = JSON.parse(blockData)
-                if (blkComplete.block.height !== height) throw Error("Block height was not matching")
+                const blk = JSON.parse(blockData)
+                if (blk.height !== height) throw Error("Block height was not matching")
 
 
-                await this._includeBlock( blkComplete );
-                resolve(blkComplete);
+                await this._includeBlock( blk );
+                resolve(blk);
             }catch(err){
                 reject(err);
             }finally{
