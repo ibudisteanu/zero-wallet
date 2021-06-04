@@ -14,10 +14,10 @@
 
                     <h3 class="wordwrap">Block {{height ? height : hash}} </h3>
 
-                    <div v-if="!loaded || !blk ">
+                    <template v-if="!loaded || !blk ">
                         <loading-spinner/>
-                    </div>
-                    <div v-else>
+                    </template>
+                    <template v-else>
                         <div class="table">
 
                             <div class="row pd-top-10 pd-bottom-10">
@@ -88,7 +88,7 @@
                         <h4>Transactions</h4>
                         <show-transactions :transactions="txs"/>
 
-                    </div>
+                    </template>
 
                 </div>
 
@@ -163,18 +163,18 @@ export default {
             try{
                 if (this.height !== undefined) blk = await  Consensus.getBlock(this.height);
                 if (this.hash ) blk = await Consensus.getBlockByHash(this.hash);
+
+                this.blk = blk
+                this.txs = blk.txs
+
+                const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)
+                this.reward = await PandoraPay.config.coins.convertToBase( reward.toString() )
+
+                this.loaded = true
+
             }catch(err){
                 this.error = err.toString()
-                return
             }
-
-            this.blk = blk
-            this.txs = blk.txs
-
-            const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)
-            this.reward = await PandoraPay.config.coins.convertToBase( reward.toString() )
-
-            this.loaded = true
 
         },
 

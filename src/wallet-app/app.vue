@@ -74,7 +74,7 @@ export default {
 
             if (name === "sockets/totalSocketsChanged"){
                 if (data > 0){
-                    Consensus.status = "sync"
+                    Consensus.status = "online"
                 } else {
                     Consensus.status = "offline"
                 }

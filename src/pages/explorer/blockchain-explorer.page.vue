@@ -12,15 +12,20 @@
 
                 <h3>Last blocks forged</h3>
 
-                <show-blocks-info :blocksInfo="lastBlocksInfo" />
-
                 <span v-if="error" class="danger">
                     {{error}}
                 </span>
 
-                <div class="centered" v-if="next">
-                    <loading-button class="button-width-inherit" @submit="handleViewMore" icon="fa fa-cloud-download-alt" text="View more..."/>
-                </div>
+                <template v-if="!loaded">
+                    <loading-spinner/>
+                </template>
+                <template v-else>
+                    <show-blocks-info :blocksInfo="lastBlocksInfo" />
+
+                    <div class="centered">
+                        <pagination :count-per-page="countPerPage" :current="page" :total="Math.floor(ending/30)" :prefix="'/explorer/'" />
+                    </div>
+                </template>
 
             </div>
         </div>
@@ -32,20 +37,33 @@
 
 import Layout from "src/components/layout/layout"
 import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
-import LoadingButton from "src/components/utils/loading-button.vue"
+import Pagination from "src/components/utils/pagination"
 import Consensus from "src/consensus/consensus"
+import LoadingSpinner from "src/components/utils/loading-spinner";
 
 export default {
 
-    components: { Layout, ShowBlocksInfo, LoadingButton },
+    components: { Layout, Pagination, ShowBlocksInfo, LoadingSpinner },
 
     data(){
         return {
             error: '',
+            countPerPage: 30,
+            loaded: true,
         }
     },
 
     computed:{
+
+        page(){
+            let page = this.$route.params.page || 1
+            if (typeof page == "string"){
+                page = Number.parseInt(page)
+                return page;
+            }
+            return 1
+        },
+
         lastBlocksInfo(){
             return this.$store.getters.blocksInfoSorted;
         },
@@ -54,26 +72,37 @@ export default {
             return this.$store.state.blockchain.end;
         },
 
-        next(){
-            return this.$store.state.blockchain.next;
-        }
     },
 
     methods: {
 
-        async handleViewMore(resolver){
+        async loadBlocksInfo(){
+            console.log(this.page)
+
+            this.loading = false
+
+            await Consensus.syncPromise;
 
             try{
-                await Consensus.downloadBlocksHashes(Math.max(this.next-10, 0), this.next)
-            }catch(err){
-                console.error(err)
-            }finally{
-                resolver(true);
-            }
+                await Consensus.downloadBlocksHashes( this.ending - ( this.page * this.countPerPage ), this.ending - ( (this.page-1) * this.countPerPage ) )
 
+                this.loaded = true
+            }catch(err){
+                this.error = err.toString()
+            }
         }
 
     },
+
+    watch: {
+        '$route' (to, from) {
+            return this.loadBlocksInfo();
+        }
+    },
+
+    mounted(){
+        return this.loadBlocksInfo();
+    }
 
 }
 

@@ -1,5 +1,4 @@
 import BaseConsensus from "./consensus-base";
-
 import consts from "consts/consts"
 
 class Consensus extends BaseConsensus{
@@ -12,23 +11,32 @@ class Consensus extends BaseConsensus{
         this._data.hash = data.hash;
         this._data.prevHash = data.prevHash;
 
+
         this.emit('consensus/blockchain-info-updated', this._data );
-        await this.downloadBlocksHashes()
+
+        if (this.status === "online") {
+            this.status = "sync"
+        }
 
     }
 
     async downloadBlocksHashes(starting = this.starting, ending = this.ending-1 ){
 
+        console.log("starting", "ending", starting, ending)
+
+        const before = {}
+        for (const key in this._data.blocksInfo)
+            before[key] = true
+
         let i, done = false;
-        for (i = ending; i >= starting && !done ; i-- ){
+        for (i = ending; i >= starting && !done; i-- ){
 
             const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( i );
 
             const blockInfo = JSON.parse(blockInfoData)
 
             if (!blockInfo || !blockInfo.hash){
-                this.emit('consensus/error', "Error getting block info" );
-                return
+                throw "Error getting block info"
             }
 
             blockInfo.height = i
@@ -38,7 +46,7 @@ class Consensus extends BaseConsensus{
                 continue
             }
 
-            if (!this._data.blocksInfo[i] || !this._data.blocksInfo[i].hash === blockInfo.hash ){
+            if (!this._data.blocksInfo[i] || this._data.blocksInfo[i].hash !== blockInfo.hash ){
 
                 if (this._data.blocksInfo[i] && this._data.blocksInfo[i].hash !== blockInfo.hash ){
                     this.emit('consensus/block-deleted', {hash: blockInfo.hash, height: i} );
@@ -94,7 +102,6 @@ class Consensus extends BaseConsensus{
                 resolve(blk);
 
             }catch(err){
-                this.emit('consensus/error', "Error getting block" );
                 reject(err);
             }finally{
                 delete this._promises.blocks[hash];
@@ -166,7 +173,6 @@ class Consensus extends BaseConsensus{
                 this._data.transactions[hash] = tx;
                 resolve(tx);
             }catch(err){
-                this.emit('consensus/error', "Error getting block" );
                 reject(err);
             } finally{
                 delete this._promises.transactions[hash];
@@ -206,7 +212,6 @@ class Consensus extends BaseConsensus{
                 this._data.transactions[tx.bloom.hash] = tx;
                 resolve(tx);
             }catch(err){
-                this.emit('consensus/error', "Error getting block" );
                 reject(err);
             } finally{
                 delete this._promises.transactions[height];

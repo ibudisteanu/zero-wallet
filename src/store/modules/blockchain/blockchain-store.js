@@ -8,7 +8,6 @@ export default {
         genesisTimestamp: 0,
 
         end: 0,
-        next: null,
 
         hash: '',
         prevHash: '',
