@@ -5,6 +5,8 @@ export default {
     entity: 'PandoraPay',
     version: '0.125',
 
+    blocksInfoPagination: 10,
+
     goArgv: [
         'js',
         '--devnet',

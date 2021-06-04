@@ -40,6 +40,7 @@ import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
 import Pagination from "src/components/utils/pagination"
 import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
+import consts from "consts/consts"
 
 export default {
 
@@ -48,12 +49,15 @@ export default {
     data(){
         return {
             error: '',
-            countPerPage: 10,
             loaded: false,
         }
     },
 
     computed:{
+
+        countPerPage(){
+            return consts.blocksInfoPagination
+        },
 
         page(){
             let page = this.$route.params.page || 1
@@ -77,14 +81,13 @@ export default {
     methods: {
 
         async loadBlocksInfo(){
-            console.log(this.page)
 
             this.loading = false
 
             await Consensus.syncPromise;
 
             try{
-                await Consensus.downloadBlocksHashes( this.ending - ( this.page * this.countPerPage ), this.ending - 1 - ( (this.page-1) * this.countPerPage  ) )
+                await Consensus.downloadBlocksHashes( this.ending - ( this.page * this.countPerPage )  )
 
                 this.loaded = true
             }catch(err){

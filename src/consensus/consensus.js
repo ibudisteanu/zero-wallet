@@ -17,63 +17,50 @@ class Consensus extends BaseConsensus{
             this.status = "sync"
         }
 
-        await this.downloadBlocksHashes(this.starting, this.ending - 20, false )
+        await this.downloadBlocksHashes( this.ending - consts.blocksInfoPagination )
 
     }
 
-
-
-    async downloadBlocksHashes( starting, ending, remove = true ){
+    async downloadBlocksHashes( starting ){
 
         starting = Math.max(0, starting )
-        ending = Math.min(ending, this.ending-1 )
+        const ending = Math.min( starting + consts.blocksInfoPagination -1, this.ending-1 )
 
-
-        const removeBlocksInfo = {}
-        for (const key in this._data.blocksInfo)
-            removeBlocksInfo[key] = true
+        console.log(starting, ending)
 
         const newBlocksInfo = {}
-        let i;
-        for (i = ending; i >= starting ; i-- ){
+
+        for (let i = ending; i >= starting ; i-- ){
 
             const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( i );
-
             const blockInfo = JSON.parse(blockInfoData)
 
-            if (!blockInfo || !blockInfo.hash){
+            if (!blockInfo || !blockInfo.hash)
                 throw "Error getting block info"
-            }
 
             blockInfo.height = i
-
-            if (this._data.blocksInfo[i] && this._data.blocksInfo[i].hash === blockInfo.hash ){
+            if (this._data.blocksInfo[i] && this._data.blocksInfo[i].hash === blockInfo.hash )
                 break
-            }
 
             if (!this._data.blocksInfo[i] || this._data.blocksInfo[i].hash !== blockInfo.hash ){
                 this._data.blocksInfo[i] = blockInfo;
                 newBlocksInfo[i] = blockInfo
             }
 
-            delete removeBlocksInfo[i]
-
         }
 
         this.emit('consensus/blocks-info-downloaded', newBlocksInfo );
 
-        if (remove ){
-            const deletedBlocksInfo = []
-            for (const key in removeBlocksInfo){
-                const height = Number.parseInt(key)
-                if (this._data.blocksInfo[height]) {
-                    deletedBlocksInfo.push(key)
-                    delete this._data.blocksInfo[key]
-                }
+        const deletedBlocksInfo = []
+        for (const key in this._data.blocksInfo){
+            const height = Number.parseInt(key)
+            if (height < starting || height > ending && height) {
+                deletedBlocksInfo.push(key)
+                delete this._data.blocksInfo[key]
             }
-            if (deletedBlocksInfo.length > 0)
-                this.emit('consensus/blocks-info-delete', deletedBlocksInfo);
         }
+        if (deletedBlocksInfo.length > 0)
+            this.emit('consensus/blocks-info-delete', deletedBlocksInfo);
 
     }
 
