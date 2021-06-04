@@ -3,7 +3,7 @@ import consts from "consts/consts"
 
 class Consensus extends BaseConsensus{
 
-    async processBlockchain(data){
+    async processBlockchain(data) {
 
         data = JSON.parse(data)
 
@@ -11,25 +11,31 @@ class Consensus extends BaseConsensus{
         this._data.hash = data.hash;
         this._data.prevHash = data.prevHash;
 
-
-        this.emit('consensus/blockchain-info-updated', this._data );
+        this.emit('consensus/blockchain-info-updated', this._data);
 
         if (this.status === "online") {
             this.status = "sync"
         }
 
+        await this.downloadBlocksHashes(this.starting, this.ending - 20, false )
+
     }
 
-    async downloadBlocksHashes(starting = this.starting, ending = this.ending-1 ){
 
-        console.log("starting", "ending", starting, ending)
 
-        const before = {}
+    async downloadBlocksHashes( starting, ending, remove = true ){
+
+        starting = Math.max(0, starting )
+        ending = Math.min(ending, this.ending-1 )
+
+
+        const removeBlocksInfo = {}
         for (const key in this._data.blocksInfo)
-            before[key] = true
+            removeBlocksInfo[key] = true
 
-        let i, done = false;
-        for (i = ending; i >= starting && !done; i-- ){
+        const newBlocksInfo = {}
+        let i;
+        for (i = ending; i >= starting ; i-- ){
 
             const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( i );
 
@@ -42,21 +48,31 @@ class Consensus extends BaseConsensus{
             blockInfo.height = i
 
             if (this._data.blocksInfo[i] && this._data.blocksInfo[i].hash === blockInfo.hash ){
-                done = true;
-                continue
+                break
             }
 
             if (!this._data.blocksInfo[i] || this._data.blocksInfo[i].hash !== blockInfo.hash ){
-
-                if (this._data.blocksInfo[i] && this._data.blocksInfo[i].hash !== blockInfo.hash ){
-                    this.emit('consensus/block-deleted', {hash: blockInfo.hash, height: i} );
-                }
-
                 this._data.blocksInfo[i] = blockInfo;
-                this.emit('consensus/block-info-downloaded', blockInfo );
-
+                newBlocksInfo[i] = blockInfo
             }
 
+            delete removeBlocksInfo[i]
+
+        }
+
+        this.emit('consensus/blocks-info-downloaded', newBlocksInfo );
+
+        if (remove ){
+            const deletedBlocksInfo = []
+            for (const key in removeBlocksInfo){
+                const height = Number.parseInt(key)
+                if (this._data.blocksInfo[height]) {
+                    deletedBlocksInfo.push(key)
+                    delete this._data.blocksInfo[key]
+                }
+            }
+            if (deletedBlocksInfo.length > 0)
+                this.emit('consensus/blocks-info-delete', deletedBlocksInfo);
         }
 
     }

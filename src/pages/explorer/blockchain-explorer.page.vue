@@ -23,7 +23,7 @@
                     <show-blocks-info :blocksInfo="lastBlocksInfo" />
 
                     <div class="centered">
-                        <pagination :count-per-page="countPerPage" :current="page" :total="Math.floor(ending/30)" :prefix="'/explorer/'" />
+                        <pagination :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" :prefix="'/explorer/'" />
                     </div>
                 </template>
 
@@ -48,8 +48,8 @@ export default {
     data(){
         return {
             error: '',
-            countPerPage: 30,
-            loaded: true,
+            countPerPage: 10,
+            loaded: false,
         }
     },
 
@@ -84,7 +84,7 @@ export default {
             await Consensus.syncPromise;
 
             try{
-                await Consensus.downloadBlocksHashes( this.ending - ( this.page * this.countPerPage ), this.ending - ( (this.page-1) * this.countPerPage ) )
+                await Consensus.downloadBlocksHashes( this.ending - ( this.page * this.countPerPage ), this.ending - 1 - ( (this.page-1) * this.countPerPage  ) )
 
                 this.loaded = true
             }catch(err){

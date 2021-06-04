@@ -16,15 +16,22 @@ export default {
         context.status = status;
     },
 
-    setBlockchainBlockInfo(context, blockInfo ){
-        Vue.set(context.blocksInfo, blockInfo.height, blockInfo);
+    setBlockchainBlocksInfo(context, blocksInfo ){
+        for (const key in blocksInfo){
+            Vue.set(context.blocksInfo, blocksInfo[key].height, blocksInfo[key]);
+        }
+    },
+
+    deleteBlockchainBlocksInfo(context, blocksInfo  ){
+        for (const height of blocksInfo){
+            Vue.delete(context.blocksInfo, height);
+        }
     },
 
     deleteBlockchainBlock(context, {height, hash} ){
         Vue.delete(context.blocks, height);
-        Vue.delete(context.blocksByHash, hash.toString("hex") );
+        Vue.delete(context.blocksByHash, hash );
     },
-
 
     setBlockchainBlock(context, blk ){
         Vue.set(context.blocks, blk.height, blk);

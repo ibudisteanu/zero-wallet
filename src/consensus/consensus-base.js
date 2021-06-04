@@ -73,10 +73,10 @@ export default class BaseConsensus extends EventEmitter{
 
         if (newValue === this._status) return;
 
-        this._status = newValue;
-
-        if (this._status === "offline")
+        if (this._status === "sync" && newValue === "offline")
             this._createSyncPromise();
+
+        this._status = newValue;
 
         if (newValue === "sync")
             this._syncPromiseResolve(true);
