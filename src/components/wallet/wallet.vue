@@ -10,7 +10,7 @@
                     <account-identicon :public-key-hash="publicKeyHash" :size="40" :outer-size="8" />
                     <div>
                         <span>Account</span>
-                        <span class="bold">{{address.addressEncoded}}</span>
+                        <span class="bold wordwrap">{{address.addressEncoded}}</span>
                     </div>
                 </div>
             </div>
@@ -25,7 +25,6 @@
             <balances :address="address"> </balances>
             <transactions :address="address"> </transactions>
         </template>
-
 
     </div>
     <div v-else>
