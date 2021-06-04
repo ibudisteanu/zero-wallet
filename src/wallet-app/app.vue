@@ -90,6 +90,7 @@ export default {
                 }else
                 if (name === "consensus/update"){
                     Consensus.processBlockchain(data)
+                    Consensus.setAccounts( this.$store.state.addresses.list, true );
                 }
             }
             console.log("JS NAME:", name, "data", data)

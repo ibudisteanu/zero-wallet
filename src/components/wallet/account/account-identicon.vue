@@ -66,7 +66,10 @@ export default {
             immediate: true,
             handler: async function(newVal, oldVal){
                 if (newVal) {
-                    const address = await PandoraPay.addresses.decodeAddress(newVal)
+                    console.log("address", newVal)
+                    const addressData = await PandoraPay.addresses.decodeAddress(newVal)
+                    const address = JSON.parse(addressData)
+                    console.log("address2", address)
                     this.identiconSrc = await Identicons.getIdenticon(address.publicKeyHash)
                     this.finalAddress = address
                 }

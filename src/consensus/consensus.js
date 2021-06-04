@@ -64,6 +64,62 @@ class Consensus extends BaseConsensus{
 
     }
 
+    async unsubscribeAccount(account){
+
+    }
+
+    async subscribeAccount(accountPublicKeyHash){
+
+        console.log("subscribeAccount", accountPublicKeyHash)
+        if (this._promises.accounts[accountPublicKeyHash]) return this._promises.accounts[accountPublicKeyHash];
+
+        return this._promises.accounts[accountPublicKeyHash] = new Promise( async (resolve, reject) => {
+
+            let accountData = await PandoraPay.network.subscribeNetworkAccount( "", accountPublicKeyHash );
+            if (!accountData) return false;
+
+            console.log("accountData", accountData)
+
+            // const prevAcc = this._data.accounts[account];
+            // const type = WalletAddressTypeEnum.WALLET_ADDRESS_TRANSPARENT;
+
+            try{
+
+            }catch(err){
+                reject(err)
+            }finally{
+                delete this._promises.accounts[accountPublicKeyHash];
+            }
+
+        })
+
+    }
+
+    async setAccounts( accounts ){
+
+        const exists = {}
+
+        for (const account in accounts) {
+
+            exists[account] = true
+
+            if (!this._data.accounts[account]){
+                this._data.accounts[account] = {
+                    publicKeyHash: accounts[account].publicKeyHash,
+                }
+                await this.subscribeAccount(accounts[account].publicKeyHash);
+            }
+
+        }
+
+        for (const account in this._data.accounts){
+            if (!exists[account]){
+                await this.unsubscribeAccount(this._data.accounts[account].publicKeyHash)
+            }
+        }
+
+    }
+
     stopDownloadPendingTransactions(){
 
     }

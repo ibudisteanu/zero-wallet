@@ -11,10 +11,19 @@ export default class BaseConsensus extends EventEmitter{
             blocks: {},
             blocksByHash: {},
             transactions: {},
+            accounts: {},
         }
+
+        this._subscribes = {
+            accounts: {
+
+            }
+        }
+
         this._promises = {
             blocks: {},
             transactions: {},
+            accounts: {},
         }
 
         this._startedStatus = false;
