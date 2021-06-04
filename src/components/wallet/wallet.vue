@@ -1,31 +1,34 @@
 <template>
 
-    <div>
+    <div v-if="address">
 
         <div class="container">
             <div class="boxed  pd-top-30 pd-bottom-30">
 
                 <span class="bold pd-bottom-20"> Account Details </span>
                 <div class="balance-title">
-                    <account-identicon :address="address" :size="40" :outer-size="8" />
+                    <account-identicon :public-key-hash="publicKeyHash" :size="40" :outer-size="8" />
                     <div>
                         <span>Account</span>
-                        <span class="bold">{{address}}</span>
+                        <span class="bold">{{address.addressEncoded}}</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div v-if="!account" class="container">
-            <div class="boxed centered pd-top-30 pd-bottom-30">
+        <div v-if="!address.loaded" class="container">
+            <div class="boxed centered ">
                 <loading-spinner />
             </div>
         </div>
-
-        <template v-if="account">
-            <balances :address="account"> </balances>
-            <transactions :address="account"> </transactions>
+        <template v-else>
+            <balances :address="address"> </balances>
+            <transactions :address="address"> </transactions>
         </template>
+
+
+    </div>
+    <div v-else>
 
     </div>
 
@@ -43,12 +46,12 @@ export default {
     components: {Balances, Transactions, AccountIdenticon, LoadingSpinner},
 
     props: {
-        address: {default: ""}
+        publicKeyHash: {default: ""}
     },
 
     computed:{
-        account(){
-            return this.$store.state.addresses.list[this.address];
+        address(){
+            return this.$store.state.addresses.list[this.publicKeyHash];
         }
     },
 

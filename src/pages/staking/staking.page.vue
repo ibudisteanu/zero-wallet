@@ -108,7 +108,7 @@ export default {
     computed:{
 
         address(){
-            return this.$store.state.addresses.list[this.$store.state.wallet.mainAddress] ;
+            return this.$store.state.addresses.list[this.$store.state.wallet.mainPublicKeyHash] ;
         },
 
         balance(){

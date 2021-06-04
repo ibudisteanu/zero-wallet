@@ -34,11 +34,11 @@ export default {
         context.count = null;
         context.countIndex = null;
 
-        localStorage.removeItem('mainAddress');
+        localStorage.removeItem('mainPublicKeyHash');
     },
 
-    setMainAddress( context, value){
-        context.mainAddress = value;
-        localStorage.setItem('mainAddress', value);
+    setMainPublicKeyHash( context, value){
+        context.mainPublicKeyHash = value;
+        localStorage.setItem('mainPublicKeyHash', value);
     },
 }

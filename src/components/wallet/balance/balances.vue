@@ -1,9 +1,9 @@
 <template>
 
     <div class="container">
-        <div class="boxed centered pd-top-30 pd-bottom-30">
+        <div class="boxed centered pd-bottom-30">
 
-            <div v-if="isEmpty" class="pd-top-20">
+            <div v-if="isEmpty">
                 <strong>Empty address</strong>
             </div>
             <div v-else>

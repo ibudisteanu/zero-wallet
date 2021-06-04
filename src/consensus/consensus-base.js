@@ -14,7 +14,7 @@ export default class BaseConsensus extends EventEmitter{
             accounts: {},
         }
 
-        this._subscribes = {
+        this._subscribed = {
             accounts: {
 
             }

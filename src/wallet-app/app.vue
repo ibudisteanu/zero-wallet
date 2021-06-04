@@ -62,6 +62,8 @@ export default {
 
         Consensus.on("consensus/status-update", status =>  this.$store.commit('setConsensusStatus', status) );
 
+        Consensus.on("consensus/account-transparent-update", status => this.$store.commit('setTransparentAddressUpdate', status))
+
         let initialized = false
         PandoraPay.events.subscribe((name, data)=>{
 
@@ -141,35 +143,36 @@ export default {
 
         async readAddresses(wallet){
 
-            let mainAddress = localStorage.getItem('mainAddress') || null;
+            let mainPublicKeyHash = localStorage.getItem('mainPublicKeyHash') || null;
 
             let firstAddress;
             const addresses = {};
             for (let i=0; i < wallet.addresses.length; i++ ){
 
+                const publicKeyHash = wallet.addresses[i].publicKeyHash
                 const addr = {
                     ...wallet.addresses[i],
                     loaded: false,
-                    identicon: await Identicons.getIdenticon(wallet.addresses[i].publicKeyHash),
+                    identicon: await Identicons.getIdenticon(publicKeyHash),
                 };
 
-                addresses[addr.addressEncoded] = addr;
+                addresses[publicKeyHash] = addr;
 
                 if (i === 0)
-                    firstAddress = addr.addressEncoded;
+                    firstAddress = publicKeyHash;
             }
 
             //localstorage
-            if (mainAddress && addresses[mainAddress])
-                this.$store.commit('setMainAddress', mainAddress);
+            if (mainPublicKeyHash && addresses[mainPublicKeyHash])
+                this.$store.commit('setMainPublicKeyHash', mainPublicKeyHash);
 
-            if (this.$store.state.wallet.mainAddress && !addresses[this.$store.state.wallet.mainAddress])
-                this.$store.commit('setMainAddress', null );
+            if (this.$store.state.wallet.mainPublicKeyHash && !addresses[this.$store.state.wallet.mainPublicKeyHash])
+                this.$store.commit('setMainPublicKeyHash', null );
 
-            if (!this.$store.state.wallet.mainAddress && firstAddress )
-                this.$store.commit('setMainAddress', firstAddress );
+            if (!this.$store.state.wallet.mainPublicKeyHash && firstAddress )
+                this.$store.commit('setMainPublicKeyHash', firstAddress );
 
-            this.$store.commit('setAddresses', addresses );
+            this.$store.commit('addAddresses', addresses );
 
         }
 
