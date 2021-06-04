@@ -21,7 +21,7 @@ export default {
 
     computed:{
         publicKeyHash(){
-            if (this.$route.params.publicKeyHash){
+            if (this.$route.params.parameter){
                 return this.computedPublicKeyHash
             }
             return this.$store.state.wallet.mainPublicKeyHash;
@@ -32,12 +32,15 @@ export default {
 
         async loadAddress(){
 
-            if (this.$route.params.publicKeyHash){
-                if (this.$route.params.publicKeyHash.length === 40) {
-                    this.computedPublicKeyHash = this.$route.params.publicKeyHash
+            const parameter = this.$route.params.parameter
+            if (parameter){
+
+                if (parameter.length === 40) {
+                    this.computedPublicKeyHash = parameter
                 }else {
-                    const addressData = await PandoraPay.addresses.decodeAddress(this.$route.params.publicKeyHash)
+                    const addressData = await PandoraPay.addresses.decodeAddress(parameter)
                     const address = JSON.parse(addressData)
+                    address.addressEncoded = parameter
                     this.$store.commit('addAddress', address)
                     this.computedPublicKeyHash = address.publicKeyHash
                 }

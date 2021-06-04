@@ -66,7 +66,7 @@ const routes = [
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
 
     {path: '/', component: WalletPage, beforeEnter: guardDecrypted },
-    {path: '/address/:publicKeyHash', component: WalletPage },
+    {path: '/address/:parameter', component: WalletPage },
 
     { path: '*', name: 'not-found', component: NotFoundPage,}
 

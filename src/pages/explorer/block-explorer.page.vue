@@ -144,7 +144,7 @@ export default {
 
         timeAgo: (timestamp) => StringHelper.timeSince( timestamp*1000 ),
         formatBytes: (bytes) => StringHelper.formatBytes(bytes, 1),
-        formatMoney: (amount) => StringHelper.formatMoney(amount, 2),
+        formatMoney: (amount) => StringHelper.formatMoney(amount, PandoraPay.config.coins.DECIMAL_SEPARATOR  ),
 
         async loadBlock(){
 

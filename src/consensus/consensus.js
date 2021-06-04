@@ -21,6 +21,7 @@ class Consensus extends BaseConsensus{
 
     }
 
+
     async downloadBlocksHashes( starting ){
 
         starting = Math.max(0, starting )
@@ -68,27 +69,30 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async subscribeAccount(accountPublicKeyHash){
+    async subscribeAccount(publicKeyHash){
 
-        if (this._promises.accounts[accountPublicKeyHash]) return this._promises.accounts[accountPublicKeyHash];
+        if (this._promises.accounts[publicKeyHash]) return this._promises.accounts[publicKeyHash];
 
-        return this._promises.accounts[accountPublicKeyHash] = new Promise( async (resolve, reject) => {
+        return this._promises.accounts[publicKeyHash] = new Promise( async (resolve, reject) => {
 
-            let accountData = await PandoraPay.network.subscribeNetworkAccount( "", accountPublicKeyHash );
-            if (!accountData) return false;
+            let accountData = await PandoraPay.network.subscribeNetworkAccount( "", publicKeyHash );
+            if (!accountData) {
+                this.emit('consensus/account-transparent-update', { publicKeyHash , account: null  } )
+                return
+            }
 
             try{
                 const account = JSON.parse(accountData)
                 console.log("accountData", account)
 
-                this._subscribed[accountPublicKeyHash] = account
-                this.emit('consensus/account-transparent-update', { accountPublicKeyHash, account  } );
+                this._subscribed[publicKeyHash] = account
+                this.emit('consensus/account-transparent-update', { publicKeyHash, account  } );
 
                 resolve(account)
             }catch(err){
                 reject(err)
             }finally{
-                delete this._promises.accounts[accountPublicKeyHash];
+                delete this._promises.accounts[publicKeyHash];
             }
 
         })

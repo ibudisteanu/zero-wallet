@@ -3,20 +3,9 @@
     <div class="row pd-top-30">
 
         <div class="col-xs-6 col-sm-8">
-
-            <div class="balance thick" v-if="isAmountAvailable">
+            <div class="balance thick" >
                 <span>
-                    {{formatMoney( convertToBase( balance.amount ) ) }}
-                </span>
-            </div>
-            <div v-else-if="isScanning">
-                <span>Scanning... {{scanPercent}}%</span>
-                <div class="progress">
-                    <div class="bar" :style="`width:${scanPercent}%`">
-                    </div>
-                </div>
-                <span v-if="getToken">
-                    Scan {{balance.scanIndex / Math.pow(10, getToken.decimalSeparator) }}
+                    {{formatMoney( convertToBase( balance ) ) }}
                 </span>
             </div>
 
@@ -39,45 +28,26 @@
 
 <script>
 
-const {version} = PandoraPay.enums.wallet.address;
+const {VERSION_TRANSPARENT} = PandoraPay.enums.wallet.address.version;
 import StringHelper from "src/utils/string-helper"
 
 export default {
 
     props: {
-        version: {default: version.VERSION_TRANSPARENT},
+        version: {default: VERSION_TRANSPARENT},
         token: {default: ''},
-        balance: {default: null},
+        balance: {default: 0},
     },
 
     computed: {
-
-        version: () => version,
-
-        scanPercent(){
-            return ((this.balance.scanIndex || 0) / Number.MAX_SAFE_INTEGER * 100).toFixed(3);
-        },
-
-        isAmountAvailable(){
-            return this.version === version.VERSION_TRANSPARENT
-        },
-
-        isScanning(){
-            return false;
-        },
-
         getToken(){
             return this.$store.state.tokens.list[this.token];
         }
-
-
     },
 
     methods: {
-
         convertToBase: (amount) => PandoraPay.config.coins.convertToBase( amount.toString() ),
-        formatMoney: (amount) => StringHelper.formatMoney(amount, 2),
-
+        formatMoney: (amount) => StringHelper.formatMoney(amount, PandoraPay.config.coins.DECIMAL_SEPARATOR ),
     }
 
 }

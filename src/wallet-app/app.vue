@@ -63,6 +63,7 @@ export default {
         Consensus.on("consensus/status-update", status =>  this.$store.commit('setConsensusStatus', status) );
 
         Consensus.on("consensus/account-transparent-update", status => this.$store.commit('setTransparentAddressUpdate', status))
+        Consensus.on("consensus/account-loaded", status => this.$store.commit('setAddressLoaded', status))
 
         let initialized = false
         PandoraPay.events.subscribe((name, data)=>{

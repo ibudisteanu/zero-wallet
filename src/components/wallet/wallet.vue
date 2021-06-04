@@ -3,7 +3,7 @@
     <div v-if="address">
 
         <div class="container">
-            <div class="boxed  pd-top-30 pd-bottom-30">
+            <div class="boxed pd-top-30 pd-bottom-30">
 
                 <span class="bold pd-bottom-20"> Account Details </span>
                 <div class="balance-title">
@@ -29,7 +29,11 @@
 
     </div>
     <div v-else>
-
+        <div class="container">
+            <div class="boxed centered pd-top-30 pd-bottom-30">
+                <loading-spinner />
+            </div>
+        </div>
     </div>
 
 </template>
