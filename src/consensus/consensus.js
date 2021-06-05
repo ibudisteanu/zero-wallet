@@ -70,23 +70,16 @@ class Consensus extends BaseConsensus{
     }
 
     async subscribeAccount(publicKeyHash){
-
         if (this._promises.accounts[publicKeyHash]) return this._promises.accounts[publicKeyHash];
-
         return this._promises.accounts[publicKeyHash] = new Promise( async (resolve, reject) => {
 
-            let accountData = await PandoraPay.network.subscribeNetworkAccount( "", publicKeyHash );
-            if (!accountData) {
-                this.emit('consensus/account-transparent-update', { publicKeyHash , account: null  } )
-                return
-            }
-
             try{
-                const account = JSON.parse(accountData)
-                console.log("accountData", account)
+                await PandoraPay.network.subscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT );
 
-                this._subscribed[publicKeyHash] = account
-                this.emit('consensus/account-transparent-update', { publicKeyHash, account  } );
+                const out = await PandoraPay.network.getNetworkAccount(publicKeyHash);
+                const account = JSON.parse(out)
+
+                this.emit("consensus/account-transparent-update", {publicKeyHash, account })
 
                 resolve(account)
             }catch(err){
@@ -96,7 +89,6 @@ class Consensus extends BaseConsensus{
             }
 
         })
-
     }
 
     async setAccounts( accounts ){
@@ -117,9 +109,8 @@ class Consensus extends BaseConsensus{
         }
 
         for (const account in this._data.accounts){
-            if (!exists[account]){
+            if (!exists[account])
                 await this.unsubscribeAccount(this._data.accounts[account].publicKeyHash)
-            }
         }
 
     }

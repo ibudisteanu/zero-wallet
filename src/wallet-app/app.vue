@@ -79,9 +79,9 @@ export default {
                 if (data === "initialized"){
                     initialized = true
 
-                    PandoraPay.events.listenNetworkNotifications((name, data)=>{
-                        console.log("listenNetworkNotifications!!", name, data)
-                        this.$store.commit('setTransparentAddressUpdate', {publicKeyHash: name, account: JSON.parse(data) })
+                    PandoraPay.events.listenNetworkNotifications(( subscriptionType, key, data)=>{
+                        if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT)
+                            this.$store.commit('setTransparentAddressUpdate', {publicKeyHash: key, account: JSON.parse(data) })
                     })
 
                     this.readWallet()
