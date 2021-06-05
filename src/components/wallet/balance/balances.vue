@@ -70,7 +70,7 @@ export default {
         },
 
         isEmpty(){
-            return this.address.account.balances.length === 0
+            return !this.address.account || !this.address.account.balances.length
         }
 
     },

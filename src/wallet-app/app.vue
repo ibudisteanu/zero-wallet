@@ -48,7 +48,14 @@ export default {
     },
 
     async mounted(){
+
         if (typeof window === "undefined") return;
+
+        this.$store.commit('setNetworkByte', {
+            networkByte: PandoraPay.config.NETWORK_SELECTED,
+            networkPrefix: PandoraPay.config.NETWORK_SELECTED_NAME,
+            networkName: PandoraPay.config.NETWORK_SELECTED_NAME,
+        })
 
         Consensus.on("consensus/blockchain-info-updated", info => this.$store.commit('setBlockchainInfo', info) )
 
@@ -66,11 +73,16 @@ export default {
         Consensus.on("consensus/account-loaded", status => this.$store.commit('setAddressLoaded', status))
 
         let initialized = false
-        PandoraPay.events.subscribe((name, data)=>{
+        PandoraPay.events.listenEvents((name, data)=>{
 
             if (name === "main") {
                 if (data === "initialized"){
                     initialized = true
+
+                    PandoraPay.events.listenNetworkNotifications((name, data)=>{
+                        console.log("listenNetworkNotifications!!", name, data)
+                        this.$store.commit('setTransparentAddressUpdate', {publicKeyHash: name, account: JSON.parse(data) })
+                    })
 
                     this.readWallet()
                 }
@@ -97,12 +109,6 @@ export default {
                 }
             }
             console.log("JS NAME:", name, "data", data)
-        })
-
-        this.$store.commit('setNetworkByte', {
-            networkByte: PandoraPay.config.NETWORK_SELECTED,
-            networkPrefix: PandoraPay.config.NETWORK_SELECTED_NAME,
-            networkName: PandoraPay.config.NETWORK_SELECTED_NAME,
         })
 
         PandoraPay.helpers.start().then(()=>{
