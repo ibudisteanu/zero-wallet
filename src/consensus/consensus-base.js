@@ -12,6 +12,7 @@ export default class BaseConsensus extends EventEmitter{
             blocksByHash: {},
             transactions: {},
             accounts: {},
+            tokensInfo: {}
         }
 
         this._subscribed = {
@@ -22,6 +23,7 @@ export default class BaseConsensus extends EventEmitter{
 
         this._promises = {
             blocks: {},
+            blocksInfo: {},
             transactions: {},
             accounts: {},
         }

@@ -97,12 +97,12 @@ export default {
             }
 
             if (initialized) {
-                if (name === "wallet/added") {
+                if (name === "wallet/added")
                     this.readWallet()
-                } else
-                if (name === "wallet/removed") {
+                else
+                if (name === "wallet/removed")
                     this.readWallet()
-                }else
+                else
                 if (name === "consensus/update"){
                     Consensus.processBlockchain(data)
                     Consensus.setAccounts( this.$store.state.addresses.list, true );

@@ -17,12 +17,39 @@ class Consensus extends BaseConsensus{
             this.status = "sync"
         }
 
-        await this.downloadBlocksHashes( this.ending - consts.blocksInfoPagination )
+        await this.downloadBlocksInfo( this.ending - consts.blocksInfoPagination )
 
     }
 
+    async _downloadBlockInfo( height ){
 
-    async downloadBlocksHashes( starting ){
+        if (this._promises.blocksInfo[height]) return this._promises.blocksInfo[height];
+        return this._promises.blocksInfo[height] = new Promise( async (resolve, reject) => {
+
+            let blockInfo
+
+            try{
+                const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( height );
+                blockInfo = JSON.parse(blockInfoData)
+
+                if (!blockInfo || !blockInfo.hash)
+                    throw "Error getting block info"
+
+                blockInfo.height = height
+
+                this._data.blocksInfo[height] = blockInfo;
+
+            }catch(err){
+                reject(err)
+            }finally {
+                resolve(blockInfo)
+            }
+
+        })
+
+    }
+
+    async downloadBlocksInfo( starting ){
 
         starting = Math.max(0, starting )
         const ending = Math.min( starting + consts.blocksInfoPagination -1, this.ending-1 )
@@ -33,20 +60,16 @@ class Consensus extends BaseConsensus{
 
         for (let i = ending; i >= starting ; i-- ){
 
-            const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( i );
-            const blockInfo = JSON.parse(blockInfoData)
+            let beforeHash
+            if (this._data.blocksInfo[i] && this._data.blocksInfo[i].hash )
+                beforeHash = this._data.blocksInfo[i].hash
 
-            if (!blockInfo || !blockInfo.hash)
-                throw "Error getting block info"
+            const blockInfo = await this._downloadBlockInfo(i)
 
-            blockInfo.height = i
-            if (this._data.blocksInfo[i] && this._data.blocksInfo[i].hash === blockInfo.hash )
+            if (beforeHash === blockInfo.hash )
                 break
 
-            if (!this._data.blocksInfo[i] || this._data.blocksInfo[i].hash !== blockInfo.hash ){
-                this._data.blocksInfo[i] = blockInfo;
-                newBlocksInfo[i] = blockInfo
-            }
+            newBlocksInfo[i] = blockInfo
 
         }
 
