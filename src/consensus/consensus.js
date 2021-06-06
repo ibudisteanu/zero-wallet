@@ -26,11 +26,9 @@ class Consensus extends BaseConsensus{
         if (this._promises.blocksInfo[height]) return this._promises.blocksInfo[height];
         return this._promises.blocksInfo[height] = new Promise( async (resolve, reject) => {
 
-            let blockInfo
-
             try{
                 const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( height );
-                blockInfo = JSON.parse(blockInfoData)
+                let blockInfo = JSON.parse(blockInfoData)
 
                 if (!blockInfo || !blockInfo.hash)
                     throw "Error getting block info"
@@ -38,11 +36,12 @@ class Consensus extends BaseConsensus{
                 blockInfo.height = height
 
                 this._data.blocksInfo[height] = blockInfo;
+                resolve(blockInfo)
 
             }catch(err){
                 reject(err)
             }finally {
-                resolve(blockInfo)
+                delete this._promises.blocksInfo[height]
             }
 
         })
@@ -88,27 +87,66 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async unsubscribeAccount(account){
-
-    }
-
-    async subscribeAccount(publicKeyHash){
+    async _downloadAccount(publicKeyHash){
         if (this._promises.accounts[publicKeyHash]) return this._promises.accounts[publicKeyHash];
         return this._promises.accounts[publicKeyHash] = new Promise( async (resolve, reject) => {
-
             try{
-                await PandoraPay.network.subscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT );
-
                 const out = await PandoraPay.network.getNetworkAccount(publicKeyHash);
                 const account = JSON.parse(out)
 
                 this.emit("consensus/account-transparent-update", {publicKeyHash, account })
-
                 resolve(account)
             }catch(err){
                 reject(err)
             }finally{
                 delete this._promises.accounts[publicKeyHash];
+            }
+        })
+    }
+
+    async unsubscribeAccount(publicKeyHash){
+
+        if (!this._subscribed.accounts[publicKeyHash])
+            return false
+
+        console.log("unsubscribeAccount", publicKeyHash)
+
+        if (this._promises.unsubscribed[publicKeyHash]) return this._promises.unsubscribed[publicKeyHash]
+        return this._promises.unsubscribed[publicKeyHash] = new Promise( async(resolve, reject)=>{
+            try{
+                await PandoraPay.network.unsubscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT );
+                delete this._subscribed.accounts[publicKeyHash]
+
+                resolve(true)
+            }catch(err){
+                reject(err)
+            }finally{
+                delete this._promises.unsubscribed[publicKeyHash]
+            }
+        })
+
+    }
+
+    async subscribeAccount(publicKeyHash){
+
+        if (this._subscribed.accounts[publicKeyHash])
+            return this._downloadAccount(publicKeyHash)
+
+        if (this._promises.subscribed.accounts[publicKeyHash]) return this._promises.subscribed.accounts[publicKeyHash];
+        return this._promises.subscribed.accounts[publicKeyHash] = new Promise( async (resolve, reject) => {
+
+            try{
+                await PandoraPay.network.subscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT );
+
+                const out = await this._downloadAccount(publicKeyHash)
+                resolve(out)
+
+                this._subscribed.accounts[publicKeyHash] = true
+
+            }catch(err){
+                reject(err)
+            }finally{
+                delete this._promises.subscribed.accounts[publicKeyHash];
             }
 
         })
@@ -203,8 +241,8 @@ class Consensus extends BaseConsensus{
                 const blk = JSON.parse(blockData)
                 if (blk.height !== height) throw Error("Block height was not matching")
 
-
                 await this._includeBlock( blk );
+
                 resolve(blk);
             }catch(err){
                 reject(err);

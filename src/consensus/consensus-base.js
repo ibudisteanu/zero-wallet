@@ -16,9 +16,7 @@ export default class BaseConsensus extends EventEmitter{
         }
 
         this._subscribed = {
-            accounts: {
-
-            }
+            accounts: { }
         }
 
         this._promises = {
@@ -26,6 +24,12 @@ export default class BaseConsensus extends EventEmitter{
             blocksInfo: {},
             transactions: {},
             accounts: {},
+            subscribed: {
+                accounts: { }
+            },
+            unsubscribed: {
+                accounts: { }
+            }
         }
 
         this._startedStatus = false;

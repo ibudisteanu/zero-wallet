@@ -3,36 +3,43 @@
     <div class="container">
         <div class="boxed centered pd-bottom-30">
 
-            <template v-if="isEmpty">
-                <strong>Empty address</strong>
+            <template v-if="!isFound">
+                <strong>Address does not exist</strong>
             </template>
-            <template v-if="!isEmpty">
+            <template v-else>
 
-                <div>
-                    <strong>Balances</strong>
-                    <balance v-for="(balance, index) in balances"
-                             :key="`balance-token-${index}`"
-                             :balance="balance.amount"
-                             :token="balance.token"
-                             :version="address.version">
-                    </balance>
-                </div>
+                <template v-if="isEmpty">
+                    <strong>No available balance</strong>
+                </template>
+                <template v-else>
+                    <div>
+                        <strong>Balances</strong>
+                        <balance v-for="(balance, index) in balances"
+                                 :key="`balance-token-${index}`"
+                                 :balance="balance.amount"
+                                 :token="balance.token"
+                                 :version="address.version">
+                        </balance>
+                    </div>
+                </template>
+
                 <div v-if="delegatedStake" class="pd-top-30">
                     <strong>Delegated Stake</strong>
                     <balance
-                             :key="`delegated-balance`"
-                             :balance="delegatedStake.stakeAvailable"
-                             token=""
-                             :version="0">
+                            :key="`delegated-balance`"
+                            :balance="delegatedStake.stakeAvailable"
+                            token=""
+                            :version="0">
                     </balance>
                 </div>
                 <div v-if="delegatedStakesPending.length" class="pd-top-30">
                     <strong>Delegated Stake Pending</strong>
                     <stake-pending v-for="(stakePending, index) in delegatedStakesPending"
-                            :key="`delegated-stake-pending-${index}`"
-                            :stakePending="stakePending">
+                                   :key="`delegated-stake-pending-${index}`"
+                                   :stakePending="stakePending">
                     </stake-pending>
                 </div>
+
             </template>
 
         </div>
@@ -69,9 +76,14 @@ export default {
             return this.delegatedStake.stakesPending
         },
 
+        isFound(){
+            return !!this.address.account
+        },
+
         isEmpty(){
-            return !this.address.account || !this.address.account.balances.length
+            return !this.address.account.balances.length
         }
+
 
     },
 

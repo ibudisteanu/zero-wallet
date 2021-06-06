@@ -69,8 +69,11 @@ export default {
 
     async mounted(){
         return this.loadAddress();
-    }
+    },
 
+    async beforeDestroy() {
+        await Consensus.unsubscribeAccount(this.publicKeyHash)
+    }
 
 };
 </script>

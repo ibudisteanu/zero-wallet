@@ -80,6 +80,7 @@ export default {
                     initialized = true
 
                     PandoraPay.events.listenNetworkNotifications(( subscriptionType, key, data)=>{
+                        console.log("listenNetworkNotifications", data)
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT)
                             this.$store.commit('setTransparentAddressUpdate', {publicKeyHash: key, account: JSON.parse(data) })
                     })
