@@ -12,13 +12,6 @@ export default {
         }
     },
 
-    setAddressLoaded(context, {publicKeyHash, loaded}){
-        const address = { ... context.list[publicKeyHash]  };
-        address.loaded = loaded;
-
-        Vue.set(context.list, publicKeyHash, address );
-    },
-
     setTransparentAddressUpdate(context, {account, publicKeyHash }){
         const address = { ... context.list[publicKeyHash]  };
         address.account = account

@@ -34,6 +34,8 @@ export default {
         context.count = null;
         context.countIndex = null;
 
+        context.addresses = []
+
         localStorage.removeItem('mainPublicKeyHash');
     },
 
@@ -41,4 +43,15 @@ export default {
         context.mainPublicKeyHash = value;
         localStorage.setItem('mainPublicKeyHash', value);
     },
+
+    addWalletAddress(context, address){
+        Vue.set(context.addresses, address.publicKeyHash, address )
+    },
+
+    addWalletAddresses(context, addresses){
+        for (const key in addresses){
+            Vue.set(context.addresses, addresses[key].publicKeyHash, addresses[key] )
+        }
+    }
+
 }

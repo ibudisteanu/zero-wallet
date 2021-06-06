@@ -16,6 +16,7 @@ const store = new Vuex.Store({
     modules: {
 
         wallet: WalletStore,
+
         blockchain: BlockchainStore,
         page: PageStore,
         transactions: TransactionsStore,

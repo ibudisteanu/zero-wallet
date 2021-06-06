@@ -16,6 +16,8 @@ export default {
 
         encrypted: null,
 
+        addresses: {},
+
         mainPublicKeyHash: null,
 
     },

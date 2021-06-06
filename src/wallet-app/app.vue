@@ -70,7 +70,6 @@ export default {
         Consensus.on("consensus/status-update", status =>  this.$store.commit('setConsensusStatus', status) );
 
         Consensus.on("consensus/account-transparent-update", status => this.$store.commit('setTransparentAddressUpdate', status))
-        Consensus.on("consensus/account-loaded", status => this.$store.commit('setAddressLoaded', status))
 
         let initialized = false
         PandoraPay.events.listenEvents((name, data)=>{
@@ -106,7 +105,7 @@ export default {
                 else
                 if (name === "consensus/update"){
                     Consensus.processBlockchain(data)
-                    Consensus.setAccounts( this.$store.state.addresses.list, true );
+                    Consensus.setAccounts( this.$store.state.wallet.addresses, true );
                 }
             }
             console.log("JS NAME:", name, "data", data)
@@ -180,7 +179,7 @@ export default {
             if (!this.$store.state.wallet.mainPublicKeyHash && firstAddress )
                 this.$store.commit('setMainPublicKeyHash', firstAddress );
 
-            this.$store.commit('addAddresses', addresses );
+            this.$store.commit('addWalletAddresses', addresses );
 
         }
 

@@ -129,6 +129,8 @@ class Consensus extends BaseConsensus{
 
     async subscribeAccount(publicKeyHash){
 
+        console.log("subscribeAccount", publicKeyHash)
+
         if (this._subscribed.accounts[publicKeyHash])
             return this._downloadAccount(publicKeyHash)
 
