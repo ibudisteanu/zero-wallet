@@ -87,7 +87,7 @@ export default {
             await Consensus.syncPromise;
 
             try{
-                await Consensus.downloadBlocksInfo( this.ending - ( this.page * this.countPerPage )  )
+                await Consensus.getBlocksInfo( this.ending - ( this.page * this.countPerPage )  )
 
                 this.loaded = true
             }catch(err){

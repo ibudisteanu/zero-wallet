@@ -12,7 +12,8 @@ export default class BaseConsensus extends EventEmitter{
             blocksByHash: {},
             transactions: {},
             accounts: {},
-            tokensInfo: {}
+            tokensInfo: {},
+            tokens: {},
         }
 
         this._subscribed = {
@@ -23,6 +24,7 @@ export default class BaseConsensus extends EventEmitter{
             blocks: {},
             blocksInfo: {},
             tokensInfo: {},
+            tokens: {},
             transactions: {},
             accounts: {},
             subscribed: {

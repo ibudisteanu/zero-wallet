@@ -120,8 +120,6 @@ export default {
             fees: null, //async data
             loaded: false,
 
-            blk: null,
-            txs: null,
             reward: '',
 
             error: '',
@@ -133,10 +131,19 @@ export default {
         height(){
             return this.$route.params.height;
         },
-
         hash(){
             return this.$route.params.hash;
         },
+        blk(){
+            if (this.height !== undefined )
+                return this.$store.state.blocks.blocks[this.height]
+
+            return this.$store.state.blocks.blocksByHash[this.hash]
+        },
+        txs(){
+            if (!this.blk) return null;
+            return this.blk.txs
+        }
 
     },
 
@@ -148,24 +155,17 @@ export default {
 
         async loadBlock(){
 
-            this.loading = false
-
-            if (this.height === undefined && !this.hash){
-                this.error = 'Block index was not specified';
-                return;
-            }
-
-            this.error = '';
-
-            await Consensus.syncPromise;
-
-            let blk
             try{
-                if (this.height !== undefined) blk = await  Consensus.getBlock(this.height);
-                if (this.hash ) blk = await Consensus.getBlockByHash(this.hash);
 
-                this.blk = blk
-                this.txs = blk.txs
+                this.loaded = false
+                this.error = '';
+
+                if (this.height === undefined && !this.hash) throw 'Block index was not specified';
+
+                await Consensus.syncPromise;
+
+                if (this.height !== undefined) await  Consensus.getBlock(this.height);
+                if (this.hash ) await Consensus.getBlockByHash(this.hash);
 
                 const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)
                 this.reward = await PandoraPay.config.coins.convertToBase( reward.toString() )
@@ -177,7 +177,6 @@ export default {
             }
 
         },
-
 
     },
 

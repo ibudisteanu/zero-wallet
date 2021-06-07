@@ -17,11 +17,37 @@ class Consensus extends BaseConsensus{
             this.status = "sync"
         }
 
-        await this.downloadBlocksInfo( this.ending - consts.blocksInfoPagination )
+        await this.getBlocksInfo( this.ending - consts.blocksInfoPagination )
 
     }
 
-    async _downloadTokenInfo( hash ){
+    async getTokenByHash( hash ){
+        if (this._data.tokens[hash]) return this._data.tokens[hash]
+        if (this._promises.tokens[hash]) return this._promises.tokens[hash];
+        return this._promises.tokens[hash] = new Promise( async (resolve, reject) => {
+            try{
+                const tokenData = await PandoraPay.network.getNetworkToken(hash);
+                const token = JSON.parse(tokenData)
+
+                if (!token ) throw "Error getting block info"
+
+                this._data.tokensInfo[hash] = token;
+
+                this.emit('consensus/token-downloaded', {hash, token} );
+
+                resolve(token)
+            }catch(err){
+                reject(err)
+            }
+            finally{
+                delete this._promises.tokens[hash]
+            }
+        })
+    }
+
+    async _getTokenInfo( hash ){
+
+        if (hash === "") hash = PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX
 
         if (this._data.tokensInfo[hash]) return this._data.tokensInfo[hash]
         if (this._promises.tokensInfo[hash]) return this._promises.tokensInfo[hash];
@@ -31,8 +57,7 @@ class Consensus extends BaseConsensus{
                 const tokenInfoData = await PandoraPay.network.getNetworkTokenInfo(hash);
                 const tokenInfo = JSON.parse(tokenInfoData)
 
-                if (!tokenInfo )
-                    throw "Error getting block info"
+                if (!tokenInfo ) throw "Error getting block info"
 
                 this._data.tokensInfo[hash] = tokenInfo;
 
@@ -48,7 +73,7 @@ class Consensus extends BaseConsensus{
         })
     }
 
-    async _downloadBlockInfo( height ){
+    async _getBlockInfo( height ){
 
         if (this._promises.blocksInfo[height]) return this._promises.blocksInfo[height];
         return this._promises.blocksInfo[height] = new Promise( async (resolve, reject) => {
@@ -75,7 +100,7 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async downloadBlocksInfo( starting ){
+    async getBlocksInfo( starting ){
 
         starting = Math.max(0, starting )
         const ending = Math.min( starting + consts.blocksInfoPagination -1, this.ending-1 )
@@ -90,7 +115,7 @@ class Consensus extends BaseConsensus{
             if (this._data.blocksInfo[i] && this._data.blocksInfo[i].hash )
                 beforeHash = this._data.blocksInfo[i].hash
 
-            const blockInfo = await this._downloadBlockInfo(i)
+            const blockInfo = await this._getBlockInfo(i)
 
             if (beforeHash === blockInfo.hash )
                 break
@@ -119,7 +144,7 @@ class Consensus extends BaseConsensus{
         if (!account) return
 
         for (const balance of account.balances){
-            await this._downloadTokenInfo(balance.token)
+            await this._getTokenInfo(balance.token)
         }
 
     }
