@@ -59,11 +59,13 @@ export default {
 
         Consensus.on("consensus/blockchain-info-updated", info => this.$store.commit('setBlockchainInfo', info) )
 
-        Consensus.on("consensus/blocks-info-downloaded", data => this.$store.commit('setBlockchainBlocksInfo', data) );
-        Consensus.on("consensus/blocks-info-delete", data => this.$store.commit('deleteBlockchainBlocksInfo', data) );
+        Consensus.on("consensus/tokenInfo-downloaded", data => this.$store.commit('setTokenInfo', data) );
 
-        Consensus.on("consensus/block-downloaded", data => this.$store.commit('setBlockchainBlock', data ) );
-        Consensus.on("consensus/block-deleted", data => this.$store.commit('deleteBlockchainBlock', data ) );
+        Consensus.on("consensus/blocks-info-downloaded", data => this.$store.commit('setBlocksInfo', data) );
+        Consensus.on("consensus/blocks-info-delete", data => this.$store.commit('deleteBlocksInfo', data) );
+
+        Consensus.on("consensus/block-downloaded", data => this.$store.commit('setBlock', data ) );
+        Consensus.on("consensus/block-deleted", data => this.$store.commit('deleteBlock', data ) );
 
         Consensus.on("consensus/tx-downloaded", async data => this.$store.commit('setTransactions', data  ) );
 

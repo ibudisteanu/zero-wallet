@@ -22,6 +22,7 @@ export default class BaseConsensus extends EventEmitter{
         this._promises = {
             blocks: {},
             blocksInfo: {},
+            tokensInfo: {},
             transactions: {},
             accounts: {},
             subscribed: {

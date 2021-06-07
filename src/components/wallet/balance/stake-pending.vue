@@ -2,7 +2,12 @@
 
     <div class="row pd-top-20">
         <span class="balance thick"> {{stakePending.pendingType ? '+' : '-'}} {{formatMoney( convertToBase( stakePending.pendingAmount ) ) }} </span>
-        <span class="currency">$PANDORA {{stakePending.activationHeight}}</span>
+        <span class="currency" v-if="getToken">
+            <router-link :to="`/tokens/${getToken.hash}`">
+                ${{getToken.ticker}}
+            </router-link>
+            {{stakePending.activationHeight}}
+        </span>
     </div>
 
 </template>
@@ -18,7 +23,9 @@ export default {
     },
 
     computed: {
-
+        getToken(){
+            return this.$store.getters.getTokenInfo( PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX );
+        }
     },
 
     methods: {

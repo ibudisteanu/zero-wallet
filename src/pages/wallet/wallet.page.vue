@@ -21,10 +21,7 @@ export default {
 
     computed:{
         publicKeyHash(){
-            if (this.$route.params.parameter){
-                return this.computedPublicKeyHash
-            }
-            return this.$store.state.wallet.mainPublicKeyHash;
+            return this.$route.params.parameter ? this.computedPublicKeyHash : this.$store.state.wallet.mainPublicKeyHash
         },
     },
 
@@ -44,6 +41,8 @@ export default {
                     this.$store.commit('addAddress', address)
                     this.computedPublicKeyHash = address.publicKeyHash
                 }
+            } else {
+                this.computedPublicKeyHash = ""
             }
 
             await Consensus.syncPromise;
@@ -72,7 +71,10 @@ export default {
     },
 
     async beforeDestroy() {
-        await Consensus.unsubscribeAccount(this.publicKeyHash)
+        const publicKeyHash = this.computedPublicKeyHash || this.publicKeyHash
+        if (!this.$store.getters.walletContains(publicKeyHash)){
+            await Consensus.unsubscribeAccount(publicKeyHash )
+        }
     }
 
 };

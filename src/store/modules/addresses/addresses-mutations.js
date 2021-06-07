@@ -13,6 +13,7 @@ export default {
     },
 
     setTransparentAddressUpdate(context, {account, publicKeyHash }){
+
         const address = { ... context.list[publicKeyHash]  };
         address.account = account
         address.loaded = true;

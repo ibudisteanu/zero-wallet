@@ -1,4 +1,5 @@
 import mutations from "./wallet-mutations"
+import getters from "./wallet-getters"
 
 export default {
 
@@ -22,6 +23,7 @@ export default {
 
     },
 
+    getters,
     mutations,
 
 }

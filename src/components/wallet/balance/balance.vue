@@ -5,7 +5,9 @@
             {{formatMoney( convertToBase( balance ) ) }}
         </span>
         <span class="currency" v-if="getToken">
-            {{getToken.name}}
+            <router-link :to="`/tokens/${getToken.hash}`">
+                ${{getToken.ticker}}
+            </router-link>
         </span>
     </div>
 
@@ -26,7 +28,7 @@ export default {
 
     computed: {
         getToken(){
-            return this.$store.state.tokens.list[this.token];
+            return this.$store.getters.getTokenInfo(this.token );
         }
     },
 

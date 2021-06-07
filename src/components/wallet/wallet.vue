@@ -54,7 +54,7 @@ export default {
 
     computed:{
         address(){
-            return this.$store.state.wallet.addresses[this.publicKeyHash];
+            return this.$store.state.addresses.list[this.publicKeyHash];
         }
     },
 

@@ -21,6 +21,33 @@ class Consensus extends BaseConsensus{
 
     }
 
+    async _downloadTokenInfo( hash ){
+
+        if (this._data.tokensInfo[hash]) return this._data.tokensInfo[hash]
+        if (this._promises.tokensInfo[hash]) return this._promises.tokensInfo[hash];
+        return this._promises.tokensInfo[hash] = new Promise( async (resolve, reject) => {
+            try{
+
+                const tokenInfoData = await PandoraPay.network.getNetworkTokenInfo(hash);
+                const tokenInfo = JSON.parse(tokenInfoData)
+
+                if (!tokenInfo )
+                    throw "Error getting block info"
+
+                this._data.tokensInfo[hash] = tokenInfo;
+
+                this.emit('consensus/tokenInfo-downloaded', tokenInfo  );
+
+                resolve(tokenInfo)
+            }catch(err){
+                reject(err)
+            }
+            finally{
+                delete this._promises.tokensInfo[hash]
+            }
+        })
+    }
+
     async _downloadBlockInfo( height ){
 
         if (this._promises.blocksInfo[height]) return this._promises.blocksInfo[height];
@@ -28,7 +55,7 @@ class Consensus extends BaseConsensus{
 
             try{
                 const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( height );
-                let blockInfo = JSON.parse(blockInfoData)
+                const blockInfo = JSON.parse(blockInfoData)
 
                 if (!blockInfo || !blockInfo.hash)
                     throw "Error getting block info"
@@ -87,6 +114,16 @@ class Consensus extends BaseConsensus{
 
     }
 
+    async processAccount(account){
+
+        if (!account) return
+
+        for (const balance of account.balances){
+            await this._downloadTokenInfo(balance.token)
+        }
+
+    }
+
     async _downloadAccount(publicKeyHash){
         if (this._promises.accounts[publicKeyHash]) return this._promises.accounts[publicKeyHash];
         return this._promises.accounts[publicKeyHash] = new Promise( async (resolve, reject) => {
@@ -94,7 +131,9 @@ class Consensus extends BaseConsensus{
                 const out = await PandoraPay.network.getNetworkAccount(publicKeyHash);
                 const account = JSON.parse(out)
 
+                await this.processAccount(account)
                 this.emit("consensus/account-transparent-update", {publicKeyHash, account })
+
                 resolve(account)
             }catch(err){
                 reject(err)
@@ -129,10 +168,10 @@ class Consensus extends BaseConsensus{
 
     async subscribeAccount(publicKeyHash){
 
-        console.log("subscribeAccount", publicKeyHash)
-
         if (this._subscribed.accounts[publicKeyHash])
             return this._downloadAccount(publicKeyHash)
+
+        console.log("subscribeAccount", publicKeyHash)
 
         if (this._promises.subscribed.accounts[publicKeyHash]) return this._promises.subscribed.accounts[publicKeyHash];
         return this._promises.subscribed.accounts[publicKeyHash] = new Promise( async (resolve, reject) => {
@@ -324,9 +363,10 @@ class Consensus extends BaseConsensus{
                 const data = {};
                 data[tx.bloom.hash] = tx;
 
+                this._data.transactions[tx.bloom.hash] = tx;
+
                 this.emit('consensus/tx-downloaded', {transactions: data} );
 
-                this._data.transactions[tx.bloom.hash] = tx;
                 resolve(tx);
             }catch(err){
                 reject(err);

@@ -15,11 +15,6 @@ export default {
 
         status: '',
 
-        blocks: {},
-        blocksByHash: {},
-
-        blocksInfo: {},
-
     },
 
     mutations,
