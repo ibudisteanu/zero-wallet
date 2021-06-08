@@ -57,6 +57,8 @@ class Consensus extends BaseConsensus{
                 const tokenInfoData = await PandoraPay.network.getNetworkTokenInfo(hash);
                 const tokenInfo = JSON.parse(tokenInfoData)
 
+                console.log("tokenInfo", tokenInfo)
+
                 if (!tokenInfo ) throw "Error getting block info"
 
                 this._data.tokensInfo[hash] = tokenInfo;
@@ -145,6 +147,8 @@ class Consensus extends BaseConsensus{
 
         for (const balance of account.balances)
             await this._getTokenInfo(balance.token)
+
+        await this._getTokenInfo("")
 
     }
 
