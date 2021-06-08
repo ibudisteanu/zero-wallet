@@ -7,12 +7,12 @@ export default {
             Vue.delete(context.list, key);
     },
 
-    setToken(context, {hash, token} ) {
-        Vue.set(context.list, hash, token )
+    setToken(context, token ) {
+        Vue.set(context.list, token.hash, token )
     },
 
-    setTokenInfo(context, {tokenInfo, hash} ) {
-        Vue.set(context.tokensInfo, hash, tokenInfo)
+    setTokenInfo(context, tokenInfo ) {
+        Vue.set(context.tokensInfo, tokenInfo.hash, tokenInfo)
     },
 
     setTokensCount(context, { count }) {

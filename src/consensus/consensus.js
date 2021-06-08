@@ -31,9 +31,10 @@ class Consensus extends BaseConsensus{
 
                 if (!token ) throw "Error getting block info"
 
+                token.hash = hash
                 this._data.tokensInfo[hash] = token;
 
-                this.emit('consensus/token-downloaded', {hash, token} );
+                this.emit('consensus/token-downloaded', token );
 
                 resolve(token)
             }catch(err){
@@ -57,13 +58,12 @@ class Consensus extends BaseConsensus{
                 const tokenInfoData = await PandoraPay.network.getNetworkTokenInfo(hash);
                 const tokenInfo = JSON.parse(tokenInfoData)
 
-                console.log("tokenInfo", tokenInfo)
-
                 if (!tokenInfo ) throw "Error getting block info"
 
+                tokenInfo.hash = hash
                 this._data.tokensInfo[hash] = tokenInfo;
 
-                this.emit('consensus/tokenInfo-downloaded', {hash, tokenInfo}  );
+                this.emit('consensus/tokenInfo-downloaded', tokenInfo  );
 
                 resolve(tokenInfo)
             }catch(err){
