@@ -36,6 +36,7 @@ export default {
             progressStatus: "Initialized",
             isDownloading: false,
             error: "",
+            lastTransferred: 0,
         }
     },
 
@@ -48,7 +49,7 @@ export default {
         this.progressStatus = "WASM Handler loading...";
 
         const script = document.createElement( 'script' );
-        script.setAttribute( 'src', './wasm_exec.js' );
+        script.setAttribute( 'src', PandoraPayWalletOptions.resPrefix + 'wasm_exec.js' );
         script.onload = async ()=>{
 
             this.progressStatus = "WASM Handler loaded";
@@ -57,14 +58,22 @@ export default {
             go.argv = consts.goArgv
 
             this.progressStatus = "WASM GO created";
-            this.isDownloading = true;
 
-            fetch("./PandoraPay-wallet.wasm")
+            this.isDownloading = true;
+            this.lastTransferred = 0
+
+            fetch(PandoraPayWalletOptions.resPrefix+"PandoraPay-wallet.wasm", {
+                headers: {
+                    'Content-Encoding': 'gzip',
+                }
+            })
                 .then(
                     fetchProgress({
-                        // implement onProgress method
                         onProgress(progress) {
-                            self.progressStatus = `WASM:  ${(progress.transferred/1024/1024).toFixed(2)}mb / ${(progress.total/1024/1024).toFixed(2)}mb`
+                            if (progress.transferred - self.lastTransferred > 256){
+                                self.lastTransferred = progress.transferred
+                                self.progressStatus = `WASM:  ${(progress.transferred/1024/1024).toFixed(2)}mb / ${(progress.total/1024/1024).toFixed(2)}mb`
+                            }
                         },
                     })
                 ).then((r)=> {

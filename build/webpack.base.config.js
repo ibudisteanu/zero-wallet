@@ -50,7 +50,7 @@ module.exports = webpackConfig = {
                         loader: 'file-loader',
                         options: {
                             name: 'assets/[contenthash].[ext]',
-                            publicPath: './',
+                            publicPath: '/',
                         },
                     },
                 ],

@@ -1,31 +1,46 @@
 <template>
 
     <div class="container">
-        <div class="boxed centered pd-top-30 pd-bottom-30">
+        <div class="boxed centered pd-bottom-30">
 
-            <span class="title">Account Balance</span>
+            <template v-if="!isFound">
+                <strong>Address does not exist</strong>
+            </template>
+            <template v-else>
 
-            <div v-if="address">
-
-                <loading-spinner v-if="!address.loaded" />
-
-                <div v-else>
-
-                    <div v-if="isEmpty" class="pd-top-20">
-                        <strong>Empty address</strong>
-                    </div>
-                    <div v-else>
-                        <balance v-for="(balance, token) in balances"
-                                 :key="`balance-token-${token}`"
-                                 :balance="balance"
-                                 :type="address.version">
+                <template v-if="isEmpty">
+                    <strong>No available balance</strong>
+                </template>
+                <template v-else>
+                    <div>
+                        <strong>Balances</strong>
+                        <balance v-for="(balance, index) in balances"
+                                 :key="`balance-token-${index}`"
+                                 :balance="balance.amount"
+                                 :token="balance.token"
+                                 :version="address.version">
                         </balance>
                     </div>
+                </template>
 
+                <div v-if="delegatedStake" class="pd-top-30">
+                    <strong>Delegated Stake</strong>
+                    <balance
+                            :key="`delegated-balance`"
+                            :balance="delegatedStake.stakeAvailable"
+                            token=""
+                            :version="0">
+                    </balance>
+                </div>
+                <div v-if="delegatedStakesPending.length" class="pd-top-30">
+                    <strong>Delegated Stake Pending</strong>
+                    <stake-pending v-for="(stakePending, index) in delegatedStakesPending"
+                                   :key="`delegated-stake-pending-${index}`"
+                                   :stakePending="stakePending">
+                    </stake-pending>
                 </div>
 
-
-            </div>
+            </template>
 
         </div>
     </div>
@@ -35,10 +50,12 @@
 <script>
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import Balance from "./balance.vue"
+import AccountIdenticon from "../account/account-identicon";
+import StakePending from "./stake-pending"
 
 export default {
 
-    components: {LoadingSpinner, Balance},
+    components: {AccountIdenticon, LoadingSpinner, Balance, StakePending},
 
     props: {
         address: {default: null}
@@ -47,14 +64,26 @@ export default {
     computed:{
 
         balances(){
-            return this.address.balances;
+            return this.address.account.balances;
+        },
+
+        delegatedStake(){
+            return this.address.account.delegatedStake
+        },
+
+        delegatedStakesPending(){
+            if (!this.delegatedStake) return []
+            return this.delegatedStake.stakesPending
+        },
+
+        isFound(){
+            return !!this.address.account
         },
 
         isEmpty(){
-            for (const key in this.address.balances)
-                return false;
-            return true;
+            return !this.address.account.balances.length
         }
+
 
     },
 
@@ -72,10 +101,6 @@ export default {
 
     .boxed{
 
-    }
-
-    .title{
-        font-size: 20px;
     }
 
 </style>

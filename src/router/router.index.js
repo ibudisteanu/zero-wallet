@@ -52,6 +52,7 @@ const routes = [
     {path: '/explorer/tx/hash/:hash', component: TransactionExplorerPage },
     {path: '/explorer/tx/height/:height', component: TransactionExplorerPage },
     {path: '/explorer', component: BlockchainExplorerPage },
+    {path: '/explorer/:page', component: BlockchainExplorerPage },
     {path: '/explorer/pending-transactions', component: PendingTransactionsExplorerPage },
 
     {path: '/tokens', component: TokensPage},
@@ -65,20 +66,15 @@ const routes = [
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
 
     {path: '/', component: WalletPage, beforeEnter: guardDecrypted },
-    {path: '/address/:address', component: WalletPage },
+    {path: '/address/:parameter', component: WalletPage },
 
     { path: '*', name: 'not-found', component: NotFoundPage,}
 
 ];
 
-function options(){
-    if (!window.PandoraPayWalletOptions) return {}
-    if (!window.PandoraPayWalletOptions.router) return {}
-}
-
 const router = new VueRouter({
-    base: (options.base) ? options.base : '',
-    mode: (options.mode) ? options.mode : 'history',
+    base: PandoraPayWalletOptions.router.base || '/',
+    mode: PandoraPayWalletOptions.router.mode || 'history',
     scrollBehavior(to, from, savedPosition) {
         if (to.hash) {
             return { selector: to.hash }

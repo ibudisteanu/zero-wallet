@@ -1,13 +1,12 @@
 <template>
 
     <div class="row pd-top-20">
-        <span class="balance thick">
-            {{formatMoney( convertToBase( balance ) ) }}
-        </span>
+        <span class="balance thick"> {{stakePending.pendingType ? '+' : '-'}} {{formatMoney( convertToBase( stakePending.pendingAmount ) ) }} </span>
         <span class="currency" v-if="getToken">
             <router-link :to="`/tokens/${getToken.hash}`">
                 ${{getToken.ticker}}
             </router-link>
+            {{stakePending.activationHeight}}
         </span>
     </div>
 
@@ -15,20 +14,17 @@
 
 <script>
 
-const {VERSION_TRANSPARENT} = PandoraPay.enums.wallet.address.version;
 import StringHelper from "src/utils/string-helper"
 
 export default {
 
     props: {
-        version: {default: VERSION_TRANSPARENT},
-        token: {default: ''},
-        balance: {default: 0},
+        stakePending: {default: null},
     },
 
     computed: {
         getToken(){
-            return this.$store.getters.getTokenInfo(this.token );
+            return this.$store.getters.getTokenInfo( PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX );
         }
     },
 
@@ -44,12 +40,11 @@ export default {
 
     .balance{
         font-size: 20px;
+        padding-right: 10px;
         display: inline-block;
     }
-
     .currency{
         display: inline-block;
     }
-
 
 </style>

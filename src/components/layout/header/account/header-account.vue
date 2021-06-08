@@ -3,7 +3,7 @@
     <div class="account" v-if="address">
 
         <div class="toggle" @click="toggleMenu" v-on-clickaway="closeMenu">
-            <account-identicon :identicon="identicon" :size="40" :outer-size="10" :version="address.version" />
+            <account-identicon :identicon="identicon" :size="48" :outer-size="10" :version="address.version" />
 
             <i class="right-float chevron-down fa fa-chevron-down"></i>
         </div>
@@ -44,7 +44,7 @@ export default {
     computed: {
 
         address(){
-            return this.$store.state.addresses.list[this.$store.state.wallet.mainAddress];
+            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKeyHash];
         },
 
         identicon(){
@@ -87,7 +87,6 @@ export default {
 </script>
 
 <style scoped>
-
 
     .account{
         width: 70px;

@@ -6,12 +6,12 @@
             <li>My accounts</li>
 
             <li v-for="(address, index) in addresses"
-                :class="`address ${ address.addressEncoded === mainAddress  ? 'focused' : ''} ` "
+                :class="`address ${ address.publicKeyHash === mainPublicKeyHash  ? 'focused' : ''} ` "
                 :key="`header-account-dropdown-li-${index}`">
 
                 <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" :version="address.version" />
 
-                <div class="account-title pointer" @click="setMainAddress(address.addressEncoded)" >
+                <div class="account-title pointer" @click="setMainPublicKeyHash(address.publicKeyHash)" >
                     <span>{{address.name}}</span>
                     <span class="gray">{{address.addressEncoded.substr(0, 15)+'...'}} </span>
                 </div>
@@ -55,11 +55,11 @@ export default {
     computed: {
 
         addresses(){
-            return this.$store.state.addresses.list;
+            return this.$store.state.wallet.addresses;
         },
 
-        mainAddress(){
-            return this.$store.state.wallet.mainAddress;
+        mainPublicKeyHash(){
+            return this.$store.state.wallet.mainPublicKeyHash;
         },
 
         encrypted(){
@@ -101,8 +101,8 @@ export default {
 
         },
 
-        setMainAddress(address){
-            return this.$store.commit('setMainAddress', address );
+        setMainPublicKeyHash(publicKeyHash){
+            return this.$store.commit('setMainPublicKeyHash', publicKeyHash );
         },
 
         viewMnemonic(){

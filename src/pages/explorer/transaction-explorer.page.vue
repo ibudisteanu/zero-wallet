@@ -38,7 +38,7 @@
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Nonce</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.txBase.nonce}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.base.nonce}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Unlock Time</span>
@@ -47,12 +47,12 @@
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Data</span>
                                 <div class="col-xs-7 col-sm-9 wordwrap">
-                                    <div v-for="(vin, index) in tx.txBase.vin" class="input"
+                                    <div v-for="(vin, index) in tx.base.vin" class="input"
                                          :key="`transaction-explorer-vin-${index}`">
                                         <account-identicon :publicKeyHash="vin.bloom.publicKeyHash" size="20" outer-size="5" />
                                         <span class="amount vertical-center">-{{$store.getters.addressesContains(tx) ? convertToBase(vin.amount) : '?'}} {{vin.token}} </span>
                                     </div>
-                                    <div v-for="(vout, index) in tx.txBase.vout" class="input"
+                                    <div v-for="(vout, index) in tx.base.vout" class="input"
                                          :key="`transaction-explorer-vout-${index}`">
                                         <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="5" />
                                         <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(vout.amount) : '?'}} {{vout.token}}</span>
@@ -69,7 +69,7 @@
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Script Version</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.txBase.txScript}}</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{tx.base.txScript}}</span>
                             </div>
                             <div class="row pd-top-40 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">JSON</span>
@@ -148,13 +148,8 @@ export default {
 
         },
 
-        convertToBase(amount){
-            return PandoraPay.config.coins.convertToBase( amount.toString() );
-        },
-
-        timeAgo(timestamp){
-            return StringHelper.timeSince( timestamp*1000 );
-        },
+        convertToBase: (amount) => PandoraPay.config.coins.convertToBase( amount.toString() ),
+        timeAgo : (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
 
     },
 

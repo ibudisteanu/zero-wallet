@@ -13,6 +13,12 @@ class Main {
         if (!PandoraPayWalletOptions)
             global.PandoraPayWalletOptions = {}
 
+        if (!PandoraPayWalletOptions.router)
+            PandoraPayWalletOptions.router = {}
+
+        if (typeof PandoraPayWalletOptions.resPrefix === "undefined")
+            PandoraPayWalletOptions.resPrefix = '/'
+
         if (!PandoraPayWalletOptions.wallet)
             global.PandoraPayWalletOptions.wallet = {
                 activated: true,

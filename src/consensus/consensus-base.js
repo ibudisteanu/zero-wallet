@@ -11,10 +11,28 @@ export default class BaseConsensus extends EventEmitter{
             blocks: {},
             blocksByHash: {},
             transactions: {},
+            accounts: {},
+            tokensInfo: {},
+            tokens: {},
         }
+
+        this._subscribed = {
+            accounts: { }
+        }
+
         this._promises = {
             blocks: {},
+            blocksInfo: {},
+            tokensInfo: {},
+            tokens: {},
             transactions: {},
+            accounts: {},
+            subscribed: {
+                accounts: { }
+            },
+            unsubscribed: {
+                accounts: { }
+            }
         }
 
         this._startedStatus = false;
@@ -73,10 +91,10 @@ export default class BaseConsensus extends EventEmitter{
 
         if (newValue === this._status) return;
 
-        this._status = newValue;
-
-        if (this._status === "offline")
+        if (this._status === "sync" && newValue === "offline")
             this._createSyncPromise();
+
+        this._status = newValue;
 
         if (newValue === "sync")
             this._syncPromiseResolve(true);

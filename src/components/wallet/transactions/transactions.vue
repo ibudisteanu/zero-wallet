@@ -1,25 +1,15 @@
 <template>
 
     <div class="container">
-
         <div class="boxed boxed-background">
 
-            <div v-if="address">
+            <span class="title row pd-bottom-20">TRANSACTIONS {{ !address.loaded ? '' : txCount + txCountPending }}</span>
 
-                <span class="title row pd-bottom-20">TRANSACTIONS {{ !address.loaded ? '' : txCount + txCountPending }}</span>
+            <show-transactions :transactions="transactionsAll "/>
 
-                <loading-spinner v-if="!address.loaded || !this.ready" />
-                <div v-else>
-
-                    <show-transactions :transactions="transactionsAll "/>
-
-                    <div class="centered" v-if="address.txsLowestIndex">
-                        <loading-button class="button-width-inherit" @submit="handleViewMore" icon="fa fa-cloud-download-alt" text="View more..."/>
-                    </div>
-
-                </div>
+            <div class="centered" v-if="address.txsLowestIndex">
+                <loading-button class="button-width-inherit" @submit="handleViewMore" icon="fa fa-cloud-download-alt" text="View more..."/>
             </div>
-
 
         </div>
 
@@ -42,11 +32,6 @@ export default {
         address: {default: null}
     },
 
-    data(){
-        return {
-            ready: false,
-        }
-    },
 
     computed:{
 
@@ -109,9 +94,6 @@ export default {
         }
     },
 
-    mounted(){
-        setTimeout(()=>this.ready = true, 100 );
-    }
 
 }
 </script>

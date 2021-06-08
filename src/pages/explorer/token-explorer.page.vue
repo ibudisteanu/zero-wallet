@@ -32,6 +32,10 @@
                                 <span class="col-xs-7 col-sm-9 wordwrap">{{token.description}}</span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Decimal Separator</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">{{token.decimalSeparator}}</span>
+                            </div>
+                            <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Max Supply</span>
                                 <span class="col-xs-7 col-sm-9 wordwrap">{{token.maxSupply / Math.pow(10, token.decimalSeparator)}}</span>
                             </div>
@@ -39,22 +43,9 @@
                                 <span class="col-xs-5 col-sm-3 wordwrap">Supply</span>
                                 <span class="col-xs-7 col-sm-9 wordwrap">{{token.supply / Math.pow(10, token.decimalSeparator) }}</span>
                             </div>
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Decimal Separator</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{token.decimalSeparator}}</span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Verification Public Key Hash</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap" >
-                                    <account-identicon v-if="token.ticker !== 'PBOX'" :publicKeyHash="token.verificationPublicKeyHash" size="20" outer-size="5" />
-                                    <span v-else>
-                                        na
-                                    </span>
-                                </span>
-                            </div>
                             <div class="row pd-top-40 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">JSON</span>
-                                <textarea class="col-xs-7 col-sm-9" rows="20">{{ token.toJSON() }}</textarea>
+                                <textarea class="col-xs-7 col-sm-9" rows="20">{{ token }}</textarea>
                             </div>
                         </div>
 
@@ -81,12 +72,13 @@ export default {
 
     data(){
         return{
-            error: ''
+            loaded: false,
+
+            error: '',
         }
     },
 
     computed:{
-
         hash(){
             return this.$route.params.hash||'';
         },
@@ -99,9 +91,20 @@ export default {
 
         async loadToken() {
 
-            await Consensus.syncPromise;
+            try{
+                this.loaded = false
 
-            return Consensus.getTokenByHash(this.hash);
+                if (!this.hash) throw 'Token hash was not specified';
+
+                await Consensus.syncPromise;
+
+                await Consensus.getTokenByHash(this.hash);
+
+                this.loaded = true
+
+            }catch(err){
+                this.error = err.toString()
+            }
 
         },
 
@@ -115,9 +118,7 @@ export default {
     },
 
     mounted(){
-
         return this.loadToken();
-
     }
 
 

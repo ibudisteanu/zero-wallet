@@ -1,4 +1,5 @@
 import mutations from "./tokens-mutations"
+import getters from "./tokens-getters"
 
 export default {
 
@@ -6,11 +7,12 @@ export default {
 
         list: {},
 
-        next: null,
-        count: 0,
+        tokensInfo: {},
 
+        count: 0,
     },
 
     mutations,
+    getters,
 
 }

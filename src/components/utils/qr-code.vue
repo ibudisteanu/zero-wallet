@@ -20,11 +20,11 @@ export default {
 
     props: {
         data: {default: ''},
+        size: {default: 256}
     },
 
     data(){
         return {
-            size: 256,
             bgColor: '#fff',
             fgColor: '#000',
             logo: require('src/assets/pandora-pay-logo-square.png').default,

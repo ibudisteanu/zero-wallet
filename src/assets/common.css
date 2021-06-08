@@ -146,6 +146,10 @@ a[disabled]{
     float:right;
 }
 
+.btn-white{
+
+}
+
 .btn-round {
     text-align: center;
     background-color: white;
@@ -221,7 +225,6 @@ input[type=submit] {
     margin: 8px 0;
     border: none;
     border-radius: 4px;
-    cursor: pointer;
 }
 
 button:hover,

@@ -103,7 +103,7 @@ export default {
         },
 
         address(){
-            return this.$store.state.addresses.list[this.$store.state.wallet.mainAddress] ;
+            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKeyHash] ;
         },
 
 

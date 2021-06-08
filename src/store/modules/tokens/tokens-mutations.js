@@ -3,32 +3,21 @@ import Vue from 'vue';
 export default {
 
     deleteTokens(context, {tokens}) {
-
         for (const key in tokens)
             Vue.delete(context.list, key);
-
     },
 
-    setTokens(context, {tokens}) {
+    setToken(context, token ) {
+        Vue.set(context.list, token.hash, token )
+    },
 
-        const list = {... ( context.list || {} )};
-
-        for (const key in tokens)
-            list[key] = tokens[key];
-
-        context.list = list;
+    setTokenInfo(context, tokenInfo ) {
+        Vue.set(context.tokensInfo, tokenInfo.hash, tokenInfo)
     },
 
     setTokensCount(context, { count }) {
-
         context.count = count;
-
     },
 
-    setTokensIds( context, { tokens, next }){
-
-        context.next = next;
-
-    }
 
 }
