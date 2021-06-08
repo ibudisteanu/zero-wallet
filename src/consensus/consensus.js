@@ -61,7 +61,7 @@ class Consensus extends BaseConsensus{
 
                 this._data.tokensInfo[hash] = tokenInfo;
 
-                this.emit('consensus/tokenInfo-downloaded', tokenInfo  );
+                this.emit('consensus/tokenInfo-downloaded', {hash, tokenInfo}  );
 
                 resolve(tokenInfo)
             }catch(err){
@@ -143,9 +143,8 @@ class Consensus extends BaseConsensus{
 
         if (!account) return
 
-        for (const balance of account.balances){
+        for (const balance of account.balances)
             await this._getTokenInfo(balance.token)
-        }
 
     }
 

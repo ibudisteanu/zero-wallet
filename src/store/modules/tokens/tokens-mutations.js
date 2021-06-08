@@ -11,8 +11,8 @@ export default {
         Vue.set(context.list, hash, token )
     },
 
-    setTokenInfo(context, tokenInfo ) {
-        Vue.set(context.tokensInfo, tokenInfo.hash, tokenInfo)
+    setTokenInfo(context, {tokenInfo, hash} ) {
+        Vue.set(context.tokensInfo, hash, tokenInfo)
     },
 
     setTokensCount(context, { count }) {
