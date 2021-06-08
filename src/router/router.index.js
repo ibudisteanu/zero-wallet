@@ -13,7 +13,7 @@ import BlockchainExplorerPage from "src/pages/explorer/blockchain-explorer.page"
 import BlockExplorerPage from "src/pages/explorer/block-explorer.page"
 import TransactionExplorerPage from "src/pages/explorer/transaction-explorer.page"
 import TokenExplorerPage from "src/pages/explorer/token-explorer.page.vue"
-import PendingTransactionsExplorerPage from "src/pages/explorer/pending-transactions-explorer.page"
+import MemPoolExplorerPage from "src/pages/explorer/mem-pool-explorer.page"
 import TokensPage from "src/pages/tokens/tokens.page.vue"
 import NotFoundPage from "src/pages/not-found/not-found.page"
 
@@ -51,9 +51,9 @@ const routes = [
     {path: '/explorer/block/hash/:hash', component: BlockExplorerPage },
     {path: '/explorer/tx/hash/:hash', component: TransactionExplorerPage },
     {path: '/explorer/tx/height/:height', component: TransactionExplorerPage },
+    {path: '/explorer/mem-pool', component: MemPoolExplorerPage },
     {path: '/explorer', component: BlockchainExplorerPage },
     {path: '/explorer/:page', component: BlockchainExplorerPage },
-    {path: '/explorer/pending-transactions', component: PendingTransactionsExplorerPage },
 
     {path: '/tokens', component: TokensPage},
     {path: '/tokens/PBOX', component: TokenExplorerPage },

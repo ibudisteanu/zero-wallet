@@ -221,6 +221,24 @@ class Consensus extends BaseConsensus{
         })
     }
 
+    downloadMempool(start = 0){
+        if (this._promises.mempool) return this._promises.mempool
+        return this._promises.mempool = new Promise(async (resolve, reject)=>{
+            try{
+                const data = await PandoraPay.network.getNetworkMempool(start)
+                const mempool = JSON.parse(data)
+                if (!mempool) throw "Mempool is invalid"
+
+                this.emit("consensus/mem-pool-update", {start, mempool})
+
+            }catch(err){
+                reject(err)
+            }finally{
+                delete (this._promises.mempool)
+            }
+        })
+    }
+
     async setAccounts( accounts ){
 
         const exists = {}

@@ -9,13 +9,14 @@
                 <span v-if="error" class="danger">
                     {{error}}
                 </span>
-
-                <div v-if="!error">
+                <div v-else>
 
                     <h3 class="wordwrap">Transaction {{height ? height : hash}} </h3>
 
-                    <loading-spinner v-if="!tx"/>
-                    <div v-else>
+                    <template v-if="!loaded || !tx">
+                        <loading-spinner v-if="!loaded"/>
+                    </template>
+                    <template v-else>
                         <div class="table">
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Block Height</span>
@@ -77,7 +78,7 @@
                             </div>
                         </div>
 
-                    </div>
+                    </template>
 
                 </div>
 
@@ -103,6 +104,7 @@ export default {
     data(){
         return {
             error: '',
+            loaded: false,
         }
     },
 
@@ -131,19 +133,22 @@ export default {
 
         async loadTransaction(){
 
-            if (this.height === undefined && !this.hash){
-                this.error = 'Tx height/hash was not specified';
-                return;
-            }
-            this.error = '';
-
-            await Consensus.syncPromise;
-
             try{
+                this.loaded = false;
+                this.error = ""
+
+                if (this.height === undefined && !this.hash)
+                    throw 'Tx height/hash was not specified';
+
+                await Consensus.syncPromise;
+
                 if (this.height !== undefined) await Consensus.getTransaction(this.height);
                 if (this.hash ) await Consensus.getTransactionByHash(this.hash);
+
             }catch(err){
-                this.error = err.message;
+                this.error = err.toString()
+            }finally{
+                this.loaded = true
             }
 
         },
@@ -160,9 +165,7 @@ export default {
     },
 
     mounted(){
-
         return this.loadTransaction();
-
     }
 
 }

@@ -6,8 +6,8 @@
 
                 <h1>Blockchain Explorer {{ ending ? ending : ''}}</h1>
 
-                <router-link to="/explorer/pending-transactions">
-                    <h3>View Pending Transactions</h3>
+                <router-link to="/explorer/mem-pool">
+                    <h3 class="pd-bottom-30">View Mem Pool</h3>
                 </router-link>
 
                 <h3>Last blocks forged</h3>

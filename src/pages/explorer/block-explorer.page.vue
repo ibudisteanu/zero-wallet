@@ -9,13 +9,12 @@
                 <span v-if="error" class="danger">
                     {{error}}
                 </span>
-
-                <div v-if="!error">
+                <template v-else>
 
                     <h3 class="wordwrap">Block {{height ? height : hash}} </h3>
 
-                    <template v-if="!loaded || !blk ">
-                        <loading-spinner/>
+                    <template v-if="!loaded || !blk">
+                        <loading-spinner v-if="!loaded"/>
                     </template>
                     <template v-else>
                         <div class="table">
@@ -90,7 +89,7 @@
 
                     </template>
 
-                </div>
+                </template>
 
 
             </div>
@@ -170,10 +169,10 @@ export default {
                 const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)
                 this.reward = await PandoraPay.config.coins.convertToBase( reward.toString() )
 
-                this.loaded = true
-
             }catch(err){
                 this.error = err.toString()
+            }finally{
+                this.loaded = true
             }
 
         },

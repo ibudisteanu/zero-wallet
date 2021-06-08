@@ -74,6 +74,8 @@ export default {
 
         Consensus.on("consensus/account-transparent-update", status => this.$store.commit('setTransparentAddressUpdate', status))
 
+        Consensus.on("consensus/mem-pool-update", data => this.$store.commit('setMemPool', data))
+
         let initialized = false
         PandoraPay.events.listenEvents((name, data)=>{
 
