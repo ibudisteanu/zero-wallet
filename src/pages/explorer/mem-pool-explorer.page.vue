@@ -14,7 +14,11 @@
                     <loading-spinner />
                 </template>
                 <template v-else>
-                    <h3>Pending Transactions: {{pendingCount}}</h3>
+
+                    <div class="subtitle">
+                        <h3>Pending Transactions: {{pendingCount}}</h3>
+                        <i class="fa fa-sync pointer" @click="downloadMempool" v-tooltip.bottom="`Download again the mempool`" ></i>
+                    </div>
 
                     <div v-for="( _, hash ) in pendingTxs"
                          :key="`pending_${hash}`">
@@ -22,7 +26,9 @@
                             <span> {{hash}} </span>
                         </router-link>
                     </div>
-                    
+
+                    <loading-button  v-if="hasMore" icon="fa fa-arrow-down" text="Load more" @submit="handleLoadMore" />
+
                 </template>
 
             </div>
@@ -35,7 +41,6 @@
 
 import Layout from "src/components/layout/layout"
 import Consensus from "src/consensus/consensus"
-import ShowTransactions from "src/components/explorer/show-transactions"
 import LoadingButton from "src/components/utils/loading-button.vue"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 
@@ -54,6 +59,9 @@ export default {
         pendingCount(){
             return this.$store.state.mempool.count
         },
+        hasMore(){
+            return this.$store.state.mempool.hasMore
+        },
         pendingTxs(){
             return this.$store.state.mempool.list
         }
@@ -67,14 +75,30 @@ export default {
                 this.error = ""
                 this.loaded = false
 
+                await Consensus.syncPromise;
+                await Consensus.downloadMempool(this.$store.state.mempool.next);
             }catch(err){
                 this.error = err.toString()
             }finally{
                 this.loaded = true
             }
-            await Consensus.syncPromise;
-            await Consensus.downloadMempool();
+
         },
+
+        async handleLoadMore(resolver){
+            try{
+
+                this.error = ""
+
+                await Consensus.syncPromise;
+                await Consensus.downloadMempool();
+
+            }catch(err){
+                this.error = err.toString()
+            }finally{
+                resolver(true)
+            }
+        }
 
     },
 
@@ -88,14 +112,16 @@ export default {
         return this.downloadMempool();
     },
 
-    beforeDestroy(){
-        //return Consensus.unsubscribePendingTransactions();
-    }
 
 }
 
 </script>
 
 <style scoped>
-
+    .subtitle i, .subtitle h3 {
+        display: inline-block;
+    }
+    .subtitle h3 {
+        padding-right: 10px;
+    }
 </style>

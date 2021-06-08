@@ -229,8 +229,12 @@ class Consensus extends BaseConsensus{
                 const mempool = JSON.parse(data)
                 if (!mempool) throw "Mempool is invalid"
 
-                this.emit("consensus/mem-pool-update", {start, mempool})
+                const hasMore = ( start + mempool.hashes.length ) < mempool.count
+                const next = ( start + mempool.hashes.length )
 
+                this.emit("consensus/mem-pool-update", {start, mempool, hasMore, next })
+
+                resolve(true)
             }catch(err){
                 reject(err)
             }finally{

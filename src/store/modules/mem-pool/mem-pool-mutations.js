@@ -2,7 +2,7 @@ import Vue from 'vue';
 
 export default {
 
-    setMemPool(context, { start, mempool }) {
+    setMemPool(context, { start, mempool, hasMore, next }) {
 
         let list
         if (start !== 0)
@@ -17,6 +17,8 @@ export default {
         context.list = list;
         context.start = start;
         context.count = mempool.count;
+        context.hasMore = hasMore
+        context.next = next
     },
 
 
