@@ -107,6 +107,10 @@
                                 <span class="col-xs-5 col-sm-3 wordwrap">JSON</span>
                                 <textarea class="col-xs-7 col-sm-9" rows="20">{{ tx }}</textarea>
                             </div>
+                            <div class="row pd-top-40 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Binary</span>
+                                <textarea class="col-xs-7 col-sm-9" rows="20">{{ tx.__extra.serialized }}</textarea>
+                            </div>
                         </div>
 
                     </template>

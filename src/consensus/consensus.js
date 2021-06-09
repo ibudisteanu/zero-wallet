@@ -346,17 +346,20 @@ class Consensus extends BaseConsensus{
 
         tx.__extra = {
             mempool: txJSON.mempool,
-            height: txJSON.info ? txJSON.info.height : null,
-            blkHeight: txJSON.info ? txJSON.info.blkHeight : null,
-            timestamp: txJSON.info ? txJSON.info.timestamp : null,
         };
+
+        if (txJSON.info) {
+            tx.__extra.height = txJSON.info.height
+            tx.__extra.blkHeight = txJSON.info.blkHeight
+            tx.__extra.timestamp = txJSON.info.timestamp
+
+            this._data.transactionsByHeight[txJSON.info.height] = tx;
+        }
 
         const data = {};
         data[tx.bloom.hash] = tx;
 
         this._data.transactionsByHash[tx.bloom.hash] = tx;
-        if (txJSON.info)
-            this._data.transactionsByHeight[txJSON.info.blkHeight] = tx;
 
         this.emit('consensus/tx-downloaded', {transactions: data} );
 
