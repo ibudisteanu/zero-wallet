@@ -69,7 +69,7 @@ export default {
         },
 
         lastBlocksInfo(){
-            return this.$store.getters.blocksInfoSorted;
+            return this.$store.getters.blocksInfoSorted//.filter(a => a.height <= this.ending - ( ( this.page +1 ) * this.countPerPage )  );
         },
 
         ending(){

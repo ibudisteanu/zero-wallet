@@ -23,7 +23,7 @@
                     <div v-for="( _, hash ) in pendingTxs"
                          :key="`pending_${hash}`">
                         <router-link :to="`/explorer/tx/hash/${hash}`" >
-                            <span> {{hash}} </span>
+                            <span class="wordwrap"> {{hash}} </span>
                         </router-link>
                     </div>
 

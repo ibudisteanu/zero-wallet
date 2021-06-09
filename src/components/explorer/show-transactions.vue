@@ -60,7 +60,7 @@ export default {
         convertToBase: (amount) => PandoraPay.config.coins.convertToBase( amount.toString() ),
 
         isPending(tx){
-            return tx.__extra.height ? false : true
+            return typeof tx.__extra.blkHeight === "undefined"
         }
 
     }

@@ -19,19 +19,50 @@
                     <template v-else>
                         <div class="table">
                             <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Block Height</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap" v-if="tx.__extra.height "><router-link :to="`/explorer/block/height/${tx.__extra.height}`">{{tx.__extra.height}}</router-link></span>
-                                <span class="col-xs-7 col-sm-9 wordwrap" v-else>-</span>
+                                <span class="col-xs-5 col-sm-3 wordwrap">TX Height</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">
+                                    <template v-if="tx.__extra.height">
+                                        {{tx.__extra.height}}
+                                    </template>
+                                    <template v-else>
+                                        -
+                                    </template>
+                                </span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Block Time</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap" v-if="tx.__extra.timestamp">{{timeAgo( $store.state.blockchain.genesisTimestamp + tx.__extra.timestamp) }}</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap" v-else>-</span>
+                                <span class="col-xs-5 col-sm-3 wordwrap">Block Height</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">
+                                    <template v-if="tx.__extra.blkHeight ">
+                                        <router-link :to="`/explorer/block/height/${tx.__extra.blkHeight}`">{{tx.__extra.blkHeight}}</router-link>
+                                    </template>
+                                    <template v-else>
+                                        -
+                                    </template>
+                                </span>
+                            </div>
+                            <div class="row pd-top-10 pd-bottom-10">
+                                <span class="col-xs-5 col-sm-3 wordwrap">Block Timestamp</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">
+                                    <template v-if="tx.__extra.timestamp">
+                                        {{timeAgo( $store.state.blockchain.genesisTimestamp + tx.__extra.timestamp) }}
+                                        <i class="fa fa-clock"></i>
+                                    </template>
+                                    <template v-else>
+                                        -
+                                    </template>
+                                </span>
                             </div>
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Confirmations</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap" v-if="tx.__extra.height">{{ $store.state.blockchain.end - tx.__extra.height -1 }}</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap" v-else>-</span>
+                                <span class="col-xs-7 col-sm-9 wordwrap">
+                                    <template v-if="tx.__extra.blkHeight" >
+                                        {{ $store.state.blockchain.end - tx.__extra.blkHeight -1 }}
+                                        <i v-if="$store.state.blockchain.end - tx.__extra.blkHeight -1 > 8" class="fa fa-check"></i>
+                                    </template>
+                                    <template v-else>
+                                        -
+                                    </template>
+                                </span>
                             </div>
                             <div v-if="tx.__extra.mempool" class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Mem Pool</span>
@@ -142,7 +173,7 @@ export default {
 
                 await Consensus.syncPromise;
 
-                if (this.height !== undefined) await Consensus.getTransaction(this.height);
+                if (this.height !== undefined) await Consensus.getTransactionByHeight(this.height);
                 if (this.hash ) await Consensus.getTransactionByHash(this.hash);
 
             }catch(err){
@@ -173,33 +204,12 @@ export default {
 
 <style scoped>
 
-    .table-row{
-        grid-template-columns: 200px 1fr;
-    }
-
-    .identicon{
-    }
-
     .input, .output{
         display: inline-block;
     }
 
     .amount{
         display: inline-block;
-    }
-
-    @media (min-width: 481px) and  (max-width: 767px) {
-
-        .table-row{
-            grid-template-columns: 150px 1fr;
-        }
-
-    }
-
-    @media (max-width: 481px) {
-        .table-row{
-            grid-template-columns: 100px 1fr;
-        }
     }
 
 </style>

@@ -8,9 +8,10 @@ export default class BaseConsensus extends EventEmitter{
 
         this._data = {
             blocksInfo: {},
-            blocks: {},
+            blocksByHeight: {},
             blocksByHash: {},
-            transactions: {},
+            transactionsByHeight: {},
+            transactionsByHash: {},
             accounts: {},
             tokensInfo: {},
             tokens: {},
