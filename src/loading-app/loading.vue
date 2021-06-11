@@ -10,12 +10,12 @@
             </svg>
 
             <div class="loading-text-div">
-                <span class="loading-text">
-                    <i v-if="isDownloading" class="fas fa-sync fa-spin"></i>
-                    {{progressStatus}}
-                </span>
                 <span v-if="error" class="danger">
                     {{error}}
+                </span>
+                <span v-else class="loading-text">
+                    <i v-if="isDownloading" class="fas fa-sync fa-spin"></i>
+                    {{progressStatus}}
                 </span>
             </div>
 
@@ -62,7 +62,7 @@ export default {
             this.lastTransferred = 0
 
             try{
-                const response = await fetch( "http://testnet.pandorapay.org/PandoraPay-wallet.wasm", {
+                const response = await fetch(PandoraPayWalletOptions.resPrefix+"PandoraPay-wallet.wasm", {
                     headers: {
                         'Content-Encoding': 'gzip',
                     }
