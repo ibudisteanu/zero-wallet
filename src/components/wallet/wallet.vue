@@ -22,8 +22,8 @@
             </div>
         </div>
         <template v-else>
-            <balances :address="address"> </balances>
-            <transactions :address="address"> </transactions>
+            <balances :address="address" />
+            <transactions :address="address" />
         </template>
 
     </div>

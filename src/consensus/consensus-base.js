@@ -13,6 +13,7 @@ export default class BaseConsensus extends EventEmitter{
             transactionsByHeight: {},
             transactionsByHash: {},
             accounts: {},
+            accountsTxs: {},
             tokensInfo: {},
             tokens: {},
         }
@@ -28,6 +29,7 @@ export default class BaseConsensus extends EventEmitter{
             tokens: {},
             transactions: {},
             accounts: {},
+            accountsTxs: {},
             subscribed: {
                 accounts: { }
             },

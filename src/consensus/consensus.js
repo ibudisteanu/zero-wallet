@@ -152,6 +152,27 @@ class Consensus extends BaseConsensus{
 
     }
 
+    async downloadAccountTxs( publicKeyHash, next = 0 ){
+        if (this._promises.accountsTxs[publicKeyHash]) return this._promises.accountsTxs[publicKeyHash];
+        return this._promises.accountsTxs[publicKeyHash] = new Promise( async (resolve, reject) => {
+            try{
+                const out = await PandoraPay.network.getNetworkAccountTxs(publicKeyHash, next);
+                const accountTxs = JSON.parse(out)
+
+                this.emit("consensus/account-txs", { publicKeyHash, next, accountTxs })
+
+                if (accountTxs)
+                    await Promise.all( accountTxs.txs.map ( txHash =>  this.getTransactionByHash(txHash) ) )
+
+                resolve(accountTxs)
+            }catch(err){
+                reject(err)
+            }finally{
+                delete this._promises.accountsTxs[publicKeyHash];
+            }
+        })
+    }
+
     async _downloadAccount(publicKeyHash){
         if (this._promises.accounts[publicKeyHash]) return this._promises.accounts[publicKeyHash];
         return this._promises.accounts[publicKeyHash] = new Promise( async (resolve, reject) => {
@@ -160,7 +181,9 @@ class Consensus extends BaseConsensus{
                 const account = JSON.parse(out)
 
                 await this.processAccount(account)
-                this.emit("consensus/account-transparent-update", {publicKeyHash, account })
+                this.emit("consensus/account-transparent-update", { publicKeyHash, account })
+
+                await this.downloadAccountTxs(publicKeyHash, 0)
 
                 resolve(account)
             }catch(err){
@@ -311,7 +334,7 @@ class Consensus extends BaseConsensus{
         })
     }
 
-    getBlock(height){
+    getBlockByHeight(height){
 
         if (typeof height === "string")
             height = Number.parseInt(height)
@@ -379,8 +402,6 @@ class Consensus extends BaseConsensus{
                 const txData = await PandoraPay.network.getNetworkTransaction( hash );
                 if (!txData) throw Error("tx fetch failed"); //disconnected
 
-                console.log("tx", txData)
-
                 resolve(this._includeTx(JSON.parse(txData)));
             }catch(err){
                 reject(err);
@@ -407,7 +428,6 @@ class Consensus extends BaseConsensus{
 
                 resolve(this._includeTx(JSON.parse(txData)));
 
-                resolve(tx);
             }catch(err){
                 reject(err);
             } finally{

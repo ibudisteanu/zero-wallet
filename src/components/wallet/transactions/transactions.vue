@@ -3,13 +3,17 @@
     <div class="container">
         <div class="boxed boxed-background">
 
-            <span class="title row pd-bottom-20">TRANSACTIONS {{ !address.loaded ? '' : txCount + txCountPending }}</span>
+            <span class="title row pd-bottom-20">
+                TRANSACTIONS
+                <template v-if="!address.txs">
+                    <loading-spinner />
+                </template>
+                <template v-else>
+                    {{txCount + txCountPending}}
+                </template>
+            </span>
 
-            <show-transactions :transactions="transactionsAll "/>
-
-            <div class="centered" v-if="address.txsLowestIndex">
-                <loading-button class="button-width-inherit" @submit="handleViewMore" icon="fa fa-cloud-download-alt" text="View more..."/>
-            </div>
+            <show-transactions :transactions="transactionsAll"/>
 
         </div>
 
@@ -26,7 +30,7 @@ import LoadingButton from "src/components/utils/loading-button.vue"
 
 export default {
 
-    components: { LoadingSpinner, ShowTransactions, LoadingButton},
+    components: { LoadingSpinner, ShowTransactions },
 
     props: {
         address: {default: null}
@@ -36,24 +40,23 @@ export default {
     computed:{
 
         txCount(){
-            return this.address.txCount || 0;
+            return this.address.txs.count || 0;
         },
 
         txCountPending(){
-            return this.address.txCountPending || 0;
-        },
-
-        txs(){
-            return this.address.txs;
-        },
-
-        pendingTxs(){
-            return this.address.pendingTxs;
+            return 0;
         },
 
         pendingTransactions(){
+            return [];
+        },
 
-            const txs = this.pendingTxs;
+        transactions(){
+
+            if (!this.address.txs)
+                return []
+
+            const txs = this.address.txs.list;
 
             const out = [];
             for (const key in txs)
@@ -61,17 +64,6 @@ export default {
                     out.push( this.$store.state.transactions.txsByHash[txs[key]] );
 
             return out;
-        },
-
-        transactions(){
-            const txs = this.txs;
-
-            const out = [];
-            for (const key in txs)
-                if (this.$store.state.transactions.txsByHash[txs[key]])
-                    out.push( this.$store.state.transactions.txsByHash[txs[key]] );
-
-            return out.sort ( (a,b) => b.__extra.height - a.__extra.height );
         },
 
         transactionsAll(){
@@ -83,13 +75,6 @@ export default {
     methods:{
 
         async handleViewMore(resolve){
-
-            try{
-                await Consensus.downloadAccountTransactionsSpecific( {account: this.address.addressEncoded, index: this.address.txsLowestIndex, limit: 10} )
-            }finally{
-                resolve(true);
-            }
-
 
         }
     },

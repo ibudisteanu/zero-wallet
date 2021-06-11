@@ -163,7 +163,7 @@ export default {
 
                 await Consensus.syncPromise;
 
-                if (this.height !== undefined) await  Consensus.getBlock(this.height);
+                if (this.height !== undefined) await  Consensus.getBlockByHeight(this.height);
                 if (this.hash ) await Consensus.getBlockByHash(this.hash);
 
                 const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)

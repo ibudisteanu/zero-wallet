@@ -73,6 +73,7 @@ export default {
         Consensus.on("consensus/status-update", status =>  this.$store.commit('setConsensusStatus', status) );
 
         Consensus.on("consensus/account-transparent-update", status => this.$store.commit('setTransparentAddressUpdate', status))
+        Consensus.on("consensus/account-txs", status => this.$store.commit('setAccountTxs', status))
 
         Consensus.on("consensus/mem-pool-update", data => this.$store.commit('setMemPool', data))
 
