@@ -20,10 +20,10 @@
                     <loading-spinner/>
                 </template>
                 <template v-else>
-                    <show-blocks-info :blocksInfo="lastBlocksInfo" />
 
-                    <div class="right">
-                        <pagination :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" :prefix="'/explorer/'" />
+                    <div id="pagination">
+                        <show-blocks-info :blocksInfo="lastBlocksInfo" />
+                        <pagination class="right" :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" :prefix="'/explorer/'" />
                     </div>
 
                 </template>

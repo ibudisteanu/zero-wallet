@@ -15,9 +15,7 @@
 
             <div id="pagination" v-if="txs">
                 <show-transactions :transactions="transactionsAll"/>
-                <div class="right">
-                    <pagination :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" :prefix="`/address/${address.addressEncoded}/`" />
-                </div>
+                <pagination class="right" :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" :prefix="`/address/${address.addressEncoded}/`" />
             </div>
 
         </div>
@@ -127,7 +125,7 @@ export default {
     },
 
     watch: {
-        '$route' (to, from) {
+        'publicKeyHash' (to, from) {
             return this.loadTransactions();
         },
         'starting' (to, from){

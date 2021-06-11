@@ -20,7 +20,9 @@ export default {
     },
 
     computed:{
-
+        mainPublicKeyHash(){
+            return this.$store.state.wallet.mainPublicKeyHash
+        }
     },
 
     methods:{
@@ -38,7 +40,7 @@ export default {
                     const addressJSON = JSON.parse(addressData)
                     publicKeyHash = addressJSON.publicKeyHash
                 } else {
-                    publicKeyHash = this.$store.state.wallet.mainPublicKeyHash
+                    publicKeyHash = this.mainPublicKeyHash
                     address = this.$store.state.wallet.addresses[publicKeyHash].addressEncoded
                 }
 
@@ -55,6 +57,7 @@ export default {
                 if (!this.publicKeyHash) return
 
                 await Consensus.subscribeAccount( this.publicKeyHash )
+
             }catch(err){
                 this.error = err.toString()
             }
@@ -66,7 +69,12 @@ export default {
     watch: {
         '$route' (to, from) {
             return this.loadAddress();
-        }
+        },
+        'mainPublicKeyHash' (to, from){
+            if (this.mainPublicKeyHash && (from === this.publicKeyHash || !this.publicKeyHash) )
+                return this.loadAddress();
+
+        },
     },
 
     async mounted(){
