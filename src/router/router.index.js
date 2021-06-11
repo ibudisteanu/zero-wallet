@@ -66,7 +66,8 @@ const routes = [
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
 
     {path: '/', component: WalletPage, beforeEnter: guardDecrypted },
-    {path: '/address/:parameter', component: WalletPage },
+    {path: '/address/:address', component: WalletPage },
+    {path: '/address/:address/:page', component: WalletPage },
 
     { path: '*', name: 'not-found', component: NotFoundPage,}
 

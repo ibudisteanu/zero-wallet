@@ -141,7 +141,7 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async processAccount(account){
+    async _processAccount(account){
 
         if (!account) return
 
@@ -159,7 +159,7 @@ class Consensus extends BaseConsensus{
                 const out = await PandoraPay.network.getNetworkAccountTxs(publicKeyHash, next);
                 const accountTxs = JSON.parse(out)
 
-                this.emit("consensus/account-txs", { publicKeyHash, next, accountTxs })
+                this.emit("consensus/account-txs", { publicKeyHash, accountTxs })
 
                 if (accountTxs)
                     await Promise.all( accountTxs.txs.map ( txHash =>  this.getTransactionByHash(txHash) ) )
@@ -174,16 +174,19 @@ class Consensus extends BaseConsensus{
     }
 
     async _downloadAccount(publicKeyHash){
+
+        if (this._data.accounts[publicKeyHash]) return this._data.accounts[publicKeyHash]
+
         if (this._promises.accounts[publicKeyHash]) return this._promises.accounts[publicKeyHash];
         return this._promises.accounts[publicKeyHash] = new Promise( async (resolve, reject) => {
             try{
                 const out = await PandoraPay.network.getNetworkAccount(publicKeyHash);
                 const account = JSON.parse(out)
 
-                await this.processAccount(account)
+                await this._processAccount(account)
                 this.emit("consensus/account-transparent-update", { publicKeyHash, account })
 
-                await this.downloadAccountTxs(publicKeyHash, 0)
+                this._data.accounts[publicKeyHash] = account
 
                 resolve(account)
             }catch(err){
@@ -272,8 +275,8 @@ class Consensus extends BaseConsensus{
 
             exists[account] = true
 
-            if (!this._data.accounts[account]){
-                this._data.accounts[account] = {
+            if (!this._data.walletAddresses[account]){
+                this._data.walletAddresses[account] = {
                     publicKeyHash: accounts[account].publicKeyHash,
                 }
                 await this.subscribeAccount(accounts[account].publicKeyHash);
@@ -281,9 +284,9 @@ class Consensus extends BaseConsensus{
 
         }
 
-        for (const account in this._data.accounts){
+        for (const account in this._data.walletAddresses){
             if (!exists[account])
-                await this.unsubscribeAccount(this._data.accounts[account].publicKeyHash)
+                await this.unsubscribeAccount(this._data.walletAddresses[account].publicKeyHash)
         }
 
     }

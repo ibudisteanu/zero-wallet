@@ -6,6 +6,8 @@ export default {
     state: {
 
         list: {},
+        accounts: {},
+        txs: {},
 
     },
 

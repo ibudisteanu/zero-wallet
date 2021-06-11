@@ -1,6 +1,6 @@
 <template>
 
-    <router-link :to="`/address/${finalAddress}`" :disabled="!finalAddress && !disableRoute">
+    <router-link :to="`/address/${finalAddress}`" :disabled="!finalAddress && !disableRoute" :alt="finalAddress">
         <div class="identicon outer" :style="`padding: ${outerSize}px; background-color: ${background}`">
             <img :src="identiconSrc" class="identicon" :style="`width: ${size}px`" >
         </div>

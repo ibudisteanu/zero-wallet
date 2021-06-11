@@ -16,15 +16,9 @@
             </div>
         </div>
 
-        <div v-if="!address.loaded" class="container">
-            <div class="boxed centered ">
-                <loading-spinner />
-            </div>
-        </div>
-        <template v-else>
-            <balances :address="address" />
-            <transactions :address="address" />
-        </template>
+
+        <balances :publicKeyHash="publicKeyHash" />
+        <transactions :publicKeyHash="publicKeyHash" />
 
     </div>
     <div v-else>

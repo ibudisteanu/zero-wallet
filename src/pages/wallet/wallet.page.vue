@@ -15,42 +15,45 @@ export default {
 
     data(){
         return {
-            computedPublicKeyHash: ''
+            publicKeyHash: ''
         }
     },
 
     computed:{
-        publicKeyHash(){
-            return this.$route.params.parameter ? this.computedPublicKeyHash : this.$store.state.wallet.mainPublicKeyHash
-        },
+
     },
 
     methods:{
 
         async loadAddress(){
 
-            const parameter = this.$route.params.parameter
-            if (parameter){
-
-                if (parameter.length === 40) {
-                    this.computedPublicKeyHash = parameter
-                }else {
-                    const addressData = await PandoraPay.addresses.decodeAddress(parameter)
-                    const address = JSON.parse(addressData)
-                    address.addressEncoded = parameter
-                    this.$store.commit('addAddress', address)
-                    this.computedPublicKeyHash = address.publicKeyHash
-                }
-            } else {
-                this.computedPublicKeyHash = ""
-            }
-
-            await Consensus.syncPromise;
-
-            if (!this.publicKeyHash)
-                return
-
             try{
+                this.error = ""
+
+                let address = this.$route.params.address
+                let publicKeyHash
+
+                if (address){
+                    const addressData = await PandoraPay.addresses.decodeAddress(address)
+                    const addressJSON = JSON.parse(addressData)
+                    publicKeyHash = addressJSON.publicKeyHash
+                } else {
+                    publicKeyHash = this.$store.state.wallet.mainPublicKeyHash
+                    address = this.$store.state.wallet.addresses[publicKeyHash].addressEncoded
+                }
+
+                const addressData = {}
+                addressData.addressEncoded = address
+                addressData.publicKeyHash = publicKeyHash
+
+                this.$store.commit('addAddress', addressData )
+
+                this.publicKeyHash = publicKeyHash
+
+                await Consensus.syncPromise;
+
+                if (!this.publicKeyHash) return
+
                 await Consensus.subscribeAccount( this.publicKeyHash )
             }catch(err){
                 this.error = err.toString()
@@ -72,9 +75,9 @@ export default {
 
     async beforeDestroy() {
         const publicKeyHash = this.computedPublicKeyHash || this.publicKeyHash
-        if (!this.$store.getters.walletContains(publicKeyHash)){
+        if (!this.$store.getters.walletContains(publicKeyHash))
             await Consensus.unsubscribeAccount(publicKeyHash )
-        }
+
     }
 
 };

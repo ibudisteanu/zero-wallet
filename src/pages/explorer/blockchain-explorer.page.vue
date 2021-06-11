@@ -22,9 +22,10 @@
                 <template v-else>
                     <show-blocks-info :blocksInfo="lastBlocksInfo" />
 
-                    <div class="centered">
+                    <div class="right">
                         <pagination :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" :prefix="'/explorer/'" />
                     </div>
+
                 </template>
 
             </div>
@@ -68,8 +69,12 @@ export default {
             return 1
         },
 
+        starting(){
+            return this.ending - ( this.page * this.countPerPage )
+        },
+
         lastBlocksInfo(){
-            return this.$store.getters.blocksInfoSorted//.filter(a => a.height <= this.ending - ( ( this.page +1 ) * this.countPerPage )  );
+            return this.$store.getters.blocksInfoSorted.filter(a => a.height >= this.starting  && a.height <= this.ending -  ( this.page -1  ) * this.countPerPage );
         },
 
         ending(){
@@ -79,28 +84,28 @@ export default {
     },
 
     methods: {
-
         async loadBlocksInfo(){
-
-            this.loading = false
-
-            await Consensus.syncPromise;
-
             try{
-                await Consensus.getBlocksInfo( this.ending - ( this.page * this.countPerPage )  )
+                this.loading = false
+                this.error = ''
+                await Consensus.syncPromise;
+
+                await Consensus.getBlocksInfo( this.starting  )
 
                 this.loaded = true
             }catch(err){
                 this.error = err.toString()
             }
         }
-
     },
 
     watch: {
         '$route' (to, from) {
             return this.loadBlocksInfo();
-        }
+        },
+        'starting' (to, from){
+            return this.loadBlocksInfo();
+        },
     },
 
     mounted(){

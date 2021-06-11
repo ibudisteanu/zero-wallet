@@ -3,7 +3,10 @@
     <div class="container">
         <div class="boxed centered pd-bottom-30">
 
-            <template v-if="!isFound">
+            <template v-if="isLoading">
+                <loading-spinner />
+            </template>
+            <template v-else-if="!isFound">
                 <strong>Address does not exist</strong>
             </template>
             <template v-else>
@@ -18,7 +21,7 @@
                                  :key="`balance-token-${index}`"
                                  :balance="balance.amount"
                                  :token="balance.token"
-                                 :version="address.version">
+                                 :version="account.version">
                         </balance>
                     </div>
                 </template>
@@ -58,17 +61,21 @@ export default {
     components: {AccountIdenticon, LoadingSpinner, Balance, StakePending},
 
     props: {
-        address: {default: null}
+        publicKeyHash: {default: ""}
     },
 
     computed:{
 
+        account(){
+            return this.$store.state.addresses.accounts[this.publicKeyHash]
+        },
+
         balances(){
-            return this.address.account.balances;
+            return this.account.balances;
         },
 
         delegatedStake(){
-            return this.address.account.delegatedStake
+            return this.account.delegatedStake
         },
 
         delegatedStakesPending(){
@@ -76,20 +83,21 @@ export default {
             return this.delegatedStake.stakesPending
         },
 
+        isLoading(){
+            return this.account === undefined
+        },
+
         isFound(){
-            return !!this.address.account
+            return this.account !== null
         },
 
         isEmpty(){
-            return !this.address.account.balances.length
+            return !this.account.balances.length
         }
 
 
     },
 
-    methods:{
-
-    }
 
 }
 </script>

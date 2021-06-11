@@ -12,6 +12,7 @@ export default class BaseConsensus extends EventEmitter{
             blocksByHash: {},
             transactionsByHeight: {},
             transactionsByHash: {},
+            walletAddresses: {},
             accounts: {},
             accountsTxs: {},
             tokensInfo: {},

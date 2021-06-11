@@ -10,10 +10,15 @@
              :class="`row pd-top-10 pd-bottom-10 ${isPending(tx) ? 'grid-primary' : ''} `"
              :key="`show-transaction-${key}`">
 
-            <router-link :to="`/explorer/tx/hash/${tx.bloom.hash}`">
+            <template v-if="typeof tx === 'string'">
+                <span class="tx-hash">{{tx}}</span>
+                <loading-spinner/>
+            </template>
+            <template v-else>
+                <router-link :to="`/explorer/tx/hash/${tx.bloom.hash}`">
 
-                <span class="col-xs-6 col-sm-2 wordwrap"><router-link :to="`/explorer/tx/hash/${tx.bloom.hash}`">{{tx.bloom.hash.substr(0,10)+'...'}}</router-link></span>
-                <span class="col-xs-6 col-sm-2 wordwrap">
+                    <span class="col-xs-6 col-sm-2 wordwrap"><router-link :to="`/explorer/tx/hash/${tx.bloom.hash}`">{{tx.bloom.hash.substr(0,10)+'...'}}</router-link></span>
+                    <span class="col-xs-6 col-sm-2 wordwrap">
                     <template v-if="!isPending(tx)">
                         {{ timeAgo( $store.state.blockchain.genesisTimestamp +  tx.__extra.timestamp) }}
                     </template>
@@ -21,7 +26,7 @@
                         pending
                     </template>
                 </span>
-                <span class="col-xs-12 col-sm-8 wordwrap">
+                    <span class="col-xs-12 col-sm-8 wordwrap">
                     <div class="input" v-for="(vin, index) in tx.base.vin "
                          :key="`show-transaction-vin-${index}`">
                         <account-identicon :publicKeyHash="vin.bloom.publicKeyHash" size="20" outer-size="7" />
@@ -33,7 +38,8 @@
                         <span class="amount vertical-center">{{$store.getters.addressesContains(tx) ? convertToBase(vout.amount) : '?'}} {{vout.token}}</span>
                     </div>
                 </span>
-            </router-link>
+                </router-link>
+            </template>
 
         </div>
 
@@ -45,10 +51,11 @@
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import StringHelper from "src/utils/string-helper"
+import LoadingSpinner from "src/components/utils/loading-spinner";
 
 export default {
 
-    components: {AccountIdenticon},
+    components: {AccountIdenticon, LoadingSpinner},
 
     props:{
         transactions: {default: null},
@@ -60,6 +67,7 @@ export default {
         convertToBase: (amount) => PandoraPay.config.coins.convertToBase( amount.toString() ),
 
         isPending(tx){
+            if (!tx || typeof tx === "string") return false
             return typeof tx.__extra.blkHeight === "undefined"
         }
 
@@ -70,7 +78,8 @@ export default {
 
 <style scoped>
 
-    .identicon{
+    .tx-hash{
+        display: inline-block;
     }
 
     .amount{

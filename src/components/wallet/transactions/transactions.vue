@@ -5,15 +5,20 @@
 
             <span class="title row pd-bottom-20">
                 TRANSACTIONS
-                <template v-if="!address.txs">
+                <template v-if="!txs">
                     <loading-spinner />
                 </template>
                 <template v-else>
-                    {{txCount + txCountPending}}
+                    {{ ending }}
                 </template>
             </span>
 
-            <show-transactions :transactions="transactionsAll"/>
+            <div id="pagination" v-if="txs">
+                <show-transactions :transactions="transactionsAll"/>
+                <div class="right">
+                    <pagination :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" :prefix="`/address/${address.addressEncoded}/`" />
+                </div>
+            </div>
 
         </div>
 
@@ -25,26 +30,57 @@
 
 import LoadingSpinner from "../../utils/loading-spinner";
 import ShowTransactions from "src/components/explorer/show-transactions"
-import Consensus from "src/consensus/consensus"
-import LoadingButton from "src/components/utils/loading-button.vue"
+import consts from "../../../../consts/consts";
+import Pagination from "../../utils/pagination";
+import Consensus from "../../../consensus/consensus";
 
 export default {
 
-    components: { LoadingSpinner, ShowTransactions },
+    components: { LoadingSpinner, Pagination, ShowTransactions },
 
     props: {
-        address: {default: null}
+        publicKeyHash: {default: ""}
     },
 
+    data(){
+        return {
+            error: "",
+            loading: true,
+        }
+    },
 
     computed:{
 
-        txCount(){
-            return this.address.txs.count || 0;
+        address(){
+            return this.$store.state.addresses.list[this.publicKeyHash]
         },
 
-        txCountPending(){
-            return 0;
+        txs(){
+            return this.$store.state.addresses.txs[this.publicKeyHash]
+        },
+
+        countPerPage(){
+            return consts.addressTxsPagination
+        },
+
+        page(){
+            let page = this.$route.params.page || 1
+            if (typeof page == "string"){
+                page = Number.parseInt(page)
+                return page;
+            }
+            return 1
+        },
+
+        starting(){
+            return ( (this.page-1) * this.countPerPage )
+        },
+
+        ending(){
+            if (!this.txs)
+                return 0
+
+            return this.txs.count;
         },
 
         pendingTransactions(){
@@ -53,31 +89,55 @@ export default {
 
         transactions(){
 
-            if (!this.address.txs)
+            if (!this.txs)
                 return []
 
-            const txs = this.address.txs.list;
+            const txs = this.txs.list;
 
             const out = [];
-            for (const key in txs)
-                if (this.$store.state.transactions.txsByHash[txs[key]])
-                    out.push( this.$store.state.transactions.txsByHash[txs[key]] );
+            for (const hash of txs)
+                if (this.$store.state.transactions.txsByHash[ hash ])
+                    out.push( this.$store.state.transactions.txsByHash[ hash ] );
+                else
+                    out.push( hash  );
 
             return out;
         },
 
         transactionsAll(){
             return this.pendingTransactions.concat( this.transactions );
-        }
+        },
 
     },
 
-    methods:{
+    methods: {
+        async loadTransactions(){
+            try{
+                this.loading = false
+                this.error = ''
+                await Consensus.syncPromise;
 
-        async handleViewMore(resolve){
+                await Consensus.downloadAccountTxs( this.publicKeyHash, this.starting  )
 
+                this.loaded = true
+            }catch(err){
+                this.error = err.toString()
+            }
         }
     },
+
+    watch: {
+        '$route' (to, from) {
+            return this.loadTransactions();
+        },
+        'starting' (to, from){
+            return this.loadTransactions();
+        },
+    },
+
+    mounted(){
+        return this.loadTransactions();
+    }
 
 
 }
