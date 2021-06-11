@@ -62,7 +62,7 @@ export default {
             this.lastTransferred = 0
 
             try{
-                const response = await fetch(PandoraPayWalletOptions.resPrefix+"PandoraPay-wallet.wasm", {
+                const response = await fetch( "http://testnet.pandorapay.org/PandoraPay-wallet.wasm", {
                     headers: {
                         'Content-Encoding': 'gzip',
                     }
@@ -77,9 +77,14 @@ export default {
                 // to access headers, server must send CORS header "Access-Control-Expose-Headers: content-encoding, content-length x-file-size"
                 // server must send custom x-file-size header if gzip or other content-encoding is used
                 const contentEncoding = response.headers.get('content-encoding');
-                const contentLength = response.headers.get(contentEncoding ? 'x-file-size' : 'content-length');
+                let contentLength = response.headers.get( contentEncoding ? 'x-file-size' : 'content-length');
+                if (contentLength === null && contentEncoding) {
+                    console.error('Response size header unavailable for encoded');
+                    contentLength = response.headers.get('content-length');
+                }
+
                 if (contentLength === null)
-                    throw Error('Response size header unavailable');
+                    throw "Response size header unavailable"
 
                 const total = parseInt(contentLength, 10);
                 let loaded = 0;
