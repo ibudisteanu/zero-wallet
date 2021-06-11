@@ -27,7 +27,6 @@
 <script>
 
 import consts from "consts/consts"
-import fetchProgress from 'fetch-progress'
 
 export default {
 
@@ -62,42 +61,81 @@ export default {
             this.isDownloading = true;
             this.lastTransferred = 0
 
-            fetch(PandoraPayWalletOptions.resPrefix+"PandoraPay-wallet.wasm", {
-                headers: {
-                    'Content-Encoding': 'gzip',
-                }
-            })
-                .then(
-                    fetchProgress({
-                        onProgress(progress) {
-                            if (progress.transferred - self.lastTransferred > 256){
-                                self.lastTransferred = progress.transferred
-                                self.progressStatus = `WASM:  ${(progress.transferred/1024/1024).toFixed(2)}mb / ${(progress.total/1024/1024).toFixed(2)}mb`
-                            }
-                        },
-                    })
-                ).then((r)=> {
-
-                    this.isDownloading = false
-
-                    // The response (res) can now be passed to any of the streaming methods as normal
-                    WebAssembly.instantiateStreaming(r, go.importObject).then(result => {
-
-                        this.progressStatus = "PandoraPay WASM running...";
-
-                        setTimeout(() => {
-
-                            go.run(result.instance)
-
-                            this.progressStatus = "PandoraPay WASM executed";
-
-                            PandoraPayWallet.loadWallet()
-
-                        }, 20)
-
-                    })
-
+            try{
+                const response = await fetch(PandoraPayWalletOptions.resPrefix+"PandoraPay-wallet.wasm", {
+                    headers: {
+                        'Content-Encoding': 'gzip',
+                    }
                 })
+
+                if (!response.ok)
+                    throw Error(response.status+' '+response.statusText)
+
+                if (!response.body)
+                    throw Error('ReadableStream not yet supported in this browser.')
+
+                // to access headers, server must send CORS header "Access-Control-Expose-Headers: content-encoding, content-length x-file-size"
+                // server must send custom x-file-size header if gzip or other content-encoding is used
+                const contentEncoding = response.headers.get('content-encoding');
+                const contentLength = response.headers.get(contentEncoding ? 'x-file-size' : 'content-length');
+                if (contentLength === null)
+                    throw Error('Response size header unavailable');
+
+                const total = parseInt(contentLength, 10);
+                let loaded = 0;
+
+                let r = await ( new Response(
+                    new ReadableStream({
+                        start(controller) {
+                            const reader = response.body.getReader();
+
+                            read();
+                            function read() {
+                                reader.read().then(({done, value}) => {
+                                    if (done) {
+                                        controller.close();
+                                        return;
+                                    }
+                                    loaded += value.byteLength;
+
+                                    if (loaded - self.lastTransferred > 256) {
+                                        self.lastTransferred = loaded
+                                        self.progressStatus = `WASM:  ${(loaded / 1024 / 1024).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
+                                    }
+
+                                    controller.enqueue(value);
+                                    read();
+                                }).catch(error => {
+                                    controller.error(error)
+                                })
+                            }
+                        }
+                    })
+                ) );
+
+                this.progressStatus = "PandoraPay WASM instantiating...";
+
+                let data = await r.arrayBuffer()
+
+                this.isDownloading = false;
+
+                const result = await WebAssembly.instantiate( data, go.importObject)
+
+                this.progressStatus = "PandoraPay WASM running...";
+
+                setTimeout(() => {
+
+                    go.run(result.instance)
+
+                    this.progressStatus = "PandoraPay WASM executed";
+
+                    PandoraPayWallet.loadWallet()
+
+                }, 20)
+
+            }catch(err){
+                this.error = err.toString()
+            }
 
         }
         document.body.appendChild( script );
