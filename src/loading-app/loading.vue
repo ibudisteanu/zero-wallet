@@ -103,9 +103,9 @@ export default {
                                     }
                                     loaded += value.byteLength;
 
-                                    if (loaded - self.lastTransferred > 256) {
+                                    if (loaded - self.lastTransferred > 1024) {
                                         self.lastTransferred = loaded
-                                        self.progressStatus = `WASM:  ${(loaded / 1024 / 1024).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
+                                        self.progressStatus = `WASM:  ${(loaded / 1024 / 1024 /3).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
                                     }
 
                                     controller.enqueue(value);
