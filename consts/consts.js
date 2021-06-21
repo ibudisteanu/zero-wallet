@@ -10,7 +10,7 @@ export default {
 
     goArgv: [
         'js',
-        '--devnet',
+        '--network=devnet',
         '--new-devnet',
         '--store-wallet-type=memory',
         '--consensus=wallet',
