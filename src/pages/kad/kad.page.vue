@@ -10,9 +10,10 @@
                 <h1>KAD</h1>
                 <span>PandoraPay will use PandoraProtocol to build a decentralized and distributed network.</span>
 
-                <span v-if="error" class="danger">
-                    {{error}}
-                </span>
+                <div v-if="error" class="alert alert-danger border-2 d-flex align-items-center">
+                    <div class="bg-white me-3 icon-item"><i class="fa fa-times"></i> </div>
+                    <p class="mb-0 flex-1">{{error}}</p>
+                </div>
 
                 <div class="pd-top-40">
                     <span>Proposed future hard forks:</span>

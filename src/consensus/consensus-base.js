@@ -37,7 +37,7 @@ export default class BaseConsensus extends EventEmitter{
             unsubscribed: {
                 accounts: { }
             },
-            mempool: null,
+            mempool: {},
         }
 
         this._startedStatus = false;

@@ -30,39 +30,18 @@ Scrollbar
     overflow-x: hidden;
     overflow-y: auto;
     text-align: center;
-    height: 300px
+    max-height: 300px
 }
 
-.right{
-    float: right;
-}
+/**
+    ToolTip
+ */
 
-.pointer{
-    cursor: pointer;
-}
-
-a, a:hover,a:visited, a:focus {
-    text-decoration:none;
-}
-
-@media (min-width: 576px) {
-    .container{
-        max-width: 100%;
-    }
-}
-
-.disabled {
-    pointer-events: none;
-}
-
-.blurry-text {
-    text-shadow: 0 0 15px black;
-    color: transparent;
-}
 
 .tooltip {
     display: block !important;
     z-index: 10000;
+    font-size: 0.8rem
 }
 
 .tooltip .tooltip-inner {
@@ -165,5 +144,39 @@ a, a:hover,a:visited, a:focus {
     visibility: visible;
     opacity: 1;
     transition: opacity .15s;
+}
+
+
+
+.right{
+    float: right;
+}
+
+.pointer{
+    cursor: pointer;
+}
+
+a, a:hover,a:visited, a:focus {
+    text-decoration:none;
+}
+
+@media (min-width: 576px) {
+    .container{
+        max-width: 100%;
+    }
+}
+
+.disabled {
+    pointer-events: none;
+}
+
+.blurry-text {
+    text-shadow: 0 0 15px black;
+    color: transparent;
+}
+
+.dark .blurry-text {
+    text-shadow: 0 0 15px white;
+    color: transparent;
 }
 

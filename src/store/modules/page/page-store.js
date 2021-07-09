@@ -9,6 +9,8 @@ export default {
 
         modalOpened: false,
 
+        dark: false,
+
     },
 
     mutations,

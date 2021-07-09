@@ -27,9 +27,10 @@
                 Generate Address
             </button>
 
-            <span v-if="error" class="danger">
-                {{error}}
-            </span>
+            <div v-if="error" class="alert alert-danger border-2 d-flex align-items-center">
+                <div class="bg-white me-3 icon-item"><i class="fa fa-times"></i> </div>
+                <p class="mb-0 flex-1">{{error}}</p>
+            </div>
 
             <div v-if="this.addressGenerated">
                 <span class="wordwrap">

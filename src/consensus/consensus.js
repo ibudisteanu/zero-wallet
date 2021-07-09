@@ -249,8 +249,8 @@ class Consensus extends BaseConsensus{
     }
 
     downloadMempool(start = 0){
-        if (this._promises.mempool) return this._promises.mempool
-        return this._promises.mempool = new Promise(async (resolve, reject)=>{
+        if (this._promises.mempool[start]) return this._promises.mempool[start]
+        return this._promises.mempool[start] = new Promise(async (resolve, reject)=>{
             try{
                 const data = await PandoraPay.network.getNetworkMempool(start)
                 const mempool = JSON.parse(data)
@@ -265,7 +265,7 @@ class Consensus extends BaseConsensus{
             }catch(err){
                 reject(err)
             }finally{
-                delete (this._promises.mempool)
+                delete (this._promises.mempool[start])
             }
         })
     }

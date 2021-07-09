@@ -9,9 +9,11 @@
       </button>
 
       <ul class="navbar-nav navbar-nav-icons flex-row align-items-center">
+
          <li class="nav-item">
-            <i class="fa fa-moon nav-item-icon"></i>
+            <i :class="`fa fa-${$store.state.page.dark ?'sun':'moon'} nav-item-icon pointer`" @click="toggleDark"></i>
          </li>
+
          <li class="nav-item">
             <i class="fa fa-globe-americas nav-item-icon"></i>
             <span class="badge badge-soft-success">{{$store.state.network.networkName}}</span>
@@ -44,14 +46,16 @@ export default {
    components: {HeaderAccount},
 
     computed:{
-
-
         title(){
             return consts.title;
         },
-
-
     },
+
+   methods: {
+      toggleDark(){
+         this.$store.commit('setDark')
+      }
+   }
 
 }
 </script>

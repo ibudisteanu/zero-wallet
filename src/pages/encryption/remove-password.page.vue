@@ -9,9 +9,10 @@
                 <span class="gray" >Password</span>
                 <password-input v-model="password"/>
 
-                <span v-if="error" class="danger">
-                    {{error}}
-                </span>
+                <div v-if="error" class="alert alert-danger border-2 d-flex align-items-center">
+                    <div class="bg-white me-3 icon-item"><i class="fa fa-times"></i> </div>
+                    <p class="mb-0 flex-1">{{error}}</p>
+                </div>
 
                 <loading-button text="Remove password" @submit="handleRemovePassword" icon="fa fa-unlock-alt"  :disabled="password.length === 0" />
 

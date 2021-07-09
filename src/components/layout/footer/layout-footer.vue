@@ -1,29 +1,25 @@
 <template>
     <footer class="footer">
-        <div class="g-0 justify-content-between fs--1 mt-4 mb-3 centered">
+        <div class="g-0 justify-content-between fs--1 mt-4 mb-3 text-600">
 
-            <div class="row pd-bottom-10 gray">
-                <div class="col-6">
+            <div class="row pb-1 mb-0">
+                <div class="col-12 col-sm-6">
                     <span>Consensus</span>
-                    <span class="color">{{blockchainStatus}}</span>
+                    <span v-if="$store.state.blockchain.status === 'sync'" class="text-success">{{blockchainStatus}}</span>
                 </div>
-                <div class="col-6">
-                    <span>Block Height </span>
-                    <span class="color">#{{blockHeight}}</span>
-                </div>
-            </div>
-
-            <div class="row gray">
-                <div class="col-6">
-                    <span>Disclaimer</span>
-                </div>
-                <div class="col-6">
-                    <span>Safety</span>
+                <div class="col-12 col-sm-6 col-sm-auto">
+                    <span>Block Height</span>
+                    <span v-if="blockHeight" class="text-success">#{{blockHeight}}</span>
                 </div>
             </div>
 
             <div class="row gray">
-                <span>2019 - 2021 <a href="http://PandoraPay.org" target="_blank">{{entity}}</a> - Wallet v {{version}}</span>
+                <div class="col-12 col-sm-6">
+                    <span>2019 - 2021 <a href="https://PandoraPay.org" target="_blank">{{entity}}</a></span>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <span>Wallet v {{version}}</span>
+                </div>
             </div>
 
         </div>
@@ -82,9 +78,5 @@ export default {
 </script>
 
 <style scoped>
-
-    .color{
-        color: #21254a !important;
-    }
 
 </style>

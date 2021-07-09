@@ -18,9 +18,10 @@
         <span class="gray">Delegate Fee in Percentage</span>
         <input type="number" v-model="delegateStakeFee" min="0" max="100" step="0.01">
 
-        <span v-if="error" class="danger">
-            {{error}}
-        </span>
+        <div v-if="error" class="alert alert-danger border-2 d-flex align-items-center">
+            <div class="bg-white me-3 icon-item"><i class="fa fa-times"></i> </div>
+            <p class="mb-0 flex-1">{{error}}</p>
+        </div>
 
         <loading-button text="Delegate Stake" @submit="handleDelegateStake" icon="fa fa-link"  />
 
