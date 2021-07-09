@@ -3,7 +3,7 @@
     <nav class="navbar navbar-light navbar-vertical navbar-expand-xl">
         <div class="d-flex align-items-center">
             <div class="toggle-icon-wrapper" style="margin-right: 0">
-                <button class="btn navbar-toggler-humburger-icon navbar-vertical-toggle" data-bs-toggle="tooltip" data-bs-placement="left" title="" data-bs-original-title="Toggle Navigation" aria-label="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
+                <button class="btn navbar-toggler-humburger-icon navbar-vertical-toggle" data-bs-toggle="tooltip" data-bs-placement="left" title="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
             </div>
             <router-link to="/" class="navbar-brand">
                 <div class="d-flex align-items-center py-3">

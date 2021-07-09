@@ -105,12 +105,17 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async getBlocksInfo( starting ){
+    async getBlocksInfo( starting, view = false ){
 
         starting = Math.max(0, starting )
         const ending = Math.min( starting + consts.blocksInfoPagination -1, this.ending-1 )
 
         console.log(starting, ending)
+
+        if (view) {
+            this._data.blocksInfoStarting = starting
+            this._data.blocksInfoEnding = ending
+        }
 
         const newBlocksInfo = {}
 
@@ -134,7 +139,7 @@ class Consensus extends BaseConsensus{
         const deletedBlocksInfo = []
         for (const key in this._data.blocksInfo){
             const height = Number.parseInt(key)
-            if (height < starting || height > ending && height) {
+            if ( (height < starting || height > ending) && ( height > this._data.blocksInfoEnding || height < this._data.blocksInfoStarting ) ) {
                 deletedBlocksInfo.push(key)
                 delete this._data.blocksInfo[key]
             }
@@ -408,7 +413,6 @@ class Consensus extends BaseConsensus{
         if (this._data.transactionsByHash[hash]) return this._data.transactionsByHash[hash];
         if (this._promises.transactions[hash]) return this._promises.transactions[hash];
 
-        console.log("hash", hash)
         return this._promises.transactions[hash] = new Promise( async (resolve, reject ) => {
 
             try{

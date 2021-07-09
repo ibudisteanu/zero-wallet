@@ -9,38 +9,37 @@
                     </div>
                 </div>
             </div>
-            <div class="scrollbar-overlay" style="max-height:19rem">
-                <div class="list-group list-group-flush fs--1">
-                    <div class="list-group-title border-bottom">All accounts:</div>
-                    <div class="list-group-item">
-                        <div v-for="(address, index) in addresses" :class="`notification notification-flush notification-unread ${ address.publicKeyHash === mainPublicKeyHash  ? 'fw-black' : ''} ` "
-                             :key="`address-${index}`">
-                                <div class="notification-body address">
-                                    <router-link :to="`/address/${address.addressEncoded}`" >
-                                        <account-identicon :address="address.addressEncoded" :identicon="address.identicon" :size="20" :outer-size="5" :version="address.version" />
-                                    </router-link>
-                                    <router-link :to="`/address/${address.addressEncoded}`" >
-                                        <div class="account-title pointer" @click="setMainPublicKeyHash(address.publicKeyHash)">
-                                            <span class="fw-semi-bold">{{address.name}}</span>
-                                            <span class="fw-normal text-truncate">{{address.addressEncoded}} </span>
-                                        </div>
-                                    </router-link>
-                                    <div class="account-tools">
-                                        <span class="fw-light" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : '&nbsp;'}}</span>
-                                        <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( address)" />
+
+            <div class="list-group list-group-flush fs--1">
+                <div class="list-group-title border-bottom">All accounts:</div>
+                <div class="list-group-item div-scrollable" style="max-height:19rem" >
+                    <div v-for="(address, index) in addresses" :class="`notification notification-flush notification-unread ${ address.publicKeyHash === mainPublicKeyHash  ? 'fw-black' : ''} ` "
+                         :key="`address-${index}`">
+                            <div class="notification-body address">
+                                <router-link :to="`/address/${address.addressEncoded}`" >
+                                    <account-identicon :address="address.addressEncoded" :identicon="address.identicon" :size="20" :outer-size="5" :version="address.version" />
+                                </router-link>
+                                <router-link :to="`/address/${address.addressEncoded}`" >
+                                    <div class="account-title pointer" @click="setMainPublicKeyHash(address.publicKeyHash)">
+                                        <span class="fw-semi-bold">{{address.name}}</span>
+                                        <span class="fw-normal text-truncate">{{address.addressEncoded}} </span>
                                     </div>
+                                </router-link>
+                                <div class="account-tools">
+                                    <span class="fw-light" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : '&nbsp;'}}</span>
+                                    <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( address)" />
                                 </div>
-                        </div>
+                            </div>
                     </div>
-                    <div class="list-group-item">
-                        <div class="list-group-title border-bottom">Operations:</div>
-                        <span @click="createAccount" v-tooltip.left="'Create a new Address'" class="pointer dropdown-item fw-normal"> <i class="fa fa-plus"></i> Create Account </span>
-                        <span @click="importAccount" v-tooltip.left="'Import an address from json file'" class="pointer dropdown-item fw-normal"><i class="fa fa-upload"></i> Import Account (json)</span>
-                        <span @click="importPrivateKey" v-tooltip.left="'Import an address from Private Key'" class="pointer dropdown-item fw-normal"><i class="fa fa-upload"></i> Import Private Key</span>
-                        <div class="dropdown-divider"></div>
-                        <span @click="viewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" class="pointer dropdown-item fw-normal"><i class="fa fa-key"></i>  View Seed Words</span>
-                        <span v-if="encrypted" @click="logout" class="pointer dropdown-item fw-normal"><i class="fa fa-sign-out-alt"></i>  Logout</span>
-                    </div>
+                </div>
+                <div class="list-group-item">
+                    <div class="list-group-title border-bottom">Operations:</div>
+                    <span @click="createAccount" v-tooltip.left="'Create a new Address'" class="pointer dropdown-item fw-normal"> <i class="fa fa-plus"></i> Create Account </span>
+                    <span @click="importAccount" v-tooltip.left="'Import an address from json file'" class="pointer dropdown-item fw-normal"><i class="fa fa-upload"></i> Import Account (json)</span>
+                    <span @click="importPrivateKey" v-tooltip.left="'Import an address from Private Key'" class="pointer dropdown-item fw-normal"><i class="fa fa-upload"></i> Import Private Key</span>
+                    <div class="dropdown-divider"></div>
+                    <span @click="viewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" class="pointer dropdown-item fw-normal"><i class="fa fa-key"></i>  View Seed Words</span>
+                    <span v-if="encrypted" @click="logout" class="pointer dropdown-item fw-normal"><i class="fa fa-sign-out-alt"></i>  Logout</span>
                 </div>
             </div>
         </div>

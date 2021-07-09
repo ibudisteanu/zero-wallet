@@ -26,6 +26,11 @@
             </div>
         </div>
 
+        <div v-if="!isLoading && !isFound" class="alert alert-warning border-2 d-flex align-items-center" role="alert">
+            <div class="bg-white me-3 icon-item"><i class="fa fa-exclamation-triangle"></i></div>
+            <p class="mb-0 flex-1">Address doesn't exist!</p>
+        </div>
+
         <balances :publicKeyHash="publicKeyHash" />
         <transactions :publicKeyHash="publicKeyHash" />
 
@@ -58,7 +63,16 @@ export default {
     computed:{
         address(){
             return this.$store.state.addresses.list[this.publicKeyHash];
-        }
+        },
+        account(){
+            return this.$store.state.addresses.accounts[this.publicKeyHash]
+        },
+        isLoading(){
+            return this.account === undefined
+        },
+        isFound(){
+            return this.account !== null
+        },
     },
 
     data(){

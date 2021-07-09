@@ -19,7 +19,7 @@
                     <template v-else>
 
                         <show-blocks-info :blocksInfo="lastBlocksInfo" />
-                        <pagination class="right pt-2" :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" :prefix="'/explorer/'" />
+                        <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" :prefix="'/explorer/'" />
 
                     </template>
 
@@ -59,20 +59,20 @@ export default {
         },
 
         page(){
-            let page = this.$route.params.page || 1
+            let page = this.$route.params.page || 0
             if (typeof page == "string"){
                 page = Number.parseInt(page)
                 return page;
             }
-            return 1
+            return 0
         },
 
         starting(){
-            return this.ending - ( this.page * this.countPerPage )
+            return this.page * this.countPerPage
         },
 
         lastBlocksInfo(){
-            return this.$store.getters.blocksInfoSorted.filter(a => a.height >= this.starting  && a.height <= this.ending -  ( this.page -1  ) * this.countPerPage );
+            return this.$store.getters.blocksInfoSorted.filter(a => a.height >= this.starting  && a.height <= ( this.page + 1  ) * this.countPerPage );
         },
 
         ending(){
@@ -88,7 +88,7 @@ export default {
                 this.error = ''
                 await Consensus.syncPromise;
 
-                await Consensus.getBlocksInfo( this.starting  )
+                await Consensus.getBlocksInfo( this.starting, true  )
 
                 this.loaded = true
             }catch(err){

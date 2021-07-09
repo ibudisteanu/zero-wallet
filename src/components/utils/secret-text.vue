@@ -11,7 +11,7 @@
         </div>
         <div class="alert alert-warning border-2 d-flex align-items-center" role="alert">
             <div class="bg-white me-3 icon-item"><i class="fa fa-exclamation-triangle"></i></div>
-            <p class="mb-0 flex-1">Warning: DO NOT share this phrase with anyone! These words can be used to <strong>{{warning}} !</strong></p>
+            <p class="mb-0 flex-1">Warning: DO NOT share this phrase with anyone! These words can be used to <strong>{{warning}}</strong></p>
         </div>
 
     </div>

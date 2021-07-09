@@ -9,9 +9,6 @@
                         <template v-if="isLoading">
                             <loading-spinner />
                         </template>
-                        <template v-else-if="!isFound">
-                            <strong>Address does not exist</strong>
-                        </template>
                     </h5>
                 </div>
             </div>

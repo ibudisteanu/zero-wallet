@@ -3,30 +3,30 @@
         <template v-if="total > 0">
 
             <nav :aria-label="label">
-                <ul class="pagination">
-                    <li class="page-item" v-if="current > 2">
-                        <router-link :to="`${prefix}${1}`"  :disabled="current === 1" class="page-link">
-                            <span aria-hidden="true">1 «</span>
+                <ul class="pagination m-0">
+                    <li class="page-item" v-if="inverted ? current > 1 : current < total - 2">
+                        <router-link :to="`${prefix}${inverted ? 0 : total-1}`" class="page-link">
+                            <span aria-hidden="true">{{inverted ? 0 : total-1}}«</span>
                         </router-link>
                     </li>
-                    <li class="page-item" v-if="current > 1">
-                        <router-link :to="`${prefix}${current-1}`"  :disabled="current === 1" class="page-link">
-                            <span aria-hidden="true">{{current-1}}</span>
+                    <li class="page-item" v-if="inverted ? current > 0 : current < total - 1">
+                        <router-link :to="`${prefix}${inverted ? current - 1 : current + 1}`"  class="page-link">
+                            <span aria-hidden="true">{{inverted ? current - 1 : current + 1}}</span>
                         </router-link>
                     </li>
                     <li class="page-item active">
-                        <router-link :to="`${prefix}${current}`"  :disabled="current === 1" class="page-link">
-                            <span aria-hidden="true">{{current}}</span>
+                        <router-link :to="`${prefix}${current}`"  class="page-link">
+                            <span aria-hidden="true">{{ current }}</span>
                         </router-link>
                     </li>
-                    <li class="page-item" v-if="current < total">
-                        <router-link :to="`${prefix}${current+1}`"  :disabled="current === 1" class="page-link">
-                            <span aria-hidden="true">{{current+1}}</span>
+                    <li class="page-item" v-if="current < total - 1">
+                        <router-link :to="`${prefix}${inverted ? current + 1 : current - 1}`" class="page-link">
+                            <span aria-hidden="true">{{inverted ? current + 1 : current - 1}}</span>
                         </router-link>
                     </li>
-                    <li class="page-item" v-if="current < total-1">
-                        <router-link :to="`${prefix}${total}`"  :disabled="current === 1" class="page-link">
-                            <span aria-hidden="true">» {{total}}</span>
+                    <li class="page-item" v-if="inverted ? current < total -2 : current < 0">
+                        <router-link :to="`${prefix}${inverted ? total -1 : 0}`"  class="page-link">
+                            <span aria-hidden="true">» {{inverted ? total -1 : 0}}</span>
                         </router-link>
                     </li>
                 </ul>
@@ -45,6 +45,7 @@ export default {
         current: {default: 0},
         countPerPage: {default: 20},
         prefix: {default: ""},
+        inverted: {default: false}
     },
 
     methods: {
@@ -55,9 +56,5 @@ export default {
 </script>
 
 <style scoped>
-
-    .pagination{
-        margin-bottom: 0;
-    }
 
 </style>

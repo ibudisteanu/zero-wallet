@@ -1,7 +1,7 @@
 <template>
 
     <router-link :to="`/address/${finalAddress}`" :class="{ disabled: !finalAddress || disableRoute }" :alt="finalAddress">
-        <div class="identicon outer" :style="`padding: ${outerSize}px; background-color: ${background}`">
+        <div class="identicon outer" :style="`padding: ${outerSize}px`">
             <img :src="identiconSrc" class="identicon" :style="`width: ${size}px`" >
         </div>
     </router-link>
@@ -17,7 +17,6 @@ export default {
     props:{
         size: {default: 40},
         outerSize: {default: 34},
-        outerColor: {default: "white;"},
 
         identicon: {default: null},
         address: {default: ""},
@@ -76,30 +75,6 @@ export default {
     },
 
     computed:{
-
-        background(){
-            return this.outerColor;
-        },
-
-        addressIdenticon(){
-
-            if (this.identicon) return this.identicon;
-
-            try {
-
-                    // let address;
-                    //
-                    // if (this.address) {
-                    //     address = PandoraPay.cryptography.addressValidator.validateAddress(this.address);
-                    //     if (!address) throw Error("Invalid address");
-                    // }
-
-            } catch(err){
-
-            }
-
-        },
-
     }
 
 
@@ -120,6 +95,11 @@ export default {
     }
 
     .identicon{
+        background-color: white;
+    }
+
+    .dark .identicon{
+        background-color: black;
     }
 
 </style>
