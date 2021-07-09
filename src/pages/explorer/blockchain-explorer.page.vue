@@ -19,7 +19,7 @@
                     <template v-else>
 
                         <show-blocks-info :blocksInfo="lastBlocksInfo" />
-                        <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" :prefix="'/explorer/'" />
+                        <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" prefix="/explorer/" suffix="#chain" />
 
                     </template>
 
@@ -59,12 +59,12 @@ export default {
         },
 
         page(){
-            let page = this.$route.params.page || 0
+            let page = this.$route.params.page || Math.ceil(this.ending / this.countPerPage-1)
             if (typeof page == "string"){
                 page = Number.parseInt(page)
                 return page;
             }
-            return 0
+            return page
         },
 
         starting(){
@@ -72,7 +72,7 @@ export default {
         },
 
         lastBlocksInfo(){
-            return this.$store.getters.blocksInfoSorted.filter(a => a.height >= this.starting  && a.height <= ( this.page + 1  ) * this.countPerPage );
+            return this.$store.getters.blocksInfoSorted.filter(a => a.height >= this.starting  && a.height < ( this.page + 1  ) * this.countPerPage );
         },
 
         ending(){

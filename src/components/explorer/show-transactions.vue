@@ -9,7 +9,7 @@
             <span class="d-none d-sm-block col-md-7 text-truncate">Data</span>
         </div>
 
-        <div v-for="(tx, key) in transactions"
+        <div id="transactions" v-for="(tx, key) in transactions"
              :class="`row pb-2 pt-2 fs--1 align-items-center ${key % 2 === 1 ?'bg-light':''}`"
              :key="`show-transaction-${key}`">
 
@@ -37,7 +37,7 @@
                 <span class="col-8 col-md-1 text-truncate">
                     <template v-if="!isPending(tx)">
                         <router-link :to="`/explorer/block/${tx.__extra.blkHeight}`">
-                            {{ ($store.state.blockchain.end - tx.__extra.blkHeight) }}
+                            {{ $store.state.blockchain.end - tx.__extra.blkHeight }}
                         </router-link>
                     </template>
                     <template v-else>
