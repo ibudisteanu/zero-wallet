@@ -1,42 +1,48 @@
 <template>
 
     <div>
-
-        <div class="row pd-top-10 pd-bottom-10">
-            <span class="hidden-xs col-sm-6 col-md-3 wordwrap">Hash</span>
-            <span class="hidden-xs hidden-sm col-md-3 wordwrap">Kernel Hash</span>
-            <span class="col-xs-4 col-sm-1 col-md-1 wordwrap">Height</span>
-            <span class="col-xs-4 col-sm-1 col-md-1 wordwrap">Time</span>
-            <span class="hidden-xs col-sm-2 col-md-2 wordwrap">Size</span>
-            <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">TX</span>
-            <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">Forger</span>
+        <div class="row pd-top-10 pd-bottom-10  fs--1 text-dark">
+            <span class="d-none d-sm-block col-sm-3 col-md-3 text-truncate">Hash</span>
+            <span class="d-none d-md-block col-md-3 text-truncate">Kernel Hash</span>
+            <span class="d-none d-sm-block col-sm-2 col-md-1 text-truncate">Height</span>
+            <span class="d-none d-sm-block col-sm-2 col-md-1 text-truncate">Time</span>
+            <span class="d-none d-sm-block col-sm-2 col-md-1 text-truncate">Size</span>
+            <span class="d-none d-sm-block col-sm-1 col-md-1 text-truncate">TX</span>
+            <span class="d-none d-sm-block col-sm-2 col-md-1 text-truncate">Forged</span>
         </div>
-        <div v-for="(blockInfo, key) in blocksInfo"
-             class="row pd-top-10 pd-bottom-10"
+        <div v-for="(blockInfo, key) in blocksInfo" :class="`row pb-2 pt-2 fs--1 align-items-center ${key % 2 === 1 ?'bg-light':''}`"
              :key="`show-block-${key}`">
 
-            <span class="hidden-xs col-sm-6 col-md-3 wordwrap">
-                <router-link :to="`/explorer/block/hash/${blockInfo.hash}`">{{blockInfo.hash.substr(0, 20)+'...'}}</router-link>
-            </span>
-            <span class="hidden-xs hidden-sm col-md-3 wordwrap">
-                {{blockInfo.kernelHash.substr(0, 20)+'...'}}
-            </span>
-            <span class="col-xs-4 col-sm-1 col-md-1 wordwrap">
-                <router-link :to="`/explorer/block/height/${blockInfo.height}`">{{blockInfo.height}}</router-link>
-            </span>
-            <span class="col-xs-4 col-sm-1 col-md-1 wordwrap">
-                {{timeAgo( $store.state.blockchain.genesisTimestamp +  blockInfo.timestamp)  }}
-            </span>
-            <span class="hidden-xs col-sm-2 col-md-2 wordwrap">
-                {{formatBytes(blockInfo.size)}}
-            </span>
-            <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">
-                {{blockInfo.txs}}
-            </span>
-            <span class="col-xs-2 col-sm-1 col-md-1 wordwrap">
-                <account-identicon  :publicKeyHash="blockInfo.forger" :size="20" :outer-size="5"  />
+            <span class="col-6 d-block d-sm-none text-dark">Hash</span>
+            <span class="col-6 col-sm-3 col-md-3 text-truncate">
+                <router-link :to="`/explorer/block/hash/${blockInfo.hash}`">{{blockInfo.hash}}</router-link>
             </span>
 
+            <span class="col-6 d-xs-none d-sm-none d-md-none text-dark">Kernel Hash</span>
+            <span class="col-6 d-xs-none d-sm-none d-md-block  col-md-3 text-truncate">
+                {{blockInfo.kernelHash}}
+            </span>
+
+            <span class="col-6 d-block d-sm-none text-dark">Height</span>
+            <span class="col-3 col-sm-2 col-md-1 text-truncate">
+                <router-link :to="`/explorer/block/height/${blockInfo.height}`">{{blockInfo.height}}</router-link>
+            </span>
+
+            <span class="col-6 d-block d-sm-none text-dark">Timestamp</span>
+            <span class="col-2 col-sm-2 col-md-1  text-truncate">
+                {{timeAgo( $store.state.blockchain.genesisTimestamp +  blockInfo.timestamp)  }}
+            </span>
+
+            <span class="col-6 d-block d-sm-none text-dark">Size</span>
+            <span class="col-3 col-sm-2 col-md-1  text-truncate"> {{formatBytes(blockInfo.size)}} </span>
+
+            <span class="col-6 d-block d-sm-none text-dark">Transactions</span>
+            <span class="col-2 col-sm-1 col-md-1  text-truncate">{{blockInfo.txs}} </span>
+
+            <span class="col-6 d-block d-sm-none text-dark">Forged By</span>
+            <span class="col-2 col-sm-2 col-md-1  text-truncate">
+                <account-identicon  :publicKeyHash="blockInfo.forger" :size="20" :outer-size="5"  />
+            </span>
         </div>
 
     </div>

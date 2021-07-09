@@ -1,26 +1,23 @@
 <template>
-    <div>
-        <div v-if="account">
+    <div v-if="account">
 
-            <div class="account">
-                <account-identicon  :identicon="account.identicon" :size="60" :outer-size="20" :version="account.version" />
-                <div class="wordwrap pd-top-10">
-                    <span class="bold">{{account.name}}</span>
-                    <span>{{typeName}}</span>
-                    <div class="pd-top-20">
-                        <span>Address:</span>
-                        <span class="thick address" >{{getAddress}} </span>
-                        <i class="fa fa-2x fa-copy pointer"  @click="copyAddress"  v-tooltip.bottom="'Copy Address'" />
-                        <i class="fa fa-2x fa-qrcode pointer" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'" />
-                        <i class="fa fa-2x fa-tools pointer"  @click="createCustomAddress"  v-tooltip.bottom="'Create custom address'" />
-                    </div>
+        <div class="account">
+            <account-identicon  :identicon="account.identicon" :size="60" :outer-size="20" :version="account.version" />
+            <div class="wordwrap pd-top-10">
+                <span class="bold">{{account.name}}</span>
+                <span>{{typeName}}</span>
+                <div class="pd-top-20">
+                    <span>Address:</span>
+                    <span class="thick address" >{{getAddress}} </span>
+                    <i class="fa fa-2x fa-copy pointer"  @click="copyAddress"  v-tooltip.bottom="'Copy Address'" />
+                    <i class="fa fa-2x fa-qrcode pointer" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'" />
+                    <i class="fa fa-2x fa-tools pointer"  @click="createCustomAddress"  v-tooltip.bottom="'Create custom address'" />
                 </div>
             </div>
-
-            <account-qr-code-modal ref="refAccountQRCodeModal"/>
-            <account-generate-custom-address ref="refGenerateCustomAddress"/>
-
         </div>
+
+        <account-qr-code-modal ref="refAccountQRCodeModal"/>
+        <account-generate-custom-address ref="refGenerateCustomAddress"/>
 
     </div>
 </template>

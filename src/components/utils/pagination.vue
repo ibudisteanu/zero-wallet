@@ -1,21 +1,37 @@
 <template>
     <div>
         <template v-if="total > 0">
-            <router-link :to="`${prefix}1#pagination`"  :disabled="current === 1">
-                <button class="btn-white pointer" :disabled="current === 1"><i class="fa fa-angle-double-left"></i></button>
-            </router-link>
-            <router-link :to="`${prefix}${current-1}#pagination`" :disabled="current === 1" >
-                <button class="btn-white pointer" :disabled="current === 1"><i class="fa fa-chevron-left"></i></button>
-            </router-link>
 
-            <button class="btn-white btn-pagination">{{current}}/{{total}}</button>
+            <nav :aria-label="label">
+                <ul class="pagination">
+                    <li class="page-item" v-if="current > 2">
+                        <router-link :to="`${prefix}${1}`"  :disabled="current === 1" class="page-link">
+                            <span aria-hidden="true">1 «</span>
+                        </router-link>
+                    </li>
+                    <li class="page-item" v-if="current > 1">
+                        <router-link :to="`${prefix}${current-1}`"  :disabled="current === 1" class="page-link">
+                            <span aria-hidden="true">{{current-1}}</span>
+                        </router-link>
+                    </li>
+                    <li class="page-item active">
+                        <router-link :to="`${prefix}${current}`"  :disabled="current === 1" class="page-link">
+                            <span aria-hidden="true">{{current}}</span>
+                        </router-link>
+                    </li>
+                    <li class="page-item" v-if="current < total">
+                        <router-link :to="`${prefix}${current+1}`"  :disabled="current === 1" class="page-link">
+                            <span aria-hidden="true">{{current+1}}</span>
+                        </router-link>
+                    </li>
+                    <li class="page-item" v-if="current < total-1">
+                        <router-link :to="`${prefix}${total}`"  :disabled="current === 1" class="page-link">
+                            <span aria-hidden="true">» {{total}}</span>
+                        </router-link>
+                    </li>
+                </ul>
+            </nav>
 
-            <router-link :to="`${prefix}${current+1}#pagination`" :disabled="current === total">
-                <button class="btn-white pointer" :disabled="current === total" ><i class="fa fa-chevron-right"></i></button>
-            </router-link>
-            <router-link :to="`${prefix}${total}#pagination`" :disabled="current === total">
-                <button class="btn-white pointer" :disabled="current === total"><i class="fa fa-angle-double-right"></i></button>
-            </router-link>
         </template>
     </div>
 </template>
@@ -24,6 +40,7 @@
 export default {
 
     props: {
+        label: {default: ""},
         total: {default: 0},
         current: {default: 0},
         countPerPage: {default: 20},
@@ -39,12 +56,8 @@ export default {
 
 <style scoped>
 
-    .btn-white{
-        padding: 7px 10px;
-    }
-
-    .btn-pagination {
-        background-color: gray;
+    .pagination{
+        margin-bottom: 0;
     }
 
 </style>

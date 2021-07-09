@@ -1,39 +1,36 @@
 <template>
 
     <layout>
-        <div class="container pd-top-20">
-            <div class="boxed ">
 
-                <h1>Mem pool</h1>
-
-                <span v-if="error" class="danger">
-                    {{error}}
-                </span>
-
-                <template v-if="!loaded">
-                    <loading-spinner />
-                </template>
-                <template v-else>
-
-                    <div class="subtitle">
-                        <h3>Pending Transactions: {{pendingCount}}</h3>
-                        <i class="fa fa-sync pointer" @click="downloadMempool" v-tooltip.bottom="`Download again the mempool`" ></i>
+        <div class="card mb-3">
+            <div class="card-header bg-light">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="mb-0">Mem pool</h5>
+                        <div class="subtitle">
+                            <h6>Pending Transactions: {{pendingCount}}</h6>
+                            <i class="fa fa-sync pointer" @click="downloadMempool" v-tooltip.bottom="`Download again the mempool`" ></i>
+                        </div>
                     </div>
+                </div>
+            </div>
+            <div class="card-body p-3">
 
-                    <div v-for="( _, hash ) in pendingTxs"
-                         :key="`pending_${hash}`"
-                         class="row pd-bottom-10">
-                        <router-link :to="`/explorer/tx/hash/${hash}`" >
-                            <span class="wordwrap"> {{hash}} </span>
-                        </router-link>
-                    </div>
+                <div v-for="(  hash, key ) in pendingTxs"
+                     :class="`row g-0  py-2  border-bottom border-200 d-flex ${key % 2 === 1 ?'bg-light':''}`" style="text-align: center"
+                     :key="`pending_${hash}`">
 
-                    <loading-button  v-if="hasMore" icon="fa fa-arrow-down" text="Load more" @submit="handleLoadMore" />
+                    <router-link :to="`/explorer/tx/hash/${hash}`" >
+                        <span class="d-block text-truncate fs--1"> {{hash}} </span>
+                    </router-link>
 
-                </template>
+                </div>
+
+                <loading-button  v-if="hasMore" icon="fa fa-arrow-down" text="Load more" @submit="handleLoadMore" />
 
             </div>
         </div>
+
     </layout>
 
 </template>
@@ -64,7 +61,7 @@ export default {
             return this.$store.state.mempool.hasMore
         },
         pendingTxs(){
-            return this.$store.state.mempool.list
+            return Object.keys(this.$store.state.mempool.list)
         }
     },
 
@@ -119,10 +116,10 @@ export default {
 </script>
 
 <style scoped>
-    .subtitle i, .subtitle h3 {
+    .subtitle i, .subtitle h6 {
         display: inline-block;
     }
-    .subtitle h3 {
-        padding-right: 10px;
+    .subtitle i {
+        padding-left: 10px;
     }
 </style>

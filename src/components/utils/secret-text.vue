@@ -1,17 +1,19 @@
 <template>
     <div>
-        <div>
-            <span :class="`font-medium-size wordwrap thick ${visible ? '' : 'noselect blurry-text' }`" >
+        <div class="pb-4">
+            <div :class="`font-medium-size wordwrap thick ${visible ? '' : 'noselect blurry-text' }`" >
                 {{text}}
                 <i v-if="visible" class="fa fa-copy cursor" v-tooltip.bottom="visible ? `Copy ${title}` : ''"  @click="copySecret"/>
-            </span>
-            <span v-if="!visible" class="pd-top-20 centered pointer" @click="visible = true">
+            </div>
+            <div v-if="!visible" class="pt-4 text-center pointer" @click="visible = true">
                 <i class="fa fa-eye fa-2x"></i> Show
-            </span>
+            </div>
         </div>
-        <div class="centered pd-top-40">
-            <span class="danger">Warning: DO NOT share this phrase with anyone! These words can be used to <strong>{{warning}} !</strong></span>
+        <div class="alert alert-warning border-2 d-flex align-items-center" role="alert">
+            <div class="bg-white me-3 icon-item"><i class="fa fa-exclamation-triangle"></i></div>
+            <p class="mb-0 flex-1">Warning: DO NOT share this phrase with anyone! These words can be used to <strong>{{warning}} !</strong></p>
         </div>
+
     </div>
 </template>
 

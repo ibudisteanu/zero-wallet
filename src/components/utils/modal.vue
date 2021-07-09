@@ -1,26 +1,25 @@
 <template>
 
-    <div v-if="open || openAlways">
-        <div class="background" @click="closeModal"> </div>
-        <div class="modal" ref="refModal">
-            <div class="body">
+    <div class="modal fade show" v-if="open" style="display: block">
 
-                <div class="close" @click="closeModal" v-if="closeButton">
-                    <i class="fa fa-times"></i>
+        <div class="modal-backdrop fade show" @click="closeModal"></div>
+
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content position-relative">
+                <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                    <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" @click="closeModal"></button>
                 </div>
-
-                <div class="header" v-if="title">
-                    <div class="title">
-                        {{this.title}}
+                <div class="modal-body p-0">
+                    <div v-if="title" class="rounded-top-lg py-3 ps-4 pe-6 bg-light">
+                        <h5 class="mb-1" id="modalExampleDemoLabel">{{title}}</h5>
+                    </div>
+                    <div class="p-4 pb-20">
+                        <slot/>
                     </div>
                 </div>
-
-                <div class="content">
-                    <slot/>
-                </div>
-
             </div>
         </div>
+
     </div>
 
 </template>
@@ -38,11 +37,8 @@ export default{
     },
 
     props:{
-
         title: {default: 'Modal Title'},
         closeButton: { default: true },
-        openAlways: {default: false},
-
     },
 
     methods:{
@@ -57,6 +53,8 @@ export default{
                 delete this.promise;
                 delete this.resolver;
             }
+
+            this.$store.commit('setModalOpened', false)
 
             this.$emit('closed');
 
@@ -73,6 +71,8 @@ export default{
             this.open = true;
             this.$emit('opened');
 
+            this.$store.commit('setModalOpened', true)
+
             return this.promise;
         },
 
@@ -82,94 +82,7 @@ export default{
 </script>
 
 <style scoped>
-
-    .modal .content{
-        padding: 20px;
-        margin: 0!important;
+    .modal-dialog{
+        z-index: 1070;
     }
-
-    .modal{
-        width: 50%;
-        height: auto;
-        border-radius: 5px;
-        position: fixed;
-        margin: 0 auto;
-        border: solid 1px #313131;
-        left: 0;
-        right: 0;
-        background-color: white;
-        z-index: 1600;
-        top: 50%;
-        transform: translateY(-50%);
-        text-align: left;
-    }
-
-    .body{
-
-    }
-
-    .header{
-
-    }
-
-    .background{
-        position: fixed;
-        height: 100%;
-        width: 100%;
-        display: block;
-        z-index: 1000;
-        top:0;
-        left: 0;
-        background-color: rgba(0, 0, 0, 0.83);
-    }
-
-    .modal .close{
-        position: fixed;
-        right: 10px!important;
-        cursor: pointer;
-        width: 20px;
-        height: 20px;
-        font-size: 22px;
-    }
-
-    .modal .title{
-        background-color: #EEEEEE;
-        padding: 10px 0;
-        text-transform: uppercase;
-        letter-spacing: 4px;
-        line-height: 22px;
-        text-align: center;
-    }
-
-
-    /*
-    ##Device = Low Resolution Tablets, Mobiles (Landscape)
-    ##Screen = B/w 481px to 767px
-    */
-
-    @media (min-width: 481px) and (max-width: 767px) {
-
-        .modal{
-            width: 80%;
-            min-width: 0;
-            padding: 10px;
-        }
-
-    }
-
-    /*
-      ##Device = Most of the Smartphones Mobiles (Portrait)
-      ##Screen = B/w 320px to 479px
-    */
-
-    @media (max-width: 480px) {
-
-        .modal{
-            width: 95%;
-            min-width: 0;
-            padding: 10px;
-        }
-
-    }
-
 </style>

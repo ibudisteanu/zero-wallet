@@ -1,17 +1,21 @@
 <template>
 
     <div>
-        <modal ref="modal" title="Account type"  >
+        <modal ref="modal" title="Create a new Account">
 
             <div class="">
                 <span class="thick">Select an Account Type</span>
                 <span>Select either a Transparent or an Anonymous account</span>
             </div>
 
-            <div class="pd-top-20 options">
+            <div class="pt-4 options">
 
-                <div class="category pointer link" @click="select(0)">
-                    <i class="fa fa-money-bill-alt"></i>
+                <div class="category pointer" @click="select(0)">
+
+                    <a href="#">
+                        <i class="fa fa-money-bill-alt"></i>
+                    </a>
+
                     <span class="thick" >Transparent</span>
                     <span>Address is public.</span>
                     <span>All amounts are transparent.</span>
@@ -79,11 +83,11 @@ export default {
         display: inline-block;
     }
 
-    .category, .category > i, .category > span{
+    .category, .category > a, .category > span{
         display: block;
     }
 
-    .category > i {
+    .category > a {
         font-size: 40px;
     }
 

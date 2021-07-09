@@ -34,12 +34,10 @@ export default {
 <style scoped>
 
     .warning{
-
         padding: 10px;
         color: #3b3b3b;
         text-align: center;
         background-color: #eaaa16;
-
     }
 
     .warning i{

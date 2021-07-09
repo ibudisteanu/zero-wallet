@@ -347,6 +347,7 @@ class Consensus extends BaseConsensus{
         return this._promises.blocks[height] = new Promise( async (resolve, reject) => {
 
             try{
+
                 const blockData = await PandoraPay.network.getNetworkBlockComplete( height );
                 if (!blockData) throw Error("Block was not received")
 

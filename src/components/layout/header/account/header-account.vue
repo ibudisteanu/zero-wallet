@@ -3,8 +3,7 @@
     <div class="account" v-if="address">
 
         <div class="toggle" @click="toggleMenu" v-on-clickaway="closeMenu">
-            <account-identicon :identicon="identicon" :size="48" :outer-size="10" :version="address.version" />
-
+            <account-identicon :address="address.addressEncoded" :identicon="identicon" :size="20" :outer-size="7" :version="address.version" :disableRoute="true" />
             <i class="right-float chevron-down fa fa-chevron-down"></i>
         </div>
 
@@ -88,13 +87,8 @@ export default {
 
 <style scoped>
 
-    .account{
-        width: 70px;
-    }
-
     .chevron-down{
-        position: relative;
-        left: -10px;
+        font-size: 10px;
     }
 
     .menu{

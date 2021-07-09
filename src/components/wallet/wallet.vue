@@ -2,20 +2,29 @@
 
     <div v-if="address">
 
-        <div class="container">
-            <div class="boxed pd-top-30 pd-bottom-30">
-
-                <span class="bold pd-bottom-20"> Account Details </span>
-                <div class="balance-title">
-                    <account-identicon :public-key-hash="publicKeyHash" :size="40" :outer-size="8" />
-                    <div>
-                        <span>Account</span>
-                        <span class="bold wordwrap">{{address.addressEncoded}}</span>
+        <div class="card mb-3">
+            <div class="card-header bg-light">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="mb-0">Account Details</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="row g-0 align-items-center py-2 position-relative border-bottom border-200">
+                    <div class="col ps-card py-1 position-static">
+                        <div class="d-flex align-items-center d-block">
+                            <div class="avatar avatar-xxl me-3">
+                                <account-identicon :public-key-hash="publicKeyHash" :size="40" :outer-size="8" />
+                            </div>
+                            <span class="fw-bold d-block text-truncate">
+                                {{address.addressEncoded}}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
 
         <balances :publicKeyHash="publicKeyHash" />
         <transactions :publicKeyHash="publicKeyHash" />
@@ -64,14 +73,5 @@ export default {
 </script>
 
 <style scoped>
-
-    .title{
-    }
-
-    .balance-title{
-        display: grid;
-        grid-template-columns: 80px 1fr;
-        grid-column-gap: 10px;
-    }
 
 </style>

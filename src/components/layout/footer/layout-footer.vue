@@ -1,26 +1,34 @@
 <template>
-    <div class="footer">
-
-        <div class="boxed">
+    <footer class="footer">
+        <div class="g-0 justify-content-between fs--1 mt-4 mb-3 centered">
 
             <div class="row pd-bottom-10 gray">
-                <span>Consensus</span>
-                <span class="color">{{blockchainStatus}}</span>
-                <span>Block Height </span>
-                <span class="color">#{{blockHeight}}</span>
+                <div class="col-6">
+                    <span>Consensus</span>
+                    <span class="color">{{blockchainStatus}}</span>
+                </div>
+                <div class="col-6">
+                    <span>Block Height </span>
+                    <span class="color">#{{blockHeight}}</span>
+                </div>
+            </div>
+
+            <div class="row gray">
+                <div class="col-6">
+                    <span>Disclaimer</span>
+                </div>
+                <div class="col-6">
+                    <span>Safety</span>
+                </div>
             </div>
 
             <div class="row gray">
                 <span>2019 - 2021 <a href="http://PandoraPay.org" target="_blank">{{entity}}</a> - Wallet v {{version}}</span>
             </div>
-            <div class="row gray">
-                <span>Disclaimer</span>
-                <span>Safety</span>
-            </div>
 
         </div>
+    </footer>
 
-    </div>
 </template>
 
 <script>
@@ -74,17 +82,6 @@ export default {
 </script>
 
 <style scoped>
-    .footer{
-        padding-top: 50px;
-    }
-
-    .row{
-        text-align: center;
-    }
-
-    .row span{
-        display:inline-block;
-    }
 
     .color{
         color: #21254a !important;

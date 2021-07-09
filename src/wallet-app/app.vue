@@ -2,12 +2,12 @@
 
     <div>
 
-        <div v-if="!error">
+        <template v-if="!error">
 
             <!-- component matched by the route will render here -->
             <router-view></router-view>
 
-        </div>
+        </template>
 
         <span v-if="error" class="danger">
             {{error}}

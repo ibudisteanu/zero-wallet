@@ -8,4 +8,8 @@ export default {
         context.refAccountTypeModal = ref;
     },
 
+    setModalOpened(context, value){
+        context.modalOpened = value
+    }
+
 }

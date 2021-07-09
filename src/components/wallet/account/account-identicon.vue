@@ -1,6 +1,6 @@
 <template>
 
-    <router-link :to="`/address/${finalAddress}`" :disabled="!finalAddress && !disableRoute" :alt="finalAddress">
+    <router-link :to="`/address/${finalAddress}`" :class="{ disabled: !finalAddress || disableRoute }" :alt="finalAddress">
         <div class="identicon outer" :style="`padding: ${outerSize}px; background-color: ${background}`">
             <img :src="identiconSrc" class="identicon" :style="`width: ${size}px`" >
         </div>
@@ -69,7 +69,7 @@ export default {
                     const addressData = await PandoraPay.addresses.decodeAddress(newVal)
                     const address = JSON.parse(addressData)
                     this.identiconSrc = await Identicons.getIdenticon(address.publicKeyHash)
-                    this.finalAddress = address
+                    this.finalAddress = newVal
                 }
             }
         }

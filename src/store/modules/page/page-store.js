@@ -7,6 +7,8 @@ export default {
         refLoadingModal: null,
         refAccountTypeModal: null,
 
+        modalOpened: false,
+
     },
 
     mutations,

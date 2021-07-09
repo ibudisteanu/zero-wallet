@@ -1,32 +1,36 @@
 <template>
 
-    <div>
 
-        <left-sidebar ref="refSidebar" @onUpdateMarginLeft="onUpdateMarginLeft" />
+    <main :class="`main`" >
 
-        <div class="layout" :style="{paddingLeft: marginLeft }">
+<!--        <warning-bar v-if="$store.getters.isTestnet" />-->
 
-            <warning-bar v-if="$store.getters.isTestnet" />
+        <div class="container" data-layout="container">
 
-            <layout-header > </layout-header>
+            <left-sidebar v-if="!disableLayout" ref="refSidebar" @onUpdateMarginLeft="onUpdateMarginLeft" />
 
-            <slot/>
+            <div class="content">
 
-            <loading-modal ref="refLoadingModal" />
+                <layout-header v-if="!disableLayout" > </layout-header>
 
-            <account-type ref="refAccountTypeModal" />
+                <slot/>
 
-            <layout-footer> </layout-footer>
+                <loading-modal ref="refLoadingModal" />
+
+                <account-type ref="refAccountTypeModal" />
+
+                <layout-footer v-if="!disableLayout" />
+
+            </div>
 
         </div>
-    </div>
+    </main>
 
 </template>
 
 <script>
 
 require('src/assets/common.css');
-require('src/assets/grid.css');
 
 import LayoutHeader from "./header/layout-header.vue";
 import LayoutFooter from "./footer/layout-footer.vue";
@@ -38,6 +42,10 @@ import WarningBar from "./header/warning-bar"
 export default {
 
     components: {AccountType, LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar},
+
+    props: {
+        disableLayout: false,
+    },
 
     data(){
         return {

@@ -1,35 +1,33 @@
 <template>
 
     <layout>
-        <div class="container pd-top-20">
-            <div class="boxed ">
 
-                <h1>Blockchain Explorer {{ ending ? ending : ''}}</h1>
-
-                <router-link to="/explorer/mem-pool">
-                    <h3 class="pd-bottom-30">View Mem Pool</h3>
-                </router-link>
-
-                <h3>Last blocks forged</h3>
-
-                <span v-if="error" class="danger">
-                    {{error}}
-                </span>
-
-                <template v-if="!loaded">
-                    <loading-spinner/>
-                </template>
-                <template v-else>
-
-                    <div id="pagination">
-                        <show-blocks-info :blocksInfo="lastBlocksInfo" />
-                        <pagination class="right" :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" :prefix="'/explorer/'" />
+        <div class="card mb-3">
+            <div class="card-header bg-light">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="mb-0">Blockchain Explorer {{ ending ? ending : ''}}</h5>
                     </div>
+                </div>
+            </div>
+            <div class="card-body p-3">
+                <div class="card-body p-0">
 
-                </template>
+                    <template v-if="!loaded">
+                        <loading-spinner/>
+                    </template>
+                    <template v-else>
+
+                        <show-blocks-info :blocksInfo="lastBlocksInfo" />
+                        <pagination class="right pt-2" :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" :prefix="'/explorer/'" />
+
+                    </template>
+
+                </div>
 
             </div>
         </div>
+
     </layout>
 
 </template>

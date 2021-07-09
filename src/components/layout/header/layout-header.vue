@@ -1,31 +1,37 @@
 <template>
 
-   <div class="header pd-top-10 pd-bottom-10">
+   <nav class="navbar navbar-light navbar-glass navbar-top navbar-expand">
 
-      <div class="container boxed" >
+      <button class="btn navbar-toggler-humburger-icon navbar-toggler me-1 me-sm-3">
+         <span class="navbar-toggle-icon">
+            <span class="toggle-line"></span>
+         </span>
+      </button>
 
-         <div class="layout-row">
+      <ul class="navbar-nav navbar-nav-icons flex-row align-items-center">
+         <li class="nav-item">
+            <i class="fa fa-moon nav-item-icon"></i>
+         </li>
+         <li class="nav-item">
+            <i class="fa fa-globe-americas nav-item-icon"></i>
+            <span>{{$store.state.network.networkName}}</span>
+            <i class="fa fa-chevron-down"></i>
 
-            <router-link to="/">
-               <img :src="require('src/assets/pandora-pay-logo-inline.png').default" class="logo" >
-            </router-link>
-
-            <div class="header-right-menu">
-               <div class="inline">
-                  <div class="network-text">
-                     {{$store.state.network.networkName}}
-                  </div>
-                  <header-account />
+            <div :class="`dropdown-menu dropdown-menu-end py-0 ${0 ? 'show': ''}`">
+               <div class="bg-white rounded-2 py-2">
+                  <a class="dropdown-item" href="#">MAIN Net</a>
+                  <a class="dropdown-item" href="#">DEV Net</a>
+                  <a class="dropdown-item" href="#">TEST Net</a>
                </div>
-
             </div>
 
-         </div>
+         </li>
+         <li class="nav-item" style="padding-right: 0">
+            <header-account />
+         </li>
+      </ul>
 
-      </div>
-
-   </div>
-
+   </nav>
 </template>
 
 <script>
@@ -52,39 +58,18 @@ export default {
 
 <style scoped>
 
-   .logo{
-      max-height: 64px;
+   .navbar-nav{
+      margin-left: auto;
+      margin-right: 0;
    }
-
-   .header {
-      width: 100%;
-      background-color: #EEEEEE;
+   .nav-item-icon {
+      font-size: 16px;
    }
-
-   .layout-row{
-      display: grid;
-      grid-template-columns: 150px 1fr;
-      align-items: center;
+   .nav-item{
+      padding-right: 20px;
    }
-
-   .layout-row a{
-      color: black;
-      align-items: center;
-   }
-
-   .header-right-menu{
-      margin-left:auto;
-      margin-right:0;
-   }
-
-   .header-right-menu .inline{
-      display: flex;
-      align-items: center;
-      flex-direction: row;
-   }
-
-   .header-right-menu .network-text{
-      padding-right: 10px;
+   .fa-chevron-down{
+      font-size: 10px;
    }
 
 </style>

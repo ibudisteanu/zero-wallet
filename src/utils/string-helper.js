@@ -50,7 +50,11 @@ class StringHelper{
             let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
             let j = (i.length > 3) ? i.length % 3 : 0;
 
-            return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
+            const str = negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i ).toFixed(decimalCount).slice(2) : "");
+            let str2 = str.replace(/0+$/,"")
+            if (str2.length > 0 && str2[str2.length-1] === '.') str2 = str2.substr(0, str2.length-1)
+
+            return str2
         } catch (e) {
             console.log(e)
         }

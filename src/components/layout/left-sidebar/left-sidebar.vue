@@ -1,64 +1,167 @@
 <template>
 
-    <div>
-        <div class="mobile-menu" @click="showMenu" :style="{display: show ? 'none' : 'inherit' }" >
-            <i class="fa fa-bars"></i>
+    <nav class="navbar navbar-light navbar-vertical navbar-expand-xl">
+        <div class="d-flex align-items-center">
+            <div class="toggle-icon-wrapper" style="margin-right: 0">
+                <button class="btn navbar-toggler-humburger-icon navbar-vertical-toggle" data-bs-toggle="tooltip" data-bs-placement="left" title="" data-bs-original-title="Toggle Navigation" aria-label="Toggle Navigation"><span class="navbar-toggle-icon"><span class="toggle-line"></span></span></button>
+            </div>
+            <router-link to="/" class="navbar-brand">
+                <div class="d-flex align-items-center py-3">
+                    <img class="me-2" :src="require('src/assets/pandora-pay-logo-inline-crop.png').default" alt="PandoraPay" height="42px">
+                </div>
+            </router-link>
         </div>
+        <div class="collapse navbar-collapse">
+            <div class="navbar-nav flex-column mb-3">
+                <li class="nav-item">
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-money-bill-alt"></i>
+                        <span class="nav-link-text ps-1">Wallet</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-wallet"></i>
+                        <span class="nav-link-text ps-1">Account</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-piggy-bank"></i>
+                        <span class="nav-link-text ps-1">Staking</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-money-check-alt"></i>
+                        <span class="nav-link-text ps-1">Transfer</span>
+                        <i class="nav-chevron fa fa-chevron-down"></i>
+                    </div>
+                    <ul class="nav collapse show">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="index.html">
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-text ps-1">Public</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="index.html">
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-text ps-1">Anonymously</span>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
 
-        <div v-if="show" class="sidebar" :style="{display: show ? 'inherit' : 'none' }" v-on-clickaway="closeMenu" >
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-hand-holding-usd"></i>
+                        <span class="nav-link-text ps-1">Receive</span>
+                        <i class="nav-chevron fa fa-chevron-down"></i>
+                    </div>
+                    <ul class="nav collapse show" >
+                        <li class="nav-item">
+                            <a class="nav-link active" href="index.html">
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-text ps-1">Public</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="index.html">
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-text ps-1">Anonymously</span>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
 
-            <router-link to="/" :class="`${route === '/'  || route === '/login' ? 'selected' : ''}`">
-                <i class="fa fa-money-bill-alt" ></i>
-                <span>Wallet</span>
-            </router-link>
-
-            <router-link :disabled="!isWalletDecrypted" to="/account" :class="`${ route === '/account' ? 'selected' : ''}`">
-                <i class="fa fa-wallet" ></i>
-                <span>Account</span>
-            </router-link>
-
-            <router-link :disabled="!isWalletDecrypted" to="/staking" :class="`${route === '/staking' ? 'selected' : ''}`" >
-                <i class="fa fa-piggy-bank"></i>
-                <span>Staking</span>
-            </router-link>
-
-            <router-link :disabled="!isWalletDecrypted" to="/send" :class="`${route === '/send' ? 'selected' : ''}`" >
-                <i class="fa fa-money-check-alt"></i>
-                <span>Send</span>
-            </router-link>
-
-            <router-link :disabled="!isWalletDecrypted" to="/receive" :class="`${route === '/receive' ? 'selected' : ''}`" >
-                <i class="fa fa-hand-holding-usd"></i>
-                <span>Receive</span>
-            </router-link>
-
-            <router-link :disabled="!isWalletDecrypted" to="/set-password" v-if="!encrypted" :class="`${route === '/set-password' ? 'selected' : ''}`"  >
-                <i class="fa fa-unlock-alt"></i>
-                <span>Encrypt</span>
-            </router-link>
-
-            <router-link :disabled="!isWalletDecrypted" to="/remove-password" v-if="encrypted" :class="`${route === '/remove-password' ? 'selected' : ''}`"  >
-                <i class="fa fa-lock"></i>
-                <span>Decrypt</span>
-            </router-link>
-
-            <router-link to="/explorer" :class="`${route.indexOf('/explorer') === 0 ? 'selected' : ''}`" >
-                <i class="fa fa-cubes"></i>
-                <span>Explorer</span>
-            </router-link>
-
-            <router-link to="/tokens" :class="`${route.indexOf('/tokens') === 0 ? 'selected' : ''}`"  >
-                <i class="fa fa-file-invoice-dollar"></i>
-                <span>Tokens</span>
-            </router-link>
-
-            <router-link to="/kad" :class="`${route === '/kad' ? 'selected' : ''}`"  >
-                <i class="fa fa-globe"></i>
-                <span>KAD</span>
-            </router-link>
-
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-unlock-alt"></i>
+                        <span class="nav-link-text ps-1">Encrypt</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-cubes"></i>
+                        <span class="nav-link-text ps-1">Explorer</span>
+                        <i class="nav-chevron fa fa-chevron-down"></i>
+                    </div>
+                    <ul class="nav collapse show">
+                        <li class="nav-item">
+                            <router-link :class="`nav-link ${route.indexOf('/explorer') === 0 ? 'active' : ''}`" to="/explorer">
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-text ps-1">Blocks</span>
+                                </div>
+                            </router-link>
+                        </li>
+                        <li class="nav-item">
+                            <router-link :class="`nav-link ${route.indexOf('/explorer/mem-pool') === 0 ? 'selected' : ''}`" to="/explorer/mem-pool">
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-text ps-1">Mem pool</span>
+                                </div>
+                            </router-link>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-file-invoice-dollar"></i>
+                        <span class="nav-link-text ps-1">Tokens</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-globe-americas"></i>
+                        <span class="nav-link-text ps-1">KAD</span>
+                    </div>
+                </li>
+            </div>
         </div>
-    </div>
+    </nav>
+
+<!--    <div>-->
+<!--        <div class="mobile-menu" @click="showMenu" :style="{display: show ? 'none' : 'inherit' }" >-->
+<!--            <i class="fa fa-bars"></i>-->
+<!--        </div>-->
+
+<!--        <div v-if="show" class="sidebar" :style="{display: show ? 'inherit' : 'none' }" v-on-clickaway="closeMenu" >-->
+
+<!--            <router-link to="/" :class="`${route === '/'  || route === '/login' ? 'selected' : ''}`">-->
+<!--                <i class="fa fa-money-bill-alt" ></i>-->
+<!--                <span>Wallet</span>-->
+<!--            </router-link>-->
+
+<!--            <router-link :disabled="!isWalletDecrypted" to="/account" :class="`${ route === '/account' ? 'selected' : ''}`">-->
+<!--                <i class="fa fa-wallet" ></i>-->
+<!--                <span>Account</span>-->
+<!--            </router-link>-->
+
+<!--            <router-link :disabled="!isWalletDecrypted" to="/staking" :class="`${route === '/staking' ? 'selected' : ''}`" >-->
+<!--                <i class="fa fa-piggy-bank"></i>-->
+<!--                <span>Staking</span>-->
+<!--            </router-link>-->
+
+<!--            <router-link :disabled="!isWalletDecrypted" to="/send" :class="`${route === '/send' ? 'selected' : ''}`" >-->
+<!--                <i class="fa fa-money-check-alt"></i>-->
+<!--                <span>Send</span>-->
+<!--            </router-link>-->
+
+<!--            <router-link :disabled="!isWalletDecrypted" to="/receive" :class="`${route === '/receive' ? 'selected' : ''}`" >-->
+<!--                <i class="fa fa-hand-holding-usd"></i>-->
+<!--                <span>Receive</span>-->
+<!--            </router-link>-->
+
+<!--            <router-link :disabled="!isWalletDecrypted" to="/set-password" v-if="!encrypted" :class="`${route === '/set-password' ? 'selected' : ''}`"  >-->
+<!--                <i class="fa fa-unlock-alt"></i>-->
+<!--                <span>Encrypt</span>-->
+<!--            </router-link>-->
+
+<!--            <router-link :disabled="!isWalletDecrypted" to="/remove-password" v-if="encrypted" :class="`${route === '/remove-password' ? 'selected' : ''}`"  >-->
+<!--                <i class="fa fa-lock"></i>-->
+<!--                <span>Decrypt</span>-->
+<!--            </router-link>-->
+
+<!--            <router-link to="/tokens" :class="`${route.indexOf('/tokens') === 0 ? 'selected' : ''}`"  >-->
+<!--                <i class="fa fa-file-invoice-dollar"></i>-->
+<!--                <span>Tokens</span>-->
+<!--            </router-link>-->
+
+<!--            <router-link to="/kad" :class="`${route === '/kad' ? 'selected' : ''}`"  >-->
+<!--                <i class="fa fa-globe"></i>-->
+<!--                <span>KAD</span>-->
+<!--            </router-link>-->
+
+<!--        </div>-->
+<!--    </div>-->
 </template>
 
 <script>
@@ -158,89 +261,9 @@ export default {
 
 <style scoped>
 
-    .sidebar {
-
-        height: 100%;
-        position: fixed;
-        z-index: 1;
-        top: 0;
-        left: 0;
-        overflow-x: hidden;
-        white-space: nowrap;
-
-        padding-top: 10px;
-
-        box-shadow: 5px 0 5px -5px #BBB;
-        background-color: white;
-
-        width: 85px;
+    .nav-chevron{
+        margin-left: 5px;
+        font-size: .675rem;
     }
-
-    .sidebar a {
-        color: #818181;
-        display: block;
-        padding-bottom: 20px;
-        text-align: center;
-        cursor: pointer;
-    }
-
-    .sidebar a.selected{
-        color: #6c6ce0;
-    }
-
-    .sidebar a:hover {
-        color: black;
-    }
-
-    .sidebar i{
-        font-size: 25px;
-    }
-
-    .sidebar i,
-    .sidebar span{
-        display: block;
-    }
-
-    .mobile-menu{
-        display: none;
-    }
-
-    .badge-div{
-        text-align: right;
-    }
-
-    .badge{
-        position: relative;
-        top: 0;
-        right: 5px;
-        width: 100%;
-        display: inline !important;
-    }
-
-    @media screen and (max-width: 767px) {
-
-        .mobile-menu{
-            color: #818181;
-            font-size: 30px;
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background-color: white;
-            padding-left: 10px;
-            padding-right: 10px;
-        }
-
-        .sidebar {
-            padding-top: 15px;
-            width: 85px;
-            display: none;
-        }
-        .sidebar a {
-            font-size: 13px;
-            padding-bottom: 10px;
-        }
-    }
-
-
 
 </style>

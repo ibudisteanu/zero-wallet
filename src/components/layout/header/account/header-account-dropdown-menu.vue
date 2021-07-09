@@ -1,37 +1,49 @@
 <template>
 
-    <div>
-        <ul class="dd-menu">
-
-            <li>My accounts</li>
-
-            <li v-for="(address, index) in addresses"
-                :class="`address ${ address.publicKeyHash === mainPublicKeyHash  ? 'focused' : ''} ` "
-                :key="`header-account-dropdown-li-${index}`">
-
-                <account-identicon :identicon="address.identicon" :size="20" :outer-size="5" :version="address.version" />
-
-                <div class="account-title pointer" @click="setMainPublicKeyHash(address.publicKeyHash)" >
-                    <span>{{address.name}}</span>
-                    <span class="gray">{{address.addressEncoded.substr(0, 15)+'...'}} </span>
+    <div class="dropdown-menu dropdown-menu-end dropdown-menu-card dropdown-menu-notification show">
+        <div class="card card-notification shadow-none">
+            <div class="card-header">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-auto">
+                        <h6 class="card-header-title mb-0">My accounts</h6>
+                    </div>
                 </div>
-                <div>
-                    <span class="gray" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : '&nbsp;'}}</span>
-                    <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( address)" />
+            </div>
+            <div class="scrollbar-overlay" style="max-height:19rem">
+                <div class="list-group list-group-flush fs--1">
+                    <div class="list-group-title border-bottom">All accounts:</div>
+                    <div class="list-group-item">
+                        <div v-for="(address, index) in addresses" :class="`notification notification-flush notification-unread ${ address.publicKeyHash === mainPublicKeyHash  ? 'fw-black' : ''} ` "
+                             :key="`address-${index}`">
+                                <div class="notification-body address">
+                                    <router-link :to="`/address/${address.addressEncoded}`" >
+                                        <account-identicon :address="address.addressEncoded" :identicon="address.identicon" :size="20" :outer-size="5" :version="address.version" />
+                                    </router-link>
+                                    <router-link :to="`/address/${address.addressEncoded}`" >
+                                        <div class="account-title pointer" @click="setMainPublicKeyHash(address.publicKeyHash)">
+                                            <span class="fw-semi-bold">{{address.name}}</span>
+                                            <span class="fw-normal text-truncate">{{address.addressEncoded}} </span>
+                                        </div>
+                                    </router-link>
+                                    <div class="account-tools">
+                                        <span class="fw-light" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : '&nbsp;'}}</span>
+                                        <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( address)" />
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="list-group-item">
+                        <div class="list-group-title border-bottom">Operations:</div>
+                        <span @click="createAccount" v-tooltip.left="'Create a new Address'" class="pointer dropdown-item fw-normal"> <i class="fa fa-plus"></i> Create Account </span>
+                        <span @click="importAccount" v-tooltip.left="'Import an address from json file'" class="pointer dropdown-item fw-normal"><i class="fa fa-upload"></i> Import Account (json)</span>
+                        <span @click="importPrivateKey" v-tooltip.left="'Import an address from Private Key'" class="pointer dropdown-item fw-normal"><i class="fa fa-upload"></i> Import Private Key</span>
+                        <div class="dropdown-divider"></div>
+                        <span @click="viewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" class="pointer dropdown-item fw-normal"><i class="fa fa-key"></i>  View Seed Words</span>
+                        <span v-if="encrypted" @click="logout" class="pointer dropdown-item fw-normal"><i class="fa fa-sign-out-alt"></i>  Logout</span>
+                    </div>
                 </div>
-
-            </li>
-
-            <li class="divider"></li>
-
-            <li @click="createAccount" v-tooltip.left="'Create a new Address'" class="pointer"> <i class="fa fa-plus"></i> Create Account </li>
-            <li @click="importAccount" v-tooltip.left="'Import an address from json file'" class="pointer"><i class="fa fa-upload"></i> Import Account (json)</li>
-            <li @click="importPrivateKey" v-tooltip.left="'Import an address from Private Key'" class="pointer"><i class="fa fa-upload"></i> Import Private Key</li>
-            <li class="divider"></li>
-            <li @click="viewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" class="pointer"><i class="fa fa-key"></i>  View Seed Words</li>
-            <li v-if="encrypted" @click="logout" class="pointer"><i class="fa fa-sign-out-alt"></i>  Logout</li>
-        </ul>
-
+            </div>
+        </div>
 
     </div>
 
@@ -53,6 +65,10 @@ export default {
     },
 
     computed: {
+
+        address(){
+            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKeyHash];
+        },
 
         addresses(){
             return this.$store.state.wallet.addresses;
@@ -156,65 +172,39 @@ export default {
 
 <style scoped>
 
+    .dropdown-menu-notification{
+        min-width: 16.4rem;
+    }
+
+    .navbar .dropdown-menu.dropdown-menu-end{
+        right: -2.5625rem
+    }
+
+    .notification{
+        display: block;
+    }
+
     .address{
         display: grid;
-        grid-template-columns: 32px 1fr;
+        grid-template-columns: 32px 160px 30px;
         grid-column-gap: 10px;
     }
 
-    .focused{
-        background-color: #edffec;
-    }
-
-    .dd-menu {
-        left: -160px;
-
-        position: absolute;
-        top: 20px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        padding: 0;
-        margin: 2px 0 0 0;
-        box-shadow: 0 0 6px 0 rgba(0,0,0,0.1);
-        background-color: #ffffff;
-        list-style-type: none;
-
-        z-index: 100;
-    }
-
-    .dd-menu li {
-        width: 200px;
-        display: grid;
-        grid-template-columns: 30px 1fr 30px;
-        grid-column-gap: 10px;
-
-        padding: 10px 20px;
-        white-space: nowrap;
-    }
-
-
-    .dd-menu li:hover {
-        background-color: #f6f6f6;
-    }
-
-    .dd-menu li a {
-        display: block;
-        margin: -10px -20px;
-        padding: 10px 20px;
-    }
-
-    .dd-menu li.divider{
-        width: 100%;
-        padding: 0;
-        border-bottom: 1px solid #cccccc;
-    }
-
-    i{
+    .dropdown-item i{
         margin-right: 5px;
     }
 
     i:hover{
         color: #313131;
+    }
+
+    .account-title span,
+    .account-tools span, .account-tools i{
+        display: block;
+    }
+
+    .account-tools{
+        float: right;
     }
 
 </style>

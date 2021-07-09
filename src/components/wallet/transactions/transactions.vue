@@ -1,26 +1,27 @@
 <template>
 
-    <div class="container">
-        <div class="boxed boxed-background">
-
-            <span class="title row pd-bottom-20">
-                TRANSACTIONS
-                <template v-if="!txs">
-                    <loading-spinner />
-                </template>
-                <template v-else>
-                    {{ ending }}
-                </template>
-            </span>
-
-            <div id="pagination" v-if="txs">
-                <show-transactions :transactions="transactionsAll"/>
-                <pagination class="right" :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" :prefix="`/address/${address.addressEncoded}/`" />
+    <div class="card mb-3 h-lg-100 overflow-hidden">
+        <div class="card-header bg-light">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h5 class="mb-0">
+                        Transactions
+                        <template v-if="!txs">
+                            <loading-spinner />
+                        </template>
+                        <template v-else>
+                            {{ ending }}
+                        </template>
+                    </h5>
+                </div>
             </div>
-
         </div>
-
+        <div class="card-body p-3" v-if="txs">
+            <show-transactions :transactions="transactionsAll"/>
+            <pagination class="right" :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" :prefix="`/address/${address.addressEncoded}/`" />
+        </div>
     </div>
+
 
 </template>
 

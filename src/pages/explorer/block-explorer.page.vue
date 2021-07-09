@@ -1,6 +1,7 @@
 <template>
 
     <layout>
+
         <div class="container pd-top-20">
             <div class="boxed ">
 
@@ -18,7 +19,6 @@
                     </template>
                     <template v-else>
                         <div class="table">
-
                             <div class="row pd-top-10 pd-bottom-10">
                                 <span class="col-xs-5 col-sm-3 wordwrap">Hash</span>
                                 <span class="col-xs-7 col-sm-9 wordwrap">{{blk.bloom.hash}}</span>
@@ -163,7 +163,7 @@ export default {
 
                 await Consensus.syncPromise;
 
-                if (this.height !== undefined) await  Consensus.getBlockByHeight(this.height);
+                if (this.height !== undefined) await Consensus.getBlockByHeight(this.height);
                 if (this.hash ) await Consensus.getBlockByHash(this.hash);
 
                 const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)
@@ -194,5 +194,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

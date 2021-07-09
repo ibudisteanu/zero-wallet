@@ -1,25 +1,27 @@
 <template>
-    <div id="pandora-wallet-loading" class="container" >
+    <div id="pandora-wallet-loading" >
 
-        <div class="wrapper center">
+        <main class="container">
 
-            <img :src="require('src/assets/pandora-pay-logo-square.png').default" class="logo" >
+            <div class="center">
+                <img :src="require('src/assets/pandora-pay-logo-square.png').default" class="logo" >
 
-            <svg width="200px" height="200px" viewBox="0 0 35 35">
-                <polygon class="triangle" fill="none" stroke="#fff" stroke-width="1" points="16,1 32,32 1,32" />
-            </svg>
+                <svg width="200px" height="200px" viewBox="0 0 35 35">
+                    <polygon class="triangle" fill="none" stroke="#fff" stroke-width="1" points="16,1 32,32 1,32" />
+                </svg>
 
-            <div class="loading-text-div">
-                <span v-if="error" class="danger">
-                    {{error}}
-                </span>
-                <span v-else class="loading-text">
-                    <i v-if="isDownloading" class="fas fa-sync fa-spin"></i>
-                    {{progressStatus}}
-                </span>
+                <div class="loading-text-div">
+                    <span v-if="error" class="danger">
+                        {{error}}
+                    </span>
+                    <span v-else class="loading-text">
+                        <i v-if="isDownloading" class="fas fa-sync fa-spin"></i>
+                        {{progressStatus}}
+                    </span>
+                </div>
             </div>
 
-        </div>
+        </main>
 
     </div>
 </template>
@@ -172,7 +174,7 @@ export default {
     }
 
     .container {
-        height: 100%;
+        height: 100vh;
     }
 
     .center{
