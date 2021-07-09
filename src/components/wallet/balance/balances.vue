@@ -99,12 +99,4 @@ export default {
 </script>
 
 <style scoped>
-
-    .container{
-    }
-
-    .boxed{
-
-    }
-
 </style>

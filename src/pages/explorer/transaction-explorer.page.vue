@@ -33,7 +33,7 @@
                                 <span class="col-xs-5 col-sm-3 wordwrap">Block Height</span>
                                 <span class="col-xs-7 col-sm-9 wordwrap">
                                     <template v-if="tx.__extra.blkHeight ">
-                                        <router-link :to="`/explorer/block/height/${tx.__extra.blkHeight}`">{{tx.__extra.blkHeight}}</router-link>
+                                        <router-link :to="`/explorer/block/${tx.__extra.blkHeight}`">{{tx.__extra.blkHeight}}</router-link>
                                     </template>
                                     <template v-else>
                                         -

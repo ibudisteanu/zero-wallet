@@ -12,7 +12,7 @@
             <span class="gray" >Enter the password to view the wallet seed</span>
             <password-input v-model="password" />
 
-            <div v-if="error" class="alert alert-warning border-2 d-flex align-items-center" role="alert">
+            <div v-if="error" class="alert alert-error border-2 d-flex align-items-center" role="alert">
                 <div class="bg-warning me-3 icon-item"><i class="fa fa-error"></i> </div>
                 <p class="mb-0 flex-1">{{error}}</p>
             </div>

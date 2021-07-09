@@ -22,6 +22,9 @@ class Consensus extends BaseConsensus{
     }
 
     async getTokenByHash( hash ){
+
+        if (!hash.length) hash = PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX
+
         if (this._data.tokens[hash]) return this._data.tokens[hash]
         if (this._promises.tokens[hash]) return this._promises.tokens[hash];
         return this._promises.tokens[hash] = new Promise( async (resolve, reject) => {
@@ -48,7 +51,7 @@ class Consensus extends BaseConsensus{
 
     async _getTokenInfo( hash ){
 
-        if (hash === "") hash = PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX
+        if (!hash.length) hash = PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX
 
         if (this._data.tokensInfo[hash]) return this._data.tokensInfo[hash]
         if (this._promises.tokensInfo[hash]) return this._promises.tokensInfo[hash];
@@ -306,6 +309,13 @@ class Consensus extends BaseConsensus{
             };
             this._data.transactionsByHash[tx.bloom.hash] = tx;
             data[tx.bloom.hash] = tx;
+
+            for (const vin of tx.base.vin)
+                this._getTokenInfo(vin.token)
+
+            for (const vout of tx.base.vout)
+                this._getTokenInfo(vout.token)
+
         }
         this.emit('consensus/tx-downloaded', {transactions: data} );
 

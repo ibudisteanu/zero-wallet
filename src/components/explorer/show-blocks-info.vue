@@ -15,7 +15,7 @@
 
             <span class="col-6 d-block d-sm-none text-dark">Hash</span>
             <span class="col-6 col-sm-3 col-md-3 text-truncate">
-                <router-link :to="`/explorer/block/hash/${blockInfo.hash}`">{{blockInfo.hash}}</router-link>
+                <router-link :to="`/explorer/block/${blockInfo.hash}`">{{blockInfo.hash}}</router-link>
             </span>
 
             <span class="col-6 d-xs-none d-sm-none d-md-none text-dark">Kernel Hash</span>
@@ -25,7 +25,7 @@
 
             <span class="col-6 d-block d-sm-none text-dark">Height</span>
             <span class="col-3 col-sm-2 col-md-1 text-truncate">
-                <router-link :to="`/explorer/block/height/${blockInfo.height}`">{{blockInfo.height}}</router-link>
+                <router-link :to="`/explorer/block/${blockInfo.height}`">{{blockInfo.height}}</router-link>
             </span>
 
             <span class="col-6 d-block d-sm-none text-dark">Timestamp</span>

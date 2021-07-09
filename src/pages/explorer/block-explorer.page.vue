@@ -2,98 +2,125 @@
 
     <layout>
 
-        <div class="container pd-top-20">
-            <div class="boxed ">
-
-                <h1>Block Explorer</h1>
-
-                <span v-if="error" class="danger">
-                    {{error}}
-                </span>
-                <template v-else>
-
-                    <h3 class="wordwrap">Block {{height ? height : hash}} </h3>
-
-                    <template v-if="!loaded || !blk">
+        <div class="card mb-3">
+            <div class="card-header bg-light">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="mb-0">Block Explorer {{height ? height : hash}}  </h5>
                         <loading-spinner v-if="!loaded"/>
-                    </template>
-                    <template v-else>
-                        <div class="table">
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Hash</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{blk.bloom.hash}}</span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Kernel Hash</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{blk.bloom.kernelHash}}</span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Confirmations</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{ $store.state.blockchain.end - blk.height -1 }}</span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Time</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{  timeAgo( $store.state.blockchain.genesisTimestamp + blk.timestamp ) }} ago</span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Height</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{blk.height}}</span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Number of Transactions</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{blk.txs.length}}</span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Merkle root</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{blk.merkleHash}}</span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Previous Hash</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap"><router-link :to="`/explorer/block/hash/${blk.prevHash}`">{{blk.prevHash}}</router-link></span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Previous Kernel Hash</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{blk.prevKernelHash}}</span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Fees</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap"><strong>TODO</strong></span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Reward</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap"><strong>{{formatMoney(this.reward)}}</strong></span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Version</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{blk.version}}</span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Size</span>
-                                <span class="col-xs-7 col-sm-9 wordwrap">{{formatBytes( blk.bloomBlkComplete.size) }}</span>
-                            </div>
-                            <div class="row pd-top-10 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">Forger</span>
-                                <div class="col-xs-7 col-sm-9">
-                                    <account-identicon class="vertical-center" :public-key-hash="blk.bloom.delegatedPublicKeyHash" :size="20" :outer-size="5"  />
-                                    <span class="forger-address wordwrap">{{blk.bloom.delegatedPublicKeyHash}}</span>
-                                </div>
-                            </div>
-                            <div class="row pd-top-40 pd-bottom-10">
-                                <span class="col-xs-5 col-sm-3 wordwrap">JSON</span>
-                                <textarea class="col-xs-7 col-sm-9" rows="20">{{ blk }}</textarea>
-                            </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-3 fs--1">
+
+                <div v-if="error" class="alert alert-error border-2 d-flex align-items-center" role="alert">
+                    <div class="bg-warning me-3 icon-item"><i class="fa fa-error"></i> </div>
+                    <p class="mb-0 flex-1">{{error}}</p>
+                </div>
+                <template v-else-if="blk">
+
+                    <div class="row pt-2 pb-2">
+                        <span class="col-xs-5 col-sm-3 text-truncate">Hash</span>
+                        <span class="col-xs-7 col-sm-9 text-truncate">{{blk.bloom.hash}}</span>
+                    </div>
+                    <div class="row pt-2 pb-2 bg-light">
+                        <span class="col-xs-5 col-sm-3 text-truncate">Kernel Hash</span>
+                        <span class="col-xs-7 col-sm-9 text-truncate">{{blk.bloom.kernelHash}}</span>
+                    </div>
+                    <div class="row pt-2 pb-2">
+                        <span class="col-xs-5 col-sm-3 text-truncate">Confirmations</span>
+                        <span class="col-xs-7 col-sm-9 text-truncate">{{ $store.state.blockchain.end - blk.height -1 }}</span>
+                    </div>
+                    <div class="row pt-2 pb-2 bg-light">
+                        <span class="col-xs-5 col-sm-3 text-truncate">Time</span>
+                        <span class="col-xs-7 col-sm-9 text-truncate">{{  timeAgo( $store.state.blockchain.genesisTimestamp + blk.timestamp ) }} ago</span>
+                    </div>
+                    <div class="row pt-2 pb-2">
+                        <span class="col-xs-5 col-sm-3 text-truncate">Height</span>
+                        <span class="col-xs-7 col-sm-9 text-truncate">{{blk.height}}</span>
+                    </div>
+                    <div class="row pt-2 pb-2 bg-light">
+                        <span class="col-xs-5 col-sm-3 text-truncate">Number of Transactions</span>
+                        <span class="col-xs-7 col-sm-9 text-truncate">{{blk.txs.length}}</span>
+                    </div>
+                    <div class="row pt-2 pb-2">
+                        <span class="col-xs-5 col-sm-3 text-truncate">Merkle root</span>
+                        <span class="col-xs-7 col-sm-9 text-truncate">{{blk.merkleHash}}</span>
+                    </div>
+                    <div class="row pt-2 pb-2 bg-light">
+                        <span class="col-xs-5 col-sm-3 text-truncate">Previous Hash</span>
+                        <span class="col-xs-7 col-sm-9 text-truncate">
+                            <router-link :to="`/explorer/block/${blk.prevHash}`" class="p-0">{{blk.prevHash}}</router-link>
+                        </span>
+                    </div>
+                    <div class="row pt-2 pb-2">
+                        <span class="col-xs-5 col-sm-3 text-truncate">Previous Kernel Hash</span>
+                        <span class="col-xs-7 col-sm-9 text-truncate">{{blk.prevKernelHash}}</span>
+                    </div>
+                    <div class="row pt-2 pb-2 bg-light">
+                        <span class="col-xs-5 col-sm-3 text-truncate">Fees</span>
+                        <span class="col-xs-7 col-sm-9 text-truncate">TODO</span>
+                    </div>
+                    <div class="row pt-2 pb-2">
+                        <span class="col-xs-5 col-sm-3 text-truncate">Reward</span>
+                        <span class="col-xs-7 col-sm-9 text-truncate">{{formatMoney(this.reward)}}</span>
+                    </div>
+                    <div class="row pt-2 pb-2 bg-light">
+                        <span class="col-xs-5 col-sm-3 text-truncate">Version</span>
+                        <span class="col-xs-7 col-sm-9 text-truncate">{{blk.version}}</span>
+                    </div>
+                    <div class="row pt-2 pb-2">
+                        <span class="col-xs-5 col-sm-3 text-truncate">Size</span>
+                        <span class="col-xs-7 col-sm-9 text-truncate">{{formatBytes( blk.bloomBlkComplete.size) }}</span>
+                    </div>
+                    <div class="row pt-2 pb-2 bg-light">
+                        <span class="col-xs-5 col-sm-3 text-truncate">Forger</span>
+                        <div class="col-xs-7 col-sm-9">
+                            <account-identicon class="vertical-center" :public-key-hash="blk.bloom.delegatedPublicKeyHash" :size="20" :outer-size="5"  />
+                            <span class="forger-address text-truncate">{{blk.bloom.delegatedPublicKeyHash}}</span>
                         </div>
-
-                        <h4>Transactions</h4>
-                        <show-transactions :transactions="txs"/>
-
-                    </template>
-
+                    </div>
                 </template>
 
+            </div>
 
+        </div>
+
+        <div class="card mb-3" v-if="blk">
+            <div class="card-header bg-light">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="mb-0">Block JSON {{blk.height}}  </h5>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-3 fs--1">
+                <div class="row">
+                    <span class="col-xs-4 col-sm-2 col-md-1 text-truncate">JSON</span>
+                    <div class="col-xs-8 col-sm-10 col-md-11">
+                        <div class="card mb-3" >
+                            <div class="card-body ">
+                                <p class="mb-0  div-scrollable" style="text-align: left">{{blk}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <div class="card mb-3" v-if="blk">
+            <div class="card-header bg-light">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="mb-0">Block Transactions {{blk.height}}  </h5>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-3 fs--1">
+                <show-transactions :transactions="txs"/>
+            </div>
+        </div>
+
     </layout>
 
 </template>
@@ -127,11 +154,16 @@ export default {
 
     computed:{
 
+        query(){
+            return this.$route.params.query;
+        },
         height(){
-            return this.$route.params.height;
+            if (this.query && this.query.length < 10)
+                return Number.parseInt(this.query)
         },
         hash(){
-            return this.$route.params.hash;
+            if (this.query && this.query.length === 32)
+                return this.query
         },
         blk(){
             if (this.height !== undefined )

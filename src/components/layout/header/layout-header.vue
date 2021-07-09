@@ -14,7 +14,7 @@
          </li>
          <li class="nav-item">
             <i class="fa fa-globe-americas nav-item-icon"></i>
-            <span>{{$store.state.network.networkName}}</span>
+            <span class="badge badge-soft-success">{{$store.state.network.networkName}}</span>
             <i class="fa fa-chevron-down"></i>
 
             <div :class="`dropdown-menu dropdown-menu-end py-0 ${0 ? 'show': ''}`">

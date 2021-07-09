@@ -8,6 +8,7 @@ import VueClipboard from 'vue-clipboard2'
 import Notification from 'vue-notification';
 import VTooltip from 'v-tooltip'
 
+
 Vue.use(VTooltip);
 Vue.use(Notification);
 Vue.use(VueClipboard);

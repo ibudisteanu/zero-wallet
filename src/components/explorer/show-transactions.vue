@@ -36,7 +36,7 @@
                 <span class="col-4 d-block d-sm-none text-dark text-truncate">Confirmations</span>
                 <span class="col-8 col-md-1 text-truncate">
                     <template v-if="!isPending(tx)">
-                        <router-link :to="`/explorer/block/height/${tx.__extra.height}`">
+                        <router-link :to="`/explorer/block/${tx.__extra.blkHeight}`">
                             {{ ($store.state.blockchain.end - tx.__extra.blkHeight) }}
                         </router-link>
                     </template>
@@ -50,16 +50,12 @@
                     <div class="input" v-for="(vin, index) in tx.base.vin "
                                              :key="`show-transaction-vin-${index}`">
                         <account-identicon :publicKeyHash="vin.bloom.publicKeyHash" size="20" outer-size="7" />
-                        <span class="amount vertical-center">
-                            - <amount :token="vin.token" :value="vin.amount" />
-                        </span>
+                        - <amount :token="vin.token" :value="vin.amount" />
                     </div>
                     <div class="output" v-for="(vout, index) in tx.base.vout"
                          :key="`show-transaction-vout-${index}`">
                         <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="7" />
-                        <span class="amount vertical-center">
-                            <amount :token="vout.token" :value="vout.amount" />
-                        </span>
+                        <amount :token="vout.token" :value="vout.amount" />
                     </div>
                 </span>
 
@@ -108,16 +104,10 @@ export default {
         display: inline-block;
     }
 
-    .amount{
-        display: inline-block;
-    }
 
     .input, .output{
         display: inline-block;
         padding-right: 10px;
-    }
-
-    .amount {
     }
 
 </style>
