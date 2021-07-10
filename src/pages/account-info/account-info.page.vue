@@ -2,74 +2,69 @@
 
     <layout>
 
-        <div class="container pd-top-20">
-            <div class="boxed ">
+        <template v-if="address">
 
-                <h1>Account Details</h1>
-                <span>Your account</span>
-                <div class="account-info" v-if="address">
+            <account :account="address" />
 
-                    <account :account="address" />
+            <div class="card mb-3">
+                <div class="card-header bg-light">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h5 class="mb-0">Account Additional Details</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body border-bottom border-200">
 
-                    <span class="gray wordwrap pd-top-20">
-                        <span v-if="!showPublicKey" class="pointer" @click="showPublicKey = true">
+                    <div class="row py-2">
+                        <div v-if="!showPublicKey" class="pointer" @click="showPublicKey = true">
                             View Public Key
-                        </span>
-                        <span v-else >
-                            Public Key: {{address.publicKey}} <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Public Key'"  @click="copyAddress(address.publicKey)"/>
-                        </span>
-                    </span>
-
-                    <template v-if="address.version === version.VERSION_TRANSPARENT">
-
-                        <span class="gray wordwrap pd-top-20">
-                            <span v-if="!showPublicKeyHash" class="pointer" @click="showPublicKeyHash = true">
-                                View Public Key Hash
-                            </span>
-                            <span v-else >
-                                Public Key Hash: {{address.publicKeyHash}} <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Public Key Hash'" @click="copyAddress(address.publicKeyHash)"/>
-                            </span>
-                        </span>
-
-                    </template>
-
-                    <div class="buttons-row pd-top-20">
-
-                        <div class="btn">
-                            <div class="btn-round pointer" @click="downloadAddress" v-tooltip.bottom="'Download Account'" >
-                                <i class="fa fa-download"></i>
-                            </div>
                         </div>
-
-                        <div class="btn">
-                            <div class="btn-round pointer" @click="deleteAddress" v-tooltip.bottom="'Delete Account'" >
-                                <i class="danger fa fa-times"></i>
-                            </div>
+                        <div v-else>
+                            Public Key: {{address.publicKey}}
+                            <i class="fa fa-copy pointer d-inline-block" v-tooltip.bottom="'Copy Public Key'"  @click="copyAddress(address.publicKey)" />
                         </div>
+                    </div>
 
-                        <div class="btn">
-                            <div class="btn-round pointer" @click="showPrivateKey" v-tooltip.bottom="'View Private Key'" >
-                                <i class="fa fa-eye"></i>
-                            </div>
+                    <div class="row py-2" v-if="address.version === version.VERSION_TRANSPARENT">
+                        <div v-if="!showPublicKeyHash" class="pointer" @click="showPublicKeyHash = true">
+                            View Public Key Hash
                         </div>
-
-                        <div class="btn" v-if="address.version === version.VERSION_TRANSPARENT">
-                            <router-link to="/staking">
-                                <div class="btn-round pointer" v-tooltip.bottom="'Delegate stake'" >
-                                    <i class="fa fa-piggy-bank"></i>
-                                </div>
-                            </router-link>
+                        <div v-else >
+                            Public Key Hash: {{address.publicKeyHash}}
+                            <i class="fa fa-copy pointer d-inline-block" v-tooltip.bottom="'Copy Public Key Hash'" @click="copyAddress(address.publicKeyHash)" />
                         </div>
-
-
                     </div>
 
                 </div>
 
-                <account-private-key-modal ref="refAccountPrivateKeyModal" :address="address"/>
+                <div class="card-body bg-light">
 
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="downloadAddress" v-tooltip.bottom="'Download Account'" >
+                        <i class="fa fa-download"></i>
+                    </button>
+
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="deleteAddress" v-tooltip.bottom="'Delete Account'" >
+                        <i class="danger fa fa-times"></i>
+                    </button>
+
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="showPrivateKey" v-tooltip.bottom="'View Private Key'" >
+                        <i class="fa fa-eye"></i>
+                    </button>
+
+                    <router-link to="/staking" v-if="address.version === version.VERSION_TRANSPARENT">
+                        <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" v-tooltip.bottom="'Delegate stake'">
+                            <i class="fa fa-piggy-bank"></i>
+                        </button>
+                    </router-link>
+
+                </div>
             </div>
-        </div>
+
+        </template>
+
+        <account-private-key-modal ref="refAccountPrivateKeyModal" :address="address"/>
+
     </layout>
 
 </template>
@@ -197,25 +192,4 @@ export default {
 </script>
 
 <style scoped>
-
-    .account-info{
-        text-align: left;
-    }
-
-    .buttons-row .btn{
-        display: inline-block;
-    }
-
-    .btn-round{
-        font-size: 20px;
-        width: 40px;
-        height: 40px;
-        margin-bottom: 10px;
-        margin-right: 30px;
-    }
-
-    .btn-round i{
-        margin-top: 10px;
-    }
-
 </style>

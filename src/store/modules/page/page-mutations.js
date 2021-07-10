@@ -20,6 +20,10 @@ export default {
         context.refAccountTypeModal = ref;
     },
 
+    setQRCodeModal(context, ref){
+        context.refQRCodeModal = ref;
+    },
+
     setModalOpened(context, value){
         context.modalOpened = value
     }

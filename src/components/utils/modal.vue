@@ -13,7 +13,7 @@
                     <div v-if="title" class="rounded-top-lg py-3 ps-3 pe-6 bg-light">
                         <h5 class="mb-1" id="modalExampleDemoLabel">{{title}}</h5>
                     </div>
-                    <div :class="`${contentClass} pb-20 d-inline-block`">
+                    <div :class="`${contentClass} pb-20 d-inline-block w-100`">
                         <slot/>
                     </div>
                 </div>

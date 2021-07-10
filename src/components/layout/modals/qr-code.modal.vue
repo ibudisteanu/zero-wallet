@@ -1,11 +1,9 @@
 <template>
 
-    <modal ref="modal" :title="`QR Code ${title ? ':'+title : ''}`" >
-
+    <modal ref="modal" :title="`QR Code ${title ? ': '+title : ''}`" >
         <div class="qr-code d-inline-block" >
             <qr-code :data="address" />
         </div>
-
     </modal>
 
 </template>

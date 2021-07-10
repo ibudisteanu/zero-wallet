@@ -1,6 +1,6 @@
 <template>
 
-    <modal ref="modal" :title="`Custom Address ${title ? ':' + title : ''}`" content-class="p-0">
+    <modal ref="modal" :title="`Custom Address ${title ? ': ' + title : ''}`" content-class="p-0">
 
         <div class="theme-wizard" v-if="account">
             <div class="card-header bg-light pt-0 pb-2">
@@ -170,7 +170,7 @@ export default {
             )
         },
         showAccountQRCode(){
-
+            return this.$store.state.page.refQRCodeModal.showModal( this.addressGenerated, this.account.name || '');
         },
 
         async handleClick(){

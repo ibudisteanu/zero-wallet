@@ -1,9 +1,9 @@
 <template>
     <div>
         <div class="pb-4">
-            <div :class="`font-medium-size wordwrap thick ${visible ? '' : 'noselect blurry-text' }`" >
+            <div :class="`fs-bold ${visible ? '' : 'noselect blurry-text' }`" >
                 {{text}}
-                <i v-if="visible" class="fa fa-copy cursor" v-tooltip.bottom="visible ? `Copy ${title}` : ''"  @click="copySecret"/>
+                <i v-if="visible" class="fa fa-copy pointer" v-tooltip.bottom="visible ? `Copy ${title}` : ''"  @click="copySecret"/>
             </div>
             <div v-if="!visible" class="pt-4 text-center pointer" @click="visible = true">
                 <i class="fa fa-eye fa-2x"></i> Show

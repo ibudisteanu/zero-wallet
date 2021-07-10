@@ -44,7 +44,6 @@
             <p class="mb-0 flex-1">Address doesn't exist!</p>
         </div>
 
-        <account-qr-code-modal ref="refAccountQRCodeModal"/>
         <account-generate-custom-address ref="refGenerateCustomAddress"/>
 
     </div>
@@ -53,13 +52,12 @@
 <script>
 
 import AccountIdenticon from "./account-identicon";
-import AccountQRCodeModal from "./account-qr-code.modal"
 import AccountGenerateCustomAddress from "./account-generate-custom-address.modal"
 const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 
-    components: { AccountGenerateCustomAddress, AccountIdenticon, 'accountQrCodeModal': AccountQRCodeModal,  },
+    components: { AccountGenerateCustomAddress, AccountIdenticon },
 
     props: {
         account: {default: null},
@@ -100,11 +98,11 @@ export default {
         },
 
         createCustomAddress(){
-            this.$refs.refGenerateCustomAddress.showModal(this.account);
+            return this.$refs.refGenerateCustomAddress.showModal(this.account);
         },
 
         showAccountQRCode(){
-            this.$refs.refAccountQRCodeModal.showModal(this.getAddress, this.account.name || '');
+            return this.$store.state.page.refQRCodeModal.showModal(this.getAddress, this.account.name || '');
         }
 
     },
