@@ -110,8 +110,6 @@ class Consensus extends BaseConsensus{
         starting = Math.max(0, starting )
         const ending = Math.min( starting + consts.blocksInfoPagination -1, this.ending-1 )
 
-        console.log(starting, ending)
-
         if (view) {
             this._data.blocksInfoStarting = starting
             this._data.blocksInfoEnding = ending
@@ -119,18 +117,20 @@ class Consensus extends BaseConsensus{
 
         const newBlocksInfo = {}
 
+        let found = false
         for (let i = ending; i >= starting ; i-- ){
 
             let beforeHash
             if (this._data.blocksInfo[i] && this._data.blocksInfo[i].hash )
                 beforeHash = this._data.blocksInfo[i].hash
 
-            const blockInfo = await this._getBlockInfo(i)
+            if (!found || !this._data.blocksInfo[i]) {
+                let blockInfo = await this._getBlockInfo(i)
+                newBlocksInfo[i] = blockInfo
 
-            if (beforeHash === blockInfo.hash )
-                break
-
-            newBlocksInfo[i] = blockInfo
+                if (!found && beforeHash === blockInfo.hash )
+                    found = true
+            }
 
         }
 

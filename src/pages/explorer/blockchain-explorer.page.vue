@@ -75,7 +75,8 @@ export default {
         },
 
         lastBlocksInfo(){
-            return this.$store.getters.blocksInfoSorted.filter(a => a.height >= this.starting  && a.height < ( this.page + 1  ) * this.countPerPage );
+            const ending = Math.min( this.ending, ( this.page + 1  ) * this.countPerPage )
+            return this.$store.getters.blocksInfoSorted.filter(a => (a.height >= ending - this.countPerPage) && (a.height < ending) );
         },
 
         ending(){
@@ -91,7 +92,8 @@ export default {
                 this.error = ''
                 await Consensus.syncPromise;
 
-                await Consensus.getBlocksInfo( this.starting, true  )
+                const ending = Math.min( this.ending, ( this.page + 1  ) * this.countPerPage )
+                await Consensus.getBlocksInfo( ending-this.countPerPage, true  )
 
                 this.loaded = true
             }catch(err){

@@ -1,82 +1,78 @@
 <template>
 
     <layout>
-        <div class="container pd-top-20">
-            <div class="boxed ">
 
-                <h1>Staking</h1>
-                <span>In browser, you can only delegate your stakes</span>
+        <layout-title icon="fa-piggy-bank" title="Staking" >Delegate your stakes to a staking node.</layout-title>
 
-                TODO
+        TODO
 
-                <div class="account-info" v-if="address">
+        <div class="account-info" v-if="address">
 
-                    <account :address="address" />
+            <account :address="address" />
 
-                    <loading-spinner v-if="!address.loaded" />
+            <loading-spinner v-if="!address.loaded" />
 
-                    <div class="pd-top-40" v-else>
+            <div class="pd-top-40" v-else>
 
-                        <span>Available coins for Staking <strong>{{balance}}</strong></span>
-                        <span v-if="balance < minimumForStaking" class="danger">Minimum required for Staking {{minimumForStaking}}</span>
+                <span>Available coins for Staking <strong>{{balance}}</strong></span>
+                <span v-if="balance < minimumForStaking" class="danger">Minimum required for Staking {{minimumForStaking}}</span>
 
-                        <div class="pd-bottom-20"></div>
+                <div class="pd-bottom-20"></div>
 
-                        <span>Delegated: <strong>{{isDelegated}}</strong> </span>
+                <span>Delegated: <strong>{{isDelegated}}</strong> </span>
 
-                        <div v-if="isDelegateStakeInPending">
-                            <span>Your delegating transaction is in pending right now...</span>
-                            <loading-spinner />
-                        </div>
-                        <div v-else >
+                <div v-if="isDelegateStakeInPending">
+                    <span>Your delegating transaction is in pending right now...</span>
+                    <loading-spinner />
+                </div>
+                <div v-else >
 
-                            <div v-if="address.delegate" >
-                                <span>Delegated nonce {{address.delegate.delegateStakeNonce}}</span>
-                                <span>Delegated public key {{address.delegate.delegateStakePublicKey}}</span>
-                                <span>Delegated fee {{delegateFeePercentage}} %</span>
+                    <div v-if="address.delegate" >
+                        <span>Delegated nonce {{address.delegate.delegateStakeNonce}}</span>
+                        <span>Delegated public key {{address.delegate.delegateStakePublicKey}}</span>
+                        <span>Delegated fee {{delegateFeePercentage}} %</span>
+                    </div>
+
+                    <div class="buttons-row pd-top-20">
+
+                        <div class="btn">
+                            <div class="btn-round pointer" @click="handleShowDelegateStake" v-tooltip.bottom="'Delegate your stake'" :disabled="!balance" >
+                                <i class="fa fa-link" :disabled="!balance"  />
                             </div>
-
-                            <div class="buttons-row pd-top-20">
-
-                                <div class="btn">
-                                    <div class="btn-round pointer" @click="handleShowDelegateStake" v-tooltip.bottom="'Delegate your stake'" :disabled="!balance" >
-                                        <i class="fa fa-link" :disabled="!balance"  />
-                                    </div>
-                                </div>
-
-                                <div class="btn">
-                                    <div class="btn-round pointer" @click="handleShowStopDelegateStake" v-tooltip.bottom="'Stop delegating your stake'" :disabled="!isDelegated || !balance" >
-                                        <i class="fa fa-unlink danger" :disabled="!isDelegated || !balance" />
-                                    </div>
-                                </div>
-
-                                <div class="btn">
-                                    <div class="btn-round pointer" @click="handleShowDelegatePrivateKey" v-tooltip.bottom="'View Delegate Stake private key'" :disabled="!balance">
-                                        <i class="fa fa-eye" :disabled="!balance" />
-                                    </div>
-                                </div>
-
-                                <div class="btn">
-                                    <div class="btn-round pointer" @click="handleShowDelegateStakeNode" v-tooltip.bottom="'Delegate Stake to node'" :disabled="!balance" >
-                                        <i class="fa fa-laptop-code" :disabled="!balance" ></i>
-                                    </div>
-                                </div>
-
-                            </div>
-
-
                         </div>
 
-                        <delegate-stake-modal ref="refDelegateStakeModal" :address="address" />
-                        <stop-delegate-stake-modal ref="refStopDelegateStakeModal" :address="address" />
-                        <delegate-stake-private-key-modal ref="refDelegateStakePrivateKeyModal" :address="address" />
-                        <delegate-stake-node-modal ref="refDelegateStakeNodeModal" :address="address"/>
+                        <div class="btn">
+                            <div class="btn-round pointer" @click="handleShowStopDelegateStake" v-tooltip.bottom="'Stop delegating your stake'" :disabled="!isDelegated || !balance" >
+                                <i class="fa fa-unlink danger" :disabled="!isDelegated || !balance" />
+                            </div>
+                        </div>
+
+                        <div class="btn">
+                            <div class="btn-round pointer" @click="handleShowDelegatePrivateKey" v-tooltip.bottom="'View Delegate Stake private key'" :disabled="!balance">
+                                <i class="fa fa-eye" :disabled="!balance" />
+                            </div>
+                        </div>
+
+                        <div class="btn">
+                            <div class="btn-round pointer" @click="handleShowDelegateStakeNode" v-tooltip.bottom="'Delegate Stake to node'" :disabled="!balance" >
+                                <i class="fa fa-laptop-code" :disabled="!balance" ></i>
+                            </div>
+                        </div>
 
                     </div>
 
+
                 </div>
+
+                <delegate-stake-modal ref="refDelegateStakeModal" :address="address" />
+                <stop-delegate-stake-modal ref="refStopDelegateStakeModal" :address="address" />
+                <delegate-stake-private-key-modal ref="refDelegateStakePrivateKeyModal" :address="address" />
+                <delegate-stake-node-modal ref="refDelegateStakeNodeModal" :address="address"/>
+
             </div>
+
         </div>
+
     </layout>
 
 </template>
@@ -85,6 +81,7 @@
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import consts from 'consts/consts';
 import Layout from "src/components/layout/layout"
+import LayoutTitle from "src/components/layout/layout-title"
 import Account from "src/components/wallet/account/account"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import Consensus from "src/consensus/consensus"
@@ -96,7 +93,7 @@ import DelegateStakeNodeModal from "src/components/staking/delegate-stake-node.m
 
 export default {
 
-    components: {AccountIdenticon, Layout, Account, LoadingSpinner, DelegateStakeModal, StopDelegateStakeModal, DelegateStakePrivateKeyModal, DelegateStakeNodeModal},
+    components: {AccountIdenticon, Layout, Account, LoadingSpinner, DelegateStakeModal, StopDelegateStakeModal, DelegateStakePrivateKeyModal, DelegateStakeNodeModal, LayoutTitle},
 
     data() {
         return {

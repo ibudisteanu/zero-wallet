@@ -17,15 +17,12 @@
                             </div>
                             <span class="fw-bold d-block text-break">
                                 {{address.addressEncoded}}
+                                <i class="fa fa-copy pointer" @click="copyAddress" v-tooltip.bottom="'Copy Address'"  ></i>
                             </span>
                         </div>
                     </div>
                 </div>
                 <div class="g-0 d-block-inline p-3">
-
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="copyAddress" v-tooltip.bottom="'Copy Address'" >
-                        <i class="fa fa-copy pointer" />
-                    </button>
 
                     <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
                         <i class="fa fa-qrcode pointer" />
