@@ -13,10 +13,7 @@
             </div>
             <div class="card-body p-3 fs--1">
 
-                <div v-if="error" class="alert alert-danger border-2 d-flex align-items-center">
-                    <div class="bg-white me-3 icon-item"><i class="fa fa-times"></i> </div>
-                    <p class="mb-0 flex-1">{{error}}</p>
-                </div>
+                <alert-box v-if="error" type="error">{{error}}</alert-box>
 
                 <template v-else-if="blk">
 
@@ -134,13 +131,14 @@ import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import ShowTransactions from "src/components/explorer/show-transactions"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
+import AlertBox from "src/components/utils/alert-box"
 
 import Consensus from "src/consensus/consensus"
 import StringHelper from "src/utils/string-helper"
 
 export default {
 
-    components: {LoadingSpinner, Layout, ShowBlocksInfo, ShowTransactions, AccountIdenticon },
+    components: {LoadingSpinner, Layout, ShowBlocksInfo, ShowTransactions, AccountIdenticon, AlertBox},
 
     data(){
         return {

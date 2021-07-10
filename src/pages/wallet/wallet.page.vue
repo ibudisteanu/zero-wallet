@@ -2,17 +2,15 @@
     <layout>
         <div v-if="address">
 
-            <account :account="address" />
+            <account :address="address" />
 
             <balances :publicKeyHash="publicKeyHash" />
             <transactions :publicKeyHash="publicKeyHash" />
 
         </div>
         <div v-else>
-            <div class="container">
-                <div class="boxed centered pd-top-30 pd-bottom-30">
-                    <loading-spinner />
-                </div>
+            <div class="py-3">
+                <loading-spinner />
             </div>
         </div>
     </layout>

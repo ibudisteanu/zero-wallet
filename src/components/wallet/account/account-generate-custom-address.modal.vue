@@ -61,16 +61,16 @@
                         </div>
                     </div>
                     <div :class="`tab-pane ${tab===3?'active':''} `">
-                        <div v-if="error" class="alert alert-danger border-2 d-flex align-items-center">
-                            <div class="bg-white me-3 icon-item"><i class="fa fa-times"></i> </div>
-                            <p class="mb-0 flex-1">{{error}}</p>
-                        </div>
+
+                        <alert-box v-if="error" type="error">{{error}}</alert-box>
 
                         <template v-if="this.addressGenerated">
 
                             <div class="form-outline">
                                 <label class="form-label" for="address">Generated Address</label>
-                                <textarea class="form-control" id="address" >{{this.addressGenerated}}</textarea>
+                                <div id="address" class="text-break">
+                                    {{this.addressGenerated}}
+                                </div>
                             </div>
 
                             <hr/>
@@ -109,11 +109,11 @@
 <script>
 
 import Modal from "src/components/utils/modal"
-import QRCode from "src/components/utils/qr-code"
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: { Modal, 'qrCode': QRCode, },
+    components: { Modal, AlertBox},
 
     data(){
         return {

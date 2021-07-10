@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="pb-4">
-            <div :class="`fs-bold ${visible ? '' : 'noselect blurry-text' }`" >
+            <div :class="`fw-bold ${visible ? '' : 'noselect blurry-text' } text-break`" >
                 {{text}}
                 <i v-if="visible" class="fa fa-copy pointer" v-tooltip.bottom="visible ? `Copy ${title}` : ''"  @click="copySecret"/>
             </div>
@@ -9,16 +9,17 @@
                 <i class="fa fa-eye fa-2x"></i> Show
             </div>
         </div>
-        <div class="alert alert-warning border-2 d-flex align-items-center" role="alert">
-            <div class="bg-white me-3 icon-item"><i class="fa fa-exclamation-triangle"></i></div>
-            <p class="mb-0 flex-1">Warning: DO NOT share this phrase with anyone! These words can be used to <strong>{{warning}}</strong></p>
-        </div>
-
+        <alert-box type="warning">
+            Warning: DO NOT share this phrase with anyone! These words can be used to <strong>{{warning}}</strong>
+        </alert-box>
     </div>
 </template>
 
 <script>
+import AlertBox from "src/components/utils/alert-box"
 export default {
+
+    components: {AlertBox},
 
     data(){
         return {

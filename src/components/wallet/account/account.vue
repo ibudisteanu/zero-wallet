@@ -1,5 +1,5 @@
 <template>
-    <div v-if="account">
+    <div v-if="address">
         <div class="card mb-3">
             <div class="card-header bg-light">
                 <div class="row align-items-center">
@@ -13,10 +13,10 @@
                     <div class="col ps-card py-1 position-static">
                         <div class="d-flex align-items-center d-block">
                             <div class="avatar avatar-xxl me-3">
-                                <account-identicon :public-key-hash="account.publicKeyHash" :size="60" :outer-size="20" :version="account.version" />
+                                <account-identicon :public-key-hash="address.publicKeyHash" :size="60" :outer-size="20" :version="address.version" />
                             </div>
-                            <span class="fw-bold d-block text-truncate">
-                                {{account.addressEncoded}}
+                            <span class="fw-bold d-block text-break">
+                                {{address.addressEncoded}}
                             </span>
                         </div>
                     </div>
@@ -39,10 +39,9 @@
             </div>
         </div>
 
-        <div v-if="!isLoading && !isFound" class="alert alert-warning border-2 d-flex align-items-center" role="alert">
-            <div class="bg-white me-3 icon-item"><i class="fa fa-exclamation-triangle"></i></div>
-            <p class="mb-0 flex-1">Address doesn't exist!</p>
-        </div>
+        <alert-box v-if="!isLoading && !isFound" type="warning" >
+            Address doesn't exist!
+        </alert-box>
 
         <account-generate-custom-address ref="refGenerateCustomAddress"/>
 
@@ -53,20 +52,25 @@
 
 import AccountIdenticon from "./account-identicon";
 import AccountGenerateCustomAddress from "./account-generate-custom-address.modal"
+import AlertBox from "src/components/utils/alert-box"
 const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 
-    components: { AccountGenerateCustomAddress, AccountIdenticon },
+    components: { AccountGenerateCustomAddress, AccountIdenticon, AlertBox },
 
     props: {
-        account: {default: null},
+        address: {default: null},
     },
 
     computed:{
 
         getAddress(){
-            return this.account.addressEncoded;
+            return this.address.addressEncoded;
+        },
+
+        account(){
+            return this.$store.state.addresses.accounts[this.address.publicKeyHash]
         },
 
         isLoading(){
@@ -98,11 +102,11 @@ export default {
         },
 
         createCustomAddress(){
-            return this.$refs.refGenerateCustomAddress.showModal(this.account);
+            return this.$refs.refGenerateCustomAddress.showModal(this.address);
         },
 
         showAccountQRCode(){
-            return this.$store.state.page.refQRCodeModal.showModal(this.getAddress, this.account.name || '');
+            return this.$store.state.page.refQRCodeModal.showModal(this.getAddress, this.address.name || '');
         }
 
     },

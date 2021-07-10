@@ -11,10 +11,7 @@
                 </svg>
 
                 <div class="loading-text-div">
-                    <div v-if="error" class="alert alert-danger border-2 d-flex align-items-center">
-                        <div class="bg-white me-3 icon-item"><i class="fa fa-times"></i> </div>
-                        <p class="mb-0 flex-1">{{error}}</p>
-                    </div>
+                    <alert-box v-if="error" type="error">{{error}}</alert-box>
                     <span v-else class="loading-text">
                         <i v-if="isDownloading" class="fas fa-sync fa-spin"></i>
                         {{progressStatus}}
@@ -30,8 +27,11 @@
 <script>
 
 import consts from "consts/consts"
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
+
+    components: { AlertBox},
 
     data(){
         return {

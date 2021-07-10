@@ -5,10 +5,7 @@
         <span class="gray">Delegate Nonce</span>
         <input type="number" v-model="delegateStakeNonce" min="0" disabled="true" >
 
-        <div v-if="error" class="alert alert-danger border-2 d-flex align-items-center">
-            <div class="bg-white me-3 icon-item"><i class="fa fa-times"></i> </div>
-            <p class="mb-0 flex-1">{{error}}</p>
-        </div>
+        <alert-box v-if="error" type="error">{{error}}</alert-box>
 
         <loading-button text="Stop Delegate Stake" @submit="handleStopDelegateStake" icon="fa fa-unlink"  />
 
@@ -23,10 +20,11 @@ import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
 import Consensus from "src/consensus/consensus"
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {Modal, PasswordInput, LoadingButton},
+    components: {Modal, PasswordInput, LoadingButton, AlertBox},
 
 
     data(){

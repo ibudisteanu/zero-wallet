@@ -6,10 +6,7 @@
 
                 <h1>Token Explorer</h1>
 
-                <div v-if="error" class="alert alert-danger border-2 d-flex align-items-center">
-                    <div class="bg-white me-3 icon-item"><i class="fa fa-times"></i> </div>
-                    <p class="mb-0 flex-1">{{error}}</p>
-                </div>
+                <alert-box v-if="error" type="error">{{error}}</alert-box>
 
                 <div v-if="!error">
 
@@ -66,10 +63,11 @@ import Layout from "src/components/layout/layout"
 import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {Layout, LoadingSpinner, AccountIdenticon},
+    components: {Layout, LoadingSpinner, AccountIdenticon, AlertBox},
 
     data(){
         return{

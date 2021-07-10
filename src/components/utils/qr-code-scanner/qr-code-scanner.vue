@@ -4,10 +4,7 @@
 
         <qrcode-stream class="qrcodeStream" @decode="onDecode" @init="onInit" />
 
-        <div v-if="error" class="alert alert-danger border-2 d-flex align-items-center">
-            <div class="bg-white me-3 icon-item"><i class="fa fa-times"></i> </div>
-            <p class="mb-0 flex-1">{{error}}</p>
-        </div>
+        <alert-box v-if="error" type="error">{{error}}</alert-box>
 
     </modal>
 
@@ -17,6 +14,7 @@
 
 import Modal from "src/components/utils/modal"
 import Vue from 'vue'
+import AlertBox from "src/components/utils/alert-box"
 
 let VueQrcodeReader = undefined;
 if (typeof window !== "undefined") {
@@ -27,7 +25,7 @@ if (typeof window !== "undefined") {
 
 export default {
 
-    components: { Modal, VueQrcodeReader },
+    components: { Modal, VueQrcodeReader, AlertBox },
 
     data(){
         return {

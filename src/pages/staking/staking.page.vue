@@ -11,7 +11,7 @@
 
                 <div class="account-info" v-if="address">
 
-                    <account :account="address" />
+                    <account :address="address" />
 
                     <loading-spinner v-if="!address.loaded" />
 

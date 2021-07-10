@@ -18,10 +18,7 @@
                 <span class="gray" >Retype Password</span>
                 <password-input v-model="retypePassword"/>
 
-                <div v-if="error" class="alert alert-danger border-2 d-flex align-items-center">
-                    <div class="bg-white me-3 icon-item"><i class="fa fa-times"></i> </div>
-                    <p class="mb-0 flex-1">{{error}}</p>
-                </div>
+                <alert-box v-if="error" type="error">{{error}}</alert-box>
 
                 <loading-button text="Set Password" @submit="handleSetPassword" icon="fa fa-lock"  :disabled="password.length === 0 || retypePassword.length === 0" />
 
@@ -47,10 +44,11 @@ import Layout from "src/components/layout/layout"
 import LoadingButton from "src/components/utils/loading-button.vue"
 import ProgressBar from "src/components/utils/progress-bar"
 import strength from 'strength'
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {PasswordInput, Layout, LoadingButton, ProgressBar},
+    components: {PasswordInput, Layout, LoadingButton, ProgressBar, AlertBox},
 
     data(){
         return {

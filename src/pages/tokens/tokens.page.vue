@@ -6,10 +6,7 @@
 
                 <h1>Tokens {{count ? count : ''}}</h1>
 
-                <div v-if="error" class="alert alert-danger border-2 d-flex align-items-center">
-                    <div class="bg-white me-3 icon-item"><i class="fa fa-times"></i> </div>
-                    <p class="mb-0 flex-1">{{error}}</p>
-                </div>
+                <alert-box v-if="error" type="error">{{error}}</alert-box>
 
                 <show-tokens-info :tokens="tokens" />
 
@@ -29,10 +26,11 @@ import Consensus from "src/consensus/consensus"
 import Layout from "src/components/layout/layout"
 import ShowTokensInfo from "src/components/explorer/show-tokens-info.vue"
 import LoadingButton from "src/components/utils/loading-button.vue"
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: { Layout, ShowTokensInfo, LoadingButton },
+    components: { Layout, ShowTokensInfo, LoadingButton, AlertBox},
 
     data(){
         return {

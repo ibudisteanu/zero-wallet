@@ -9,10 +9,7 @@
                 <span class="gray" >Password</span>
                 <password-input v-model="password"/>
 
-                <div v-if="error" class="alert alert-danger border-2 d-flex align-items-center">
-                    <div class="bg-white me-3 icon-item"><i class="fa fa-times"></i> </div>
-                    <p class="mb-0 flex-1">{{error}}</p>
-                </div>
+                <alert-box v-if="error" type="error">{{error}}</alert-box>
 
                 <loading-button text="Remove password" @submit="handleRemovePassword" icon="fa fa-unlock-alt"  :disabled="password.length === 0" />
 
@@ -31,10 +28,11 @@
 import PasswordInput from "src/components/utils/password-input";
 import Layout from "src/components/layout/layout"
 import LoadingButton from "src/components/utils/loading-button.vue"
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {PasswordInput, Layout, LoadingButton },
+    components: {PasswordInput, Layout, LoadingButton, AlertBox },
 
     data(){
         return {

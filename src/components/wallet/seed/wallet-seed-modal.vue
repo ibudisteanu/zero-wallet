@@ -2,20 +2,13 @@
 
     <modal ref="modal" title="Wallet Seed" >
 
-        <div v-if="seed">
-
-            <secret-text :text="seed" title="Seed"  />
-
-        </div>
+        <secret-text v-if="seed" :text="seed" title="Seed"  />
 
         <div v-if="!seed">
             <span class="gray" >Enter the password to view the wallet seed</span>
             <password-input v-model="password" />
 
-            <div v-if="error" class="alert alert-danger border-2 d-flex align-items-center">
-                <div class="bg-white me-3 icon-item"><i class="fa fa-times"></i> </div>
-                <p class="mb-0 flex-1">{{error}}</p>
-            </div>
+            <alert-box v-if="error" type="error">{{error}}</alert-box>
 
             <loading-button text="Show Wallet Seed" @submit="handleShowSeed" icon="fa fa-key"  :disabled="!password.length " />
 
@@ -31,10 +24,11 @@ import Modal from "src/components/utils/modal"
 import PasswordInput from "../../utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
 import SecretText from "src/components/utils/secret-text"
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {PasswordInput, Modal, LoadingButton, SecretText},
+    components: {PasswordInput, Modal, LoadingButton, SecretText, AlertBox},
 
     data(){
         return {

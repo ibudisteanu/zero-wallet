@@ -6,7 +6,7 @@
 
                 <h1>Receive Money {{ title }}</h1>
 
-                <account :account="address" />
+                <account :address="address" />
 
             </div>
         </div>

@@ -12,10 +12,7 @@
             </div>
             <div class="card-body p-3 fs--1">
 
-                <div v-if="error" class="alert alert-danger border-2 d-flex align-items-center">
-                    <div class="bg-white me-3 icon-item"><i class="fa fa-times"></i> </div>
-                    <p class="mb-0 flex-1">{{error}}</p>
-                </div>
+                <alert-box v-if="error" type="error">{{error}}</alert-box>
                 <div v-else-if="tx">
 
                     <div class="row pt-2 pb-2">
@@ -121,10 +118,11 @@ import LoadingSpinner from "src/components/utils/loading-spinner";
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import StringHelper from "src/utils/string-helper"
 import Amount from "src/components/wallet/amount"
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {Layout, LoadingSpinner, AccountIdenticon, Amount},
+    components: {Layout, LoadingSpinner, AccountIdenticon, Amount, AlertBox},
 
     data(){
         return {
