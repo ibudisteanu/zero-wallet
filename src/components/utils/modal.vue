@@ -1,6 +1,6 @@
 <template>
 
-    <div class="modal fade show" v-if="open" style="display: block">
+    <div class="modal fade show" v-if="open" style="display: flex !important">
 
         <div class="modal-backdrop fade show" @click="closeModal"></div>
 
@@ -10,10 +10,10 @@
                     <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" @click="closeModal"></button>
                 </div>
                 <div class="modal-body p-0">
-                    <div v-if="title" class="rounded-top-lg py-3 ps-4 pe-6 bg-light">
+                    <div v-if="title" class="rounded-top-lg py-3 ps-3 pe-6 bg-light">
                         <h5 class="mb-1" id="modalExampleDemoLabel">{{title}}</h5>
                     </div>
-                    <div class="p-4 pb-20">
+                    <div :class="`${contentClass} pb-20 d-inline-block`">
                         <slot/>
                     </div>
                 </div>
@@ -39,6 +39,7 @@ export default{
     props:{
         title: {default: 'Modal Title'},
         closeButton: { default: true },
+        contentClass: {default: 'p-3'}
     },
 
     methods:{
@@ -85,4 +86,15 @@ export default{
     .modal-dialog{
         z-index: 1070;
     }
+
+    .modal-dialog { /* Width */
+        max-width: 100%;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .modal-content{
+        max-width: 520px;
+    }
+
 </style>

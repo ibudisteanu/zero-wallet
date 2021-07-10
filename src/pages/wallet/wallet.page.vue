@@ -1,17 +1,35 @@
 <template>
     <layout>
-        <wallet :public-key-hash="publicKeyHash" />
+        <div v-if="address">
+
+            <account :account="address" />
+
+            <balances :publicKeyHash="publicKeyHash" />
+            <transactions :publicKeyHash="publicKeyHash" />
+
+        </div>
+        <div v-else>
+            <div class="container">
+                <div class="boxed centered pd-top-30 pd-bottom-30">
+                    <loading-spinner />
+                </div>
+            </div>
+        </div>
     </layout>
 </template>
 
 <script>
 import Layout from "src/components/layout/layout";
-import Wallet from "src/components/wallet/wallet";
 import Consensus from "src/consensus/consensus"
+import Balances from "../../components/wallet/balance/balances";
+import Transactions from "../../components/wallet/transactions/transactions";
+import AccountIdenticon from "../../components/wallet/account/account-identicon";
+import LoadingSpinner from "../../components/utils/loading-spinner";
+import Account from "src/components/wallet/account/account"
 
 export default {
 
-    components: {Layout, Wallet},
+    components: {Layout,  Balances, Transactions, AccountIdenticon, LoadingSpinner, Account},
 
     data(){
         return {
@@ -20,6 +38,12 @@ export default {
     },
 
     computed:{
+        address(){
+            return this.$store.state.addresses.list[this.mainPublicKeyHash];
+        },
+        account(){
+            return this.$store.state.addresses.accounts[this.mainPublicKeyHash]
+        },
         mainPublicKeyHash(){
             return this.$store.state.wallet.mainPublicKeyHash
         }

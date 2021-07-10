@@ -48,8 +48,7 @@ const routes = [
     {path: '/remove-password', component: RemovePasswordPage, beforeEnter: guardDecrypted },
 
     {path: '/explorer/block/:query', component: BlockExplorerPage },
-    {path: '/explorer/tx/hash/:hash', component: TransactionExplorerPage },
-    {path: '/explorer/tx/height/:height', component: TransactionExplorerPage },
+    {path: '/explorer/tx/:query', component: TransactionExplorerPage },
     {path: '/explorer/mem-pool', component: MemPoolExplorerPage },
     {path: '/explorer', component: BlockchainExplorerPage },
     {path: '/explorer/:page', component: BlockchainExplorerPage },

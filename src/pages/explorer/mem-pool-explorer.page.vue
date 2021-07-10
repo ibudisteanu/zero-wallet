@@ -20,7 +20,7 @@
                      :class="`row g-0  py-2  border-bottom border-200 d-flex ${key % 2 === 1 ?'bg-light':''}`" style="text-align: center"
                      :key="`pending_${hash}`">
 
-                    <router-link :to="`/explorer/tx/hash/${hash}`" >
+                    <router-link :to="`/explorer/tx/${hash}`" >
                         <span class="d-block text-truncate fs--1"> {{hash}} </span>
                     </router-link>
 

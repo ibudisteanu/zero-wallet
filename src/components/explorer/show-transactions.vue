@@ -20,7 +20,7 @@
             <template v-else>
                 <span class="col-4 d-block d-sm-none text-dark">Hash</span>
                 <span class="col-8 col-md-2 text-truncate">
-                    <router-link :to="`/explorer/tx/hash/${tx.bloom.hash}`">{{tx.bloom.hash}}</router-link>
+                    <router-link :to="`/explorer/tx/${tx.bloom.hash}`">{{tx.bloom.hash}}</router-link>
                 </span>
 
                 <span class="col-4 d-xs-none d-sm-none d-md-none text-dark">Time</span>

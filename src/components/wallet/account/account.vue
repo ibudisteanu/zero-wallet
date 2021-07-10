@@ -1,19 +1,47 @@
 <template>
     <div v-if="account">
-
-        <div class="account">
-            <account-identicon  :identicon="account.identicon" :size="60" :outer-size="20" :version="account.version" />
-            <div class="wordwrap pd-top-10">
-                <span class="bold">{{account.name}}</span>
-                <span>{{typeName}}</span>
-                <div class="pd-top-20">
-                    <span>Address:</span>
-                    <span class="thick address" >{{getAddress}} </span>
-                    <i class="fa fa-2x fa-copy pointer"  @click="copyAddress"  v-tooltip.bottom="'Copy Address'" />
-                    <i class="fa fa-2x fa-qrcode pointer" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'" />
-                    <i class="fa fa-2x fa-tools pointer"  @click="createCustomAddress"  v-tooltip.bottom="'Create custom address'" />
+        <div class="card mb-3">
+            <div class="card-header bg-light">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="mb-0">Account Details</h5>
+                    </div>
                 </div>
             </div>
+            <div class="card-body p-0">
+                <div class="row g-0 align-items-center py-2 position-relative border-bottom border-200">
+                    <div class="col ps-card py-1 position-static">
+                        <div class="d-flex align-items-center d-block">
+                            <div class="avatar avatar-xxl me-3">
+                                <account-identicon :public-key-hash="account.publicKeyHash" :size="60" :outer-size="20" :version="account.version" />
+                            </div>
+                            <span class="fw-bold d-block text-truncate">
+                                {{account.addressEncoded}}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="g-0 d-block-inline p-3">
+
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="copyAddress" v-tooltip.bottom="'Copy Address'" >
+                        <i class="fa fa-copy pointer" />
+                    </button>
+
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
+                        <i class="fa fa-qrcode pointer" />
+                    </button>
+
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="createCustomAddress"  v-tooltip.bottom="'Create custom address'">
+                        <i class="fa fa-tools pointer" />
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+        <div v-if="!isLoading && !isFound" class="alert alert-warning border-2 d-flex align-items-center" role="alert">
+            <div class="bg-white me-3 icon-item"><i class="fa fa-exclamation-triangle"></i></div>
+            <p class="mb-0 flex-1">Address doesn't exist!</p>
         </div>
 
         <account-qr-code-modal ref="refAccountQRCodeModal"/>
@@ -39,14 +67,15 @@ export default {
 
     computed:{
 
-        typeName(){
-            if (!this.account) return '';
-            if (this.account.version === version.VERSION_TRANSPARENT) return 'Transparent';
+        getAddress(){
+            return this.account.addressEncoded;
         },
 
-        getAddress(){
-            if (!this.account) return '';
-            if (this.account.version === version.VERSION_TRANSPARENT) return this.account.addressEncoded;
+        isLoading(){
+            return this.account === undefined
+        },
+        isFound(){
+            return this.account !== null
         },
 
     },
@@ -75,7 +104,7 @@ export default {
         },
 
         showAccountQRCode(){
-            this.$refs.refAccountQRCodeModal.showModal(this.getAddress, this.account.name);
+            this.$refs.refAccountQRCodeModal.showModal(this.getAddress, this.account.name || '');
         }
 
     },
@@ -84,21 +113,5 @@ export default {
 </script>
 
 <style scoped>
-
-    .account{
-        display: grid;
-        grid-template-columns: 100px 1fr;
-        grid-column-gap: 10px;
-    }
-
-    .account .address{
-        display: inline-block;
-    }
-
-    .account i{
-        display: inline-block;
-        padding-right: 5px;
-        padding-left: 5px;
-    }
 
 </style>

@@ -180,3 +180,9 @@ a, a:hover,a:visited, a:focus {
     color: transparent;
 }
 
+
+@media (max-width: 576px) {
+    .theme-wizard .nav-item-circle-parent {
+        padding: 0 .3rem;
+    }
+}

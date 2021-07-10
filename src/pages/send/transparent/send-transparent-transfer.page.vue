@@ -190,7 +190,7 @@ export default {
                     text: `A transaction has been made. \n TxId <strong>${hash}</strong>`,
                 });
 
-                this.$router.push(`/explorer/tx/hash/${hash}`);
+                this.$router.push(`/explorer/tx/${hash}`);
 
             }catch(err){
                 console.error(err);

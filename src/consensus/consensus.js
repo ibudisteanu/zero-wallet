@@ -315,11 +315,8 @@ class Consensus extends BaseConsensus{
             this._data.transactionsByHash[tx.bloom.hash] = tx;
             data[tx.bloom.hash] = tx;
 
-            for (const vin of tx.base.vin)
-                this._getTokenInfo(vin.token)
-
-            for (const vout of tx.base.vout)
-                this._getTokenInfo(vout.token)
+            for (const vin of tx.base.vin) this._getTokenInfo(vin.token)
+            for (const vout of tx.base.vout) this._getTokenInfo(vout.token)
 
         }
         this.emit('consensus/tx-downloaded', {transactions: data} );
@@ -403,6 +400,9 @@ class Consensus extends BaseConsensus{
 
         this._data.transactionsByHash[tx.bloom.hash] = tx;
 
+        for (const vin of tx.base.vin) this._getTokenInfo(vin.token)
+        for (const vout of tx.base.vout) this._getTokenInfo(vout.token)
+
         this.emit('consensus/tx-downloaded', {transactions: data} );
 
         return tx
@@ -420,7 +420,9 @@ class Consensus extends BaseConsensus{
                 const txData = await PandoraPay.network.getNetworkTransaction( hash );
                 if (!txData) throw Error("tx fetch failed"); //disconnected
 
-                resolve(this._includeTx(JSON.parse(txData)));
+                const tx = JSON.parse(txData)
+
+                resolve(this._includeTx(tx));
             }catch(err){
                 reject(err);
             } finally{
@@ -444,7 +446,9 @@ class Consensus extends BaseConsensus{
                 const txData = await PandoraPay.network.getNetworkTransaction( height );
                 if (!txData) throw Error("tx fetch failed"); //disconnected
 
-                resolve(this._includeTx(JSON.parse(txData)));
+                const tx = JSON.parse(txData)
+
+                resolve(this._includeTx(tx));
 
             }catch(err){
                 reject(err);

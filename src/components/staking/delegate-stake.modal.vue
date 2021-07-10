@@ -145,7 +145,7 @@ export default {
                     text: `Delegate Staking Transaction has been made. \n TxId ${out.tx.hash().toString("hex")}`,
                 });
 
-                this.$router.push(`/explorer/tx/hash/${out.tx.hash().toString('hex')}`);
+                this.$router.push(`/explorer/tx/${out.tx.hash()}`);
 
                 this.closeModal();
 

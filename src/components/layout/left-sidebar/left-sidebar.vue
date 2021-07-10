@@ -11,21 +11,31 @@
                 </div>
             </router-link>
         </div>
-        <div class="collapse navbar-collapse">
-            <div class="navbar-nav flex-column mb-3">
+        <div class="collapse navbar-collapse scrollbar">
+            <ul class="navbar-nav flex-column mb-3">
                 <li class="nav-item">
-                    <div class="d-flex align-items-center">
-                        <i class="fa fa-money-bill-alt"></i>
-                        <span class="nav-link-text ps-1">Wallet</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <i class="fa fa-wallet"></i>
-                        <span class="nav-link-text ps-1">Account</span>
-                    </div>
+                    <router-link to="/" :class="`${route === '/'  || route === '/login' ? 'selected' : ''}`">
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-money-bill-alt"></i>
+                            <span class="nav-link-text ps-1">Wallet</span>
+                        </div>
+                    </router-link>
+                </li>
+                <li class="nav-item">
+                    <router-link :disabled="!isWalletDecrypted" to="/account" :class="`${ route === '/account' ? 'selected' : ''}`">
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-wallet"></i>
+                            <span class="nav-link-text ps-1">Account</span>
+                        </div>
+                    </router-link>
+                </li>
+                <li class="nav-item">
                     <div class="d-flex align-items-center">
                         <i class="fa fa-piggy-bank"></i>
                         <span class="nav-link-text ps-1">Staking</span>
                     </div>
+                </li>
+                <li class="nav-item">
                     <div class="d-flex align-items-center">
                         <i class="fa fa-money-check-alt"></i>
                         <span class="nav-link-text ps-1">Transfer</span>
@@ -47,7 +57,8 @@
                             </a>
                         </li>
                     </ul>
-
+                </li>
+                <li class="nav-item">
                     <div class="d-flex align-items-center">
                         <i class="fa fa-hand-holding-usd"></i>
                         <span class="nav-link-text ps-1">Receive</span>
@@ -69,11 +80,16 @@
                             </a>
                         </li>
                     </ul>
+                </li>
 
+                <li class="nav-item">
                     <div class="d-flex align-items-center">
                         <i class="fa fa-unlock-alt"></i>
                         <span class="nav-link-text ps-1">Encrypt</span>
                     </div>
+                </li>
+
+                <li class="nav-item">
                     <div class="d-flex align-items-center">
                         <i class="fa fa-cubes"></i>
                         <span class="nav-link-text ps-1">Explorer</span>
@@ -88,23 +104,27 @@
                             </router-link>
                         </li>
                         <li class="nav-item">
-                            <router-link :class="`nav-link ${route.indexOf('/explorer/mem-pool') === 0 ? 'selected' : ''}`" to="/explorer/mem-pool">
+                            <router-link :class="`nav-link ${route.indexOf('/explorer/mem-pool') === 0 ? 'active' : ''}`" to="/explorer/mem-pool">
                                 <div class="d-flex align-items-center">
                                     <span class="nav-link-text ps-1">Mem pool</span>
                                 </div>
                             </router-link>
                         </li>
                     </ul>
+                </li>
+                <li class="nav-item">
                     <div class="d-flex align-items-center">
                         <i class="fa fa-file-invoice-dollar"></i>
                         <span class="nav-link-text ps-1">Tokens</span>
                     </div>
+                </li>
+                <li class="nav-item">
                     <div class="d-flex align-items-center">
                         <i class="fa fa-globe-americas"></i>
                         <span class="nav-link-text ps-1">KAD</span>
                     </div>
                 </li>
-            </div>
+            </ul>
         </div>
     </nav>
 
@@ -114,11 +134,6 @@
 <!--        </div>-->
 
 <!--        <div v-if="show" class="sidebar" :style="{display: show ? 'inherit' : 'none' }" v-on-clickaway="closeMenu" >-->
-
-<!--            <router-link to="/" :class="`${route === '/'  || route === '/login' ? 'selected' : ''}`">-->
-<!--                <i class="fa fa-money-bill-alt" ></i>-->
-<!--                <span>Wallet</span>-->
-<!--            </router-link>-->
 
 <!--            <router-link :disabled="!isWalletDecrypted" to="/account" :class="`${ route === '/account' ? 'selected' : ''}`">-->
 <!--                <i class="fa fa-wallet" ></i>-->
