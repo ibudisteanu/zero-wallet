@@ -39,10 +39,6 @@
             </div>
         </div>
 
-        <alert-box v-if="!isLoading && !isFound" type="warning" >
-            Address doesn't exist!
-        </alert-box>
-
         <account-generate-custom-address ref="refGenerateCustomAddress"/>
 
     </div>
@@ -52,34 +48,20 @@
 
 import AccountIdenticon from "./account-identicon";
 import AccountGenerateCustomAddress from "./account-generate-custom-address.modal"
-import AlertBox from "src/components/utils/alert-box"
 const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 
-    components: { AccountGenerateCustomAddress, AccountIdenticon, AlertBox },
+    components: { AccountGenerateCustomAddress, AccountIdenticon },
 
     props: {
         address: {default: null},
     },
 
     computed:{
-
         getAddress(){
             return this.address.addressEncoded;
         },
-
-        account(){
-            return this.$store.state.addresses.accounts[this.address.publicKeyHash]
-        },
-
-        isLoading(){
-            return this.account === undefined
-        },
-        isFound(){
-            return this.account !== null
-        },
-
     },
 
     methods: {

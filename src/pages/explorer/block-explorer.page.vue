@@ -2,6 +2,8 @@
 
     <layout>
 
+        <layout-title icon="fa-cube" title="Explore Block" >View a specific block.</layout-title>
+
         <div class="card mb-3">
             <div class="card-header bg-light">
                 <div class="row align-items-center">
@@ -31,8 +33,10 @@
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Time</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{  timeAgo( $store.state.blockchain.genesisTimestamp + blk.timestamp ) }} ago</span>
-                        <i class="fa fa-clock"></i>
+                        <span class="col-7 col-sm-9 text-truncate">
+                            {{  timeAgo( $store.state.blockchain.genesisTimestamp + blk.timestamp ) }} ago
+                            <i class="fa fa-clock"></i>
+                        </span>
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Height</span>
@@ -127,6 +131,7 @@
 <script>
 
 import Layout from "src/components/layout/layout"
+import LayoutTitle from "src/components/layout/layout-title"
 import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import ShowTransactions from "src/components/explorer/show-transactions"
@@ -138,7 +143,7 @@ import StringHelper from "src/utils/string-helper"
 
 export default {
 
-    components: {LoadingSpinner, Layout, ShowBlocksInfo, ShowTransactions, AccountIdenticon, AlertBox},
+    components: {LoadingSpinner, Layout, ShowBlocksInfo, ShowTransactions, AccountIdenticon, AlertBox, LayoutTitle },
 
     data(){
         return {

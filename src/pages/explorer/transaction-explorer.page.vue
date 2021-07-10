@@ -1,6 +1,9 @@
 <template>
 
     <layout>
+
+        <layout-title icon="fa-file-invoice-dollar" title="Transaction" >View a transaction.</layout-title>
+
         <div class="card mb-3">
             <div class="card-header bg-light">
                 <div class="row align-items-center">
@@ -113,6 +116,7 @@
 <script>
 
 import Layout from "src/components/layout/layout"
+import LayoutTitle from "src/components/layout/layout-title"
 import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
@@ -122,7 +126,7 @@ import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {Layout, LoadingSpinner, AccountIdenticon, Amount, AlertBox},
+    components: {Layout, LoadingSpinner, AccountIdenticon, Amount, AlertBox, LayoutTitle},
 
     data(){
         return {

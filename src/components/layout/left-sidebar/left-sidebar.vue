@@ -17,23 +17,25 @@
                     <router-link to="/" :class="`${route === '/'  || route === '/login' ? 'selected' : ''}`">
                         <div class="d-flex align-items-center">
                             <i class="fa fa-money-bill-alt"></i>
-                            <span class="nav-link-text ps-1">Wallet</span>
-                        </div>
-                    </router-link>
-                </li>
-                <li class="nav-item">
-                    <router-link :disabled="!isWalletDecrypted" to="/account" :class="`${ route === '/account' ? 'selected' : ''}`">
-                        <div class="d-flex align-items-center">
-                            <i class="fa fa-wallet"></i>
                             <span class="nav-link-text ps-1">Account</span>
                         </div>
                     </router-link>
                 </li>
                 <li class="nav-item">
-                    <div class="d-flex align-items-center">
-                        <i class="fa fa-piggy-bank"></i>
-                        <span class="nav-link-text ps-1">Staking</span>
-                    </div>
+                    <router-link :disabled="!isWalletDecrypted" to="/wallet" :class="`${ route === '/wallet' ? 'selected' : ''}`">
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-wallet"></i>
+                            <span class="nav-link-text ps-1">Wallet</span>
+                        </div>
+                    </router-link>
+                </li>
+                <li class="nav-item">
+                    <router-link :disabled="!isWalletDecrypted" to="/staking" :class="`${ route === '/staking' ? 'selected' : ''}`">
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-piggy-bank"></i>
+                            <span class="nav-link-text ps-1">Staking</span>
+                        </div>
+                    </router-link>
                 </li>
                 <li class="nav-item">
                     <div class="d-flex align-items-center">
@@ -66,11 +68,11 @@
                     </div>
                     <ul class="nav collapse show" >
                         <li class="nav-item">
-                            <a class="nav-link active" href="index.html">
+                            <router-link :disabled="!isWalletDecrypted" to="/receive" :class="`nav-link ${ route === '/receive' ? 'selected' : ''}`">
                                 <div class="d-flex align-items-center">
                                     <span class="nav-link-text ps-1">Public</span>
                                 </div>
-                            </a>
+                            </router-link>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link active" href="index.html">

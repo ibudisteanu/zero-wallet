@@ -1,11 +1,11 @@
 import VueRouter from "vue-router"
 import Vue from "vue";
 
-import WalletPage from "src/pages/wallet/wallet.page"
 import LoginPage from "src/pages/login/login.page"
 import SendTransparentTransferPage from "src/pages/send/transparent/send-transparent-transfer.page"
 import ReceivePage from "src/pages/receive/receive.page"
-import AccountInfoPage from "src/pages/account-info/account-info.page"
+import WalletPage from "src/pages/wallet/wallet.page"
+import AddressPage from "src/pages/address/address.page"
 import StakingPage from "src/pages/staking/staking.page"
 import SetPasswordPage from "src/pages/encryption/set-password.page"
 import RemovePasswordPage from "src/pages/encryption/remove-password.page"
@@ -43,7 +43,7 @@ const routes = [
     {path: '/send', component: SendTransparentTransferPage, beforeEnter: guardDecrypted },
 
     {path: '/receive', component: ReceivePage, beforeEnter: guardDecrypted },
-    {path: '/account', component: AccountInfoPage, beforeEnter: guardDecrypted },
+    {path: '/wallet', component: WalletPage, beforeEnter: guardDecrypted },
     {path: '/set-password', component: SetPasswordPage , beforeEnter: guardDecrypted},
     {path: '/remove-password', component: RemovePasswordPage, beforeEnter: guardDecrypted },
 
@@ -63,9 +63,9 @@ const routes = [
 
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
 
-    {path: '/', component: WalletPage, beforeEnter: guardDecrypted },
-    {path: '/address/:address', component: WalletPage },
-    {path: '/address/:address/:page', component: WalletPage },
+    {path: '/', component: AddressPage, beforeEnter: guardDecrypted },
+    {path: '/address/:address', component: AddressPage },
+    {path: '/address/:address/:page', component: AddressPage },
 
     { path: '*', name: 'not-found', component: NotFoundPage,}
 

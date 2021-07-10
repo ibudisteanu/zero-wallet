@@ -6,6 +6,7 @@
                 <div class="col">
                     <h5 class="mb-0">
                         Transactions
+
                         <template v-if="!txs">
                             <loading-spinner />
                         </template>
@@ -62,6 +63,7 @@ export default {
         },
 
         page(){
+            if (!this.txs) return 0
             let page = this.$route.params.page || Math.ceil(this.ending / this.countPerPage-1)
             if (typeof page == "string"){
                 page = Number.parseInt(page)
@@ -76,9 +78,7 @@ export default {
         },
 
         ending(){
-            if (!this.txs)
-                return 0
-
+            if (!this.txs) return 0
             return this.txs.count;
         },
 
@@ -88,8 +88,7 @@ export default {
 
         transactions(){
 
-            if (!this.txs)
-                return []
+            if (!this.txs) return []
 
             const txs = this.txs.list;
 
@@ -116,6 +115,7 @@ export default {
                 this.error = ''
                 await Consensus.syncPromise;
 
+                console.log("Consensus.downloadAccountTxs( this.publicKeyHash, this.starting  )", this.publicKeyHash, this.starting)
                 await Consensus.downloadAccountTxs( this.publicKeyHash, this.starting  )
 
                 this.loaded = true

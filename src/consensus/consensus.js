@@ -154,9 +154,9 @@ class Consensus extends BaseConsensus{
         if (!account) return
 
         for (const balance of account.balances)
-            await this._getTokenInfo(balance.token)
+            this._getTokenInfo(balance.token)
 
-        await this._getTokenInfo("")
+        this._getTokenInfo("")
 
     }
 

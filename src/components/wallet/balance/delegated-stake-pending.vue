@@ -4,7 +4,7 @@
         <h4 class="fw-medium pt-2">
             {{delegatedStakePending.pendingType ? '' : '-'}} {{ amount }}
             <small class="fs--1 text-700">/
-                <router-link :to="`/tokens/${getToken.hash}`">
+                <router-link v-if="getToken" :to="`/tokens/${getToken.hash}`">
                     ${{getToken.ticker}}
                 </router-link>
                 {{delegatedStakePending.activationHeight}}

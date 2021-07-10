@@ -2,6 +2,8 @@
 
     <layout>
 
+        <layout-title icon="fa-cubes" title="Blockchain" >View the latest blocks.</layout-title>
+
         <div class="card mb-3">
             <div class="card-header bg-light">
                 <div class="row align-items-center">
@@ -35,6 +37,7 @@
 <script>
 
 import Layout from "src/components/layout/layout"
+import LayoutTitle from "src/components/layout/layout-title"
 import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
 import Pagination from "src/components/utils/pagination"
 import Consensus from "src/consensus/consensus"
@@ -43,7 +46,7 @@ import consts from "consts/consts"
 
 export default {
 
-    components: { Layout, Pagination, ShowBlocksInfo, LoadingSpinner },
+    components: { Layout, Pagination, ShowBlocksInfo, LoadingSpinner, LayoutTitle },
 
     data(){
         return {

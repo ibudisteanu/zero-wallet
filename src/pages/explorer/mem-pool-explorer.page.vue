@@ -2,6 +2,8 @@
 
     <layout>
 
+        <layout-title icon="fa-list-ol" title="Mem pool">View the latest transactions that are in pending for the next blocks.</layout-title>
+
         <div class="card mb-3">
             <div class="card-header bg-light">
                 <div class="row align-items-center">
@@ -38,13 +40,14 @@
 <script>
 
 import Layout from "src/components/layout/layout"
+import LayoutTitle from "src/components/layout/layout-title"
 import Consensus from "src/consensus/consensus"
 import LoadingButton from "src/components/utils/loading-button.vue"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 
 export default {
 
-    components: { Layout, LoadingButton, LoadingSpinner },
+    components: { Layout, LoadingButton, LoadingSpinner, LayoutTitle },
 
     data(){
         return {
