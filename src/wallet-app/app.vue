@@ -50,6 +50,10 @@ export default {
 
         if (typeof window === "undefined") return;
 
+        if (typeof localStorage !== "undefined" && localStorage.getItem('dark') === 'true')
+            this.$store.commit('setDark', true)
+
+
         this.$store.commit('setNetworkByte', {
             networkByte: PandoraPay.config.NETWORK_SELECTED,
             networkPrefix: PandoraPay.config.NETWORK_SELECTED_NAME,

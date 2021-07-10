@@ -53,7 +53,7 @@ export default {
 
    methods: {
       toggleDark(){
-         this.$store.commit('setDark')
+         this.$store.commit('setDark', !this.$store.state.page.dark)
       }
    }
 

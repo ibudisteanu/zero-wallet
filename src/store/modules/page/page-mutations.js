@@ -1,14 +1,14 @@
 export default {
 
-    setDark(context, ){
+    setDark(context, value ){
 
-        const toggle = !context.dark
-
-        context.dark = toggle;
-        if (context.dark) {
+        context.dark = value;
+        if (value) {
             document.getElementsByTagName("html")[0].classList.add('dark');
+            if (typeof localStorage !== "undefined") localStorage.setItem('dark', 'true' )
         } else {
             document.getElementsByTagName("html")[0].classList.remove('dark');
+            if (typeof localStorage !== "undefined") localStorage.removeItem('dark')
         }
     },
 

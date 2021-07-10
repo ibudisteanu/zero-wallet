@@ -46,6 +46,9 @@ export default {
 
         if (typeof window === "undefined") return;
 
+        if (typeof localStorage !== "undefined" && localStorage.getItem('dark') === 'true')
+            document.getElementsByTagName("html")[0].classList.add('dark');
+
         const self = this
 
         this.progressStatus = "WASM Handler loading...";
