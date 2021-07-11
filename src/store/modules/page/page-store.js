@@ -10,6 +10,7 @@ export default {
         modalOpened: false,
 
         dark: false,
+        leftSidebarShow: false,
 
     },
 

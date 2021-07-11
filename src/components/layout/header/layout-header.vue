@@ -2,7 +2,7 @@
 
    <nav class="navbar navbar-light navbar-glass navbar-top navbar-expand">
 
-      <button class="btn navbar-toggler-humburger-icon navbar-toggler me-1 me-sm-3">
+      <button class="btn navbar-toggler-humburger-icon navbar-toggler me-1 me-sm-3" @click="handleToggleLeftSidebar">
          <span class="navbar-toggle-icon">
             <span class="toggle-line"></span>
          </span>
@@ -11,7 +11,7 @@
       <ul class="navbar-nav navbar-nav-icons flex-row align-items-center">
 
          <li class="nav-item">
-            <i :class="`fa fa-${$store.state.page.dark ?'sun':'moon'} nav-item-icon pointer`" @click="toggleDark"></i>
+            <i :class="`fa fa-${$store.state.page.dark ?'sun':'moon'} nav-item-icon pointer`" @click="handleToggleDark"></i>
          </li>
 
          <li class="nav-item">
@@ -52,8 +52,11 @@ export default {
     },
 
    methods: {
-      toggleDark(){
+      handleToggleDark(){
          this.$store.commit('setDark', !this.$store.state.page.dark)
+      },
+      handleToggleLeftSidebar(){
+         this.$store.commit('setLeftSidebarShow', !this.$store.state.page.leftSidebarShow)
       }
    }
 

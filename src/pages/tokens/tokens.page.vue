@@ -1,21 +1,28 @@
 <template>
 
     <layout>
-        <div class="container pd-top-20">
-            <div class="boxed ">
 
-                <h1>Tokens {{count ? count : ''}}</h1>
+        <layout-title icon="fa fa-file-invoice-dollar" title="Tokens">View the existing tokens.</layout-title>
 
-                <alert-box v-if="error" type="error">{{error}}</alert-box>
-
-                <show-tokens-info :tokens="tokens" />
-
-                <div class="centered" v-if="next">
-                    <loading-button class="button-width-inherit" @submit="handleViewMore" icon="fa fa-cloud-download-alt" text="View more..."/>
+        <div class="card mb-3">
+            <div class="card-header bg-light">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="mb-0">Tokens {{ count ? count : ''}}</h5>
+                    </div>
                 </div>
+            </div>
+            <div class="card-body p-3">
+                <div class="card-body p-0">
 
+                    <alert-box v-if="error" type="error">{{error}}</alert-box>
+
+                    <show-tokens-info :tokens="tokens" />
+
+                </div>
             </div>
         </div>
+
     </layout>
 
 </template>
@@ -24,13 +31,14 @@
 
 import Consensus from "src/consensus/consensus"
 import Layout from "src/components/layout/layout"
+import LayoutTitle from "src/components/layout/layout-title"
 import ShowTokensInfo from "src/components/explorer/show-tokens-info.vue"
 import LoadingButton from "src/components/utils/loading-button.vue"
 import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: { Layout, ShowTokensInfo, LoadingButton, AlertBox},
+    components: { Layout, ShowTokensInfo, LoadingButton, AlertBox, LayoutTitle},
 
     data(){
         return {
@@ -58,15 +66,10 @@ export default {
 
         async startDownloadingTokens() {
             await Consensus.syncPromise;
-            await Consensus.startDownloadingTokens();
         },
 
         async handleViewMore(resolve){
-            try {
-                await Consensus._downloadTokensSpecific({index: this.next});
-            }finally{
-                resolve(true);
-            }
+
         }
 
 
@@ -83,7 +86,6 @@ export default {
     },
 
     beforeDestroy(){
-        return Consensus.stopDownloadingTokens();
     }
 }
 

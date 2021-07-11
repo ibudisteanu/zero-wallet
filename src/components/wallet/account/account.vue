@@ -10,7 +10,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="row g-0 align-items-center py-2 position-relative border-bottom border-200">
-                    <div class="col ps-card py-1 position-static">
+                    <div class="col px-1 py-1 position-static">
                         <div class="d-flex align-items-center d-block">
                             <div class="avatar avatar-xxl me-3">
                                 <account-identicon :public-key-hash="address.publicKeyHash" :size="60" :outer-size="20" :version="address.version" />

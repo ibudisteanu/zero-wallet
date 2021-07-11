@@ -54,7 +54,7 @@ const routes = [
     {path: '/explorer/:page', component: BlockchainExplorerPage },
 
     {path: '/tokens', component: TokensPage},
-    {path: '/tokens/PBOX', component: TokenExplorerPage },
+    {path: '/tokens/pandora', component: TokenExplorerPage },
     {path: '/tokens/:hash', component: TokenExplorerPage },
 
     {path: '/staking', component: StakingPage, beforeEnter: guardDecrypted },
@@ -75,13 +75,9 @@ const router = new VueRouter({
     base: PandoraPayWalletOptions.router.base || '/',
     mode: PandoraPayWalletOptions.router.mode || 'history',
     scrollBehavior(to, from, savedPosition) {
-        if (to.hash) {
-            return { selector: to.hash }
-        } else if (savedPosition) {
-            return savedPosition;
-        } else {
-            return { x: 0, y: 0 }
-        }
+        if (to.hash) return { selector: to.hash }
+        else if (savedPosition) return savedPosition;
+        else return { x: 0, y: 0 }
     },
     routes // short for `routes: routes`
 });

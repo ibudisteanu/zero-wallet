@@ -26,6 +26,10 @@ export default {
 
     setModalOpened(context, value){
         context.modalOpened = value
-    }
+    },
+
+    setLeftSidebarShow(context, value){
+        context.leftSidebarShow = value
+    },
 
 }

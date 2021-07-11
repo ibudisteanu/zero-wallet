@@ -16,15 +16,11 @@
                     <div v-for="(address, index) in addresses" :class="`notification notification-flush notification-unread ${ address.publicKeyHash === mainPublicKeyHash  ? 'fw-black' : ''} ` "
                          :key="`address-${index}`">
                             <div class="notification-body address">
-                                <router-link :to="`/address/${address.addressEncoded}`" >
-                                    <account-identicon :address="address.addressEncoded" :identicon="address.identicon" :size="20" :outer-size="5" :version="address.version" />
-                                </router-link>
-                                <router-link :to="`/address/${address.addressEncoded}`" >
-                                    <div class="account-title pointer" @click="setMainPublicKeyHash(address.publicKeyHash)">
-                                        <span class="fw-semi-bold">{{address.name}}</span>
-                                        <span class="fw-normal text-truncate">{{address.addressEncoded}} </span>
-                                    </div>
-                                </router-link>
+                                <account-identicon :address="address.addressEncoded" :identicon="address.identicon" :size="20" :outer-size="5" :version="address.version" />
+                                <div class="account-title pointer" @click="setMainPublicKeyHash(address.publicKeyHash)">
+                                    <span class="fw-semi-bold">{{address.name}}</span>
+                                    <span class="fw-normal text-truncate">{{address.addressEncoded}} </span>
+                                </div>
                                 <div class="account-tools">
                                     <span class="fw-light" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : '&nbsp;'}}</span>
                                     <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( address)" />
