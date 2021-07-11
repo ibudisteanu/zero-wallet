@@ -3,22 +3,19 @@
         <div class="g-0 justify-content-between fs--1 mt-4 mb-3 text-600">
 
             <div class="row pb-1 mb-0">
-                <div class="col-12 col-sm-6">
+                <div class="col-12 col-auto text-center">
                     <span>Consensus</span>
                     <span v-if="$store.state.blockchain.status === 'sync'" class="text-success">{{blockchainStatus}}</span>
                 </div>
-                <div class="col-12 col-sm-6 col-sm-auto">
+                <div class="col-12 col-auto text-center">
                     <span>Block Height</span>
                     <span v-if="blockHeight" class="text-success">#{{blockHeight}}</span>
                 </div>
             </div>
 
-            <div class="row gray">
-                <div class="col-12 col-sm-6">
-                    <span>2019 - 2021 <a href="https://PandoraPay.org" target="_blank">{{entity}}</a></span>
-                </div>
-                <div class="col-12 col-sm-6">
-                    <span>Wallet v {{version}}</span>
+            <div class="row pb-0 mb-0">
+                <div class="col-12 col-auto text-center">
+                    <span>2019 - 2021 <a href="https://PandoraPay.org" target="_blank">{{entity}}</a> Wallet v {{version}} </span>
                 </div>
             </div>
 

@@ -15,14 +15,14 @@
                 <div class="list-group-item div-scrollable" style="max-height:19rem" >
                     <div v-for="(address, index) in addresses" :class="`notification notification-flush notification-unread ${ address.publicKeyHash === mainPublicKeyHash  ? 'fw-black' : ''} ` "
                          :key="`address-${index}`">
-                            <div class="notification-body address">
+                            <div class="notification-body address pointer">
                                 <account-identicon :address="address.addressEncoded" :identicon="address.identicon" :size="20" :outer-size="5" :version="address.version" />
-                                <div class="account-title pointer" @click="setMainPublicKeyHash(address.publicKeyHash)">
-                                    <span class="fw-semi-bold">{{address.name}}</span>
+                                <div class="account-title" @click="setMainPublicKeyHash(address.publicKeyHash)">
+                                    <span class="fw-semi-bold text-truncate">{{address.name}}</span>
                                     <span class="fw-normal text-truncate">{{address.addressEncoded}} </span>
                                 </div>
                                 <div class="account-tools">
-                                    <span class="fw-light" >{{address.mnemonicSequenceIndex ? '#'+address.mnemonicSequenceIndex : '&nbsp;'}}</span>
+                                    <span class="fw-light" >{{ (address.seedIndex !== undefined) ? '#'+address.seedIndex : '&nbsp;'}}</span>
                                     <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( address)" />
                                 </div>
                             </div>
@@ -30,6 +30,7 @@
                 </div>
                 <div class="list-group-item">
                     <div class="list-group-title border-bottom">Operations:</div>
+                    <span @click="viewAccount" v-tooltip.left="'View account'" class="pointer dropdown-item"> <i class="fa fa-hand-pointer"></i> View account </span>
                     <span @click="createAccount" v-tooltip.left="'Create a new Address'" class="pointer dropdown-item fw-normal"> <i class="fa fa-plus"></i> Create Account </span>
                     <span @click="importAccount" v-tooltip.left="'Import an address from json file'" class="pointer dropdown-item fw-normal"><i class="fa fa-upload"></i> Import Account (json)</span>
                     <span @click="importPrivateKey" v-tooltip.left="'Import an address from Private Key'" class="pointer dropdown-item fw-normal"><i class="fa fa-upload"></i> Import Private Key</span>
@@ -80,6 +81,10 @@ export default {
     },
 
     methods:{
+
+        viewAccount(){
+            this.$router.push('/address/'+this.address.addressEncoded)
+        },
 
         async createAccount(){
 
@@ -183,6 +188,7 @@ export default {
         display: grid;
         grid-template-columns: 32px 160px 30px;
         grid-column-gap: 10px;
+        text-align: left;
     }
 
     .dropdown-item i{
