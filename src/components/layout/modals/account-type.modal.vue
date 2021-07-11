@@ -1,28 +1,28 @@
 <template>
 
-    <div>
-        <modal ref="modal" title="Account type"  >
+    <modal ref="modal" title="Create a new Account">
 
-            <div class="">
-                <span class="thick">Select an Account Type</span>
-                <span>Select either a Transparent or an Anonymous account</span>
-            </div>
+        <p>
+            <strong>Select an Account Type</strong><br/>
+            Select either a <strong>Transparent</strong> or an <strong>Anonymous account</strong>
+        </p>
 
-            <div class="pd-top-20 options">
+        <div class="pt-2 options">
 
-                <div class="category pointer link" @click="select(0)">
-                    <i class="fa fa-money-bill-alt"></i>
-                    <span class="thick" >Transparent</span>
-                    <span>Address is public.</span>
-                    <span>All amounts are transparent.</span>
-                    <span>Staking</span>
-                    <span>Cold Staking</span>
-                </div>
+            <a class="category pointer" @click="select(0)" href="#" >
 
-            </div>
+                <i class="fa fa-money-bill-alt fa-3x"></i>
 
-        </modal>
-    </div>
+                <span class="thick" >Transparent</span>
+                <span>Address is public.</span>
+                <span>All amounts are transparent.</span>
+                <span>Staking</span>
+                <span>Cold Staking</span>
+            </a>
+
+        </div>
+
+    </modal>
 
 </template>
 
@@ -81,10 +81,6 @@ export default {
 
     .category, .category > i, .category > span{
         display: block;
-    }
-
-    .category > i {
-        font-size: 40px;
     }
 
 </style>

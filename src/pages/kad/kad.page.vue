@@ -2,42 +2,34 @@
 
     <layout>
 
-        <kad-top-bar />
+        <layout-title icon="fa-globe-americas" title="Kademlia">Decentralized Peer to Peer Network.</layout-title>
 
-        <div class="container pd-top-20">
-            <div class="boxed ">
-
-                <h1>KAD</h1>
-                <span>PandoraPay will use PandoraProtocol to build a decentralized and distributed network.</span>
-
-                <span v-if="error" class="danger">
-                    {{error}}
-                </span>
-
-                <div class="pd-top-40">
-                    <span>Proposed future hard forks:</span>
-                    <p>
-                        PandoraPay <strong>ZETHER Hardfork</strong> will allow confidential and unlikable transactions. <br/>
-                        PandoraPay <strong>DEX Hardfork</strong> will allow dex. <br/>
-                        PandoraPay <strong>P2PDEX Hardfork</strong> will allow Peer to Peer DEX. <br/>
-                        PandoraPay <strong>P2PBAZAAR Hardfork</strong> will allow Peer to Peer Bazaar. <br/>
-                    </p>
+        <div class="card mb-3">
+            <div class="card-header bg-light">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="mb-0 text-truncate">Info </h5>
+                    </div>
                 </div>
+            </div>
+            <div class="card-body p-3 fs--1">
 
             </div>
         </div>
+
     </layout>
 
 </template>
 
 <script>
 
-import KadTopBar from "./kad-top-bar"
 import Layout from "src/components/layout/layout"
+import LayoutTitle from "src/components/layout/layout-title"
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: { Layout, KadTopBar },
+    components: { Layout, AlertBox, LayoutTitle },
 
     data(){
         return {

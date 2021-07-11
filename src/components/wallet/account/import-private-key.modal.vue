@@ -5,9 +5,7 @@
         <span class="gray">Private Key</span>
         <input type="text" v-model="privateKey">
 
-        <span v-if="error" class="danger">
-            {{error}}
-        </span>
+        <alert-box v-if="error" type="error">{{error}}</alert-box>
 
         <loading-button text="Import Private Key" @submit="importPrivateKey" icon="fa fa-file-upload"  />
 
@@ -20,10 +18,11 @@
 import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {PasswordInput, Modal, LoadingButton },
+    components: {PasswordInput, Modal, LoadingButton, AlertBox },
 
     data(){
         return {

@@ -6,10 +6,11 @@ export default {
     version: '0.125',
 
     blocksInfoPagination: 10,
+    addressTxsPagination: 5,
 
     goArgv: [
         'js',
-        '--devnet',
+        '--network=devnet',
         '--new-devnet',
         '--store-wallet-type=memory',
         '--consensus=wallet',

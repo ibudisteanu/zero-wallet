@@ -1,18 +1,26 @@
 <template>
 
-    <div class="container">
-        <div class="boxed boxed-background">
+    <div class="card mb-3 h-lg-100 overflow-hidden">
+        <div class="card-header bg-light">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h5 class="mb-0">
+                        Transactions
 
-            <span class="title row pd-bottom-20">TRANSACTIONS {{ !address.loaded ? '' : txCount + txCountPending }}</span>
-
-            <show-transactions :transactions="transactionsAll "/>
-
-            <div class="centered" v-if="address.txsLowestIndex">
-                <loading-button class="button-width-inherit" @submit="handleViewMore" icon="fa fa-cloud-download-alt" text="View more..."/>
+                        <template v-if="!txs">
+                            <loading-spinner />
+                        </template>
+                        <template v-else>
+                            {{ ending }}
+                        </template>
+                    </h5>
+                </div>
             </div>
-
         </div>
-
+        <div class="card-body p-3" v-if="txs && transactionsAll.length ">
+            <show-transactions :transactions="transactionsAll"/>
+            <pagination class="right" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" :prefix="`/address/${address.addressEncoded}/`" suffix="#transactions" />
+        </div>
     </div>
 
 </template>
@@ -21,78 +29,114 @@
 
 import LoadingSpinner from "../../utils/loading-spinner";
 import ShowTransactions from "src/components/explorer/show-transactions"
-import Consensus from "src/consensus/consensus"
-import LoadingButton from "src/components/utils/loading-button.vue"
+import consts from "../../../../consts/consts";
+import Pagination from "../../utils/pagination";
+import Consensus from "../../../consensus/consensus";
 
 export default {
 
-    components: { LoadingSpinner, ShowTransactions, LoadingButton},
+    components: { LoadingSpinner, Pagination, ShowTransactions },
 
     props: {
-        address: {default: null}
+        publicKeyHash: {default: ""}
     },
 
+    data(){
+        return {
+            error: "",
+            loading: true,
+        }
+    },
 
     computed:{
 
-        txCount(){
-            return this.address.txCount || 0;
-        },
-
-        txCountPending(){
-            return this.address.txCountPending || 0;
+        address(){
+            return this.$store.state.addresses.list[this.publicKeyHash]
         },
 
         txs(){
-            return this.address.txs;
+            return this.$store.state.addresses.txs[this.publicKeyHash]
         },
 
-        pendingTxs(){
-            return this.address.pendingTxs;
+        countPerPage(){
+            return consts.addressTxsPagination
+        },
+
+        page(){
+            if (!this.txs) return 0
+            let page = this.$route.params.page || Math.ceil(this.ending / this.countPerPage-1)
+            if (typeof page == "string"){
+                page = Number.parseInt(page)
+                return page;
+            }
+            return page
+        },
+
+        starting(){
+            return ( this.page * this.countPerPage )
+
+        },
+
+        ending(){
+            if (!this.txs) return 0
+            return this.txs.count;
         },
 
         pendingTransactions(){
+            return [];
+        },
 
-            const txs = this.pendingTxs;
+        transactions(){
+
+            if (!this.txs) return []
+
+            const txs = this.txs.list;
 
             const out = [];
-            for (const key in txs)
-                if (this.$store.state.transactions.txsByHash[txs[key]])
-                    out.push( this.$store.state.transactions.txsByHash[txs[key]] );
+            for (const hash of txs)
+                if (this.$store.state.transactions.txsByHash[ hash ])
+                    out.push( this.$store.state.transactions.txsByHash[ hash ] );
+                else
+                    out.push( hash  );
 
             return out;
         },
 
-        transactions(){
-            const txs = this.txs;
-
-            const out = [];
-            for (const key in txs)
-                if (this.$store.state.transactions.txsByHash[txs[key]])
-                    out.push( this.$store.state.transactions.txsByHash[txs[key]] );
-
-            return out.sort ( (a,b) => b.__extra.height - a.__extra.height );
-        },
-
         transactionsAll(){
             return this.pendingTransactions.concat( this.transactions );
-        }
+        },
 
     },
 
-    methods:{
-
-        async handleViewMore(resolve){
-
+    methods: {
+        async loadTransactions(){
             try{
-                await Consensus.downloadAccountTransactionsSpecific( {account: this.address.addressEncoded, index: this.address.txsLowestIndex, limit: 10} )
-            }finally{
-                resolve(true);
+                this.loading = false
+                this.error = ''
+                await Consensus.syncPromise;
+
+                console.log("Consensus.downloadAccountTxs( this.publicKeyHash, this.starting  )", this.publicKeyHash, this.starting)
+                await Consensus.downloadAccountTxs( this.publicKeyHash, this.starting  )
+
+                this.loaded = true
+            }catch(err){
+                this.error = err.toString()
             }
-
-
         }
     },
+
+    watch: {
+        'publicKeyHash' (to, from) {
+            return this.loadTransactions();
+        },
+        'starting' (to, from){
+            return this.loadTransactions();
+        },
+    },
+
+    mounted(){
+        return this.loadTransactions();
+    }
 
 
 }

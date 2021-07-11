@@ -18,9 +18,7 @@
         <span class="gray">Delegate Fee in Percentage</span>
         <input type="number" v-model="delegateStakeFee" min="0" max="100" step="0.01">
 
-        <span v-if="error" class="danger">
-            {{error}}
-        </span>
+        <alert-box v-if="error" type="error">{{error}}</alert-box>
 
         <loading-button text="Delegate Stake" @submit="handleDelegateStake" icon="fa fa-link"  />
 
@@ -35,10 +33,11 @@ import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
 import Consensus from "src/consensus/consensus"
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {Modal, PasswordInput, LoadingButton},
+    components: {Modal, PasswordInput, LoadingButton, AlertBox},
 
 
     data(){
@@ -144,7 +143,7 @@ export default {
                     text: `Delegate Staking Transaction has been made. \n TxId ${out.tx.hash().toString("hex")}`,
                 });
 
-                this.$router.push(`/explorer/tx/hash/${out.tx.hash().toString('hex')}`);
+                this.$router.push(`/explorer/tx/${out.tx.hash()}`);
 
                 this.closeModal();
 

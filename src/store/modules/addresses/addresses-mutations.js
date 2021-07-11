@@ -6,19 +6,26 @@ export default {
         Vue.set(context.list, address.publicKeyHash, address );
     },
 
-    addAddresses( context, addresses ){
-        for (const publicKeyHash in addresses ){
-            Vue.set(context.list, publicKeyHash, addresses[publicKeyHash] );
-        }
-    },
-
     setTransparentAddressUpdate(context, {account, publicKeyHash }){
-
-        const address = { ... context.list[publicKeyHash]  };
-        address.account = account
-        address.loaded = true;
-
-        Vue.set(context.list, publicKeyHash, address );
+        Vue.set(context.accounts, publicKeyHash, account );
     },
+
+    setAccountTxs(context, {publicKeyHash, next, accountTxs }){
+
+        const obj = { ... context.txs[publicKeyHash]  };
+
+        obj.list = []
+
+        if (accountTxs){
+            obj.count = accountTxs.count
+            for (const hash of accountTxs.txs)
+                obj.list.push(hash)
+        } else {
+            obj.count = 0
+            obj.next = 0
+        }
+
+        Vue.set(context.txs, publicKeyHash, obj );
+    }
 
 }

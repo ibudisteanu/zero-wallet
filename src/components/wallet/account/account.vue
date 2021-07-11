@@ -1,26 +1,42 @@
 <template>
-    <div>
-        <div v-if="account">
-
-            <div class="account">
-                <account-identicon  :identicon="account.identicon" :size="60" :outer-size="20" :version="account.version" />
-                <div class="wordwrap pd-top-10">
-                    <span class="bold">{{account.name}}</span>
-                    <span>{{typeName}}</span>
-                    <div class="pd-top-20">
-                        <span>Address:</span>
-                        <span class="thick address" >{{getAddress}} </span>
-                        <i class="fa fa-2x fa-copy pointer"  @click="copyAddress"  v-tooltip.bottom="'Copy Address'" />
-                        <i class="fa fa-2x fa-qrcode pointer" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'" />
-                        <i class="fa fa-2x fa-tools pointer"  @click="createCustomAddress"  v-tooltip.bottom="'Create custom address'" />
+    <div v-if="address">
+        <div class="card mb-3">
+            <div class="card-header bg-light">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="mb-0">Account Details</h5>
                     </div>
                 </div>
             </div>
+            <div class="card-body p-0">
+                <div class="row g-0 align-items-center py-2 position-relative border-bottom border-200">
+                    <div class="col px-1 py-1 position-static">
+                        <div class="d-flex align-items-center d-block">
+                            <div class="avatar avatar-xxl me-3">
+                                <account-identicon :public-key-hash="address.publicKeyHash" :size="60" :outer-size="20" :version="address.version" />
+                            </div>
+                            <span class="fw-bold d-block text-break">
+                                {{address.addressEncoded}}
+                                <i class="fa fa-copy pointer" @click="copyAddress" v-tooltip.bottom="'Copy Address'"  ></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="g-0 d-block-inline p-3">
 
-            <account-qr-code-modal ref="refAccountQRCodeModal"/>
-            <account-generate-custom-address ref="refGenerateCustomAddress"/>
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
+                        <i class="fa fa-qrcode pointer" />
+                    </button>
 
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="createCustomAddress"  v-tooltip.bottom="'Create custom address'">
+                        <i class="fa fa-tools pointer" />
+                    </button>
+
+                </div>
+            </div>
         </div>
+
+        <account-generate-custom-address ref="refGenerateCustomAddress"/>
 
     </div>
 </template>
@@ -28,30 +44,21 @@
 <script>
 
 import AccountIdenticon from "./account-identicon";
-import AccountQRCodeModal from "./account-qr-code.modal"
 import AccountGenerateCustomAddress from "./account-generate-custom-address.modal"
 const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 
-    components: { AccountGenerateCustomAddress, AccountIdenticon, 'accountQrCodeModal': AccountQRCodeModal,  },
+    components: { AccountGenerateCustomAddress, AccountIdenticon },
 
     props: {
-        account: {default: null},
+        address: {default: null},
     },
 
     computed:{
-
-        typeName(){
-            if (!this.account) return '';
-            if (this.account.version === version.VERSION_TRANSPARENT) return 'Transparent';
-        },
-
         getAddress(){
-            if (!this.account) return '';
-            if (this.account.version === version.VERSION_TRANSPARENT) return this.account.addressEncoded;
+            return this.address.addressEncoded;
         },
-
     },
 
     methods: {
@@ -74,11 +81,11 @@ export default {
         },
 
         createCustomAddress(){
-            this.$refs.refGenerateCustomAddress.showModal(this.account);
+            return this.$refs.refGenerateCustomAddress.showModal(this.address);
         },
 
         showAccountQRCode(){
-            this.$refs.refAccountQRCodeModal.showModal(this.getAddress, this.account.name);
+            return this.$store.state.page.refQRCodeModal.showModal(this.getAddress, this.address.name || '');
         }
 
     },
@@ -87,21 +94,5 @@ export default {
 </script>
 
 <style scoped>
-
-    .account{
-        display: grid;
-        grid-template-columns: 100px 1fr;
-        grid-column-gap: 10px;
-    }
-
-    .account .address{
-        display: inline-block;
-    }
-
-    .account i{
-        display: inline-block;
-        padding-right: 5px;
-        padding-left: 5px;
-    }
 
 </style>

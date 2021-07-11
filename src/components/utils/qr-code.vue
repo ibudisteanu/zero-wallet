@@ -34,7 +34,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style >
     .qr{
         /* set border styling */
         border-color: #eeeeee;
@@ -47,4 +47,9 @@ export default {
         -webkit-border-radius: 15px;
         display: inline-block;
     }
+
+    .qr img {
+        width: 100%;
+    }
+
 </style>

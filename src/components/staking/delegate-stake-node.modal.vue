@@ -29,10 +29,7 @@
             <span>Your stake has been delegated!</span>
         </template>
 
-        <span v-if="error" class="danger">
-            {{error}}
-        </span>
-
+        <alert-box v-if="error" type="error">{{error}}</alert-box>
 
     </modal>
 
@@ -45,10 +42,11 @@ import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
 import StepsBar from "src/components/utils/steps-bar"
 import HttpHelper from "src/utils/http-helper"
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {Modal, PasswordInput, LoadingButton, StepsBar},
+    components: {Modal, PasswordInput, LoadingButton, StepsBar, AlertBox},
 
 
     data() {

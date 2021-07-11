@@ -37,9 +37,7 @@
 
                         <destination-amount text="Fee" :balances="balances" @changed="changedFee" />
 
-                        <span v-if="error" class="danger">
-                            {{error}}
-                        </span>
+                        <alert-box v-if="error" type="error">{{error}}</alert-box>
 
                         <div class="centered pd-top-20">
                             <loading-button text="Send Money Publicly" @submit="handleSendFunds" icon="fa fa-money-bill-alt" />
@@ -74,10 +72,13 @@ import DestinationAddress from "src/components/send/destination-address.vue"
 import DestinationAmount from "src/components/send/destination-amount.vue"
 import ExtraMessage from "src/components/send/extra-message"
 import Vue from 'vue'
+import AlertBox from "src/components/utils/alert-box"
+import Modal from "../../../components/utils/modal";
 
 export default {
 
-    components: {Layout, Account, LoadingSpinner, LoadingButton, SendTopBar, DestinationAddress, DestinationAmount, ExtraMessage },
+    components: {Layout, Account, LoadingSpinner, LoadingButton,
+        SendTopBar, DestinationAddress, DestinationAmount, ExtraMessage, AlertBox },
 
     data(){
         return {
@@ -189,7 +190,7 @@ export default {
                     text: `A transaction has been made. \n TxId <strong>${hash}</strong>`,
                 });
 
-                this.$router.push(`/explorer/tx/hash/${hash}`);
+                this.$router.push(`/explorer/tx/${hash}`);
 
             }catch(err){
                 console.error(err);

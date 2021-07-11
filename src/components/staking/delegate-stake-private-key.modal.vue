@@ -4,11 +4,9 @@
 
         <span class="thick">Private Key of Delegate Stake</span>
 
-        <secret-text v-if="privateKey" class="pd-top-20" :text="privateKey" title="Private Key" warning="STAKE ON YOUR BEHALF AND TAKE YOUR REWARDS" />
+        <secret-text v-if="privateKey" class="pt-3" :text="privateKey" title="Private Key" warning="STAKE ON YOUR BEHALF AND TAKE YOUR REWARDS" />
 
-        <span v-if="error" class="danger">
-            {{error}}
-        </span>
+        <alert-box v-if="error" type="error">{{error}}</alert-box>
 
     </modal>
 
@@ -19,10 +17,11 @@
 import Modal from "src/components/utils/modal"
 import LoadingButton from "src/components/utils/loading-button.vue"
 import SecretText from "src/components/utils/secret-text"
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: { Modal, LoadingButton, SecretText },
+    components: { Modal, LoadingButton, SecretText, AlertBox },
 
     data(){
         return {

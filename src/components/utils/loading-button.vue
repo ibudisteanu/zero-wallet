@@ -24,7 +24,7 @@ export default{
     props: {
         canDisable: {default: true},
         text: {default: 'Submit'},
-        icon : {default: 'send'},
+        icon : {default: 'fa fa-share'},
     },
     methods: {
         handleClick(e){

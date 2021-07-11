@@ -1,47 +1,43 @@
 <template>
 
-    <div class="container">
-        <div class="boxed centered pd-bottom-30">
-
-            <template v-if="!isFound">
-                <strong>Address does not exist</strong>
-            </template>
-            <template v-else>
-
-                <template v-if="isEmpty">
-                    <strong>No available balance</strong>
-                </template>
-                <template v-else>
-                    <div>
-                        <strong>Balances</strong>
-                        <balance v-for="(balance, index) in balances"
-                                 :key="`balance-token-${index}`"
-                                 :balance="balance.amount"
-                                 :token="balance.token"
-                                 :version="address.version">
-                        </balance>
-                    </div>
-                </template>
-
-                <div v-if="delegatedStake" class="pd-top-30">
-                    <strong>Delegated Stake</strong>
-                    <balance
-                            :key="`delegated-balance`"
+    <div class="card mb-3  overflow-hidden">
+        <div class="card-header bg-light">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h5 class="mb-0">
+                        Balances
+                        <template v-if="isLoading">
+                            <loading-spinner />
+                        </template>
+                    </h5>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0" v-if="!isLoading && isFound">
+            <div class="row g-0 align-items-center py-2 position-relative border-bottom border-200 text-center">
+                <h5 class="fw-bold fs-0 pt-4">All holdings</h5>
+                <balance v-for="(balance, index) in balances"
+                         :key="`balance-token-${index}`"
+                         :balance="balance.amount"
+                         :token="balance.token"
+                         :version="account.version">
+                </balance>
+                <div v-if="delegatedStake">
+                    <h5 class="fw-bold fs-0 pt-4">Delegated Stake</h5>
+                    <balance :key="`delegated-balance`"
                             :balance="delegatedStake.stakeAvailable"
                             token=""
                             :version="0">
                     </balance>
                 </div>
-                <div v-if="delegatedStakesPending.length" class="pd-top-30">
-                    <strong>Delegated Stake Pending</strong>
-                    <stake-pending v-for="(stakePending, index) in delegatedStakesPending"
+                <div v-if="delegatedStakesPending.length" >
+                    <h5 class="fw-bold fs-0 pt-4">Delegated Stakes in pending</h5>
+                    <delegated-stake-pending v-for="(delegatedStakePending, index) in delegatedStakesPending"
                                    :key="`delegated-stake-pending-${index}`"
-                                   :stakePending="stakePending">
-                    </stake-pending>
+                                   :delegatedStakePending="delegatedStakePending">
+                    </delegated-stake-pending>
                 </div>
-
-            </template>
-
+            </div>
         </div>
     </div>
 
@@ -51,24 +47,28 @@
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import Balance from "./balance.vue"
 import AccountIdenticon from "../account/account-identicon";
-import StakePending from "./stake-pending"
+import DelegatedStakePending from "./delegated-stake-pending"
 
 export default {
 
-    components: {AccountIdenticon, LoadingSpinner, Balance, StakePending},
+    components: {AccountIdenticon, LoadingSpinner, Balance, DelegatedStakePending},
 
     props: {
-        address: {default: null}
+        publicKeyHash: {default: ""}
     },
 
     computed:{
 
+        account(){
+            return this.$store.state.addresses.accounts[this.publicKeyHash]
+        },
+
         balances(){
-            return this.address.account.balances;
+            return this.account.balances;
         },
 
         delegatedStake(){
-            return this.address.account.delegatedStake
+            return this.account.delegatedStake
         },
 
         delegatedStakesPending(){
@@ -76,31 +76,24 @@ export default {
             return this.delegatedStake.stakesPending
         },
 
+        isLoading(){
+            return this.account === undefined
+        },
+
         isFound(){
-            return !!this.address.account
+            return this.account !== null
         },
 
         isEmpty(){
-            return !this.address.account.balances.length
+            return !this.account.balances.length
         }
 
 
     },
 
-    methods:{
-
-    }
 
 }
 </script>
 
 <style scoped>
-
-    .container{
-    }
-
-    .boxed{
-
-    }
-
 </style>

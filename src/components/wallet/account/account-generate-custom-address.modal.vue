@@ -1,44 +1,106 @@
 <template>
 
-    <modal ref="modal" :title="`Custom Address: ${title}`" >
+    <modal ref="modal" :title="`Custom Address ${title ? ': ' + title : ''}`" content-class="p-0">
 
-        <div class="qr-code pd-top-20">
-
-            <div>
-                <input type="radio" id="" name="publicKeyHash" v-model="keyType" value="publicKeyHash">
-                <label> Public Key Hash</label><br>
-
-                <input type="radio" name="publicKey" v-model="keyType" value="publicKey">
-                <label> Public Key</label> <i class="fa fa-question" v-tooltip.bottom="'It will allow users to send you encrypt messages'" ></i> <br>
+        <div class="theme-wizard" v-if="account">
+            <div class="card-header bg-light pt-0 pb-2">
+                <ul class="nav justify-content-between nav-wizard">
+                    <li class="nav-item">
+                        <a :class="`nav-link ${tab===0?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(0)">
+                            <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-key"></i></span></span>
+                            <span class="d-none d-md-block mt-1 fs--1">Public Key</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a :class="`nav-link ${tab===1?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(1)">
+                            <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-dollar-sign"></i></span></span>
+                            <span class="d-none d-md-block mt-1 fs--1">Amount</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a :class="`nav-link ${tab===2?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(2)">
+                            <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-hand-holding-usd"></i></span></span>
+                            <span class="d-none d-md-block mt-1 fs--1">Payment ID</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a :class="`nav-link ${tab===3?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(3)">
+                            <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-check"></i></span></span>
+                            <span class="d-none d-md-block mt-1 fs--1">Done</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
+            <div class="card-body py-2">
+                <div class="tab-content">
+                    <div :class="`tab-pane ${tab===0?'active':''} `">
+                        <div class="form-check">
+                            <input class="form-check-input" id="publicKeyHash" type="radio" value="publicKeyHash" v-model="keyType" />
+                            <label class="form-check-label" for="publicKeyHash">Public Key Hash</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" id="publicKey" type="radio" value="publicKey" v-model="keyType" :disabled="!this.account.publicKey" />
+                            <label class="form-check-label" for="publicKey">Public Key</label>
+                            <i class="fa fa-question" v-tooltip.bottom="'It will allow users to send you encrypt messages'" ></i> <br>
+                        </div>
+                    </div>
+                    <div :class="`tab-pane ${tab===1?'active':''}`">
+                        <div class="form-check">
+                            <input class="form-check-input" id="amount" type="checkbox"  name="checkbox" v-model="hasAmount"  >
+                            <label class="form-check-label" for="amount"> Amount </label>
+                            <i class="fa fa-question" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
+                            <input class="form-control" v-if="hasAmount" type="number" v-model="amount" min="0" style="width: 14rem;">
+                        </div>
+                    </div>
+                    <div :class="`tab-pane ${tab===2?'active':''} `">
+                        <div class="form-check">
+                            <input class="form-check-input" id="paymentId" type="checkbox"  name="checkbox" v-model="hasPaymentId"  >
+                            <label class="form-check-label" for="paymentId"> PaymentId</label>
+                            <i class="fa fa-question" v-tooltip.bottom="'Specify a default message(paymentId)'" ></i>  <br>
+                            <input class="form-control" v-if="hasPaymentId" type="text" v-model="paymentId" >
+                        </div>
+                    </div>
+                    <div :class="`tab-pane ${tab===3?'active':''} `">
 
-            <div>
-                <input type="checkbox"  name="checkbox" v-model="hasAmount"  >
-                <label> Amount </label> <i class="fa fa-question" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
-                <input v-if="hasAmount" type="number" v-model="amount" min="0">
+                        <alert-box v-if="error" type="error">{{error}}</alert-box>
 
-                <input type="checkbox"  name="checkbox" v-model="hasPaymentId"  >
-                <label> PaymentId</label> <i class="fa fa-question" v-tooltip.bottom="'Specify a default message(paymentId)'" ></i>  <br>
-                <input v-if="hasPaymentId" type="text" v-model="paymentId" min="0"  >
+                        <template v-if="this.addressGenerated">
+
+                            <div class="form-outline">
+                                <label class="form-label" for="address">Generated Address</label>
+                                <div id="address" class="text-break">
+                                    {{this.addressGenerated}}
+                                </div>
+                            </div>
+
+                            <hr/>
+
+                            <div class="g-0 d-block-inline ">
+                                <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="copyAddress" v-tooltip.bottom="'Copy Address'" >
+                                    <i class="fa fa-copy pointer" />
+                                </button>
+
+                                <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
+                                    <i class="fa fa-qrcode pointer" />
+                                </button>
+                            </div>
+                        </template>
+
+                    </div>
+                </div>
             </div>
-
-            <button type="button" @click="handleClick">
-                <i class="fa fa-cog"></i>
-                Generate Address
-            </button>
-
-            <span v-if="error" class="danger">
-                {{error}}
-            </span>
-
-            <div v-if="this.addressGenerated">
-                <span class="wordwrap">
-                    {{this.addressGenerated}}
-                </span>
+            <div class="card-footer bg-light">
+                <div class="" style="text-align: center">
+                    <button class="btn btn-link" type="button" v-if="tab > 0" @click="()=>increaseTab(-1)">
+                        Back<span class="fas fa-chevron-left me-2" data-fa-transform="shrink-3"></span>
+                    </button>
+                    <button class="btn btn-primary" type="button" v-if="tab < 3" @click="()=>increaseTab(1)">
+                        Next<span class="fas fa-chevron-right ms-2" data-fa-transform="shrink-3"> </span>
+                    </button>
+                </div>
             </div>
-
-            <qr-code v-if="this.addressGenerated" :data="this.addressGenerated" />
         </div>
+
 
     </modal>
 
@@ -47,11 +109,11 @@
 <script>
 
 import Modal from "src/components/utils/modal"
-import QRCode from "src/components/utils/qr-code"
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: { Modal, 'qrCode': QRCode, },
+    components: { Modal, AlertBox},
 
     data(){
         return {
@@ -65,7 +127,9 @@ export default {
             amount: 0,
             paymentId: "",
 
-            addressGenerated: ""
+            addressGenerated: "",
+
+            tab: 0,
         }
     },
 
@@ -88,6 +152,25 @@ export default {
 
         closeModal() {
             this.$refs.modal.closeModal();
+        },
+
+        copyAddress(){
+            this.$copyText(this.addressGenerated).then( e =>
+                    this.$notify({
+                        type: 'success',
+                        title: `Copied to clipboard successfully`,
+                        text: `Address ${this.addressGenerated} copied to clipboard`,
+                    }),
+                e =>
+                    this.$notify({
+                        type: 'error',
+                        title: `Clipboard failed`,
+                        text: `Failed to copy to clipboard`,
+                    })
+            )
+        },
+        showAccountQRCode(){
+            return this.$store.state.page.refQRCodeModal.showModal( this.addressGenerated, this.account.name || '');
         },
 
         async handleClick(){
@@ -114,6 +197,7 @@ export default {
                     args.push(this.paymentId)
                 }
 
+                console.log(args)
 
                 const out = await PandoraPay.addresses.generateAddress( ...args )
                 this.addressGenerated = out[1]
@@ -122,7 +206,15 @@ export default {
                 this.error = err.toString()
             }
 
+        },
 
+        increaseTab(value){
+            this.tab = this.tab + value
+            if (this.tab === 3) this.handleClick()
+        },
+        setTab(value){
+            this.tab = value
+            if (this.tab === 3) this.handleClick()
         }
 
     }
@@ -131,5 +223,7 @@ export default {
 </script>
 
 <style scoped>
+    .address{
 
+    }
 </style>

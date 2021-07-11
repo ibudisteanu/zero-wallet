@@ -1,9 +1,8 @@
 <template>
 
-    <modal ref="modal" :title="`Private Key of ${ address ? address.name : '' }`" >
+    <modal ref="modal" :title="`Private Key ${ address ? 'of '+address.name : '' }`" >
 
-        <span class="thick">Private Key of Your Address "{{address ? address.name: ''}}"</span>
-        <secret-key v-if="privateKey" class="pd-top-20" :text="privateKey" title="Private Key" warning="STEAL YOUR FUNDS FROM THIS ACCOUNT" />
+        <secret-text v-if="privateKey" class="pt-3" :text="privateKey" title="Private Key" warning="STEAL YOUR FUNDS FROM THIS ACCOUNT" />
 
     </modal>
 
@@ -14,11 +13,11 @@
 import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
-import SecretKey from "src/components/utils/secret-text"
+import SecretText from "src/components/utils/secret-text"
 
 export default {
 
-    components: { Modal, PasswordInput, LoadingButton, SecretKey },
+    components: { Modal, PasswordInput, LoadingButton, SecretText },
 
     data(){
         return {

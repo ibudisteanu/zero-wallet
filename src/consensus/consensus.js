@@ -22,6 +22,9 @@ class Consensus extends BaseConsensus{
     }
 
     async getTokenByHash( hash ){
+
+        if (!hash.length) hash = PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX
+
         if (this._data.tokens[hash]) return this._data.tokens[hash]
         if (this._promises.tokens[hash]) return this._promises.tokens[hash];
         return this._promises.tokens[hash] = new Promise( async (resolve, reject) => {
@@ -48,7 +51,7 @@ class Consensus extends BaseConsensus{
 
     async _getTokenInfo( hash ){
 
-        if (hash === "") hash = PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX
+        if (!hash.length) hash = PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX
 
         if (this._data.tokensInfo[hash]) return this._data.tokensInfo[hash]
         if (this._promises.tokensInfo[hash]) return this._promises.tokensInfo[hash];
@@ -102,27 +105,32 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async getBlocksInfo( starting ){
+    async getBlocksInfo( starting, view = false ){
 
         starting = Math.max(0, starting )
         const ending = Math.min( starting + consts.blocksInfoPagination -1, this.ending-1 )
 
-        console.log(starting, ending)
+        if (view) {
+            this._data.blocksInfoStarting = starting
+            this._data.blocksInfoEnding = ending
+        }
 
         const newBlocksInfo = {}
 
+        let found = false
         for (let i = ending; i >= starting ; i-- ){
 
             let beforeHash
             if (this._data.blocksInfo[i] && this._data.blocksInfo[i].hash )
                 beforeHash = this._data.blocksInfo[i].hash
 
-            const blockInfo = await this._getBlockInfo(i)
+            if (!found || !this._data.blocksInfo[i]) {
+                let blockInfo = await this._getBlockInfo(i)
+                newBlocksInfo[i] = blockInfo
 
-            if (beforeHash === blockInfo.hash )
-                break
-
-            newBlocksInfo[i] = blockInfo
+                if (!found && beforeHash === blockInfo.hash )
+                    found = true
+            }
 
         }
 
@@ -131,7 +139,7 @@ class Consensus extends BaseConsensus{
         const deletedBlocksInfo = []
         for (const key in this._data.blocksInfo){
             const height = Number.parseInt(key)
-            if (height < starting || height > ending && height) {
+            if ( (height < starting || height > ending) && ( height > this._data.blocksInfoEnding || height < this._data.blocksInfoStarting ) ) {
                 deletedBlocksInfo.push(key)
                 delete this._data.blocksInfo[key]
             }
@@ -141,26 +149,52 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async processAccount(account){
+    async _processAccount(account){
 
         if (!account) return
 
         for (const balance of account.balances)
-            await this._getTokenInfo(balance.token)
+            this._getTokenInfo(balance.token)
 
-        await this._getTokenInfo("")
+        this._getTokenInfo("")
 
     }
 
+    async downloadAccountTxs( publicKeyHash, next = 0 ){
+        if (this._promises.accountsTxs[publicKeyHash]) return this._promises.accountsTxs[publicKeyHash];
+        return this._promises.accountsTxs[publicKeyHash] = new Promise( async (resolve, reject) => {
+            try{
+                const out = await PandoraPay.network.getNetworkAccountTxs(publicKeyHash, next);
+                const accountTxs = JSON.parse(out)
+
+                this.emit("consensus/account-txs", { publicKeyHash, accountTxs })
+
+                if (accountTxs)
+                    await Promise.all( accountTxs.txs.map ( txHash =>  this.getTransactionByHash(txHash) ) )
+
+                resolve(accountTxs)
+            }catch(err){
+                reject(err)
+            }finally{
+                delete this._promises.accountsTxs[publicKeyHash];
+            }
+        })
+    }
+
     async _downloadAccount(publicKeyHash){
+
+        if (this._data.accounts[publicKeyHash]) return this._data.accounts[publicKeyHash]
+
         if (this._promises.accounts[publicKeyHash]) return this._promises.accounts[publicKeyHash];
         return this._promises.accounts[publicKeyHash] = new Promise( async (resolve, reject) => {
             try{
                 const out = await PandoraPay.network.getNetworkAccount(publicKeyHash);
                 const account = JSON.parse(out)
 
-                await this.processAccount(account)
-                this.emit("consensus/account-transparent-update", {publicKeyHash, account })
+                await this._processAccount(account)
+                this.emit("consensus/account-transparent-update", { publicKeyHash, account })
+
+                this._data.accounts[publicKeyHash] = account
 
                 resolve(account)
             }catch(err){
@@ -199,8 +233,6 @@ class Consensus extends BaseConsensus{
         if (this._subscribed.accounts[publicKeyHash])
             return this._downloadAccount(publicKeyHash)
 
-        console.log("subscribeAccount", publicKeyHash)
-
         if (this._promises.subscribed.accounts[publicKeyHash]) return this._promises.subscribed.accounts[publicKeyHash];
         return this._promises.subscribed.accounts[publicKeyHash] = new Promise( async (resolve, reject) => {
 
@@ -221,6 +253,28 @@ class Consensus extends BaseConsensus{
         })
     }
 
+    downloadMempool(start = 0){
+        if (this._promises.mempool[start]) return this._promises.mempool[start]
+        return this._promises.mempool[start] = new Promise(async (resolve, reject)=>{
+            try{
+                const data = await PandoraPay.network.getNetworkMempool(start)
+                const mempool = JSON.parse(data)
+                if (!mempool) throw "Mempool is invalid"
+
+                const hasMore = ( start + mempool.hashes.length ) < mempool.count
+                const next = ( start + mempool.hashes.length )
+
+                this.emit("consensus/mem-pool-update", {start, mempool, hasMore, next })
+
+                resolve(true)
+            }catch(err){
+                reject(err)
+            }finally{
+                delete (this._promises.mempool[start])
+            }
+        })
+    }
+
     async setAccounts( accounts ){
 
         const exists = {}
@@ -229,8 +283,8 @@ class Consensus extends BaseConsensus{
 
             exists[account] = true
 
-            if (!this._data.accounts[account]){
-                this._data.accounts[account] = {
+            if (!this._data.walletAddresses[account]){
+                this._data.walletAddresses[account] = {
                     publicKeyHash: accounts[account].publicKeyHash,
                 }
                 await this.subscribeAccount(accounts[account].publicKeyHash);
@@ -238,31 +292,32 @@ class Consensus extends BaseConsensus{
 
         }
 
-        for (const account in this._data.accounts){
+        for (const account in this._data.walletAddresses){
             if (!exists[account])
-                await this.unsubscribeAccount(this._data.accounts[account].publicKeyHash)
+                await this.unsubscribeAccount(this._data.walletAddresses[account].publicKeyHash)
         }
-
-    }
-
-    stopDownloadPendingTransactions(){
 
     }
 
     _includeBlock(blk){
 
-        this.emit('consensus/block-downloaded', blk );
-        this._data.blocks[blk.height] = blk;
+        this._data.blocksByHeight[blk.height] = blk;
         this._data.blocksByHash[blk.hash] = blk;
+
+        this.emit('consensus/block-downloaded', blk );
 
         const data = {};
         for (const tx of blk.txs) {
             tx.__extra = {
-                height: blk.height,
+                blkHeight: blk.height,
                 timestamp: blk.timestamp,
             };
-            this._data.transactions[tx.bloom.hash] = tx;
+            this._data.transactionsByHash[tx.bloom.hash] = tx;
             data[tx.bloom.hash] = tx;
+
+            for (const vin of tx.base.vin) this._getTokenInfo(vin.token)
+            for (const vout of tx.base.vout) this._getTokenInfo(vout.token)
+
         }
         this.emit('consensus/tx-downloaded', {transactions: data} );
 
@@ -270,7 +325,7 @@ class Consensus extends BaseConsensus{
 
     getBlockByHash(hash){
 
-        if (this._data.blocks[hash]) return this._data.blocksByHash[hash];
+        if (this._data.blocksByHash[hash]) return this._data.blocksByHash[hash];
         if (this._promises.blocks[hash]) return this._promises.blocks[hash];
 
         return this._promises.blocks[hash] = new Promise( async (resolve, reject) => {
@@ -294,16 +349,17 @@ class Consensus extends BaseConsensus{
         })
     }
 
-    getBlock(height){
+    getBlockByHeight(height){
 
         if (typeof height === "string")
             height = Number.parseInt(height)
 
-        if (this._data.blocks[height]) return this._data.blocks[height];
+        if (this._data.blocksByHeight[height]) return this._data.blocksByHeight[height];
 
         return this._promises.blocks[height] = new Promise( async (resolve, reject) => {
 
             try{
+
                 const blockData = await PandoraPay.network.getNetworkBlockComplete( height );
                 if (!blockData) throw Error("Block was not received")
 
@@ -323,14 +379,39 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async getTransactionByHash(hash, isPending = false ){
+    _includeTx(txJSON ){
 
-        let tx = this._data.transactions[hash] || this._promises.transactions[hash];
-        if (tx){
-            tx = await tx;
-            if ((isPending && !tx.__extra.height ) || (!isPending && tx.__extra.height ))
-                return tx;
+        const tx = txJSON.tx
+
+        tx.__extra = {
+            mempool: txJSON.mempool,
+        };
+
+        if (txJSON.info) {
+            tx.__extra.height = txJSON.info.height
+            tx.__extra.blkHeight = txJSON.info.blkHeight
+            tx.__extra.timestamp = txJSON.info.timestamp
+
+            this._data.transactionsByHeight[txJSON.info.height] = tx;
         }
+
+        const data = {};
+        data[tx.bloom.hash] = tx;
+
+        this._data.transactionsByHash[tx.bloom.hash] = tx;
+
+        for (const vin of tx.base.vin) this._getTokenInfo(vin.token)
+        for (const vout of tx.base.vout) this._getTokenInfo(vout.token)
+
+        this.emit('consensus/tx-downloaded', {transactions: data} );
+
+        return tx
+    }
+
+    async getTransactionByHash(hash ){
+
+        if (this._data.transactionsByHash[hash]) return this._data.transactionsByHash[hash];
+        if (this._promises.transactions[hash]) return this._promises.transactions[hash];
 
         return this._promises.transactions[hash] = new Promise( async (resolve, reject ) => {
 
@@ -339,23 +420,9 @@ class Consensus extends BaseConsensus{
                 const txData = await PandoraPay.network.getNetworkTransaction( hash );
                 if (!txData) throw Error("tx fetch failed"); //disconnected
 
-                const txJSON = JSON.parse(txData)
-                const tx = txJSON.tx
+                const tx = JSON.parse(txData)
 
-                if (tx.bloom.hash !== hash ) throw Error("Transaction hash is invalid");
-
-                tx.__extra = {
-                    mempool: txJSON.mempool,
-                };
-
-
-                const data = {};
-                data[hash] = tx;
-
-                this.emit('consensus/tx-downloaded', {transactions: data} );
-
-                this._data.transactions[hash] = tx;
-                resolve(tx);
+                resolve(this._includeTx(tx));
             }catch(err){
                 reject(err);
             } finally{
@@ -364,15 +431,13 @@ class Consensus extends BaseConsensus{
         } );
     }
 
-    getTransaction(height){
+    getTransactionByHeight(height){
 
         if (typeof height === "string")
             height = Number.parseInt(height)
 
-        let tx = this._data.transactions[height] || this._promises.transactions[height];
-        if (tx){
-            return tx;
-        }
+        if (this._data.transactionsByHeight[height]) return this._data.transactionsByHeight[height];
+        if (this._promises.transactions[height]) return this._promises.transactions[height];
 
         return this._promises.transactions[height] = new Promise( async (resolve, reject ) => {
 
@@ -381,21 +446,10 @@ class Consensus extends BaseConsensus{
                 const txData = await PandoraPay.network.getNetworkTransaction( height );
                 if (!txData) throw Error("tx fetch failed"); //disconnected
 
-                const txJSON = JSON.parse(txData)
-                const tx = txJSON.tx
+                const tx = JSON.parse(txData)
 
-                tx.__extra = {
-                    mempool: txJSON.mempool,
-                };
+                resolve(this._includeTx(tx));
 
-                const data = {};
-                data[tx.bloom.hash] = tx;
-
-                this._data.transactions[tx.bloom.hash] = tx;
-
-                this.emit('consensus/tx-downloaded', {transactions: data} );
-
-                resolve(tx);
             }catch(err){
                 reject(err);
             } finally{

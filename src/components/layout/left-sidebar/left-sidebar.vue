@@ -1,85 +1,235 @@
 <template>
 
-    <div>
-        <div class="mobile-menu" @click="showMenu" :style="{display: show ? 'none' : 'inherit' }" >
-            <i class="fa fa-bars"></i>
+    <nav class="navbar navbar-light navbar-vertical navbar-expand-xl">
+        <div class="d-flex align-items-center">
+            <router-link to="/" class="navbar-brand">
+                <div class="d-flex align-items-center py-3">
+                    <img class="me-2" :src="require('src/assets/pandora-pay-logo-inline-crop.png').default" alt="PandoraPay" height="42px">
+                </div>
+            </router-link>
         </div>
+        <div :class="`navbar-collapse collapse ${this.$store.state.page.leftSidebarShow ? 'show' : ''}`">
+            <div class="navbar-vertical-content scrollbar">
+                <ul class="navbar-nav flex-column mb-3">
+                    <li class="nav-item">
+                        <router-link to="/" :class="`${route === '/'  || route === '/login' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-money-bill-alt"></i>
+                                <span class="nav-link-text ps-1">Account</span>
+                            </div>
+                        </router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link :disabled="!isWalletDecrypted" to="/wallet" :class="`${ route === '/wallet' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-wallet"></i>
+                                <span class="nav-link-text ps-1">Wallet</span>
+                            </div>
+                        </router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link :disabled="!isWalletDecrypted" to="/staking" :class="`${ route === '/staking' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-piggy-bank"></i>
+                                <span class="nav-link-text ps-1">Staking</span>
+                            </div>
+                        </router-link>
+                    </li>
+                    <li class="nav-item">
+                        <div class="d-flex align-items-center">
+                            <router-link class="nav-link" to="#" @click.native="e => toggleNavElement(e, 'transfer')">
+                                <i class="fa fa-money-check-alt"></i>
+                                <span class="nav-link-text ps-1">Transfer</span>
+                                <i :class="`nav-chevron fa fa-chevron-${navElementsShown['transfer'] ? 'up' : 'down' }`"></i>
+                            </router-link>
+                        </div>
+                        <ul :class="`nav collapse ${navElementsShown['transfer'] ? 'show':''}`">
+                            <li class="nav-item">
+                                <router-link to="#" class="nav-link" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center" @click="disableNavbarMenu">
+                                        <span class="nav-link-text ps-1">Public</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link to="#" class="nav-link" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <span class="nav-link-text ps-1">Anonymously</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <div class="d-flex align-items-center">
+                            <router-link class="nav-link" to="#" @click.native="e => toggleNavElement(e, 'receive')" >
+                                <i class="fa fa-hand-holding-usd"></i>
+                                <span class="nav-link-text ps-1">Receive</span>
+                                <i :class="`nav-chevron fa fa-chevron-${navElementsShown['transfer'] ? 'up' : 'down' }`"></i>
+                            </router-link>
+                        </div>
+                        <ul :class="`nav collapse ${navElementsShown['receive'] ? 'show':''}`">
+                            <li class="nav-item">
+                                <router-link :disabled="!isWalletDecrypted" to="/receive" :class="`nav-link ${ route === '/receive' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <span class="nav-link-text ps-1">Public</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link to="#" class="nav-link" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <span class="nav-link-text ps-1">Anonymously</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                        </ul>
+                    </li>
 
-        <div v-if="show" class="sidebar" :style="{display: show ? 'inherit' : 'none' }" v-on-clickaway="closeMenu" >
+                    <li class="nav-item">
+                        <div class="d-flex align-items-center">
+                            <router-link to="#" class="nav-link" @click.native="disableNavbarMenu">
+                                <i class="fa fa-unlock-alt"></i>
+                                <span class="nav-link-text ps-1">Encrypt</span>
+                            </router-link>
+                        </div>
+                    </li>
 
-            <router-link to="/" :class="`${route === '/'  || route === '/login' ? 'selected' : ''}`">
-                <i class="fa fa-money-bill-alt" ></i>
-                <span>Wallet</span>
-            </router-link>
-
-            <router-link :disabled="!isWalletDecrypted" to="/account" :class="`${ route === '/account' ? 'selected' : ''}`">
-                <i class="fa fa-wallet" ></i>
-                <span>Account</span>
-            </router-link>
-
-            <router-link :disabled="!isWalletDecrypted" to="/staking" :class="`${route === '/staking' ? 'selected' : ''}`" >
-                <i class="fa fa-piggy-bank"></i>
-                <span>Staking</span>
-            </router-link>
-
-            <router-link :disabled="!isWalletDecrypted" to="/send" :class="`${route === '/send' ? 'selected' : ''}`" >
-                <i class="fa fa-money-check-alt"></i>
-                <span>Send</span>
-            </router-link>
-
-            <router-link :disabled="!isWalletDecrypted" to="/receive" :class="`${route === '/receive' ? 'selected' : ''}`" >
-                <i class="fa fa-hand-holding-usd"></i>
-                <span>Receive</span>
-            </router-link>
-
-            <router-link :disabled="!isWalletDecrypted" to="/set-password" v-if="!encrypted" :class="`${route === '/set-password' ? 'selected' : ''}`"  >
-                <i class="fa fa-unlock-alt"></i>
-                <span>Encrypt</span>
-            </router-link>
-
-            <router-link :disabled="!isWalletDecrypted" to="/remove-password" v-if="encrypted" :class="`${route === '/remove-password' ? 'selected' : ''}`"  >
-                <i class="fa fa-lock"></i>
-                <span>Decrypt</span>
-            </router-link>
-
-            <router-link to="/explorer" :class="`${route.indexOf('/explorer') === 0 ? 'selected' : ''}`" >
-                <i class="fa fa-cubes"></i>
-                <span>Explorer</span>
-            </router-link>
-
-            <router-link to="/tokens" :class="`${route.indexOf('/tokens') === 0 ? 'selected' : ''}`"  >
-                <i class="fa fa-file-invoice-dollar"></i>
-                <span>Tokens</span>
-            </router-link>
-
-            <router-link to="/kad" :class="`${route === '/kad' ? 'selected' : ''}`"  >
-                <i class="fa fa-globe"></i>
-                <span>KAD</span>
-            </router-link>
-
+                    <li class="nav-item">
+                        <div class="d-flex align-items-center">
+                            <router-link to="#" class="nav-link" @click.native="e => toggleNavElement( e,'explorer')">
+                                <i class="fa fa-cubes"></i>
+                                <span class="nav-link-text ps-1">Explorer</span>
+                                <i :class="`nav-chevron fa fa-chevron-${navElementsShown['explorer'] ? 'up' : 'down' }`"></i>
+                            </router-link>
+                        </div>
+                        <ul :class="`nav collapse ${navElementsShown['explorer'] ? 'show':''}`">
+                            <li class="nav-item">
+                                <router-link :class="`nav-link ${route.indexOf('/explorer') === 0 ? 'active' : ''} nav-link`" to="/explorer" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <span class="nav-link-text ps-1">Blocks</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link :class="`nav-link ${route.indexOf('/explorer/mem-pool') === 0 ? 'active' : ''}  nav-link`" to="/explorer/mem-pool" @click="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <span class="nav-link-text ps-1">Mem pool</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <router-link :class="`nav-link ${route.indexOf('/tokens') === 0 ? 'active' : ''} nav-link`" to="/tokens" @click.native="disableNavbarMenu">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-file-invoice-dollar"></i>
+                                <span class="nav-link-text ps-1">Tokens</span>
+                            </div>
+                        </router-link>
+                    </li>
+                    <li class="nav-item">
+                        <div class="d-flex align-items-center">
+                            <router-link to="#" class="nav-link" @click.native="e => toggleNavElement(e,'kad')">
+                                <i class="fa fa-globe-americas"></i>
+                                <span class="nav-link-text ps-1">KAD</span>
+                                <i :class="`nav-chevron fa fa-chevron-${navElementsShown['kad'] ? 'up' : 'down' }`"></i>
+                            </router-link>
+                        </div>
+                        <ul :class="`nav collapse ${navElementsShown['kad'] ? 'show':''}`">
+                            <li class="nav-item">
+                                <router-link :disabled="!isWalletDecrypted" to="#" :class="`nav-link ${ route === '/kad/chat' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <span class="nav-link-text ps-1">Encrypted Chat</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link :disabled="!isWalletDecrypted" to="#" :class="`nav-link ${ route === '/kad/dex' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <span class="nav-link-text ps-1">DEX</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link :disabled="!isWalletDecrypted" to="#" :class="`nav-link ${ route === '/kad/p2p/dex' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <span class="nav-link-text ps-1">Peer to Peer Exchange</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link :disabled="!isWalletDecrypted" to="#" :class="`nav-link ${ route === '/kad/p2p/bazaar' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <span class="nav-link-text ps-1">Peer to Peer Bazaar</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
+    </nav>
+
+<!--    <div>-->
+<!--        <div class="mobile-menu" @click="showMenu" :style="{display: show ? 'none' : 'inherit' }" >-->
+<!--            <i class="fa fa-bars"></i>-->
+<!--        </div>-->
+
+<!--        <div v-if="show" class="sidebar" :style="{display: show ? 'inherit' : 'none' }" v-on-clickaway="closeMenu" >-->
+
+<!--            <router-link :disabled="!isWalletDecrypted" to="/account" :class="`${ route === '/account' ? 'selected' : ''}`">-->
+<!--                <i class="fa fa-wallet" ></i>-->
+<!--                <span>Account</span>-->
+<!--            </router-link>-->
+
+<!--            <router-link :disabled="!isWalletDecrypted" to="/staking" :class="`${route === '/staking' ? 'selected' : ''}`" >-->
+<!--                <i class="fa fa-piggy-bank"></i>-->
+<!--                <span>Staking</span>-->
+<!--            </router-link>-->
+
+<!--            <router-link :disabled="!isWalletDecrypted" to="/send" :class="`${route === '/send' ? 'selected' : ''}`" >-->
+<!--                <i class="fa fa-money-check-alt"></i>-->
+<!--                <span>Send</span>-->
+<!--            </router-link>-->
+
+<!--            <router-link :disabled="!isWalletDecrypted" to="/receive" :class="`${route === '/receive' ? 'selected' : ''}`" >-->
+<!--                <i class="fa fa-hand-holding-usd"></i>-->
+<!--                <span>Receive</span>-->
+<!--            </router-link>-->
+
+<!--            <router-link :disabled="!isWalletDecrypted" to="/set-password" v-if="!encrypted" :class="`${route === '/set-password' ? 'selected' : ''}`"  >-->
+<!--                <i class="fa fa-unlock-alt"></i>-->
+<!--                <span>Encrypt</span>-->
+<!--            </router-link>-->
+
+<!--            <router-link :disabled="!isWalletDecrypted" to="/remove-password" v-if="encrypted" :class="`${route === '/remove-password' ? 'selected' : ''}`"  >-->
+<!--                <i class="fa fa-lock"></i>-->
+<!--                <span>Decrypt</span>-->
+<!--            </router-link>-->
+<!--        </div>-->
+<!--    </div>-->
 </template>
 
 <script>
 import { mixin as clickaway } from 'vue-clickaway'
 const {version} = PandoraPay.enums.wallet.address;
-
+import Vue from 'vue';
 export default {
 
     mixins: [ clickaway ],
 
     data(){
         return {
-            show: false,
-            fullWidth: false,
+            toggle: false,
+            navElementsShown: {},
         }
     },
 
     computed:{
 
         sendUrl(){
-
             if (!this.address) return '';
 
             if (this.address.version === version.VERSION_TRANSPARENT) return '/send/transparent/transfer';
@@ -112,135 +262,25 @@ export default {
     },
 
     methods:{
-
-        showMenu(){
-            this.show = true;
+        toggleNavElement(e, key){
+            if (!this.navElementsShown[key]) Vue.set(this.navElementsShown, key, true)
+            else Vue.set(this.navElementsShown, key, false)
+            if (e) e.stopPropagation()
         },
-
-        closeMenu(){
-
-            if (this.fullWidth) return;
-
-            this.show = false;
-            console.log('show false');
+        disableNavbarMenu(e){
+            this.$store.commit('setLeftSidebarShow', false)
+            if (e) e.stopPropagation()
         }
     },
 
     mounted(){
 
-        const refresh = (e)=>{
-
-            //note i need to pass the event as an argument to the function
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-
-            if (width <= 767) {
-                this.show = false;
-                this.fullWidth = false;
-                this.$emit('onUpdateMarginLeft', {marginLeft: '0' });
-            }
-            else {
-                this.show = true;
-                this.fullWidth = true;
-                this.$emit('onUpdateMarginLeft', {marginLeft: '85px' });
-            }
-
-
-        };
-
-        window.addEventListener("resize", (e)=> refresh(e) );
-
-        refresh(window);
     }
 
 }
 </script>
 
 <style scoped>
-
-    .sidebar {
-
-        height: 100%;
-        position: fixed;
-        z-index: 1;
-        top: 0;
-        left: 0;
-        overflow-x: hidden;
-        white-space: nowrap;
-
-        padding-top: 10px;
-
-        box-shadow: 5px 0 5px -5px #BBB;
-        background-color: white;
-
-        width: 85px;
-    }
-
-    .sidebar a {
-        color: #818181;
-        display: block;
-        padding-bottom: 20px;
-        text-align: center;
-        cursor: pointer;
-    }
-
-    .sidebar a.selected{
-        color: #6c6ce0;
-    }
-
-    .sidebar a:hover {
-        color: black;
-    }
-
-    .sidebar i{
-        font-size: 25px;
-    }
-
-    .sidebar i,
-    .sidebar span{
-        display: block;
-    }
-
-    .mobile-menu{
-        display: none;
-    }
-
-    .badge-div{
-        text-align: right;
-    }
-
-    .badge{
-        position: relative;
-        top: 0;
-        right: 5px;
-        width: 100%;
-        display: inline !important;
-    }
-
-    @media screen and (max-width: 767px) {
-
-        .mobile-menu{
-            color: #818181;
-            font-size: 30px;
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background-color: white;
-            padding-left: 10px;
-            padding-right: 10px;
-        }
-
-        .sidebar {
-            padding-top: 15px;
-            width: 85px;
-            display: none;
-        }
-        .sidebar a {
-            font-size: 13px;
-            padding-bottom: 10px;
-        }
-    }
-
 
 
 </style>

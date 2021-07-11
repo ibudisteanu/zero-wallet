@@ -1,22 +1,25 @@
 <template>
     <div>
-        <div>
-            <span :class="`font-medium-size wordwrap thick ${visible ? '' : 'noselect blurry-text' }`" >
+        <div class="pb-4">
+            <div :class="`fw-bold ${visible ? '' : 'noselect blurry-text' } text-break`" >
                 {{text}}
-                <i v-if="visible" class="fa fa-copy cursor" v-tooltip.bottom="visible ? `Copy ${title}` : ''"  @click="copySecret"/>
-            </span>
-            <span v-if="!visible" class="pd-top-20 centered pointer" @click="visible = true">
+                <i v-if="visible" class="fa fa-copy pointer" v-tooltip.bottom="visible ? `Copy ${title}` : ''"  @click="copySecret"/>
+            </div>
+            <div v-if="!visible" class="pt-4 text-center pointer" @click="visible = true">
                 <i class="fa fa-eye fa-2x"></i> Show
-            </span>
+            </div>
         </div>
-        <div class="centered pd-top-40">
-            <span class="danger">Warning: DO NOT share this phrase with anyone! These words can be used to <strong>{{warning}} !</strong></span>
-        </div>
+        <alert-box type="warning">
+            Warning: DO NOT share this phrase with anyone! These words can be used to <strong>{{warning}}</strong>
+        </alert-box>
     </div>
 </template>
 
 <script>
+import AlertBox from "src/components/utils/alert-box"
 export default {
+
+    components: {AlertBox},
 
     data(){
         return {

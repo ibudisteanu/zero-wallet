@@ -8,6 +8,7 @@ import PageStore from "./modules/page/page-store"
 import TransactionsStore from "./modules/transactions/transactions-store"
 import TokensStore from "./modules/tokens/tokens-store"
 import NetworkStore from "./modules/network/network-store"
+import MemPoolStore from "./modules/mem-pool/mem-pool-store"
 
 Vue.use(Vuex);
 
@@ -24,9 +25,9 @@ const store = new Vuex.Store({
         transactions: TransactionsStore,
         tokens: TokensStore,
         addresses: AddressesStore,
+        mempool: MemPoolStore,
 
         network: NetworkStore,
-
     },
 
 

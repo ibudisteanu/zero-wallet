@@ -45,17 +45,18 @@ Start nginx
 
 `sudo service nginx start`
 
-## Compress gzip
+## Enable serving WASM via gzip
 
 `sudo nano /etc/nginx/nginx.conf`
 
 ```
-gzip on;
+gzip_static on
+```
 
-gzip_vary on;
-gzip_proxied any;
-gzip_comp_level 6;
-gzip_buffers 16 8k;
-gzip_http_version 1.1;
-gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+## Enable serving WASM via Brotli
+
+`sudo nano /etc/nginx/nginx.conf`
+
+```
+brotli_static on
 ```

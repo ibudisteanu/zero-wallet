@@ -7,6 +7,11 @@ export default {
         refLoadingModal: null,
         refAccountTypeModal: null,
 
+        modalOpened: false,
+
+        dark: false,
+        leftSidebarShow: false,
+
     },
 
     mutations,

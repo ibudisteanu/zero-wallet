@@ -2,16 +2,14 @@
 
     <div>
 
-        <div v-if="!error">
+        <template v-if="!error">
 
             <!-- component matched by the route will render here -->
             <router-view></router-view>
 
-        </div>
+        </template>
 
-        <span v-if="error" class="danger">
-            {{error}}
-        </span>
+        <alert-box v-if="error" type="error">{{error}}</alert-box>
 
         <notifications position="bottom left" />
 
@@ -23,10 +21,11 @@
 
 import Consensus from "src/consensus/consensus"
 import Identicons from "src/utils/identicons"
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {  },
+    components: {  AlertBox },
 
     data(){
         return {
@@ -51,6 +50,10 @@ export default {
 
         if (typeof window === "undefined") return;
 
+        if (typeof localStorage !== "undefined" && localStorage.getItem('dark') === 'true')
+            this.$store.commit('setDark', true)
+
+
         this.$store.commit('setNetworkByte', {
             networkByte: PandoraPay.config.NETWORK_SELECTED,
             networkPrefix: PandoraPay.config.NETWORK_SELECTED_NAME,
@@ -73,6 +76,9 @@ export default {
         Consensus.on("consensus/status-update", status =>  this.$store.commit('setConsensusStatus', status) );
 
         Consensus.on("consensus/account-transparent-update", status => this.$store.commit('setTransparentAddressUpdate', status))
+        Consensus.on("consensus/account-txs", status => this.$store.commit('setAccountTxs', status))
+
+        Consensus.on("consensus/mem-pool-update", data => this.$store.commit('setMemPool', data))
 
         let initialized = false
         PandoraPay.events.listenEvents((name, data)=>{
