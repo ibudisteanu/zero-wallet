@@ -80,17 +80,24 @@ export default {
 
         Consensus.on("consensus/mem-pool-update", data => this.$store.commit('setMemPool', data))
 
+        Consensus.on("consensus/account-txs-update-notification", data => this.$store.commit('accountTxUpdateNotification', data) )
+
         let initialized = false
-        PandoraPay.events.listenEvents((name, data)=>{
+        PandoraPay.events.listenEvents((name, data )=>{
 
             if (name === "main") {
                 if (data === "initialized"){
                     initialized = true
 
-                    PandoraPay.events.listenNetworkNotifications(( subscriptionType, key, data)=>{
-                        console.log("listenNetworkNotifications", data)
+                    PandoraPay.events.listenNetworkNotifications(( subscriptionType, key, data, extraInfo)=>{
+
+                        console.log("listenNetworkNotifications", data, extraInfo)
+
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT)
-                            this.$store.commit('setTransparentAddressUpdate', {publicKeyHash: key, account: JSON.parse(data) })
+                            return this.$store.commit('accountNotification', {publicKeyHash: key, account: JSON.parse(data) })
+
+                        if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTIONS)
+                            return Consensus.transactionsNotification( key, data.substr(1,64), JSON.parse(extraInfo) )
                     })
 
                     this.readWallet()
@@ -98,11 +105,10 @@ export default {
             }
 
             if (name === "sockets/totalSocketsChanged"){
-                if (data > 0){
+                if (data > 0)
                     Consensus.status = "online"
-                } else {
+                else
                     Consensus.status = "offline"
-                }
             }
 
             if (initialized) {

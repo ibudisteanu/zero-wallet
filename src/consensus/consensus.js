@@ -21,6 +21,7 @@ class Consensus extends BaseConsensus{
 
     }
 
+
     async getTokenByHash( hash ){
 
         if (!hash.length) hash = PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX
@@ -111,8 +112,8 @@ class Consensus extends BaseConsensus{
         const ending = Math.min( starting + consts.blocksInfoPagination -1, this.ending-1 )
 
         if (view) {
-            this._data.blocksInfoStarting = starting
-            this._data.blocksInfoEnding = ending
+            this._data.blocksInfoPosition.starting = starting
+            this._data.blocksInfoPosition.ending = ending
         }
 
         const newBlocksInfo = {}
@@ -139,7 +140,7 @@ class Consensus extends BaseConsensus{
         const deletedBlocksInfo = []
         for (const key in this._data.blocksInfo){
             const height = Number.parseInt(key)
-            if ( (height < starting || height > ending) && ( height > this._data.blocksInfoEnding || height < this._data.blocksInfoStarting ) ) {
+            if ( (height < starting || height > ending) && ( height > this._data.blocksInfoPosition.ending || height < this._data.blocksInfoPosition.starting ) ) {
                 deletedBlocksInfo.push(key)
                 delete this._data.blocksInfo[key]
             }
@@ -160,14 +161,41 @@ class Consensus extends BaseConsensus{
 
     }
 
-    async downloadAccountTxs( publicKeyHash, next = 0 ){
+    async transactionsNotification( publicKeyHash, txHash, extraInfo ) {
+
+        const accountsTxsPosition = this._data.accountsTxsPosition[publicKeyHash]
+        this.emit('consensus/account-txs-update-notification', {publicKeyHash, txHash, extraInfo, accountsTxsPosition})
+
+        if ( extraInfo.inserted && ( !accountsTxsPosition || (extraInfo.txsCount > accountsTxsPosition.starting && extraInfo.txsCount < accountsTxsPosition.ending) ) )
+            await this.getTransactionByHash(txHash)
+
+    }
+
+    async downloadAccountTxs( publicKeyHash, next, view = false ){
+
+        let starting, ending
+
         if (this._promises.accountsTxs[publicKeyHash]) return this._promises.accountsTxs[publicKeyHash];
         return this._promises.accountsTxs[publicKeyHash] = new Promise( async (resolve, reject) => {
             try{
-                const out = await PandoraPay.network.getNetworkAccountTxs(publicKeyHash, next);
+                const out = await PandoraPay.network.getNetworkAccountTxs(publicKeyHash, next || 0 );
                 const accountTxs = JSON.parse(out)
 
-                this.emit("consensus/account-txs", { publicKeyHash, accountTxs })
+                if (next === undefined){
+                    starting = Math.max(0, accountTxs.count - consts.addressTxsPagination )
+                    ending = accountTxs.count
+                }else {
+                    starting = next - consts.addressTxsPagination
+                    ending = next
+                }
+
+                if (view)
+                    this._data.accountsTxsPosition[publicKeyHash] = {
+                        starting,
+                        ending
+                    }
+
+                this.emit("consensus/account-txs", { publicKeyHash, starting, accountTxs })
 
                 if (accountTxs)
                     await Promise.all( accountTxs.txs.map ( txHash =>  this.getTransactionByHash(txHash) ) )
@@ -210,12 +238,15 @@ class Consensus extends BaseConsensus{
         if (!this._subscribed.accounts[publicKeyHash])
             return false
 
-        console.log("unsubscribeAccount", publicKeyHash)
-
         if (this._promises.unsubscribed[publicKeyHash]) return this._promises.unsubscribed[publicKeyHash]
         return this._promises.unsubscribed[publicKeyHash] = new Promise( async(resolve, reject)=>{
             try{
-                await PandoraPay.network.unsubscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT );
+
+                await Promise.all([
+                    PandoraPay.network.unsubscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT ),
+                    PandoraPay.network.unsubscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTIONS)
+                ]);
+
                 delete this._subscribed.accounts[publicKeyHash]
 
                 resolve(true)
@@ -237,7 +268,11 @@ class Consensus extends BaseConsensus{
         return this._promises.subscribed.accounts[publicKeyHash] = new Promise( async (resolve, reject) => {
 
             try{
-                await PandoraPay.network.subscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT );
+
+                await Promise.all([
+                    PandoraPay.network.subscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT ),
+                    PandoraPay.network.subscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTIONS ),
+                ])
 
                 const out = await this._downloadAccount(publicKeyHash)
                 resolve(out)

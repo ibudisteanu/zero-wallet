@@ -12,7 +12,7 @@
             </alert-box>
 
             <balances :publicKeyHash="publicKeyHash" />
-            <transactions :publicKeyHash="publicKeyHash" />
+            <transactions :publicKeyHash="publicKeyHash" :page="page" />
 
         </template>
         <template class="py-3" v-else>
@@ -43,6 +43,16 @@ export default {
     },
 
     computed:{
+
+        page(){
+            let page = this.$route.params.page
+            if (typeof page == "string"){
+                page = Number.parseInt(page)
+                return page;
+            }
+            return page
+        },
+
         address(){
             return this.$store.state.addresses.list[this.publicKeyHash];
         },

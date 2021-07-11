@@ -74,9 +74,12 @@ export default {
             return this.page * this.countPerPage
         },
 
+        last(){
+            return Math.min( this.ending, ( this.page + 1  ) * this.countPerPage )
+        },
+
         lastBlocksInfo(){
-            const ending = Math.min( this.ending, ( this.page + 1  ) * this.countPerPage )
-            return this.$store.getters.blocksInfoSorted.filter(a => (a.height >= ending - this.countPerPage) && (a.height < ending) );
+            return this.$store.getters.blocksInfoSorted.filter(a => (a.height >= this.last - this.countPerPage) && (a.height < this.last) );
         },
 
         ending(){
@@ -92,8 +95,7 @@ export default {
                 this.error = ''
                 await Consensus.syncPromise;
 
-                const ending = Math.min( this.ending, ( this.page + 1  ) * this.countPerPage )
-                await Consensus.getBlocksInfo( ending-this.countPerPage, true  )
+                await Consensus.getBlocksInfo( this.last-this.countPerPage, true  )
 
                 this.loaded = true
             }catch(err){
@@ -104,9 +106,6 @@ export default {
 
     watch: {
         '$route' (to, from) {
-            return this.loadBlocksInfo();
-        },
-        'starting' (to, from){
             return this.loadBlocksInfo();
         },
     },

@@ -18,8 +18,13 @@ export default class BaseConsensus extends EventEmitter{
             tokensInfo: {},
             tokens: {},
 
-            blocksInfoStarting: 0,
-            blocksInfoEnding: 0,
+            blocksInfoPosition: {
+                starting: 0,
+                ending: 0,
+            },
+            accountsTxsPosition: {
+
+            },
         }
 
         this._subscribed = {

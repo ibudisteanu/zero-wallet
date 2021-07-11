@@ -19,7 +19,7 @@
         </div>
         <div class="card-body p-3" v-if="txs && transactionsAll.length ">
             <show-transactions :transactions="transactionsAll"/>
-            <pagination class="right" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" :prefix="`/address/${address.addressEncoded}/`" suffix="#transactions" />
+            <pagination class="right" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="Math.ceil(ending/countPerPage)" :prefix="`/address/${address.addressEncoded}/`" suffix="#transactions" />
         </div>
     </div>
 
@@ -38,7 +38,8 @@ export default {
     components: { LoadingSpinner, Pagination, ShowTransactions },
 
     props: {
-        publicKeyHash: {default: ""}
+        publicKeyHash: {default: ""},
+        page: {default: null},
     },
 
     data(){
@@ -49,6 +50,11 @@ export default {
     },
 
     computed:{
+
+        finalPage(){
+            if (this.page !== null) return this.page
+            return Math.ceil(this.txs.count / this.countPerPage)
+        },
 
         address(){
             return this.$store.state.addresses.list[this.publicKeyHash]
@@ -62,19 +68,8 @@ export default {
             return consts.addressTxsPagination
         },
 
-        page(){
-            if (!this.txs) return 0
-            let page = this.$route.params.page || Math.ceil(this.ending / this.countPerPage-1)
-            if (typeof page == "string"){
-                page = Number.parseInt(page)
-                return page;
-            }
-            return page
-        },
-
         starting(){
             return ( this.page * this.countPerPage )
-
         },
 
         ending(){
@@ -86,18 +81,31 @@ export default {
             return [];
         },
 
+        last(){
+            return Math.min( this.ending, ( this.page + 1  ) * this.countPerPage )
+        },
+
         transactions(){
 
             if (!this.txs) return []
 
-            const txs = this.txs.list;
+            const txs = this.txs.hashes;
+
+            let ending = (this.page === null) ? this.txs.count : ( this.page ) * this.countPerPage
+            let starting = ending - this.countPerPage
 
             const out = [];
-            for (const hash of txs)
-                if (this.$store.state.transactions.txsByHash[ hash ])
-                    out.push( this.$store.state.transactions.txsByHash[ hash ] );
-                else
-                    out.push( hash  );
+            for ( const heightStr in txs) {
+                const height = Number.parseInt(heightStr)
+
+                if (height >= starting && height < ending ){
+                    const hash = txs[height]
+                    if (this.$store.state.transactions.txsByHash[ hash ])
+                        out.push(this.$store.state.transactions.txsByHash[ hash ]);
+                    else
+                        out.push(hash);
+                }
+            }
 
             return out;
         },
@@ -115,12 +123,12 @@ export default {
                 this.error = ''
                 await Consensus.syncPromise;
 
-                console.log("Consensus.downloadAccountTxs( this.publicKeyHash, this.starting  )", this.publicKeyHash, this.starting)
-                await Consensus.downloadAccountTxs( this.publicKeyHash, this.starting  )
+                await Consensus.downloadAccountTxs( this.publicKeyHash, (this.page === null) ? undefined : ( this.page ) * this.countPerPage, this.page !== null  )
 
-                this.loaded = true
             }catch(err){
                 this.error = err.toString()
+            }finally{
+                this.loaded = true
             }
         }
     },
@@ -129,7 +137,7 @@ export default {
         'publicKeyHash' (to, from) {
             return this.loadTransactions();
         },
-        'starting' (to, from){
+        'page' (to, from) {
             return this.loadTransactions();
         },
     },
@@ -143,13 +151,4 @@ export default {
 </script>
 
 <style scoped>
-
-    .container{
-
-    }
-
-    .title{
-        font-size: 20px;
-    }
-
 </style>
