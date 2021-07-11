@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa-cube" title="Explore Block" >View a specific block.</layout-title>
+        <layout-title icon="fa-cube" title="Explore Block">View a specific block.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">
@@ -17,7 +17,7 @@
 
                 <alert-box v-if="error" type="error">{{error}}</alert-box>
 
-                <template v-else-if="blk">
+                <template v-if="blk">
 
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Hash</span>
