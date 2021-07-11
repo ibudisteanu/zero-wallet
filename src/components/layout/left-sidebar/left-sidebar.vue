@@ -37,36 +37,36 @@
                     </li>
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <a class="nav-link" href="#" @click="() => toggleNavElement('transfer')">
+                            <router-link class="nav-link" to="#" @click.native="e => toggleNavElement(e, 'transfer')">
                                 <i class="fa fa-money-check-alt"></i>
                                 <span class="nav-link-text ps-1">Transfer</span>
                                 <i :class="`nav-chevron fa fa-chevron-${navElementsShown['transfer'] ? 'up' : 'down' }`"></i>
-                            </a>
+                            </router-link>
                         </div>
                         <ul :class="`nav collapse ${navElementsShown['transfer'] ? 'show':''}`">
                             <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    <div class="d-flex align-items-center" @click.native="disableNavbarMenu">
+                                <router-link to="#" class="nav-link" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center" @click="disableNavbarMenu">
                                         <span class="nav-link-text ps-1">Public</span>
                                     </div>
-                                </a>
+                                </router-link>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#" @click.native="disableNavbarMenu">
+                                <router-link to="#" class="nav-link" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
                                         <span class="nav-link-text ps-1">Anonymously</span>
                                     </div>
-                                </a>
+                                </router-link>
                             </li>
                         </ul>
                     </li>
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <a class="nav-link" href="#" @click="() => toggleNavElement('receive')" >
+                            <router-link class="nav-link" to="#" @click.native="e => toggleNavElement(e, 'receive')" >
                                 <i class="fa fa-hand-holding-usd"></i>
                                 <span class="nav-link-text ps-1">Receive</span>
                                 <i :class="`nav-chevron fa fa-chevron-${navElementsShown['transfer'] ? 'up' : 'down' }`"></i>
-                            </a>
+                            </router-link>
                         </div>
                         <ul :class="`nav collapse ${navElementsShown['receive'] ? 'show':''}`">
                             <li class="nav-item">
@@ -77,31 +77,31 @@
                                 </router-link>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="#" @click.native="disableNavbarMenu">
+                                <router-link to="#" class="nav-link" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
                                         <span class="nav-link-text ps-1">Anonymously</span>
                                     </div>
-                                </a>
+                                </router-link>
                             </li>
                         </ul>
                     </li>
 
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <a class="nav-link" href="#" @click.native="disableNavbarMenu">
+                            <router-link to="#" class="nav-link" @click.native="disableNavbarMenu">
                                 <i class="fa fa-unlock-alt"></i>
                                 <span class="nav-link-text ps-1">Encrypt</span>
-                            </a>
+                            </router-link>
                         </div>
                     </li>
 
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <a class="nav-link" href="#" @click="() => toggleNavElement('explorer')">
+                            <router-link to="#" class="nav-link" @click.native="e => toggleNavElement( e,'explorer')">
                                 <i class="fa fa-cubes"></i>
                                 <span class="nav-link-text ps-1">Explorer</span>
                                 <i :class="`nav-chevron fa fa-chevron-${navElementsShown['explorer'] ? 'up' : 'down' }`"></i>
-                            </a>
+                            </router-link>
                         </div>
                         <ul :class="`nav collapse ${navElementsShown['explorer'] ? 'show':''}`">
                             <li class="nav-item">
@@ -130,11 +130,11 @@
                     </li>
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <a class="nav-link" href="#" @click="() => toggleNavElement('kad')">
+                            <router-link to="#" class="nav-link" @click.native="e => toggleNavElement(e,'kad')">
                                 <i class="fa fa-globe-americas"></i>
                                 <span class="nav-link-text ps-1">KAD</span>
                                 <i :class="`nav-chevron fa fa-chevron-${navElementsShown['kad'] ? 'up' : 'down' }`"></i>
-                            </a>
+                            </router-link>
                         </div>
                         <ul :class="`nav collapse ${navElementsShown['kad'] ? 'show':''}`">
                             <li class="nav-item">
@@ -262,13 +262,14 @@ export default {
     },
 
     methods:{
-        toggleNavElement(key){
+        toggleNavElement(e, key){
             if (!this.navElementsShown[key]) Vue.set(this.navElementsShown, key, true)
             else Vue.set(this.navElementsShown, key, false)
+            if (e) e.stopPropagation()
         },
-        disableNavbarMenu(){
-            console.log("menu closed")
+        disableNavbarMenu(e){
             this.$store.commit('setLeftSidebarShow', false)
+            if (e) e.stopPropagation()
         }
     },
 
