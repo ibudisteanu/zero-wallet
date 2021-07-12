@@ -15,11 +15,8 @@ export default {
         Vue.set(state.list, publicKeyHash, account );
     },
 
-    setAccountTxsViewPosition(state, {publicKeyHash, starting, ending}){
-        Vue.set( state.viewTxsPositions, publicKeyHash,  {
-            starting,
-            ending
-        })
+    setAccountTxsViewPosition(state, {publicKeyHash, starting, ending, update}){
+        Vue.set( state.viewTxsPositions, publicKeyHash,  { starting,  ending,  update })
     },
 
     setAccountTxs(state, {publicKeyHash, starting, accountTxs }){
@@ -40,27 +37,32 @@ export default {
         Vue.set(state.txs, publicKeyHash, obj );
     },
 
-    accountTxUpdateNotification(state, {publicKeyHash, txHash, extraInfo, viewTxsPosition }){
+    accountTxUpdateNotification(state, {publicKeyHash, txHash, extraInfo }){
 
         const obj = { ... state.txs[publicKeyHash]  };
 
+        const viewTxsPositions = state.viewTxsPositions[publicKeyHash]
+
         if (!extraInfo.inserted){ //removed
             obj.count -= 1
+            delete obj.hashes[ extraInfo.txsCount ]
 
-            if ( obj.hashes[ extraInfo.txsCount ])
-                delete obj.hashes[ extraInfo.txsCount ]
+            if (viewTxsPositions && viewTxsPositions.ending === obj.count+1 && viewTxsPositions.update)
+                Vue.set(state.viewTxsPositions, publicKeyHash, { starting: viewTxsPositions.starting - 1, ending: viewTxsPositions.ending - 1, update: true })
 
         } else {
             obj.count += 1
+            obj.hashes[ extraInfo.txsCount ] = txHash
 
-            if (!obj.hashes[ extraInfo.txsCount ])
-                obj.hashes[ extraInfo.txsCount ] = txHash
+            if (viewTxsPositions && viewTxsPositions.ending === obj.count-1 && viewTxsPositions.update)
+                Vue.set(state.viewTxsPositions, publicKeyHash, { starting: viewTxsPositions.starting + 1, ending: viewTxsPositions.ending + 1, update: true })
+
         }
 
-        if (viewTxsPosition)
+        if (viewTxsPositions)
             for (const heightStr in obj.hashes) {
                 const height = Number.parseInt(heightStr)
-                if (height < viewTxsPosition.starting || height > viewTxsPosition.ending)
+                if (height < viewTxsPositions.starting || height > viewTxsPositions.ending)
                     delete obj.hashes[heightStr]
             }
 

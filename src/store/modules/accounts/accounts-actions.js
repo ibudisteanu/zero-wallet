@@ -10,41 +10,34 @@ const promises = {
 export default {
 
     async accountTransactionsNotification( {state, dispatch, commit},  {publicKeyHash, txHash, extraInfo} ) {
-
-        const viewTxsPosition = state.viewTxsPositions[publicKeyHash]
-
-        commit('accountTxUpdateNotification', {publicKeyHash, txHash, extraInfo, viewTxsPosition})
-
-        if ( extraInfo.inserted && ( !viewTxsPosition || (extraInfo.txsCount > viewTxsPosition.starting && extraInfo.txsCount < viewTxsPosition.ending) ) )
-            await dispatch('getTransactionByHash', txHash)
-
+        commit('accountTxUpdateNotification', {publicKeyHash, txHash, extraInfo})
     },
 
-    async downloadAccountTxs({state, dispatch, commit}, {publicKeyHash, next, view = false } ){
+    async downloadAccountTxs({state, dispatch, commit}, {publicKeyHash, next, view = false, updateViewPosition = false } ){
 
         let starting, ending
 
         if (promises.accountsTxs[publicKeyHash]) return promises.accountsTxs[publicKeyHash];
         return promises.accountsTxs[publicKeyHash] = new Promise( async (resolve, reject) => {
             try{
-                const out = await PandoraPay.network.getNetworkAccountTxs(publicKeyHash, next || 0 );
+                const out = await PandoraPay.network.getNetworkAccountTxs(publicKeyHash, (next === undefined) ? Number.MAX_SAFE_INTEGER : next  );
                 const accountTxs = JSON.parse(out)
 
-                if (next === undefined){
-                    starting = Math.max(0, accountTxs.count - consts.addressTxsPagination )
-                    ending = accountTxs.count
-                }else {
-                    starting = next - consts.addressTxsPagination
-                    ending = next
-                }
-
-                if (view)
-                    commit('setAccountTxsViewPosition', { publicKeyHash, starting,  ending})
-
-                commit('setAccountTxs', { publicKeyHash, starting, accountTxs })
+                console.log("next", next, updateViewPosition, accountTxs)
 
                 if (accountTxs)
-                    await Promise.all( accountTxs.txs.map ( txHash =>  dispatch('getTransactionByHash', txHash) ) )
+                    if (next === undefined){
+                        starting = Math.max(0, accountTxs.count - consts.addressTxsPagination )
+                        ending = accountTxs.count
+                    }else {
+                        starting = next - consts.addressTxsPagination
+                        ending = next
+                    }
+
+                if (view)
+                    commit('setAccountTxsViewPosition', { publicKeyHash, starting,  ending, update: updateViewPosition })
+
+                commit('setAccountTxs', { publicKeyHash, starting, accountTxs })
 
                 resolve(accountTxs)
             }catch(err){

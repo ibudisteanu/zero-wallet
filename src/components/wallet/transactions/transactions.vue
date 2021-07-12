@@ -6,7 +6,6 @@
                 <div class="col">
                     <h5 class="mb-0">
                         Transactions
-
                         <template v-if="!txs">
                             <loading-spinner />
                         </template>
@@ -21,6 +20,9 @@
             <show-transactions :transactions="transactionsAll"/>
             <pagination class="right" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="Math.ceil(ending/countPerPage)" :prefix="`/address/${address.addressEncoded}/`" suffix="#transactions" />
         </div>
+
+        <alert-box v-if="error" type="error">{{error}}</alert-box>
+
     </div>
 
 </template>
@@ -31,10 +33,11 @@ import LoadingSpinner from "../../utils/loading-spinner";
 import ShowTransactions from "src/components/explorer/show-transactions"
 import consts from "../../../../consts/consts";
 import Pagination from "../../utils/pagination";
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: { LoadingSpinner, Pagination, ShowTransactions },
+    components: { LoadingSpinner, Pagination, ShowTransactions, AlertBox },
 
     props: {
         publicKeyHash: {default: ""},
@@ -81,7 +84,7 @@ export default {
         },
 
         last(){
-            return Math.min( this.ending, ( this.page + 1  ) * this.countPerPage )
+            return (this.page === null) ? undefined : ( this.page + 1 ) * this.countPerPage
         },
 
         transactions(){
@@ -90,16 +93,15 @@ export default {
 
             const txs = this.txs.hashes;
 
-            let ending = (this.page === null) ? this.txs.count : ( this.page ) * this.countPerPage
+            let ending = (this.page === null) ? this.txs.count : this.last
             let starting = ending - this.countPerPage
-
-            console.log(starting, ending)
 
             const out = [];
             for ( const heightStr in txs) {
                 const height = Number.parseInt(heightStr)
 
                 if (height >= starting && height < ending ){
+                    console.log(height)
                     const hash = txs[height]
                     if (this.$store.state.transactions.txsByHash[ hash ])
                         out.push(this.$store.state.transactions.txsByHash[ hash ]);
@@ -122,9 +124,9 @@ export default {
             try{
                 this.loading = false
                 this.error = ''
-                await this.$store.state.blockchain.syncPromise;
 
-                await this.$store.dispatch('downloadAccountTxs', {publicKeyHash: this.publicKeyHash, next: (this.page === null) ? undefined : ( this.page ) * this.countPerPage, view: this.page !== null } )
+                await this.$store.state.blockchain.syncPromise;
+                await this.$store.dispatch('downloadAccountTxs', {publicKeyHash: this.publicKeyHash, next: this.last, view: true, updateViewPosition: (this.page === null) } )
 
             }catch(err){
                 this.error = err.toString()
