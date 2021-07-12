@@ -40,7 +40,6 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
 import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
 import Pagination from "src/components/utils/pagination"
-import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import consts from "consts/consts"
 

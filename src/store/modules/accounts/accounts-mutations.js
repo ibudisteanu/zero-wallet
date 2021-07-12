@@ -15,6 +15,13 @@ export default {
         Vue.set(state.list, publicKeyHash, account );
     },
 
+    setAccountTxsViewPosition(state, {publicKeyHash, starting, ending}){
+        Vue.set( state.viewTxsPositions, publicKeyHash,  {
+            starting,
+            ending
+        })
+    },
+
     setAccountTxs(state, {publicKeyHash, starting, accountTxs }){
 
         const obj = {
@@ -33,7 +40,7 @@ export default {
         Vue.set(state.txs, publicKeyHash, obj );
     },
 
-    accountTxUpdateNotification(state, {publicKeyHash, txHash, extraInfo, accountsTxsPosition }){
+    accountTxUpdateNotification(state, {publicKeyHash, txHash, extraInfo, viewTxsPosition }){
 
         const obj = { ... state.txs[publicKeyHash]  };
 
@@ -50,10 +57,10 @@ export default {
                 obj.hashes[ extraInfo.txsCount ] = txHash
         }
 
-        if (accountsTxsPosition)
+        if (viewTxsPosition)
             for (const heightStr in obj.hashes) {
                 const height = Number.parseInt(heightStr)
-                if (height < accountsTxsPosition.starting || height > accountsTxsPosition.ending)
+                if (height < viewTxsPosition.starting || height > viewTxsPosition.ending)
                     delete obj.hashes[heightStr]
             }
 

@@ -24,7 +24,6 @@
 <script>
 import Layout from "src/components/layout/layout";
 import LayoutTitle from "src/components/layout/layout-title";
-import Consensus from "src/consensus/consensus"
 import Balances from "../../components/wallet/balance/balances";
 import Transactions from "../../components/wallet/transactions/transactions";
 import AccountIdenticon from "../../components/wallet/account/account-identicon";
@@ -130,7 +129,7 @@ export default {
     async beforeDestroy() {
         const publicKeyHash = this.computedPublicKeyHash || this.publicKeyHash
         if (!this.$store.getters.walletContains(publicKeyHash))
-            await this.$store.dispatch('unsubscribeAccount', publicKeyHash )
+            await this.$store.dispatch('_unsubscribeAccount', publicKeyHash )
 
     }
 

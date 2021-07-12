@@ -59,7 +59,6 @@
 
 import Layout from "src/components/layout/layout"
 import Account from "src/components/wallet/account/account"
-import Consensus from "src/consensus/consensus"
 
 const {version} = PandoraPay.enums.wallet.address;
 

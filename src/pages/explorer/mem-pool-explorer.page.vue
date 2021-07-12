@@ -41,7 +41,6 @@
 
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
-import Consensus from "src/consensus/consensus"
 import LoadingButton from "src/components/utils/loading-button.vue"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 

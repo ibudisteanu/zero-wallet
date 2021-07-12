@@ -8,7 +8,7 @@ export default {
         txs: {},
 
         subscribed: {},
-        viewPositions: {},
+        viewTxsPositions: {},
 
     },
 

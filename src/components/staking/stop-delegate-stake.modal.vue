@@ -19,7 +19,6 @@
 import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
-import Consensus from "src/consensus/consensus"
 import AlertBox from "src/components/utils/alert-box"
 
 export default {

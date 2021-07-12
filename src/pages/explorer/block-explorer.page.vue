@@ -138,7 +138,6 @@ import ShowTransactions from "src/components/explorer/show-transactions"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import AlertBox from "src/components/utils/alert-box"
 
-import Consensus from "src/consensus/consensus"
 import StringHelper from "src/utils/string-helper"
 
 export default {

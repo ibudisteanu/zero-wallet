@@ -84,7 +84,6 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
 import Account from "src/components/wallet/account/account"
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import Consensus from "src/consensus/consensus"
 
 import DelegateStakeModal from "src/components/staking/delegate-stake.modal.vue"
 import StopDelegateStakeModal from "src/components/staking/stop-delegate-stake.modal.vue"

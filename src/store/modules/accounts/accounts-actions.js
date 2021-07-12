@@ -9,6 +9,17 @@ const promises = {
 
 export default {
 
+    async accountTransactionsNotification( {state, dispatch, commit},  {publicKeyHash, txHash, extraInfo} ) {
+
+        const viewTxsPosition = state.viewTxsPositions[publicKeyHash]
+
+        commit('accountTxUpdateNotification', {publicKeyHash, txHash, extraInfo, viewTxsPosition})
+
+        if ( extraInfo.inserted && ( !viewTxsPosition || (extraInfo.txsCount > viewTxsPosition.starting && extraInfo.txsCount < viewTxsPosition.ending) ) )
+            await dispatch('getTransactionByHash', txHash)
+
+    },
+
     async downloadAccountTxs({state, dispatch, commit}, {publicKeyHash, next, view = false } ){
 
         let starting, ending
@@ -28,10 +39,7 @@ export default {
                 }
 
                 if (view)
-                    state.viewPositions[publicKeyHash] = {
-                        starting,
-                        ending
-                    }
+                    commit('setAccountTxsViewPosition', { publicKeyHash, starting,  ending})
 
                 commit('setAccountTxs', { publicKeyHash, starting, accountTxs })
 

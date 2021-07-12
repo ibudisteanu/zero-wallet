@@ -19,7 +19,6 @@
 
 <script>
 
-import Consensus from "src/consensus/consensus"
 import Identicons from "src/utils/identicons"
 import AlertBox from "src/components/utils/alert-box"
 import consts from "consts/consts"
@@ -81,7 +80,7 @@ export default {
                             return this.$store.commit('accountNotification', {publicKeyHash: key, account: JSON.parse(data) })
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTIONS)
-                            return Consensus.transactionsNotification( key, data.substr(1,64), JSON.parse(extraInfo) )
+                            return this.$store.dispatch('accountTransactionsNotification', { publicKeyHash: key, txHash:data.substr(1,64), extraInfo: JSON.parse(extraInfo) } )
                     })
 
                     this.readWallet()

@@ -117,7 +117,6 @@
 
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
-import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import StringHelper from "src/utils/string-helper"

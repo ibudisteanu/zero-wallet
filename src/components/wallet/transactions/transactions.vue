@@ -31,7 +31,6 @@ import LoadingSpinner from "../../utils/loading-spinner";
 import ShowTransactions from "src/components/explorer/show-transactions"
 import consts from "../../../../consts/consts";
 import Pagination from "../../utils/pagination";
-import Consensus from "../../../consensus/consensus";
 
 export default {
 
