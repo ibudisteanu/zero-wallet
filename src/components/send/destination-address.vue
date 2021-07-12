@@ -73,7 +73,7 @@ export default {
     },
 
     watch: {
-        'addressValidated' (to, from) {
+        addressValidated (to, from) {
             return this.$emit('changed', {
                 addressModel: to,
                 address: this.address,

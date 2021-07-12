@@ -137,10 +137,10 @@ export default {
     },
 
     watch: {
-        'publicKeyHash' (to, from) {
+        publicKeyHash (to, from) {
             return this.loadTransactions();
         },
-        'page' (to, from) {
+        page (to, from) {
             return this.loadTransactions();
         },
     },

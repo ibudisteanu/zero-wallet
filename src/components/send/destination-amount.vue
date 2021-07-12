@@ -42,12 +42,12 @@ export default {
     },
 
     watch: {
-        'amount' (to, from) {
+        amount (to, from) {
             return this.$emit('changed', {
                 amount: Math.floor( PandoraPay.argv.transactions.coins.convertToUnits( Number.parseFloat(to) ) ),
             });
         },
-        'tokenCurrency' (to, from) {
+        tokenCurrency (to, from) {
             return this.$emit('changed', {
                 tokenCurrency: to,
             });

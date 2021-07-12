@@ -112,10 +112,10 @@ export default {
     },
 
     watch: {
-        '$route' (to, from) {
+        $route (to, from) {
             return this.loadAddress();
         },
-        'mainPublicKeyHash' (to, from){
+        mainPublicKeyHash (to, from){
             if (this.mainPublicKeyHash && (from === this.publicKeyHash || !this.publicKeyHash) )
                 return this.loadAddress();
 

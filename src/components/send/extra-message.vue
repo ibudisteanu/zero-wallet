@@ -71,12 +71,12 @@ export default {
     },
 
     watch: {
-        'extraMessage' (to, from) {
+        extraMessage (to, from) {
             return this.$emit('changed', {
                 extraMessage: to,
             });
         },
-        'extraEncryptionOption' (to, from) {
+        extraEncryptionOption (to, from) {
             return this.$emit('changed', {
                 extraEncryptionOption: this.selectedDestinationAddressModel ? this.selectedDestinationAddressModel.publicKey : '',
             });
