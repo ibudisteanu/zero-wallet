@@ -167,10 +167,10 @@ export default {
                 if (this.height === undefined && !this.hash)
                     throw 'Tx height/hash was not specified';
 
-                await Consensus.syncPromise;
+                await this.$store.state.blockchain.syncPromise;
 
-                if (this.height !== undefined) await Consensus.getTransactionByHeight(this.height);
-                if (this.hash ) await Consensus.getTransactionByHash(this.hash);
+                if (this.height !== undefined) await this.$store.dispatch('getTransactionByHeight', this.height);
+                if (this.hash ) await this.$store.dispatch('getTransactionByHash', this.hash);
 
             }catch(err){
                 this.error = err.toString()

@@ -61,7 +61,7 @@ export default {
         },
 
         txs(){
-            return this.$store.state.addresses.txs[this.publicKeyHash]
+            return this.$store.state.accounts.txs[this.publicKeyHash]
         },
 
         countPerPage(){
@@ -94,6 +94,8 @@ export default {
             let ending = (this.page === null) ? this.txs.count : ( this.page ) * this.countPerPage
             let starting = ending - this.countPerPage
 
+            console.log(starting, ending)
+
             const out = [];
             for ( const heightStr in txs) {
                 const height = Number.parseInt(heightStr)
@@ -121,9 +123,9 @@ export default {
             try{
                 this.loading = false
                 this.error = ''
-                await Consensus.syncPromise;
+                await this.$store.state.blockchain.syncPromise;
 
-                await Consensus.downloadAccountTxs( this.publicKeyHash, (this.page === null) ? undefined : ( this.page ) * this.countPerPage, this.page !== null  )
+                await this.$store.dispatch('downloadAccountTxs', {publicKeyHash: this.publicKeyHash, next: (this.page === null) ? undefined : ( this.page ) * this.countPerPage, view: this.page !== null } )
 
             }catch(err){
                 this.error = err.toString()

@@ -125,9 +125,9 @@ export default {
 
                 if (!this.hash) throw 'Token hash was not specified';
 
-                await Consensus.syncPromise;
+                await this.$store.state.blockchain.syncPromise;
 
-                await Consensus.getTokenByHash(this.hash);
+                await this.$store.dispatch('getTokenByHash', this.hash);
 
                 this.loaded = true
 

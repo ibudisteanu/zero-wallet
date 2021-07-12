@@ -1,0 +1,64 @@
+import Vue from "vue";
+
+export default {
+
+    setAccount(state, {account, publicKeyHash }){
+        Vue.set(state.list, publicKeyHash, account );
+    },
+
+    setSubscribedAccountStatus(state, {publicKeyHash,status} ){
+        if (status) Vue.set(state.subscribed, publicKeyHash, true)
+        else Vue.delete(state.subscribed, publicKeyHash)
+    },
+
+    accountNotification(state, {account, publicKeyHash}){
+        Vue.set(state.list, publicKeyHash, account );
+    },
+
+    setAccountTxs(state, {publicKeyHash, starting, accountTxs }){
+
+        const obj = {
+            hashes: {},
+        };
+
+        if (accountTxs){
+            obj.count = accountTxs.count
+            for (let i=0; i < accountTxs.txs.length; i++)
+                obj.hashes[starting + i] = accountTxs.txs[i]
+        } else {
+            obj.count = 0
+            obj.next = 0
+        }
+
+        Vue.set(state.txs, publicKeyHash, obj );
+    },
+
+    accountTxUpdateNotification(state, {publicKeyHash, txHash, extraInfo, accountsTxsPosition }){
+
+        const obj = { ... state.txs[publicKeyHash]  };
+
+        if (!extraInfo.inserted){ //removed
+            obj.count -= 1
+
+            if ( obj.hashes[ extraInfo.txsCount ])
+                delete obj.hashes[ extraInfo.txsCount ]
+
+        } else {
+            obj.count += 1
+
+            if (!obj.hashes[ extraInfo.txsCount ])
+                obj.hashes[ extraInfo.txsCount ] = txHash
+        }
+
+        if (accountsTxsPosition)
+            for (const heightStr in obj.hashes) {
+                const height = Number.parseInt(heightStr)
+                if (height < accountsTxsPosition.starting || height > accountsTxsPosition.ending)
+                    delete obj.hashes[heightStr]
+            }
+
+        Vue.set(state.txs, publicKeyHash, obj );
+    }
+
+
+}

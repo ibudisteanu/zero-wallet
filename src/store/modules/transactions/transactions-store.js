@@ -1,4 +1,5 @@
 import mutations from "./transactions-mutations"
+import actions from "./transactions-actions"
 
 export default {
 
@@ -7,6 +8,7 @@ export default {
         txsByHeight: {},
     },
 
+    actions,
     mutations,
 
 }

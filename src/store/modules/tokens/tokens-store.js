@@ -1,17 +1,17 @@
 import mutations from "./tokens-mutations"
 import getters from "./tokens-getters"
+import actions from "./tokens-actions"
 
 export default {
 
     state: {
 
         list: {},
-
-        tokensInfo: {},
-
         count: 0,
+
     },
 
+    actions,
     mutations,
     getters,
 

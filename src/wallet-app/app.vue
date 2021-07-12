@@ -22,6 +22,7 @@
 import Consensus from "src/consensus/consensus"
 import Identicons from "src/utils/identicons"
 import AlertBox from "src/components/utils/alert-box"
+import consts from "consts/consts"
 
 export default {
 
@@ -46,6 +47,10 @@ export default {
 
     },
 
+    beforeMount(){
+        this.$store.commit('createSyncPromise')
+    },
+
     async mounted(){
 
         if (typeof window === "undefined") return;
@@ -60,32 +65,11 @@ export default {
             networkName: PandoraPay.config.NETWORK_SELECTED_NAME,
         })
 
-        Consensus.on("consensus/blockchain-info-updated", info => this.$store.commit('setBlockchainInfo', info) )
-
-        Consensus.on("consensus/tokenInfo-downloaded", data => this.$store.commit('setTokenInfo', data) );
-        Consensus.on("consensus/token-downloaded", data => this.$store.commit('setToken', data) );
-
-        Consensus.on("consensus/blocks-info-downloaded", data => this.$store.commit('setBlocksInfo', data) );
-        Consensus.on("consensus/blocks-info-delete", data => this.$store.commit('deleteBlocksInfo', data) );
-
-        Consensus.on("consensus/block-downloaded", data => this.$store.commit('setBlock', data ) );
-        Consensus.on("consensus/block-deleted", data => this.$store.commit('deleteBlock', data ) );
-
-        Consensus.on("consensus/tx-downloaded", async data => this.$store.commit('setTransactions', data  ) );
-
-        Consensus.on("consensus/status-update", status =>  this.$store.commit('setConsensusStatus', status) );
-
-        Consensus.on("consensus/account-transparent-update", status => this.$store.commit('setTransparentAddressUpdate', status))
-        Consensus.on("consensus/account-txs", status => this.$store.commit('setAccountTxs', status))
-
-        Consensus.on("consensus/mem-pool-update", data => this.$store.commit('setMemPool', data))
-
-        Consensus.on("consensus/account-txs-update-notification", data => this.$store.commit('accountTxUpdateNotification', data) )
 
         let initialized = false
-        PandoraPay.events.listenEvents((name, data )=>{
+        PandoraPay.events.listenEvents( (name, data )=>{
 
-            if (name === "main") {
+            if (name === "main")
                 if (data === "initialized"){
                     initialized = true
 
@@ -102,13 +86,10 @@ export default {
 
                     this.readWallet()
                 }
-            }
 
             if (name === "sockets/totalSocketsChanged"){
-                if (data > 0)
-                    Consensus.status = "online"
-                else
-                    Consensus.status = "offline"
+                if (data > 0) this.$store.commit('setConsensusStatus', "online")
+                else this.$store.commit('setConsensusStatus', "offline")
             }
 
             if (initialized) {
@@ -119,8 +100,7 @@ export default {
                     this.readWallet()
                 else
                 if (name === "consensus/update"){
-                    Consensus.processBlockchain(data)
-                    Consensus.setAccounts( this.$store.state.wallet.addresses, true );
+                    this.processUpdate(JSON.parse(data))
                 }
             }
             console.log("JS NAME:", name, "data", data)
@@ -133,6 +113,17 @@ export default {
     },
 
     methods:{
+
+        async processUpdate(data){
+            if (this.$store.state.blockchain.status === 'online')
+                this.$store.commit('setConsensusStatus', "sync")
+
+            this.$store.commit('setBlockchainInfo', data)
+            await this.$store.dispatch('getBlocksInfo',  {starting: this.$store.state.blockchain.end - consts.blocksInfoPagination, blockchainEnd: this.$store.state.blockchain.end } )
+
+            for (const key in this.$store.state.wallet.addresses)
+                await this.$store.dispatch('subscribeAccount', this.$store.state.wallet.addresses[key].publicKeyHash)
+        },
 
         async readWallet(){
 

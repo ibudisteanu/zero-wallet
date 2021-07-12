@@ -76,8 +76,8 @@ export default {
                 this.error = ""
                 this.loaded = false
 
-                await Consensus.syncPromise;
-                await Consensus.downloadMempool(this.$store.state.mempool.next);
+                await this.$store.state.blockchain.syncPromise;
+                await this.$store.dispatch('downloadMempool', this.$store.state.mempool.next);
             }catch(err){
                 this.error = err.toString()
             }finally{
@@ -91,8 +91,8 @@ export default {
 
                 this.error = ""
 
-                await Consensus.syncPromise;
-                await Consensus.downloadMempool();
+                await this.$store.state.blockchain.syncPromise;
+                await this.$store.dispatch('downloadMempool', 0 );
 
             }catch(err){
                 this.error = err.toString()

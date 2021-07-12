@@ -15,6 +15,9 @@ export default {
 
         status: '',
 
+        syncPromise: null,
+        syncPromiseResolve: null,
+
     },
 
     mutations,

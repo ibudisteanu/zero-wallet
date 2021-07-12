@@ -57,7 +57,7 @@ export default {
             return this.$store.state.addresses.list[this.publicKeyHash];
         },
         account(){
-            return this.$store.state.addresses.accounts[this.publicKeyHash]
+            return this.$store.state.accounts.list[this.publicKeyHash]
         },
         mainPublicKeyHash(){
             return this.$store.state.wallet.mainPublicKeyHash
@@ -98,11 +98,11 @@ export default {
 
                 this.publicKeyHash = publicKeyHash
 
-                await Consensus.syncPromise;
+                await this.$store.state.blockchain.syncPromise;
 
                 if (!this.publicKeyHash) return
 
-                await Consensus.subscribeAccount( this.publicKeyHash )
+                await this.$store.dispatch('subscribeAccount', this.publicKeyHash )
 
             }catch(err){
                 this.error = err.toString()
@@ -130,7 +130,7 @@ export default {
     async beforeDestroy() {
         const publicKeyHash = this.computedPublicKeyHash || this.publicKeyHash
         if (!this.$store.getters.walletContains(publicKeyHash))
-            await Consensus.unsubscribeAccount(publicKeyHash )
+            await this.$store.dispatch('unsubscribeAccount', publicKeyHash )
 
     }
 

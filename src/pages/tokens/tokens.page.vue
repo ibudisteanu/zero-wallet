@@ -65,7 +65,7 @@ export default {
     methods: {
 
         async startDownloadingTokens() {
-            await Consensus.syncPromise;
+            await this.$store.state.blockchain.syncPromise;
         },
 
         async handleViewMore(resolve){

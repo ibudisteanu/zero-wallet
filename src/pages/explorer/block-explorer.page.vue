@@ -172,7 +172,7 @@ export default {
         },
         blk(){
             if (this.height !== undefined )
-                return this.$store.state.blocks.blocks[this.height]
+                return this.$store.state.blocks.blocksByHeight[this.height]
 
             return this.$store.state.blocks.blocksByHash[this.hash]
         },
@@ -198,10 +198,10 @@ export default {
 
                 if (this.height === undefined && !this.hash) throw 'Block index was not specified';
 
-                await Consensus.syncPromise;
+                await this.$store.state.blockchain.syncPromise;
 
-                if (this.height !== undefined) await Consensus.getBlockByHeight(this.height);
-                if (this.hash ) await Consensus.getBlockByHash(this.hash);
+                if (this.height !== undefined) await this.$store.dispatch('getBlockByHeight', this.height);
+                if (this.hash ) await this.$store.dispatch('getBlockByHash', this.hash);
 
                 const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)
                 this.reward = await PandoraPay.config.coins.convertToBase( reward.toString() )

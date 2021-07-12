@@ -93,9 +93,10 @@ export default {
             try{
                 this.loading = false
                 this.error = ''
-                await Consensus.syncPromise;
 
-                await Consensus.getBlocksInfo( this.last-this.countPerPage, true  )
+                await this.$store.state.blockchain.syncPromise;
+
+                await this.$store.dispatch('getBlocksInfo', { starting: this.last-this.countPerPage, blockchainEnd: this.$store.state.blockchain.end, view: true } )
 
                 this.loaded = true
             }catch(err){

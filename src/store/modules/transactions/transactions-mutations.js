@@ -7,15 +7,16 @@ export default {
             Vue.delete(context.txsByHash, key);
     },
 
-    setTransactions(context, { transactions }) {
 
-        const list = {... ( context.txsByHash || {} ) };
+    setTransactions( state, txs ) {
 
-        for (const key in transactions)
-            list[key] = transactions[key];
+        for (const tx of txs){
+            Vue.set( state.txsByHash, tx.bloom.hash,  tx);
 
-        context.txsByHash = list;
-    },
+            if (tx.__extra.height !== undefined)
+                Vue.set( state.txsByHeight, tx.__extra.height,  tx);
+        }
 
+    }
 
 }

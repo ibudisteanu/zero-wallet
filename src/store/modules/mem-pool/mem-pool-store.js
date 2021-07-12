@@ -1,4 +1,5 @@
 import mutations from "./mem-pool-mutations"
+import actions from "./mem-pool-actions"
 
 export default {
 
@@ -12,5 +13,6 @@ export default {
     },
 
     mutations,
+    actions,
 
 }
