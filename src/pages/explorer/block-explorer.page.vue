@@ -202,8 +202,13 @@ export default {
                 if (this.height !== undefined) await this.$store.dispatch('getBlockByHeight', this.height);
                 if (this.hash ) await this.$store.dispatch('getBlockByHash', this.hash);
 
-                const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)
-                this.reward = await PandoraPay.config.coins.convertToBase( reward.toString() )
+                if (this.blk){
+
+                    this.$store.commit('setViewBlockHash', this.blk.hash )
+                    const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)
+                    this.reward = await PandoraPay.config.coins.convertToBase( reward.toString() )
+
+                }
 
             }catch(err){
                 this.error = err.toString()

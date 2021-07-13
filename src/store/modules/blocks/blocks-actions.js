@@ -21,6 +21,8 @@ export default {
             txs.push(tx)
         }
 
+        blk.__timestampUsed = new Date().getTime()
+
         commit('setBlock', blk )
         commit('setTransactions', txs )
 

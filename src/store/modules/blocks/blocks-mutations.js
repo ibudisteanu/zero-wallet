@@ -2,15 +2,18 @@ import Vue from 'vue';
 
 export default {
 
-    deleteBlock(context, {height, hash} ){
-        Vue.delete(context.blocksByHeight, height);
-        Vue.delete(context.blocksByHash, hash );
+    deleteBlock(state, {height, hash} ){
+        Vue.delete(state.blocksByHeight, height);
+        Vue.delete(state.blocksByHash, hash );
     },
 
-    setBlock(context, blk ){
-        Vue.set(context.blocksByHeight, blk.height, blk);
-        Vue.set(context.blocksByHash, blk.bloom.hash, blk );
+    setBlock(state, blk ){
+        Vue.set(state.blocksByHeight, blk.height, blk);
+        Vue.set(state.blocksByHash, blk.bloom.hash, blk );
     },
 
+    setViewBlockHash(state, hash){
+        state.viewBlockHash = hash
+    }
 
 }

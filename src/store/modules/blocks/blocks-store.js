@@ -7,6 +7,9 @@ export default {
     state: {
         blocksByHeight: {},
         blocksByHash: {},
+
+        viewBlockHash: null,
+
     },
 
     actions,

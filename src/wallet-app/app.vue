@@ -57,6 +57,7 @@ export default {
         if (typeof localStorage !== "undefined" && localStorage.getItem('dark') === 'true')
             this.$store.commit('setDark', true)
 
+        this.clearUnusedDataWorker()
 
         this.$store.commit('setNetworkByte', {
             networkByte: PandoraPay.config.NETWORK_SELECTED,
@@ -185,6 +186,28 @@ export default {
                 this.$store.commit('setMainPublicKeyHash', firstAddress );
 
             this.$store.commit('addWalletAddresses', addresses );
+
+        },
+
+        clearUnusedDataWorker(){
+
+            try{
+                for (const hash in this.$store.state.blocks.blocksByHash){
+                    const blk = this.$store.state.blocks.blocksByHash[hash]
+                    if (blk.bloom.hash !== this.$store.state.blocks.viewBlockHash && new Date().getTime() - blk.__timestampUsed > 5*60*1000)
+                        this.$store.commit('deleteBlock', {height: blk.height, hash: blk.bloom.hash })
+                }
+
+                for (const height in this.$store.state.blocks.blocksByHeight){
+                    const blk = this.$store.state.blocks.blocksByHeight[height]
+                    if (blk.bloom.hash !== this.$store.state.blocks.viewBlockHash && new Date().getTime() - blk.__timestampUsed > 5*60*1000)
+                        this.$store.commit('deleteBlock', {height: blk.height, hash: blk.bloom.hash })
+                }
+            }catch(err){
+                console.error(err)
+            }
+
+            setTimeout( ()=> this.clearUnusedDataWorker(), 1000)
 
         }
 
