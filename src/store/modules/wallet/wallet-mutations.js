@@ -2,56 +2,60 @@ import Vue from 'vue';
 
 export default {
 
-    setLoggedIn( context, value){
-        context.loggedIn = value;
+    setLoggedIn( state, value){
+        state.loggedIn = value;
     },
 
-    setEncrypted( context, value ){
-        context.encrypted = value;
+    setEncrypted( state, value ){
+        state.encrypted = value;
     },
 
-    setWallet( context, data ){
-        context.version = data.version;
-        context.mnemonic = data.mnemonic;
-        context.seed = data.seed;
-        context.seedIndex = data.seedIndex;
-        context.count = data.count;
-        context.countIndex = data.countIndex;
+    setWallet( state, data ){
+        state.version = data.version;
+        state.mnemonic = data.mnemonic;
+        state.seed = data.seed;
+        state.seedIndex = data.seedIndex;
+        state.count = data.count;
+        state.countIndex = data.countIndex;
     },
 
-    setLoaded(context, value){
-        context.loaded = value;
+    setLoaded(state, value){
+        state.loaded = value;
     },
 
-    walletClear(context){
+    walletClear(state){
 
-        context.loaded = false;
+        state.loaded = false;
 
-        context.version = null;
-        context.mnemonic = null;
-        context.seed = null;
-        context.seedIndex = null;
-        context.count = null;
-        context.countIndex = null;
+        state.version = null;
+        state.mnemonic = null;
+        state.seed = null;
+        state.seedIndex = null;
+        state.count = null;
+        state.countIndex = null;
 
-        context.addresses = []
+        state.addresses = {}
 
         localStorage.removeItem('mainPublicKeyHash');
     },
 
-    setMainPublicKeyHash( context, value){
-        context.mainPublicKeyHash = value;
+    setMainPublicKeyHash( state, value){
+        state.mainPublicKeyHash = value;
         localStorage.setItem('mainPublicKeyHash', value);
     },
 
-    addWalletAddress(context, address){
-        Vue.set(context.addresses, address.publicKeyHash, address )
+    addWalletAddress(state, address){
+        Vue.set(state.addresses, address.publicKeyHash, address )
     },
 
-    addWalletAddresses(context, addresses){
-        for (const key in addresses){
-            Vue.set(context.addresses, addresses[key].publicKeyHash, addresses[key] )
-        }
+    addWalletAddresses(state, newAddresses){
+
+        const {addresses} = state
+
+        for (const key in newAddresses)
+            addresses[key] = newAddresses[key]
+
+        state.addresses = {addresses}
     }
 
 }

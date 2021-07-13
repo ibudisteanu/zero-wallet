@@ -10,11 +10,11 @@
         </div>
 
         <div id="transactions" />
+
         <div v-for="(tx, key) in transactions"
              :key="`show-transaction-${key}`">
             <show-transaction :class="`row py-2 fs--1 align-items-center ${key % 2 === 1 ?'bg-light':''}`" :txHash="tx" />
         </div>
-
 
     </div>
 
@@ -38,7 +38,14 @@ export default {
 
     methods:{
 
+    },
 
+    mounted(){
+        this.$store.commit('addViewTransactionsHashes', this.transactions )
+    },
+
+    beforeDestroy() {
+        this.$store.commit('removeViewTransactionsHashes', this.transactions )
     }
 
 }

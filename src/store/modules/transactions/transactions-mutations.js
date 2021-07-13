@@ -3,34 +3,54 @@ import Vue from 'vue';
 export default {
 
     deleteTransactions(state, transactions ){
+
+        const {txsByHash,txsByHeight} = state
+
         for (const tx of transactions) {
-            Vue.delete(state.txsByHash, tx.bloom.hash);
+            delete txsByHash[tx.bloom.hash]
 
             if (tx.__extra.height !== undefined)
-                Vue.delete( state.txsByHeight, tx.__extra.height);
+                delete txsByHeight[tx.__extra.height]
         }
+        state.txsByHash = {...txsByHash}
+        state.txsByHeight = {...txsByHeight}
     },
 
 
     setTransactions( state, txs ) {
 
         const timestamp = new Date().getTime()
+        const {txsByHash,txsByHeight} = state
 
         for (const tx of txs){
 
             tx.__timestampUsed = timestamp
 
-            Vue.set( state.txsByHash, tx.bloom.hash,  tx);
+            txsByHash[tx.bloom.hash] = tx
 
             if (tx.__extra.height !== undefined)
-                Vue.set( state.txsByHeight, tx.__extra.height,  tx);
-
+                txsByHeight[tx.__extra.height] = tx
         }
 
+        state.txsByHash = {...txsByHash}
+        state.txsByHeight = {...txsByHeight}
     },
 
-    setViewTransactionsHashes(state, txsHashes) {
-        state.viewTransactionsHashes = txsHashes
+    addViewTransactionsHashes(state, txsHashes ) {
+
+        const {viewTransactionsHashes} = state
+        for (const txHash of txsHashes )
+            viewTransactionsHashes[txHash] = true
+
+        state.viewTransactionsHashes = {...viewTransactionsHashes}
+    },
+
+    removeViewTransactionsHashes(state, txsHashes ) {
+        const {viewTransactionsHashes} = state
+        for (const txHash of txsHashes )
+            delete viewTransactionsHashes[txHash]
+
+        state.viewTransactionsHashes = {...viewTransactionsHashes}
     }
 
 

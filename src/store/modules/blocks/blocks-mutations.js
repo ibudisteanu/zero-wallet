@@ -3,10 +3,14 @@ import Vue from 'vue';
 export default {
 
     deleteBlocks(state, blocks ){
+        const {blocksByHeight, blocksByHash } = state
+
         for (const block of blocks){
-            Vue.delete(state.blocksByHeight, block.height);
-            Vue.delete(state.blocksByHash, block.bloom.hash );
+            delete blocksByHeight[block.height]
+            delete blocksByHash[block.bloom.hash]
         }
+        state.blocksByHeight = {...blocksByHeight}
+        state.blocksByHash = {...blocksByHash}
     },
 
     setBlock(state, {hash, height, block}){

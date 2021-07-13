@@ -195,7 +195,8 @@ export default {
             const maxDiff = 5*60*1000
 
             try{
-                const blocksRemoved = []
+                const blocksRemoved = [], txsRemoved = []
+
                 const blocksByHash = this.$store.state.blocks.blocksByHash
                 for (const hash in blocksByHash){
                     const blk = blocksByHash[hash]
@@ -210,7 +211,6 @@ export default {
                         blocksRemoved.push(blk)
                 }
 
-                const txsRemoved = []
                 const txsByHash = this.$store.state.transactions.txsByHash
                 for (const hash in txsByHash){
                     const tx = txsByHash[hash]
