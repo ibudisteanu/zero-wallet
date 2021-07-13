@@ -2,22 +2,26 @@ import Vue from 'vue';
 
 export default {
 
-    deleteBlock(state, {height, hash} ){
-        Vue.delete(state.blocksByHeight, height);
-        Vue.delete(state.blocksByHash, hash );
+    deleteBlocks(state, blocks ){
+        for (const block of blocks){
+            Vue.delete(state.blocksByHeight, block.height);
+            Vue.delete(state.blocksByHash, block.bloom.hash );
+        }
     },
 
-    setBlock(state, blk ){
-        blk.__timestampUsed = new Date().getTime()
-        Vue.set(state.blocksByHeight, blk.height, blk);
-        Vue.set(state.blocksByHash, blk.bloom.hash, blk );
+    setBlock(state, {hash, height, block}){
+
+        if (!block) block = state.blocksByHash[hash] || state.blocksByHeight[height]
+        if (!block) return console.error("Block was not found")
+
+        block.__timestampUsed = new Date().getTime()
+        Vue.set(state.blocksByHeight, block.height, block);
+        Vue.set(state.blocksByHash, block.bloom.hash, block );
     },
 
     setViewBlockHash(state, hash){
         state.viewBlockHash = hash
-
-        if (hash)
-            state.commit('setBlock', state.blocksByHash[hash])
+        if (hash) state.commit('setBlock', {hash} )
     }
 
 }

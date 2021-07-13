@@ -1,4 +1,7 @@
-const promises = {}
+const promises = {
+    txsByHeight: {},
+    txsByHash: {},
+}
 
 export default {
 
@@ -27,9 +30,9 @@ export default {
     async getTransactionByHash( {state, dispatch, commit}, hash){
 
         if (state.txsByHash[hash]) return state.txsByHash[hash];
-        if (promises[hash]) return promises[hash];
+        if (promises.txsByHash[hash]) return promises.txsByHash[hash];
 
-        return promises[hash] = new Promise( async (resolve, reject ) => {
+        return promises.txsByHash[hash] = new Promise( async (resolve, reject ) => {
 
             try{
 
@@ -42,7 +45,7 @@ export default {
             }catch(err){
                 reject(err);
             } finally{
-                delete promises[hash];
+                delete promises.txsByHash[hash];
             }
         } );
     },
@@ -52,9 +55,9 @@ export default {
         if (typeof height === "string") height = Number.parseInt(height)
 
         if (state.txsByHeight[height]) return state.txsByHeight[height];
-        if (promises[height]) return promises[height];
+        if (promises.txsByHeight[height]) return promises.txsByHeight[height];
 
-        return promises[height] = new Promise( async (resolve, reject ) => {
+        return promises.txsByHeight[height] = new Promise( async (resolve, reject ) => {
 
             try{
 
@@ -68,7 +71,7 @@ export default {
             }catch(err){
                 reject(err);
             } finally{
-                delete promises[height];
+                delete promises.txsByHeight[height];
             }
         } );
 

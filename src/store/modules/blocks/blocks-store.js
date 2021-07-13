@@ -9,7 +9,6 @@ export default {
         blocksByHash: {},
 
         viewBlockHash: null,
-
     },
 
     actions,

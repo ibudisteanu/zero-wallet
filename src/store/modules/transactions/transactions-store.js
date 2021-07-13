@@ -6,6 +6,8 @@ export default {
     state: {
         txsByHash: {},
         txsByHeight: {},
+
+        viewTransactionsHashes: {},
     },
 
     actions,

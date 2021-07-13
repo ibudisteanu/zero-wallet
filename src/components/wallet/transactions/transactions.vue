@@ -102,11 +102,7 @@ export default {
 
                 if (height >= starting && height < ending ){
                     console.log(height)
-                    const hash = txs[height]
-                    if (this.$store.state.transactions.txsByHash[ hash ])
-                        out.push(this.$store.state.transactions.txsByHash[ hash ]);
-                    else
-                        out.push(hash);
+                    out.push(txs[height]);
                 }
             }
 

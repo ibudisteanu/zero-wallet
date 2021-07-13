@@ -8,8 +8,10 @@
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0 text-truncate">Block Explorer {{height ? height : hash}}  </h5>
-                        <loading-spinner v-if="!loaded"/>
+                        <h5 class="mb-0 text-truncate">
+                            Block Explorer {{height ? height : hash}}
+                            <loading-spinner v-if="!loaded"/>
+                        </h5>
                     </div>
                 </div>
             </div>
@@ -177,7 +179,7 @@ export default {
         },
         txs(){
             if (!this.blk) return null;
-            return this.blk.txs
+            return this.blk.txs.map(it => it.bloom.hash)
         }
 
     },

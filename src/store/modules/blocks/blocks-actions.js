@@ -21,8 +21,8 @@ export default {
             txs.push(tx)
         }
 
-        commit('setBlock', blk )
         commit('setTransactions', txs )
+        commit('setBlock', {block: blk} )
 
         return blk;
     },

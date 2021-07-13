@@ -1,8 +1,8 @@
 <template>
     <div>
-        <template v-if="typeof tx === 'string'">
+        <template v-if="!tx">
             <div>
-                <span class="tx-hash">{{tx}}</span>
+                <span class="tx-hash">{{txHash}}</span>
                 <loading-spinner/>
             </div>
         </template>
@@ -10,9 +10,8 @@
 
             <span class="col-4 d-block d-sm-none text-dark">Hash</span>
             <span class="col-8 col-md-2 text-truncate">
-                <router-link :to="`/explorer/tx/${tx.bloom.hash}`">
-                    {{tx.__extra ? tx.__extra.height : -1}}
-                    <!--                        {{tx.bloom.hash}}-->
+                <router-link :to="`/explorer/tx/${txHash}`">
+                    {{tx.bloom.hash}}
                 </router-link>
            </span>
 
@@ -68,11 +67,17 @@ export default {
     components: {AccountIdenticon, LoadingSpinner, Amount},
 
     props: {
-        tx: {default: null}
+        txHash: {default: null}
     },
 
     computed:{
-        isPending(tx){
+
+        tx(){
+            return this.$store.state.transactions.txsByHash[this.txHash]
+        },
+
+        isPending(){
+            const tx = this.tx
             if (!tx || typeof tx === "string" || !tx.__extra) return false
             return typeof tx.__extra.blkHeight === "undefined"
         }
@@ -84,11 +89,10 @@ export default {
     },
 
     watch: {
-        tx:{
+        txHash:{
             immediate: true,
             handler: function (to, from) {
-                if (typeof to === "string")
-                    return this.$store.dispatch('getTransactionByHash', to)
+                return this.$store.dispatch('getTransactionByHash', to)
             }
         },
     },
