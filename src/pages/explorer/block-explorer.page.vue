@@ -194,6 +194,7 @@ export default {
 
                 this.loaded = false
                 this.error = '';
+                this.reward = ''
 
                 if (this.height === undefined && !this.hash) throw 'Block index was not specified';
 
@@ -203,11 +204,9 @@ export default {
                 if (this.hash ) await this.$store.dispatch('getBlockByHash', this.hash);
 
                 if (this.blk){
-
                     this.$store.commit('setViewBlockHash', this.blk.hash )
                     const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)
                     this.reward = await PandoraPay.config.coins.convertToBase( reward.toString() )
-
                 }
 
             }catch(err){
@@ -228,6 +227,10 @@ export default {
 
     async mounted(){
         return this.loadBlock();
+    },
+
+    beforeDestroy(){
+        this.$store.commit('setViewBlockHash', null )
     }
 
 }

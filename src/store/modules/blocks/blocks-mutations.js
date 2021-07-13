@@ -8,12 +8,16 @@ export default {
     },
 
     setBlock(state, blk ){
+        blk.__timestampUsed = new Date().getTime()
         Vue.set(state.blocksByHeight, blk.height, blk);
         Vue.set(state.blocksByHash, blk.bloom.hash, blk );
     },
 
     setViewBlockHash(state, hash){
         state.viewBlockHash = hash
+
+        if (hash)
+            state.commit('setBlock', state.blocksByHash[hash])
     }
 
 }

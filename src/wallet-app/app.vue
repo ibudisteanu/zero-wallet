@@ -57,7 +57,7 @@ export default {
         if (typeof localStorage !== "undefined" && localStorage.getItem('dark') === 'true')
             this.$store.commit('setDark', true)
 
-        this.clearUnusedDataWorker()
+        setTimeout( ()=> this.clearUnusedDataStoreWorker(), 1000)
 
         this.$store.commit('setNetworkByte', {
             networkByte: PandoraPay.config.NETWORK_SELECTED,
@@ -189,7 +189,7 @@ export default {
 
         },
 
-        clearUnusedDataWorker(){
+        clearUnusedDataStoreWorker(){
 
             try{
                 for (const hash in this.$store.state.blocks.blocksByHash){
@@ -204,10 +204,10 @@ export default {
                         this.$store.commit('deleteBlock', {height: blk.height, hash: blk.bloom.hash })
                 }
             }catch(err){
-                console.error(err)
+                console.error("clearUnusedDataStoreWorker raised an error", err)
             }
 
-            setTimeout( ()=> this.clearUnusedDataWorker(), 1000)
+            setTimeout( ()=> this.clearUnusedDataStoreWorker(), 1000)
 
         }
 
