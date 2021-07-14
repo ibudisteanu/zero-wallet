@@ -47,7 +47,7 @@ export default {
     data(){
         return {
             error: "",
-            loading: true,
+            loaded: true,
         }
     },
 
@@ -118,7 +118,7 @@ export default {
     methods: {
         async loadTransactions(){
             try{
-                this.loading = false
+                this.loaded = false
                 this.error = ''
 
                 await this.$store.state.blockchain.syncPromise;

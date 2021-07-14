@@ -17,7 +17,7 @@ export default{
     components: {LoadingSpinner},
     data : function (){
         return {
-            loading:false,
+            loaded:false,
             disabled:false,
         }
     },
@@ -31,7 +31,7 @@ export default{
 
             if (this.disabled && this.canDisable  === true) return false;
 
-            this.loading = true;
+            this.loaded = true;
             if ( this.canDisable ) this.disabled=true;
             let resolver;
 
@@ -40,7 +40,7 @@ export default{
             });
 
             promise.then( answer => {
-                this.loading = false;
+                this.loaded = false;
                 if (this.canDisable) this.disabled = false;
             });
 

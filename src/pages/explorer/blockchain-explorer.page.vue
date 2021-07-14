@@ -90,7 +90,7 @@ export default {
     methods: {
         async loadBlocksInfo(){
             try{
-                this.loading = false
+                this.loaded = false
                 this.error = ''
 
                 await this.$store.state.blockchain.syncPromise;

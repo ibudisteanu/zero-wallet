@@ -17,7 +17,7 @@ export default {
             }catch(err){
                 reject(err)
             }finally{
-                delete (promises[page])
+                delete promises[page]
             }
         })
 

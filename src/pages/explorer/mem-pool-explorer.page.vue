@@ -18,17 +18,20 @@
             </div>
             <div class="card-body p-3">
 
-                <div v-for="(  hash, key ) in pendingTxs"
-                     :class="`row g-0  py-2  border-bottom border-200 d-flex ${key % 2 === 1 ?'bg-light':''}`" style="text-align: center"
-                     :key="`pending_${hash}`">
+                <template v-if="!loaded">
+                    <loading-spinner/>
+                </template>
+                <template v-else>
+                    <div v-for="(  hash, key ) in pendingTxs"
+                         :class="`row g-0  py-2  border-bottom border-200 d-flex ${key % 2 === 1 ?'bg-light':''}`" style="text-align: center"
+                         :key="`pending_${hash}`">
 
-                    <router-link :to="`/explorer/tx/${hash}`" >
-                        <span class="d-block text-truncate fs--1"> {{hash}} </span>
-                    </router-link>
-
-                </div>
-
-                <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.ceil(mempoolCount/countPerPage)" prefix="/explorer/mem-pool/" suffix="#mempool" />
+                        <router-link :to="`/explorer/tx/${hash}`" >
+                            <span class="d-block text-truncate fs--1"> {{hash}} </span>
+                        </router-link>
+                    </div>
+                    <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.ceil(mempoolCount/countPerPage)" prefix="/explorer/mem-pool/" suffix="#mempool" />
+                </template>
 
             </div>
         </div>
@@ -43,15 +46,16 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
 import Pagination from "src/components/utils/pagination"
 import consts from "consts/consts"
+import LoadingSpinner from "src/components/utils/loading-spinner";
 
 export default {
 
-    components: { Layout, LayoutTitle, Pagination },
+    components: { Layout, LayoutTitle, Pagination, LoadingSpinner },
 
     data(){
         return {
             error: '',
-            loading: false,
+            loaded: false,
         }
     },
 
@@ -84,7 +88,7 @@ export default {
         async handleLoadMore(page = this.page){
             try{
 
-                this.loading = true
+                this.loaded = false
                 this.error = ""
 
                 await this.$store.state.blockchain.syncPromise;
@@ -93,7 +97,7 @@ export default {
             }catch(err){
                 this.error = err.toString()
             }finally{
-                this.loading = false
+                this.loaded = true
             }
         }
 
