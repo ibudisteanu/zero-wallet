@@ -7,9 +7,9 @@ export default {
         list: {},
 
         count: 0,
+
+        page: 0,
         start: 0,
-        hasMore: false,
-        next: 0,
     },
 
     mutations,

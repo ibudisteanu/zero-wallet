@@ -7,6 +7,7 @@ export default {
 
     blocksInfoPagination: 10,
     addressTxsPagination: 5,
+    mempoolTxsPagination: 50,
 
     goArgv: [
         'js',

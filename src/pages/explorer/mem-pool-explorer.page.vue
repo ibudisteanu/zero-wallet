@@ -5,12 +5,12 @@
         <layout-title icon="fa-list-ol" title="Mem pool">View the latest transactions that are in pending for the next blocks.</layout-title>
 
         <div class="card mb-3">
-            <div class="card-header bg-light">
+            <div class="card-header bg-light" id="mempool">
                 <div class="row align-items-center">
                     <div class="col">
                         <h5 class="mb-0">Mem pool</h5>
                         <div class="subtitle">
-                            <h6>Pending Transactions: {{pendingCount}}</h6>
+                            <h6>Pending Transactions: {{mempoolCount}}</h6>
                             <i class="fa fa-sync pointer" @click="downloadMempool" v-tooltip.bottom="`Download again the mempool`" ></i>
                         </div>
                     </div>
@@ -28,7 +28,7 @@
 
                 </div>
 
-                <loading-button  v-if="hasMore" icon="fa fa-arrow-down" text="Load more" @submit="handleLoadMore" />
+                <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.ceil(mempoolCount/countPerPage)" prefix="/explorer/mem-pool/" suffix="#mempool" />
 
             </div>
         </div>
@@ -41,62 +41,59 @@
 
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
-import LoadingButton from "src/components/utils/loading-button.vue"
-import LoadingSpinner from "src/components/utils/loading-spinner";
+import Pagination from "src/components/utils/pagination"
+import consts from "consts/consts"
 
 export default {
 
-    components: { Layout, LoadingButton, LoadingSpinner, LayoutTitle },
+    components: { Layout, LayoutTitle, Pagination },
 
     data(){
         return {
             error: '',
-            loaded: false,
+            loading: false,
         }
     },
 
     computed:{
-        pendingCount(){
-            return this.$store.state.mempool.count
+        countPerPage(){
+            return consts.mempoolTxsPagination
         },
-        hasMore(){
-            return this.$store.state.mempool.hasMore
+        mempoolCount(){
+            return this.$store.state.mempool.count
         },
         pendingTxs(){
             return Object.keys(this.$store.state.mempool.list)
-        }
+        },
+        page(){
+            let page = this.$route.params.page || 0
+            if (typeof page == "string"){
+                page = Number.parseInt(page)
+                return page;
+            }
+            return page
+        },
     },
 
     methods:{
 
-        async downloadMempool(){
-
-            try{
-                this.error = ""
-                this.loaded = false
-
-                await this.$store.state.blockchain.syncPromise;
-                await this.$store.dispatch('downloadMempool', this.$store.state.mempool.next);
-            }catch(err){
-                this.error = err.toString()
-            }finally{
-                this.loaded = true
-            }
-
+        downloadMempool(){
+            return this.handleLoadMore( 0 )
         },
 
-        async handleLoadMore(resolver){
+        async handleLoadMore(page = this.page){
             try{
 
+                this.loading = true
                 this.error = ""
 
                 await this.$store.state.blockchain.syncPromise;
-                await this.$store.dispatch('downloadMempool', 0 );
+                await this.$store.dispatch('downloadMempool', page );
 
             }catch(err){
                 this.error = err.toString()
             }finally{
-                resolver(true)
+                this.loading = false
             }
         }
 

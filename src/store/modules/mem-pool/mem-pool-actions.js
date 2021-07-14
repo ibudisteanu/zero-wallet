@@ -2,25 +2,22 @@ const promises = {}
 
 export default {
 
-    downloadMempool( {state, dispatch, commit}, start = 0 ){
+    downloadMempool( {state, dispatch, commit}, page = 0 ){
 
-        if (promises.mempool[start]) return promises.mempool[start]
-        return promises.mempool[start] = new Promise(async (resolve, reject)=>{
+        if (promises[page]) return promises[page]
+        return promises[page] = new Promise(async (resolve, reject)=>{
             try{
-                const data = await PandoraPay.network.getNetworkMempool(start)
+                const data = await PandoraPay.network.getNetworkMempool(page, 0)
                 const mempool = JSON.parse(data)
                 if (!mempool) throw "Mempool is invalid"
 
-                const hasMore = ( start + mempool.hashes.length ) < mempool.count
-                const next = ( start + mempool.hashes.length )
-
-                commit('setMemPool', {start, mempool, hasMore, next })
+                commit('setMemPool', {page, mempool })
 
                 resolve(true)
             }catch(err){
                 reject(err)
             }finally{
-                delete (this._promises.mempool[start])
+                delete (promises[page])
             }
         })
 

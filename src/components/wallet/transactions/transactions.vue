@@ -32,7 +32,7 @@
 import LoadingSpinner from "../../utils/loading-spinner";
 import ShowTransactions from "src/components/explorer/show-transactions"
 import consts from "../../../../consts/consts";
-import Pagination from "../../utils/pagination";
+import Pagination from "src/components/utils/pagination"
 import AlertBox from "src/components/utils/alert-box"
 
 export default {
