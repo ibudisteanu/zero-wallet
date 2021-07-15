@@ -1,17 +1,22 @@
 <template>
     <modal ref="modal" title="Faucet coins" >
 
-        <div class="card-body py-2">
+        <div class="card-body pb-0 pt-2">
             <div class="tab-content">
-                <div>
+                <div class="pb-4">
                     <label>Receive your coins to this address:</label>
                     <div class="address d-flex align-items-center">
                         <account-identicon :address="address.addressEncoded" :size="30" :outer-size="5" />
                         <span class="text-break">{{address.addressEncoded}}</span>
                     </div>
                 </div>
-                <div>
-                    <vue-hcaptcha :sitekey="this.$store.state.faucet.hCaptchaSiteKey"></vue-hcaptcha>
+                <div class="pb-4">
+                    <vue-hcaptcha :sitekey="$store.state.faucet.hCaptchaSiteKey" @verify="handleCaptchaAnswer" :theme="`${$store.state.page.dark ? 'dark' : 'light'}`" />
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="button" @click="" :disabled="!captchaAnswer">
+                        Receive {{$store.state.faucet.faucetTestnetCoins}} <i class="fa fa-coins"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -30,6 +35,7 @@ export default {
 
     data(){
         return{
+            captchaAnswer: ""
         }
     },
 
@@ -40,6 +46,11 @@ export default {
     },
 
     methods:{
+
+        handleCaptchaAnswer(answer){
+            this.captchaAnswer = answer
+        },
+
         showModal() {
             Object.assign(this.$data, this.$options.data());
             this.$refs.modal.showModal();
