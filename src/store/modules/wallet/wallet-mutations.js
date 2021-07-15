@@ -55,7 +55,7 @@ export default {
         for (const key in newAddresses)
             addresses[key] = newAddresses[key]
 
-        state.addresses = {addresses}
+        state.addresses = {...addresses}
     }
 
 }

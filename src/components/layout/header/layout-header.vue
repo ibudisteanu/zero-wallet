@@ -10,11 +10,15 @@
 
       <ul class="navbar-nav navbar-nav-icons flex-row align-items-center">
 
-         <li class="nav-item">
+         <li class="nav-item" v-tooltip.bottom="`Testnet Faucet`" @click="handleShowTestnetFaucer">
+            <i class="fa fa-coins nav-item-icon pointer"></i>
+         </li>
+
+         <li class="nav-item" v-tooltip.bottom="`Switch theme`">
             <i :class="`fa fa-${$store.state.page.dark ?'sun':'moon'} nav-item-icon pointer`" @click="handleToggleDark"></i>
          </li>
 
-         <li class="nav-item">
+         <li class="nav-item" v-tooltip.bottom="`Select network`" >
             <i class="fa fa-globe-americas nav-item-icon"></i>
             <span class="badge badge-soft-success">{{$store.state.network.networkName}}</span>
             <i class="fa fa-chevron-down"></i>
@@ -52,6 +56,9 @@ export default {
     },
 
    methods: {
+      handleShowTestnetFaucer(){
+         this.$store.state.page.refTestnetFaucetModal.showModal()
+      },
       handleToggleDark(){
          this.$store.commit('setDark', !this.$store.state.page.dark)
       },
