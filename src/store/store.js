@@ -12,6 +12,7 @@ import TokensStore from "./modules/tokens/tokens-store"
 import TokensInfoStore from "./modules/tokens-info/tokens-info-store"
 import NetworkStore from "./modules/network/network-store"
 import MemPoolStore from "./modules/mem-pool/mem-pool-store"
+import FaucetStore from "./modules/faucet/faucet-store"
 
 Vue.use(Vuex);
 
@@ -32,6 +33,7 @@ const store = new Vuex.Store({
         addresses: AddressesStore,
         accounts: AccountsStore,
         mempool: MemPoolStore,
+        faucet: FaucetStore,
 
         network: NetworkStore,
     },

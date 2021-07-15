@@ -10,6 +10,9 @@
                         <span class="text-break">{{address.addressEncoded}}</span>
                     </div>
                 </div>
+                <div>
+                    <vue-hcaptcha :sitekey="this.$store.state.faucet.hCaptchaSiteKey"></vue-hcaptcha>
+                </div>
             </div>
         </div>
 
@@ -19,9 +22,11 @@
 <script>
 import Modal from "src/components/utils/modal"
 import AccountIdenticon from "../../wallet/account/account-identicon";
+import VueHcaptcha from '@hcaptcha/vue-hcaptcha';
+
 export default {
 
-    components: {AccountIdenticon, Modal},
+    components: {AccountIdenticon, Modal, VueHcaptcha},
 
     data(){
         return{

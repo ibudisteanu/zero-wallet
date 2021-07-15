@@ -10,7 +10,7 @@
 
       <ul class="navbar-nav navbar-nav-icons flex-row align-items-center">
 
-         <li class="nav-item" v-tooltip.bottom="`Testnet Faucet`" @click="handleShowTestnetFaucer">
+         <li v-if="faucetTestnetEnabled" class="nav-item" v-tooltip.bottom="`Testnet Faucet`" @click="handleShowTestnetFaucer">
             <i class="fa fa-coins nav-item-icon pointer"></i>
          </li>
 
@@ -50,9 +50,12 @@ export default {
    components: {HeaderAccount},
 
     computed:{
-        title(){
-            return consts.title;
-        },
+      title(){
+         return consts.title;
+      },
+      faucetTestnetEnabled(){
+         return this.$store.state.faucet.faucetTestnetEnabled
+      }
     },
 
    methods: {

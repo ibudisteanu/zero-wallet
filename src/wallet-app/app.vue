@@ -123,6 +123,8 @@ export default {
 
             for (const key in this.$store.state.wallet.addresses)
                 await this.$store.dispatch('subscribeAccount', this.$store.state.wallet.addresses[key].publicKeyHash)
+
+            await this.$store.dispatch('initializeFaucetInfo')
         },
 
         async readWallet(){
