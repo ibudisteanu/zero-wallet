@@ -97,9 +97,10 @@ export default {
 
                 await this.$store.dispatch('getBlocksInfo', { starting: this.last-this.countPerPage, blockchainEnd: this.$store.state.blockchain.end, view: true } )
 
-                this.loaded = true
             }catch(err){
                 this.error = err.toString()
+            }finally{
+                this.loaded = true
             }
         }
     },

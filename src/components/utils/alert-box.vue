@@ -16,7 +16,7 @@ export default {
     computed:{
         getIcon(){
             if (this.type === "warning") return "fa-exclamation-triangle"
-            if (this.type === "warning") return "fa-exclamation-circle"
+            if (this.type === "error") return "fa-exclamation-circle"
             return ""
         },
 

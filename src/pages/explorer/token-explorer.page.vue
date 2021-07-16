@@ -128,10 +128,10 @@ export default {
 
                 await this.$store.dispatch('getTokenByHash', this.hash);
 
-                this.loaded = true
-
             }catch(err){
                 this.error = err.toString()
+            }finally{
+                this.loaded = true
             }
 
         },

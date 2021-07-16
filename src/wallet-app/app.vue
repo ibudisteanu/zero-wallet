@@ -88,7 +88,10 @@ export default {
                 }
 
             if (name === "sockets/totalSocketsChanged"){
-                if (data > 0) this.$store.commit('setConsensusStatus', "online")
+                if (data > 0) {
+                    this.$store.commit('setConsensusStatus', "online")
+                    this.$store.dispatch('initializeFaucetInfo')
+                }
                 else this.$store.commit('setConsensusStatus', "offline")
             }
 
@@ -123,8 +126,6 @@ export default {
 
             for (const key in this.$store.state.wallet.addresses)
                 await this.$store.dispatch('subscribeAccount', this.$store.state.wallet.addresses[key].publicKeyHash)
-
-            await this.$store.dispatch('initializeFaucetInfo')
         },
 
         async readWallet(){

@@ -4,7 +4,7 @@ import mutations from "./faucet-mutations"
 export default {
     state:{
 
-        hcaptchaSiteKey: "",
+        hCaptchaSiteKey: null,
         faucetTestnetEnabled: false,
         faucetTestnetCoins: 0,
 

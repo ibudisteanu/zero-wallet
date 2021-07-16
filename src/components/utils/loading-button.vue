@@ -1,7 +1,7 @@
 <template>
     <button type="button" @click="handleClick">
 
-        <loading-spinner v-if="loading" />
+        <loading-spinner v-if="!loaded" />
 
         <template v-else>
             <i v-if="icon" :class="icon" />
@@ -17,7 +17,7 @@ export default{
     components: {LoadingSpinner},
     data : function (){
         return {
-            loaded:false,
+            loaded:true,
             disabled:false,
         }
     },
@@ -31,7 +31,7 @@ export default{
 
             if (this.disabled && this.canDisable  === true) return false;
 
-            this.loaded = true;
+            this.loaded = false;
             if ( this.canDisable ) this.disabled=true;
             let resolver;
 
@@ -40,7 +40,7 @@ export default{
             });
 
             promise.then( answer => {
-                this.loaded = false;
+                this.loaded = true;
                 if (this.canDisable) this.disabled = false;
             });
 

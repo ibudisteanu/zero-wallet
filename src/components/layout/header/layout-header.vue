@@ -10,10 +10,6 @@
 
       <ul class="navbar-nav navbar-nav-icons flex-row align-items-center">
 
-         <li v-if="faucetTestnetEnabled" class="nav-item" v-tooltip.bottom="`Testnet Faucet`" @click="handleShowTestnetFaucer">
-            <i class="fa fa-coins nav-item-icon pointer"></i>
-         </li>
-
          <li class="nav-item" v-tooltip.bottom="`Switch theme`">
             <i :class="`fa fa-${$store.state.page.dark ?'sun':'moon'} nav-item-icon pointer`" @click="handleToggleDark"></i>
          </li>
@@ -59,9 +55,7 @@ export default {
     },
 
    methods: {
-      handleShowTestnetFaucer(){
-         this.$store.state.page.refTestnetFaucetModal.showModal()
-      },
+
       handleToggleDark(){
          this.$store.commit('setDark', !this.$store.state.page.dark)
       },
