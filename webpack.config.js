@@ -2,8 +2,7 @@
 
 const environment = (process.env.NODE_ENV || 'development').trim();
 
-if (environment === 'development') {
+if (environment === 'development')
     module.exports = require('./config/webpack.browser-hot-loader.config');
-} else {
+else
     module.exports = require('./config/webpack.browser.config');
-}

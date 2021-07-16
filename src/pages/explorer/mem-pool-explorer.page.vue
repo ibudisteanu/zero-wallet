@@ -30,7 +30,7 @@
                             <span class="d-block text-truncate fs--1"> {{hash}} </span>
                         </router-link>
                     </div>
-                    <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.ceil(mempoolCount/countPerPage)" prefix="/explorer/mem-pool/" suffix="#mempool" />
+                    <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.trunc(mempoolCount/countPerPage)" prefix="/explorer/mem-pool/" suffix="#mempool" />
                 </template>
 
             </div>

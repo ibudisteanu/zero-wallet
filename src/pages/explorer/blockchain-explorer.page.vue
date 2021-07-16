@@ -21,7 +21,7 @@
                     <template v-else>
 
                         <show-blocks-info :blocksInfo="lastBlocksInfo" />
-                        <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" prefix="/explorer/" suffix="#chain" />
+                        <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.trunc(ending/countPerPage)" prefix="/explorer/" suffix="#chain" />
 
                     </template>
 
@@ -61,7 +61,7 @@ export default {
         },
 
         page(){
-            let page = this.$route.params.page || Math.ceil(this.ending / this.countPerPage-1)
+            let page = this.$route.params.page || Math.trunc(this.ending / this.countPerPage)
             if (typeof page == "string"){
                 page = Number.parseInt(page)
                 return page;
