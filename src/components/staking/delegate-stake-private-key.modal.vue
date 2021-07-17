@@ -51,21 +51,20 @@ export default {
 
             this.delegate = delegate;
 
-            this.$refs.modal.showModal();
+            this.handleShowPrivateKey( () => { });
 
-            return this.handleShowPrivateKey( () => { });
-
+            return this.$refs.modal.showModal();
         },
 
         closeModal() {
             this.$refs.modal.closeModal();
         },
 
-        async handleShowPrivateKey(resolve){
-
-            this.error = '';
+        async handleShowPrivateKey(){
 
             try{
+
+                this.error = '';
 
                 const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.addressEncoded, false);
                 const delegateStakePrivateKeyModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegate.delegateStakeNonce );
@@ -81,7 +80,7 @@ export default {
             }catch(err){
                 this.error = err.message;
             }finally{
-                resolve(true);
+
             }
 
         },

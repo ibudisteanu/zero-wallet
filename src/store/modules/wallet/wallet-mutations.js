@@ -48,6 +48,10 @@ export default {
         Vue.set(state.addresses, address.publicKeyHash, address )
     },
 
+    removeWalletAddress(state, address){
+        Vue.delete(state.addresses, address.publicKeyHash, address )
+    },
+
     addWalletAddresses(state, newAddresses){
 
         const {addresses} = state

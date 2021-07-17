@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <span class="gray">Destination Address {{index !== null ? index+1 : ''}}</span>
+        <span >Destination Address {{index !== null ? index+1 : ''}}</span>
 
         <div :class="`${identicon ? 'destination': ''}-row`">
 

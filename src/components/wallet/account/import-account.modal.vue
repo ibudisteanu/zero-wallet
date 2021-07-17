@@ -22,12 +22,12 @@
             <span>Encrypted: {{this.isAddressEncrypted}}</span>
 
             <div v-if="isAddressEncrypted" class="pd-top-40">
-                <span class="gray">Address password</span>
+                <span >Address password</span>
                 <password-input v-model="addressPassword"></password-input>
             </div>
 
             <div v-if="isWalletEncrypted" class="pd-top-40">
-                <span class="gray">Wallet password</span>
+                <span >Wallet password</span>
                 <password-input v-model="walletPassword"></password-input>
             </div>
 
@@ -72,13 +72,12 @@ export default {
     methods:{
 
         showModal() {
-
             Object.assign(this.$data, this.$options.data());
-            this.$refs.modal.showModal();
+            return this.$refs.modal.showModal();
         },
 
         closeModal() {
-            this.$refs.modal.closeModal();
+            return this.$refs.modal.closeModal();
         },
 
         importAccount(){

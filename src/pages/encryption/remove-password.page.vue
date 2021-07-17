@@ -6,7 +6,7 @@
 
                 <h1>Remove Password</h1>
 
-                <span class="gray" >Password</span>
+                <span  >Password</span>
                 <password-input v-model="password"/>
 
                 <alert-box v-if="error" type="error">{{error}}</alert-box>

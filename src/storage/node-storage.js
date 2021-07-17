@@ -22,21 +22,16 @@ module.exports = class NodeStorage {
         return this._db.clear()
     }
 
-    removeItem(key) {
+    async removeItem(key) {
         return this._db.del(key)
     }
 
-    setItem(key, value) {
+    async setItem(key, value) {
         return this._db.put(key, value)
     }
 
     async getItem(key) {
-        try{
-            const out = await this._db.get(key);
-            return out;
-        }catch(err){
-            return null;
-        }
+        return this._db.get(key);
     }
 
 }

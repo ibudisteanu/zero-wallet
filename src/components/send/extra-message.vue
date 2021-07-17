@@ -1,7 +1,7 @@
 <template>
     <div>
 
-        <span class="gray">Extra message</span>
+        <span >Extra message</span>
         <div :class="`extra-message-row ${identicon ? 'identicon':''}`">
 
 

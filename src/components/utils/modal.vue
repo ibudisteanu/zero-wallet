@@ -2,12 +2,12 @@
 
     <div class="modal fade show" v-if="open" style="display: flex !important">
 
-        <div class="modal-backdrop fade show" @click="closeModal"></div>
+        <div class="modal-backdrop fade show" @click="handleClickBackground"></div>
 
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content position-relative">
                 <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                    <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" @click="closeModal"></button>
+                    <button v-if="closeButton" class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" @click="closeModal"></button>
                 </div>
                 <div class="modal-body p-0">
                     <div v-if="title" class="rounded-top-lg py-3 ps-3 pe-6 bg-light">
@@ -43,6 +43,13 @@ export default{
     },
 
     methods:{
+
+        handleClickBackground(e){
+            if ( e ) e.stopPropagation();
+            if (!this.closeButton) return
+
+            return this.closeModal()
+        },
 
         closeModal(e){
 

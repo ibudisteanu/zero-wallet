@@ -2,7 +2,7 @@
 
     <modal ref="modal" title="Import Private Key">
 
-        <span class="gray">Private Key</span>
+        <span >Private Key</span>
         <input type="text" v-model="privateKey">
 
         <alert-box v-if="error" type="error">{{error}}</alert-box>
@@ -45,11 +45,11 @@ export default {
         showModal(selectedType) {
             Object.assign(this.$data, this.$options.data());
             this.selectedType = selectedType;
-            this.$refs.modal.showModal();
+            return this.$refs.modal.showModal();
         },
 
         closeModal() {
-            this.$refs.modal.closeModal();
+            return this.$refs.modal.closeModal();
         },
 
         async importPrivateKey(resolve){

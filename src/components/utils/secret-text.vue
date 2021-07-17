@@ -6,7 +6,7 @@
                 <i v-if="visible" class="fa fa-copy pointer" v-tooltip.bottom="visible ? `Copy ${title}` : ''"  @click="copySecret"/>
             </div>
             <div v-if="!visible" class="pt-4 text-center pointer" @click="visible = true">
-                <i class="fa fa-eye fa-2x"></i> Show
+                <i class="fa fa-eye fs-3"></i> Show
             </div>
         </div>
         <alert-box type="warning">

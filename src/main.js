@@ -1,6 +1,10 @@
+import PandoraStorage from "src/storage/pandora-storage"
+
 class Main {
 
     constructor(){
+
+        PandoraStorage.exportStorage()
 
         window.addEventListener("load", () => {
             this.initialize()

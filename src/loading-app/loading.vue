@@ -4,6 +4,7 @@
         <main class="container">
 
             <div class="center">
+
                 <img :src="require('src/assets/pandora-pay-logo-square.png').default" class="logo" >
 
                 <svg width="200px" height="200px" viewBox="0 0 35 35">
@@ -31,7 +32,7 @@ import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: { AlertBox},
+    components: { AlertBox },
 
     data(){
         return {
@@ -202,6 +203,9 @@ export default {
         stroke:#0EB4DB;
         stroke-dasharray: 17;
         animation: dash 2.5s cubic-bezier(0.35, 0.04, 0.63, 0.95) infinite;
+    }
+
+    .dark .logo{
     }
 
     @keyframes dash {

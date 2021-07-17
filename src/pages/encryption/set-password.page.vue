@@ -9,13 +9,13 @@
 
                 TODO
 
-                <span class="gray">Password Strength</span>
+                <span >Password Strength</span>
                 <progress-bar :value="strengthPassword*20" :text="strengthPasswordMessage" />
 
                 <span class="gray pd-top-20" >Password</span>
                 <password-input v-model="password"/>
 
-                <span class="gray" >Retype Password</span>
+                <span  >Retype Password</span>
                 <password-input v-model="retypePassword"/>
 
                 <alert-box v-if="error" type="error">{{error}}</alert-box>

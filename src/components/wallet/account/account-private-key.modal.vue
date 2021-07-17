@@ -47,12 +47,12 @@ export default {
 
             this.handleShowPrivateKey();
 
-            this.$refs.modal.showModal();
+            return this.$refs.modal.showModal();
 
         },
 
         closeModal() {
-            this.$refs.modal.closeModal();
+            return this.$refs.modal.closeModal();
         },
 
         handleShowPrivateKey(){

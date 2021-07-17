@@ -2,10 +2,10 @@
 
     <modal ref="modal" title="Loading..."  :close-button="false" >
 
-        <span class="thick">Please wait... Don't close the page</span>
+        <span class="fw-black">Please wait... Don't close the page</span>
 
-        <div class="centered pt-5">
-            <loading-spinner />
+        <div class="pt-4 text-center">
+            <loading-spinner class="fs-6"/>
         </div>
 
     </modal>

@@ -1,0 +1,95 @@
+<template>
+    <modal ref="modal" :title="`Delete Address ${title ? ': ' + title : ''}`">
+
+        <div class="card-body pb-0 pt-2">
+            <div class="tab-content" v-if="account">
+
+                <span>Are you sure you want to <b>delete</b> address {{this.account.name}} - {{this.account.addressEncoded}} ? </span>
+                <alert-box v-if="error" type="error">{{error}}</alert-box>
+
+                <div class="modal-footer">
+                    <button class="btn btn-danger" type="button" @click="handleDelete">
+                        Yes, Delete account <i class="fa fa-times"></i>
+                    </button>
+                    <button class="btn btn-secondary" type="button" @click="closeModal">
+                        Close <i class="fa fa-ban"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </modal>
+</template>
+
+<script>
+import Modal from "src/components/utils/modal"
+import AlertBox from "../../utils/alert-box";
+export default {
+
+    components: { Modal, AlertBox},
+
+    data() {
+        return {
+            error: '',
+            account: null,
+            title: "",
+        }
+    },
+
+    methods: {
+
+        showModal(account) {
+
+            Object.assign(this.$data, this.$options.data());
+
+            this.account = account;
+            this.title = account.name;
+
+            return this.$refs.modal.showModal();
+
+        },
+
+        closeModal() {
+            return this.$refs.modal.closeModal();
+        },
+
+        async handleDelete(){
+
+            this.$store.state.page.refLoadingModal.showModal();
+
+            const address = this.account
+
+            try{
+
+                const out = await PandoraPay.wallet.manager.removeWalletAddress( address.addressEncoded );
+                if (out) {
+                    this.$notify({
+                        type: 'success',
+                        title: `Address ${address.name} has been removed successfully`,
+                        text: `The address ${address.addressEncoded} has been removed and deleted from your wallet`,
+                    });
+                    this.$store.commit('removeWalletAddress', address)
+                }
+
+            }catch(err){
+                this.$notify({
+                    type: 'error',
+                    title: `Address ${address.addressEncoded} could not been removed`,
+                    text: `Raised an error ${err.message}`,
+                })
+            }finally{
+                this.$store.state.page.refLoadingModal.closeModal();
+            }
+
+
+            this.closeModal()
+        },
+
+    }
+
+}
+</script>
+
+<style scoped>
+</style>

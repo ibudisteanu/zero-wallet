@@ -8,7 +8,6 @@ module.exports = class BrowserStorage {
             name: name,
             storeName: name,
         })
-
     }
 
     static supported(){
@@ -39,21 +38,16 @@ module.exports = class BrowserStorage {
         return this._store.clear()
     }
 
-    removeItem(key) {
+    async removeItem(key) {
         return this._store.removeItem(key)
     }
 
-    setItem(key, value) {
+    async setItem(key, value) {
         return this._store.setItem(key, value)
     }
 
     async getItem(key) {
-        try{
-            const out = await this._store.getItem(key);
-            return out;
-        }catch(err){
-            return null;
-        }
+        return this._store.getItem(key);
     }
 
 }

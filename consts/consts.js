@@ -13,7 +13,6 @@ export default {
         'js',
         '--network=devnet',
         '--new-devnet',
-        '--store-wallet-type=memory',
         '--consensus=wallet',
         '--tcp-max-clients=1'
     ],

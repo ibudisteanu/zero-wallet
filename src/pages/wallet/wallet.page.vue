@@ -19,22 +19,22 @@
                 <div class="card-body border-bottom border-200">
 
                     <div class="row py-2">
-                        <div v-if="!showPublicKey" class="pointer" @click="showPublicKey = true">
+                        <div v-if="!showPublicKey" class="pointer w-auto" @click="showPublicKey = true">
                             View Public Key
                         </div>
                         <div v-else>
                             Public Key: {{address.publicKey}}
-                            <i class="fa fa-copy pointer d-inline-block" v-tooltip.bottom="'Copy Public Key'"  @click="copyAddress(address.publicKey)" />
+                            <i class="fa fa-copy pointer d-inline-block" v-tooltip.bottom="'Copy Public Key'"  @click="handleCopyAddress(address.publicKey)" />
                         </div>
                     </div>
 
-                    <div class="row py-2" v-if="address.version === version.VERSION_TRANSPARENT">
-                        <div v-if="!showPublicKeyHash" class="pointer" @click="showPublicKeyHash = true">
+                    <div class="row py-2">
+                        <div v-if="!showPublicKeyHash" class="pointer w-auto" @click="showPublicKeyHash = true">
                             View Public Key Hash
                         </div>
                         <div v-else >
                             Public Key Hash: {{address.publicKeyHash}}
-                            <i class="fa fa-copy pointer d-inline-block" v-tooltip.bottom="'Copy Public Key Hash'" @click="copyAddress(address.publicKeyHash)" />
+                            <i class="fa fa-copy pointer d-inline-block" v-tooltip.bottom="'Copy Public Key Hash'" @click="handleCopyAddress(address.publicKeyHash)" />
                         </div>
                     </div>
 
@@ -42,15 +42,15 @@
 
                 <div class="card-body bg-light">
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="downloadAddress" v-tooltip.bottom="'Download Account'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="handleDownloadAddress" v-tooltip.bottom="'Download Account'" >
                         <i class="fa fa-download"></i>
                     </button>
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="deleteAddress" v-tooltip.bottom="'Delete Account'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="handleDeleteAddress" v-tooltip.bottom="'Delete Account'" >
                         <i class="danger fa fa-times"></i>
                     </button>
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="showPrivateKey" v-tooltip.bottom="'View Private Key'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="handleShowPrivateKey" v-tooltip.bottom="'View Private Key'" >
                         <i class="fa fa-eye"></i>
                     </button>
 
@@ -66,6 +66,7 @@
         </template>
 
         <account-private-key-modal ref="refAccountPrivateKeyModal" :address="address"/>
+        <account-delete-modal ref="refAccountDeleteModal" :address="address"/>
 
     </layout>
 
@@ -80,11 +81,12 @@ import AccountPrivateKeyModal from "src/components/wallet/account/account-privat
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title";
 import Account from "src/components/wallet/account/account"
+import AccountDeleteModal from "src/components/wallet/account/account-delete.modal"
 const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 
-    components: {AccountIdenticon, AccountPrivateKeyModal, Layout, Account, LayoutTitle},
+    components: {AccountIdenticon, AccountPrivateKeyModal, Layout, Account, LayoutTitle, AccountDeleteModal},
 
     data(){
         return {
@@ -107,7 +109,7 @@ export default {
 
     methods:{
 
-        async downloadAddress(){
+        async handleDownloadAddress(){
 
             if ( typeof Blob === "undefined")
                 return this.$notify({
@@ -133,45 +135,15 @@ export default {
 
         },
 
-        showPrivateKey(){
-
-            this.$refs.refAccountPrivateKeyModal.showModal(this.address);
-
+        handleShowPrivateKey(){
+            return this.$refs.refAccountPrivateKeyModal.showModal(this.address);
         },
 
-        async deleteAddress(){
-
-            const confirmation = confirm( `Are you sure you want to Delete ${this.address.name} ${ this.address.addressEncoded } `);
-            if (!confirmation) return;
-
-            this.$store.state.page.refLoadingModal.showModal();
-
-            const address = this.address
-
-            try{
-
-                const out = await PandoraPay.wallet.manager.removeWalletAddress( address.addressEncoded );
-                if (out)
-                    this.$notify({
-                        type: 'success',
-                        title: `Address ${address.name} has been removed successfully`,
-                        text: `The address ${address.addressEncoded} has been removed and deleted from your wallet`,
-                    });
-
-            }catch(err){
-                this.$notify({
-                    type: 'error',
-                    title: `Address ${address.addressEncoded} could not been removed`,
-                    text: `Raised an error ${err.message}`,
-                })
-            }finally{
-                this.$store.state.page.refLoadingModal.closeModal();
-            }
-
-
+        handleDeleteAddress(){
+            return this.$refs.refAccountDeleteModal.showModal(this.address)
         },
 
-        copyAddress(key){
+        handleCopyAddress(key){
 
             this.$copyText(key).then( e =>
                 this.$notify({

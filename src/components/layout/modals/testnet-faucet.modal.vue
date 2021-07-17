@@ -61,11 +61,11 @@ export default {
 
         showModal() {
             Object.assign(this.$data, this.$options.data());
-            this.$refs.modal.showModal();
+            return this.$refs.modal.showModal();
         },
 
         closeModal() {
-            this.$refs.modal.closeModal();
+            return this.$refs.modal.closeModal();
         },
 
         handleCaptchaToken(token){

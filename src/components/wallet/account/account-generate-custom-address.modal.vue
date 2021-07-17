@@ -1,6 +1,6 @@
 <template>
 
-    <modal ref="modal" :title="`Custom Address ${title ? ': ' + title : ''}`" content-class="p-0">
+    <modal ref="modal" :title="`Custom Address ${title ? ': ' + title : ''}`" >
 
         <div class="theme-wizard" v-if="account">
             <div class="card-header bg-light pt-0 pb-2">
@@ -146,12 +146,12 @@ export default {
             this.account = account;
             this.title = account.name;
 
-            this.$refs.modal.showModal();
+            return this.$refs.modal.showModal();
 
         },
 
         closeModal() {
-            this.$refs.modal.closeModal();
+            return this.$refs.modal.closeModal();
         },
 
         copyAddress(){

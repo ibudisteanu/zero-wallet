@@ -38,12 +38,11 @@ export default {
             this.address = address;
             this.title = title;
 
-            this.$refs.modal.showModal();
-
+            return this.$refs.modal.showModal();
         },
 
         closeModal() {
-            this.$refs.modal.closeModal();
+            return this.$refs.modal.closeModal();
         },
 
 

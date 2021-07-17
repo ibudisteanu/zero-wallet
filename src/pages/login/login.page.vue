@@ -14,7 +14,7 @@
                     <h2 class="sub-title gray mg-top-0 pd-bottom-40">The Anonymous Cash awaits</h2>
 
                     <div class="left">
-                        <span class="gray" >Password</span>
+                        <span  >Password</span>
                         <password-input v-model="password"/>
 
                         <alert-box v-if="error" type="error">{{error}}</alert-box>

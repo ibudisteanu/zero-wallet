@@ -5,7 +5,7 @@
         <secret-text v-if="seed" :text="seed" title="Seed"  />
 
         <div v-if="!seed">
-            <span class="gray" >Enter the password to view the wallet seed</span>
+            <span  >Enter the password to view the wallet seed</span>
             <password-input v-model="password" />
 
             <alert-box v-if="error" type="error">{{error}}</alert-box>
@@ -51,13 +51,14 @@ export default {
         showModal() {
 
             Object.assign(this.$data, this.$options.data());
-            this.$refs.modal.showModal();
 
-            return this.handleShowSeed( ()=>{} );
+            this.handleShowSeed( ()=>{} );
+
+            return this.$refs.modal.showModal();
         },
 
         closeModal() {
-            this.$refs.modal.closeModal();
+            return this.$refs.modal.closeModal();
         },
 
         async handleShowSeed(resolve){

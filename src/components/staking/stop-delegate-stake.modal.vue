@@ -2,7 +2,7 @@
 
     <modal ref="modal" title="Stop Delegate Stake">
 
-        <span class="gray">Delegate Nonce</span>
+        <span>Delegate Nonce</span>
         <input type="number" v-model="delegateStakeNonce" min="0" disabled="true" >
 
         <alert-box v-if="error" type="error">{{error}}</alert-box>
@@ -50,12 +50,12 @@ export default {
             this.delegate = delegate;
             this.delegateStakeNonce = delegate ? delegate.delegateStakeNonce : 0;
 
-            this.$refs.modal.showModal();
+            return this.$refs.modal.showModal();
         },
 
 
         closeModal() {
-            this.$refs.modal.closeModal();
+            return this.$refs.modal.closeModal();
         },
 
 

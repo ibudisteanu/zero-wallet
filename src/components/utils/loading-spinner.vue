@@ -1,5 +1,5 @@
 <template>
-    <i class="fas fa-sync fa-spin"></i>
+    <i class="fa fa-spinner fa-spin"></i>
 </template>
 
 <script>
