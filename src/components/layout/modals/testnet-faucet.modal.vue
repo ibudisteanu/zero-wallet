@@ -21,10 +21,10 @@
 
         <template slot="footer">
             <alert-box v-if="error" type="error">{{error}}</alert-box>
-            <button class="btn btn-primary" type="button" @click="handleSubmit" :disabled="!captchaToken">
+            <button class="btn btn-falcon-primary" type="button" @click="handleSubmit" :disabled="!captchaToken">
                 <i class="fa fa-coins"></i> Receive {{$store.state.faucet.faucetTestnetCoins}}
             </button>
-            <button class="btn btn-secondary" type="button" @click="closeModal" :disabled="!captchaToken">
+            <button class="btn btn-falcon-secondary" type="button" @click="closeModal" :disabled="!captchaToken">
                 <i class="fa fa-ban"></i> Cancel
             </button>
         </template>

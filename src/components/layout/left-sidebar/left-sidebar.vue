@@ -88,10 +88,18 @@
 
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <router-link to="#" class="nav-link" @click.native="disableNavbarMenu">
-                                <i class="fa fa-unlock-alt"></i>
-                                <span class="nav-link-text ps-1">Encrypt</span>
-                            </router-link>
+                            <template v-if="isWalletDecrypted">
+                                <router-link to="/set-password" class="nav-link" @click.native="disableNavbarMenu">
+                                    <i class="fa fa-lock"></i>
+                                    <span class="nav-link-text ps-1">Set Password</span>
+                                </router-link>
+                            </template>
+                            <template v-else>
+                                <router-link to="/remove-password" class="nav-link" @click.native="disableNavbarMenu">
+                                    <i class="fa fa-unlock-alt"></i>
+                                    <span class="nav-link-text ps-1">Remove Password</span>
+                                </router-link>
+                            </template>
                         </div>
                     </li>
 

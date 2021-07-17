@@ -7,10 +7,10 @@
         </template>
 
         <template slot="footer">
-            <button class="btn btn-danger" type="button" @click="handleDelete">
+            <button class="btn btn-falcon-danger" type="button" @click="handleDelete">
                 <i class="fa fa-times"></i> Yes, Delete account
             </button>
-            <button class="btn btn-secondary" type="button" @click="closeModal">
+            <button class="btn btn-falcon-secondary" type="button" @click="closeModal">
                 <i class="fa fa-ban"></i> Close
             </button>
         </template>

@@ -1,5 +1,5 @@
 <template>
-    <button type="button" @click="handleClick">
+    <button class="btn btn-falcon-primary me-1 mb-1" type="button" @click="handleClick">
 
         <loading-spinner v-if="!loaded" />
 

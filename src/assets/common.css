@@ -152,6 +152,22 @@ Scrollbar
     float: right;
 }
 
+.input-toggle-group{
+    position: relative;
+}
+
+.input-toggle{
+    background: none;
+    border: none;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 1;
+    cursor: pointer;
+    color: #ccc;
+    font-size: 20px;
+}
+
 .pointer{
     cursor: pointer;
 }

@@ -22,8 +22,8 @@
         </div>
 
 
-        <div class="fixedButton pointer" @click="handleShowTestnetFaucer" v-tooltip.top="`Testnet Faucet`">
-            <div class="roundedFixedBtn btn-primary"><i class="fa fa-coins"></i></div>
+        <div class="fixed-button pointer" @click="handleShowTestnetFaucer" v-tooltip.top="`Testnet Faucet`">
+            <div class="rounded-fixed-btn btn-secondary"><i class="fa fa-coins"></i></div>
         </div>
 
     </footer>
@@ -71,17 +71,17 @@ export default {
 
 <style scoped>
 
-    .fixedButton{
+    .fixed-button{
         position: fixed;
         bottom: 0;
         right: 0;
         padding: 0 20px 20px 20px;;
     }
-    .roundedFixedBtn{
-        height: 60px;
-        line-height: 60px;
-        width: 60px;
-        font-size: 2em;
+    .rounded-fixed-btn{
+        height: 50px;
+        width: 50px;
+        line-height: 50px;
+        font-size: 1.5em;
         border-radius: 50%;
         text-align: center;
         cursor: pointer;
