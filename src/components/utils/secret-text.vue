@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="pb-4">
+        <div>
             <div :class="`fw-bold ${visible ? '' : 'noselect blurry-text' } text-break`" >
                 {{text}}
                 <i v-if="visible" class="fa fa-copy pointer" v-tooltip.bottom="visible ? `Copy ${title}` : ''"  @click="copySecret"/>
@@ -9,7 +9,7 @@
                 <i class="fa fa-eye fs-3"></i> Show
             </div>
         </div>
-        <alert-box type="warning">
+        <alert-box type="warning" class="mt-4">
             Warning: DO NOT share this phrase with anyone! These words can be used to <strong>{{warning}}</strong>
         </alert-box>
     </div>

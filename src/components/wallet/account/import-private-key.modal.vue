@@ -2,12 +2,14 @@
 
     <modal ref="modal" title="Import Private Key">
 
-        <span >Private Key</span>
-        <input type="text" v-model="privateKey">
+        <template slot="body">
+            <span>Private Key</span>
+            <input type="text" v-model="privateKey">
 
-        <alert-box v-if="error" type="error">{{error}}</alert-box>
+            <alert-box v-if="error" type="error">{{error}}</alert-box>
 
-        <loading-button text="Import Private Key" @submit="importPrivateKey" icon="fa fa-file-upload"  />
+            <loading-button text="Import Private Key" @submit="importPrivateKey" icon="fa fa-file-upload"  />
+        </template>
 
     </modal>
 

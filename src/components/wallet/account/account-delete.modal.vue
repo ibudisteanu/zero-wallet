@@ -1,23 +1,19 @@
 <template>
     <modal ref="modal" :title="`Delete Address ${title ? ': ' + title : ''}`">
 
-        <div class="card-body pb-0 pt-2">
-            <div class="tab-content" v-if="account">
+        <template slot="body" v-if="account">
+            <p>Are you sure you want to <b>delete</b> address {{this.account.name}} - {{this.account.addressEncoded}} ? </p>
+            <alert-box v-if="error" type="error">{{error}}</alert-box>
+        </template>
 
-                <span>Are you sure you want to <b>delete</b> address {{this.account.name}} - {{this.account.addressEncoded}} ? </span>
-                <alert-box v-if="error" type="error">{{error}}</alert-box>
-
-                <div class="modal-footer">
-                    <button class="btn btn-danger" type="button" @click="handleDelete">
-                        Yes, Delete account <i class="fa fa-times"></i>
-                    </button>
-                    <button class="btn btn-secondary" type="button" @click="closeModal">
-                        Close <i class="fa fa-ban"></i>
-                    </button>
-                </div>
-
-            </div>
-        </div>
+        <template slot="footer">
+            <button class="btn btn-danger" type="button" @click="handleDelete">
+                <i class="fa fa-times"></i> Yes, Delete account
+            </button>
+            <button class="btn btn-secondary" type="button" @click="closeModal">
+                <i class="fa fa-ban"></i> Close
+            </button>
+        </template>
 
     </modal>
 </template>

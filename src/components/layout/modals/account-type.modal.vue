@@ -2,25 +2,27 @@
 
     <modal ref="modal" title="Create a new Account">
 
-        <p>
-            <strong>Select an Account Type</strong><br/>
-            Select either a <strong>Transparent</strong> or an <strong>Anonymous account</strong>
-        </p>
+        <template slot="body">
 
-        <div class="pt-2 options">
+            <p>
+                Select either a <strong>Transparent</strong> or an <strong>Anonymous account</strong>
+            </p>
 
-            <a class="category pointer" @click="select(0)" href="#" >
+            <div class="pt-2 d-inline-block">
 
-                <i class="fa fa-money-bill-alt fa-3x"></i>
+                <a class="category pointer" @click="select(0)" href="#" >
 
-                <span class="thick" >Transparent</span>
-                <span>Address is public.</span>
-                <span>All amounts are transparent.</span>
-                <span>Staking</span>
-                <span>Cold Staking</span>
-            </a>
+                    <i class="fa fa-money-bill-alt fa-3x"></i>
 
-        </div>
+                    <span class="thick" >Transparent</span>
+                    <span>Address is public.</span>
+                    <span>All amounts are transparent.</span>
+                    <span>Staking</span>
+                    <span>Cold Staking</span>
+                </a>
+
+            </div>
+        </template>
 
     </modal>
 
@@ -74,10 +76,6 @@ export default {
 </script>
 
 <style scoped>
-
-    .options{
-        display: inline-block;
-    }
 
     .category, .category > i, .category > span{
         display: block;

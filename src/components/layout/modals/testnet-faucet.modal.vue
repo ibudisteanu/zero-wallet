@@ -1,31 +1,34 @@
 <template>
     <modal ref="modal" title="Faucet coins" >
 
-        <div class="card-body pb-0 pt-2">
-            <div class="tab-content" v-if="address">
-                <div class="pb-4">
-                    <label>Receive your coins to this address:</label>
-                    <div class="address d-flex align-items-center">
-                        <account-identicon :address="address.addressEncoded" :size="30" :outer-size="5" />
-                        <span class="text-break">{{address.addressEncoded}}</span>
-                    </div>
-                </div>
-                <div class="pb-4 text-center">
-                    <template v-if="!hCaptchaSiteKey">
-                        <loading-spinner />
-                    </template>
-                    <template v-else>
-                        <vue-hcaptcha :sitekey="hCaptchaSiteKey" @verify="handleCaptchaToken" :theme="`${$store.state.page.dark ? 'dark' : 'light'}`" />
-                    </template>
-                </div>
-                <alert-box v-if="error" type="error">{{error}}</alert-box>
-                <div class="modal-footer">
-                    <button class="btn btn-primary" type="button" @click="handleSubmit" :disabled="!captchaToken">
-                        Receive {{$store.state.faucet.faucetTestnetCoins}} <i class="fa fa-coins"></i>
-                    </button>
+        <template slot="body" v-if="address">
+            <div class="pb-4">
+                <label class="pb-2">Receive your coins to this address:</label>
+                <div class="address align-items-center">
+                    <account-identicon :address="address.addressEncoded" :size="30" :outer-size="10" />
+                    <span class="text-break">{{address.addressEncoded}}</span>
                 </div>
             </div>
-        </div>
+            <div class="text-center">
+                <template v-if="!hCaptchaSiteKey">
+                    <loading-spinner />
+                </template>
+                <template v-else>
+                    <vue-hcaptcha :sitekey="hCaptchaSiteKey" @verify="handleCaptchaToken" :theme="`${$store.state.page.dark ? 'dark' : 'light'}`" />
+                </template>
+            </div>
+        </template>
+
+        <template slot="footer">
+            <alert-box v-if="error" type="error">{{error}}</alert-box>
+            <button class="btn btn-primary" type="button" @click="handleSubmit" :disabled="!captchaToken">
+                <i class="fa fa-coins"></i> Receive {{$store.state.faucet.faucetTestnetCoins}}
+            </button>
+            <button class="btn btn-secondary" type="button" @click="closeModal" :disabled="!captchaToken">
+                <i class="fa fa-ban"></i> Cancel
+            </button>
+        </template>
+
 
     </modal>
 </template>
@@ -97,7 +100,7 @@ export default {
 <style scoped>
     .address{
         display: grid;
-        grid-template-columns: 30px 1fr;
+        grid-template-columns: 50px 1fr;
         grid-column-gap: 10px;
     }
 </style>

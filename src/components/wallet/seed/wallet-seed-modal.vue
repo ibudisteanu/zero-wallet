@@ -2,17 +2,20 @@
 
     <modal ref="modal" title="Wallet Seed" >
 
-        <secret-text v-if="seed" :text="seed" title="Seed"  />
+        <template slot="body">
 
-        <div v-if="!seed">
-            <span  >Enter the password to view the wallet seed</span>
-            <password-input v-model="password" />
+            <secret-text v-if="seed" :text="seed" title="Seed"  />
 
-            <alert-box v-if="error" type="error">{{error}}</alert-box>
+            <div v-if="!seed">
+                <span  >Enter the password to view the wallet seed</span>
+                <password-input v-model="password" />
 
-            <loading-button text="Show Wallet Seed" @submit="handleShowSeed" icon="fa fa-key"  :disabled="!password.length " />
+                <alert-box v-if="error" type="error">{{error}}</alert-box>
 
-        </div>
+                <loading-button text="Show Wallet Seed" @submit="handleShowSeed" icon="fa fa-key"  :disabled="!password.length " />
+            </div>
+
+        </template>
 
     </modal>
 

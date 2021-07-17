@@ -2,38 +2,40 @@
 
     <modal ref="modal" title="Import Account" >
 
-        <input class="importAddresses" ref="refImportedAddresses" type="file" v-on:change="handleImportAccounts"  size="50" accept=".pandora" />
+        <template slot="body">
+            <input class="importAddresses" ref="refImportedAddresses" type="file" v-on:change="handleImportAccounts"  size="50" accept=".pandora" />
 
-        <div v-if="!address">
+            <div v-if="!address">
 
-            <div class="btn">
-                <div class="btn-round" @click="importAccount" v-tooltip.bottom="'Upload file'" >
-                    <i class="fa fa-upload"></i>
+                <div class="btn">
+                    <div class="btn-round" @click="importAccount" v-tooltip.bottom="'Upload file'" >
+                        <i class="fa fa-upload"></i>
+                    </div>
                 </div>
-            </div>
-            <span @click="importAccount" class="thick importAccountText">Select file to be imported</span>
+                <span @click="importAccount" class="thick importAccountText">Select file to be imported</span>
 
-        </div>
-
-        <div v-if="address">
-
-            <span class="thick">Wallet to import </span>
-            <span>Name: {{address.name}}</span>
-            <span>Encrypted: {{this.isAddressEncrypted}}</span>
-
-            <div v-if="isAddressEncrypted" class="pd-top-40">
-                <span >Address password</span>
-                <password-input v-model="addressPassword"></password-input>
             </div>
 
-            <div v-if="isWalletEncrypted" class="pd-top-40">
-                <span >Wallet password</span>
-                <password-input v-model="walletPassword"></password-input>
+            <div v-if="address">
+
+                <span class="thick">Wallet to import </span>
+                <span>Name: {{address.name}}</span>
+                <span>Encrypted: {{this.isAddressEncrypted}}</span>
+
+                <div v-if="isAddressEncrypted" class="pd-top-40">
+                    <span >Address password</span>
+                    <password-input v-model="addressPassword"></password-input>
+                </div>
+
+                <div v-if="isWalletEncrypted" class="pd-top-40">
+                    <span >Wallet password</span>
+                    <password-input v-model="walletPassword"></password-input>
+                </div>
+
+                <loading-button text="Import Account" @submit="handleProcess" icon="fa fa-upload"  :disabled="(isAddressEncrypted && !walletPassword.length) || (isWalletEncrypted && !walletPassword.length ) " />
+
             </div>
-
-            <loading-button text="Import Account" @submit="handleProcess" icon="fa fa-upload"  :disabled="(isAddressEncrypted && !walletPassword.length) || (isWalletEncrypted && !walletPassword.length ) " />
-
-        </div>
+        </template>
 
     </modal>
 

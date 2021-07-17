@@ -2,7 +2,9 @@
 
     <modal ref="modal" :title="`Private Key ${ address ? 'of '+address.name : '' }`" >
 
-        <secret-text v-if="privateKey" class="pt-3" :text="privateKey" title="Private Key" warning="STEAL YOUR FUNDS FROM THIS ACCOUNT" />
+        <template slot="body">
+            <secret-text v-if="privateKey" class="pt-3" :text="privateKey" title="Private Key" warning="STEAL YOUR FUNDS FROM THIS ACCOUNT" />
+        </template>
 
     </modal>
 

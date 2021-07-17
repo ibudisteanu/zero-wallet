@@ -171,6 +171,9 @@ export default {
                 if (this.height !== undefined) await this.$store.dispatch('getTransactionByHeight', this.height);
                 if (this.hash ) await this.$store.dispatch('getTransactionByHash', this.hash);
 
+                if (this.tx)
+                    this.$store.commit('addViewTransactionsHashes', [this.tx.bloom.hash] )
+
             }catch(err){
                 this.error = err.toString()
             }finally{
@@ -192,6 +195,12 @@ export default {
 
     mounted(){
         return this.loadTransaction();
+    },
+
+    beforeDestroy() {
+
+        if (this.tx)
+            this.$store.commit('removeViewTransactionsHashes', [this.tx.bloom.hash] )
     }
 
 }

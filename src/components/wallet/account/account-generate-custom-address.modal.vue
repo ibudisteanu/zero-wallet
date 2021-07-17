@@ -1,105 +1,111 @@
 <template>
 
-    <modal ref="modal" :title="`Custom Address ${title ? ': ' + title : ''}`" >
+    <modal ref="modal" :title="`Custom Address ${title ? ': ' + title : ''}`" content-class="">
 
-        <div class="theme-wizard" v-if="account">
-            <div class="card-header bg-light pt-0 pb-2">
-                <ul class="nav justify-content-between nav-wizard">
-                    <li class="nav-item">
-                        <a :class="`nav-link ${tab===0?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(0)">
-                            <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-key"></i></span></span>
-                            <span class="d-none d-md-block mt-1 fs--1">Public Key</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a :class="`nav-link ${tab===1?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(1)">
-                            <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-dollar-sign"></i></span></span>
-                            <span class="d-none d-md-block mt-1 fs--1">Amount</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a :class="`nav-link ${tab===2?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(2)">
-                            <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-hand-holding-usd"></i></span></span>
-                            <span class="d-none d-md-block mt-1 fs--1">Payment ID</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a :class="`nav-link ${tab===3?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(3)">
-                            <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-check"></i></span></span>
-                            <span class="d-none d-md-block mt-1 fs--1">Done</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div class="card-body py-2">
-                <div class="tab-content">
-                    <div :class="`tab-pane ${tab===0?'active':''} `">
-                        <div class="form-check">
-                            <input class="form-check-input" id="publicKeyHash" type="radio" value="publicKeyHash" v-model="keyType" />
-                            <label class="form-check-label" for="publicKeyHash">Public Key Hash</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" id="publicKey" type="radio" value="publicKey" v-model="keyType" :disabled="!this.account.publicKey" />
-                            <label class="form-check-label" for="publicKey">Public Key</label>
-                            <i class="fa fa-question" v-tooltip.bottom="'It will allow users to send you encrypt messages'" ></i> <br>
-                        </div>
-                    </div>
-                    <div :class="`tab-pane ${tab===1?'active':''}`">
-                        <div class="form-check">
-                            <input class="form-check-input" id="amount" type="checkbox"  name="checkbox" v-model="hasAmount"  >
-                            <label class="form-check-label" for="amount"> Amount </label>
-                            <i class="fa fa-question" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
-                            <input class="form-control" v-if="hasAmount" type="number" v-model="amount" min="0" style="width: 14rem;">
-                        </div>
-                    </div>
-                    <div :class="`tab-pane ${tab===2?'active':''} `">
-                        <div class="form-check">
-                            <input class="form-check-input" id="paymentId" type="checkbox"  name="checkbox" v-model="hasPaymentId"  >
-                            <label class="form-check-label" for="paymentId"> PaymentId</label>
-                            <i class="fa fa-question" v-tooltip.bottom="'Specify a default message(paymentId)'" ></i>  <br>
-                            <input class="form-control" v-if="hasPaymentId" type="text" v-model="paymentId" >
-                        </div>
-                    </div>
-                    <div :class="`tab-pane ${tab===3?'active':''} `">
+        <template slot="body">
 
-                        <alert-box v-if="error" type="error">{{error}}</alert-box>
+            <div class="theme-wizard" v-if="account">
+                <div class="card-header bg-light pt-0 pb-2">
+                    <ul class="nav justify-content-between nav-wizard">
+                        <li class="nav-item">
+                            <a :class="`nav-link ${tab===0?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(0)">
+                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-key"></i></span></span>
+                                <span class="d-none d-md-block mt-1 fs--1">Public Key</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a :class="`nav-link ${tab===1?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(1)">
+                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-dollar-sign"></i></span></span>
+                                <span class="d-none d-md-block mt-1 fs--1">Amount</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a :class="`nav-link ${tab===2?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(2)">
+                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-hand-holding-usd"></i></span></span>
+                                <span class="d-none d-md-block mt-1 fs--1">Payment ID</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a :class="`nav-link ${tab===3?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(3)">
+                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-check"></i></span></span>
+                                <span class="d-none d-md-block mt-1 fs--1">Done</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body py-3">
+                    <div class="tab-content">
+                        <div :class="`tab-pane ${tab===0?'active':''} `">
+                            <div class="form-check">
+                                <input class="form-check-input" id="publicKeyHash" type="radio" value="publicKeyHash" v-model="keyType" />
+                                <label class="form-check-label" for="publicKeyHash">Public Key Hash</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" id="publicKey" type="radio" value="publicKey" v-model="keyType" :disabled="!this.account.publicKey" />
+                                <label class="form-check-label" for="publicKey">Public Key</label>
+                                <i class="fa fa-question" v-tooltip.bottom="'It will allow users to send you encrypt messages'" ></i> <br>
+                            </div>
+                        </div>
+                        <div :class="`tab-pane ${tab===1?'active':''}`">
+                            <div class="form-check">
+                                <input class="form-check-input" id="amount" type="checkbox"  name="checkbox" v-model="hasAmount"  >
+                                <label class="form-check-label" for="amount"> Amount </label>
+                                <i class="fa fa-question" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
+                                <input class="form-control" v-if="hasAmount" type="number" v-model="amount" min="0" style="width: 14rem;">
+                            </div>
+                        </div>
+                        <div :class="`tab-pane ${tab===2?'active':''} `">
+                            <div class="form-check">
+                                <input class="form-check-input" id="paymentId" type="checkbox"  name="checkbox" v-model="hasPaymentId"  >
+                                <label class="form-check-label" for="paymentId"> PaymentId</label>
+                                <i class="fa fa-question" v-tooltip.bottom="'Specify a default message(paymentId)'" ></i>  <br>
+                                <input class="form-control" v-if="hasPaymentId" type="text" v-model="paymentId" >
+                            </div>
+                        </div>
+                        <div :class="`tab-pane ${tab===3?'active':''} `">
 
-                        <template v-if="this.addressGenerated">
+                            <alert-box v-if="error" type="error">{{error}}</alert-box>
 
-                            <div class="form-outline">
-                                <label class="form-label" for="address">Generated Address</label>
-                                <div id="address" class="text-break">
-                                    {{this.addressGenerated}}
+                            <template v-if="this.addressGenerated">
+
+                                <div class="form-outline">
+                                    <label class="form-label" for="address">Generated Address</label>
+                                    <div id="address" class="address align-items-center">
+                                        <account-identicon :address="this.addressGenerated" size="30" outer-size="10" />
+                                        <span class="text-break">
+                                            {{this.addressGenerated}}
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <hr/>
+                                <hr/>
 
-                            <div class="g-0 d-block-inline ">
-                                <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="copyAddress" v-tooltip.bottom="'Copy Address'" >
-                                    <i class="fa fa-copy pointer" />
-                                </button>
+                                <div class="g-0 d-block-inline ">
+                                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="copyAddress" v-tooltip.bottom="'Copy Address'" >
+                                        <i class="fa fa-copy pointer" />
+                                    </button>
 
-                                <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
-                                    <i class="fa fa-qrcode pointer" />
-                                </button>
-                            </div>
-                        </template>
+                                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
+                                        <i class="fa fa-qrcode pointer" />
+                                    </button>
+                                </div>
+                            </template>
 
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="card-footer bg-light">
-                <div class="" style="text-align: center">
-                    <button class="btn btn-link" type="button" v-if="tab > 0" @click="()=>increaseTab(-1)">
-                        Back<span class="fas fa-chevron-left me-2" data-fa-transform="shrink-3"></span>
-                    </button>
-                    <button class="btn btn-primary" type="button" v-if="tab < 3" @click="()=>increaseTab(1)">
-                        Next<span class="fas fa-chevron-right ms-2" data-fa-transform="shrink-3"> </span>
-                    </button>
-                </div>
-            </div>
-        </div>
+
+        </template>
+
+        <template slot="footer">
+            <button class="btn btn-link" type="button" v-if="tab > 0" @click="()=>increaseTab(-1)">
+                Back <i class="fas fa-chevron-left me-2" data-fa-transform="shrink-3"></i>
+            </button>
+            <button class="btn btn-primary" type="button" v-if="tab < 3" @click="()=>increaseTab(1)">
+                <i class="fas fa-chevron-right ms-2" data-fa-transform="shrink-3"> </i> Next
+            </button>
+        </template>
 
 
     </modal>
@@ -110,10 +116,11 @@
 
 import Modal from "src/components/utils/modal"
 import AlertBox from "src/components/utils/alert-box"
+import AccountIdenticon from "./account-identicon";
 
 export default {
 
-    components: { Modal, AlertBox},
+    components: {AccountIdenticon, Modal, AlertBox},
 
     data(){
         return {
@@ -224,6 +231,8 @@ export default {
 
 <style scoped>
     .address{
-
+        display: grid;
+        grid-template-columns: 50px 1fr;
+        grid-column-gap: 10px;
     }
 </style>
