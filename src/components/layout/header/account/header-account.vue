@@ -64,11 +64,11 @@ export default {
         },
 
         viewMnemonic(){
-            this.$refs.refWalletSeedModal.showModal( );
+            return this.$refs.refWalletSeedModal.showModal(  );
         },
 
         showImportAccount(){
-            this.$refs.refImportAccountModal.showModal( );
+            return this.$refs.refImportAccountModal.showModal( );
         },
 
         async showImportPrivateKey(){

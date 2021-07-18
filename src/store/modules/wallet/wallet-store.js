@@ -12,7 +12,6 @@ export default {
         isEncrypted: false,
 
         version: null,
-        mnemonic: null,
         seed: null,
         seedIndex: null,
         count: null,

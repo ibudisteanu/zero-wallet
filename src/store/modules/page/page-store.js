@@ -8,6 +8,7 @@ export default {
         refAccountTypeModal: null,
         refQRCodeModal: null,
         refTestnetFaucetModal:null,
+        refWalletPasswordModal:null,
 
         modalOpened: false,
 

@@ -122,7 +122,7 @@ export default {
         },
 
         viewMnemonic(){
-            return this.$emit('viewMnemonic', true);
+            return this.$emit('viewMnemonic')
         },
 
         logout(){

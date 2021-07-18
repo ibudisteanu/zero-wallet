@@ -5,7 +5,6 @@ export default {
     setWallet( state, { wallet, addresses, mainPublicKeyHash } ){
         state.isEncrypted = wallet.isEncrypted
         state.version = wallet.version;
-        state.mnemonic = wallet.mnemonic;
         state.seed = wallet.seed;
         state.seedIndex = wallet.seedIndex;
         state.count = wallet.count;

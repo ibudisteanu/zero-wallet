@@ -28,6 +28,14 @@ export default {
         state.refTestnetFaucetModal = ref;
     },
 
+    setWalletPasswordModal(state, ref){
+        state.refWalletPasswordModal = ref;
+    },
+
+    setWalletSeedModal(state, ref){
+        state.refWalletSeedModal = ref;
+    },
+
     setModalOpened(state, value){
         state.modalOpened = value
     },
