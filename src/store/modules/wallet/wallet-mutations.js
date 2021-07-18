@@ -22,6 +22,7 @@ export default {
     walletClear(state){
 
         state.loaded = false;
+        state.initialized = false;
 
         state.version = null;
         state.mnemonic = null;

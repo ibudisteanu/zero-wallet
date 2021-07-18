@@ -124,21 +124,12 @@ export default {
                 await this.$store.dispatch('subscribeAccount', this.$store.state.wallet.addresses[key].publicKeyHash)
         },
 
+
         async readWallet(){
 
-            const walletData = await PandoraPay.wallet.getWallet()
-            const wallet = JSON.parse( walletData )
+            await this.$store.dispatch('readWallet')
 
-            console.log("wallet received", wallet)
-
-            this.$store.commit('setWallet', wallet );
-
-            await this.readAddresses(wallet);
-
-            const loaded = wallet.loaded
-
-            this.$store.commit('setInitialized', true );
-            this.$store.commit('setLoaded', wallet.loaded );
+            const loaded = this.$store.state.wallet.loaded
 
             const route = this.$router.currentRoute.path;
             if (!loaded && route.indexOf('/login') === -1 ){
@@ -148,42 +139,6 @@ export default {
 
             }
             if (loaded && route.indexOf('/login') >= 0) this.$router.push('/');
-
-            this.$store.commit('setLoaded', true);
-
-        },
-
-        async readAddresses(wallet){
-
-            let mainPublicKeyHash = localStorage.getItem('mainPublicKeyHash') || null;
-
-            let firstAddress;
-            const addresses = {};
-            for (let i=0; i < wallet.addresses.length; i++ ){
-
-                const publicKeyHash = wallet.addresses[i].publicKeyHash
-                const addr = {
-                    ...wallet.addresses[i],
-                    identicon: await Identicons.getIdenticon(publicKeyHash),
-                };
-
-                addresses[publicKeyHash] = addr;
-
-                if (i === 0)
-                    firstAddress = publicKeyHash;
-            }
-
-            //localstorage
-            if (mainPublicKeyHash && addresses[mainPublicKeyHash])
-                this.$store.commit('setMainPublicKeyHash', mainPublicKeyHash);
-
-            if (this.$store.state.wallet.mainPublicKeyHash && !addresses[this.$store.state.wallet.mainPublicKeyHash])
-                this.$store.commit('setMainPublicKeyHash', null );
-
-            if (!this.$store.state.wallet.mainPublicKeyHash && firstAddress )
-                this.$store.commit('setMainPublicKeyHash', firstAddress );
-
-            this.$store.commit('addWalletAddresses', addresses );
 
         },
 

@@ -18,7 +18,7 @@
                 <label>Password</label>
                 <password-input v-model="password"/>
 
-                <alert-box class="pt-3" v-if="error" type="error">{{error}}</alert-box>
+                <alert-box class="mt-3" v-if="error" type="error">{{error}}</alert-box>
 
                 <div class="pt-3 d-flex justify-content-center">
                     <loading-button text="Login" @submit="handleLogin" icon="fa fa-sign-in-alt"  :disabled="!password.length" />
@@ -38,7 +38,7 @@ import PasswordInput from "src/components/utils/password-input";
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import LoadingButton from "src/components/utils/loading-button.vue"
 import AlertBox from "src/components/utils/alert-box"
-
+import UtilsHelper from "src/utils/utils-helper"
 export default {
     components: {LoadingSpinner, PasswordInput, Layout, LoadingButton, AlertBox},
 
@@ -63,10 +63,14 @@ export default {
 
             try{
 
+                await UtilsHelper.sleep(10)
+
                 const out = await PandoraPay.wallet.manager.encryption.decryptWallet(this.password);
 
                 if (!out)
                     throw Error("An error was encountered");
+
+                this.$store.dispatch('readWallet' )
 
                 if (this.$router.currentRoute.path !== '/')
                     this.$router.push('/');
