@@ -29,6 +29,7 @@
                     <div class="col-12 col-sm-6">
                         <label>Encryption difficulty: {{encryptionDifficulty}} <i class="fa fa-question" v-tooltip.bottom="'The harder the encryption is, the harder for brute force is to crack it'" /> </label>
                         <input class="form-range" type="range" min="1" max="10" v-model="encryptionDifficulty" />
+                        <label v-if="encryptionDifficulty > 1">WARNING: High Difficulty will require 40-60 seconds to verify the password</label>
                     </div>
                     <div class="col-12 col-sm-6">
                         <label>Password Strength <i class="fa fa-question" v-tooltip.bottom="'Avoid using guessable passwords as dictionary attacks can crack it.'" /> </label>
