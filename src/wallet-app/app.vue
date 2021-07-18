@@ -36,12 +36,8 @@ export default {
 
     computed:{
 
-        pageActive(){
-            return this.$store.state.page.pageActive;
-        },
-
-        loggedIn(){
-            return this.$store.state.wallet.loggedIn;
+        loaded(){
+            return this.$store.state.wallet.loaded;
         },
 
     },
@@ -130,31 +126,31 @@ export default {
 
         async readWallet(){
 
-            const wallet = JSON.parse( await PandoraPay.wallet.getWallet() )
+            const walletData = await PandoraPay.wallet.getWallet()
+            const wallet = JSON.parse( walletData )
 
-            const loggedIn = true;
-            this.$store.commit('setLoggedIn', loggedIn );
+            console.log("wallet received", wallet)
 
             this.$store.commit('setWallet', wallet );
 
             await this.readAddresses(wallet);
 
-            const route = this.$router.currentRoute.path;
-            if (!loggedIn && route.indexOf('/login') === -1 ){
+            const loaded = wallet.loaded
 
-                if ( route.indexOf('/explorer') === -1 && route.indexOf('/tokens') === -1 && route.indexOf('kad') === -1 )
+            this.$store.commit('setInitialized', true );
+            this.$store.commit('setLoaded', wallet.loaded );
+
+            const route = this.$router.currentRoute.path;
+            if (!loaded && route.indexOf('/login') === -1 ){
+
+                if ( route.indexOf('/explorer') === -1 && route.indexOf('/tokens') === -1)
                     this.$router.push('/login');
 
             }
-            if (loggedIn && route.indexOf('/login') >= 0) this.$router.push('/');
+            if (loaded && route.indexOf('/login') >= 0) this.$router.push('/');
 
             this.$store.commit('setLoaded', true);
 
-        },
-
-        clearWallet(){
-            this.$store.commit('walletClear');
-            this.$store.state.page.refLoadingModal.closeModal();
         },
 
         async readAddresses(wallet){
@@ -168,7 +164,6 @@ export default {
                 const publicKeyHash = wallet.addresses[i].publicKeyHash
                 const addr = {
                     ...wallet.addresses[i],
-                    loaded: false,
                     identicon: await Identicons.getIdenticon(publicKeyHash),
                 };
 

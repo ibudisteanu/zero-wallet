@@ -263,7 +263,7 @@ export default {
         },
 
         isWalletDecrypted(){
-            if (this.$store.state.wallet.loaded && !this.$store.state.wallet.loggedIn ) return false;
+            if (this.$store.state.wallet.initialized && !this.$store.state.wallet.loaded ) return false;
             return true;
         },
 

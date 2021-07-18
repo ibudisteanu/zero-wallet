@@ -25,7 +25,9 @@ import store from "./../store/store"
 
 const guardDecrypted = (to, from, next) => {
 
-    if (store.state.wallet.loaded && !store.state.wallet.loggedIn ) return next('/login');
+    console.log("store.state.wallet.initialized",store.state.wallet.initialized)
+    console.log("store.state.wallet.loaded", store.state.wallet.loaded)
+    if (store.state.wallet.initialized && !store.state.wallet.loaded ) return next('/login');
 
     next();
 
@@ -33,7 +35,7 @@ const guardDecrypted = (to, from, next) => {
 
 const guardLogin = (to, from, next) =>{
 
-    if (store.state.wallet.loaded && store.state.wallet.loggedIn ) return next('/');
+    if (store.state.wallet.initialized && store.state.wallet.loaded ) return next('/');
 
     next();
 };
@@ -68,8 +70,8 @@ const routes = [
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
 
     {path: '/', component: AddressPage, beforeEnter: guardDecrypted },
-    {path: '/address/:address', component: AddressPage },
-    {path: '/address/:address/:page', component: AddressPage },
+    {path: '/address/:address', component: AddressPage, beforeEnter: guardDecrypted  },
+    {path: '/address/:address/:page', component: AddressPage, beforeEnter: guardDecrypted  },
 
     { path: '*', name: 'not-found', component: NotFoundPage,}
 

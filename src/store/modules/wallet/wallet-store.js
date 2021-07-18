@@ -5,8 +5,8 @@ export default {
 
     state: {
 
-        loaded: false,
-        loggedIn: false,
+        initialized: false, //wasm wallet initialized
+        loaded: false, //wasm wallet decrypted
 
         version: null,
         mnemonic: null,

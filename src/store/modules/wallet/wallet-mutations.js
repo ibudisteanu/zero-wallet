@@ -2,12 +2,12 @@ import Vue from 'vue';
 
 export default {
 
-    setLoggedIn( state, value){
-        state.loggedIn = value;
+    setLoaded( state, value){
+        state.loaded = value;
     },
 
-    setEncrypted( state, value ){
-        state.encrypted = value;
+    setInitialized( state, value ){
+        state.initialized = value;
     },
 
     setWallet( state, data ){
@@ -17,10 +17,6 @@ export default {
         state.seedIndex = data.seedIndex;
         state.count = data.count;
         state.countIndex = data.countIndex;
-    },
-
-    setLoaded(state, value){
-        state.loaded = value;
     },
 
     walletClear(state){

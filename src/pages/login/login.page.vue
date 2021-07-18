@@ -1,27 +1,27 @@
 <template>
 
-    <layout>
-        <div class="container pd-top-20">
-            <div class="centered">
+    <layout :disable-layout="true">
 
-                <loading-spinner v-if="!$store.state.wallet.loaded" />
+        <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
 
-                <div v-if="$store.state.wallet.loaded">
+            <div class="d-flex flex-center mb-2">
+                <img :src="require('src/assets/pandora-pay-logo.png').default" class="logo">
+            </div>
 
-                    <img :src="require('src/assets/pandora-pay-logo.png').default"  class="logo"> <br/>
+            <div class="d-flex flex-center mb-2 mb-sm-4">
+                <h1 class="fs-0 fs-sm-2 fs-md-3">The Anonymous Cash awaits</h1>
+            </div>
 
-                    <h1 class="title mg-bottom-0 mg-top-0">World's First Anonymous Cash</h1>
-                    <h2 class="sub-title gray mg-top-0 pd-bottom-40">The Anonymous Cash awaits</h2>
+            <loading-spinner v-if="!$store.state.wallet.initialized" />
+            <div v-else>
 
-                    <div class="left">
-                        <span  >Password</span>
-                        <password-input v-model="password"/>
+                <label>Password</label>
+                <password-input v-model="password"/>
 
-                        <alert-box v-if="error" type="error">{{error}}</alert-box>
+                <alert-box class="pt-3" v-if="error" type="error">{{error}}</alert-box>
 
-                        <loading-button text="Login" @submit="handleLogin" icon="fa fa-sign-in-alt"  :disabled="password.length === 0" />
-                    </div>
-
+                <div class="pt-3 d-flex justify-content-center">
+                    <loading-button text="Login" @submit="handleLogin" icon="fa fa-sign-in-alt"  :disabled="!password.length" />
                 </div>
 
             </div>
@@ -63,7 +63,7 @@ export default {
 
             try{
 
-                const out = await PandoraPay.wallet.encryption.decryptWallet(this.password);
+                const out = await PandoraPay.wallet.manager.encryption.decryptWallet(this.password);
 
                 if (!out)
                     throw Error("An error was encountered");
@@ -91,21 +91,9 @@ export default {
 
 <style scoped>
 
-    .container{
-        max-width: 400px;
-    }
-
     .logo{
         max-width: 200px;
         max-height: 200px;
-    }
-
-    .title{
-        font-weight: bolder;
-    }
-
-    .sub-title{
-        font-weight: normal;
     }
 
 </style>

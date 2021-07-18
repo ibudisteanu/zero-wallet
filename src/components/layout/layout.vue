@@ -7,9 +7,9 @@
 
         <div class="container" data-layout="container">
 
-            <left-sidebar v-if="!disableLayout" ref="refSidebar" @onUpdateMarginLeft="onUpdateMarginLeft" />
+            <left-sidebar v-if="!disableLayout" ref="refSidebar" />
 
-            <div class="content">
+            <div :class="`${disableLayout ? 'row flex-center min-vh-100 py-6' : 'content'}`">
 
                 <layout-header v-if="!disableLayout" > </layout-header>
 
@@ -52,16 +52,14 @@ export default {
 
     data(){
         return {
-            marginLeft: '85px',
-            width: '100%',
         }
     },
 
-    methods:{
+    computed:{
 
-        onUpdateMarginLeft({marginLeft, width}){
-            this.marginLeft = marginLeft;
-        }
+    },
+
+    methods:{
 
     },
 
