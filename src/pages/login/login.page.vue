@@ -12,7 +12,9 @@
                 <h1 class="fs-0 fs-sm-2 fs-md-3">The Anonymous Cash awaits</h1>
             </div>
 
-            <loading-spinner v-if="!$store.state.wallet.initialized" />
+            <div v-if="!$store.state.wallet.initialized" class="d-flex justify-content-center" >
+                <loading-spinner class="fs-3"/>
+            </div>
             <div v-else>
 
                 <label>Password</label>
@@ -63,7 +65,7 @@ export default {
 
             try{
 
-                await UtilsHelper.sleep(10)
+                await UtilsHelper.sleep(50)
 
                 const out = await PandoraPay.wallet.manager.encryption.decryptWallet(this.password);
 

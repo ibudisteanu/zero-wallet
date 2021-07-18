@@ -8,7 +8,7 @@ export default {
             if (typeof localStorage !== "undefined") localStorage.setItem('dark', 'true' )
         } else {
             document.getElementsByTagName("html")[0].classList.remove('dark');
-            if (typeof localStorage !== "undefined") localStorage.removeItem('dark')
+            if (typeof localStorage !== "undefined") localStorage.setItem('dark', 'false')
         }
     },
 

@@ -104,7 +104,7 @@ export default {
                 this.error = '';
                 this.$store.state.page.refLoadingModal.showModal();
 
-                await UtilsHelper.sleep(10 )
+                await UtilsHelper.sleep(50 )
 
                 //if (this.password.length < 6) throw Error("password is too weak");
                 if (this.password !== this.retypePassword) throw Error("passwords are not matching");
@@ -122,7 +122,7 @@ export default {
                 this.$router.push('/');
 
             }catch(err){
-                this.error = err.message;
+                this.error = err.toString();
             }finally{
                 this.$store.state.page.refLoadingModal.closeModal();
                 resolve(true);

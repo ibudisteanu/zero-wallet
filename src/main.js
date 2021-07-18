@@ -30,8 +30,8 @@ class Main {
                 id: "Wallet",
             }
 
-        if (!PandoraPayWalletOptions.loading)
-            global.PandoraPayWalletOptions.loading = { }
+        if (!PandoraPayWalletOptions.intro)
+            global.PandoraPayWalletOptions.intro = { }
 
         /**
          * On Window Load
@@ -42,16 +42,16 @@ class Main {
     }
 
     start(){
-        const loadingVue = require('./loading-app/loading-vue').default;
-        this.loadingVueApp = loadingVue(PandoraPayWalletOptions.loading);
+        const introAppVue = require('./intro-app/intro-app').default;
+        this.introAppVue = introAppVue(PandoraPayWalletOptions.intro);
     }
 
     loadWallet(){
 
-        if (this.loadingVueApp){
-            this.loadingVueApp.$destroy()
-            const elem = document.getElementById("pandora-wallet-loading");
-            document.getElementById("pandora-wallet-loading").parentNode.removeChild(elem);
+        if (this.introAppVue){
+            this.introAppVue.$destroy()
+            const elem = document.getElementById("pandora-wallet-intro");
+            document.getElementById("pandora-wallet-intro").parentNode.removeChild(elem);
         }
 
         const mainVue = require('./wallet-app/main-vue').default;

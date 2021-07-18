@@ -11,6 +11,7 @@ export default {
     },
 
     setWallet( state, data ){
+        state.isEncrypted = data.isEncrypted
         state.version = data.version;
         state.mnemonic = data.mnemonic;
         state.seed = data.seed;
@@ -23,6 +24,8 @@ export default {
 
         state.loaded = false;
         state.initialized = false;
+
+        state.isEncrypted = false
 
         state.version = null;
         state.mnemonic = null;

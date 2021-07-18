@@ -11,6 +11,8 @@ export default {
 
         console.log("wallet received", wallet)
 
+        wallet.isEncrypted = wallet.encryption.encrypted === PandoraPay.enums.wallet.encryptedVersion.ENCRYPTED_VERSION_ENCRYPTION_ARGON2
+
         commit('setWallet', wallet );
 
         await dispatch('readAddresses', wallet);

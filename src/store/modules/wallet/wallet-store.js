@@ -9,6 +9,8 @@ export default {
         initialized: false, //wasm wallet initialized
         loaded: false, //wasm wallet decrypted
 
+        isEncrypted: false,
+
         version: null,
         mnemonic: null,
         seed: null,

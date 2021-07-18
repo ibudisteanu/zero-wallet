@@ -20,7 +20,7 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link :disabled="!isWalletDecrypted" to="/wallet" :class="`${ route === '/wallet' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
+                        <router-link :disabled="!isWalletLogged" to="/wallet" :class="`${ route === '/wallet' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
                             <div class="d-flex align-items-center">
                                 <i class="fa fa-wallet"></i>
                                 <span class="nav-link-text ps-1">Wallet</span>
@@ -28,7 +28,7 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link :disabled="!isWalletDecrypted" to="/staking" :class="`${ route === '/staking' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
+                        <router-link :disabled="!isWalletLogged" to="/staking" :class="`${ route === '/staking' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
                             <div class="d-flex align-items-center">
                                 <i class="fa fa-piggy-bank"></i>
                                 <span class="nav-link-text ps-1">Staking</span>
@@ -70,7 +70,7 @@
                         </div>
                         <ul :class="`nav collapse ${navElementsShown['receive'] ? 'show':''}`">
                             <li class="nav-item">
-                                <router-link :disabled="!isWalletDecrypted" to="/receive" :class="`nav-link ${ route === '/receive' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
+                                <router-link :disabled="!isWalletLogged" to="/receive" :class="`nav-link ${ route === '/receive' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
                                         <span class="nav-link-text ps-1">Public</span>
                                     </div>
@@ -88,7 +88,7 @@
 
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <template v-if="isWalletDecrypted">
+                            <template v-if="!encrypted">
                                 <router-link to="/set-password" class="nav-link" @click.native="disableNavbarMenu">
                                     <i class="fa fa-lock"></i>
                                     <span class="nav-link-text ps-1">Set Password</span>
@@ -146,28 +146,28 @@
                         </div>
                         <ul :class="`nav collapse ${navElementsShown['kad'] ? 'show':''}`">
                             <li class="nav-item">
-                                <router-link :disabled="!isWalletDecrypted" to="#" :class="`nav-link ${ route === '/kad/chat' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
+                                <router-link :disabled="!isWalletLogged" to="#" :class="`nav-link ${ route === '/kad/chat' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
                                         <span class="nav-link-text ps-1">Encrypted Chat</span>
                                     </div>
                                 </router-link>
                             </li>
                             <li class="nav-item">
-                                <router-link :disabled="!isWalletDecrypted" to="#" :class="`nav-link ${ route === '/kad/dex' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
+                                <router-link :disabled="!isWalletLogged" to="#" :class="`nav-link ${ route === '/kad/dex' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
                                         <span class="nav-link-text ps-1">DEX</span>
                                     </div>
                                 </router-link>
                             </li>
                             <li class="nav-item">
-                                <router-link :disabled="!isWalletDecrypted" to="#" :class="`nav-link ${ route === '/kad/p2p/dex' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
+                                <router-link :disabled="!isWalletLogged" to="#" :class="`nav-link ${ route === '/kad/p2p/dex' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
                                         <span class="nav-link-text ps-1">Peer to Peer Exchange</span>
                                     </div>
                                 </router-link>
                             </li>
                             <li class="nav-item">
-                                <router-link :disabled="!isWalletDecrypted" to="#" :class="`nav-link ${ route === '/kad/p2p/bazaar' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
+                                <router-link :disabled="!isWalletLogged" to="#" :class="`nav-link ${ route === '/kad/p2p/bazaar' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
                                         <span class="nav-link-text ps-1">Peer to Peer Bazaar</span>
                                     </div>
@@ -187,32 +187,32 @@
 
 <!--        <div v-if="show" class="sidebar" :style="{display: show ? 'inherit' : 'none' }" v-on-clickaway="closeMenu" >-->
 
-<!--            <router-link :disabled="!isWalletDecrypted" to="/account" :class="`${ route === '/account' ? 'selected' : ''}`">-->
+<!--            <router-link :disabled="!isWalletLogged" to="/account" :class="`${ route === '/account' ? 'selected' : ''}`">-->
 <!--                <i class="fa fa-wallet" ></i>-->
 <!--                <span>Account</span>-->
 <!--            </router-link>-->
 
-<!--            <router-link :disabled="!isWalletDecrypted" to="/staking" :class="`${route === '/staking' ? 'selected' : ''}`" >-->
+<!--            <router-link :disabled="!isWalletLogged" to="/staking" :class="`${route === '/staking' ? 'selected' : ''}`" >-->
 <!--                <i class="fa fa-piggy-bank"></i>-->
 <!--                <span>Staking</span>-->
 <!--            </router-link>-->
 
-<!--            <router-link :disabled="!isWalletDecrypted" to="/send" :class="`${route === '/send' ? 'selected' : ''}`" >-->
+<!--            <router-link :disabled="!isWalletLogged" to="/send" :class="`${route === '/send' ? 'selected' : ''}`" >-->
 <!--                <i class="fa fa-money-check-alt"></i>-->
 <!--                <span>Send</span>-->
 <!--            </router-link>-->
 
-<!--            <router-link :disabled="!isWalletDecrypted" to="/receive" :class="`${route === '/receive' ? 'selected' : ''}`" >-->
+<!--            <router-link :disabled="!isWalletLogged" to="/receive" :class="`${route === '/receive' ? 'selected' : ''}`" >-->
 <!--                <i class="fa fa-hand-holding-usd"></i>-->
 <!--                <span>Receive</span>-->
 <!--            </router-link>-->
 
-<!--            <router-link :disabled="!isWalletDecrypted" to="/set-password" v-if="!encrypted" :class="`${route === '/set-password' ? 'selected' : ''}`"  >-->
+<!--            <router-link :disabled="!isWalletLogged" to="/set-password" v-if="!encrypted" :class="`${route === '/set-password' ? 'selected' : ''}`"  >-->
 <!--                <i class="fa fa-unlock-alt"></i>-->
 <!--                <span>Encrypt</span>-->
 <!--            </router-link>-->
 
-<!--            <router-link :disabled="!isWalletDecrypted" to="/remove-password" v-if="encrypted" :class="`${route === '/remove-password' ? 'selected' : ''}`"  >-->
+<!--            <router-link :disabled="!isWalletLogged" to="/remove-password" v-if="encrypted" :class="`${route === '/remove-password' ? 'selected' : ''}`"  >-->
 <!--                <i class="fa fa-lock"></i>-->
 <!--                <span>Decrypt</span>-->
 <!--            </router-link>-->
@@ -244,7 +244,7 @@ export default {
         },
 
         encrypted(){
-            return this.$store.state.wallet.encrypted;
+            return this.$store.state.wallet.isEncrypted;
         },
 
         route(){
@@ -255,14 +255,7 @@ export default {
             return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKeyHash];
         },
 
-        conversationsNewNotifications(){
-
-            if (!this.address) return 0;
-            return this.$store.getters.conversationsNewNotifications(this.address.publicKey)
-
-        },
-
-        isWalletDecrypted(){
+        isWalletLogged(){
             if (this.$store.state.wallet.initialized && !this.$store.state.wallet.loaded ) return false;
             return true;
         },

@@ -1,5 +1,5 @@
 <template>
-    <div :class="`alert alert-${getBackground} border-2 d-flex align-items-center mb-0`" role="alert">
+    <div :class="`alert alert-${getBackground} border-2 d-flex align-items-center`" role="alert">
         <div class="bg-white me-3 icon-item">
             <i :class="`fa ${getIcon}`"></i>
         </div>
