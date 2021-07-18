@@ -25,19 +25,16 @@ import store from "./../store/store"
 
 const guardDecrypted = (to, from, next) => {
 
-    console.log("store.state.wallet.initialized",store.state.wallet.initialized)
-    console.log("store.state.wallet.loaded", store.state.wallet.loaded)
-    if (store.state.wallet.initialized && !store.state.wallet.loaded ) return next('/login');
-
+//    if (store.state.wallet.initialized && !store.state.wallet.loaded ) return next('/login');
     next();
 
 };
 
 const guardLogin = (to, from, next) =>{
 
-    if (store.state.wallet.initialized && store.state.wallet.loaded ) return next('/');
-
+//    if (store.state.wallet.initialized && store.state.wallet.loaded ) return next('/');
     next();
+
 };
 
 const routes = [

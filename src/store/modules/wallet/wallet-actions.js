@@ -4,29 +4,20 @@ export default {
 
     async readWallet( {state, dispatch, commit} ){
 
-        commit('walletClear' );
-
         const walletData = await PandoraPay.wallet.getWallet()
         const wallet = JSON.parse( walletData )
 
-        console.log("wallet received", wallet)
-
         wallet.isEncrypted = wallet.encryption.encrypted === PandoraPay.enums.wallet.encryptedVersion.ENCRYPTED_VERSION_ENCRYPTION_ARGON2
 
-        commit('setWallet', wallet );
+        console.log("wallet received", wallet)
 
         await dispatch('readAddresses', wallet);
-
-        const loaded = wallet.loaded
-
-        commit('setInitialized', true );
-        commit('setLoaded', loaded );
 
     },
 
     async readAddresses( {state, dispatch, commit}, wallet ){
 
-        let mainPublicKeyHash = localStorage.getItem('mainPublicKeyHash') || null;
+        let mainPublicKeyHash = state.mainPublicKeyHash || localStorage.getItem('mainPublicKeyHash') || null;
 
         let firstAddress;
         const addresses = {};
@@ -45,16 +36,13 @@ export default {
         }
 
         //localstorage
-        if (mainPublicKeyHash && addresses[mainPublicKeyHash])
-            commit('setMainPublicKeyHash', mainPublicKeyHash);
+        if (mainPublicKeyHash && !addresses[mainPublicKeyHash])
+            mainPublicKeyHash = null
 
-        if (state.mainPublicKeyHash && !addresses[state.mainPublicKeyHash])
-            commit('setMainPublicKeyHash', null );
+        if (!mainPublicKeyHash && firstAddress )
+            mainPublicKeyHash = firstAddress;
 
-        if (!state.mainPublicKeyHash && firstAddress )
-            commit('setMainPublicKeyHash', firstAddress );
-
-        commit('addWalletAddresses', addresses );
+        commit('setWallet', { addresses, wallet, mainPublicKeyHash } );
 
     },
 

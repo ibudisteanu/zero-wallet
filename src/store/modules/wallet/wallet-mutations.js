@@ -2,41 +2,21 @@ import Vue from 'vue';
 
 export default {
 
-    setLoaded( state, value){
-        state.loaded = value;
-    },
+    setWallet( state, { wallet, addresses, mainPublicKeyHash } ){
+        state.isEncrypted = wallet.isEncrypted
+        state.version = wallet.version;
+        state.mnemonic = wallet.mnemonic;
+        state.seed = wallet.seed;
+        state.seedIndex = wallet.seedIndex;
+        state.count = wallet.count;
+        state.countIndex = wallet.countIndex;
 
-    setInitialized( state, value ){
-        state.initialized = value;
-    },
+        state.initialized = true
+        state.loaded = wallet.loaded
 
-    setWallet( state, data ){
-        state.isEncrypted = data.isEncrypted
-        state.version = data.version;
-        state.mnemonic = data.mnemonic;
-        state.seed = data.seed;
-        state.seedIndex = data.seedIndex;
-        state.count = data.count;
-        state.countIndex = data.countIndex;
-    },
+        state.addresses = addresses
 
-    walletClear(state){
-
-        state.loaded = false;
-        state.initialized = false;
-
-        state.isEncrypted = false
-
-        state.version = null;
-        state.mnemonic = null;
-        state.seed = null;
-        state.seedIndex = null;
-        state.count = null;
-        state.countIndex = null;
-
-        state.addresses = {}
-
-        localStorage.removeItem('mainPublicKeyHash');
+        state.mainPublicKeyHash = mainPublicKeyHash
     },
 
     setMainPublicKeyHash( state, value){
@@ -51,15 +31,5 @@ export default {
     removeWalletAddress(state, address){
         Vue.delete(state.addresses, address.publicKeyHash, address )
     },
-
-    addWalletAddresses(state, newAddresses){
-
-        const {addresses} = state
-
-        for (const key in newAddresses)
-            addresses[key] = newAddresses[key]
-
-        state.addresses = {...addresses}
-    }
 
 }

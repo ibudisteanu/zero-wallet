@@ -2,14 +2,10 @@
 
     <div>
 
-        <template v-if="!error">
-
-            <!-- component matched by the route will render here -->
-            <router-view></router-view>
-
-        </template>
-
         <alert-box v-if="error" type="error">{{error}}</alert-box>
+        <template v-else>
+            <router-view></router-view>
+        </template>
 
         <notifications position="bottom left" />
 
@@ -92,15 +88,13 @@ export default {
             }
 
             if (initialized) {
-                if (name === "wallet/added")
-                    this.readWallet()
-                else
-                if (name === "wallet/removed")
-                    this.readWallet()
-                else
-                if (name === "consensus/update"){
+                if (name === "wallet/added") this.readWallet()
+                else if (name === "wallet/removed") this.readWallet()
+                else if (name === "wallet/encrypted") this.readWallet()
+                else if (name === "wallet/removed-encryption") this.readWallet()
+                else if (name === "consensus/update")
                     this.processUpdate(JSON.parse(data))
-                }
+
             }
             console.log("JS NAME:", name, "data", data)
         })

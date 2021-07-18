@@ -18,6 +18,9 @@
         <template class="py-3" v-else>
             <loading-spinner />
         </template>
+
+        <alert-box v-if="error" type="error">{{error}}</alert-box>
+
     </layout>
 </template>
 
@@ -118,7 +121,6 @@ export default {
         mainPublicKeyHash (to, from){
             if (this.mainPublicKeyHash && (from === this.publicKeyHash || !this.publicKeyHash) )
                 return this.loadAddress();
-
         },
     },
 
