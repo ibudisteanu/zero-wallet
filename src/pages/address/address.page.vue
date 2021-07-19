@@ -15,9 +15,9 @@
             <transactions :publicKeyHash="publicKeyHash" :page="page" />
 
         </template>
-        <template class="py-3" v-else>
-            <loading-spinner />
-        </template>
+        <div class="py-3 text-center" v-else>
+            <loading-spinner class="fs-3" />
+        </div>
 
         <alert-box v-if="error" type="error">{{error}}</alert-box>
 
@@ -41,7 +41,7 @@ export default {
     data(){
         return {
             publicKeyHash: '',
-            error: "",
+            error: "xxxx",
         }
     },
 
@@ -79,6 +79,7 @@ export default {
         async loadAddress(){
 
             try{
+
                 this.error = ""
 
                 let address = this.$route.params.address
@@ -90,6 +91,7 @@ export default {
                     publicKeyHash = addressJSON.publicKeyHash
                 } else {
                     publicKeyHash = this.mainPublicKeyHash
+                    if (!this.$store.state.wallet.addresses[publicKeyHash]) return
                     address = this.$store.state.wallet.addresses[publicKeyHash].addressEncoded
                 }
 
@@ -109,6 +111,7 @@ export default {
 
             }catch(err){
                 this.error = err.toString()
+                console.error(err)
             }
 
         }
@@ -119,9 +122,12 @@ export default {
         $route (to, from) {
             return this.loadAddress();
         },
-        mainPublicKeyHash (to, from){
-            if (this.mainPublicKeyHash && (from === this.publicKeyHash || !this.publicKeyHash) )
-                return this.loadAddress();
+        async mainPublicKeyHash (to, from){
+            if (this.mainPublicKeyHash && (from !== this.publicKeyHash || !this.publicKeyHash) )
+                await this.loadAddress();
+
+            if (!this.$store.getters.walletContains(from) && from !== to)
+                await this.$store.dispatch('_unsubscribeAccount', from )
         },
     },
 
@@ -130,9 +136,8 @@ export default {
     },
 
     async beforeDestroy() {
-        const publicKeyHash = this.computedPublicKeyHash || this.publicKeyHash
-        if (!this.$store.getters.walletContains(publicKeyHash))
-            await this.$store.dispatch('_unsubscribeAccount', publicKeyHash )
+        if (!this.$store.getters.walletContains(this.publicKeyHash))
+            await this.$store.dispatch('_unsubscribeAccount', this.publicKeyHash )
 
     }
 

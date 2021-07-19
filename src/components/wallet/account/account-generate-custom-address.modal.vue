@@ -8,28 +8,28 @@
                 <div class="card-header bg-light pt-0 pb-2">
                     <ul class="nav justify-content-between nav-wizard">
                         <li class="nav-item">
-                            <a :class="`nav-link ${tab===0?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(0)">
+                            <router-link :class="`nav-link ${tab===0?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(0)">
                                 <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-key"></i></span></span>
                                 <span class="d-none d-md-block mt-1 fs--1">Public Key</span>
-                            </a>
+                            </router-link>
                         </li>
                         <li class="nav-item">
-                            <a :class="`nav-link ${tab===1?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(1)">
+                            <router-link :class="`nav-link ${tab===1?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(1)">
                                 <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-dollar-sign"></i></span></span>
                                 <span class="d-none d-md-block mt-1 fs--1">Amount</span>
-                            </a>
+                            </router-link>
                         </li>
                         <li class="nav-item">
-                            <a :class="`nav-link ${tab===2?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(2)">
+                            <router-link :class="`nav-link ${tab===2?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(2)">
                                 <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-hand-holding-usd"></i></span></span>
                                 <span class="d-none d-md-block mt-1 fs--1">Payment ID</span>
-                            </a>
+                            </router-link>
                         </li>
                         <li class="nav-item">
-                            <a :class="`nav-link ${tab===3?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(3)">
+                            <router-link :class="`nav-link ${tab===3?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(3)">
                                 <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-check"></i></span></span>
                                 <span class="d-none d-md-block mt-1 fs--1">Done</span>
-                            </a>
+                            </router-link>
                         </li>
                     </ul>
                 </div>
