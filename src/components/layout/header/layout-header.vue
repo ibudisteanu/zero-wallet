@@ -8,6 +8,12 @@
          </span>
       </button>
 
+      <router-link class="navbar-brand me-1 me-sm-3" to="/">
+         <div class="d-flex align-items-center">
+            <img class="me-2" :src="require('src/assets/pandora-pay-logo-square.png').default" alt="" width="40">
+         </div>
+      </router-link>
+
       <ul class="navbar-nav navbar-nav-icons flex-row align-items-center">
 
          <li class="nav-item" v-tooltip.bottom="`Switch theme`">
@@ -92,7 +98,7 @@ export default {
       font-size: 16px;
    }
    .nav-item{
-      padding-right: 20px;
+      padding-right: 10px;
    }
    .fa-chevron-down{
       font-size: 10px;

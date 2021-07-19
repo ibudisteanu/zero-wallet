@@ -4,7 +4,7 @@
 
         <alert-box v-if="error" type="error">{{error}}</alert-box>
         <template v-else>
-            <router-view></router-view>
+            <router-view v-if="walletInitialized"></router-view>
         </template>
 
         <notifications position="bottom left" />
@@ -26,16 +26,11 @@ export default {
     data(){
         return {
             error: '',
-
+            walletInitialized: false,
         }
     },
 
     computed:{
-
-        loaded(){
-            return this.$store.state.wallet.loaded;
-        },
-
     },
 
     beforeMount(){
@@ -121,6 +116,8 @@ export default {
 
 
         async readWallet(){
+
+            this.walletInitialized = true
 
             await this.$store.dispatch('readWallet')
 

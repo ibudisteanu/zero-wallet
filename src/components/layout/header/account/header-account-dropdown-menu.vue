@@ -15,9 +15,9 @@
                 <div class="list-group-item div-scrollable" style="max-height:19rem" >
                     <div v-for="(address, index) in addresses" :class="`notification notification-flush notification-unread ${ address.publicKeyHash === mainPublicKeyHash  ? 'fw-black' : ''} ` "
                          :key="`address-${index}`">
-                            <div class="notification-body address pointer">
-                                <account-identicon :address="address.addressEncoded" :identicon="address.identicon" :size="20" :outer-size="5" :version="address.version" />
-                                <div class="account-title" @click="setMainPublicKeyHash(address.publicKeyHash)">
+                            <div class="notification-body address">
+                                <account-identicon :address="address.addressEncoded" :identicon="address.identicon" :size="20" :outer-size="5" :version="address.version" :disable-route="true" />
+                                <div class="account-title pointer" @click="setMainPublicKeyHash(address.publicKeyHash)">
                                     <span class="fw-semi-bold text-truncate">{{address.name}}</span>
                                     <span class="fw-normal text-truncate">{{address.addressEncoded}} </span>
                                 </div>
