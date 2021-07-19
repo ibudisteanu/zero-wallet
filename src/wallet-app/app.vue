@@ -127,13 +127,13 @@ export default {
             const loaded = this.$store.state.wallet.loaded
 
             const route = this.$router.currentRoute.path;
-            //TODO allow some functionalities even if the wallet was not decrypted
-            // if (!loaded && route.indexOf('/login') === -1 ){
-            //
-            //     if ( route.indexOf('/explorer') === -1 && route.indexOf('/tokens') === -1)
-            //         this.$router.push('/login');
-            //
-            // }
+            if (!loaded && route.indexOf('/login') === -1 ){
+
+                //TODO allow some functionalities even if the wallet was not
+                //if ( route.indexOf('/explorer') === -1 && route.indexOf('/tokens') === -1)
+
+                this.$router.push('/login');
+            }
             if (loaded && route.indexOf('/login') >= 0) this.$router.push('/');
 
         },
