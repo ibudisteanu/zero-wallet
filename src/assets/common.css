@@ -134,6 +134,15 @@ Scrollbar
     border-color: #f9f9f9;
 }
 
+.unselectable {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 a .disabled{
     cursor: not-allowed;
     opacity: 0.5;

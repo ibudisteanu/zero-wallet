@@ -127,7 +127,7 @@ export default {
                 await this.loadAddress();
 
             if (!this.$store.getters.walletContains(from) && from !== to)
-                await this.$store.dispatch('_unsubscribeAccount', from )
+                await this.$store.dispatch('unsubscribeAccount', from )
         },
     },
 
@@ -137,7 +137,7 @@ export default {
 
     async beforeDestroy() {
         if (!this.$store.getters.walletContains(this.publicKeyHash))
-            await this.$store.dispatch('_unsubscribeAccount', this.publicKeyHash )
+            await this.$store.dispatch('unsubscribeAccount', this.publicKeyHash )
 
     }
 

@@ -44,7 +44,7 @@ export default{
                 if (this.canDisable) this.disabled = false;
             });
 
-            e.stopPropagation();
+            if (e) e.stopPropagation();
             this.$emit('submit', resolver );
         },
     }

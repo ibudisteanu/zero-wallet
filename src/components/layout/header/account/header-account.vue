@@ -2,7 +2,7 @@
 
     <div class="account" v-if="address">
 
-        <div class="toggle" @click="toggleMenu" v-on-clickaway="closeMenu">
+        <div class="toggle unselectable" @click="toggleMenu" v-on-clickaway="closeMenu" v-tooltip.bottom="`${menuOpen ? '' : address.addressEncoded}`" >
             <account-identicon :address="address.addressEncoded" :identicon="identicon" :size="20" :outer-size="7" :version="address.version" :disableRoute="true" />
             <i class="right-float chevron-down fa fa-chevron-down"></i>
         </div>

@@ -21,12 +21,12 @@
             <div v-else>
 
                 <label>Password</label>
-                <password-input v-model="password"/>
+                <password-input v-model="password" v-on:keyup.native.enter="()=>$refs.refLoadingButton.handleClick()" />
 
                 <alert-box class="mt-3" v-if="error" type="error">{{error}}</alert-box>
 
                 <div class="pt-3 d-flex justify-content-center">
-                    <loading-button text="Login" @submit="handleLogin" icon="fa fa-sign-in-alt"  :disabled="!password.length" />
+                    <loading-button ref="refLoadingButton" text="Login" @submit="handleLogin" icon="fa fa-sign-in-alt"  :disabled="!password.length" />
                 </div>
 
             </div>

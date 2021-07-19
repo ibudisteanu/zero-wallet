@@ -92,6 +92,7 @@ export default {
                 else if (name === "wallet/removed") this.readWallet()
                 else if (name === "wallet/encrypted") this.readWallet()
                 else if (name === "wallet/removed-encryption") this.readWallet()
+                else if (name === "wallet/logged-out") this.readWallet()
                 else if (name === "consensus/update")
                     this.processUpdate(JSON.parse(data))
 
