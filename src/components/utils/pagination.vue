@@ -1,6 +1,6 @@
 <template>
     <div>
-        <template v-if="total > 0">
+        <template>
 
             <nav :aria-label="label">
                 <ul class="pagination m-0">

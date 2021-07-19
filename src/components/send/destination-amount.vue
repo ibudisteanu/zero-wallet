@@ -1,11 +1,11 @@
 <template>
     <div class="amount-row">
         <div>
-            <span class="gray">{{text}}</span>
+            <span >{{text}}</span>
             <input type="number" v-model="amount" min="0" step="0.0001">
         </div>
         <div>
-            <span class="gray">Currency</span>
+            <span >Currency</span>
             <select v-model="tokenCurrency">
                 <option v-for="(balance, token) in balances"
                         :key="`send-money-${token}`"
@@ -42,12 +42,12 @@ export default {
     },
 
     watch: {
-        'amount' (to, from) {
+        amount (to, from) {
             return this.$emit('changed', {
                 amount: Math.floor( PandoraPay.argv.transactions.coins.convertToUnits( Number.parseFloat(to) ) ),
             });
         },
-        'tokenCurrency' (to, from) {
+        tokenCurrency (to, from) {
             return this.$emit('changed', {
                 tokenCurrency: to,
             });

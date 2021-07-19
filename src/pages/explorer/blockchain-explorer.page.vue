@@ -21,7 +21,7 @@
                     <template v-else>
 
                         <show-blocks-info :blocksInfo="lastBlocksInfo" />
-                        <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" prefix="/explorer/" suffix="#chain" />
+                        <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.trunc(ending/countPerPage)" prefix="/explorer/" suffix="#chain" />
 
                     </template>
 
@@ -40,7 +40,6 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
 import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
 import Pagination from "src/components/utils/pagination"
-import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import consts from "consts/consts"
 
@@ -62,7 +61,7 @@ export default {
         },
 
         page(){
-            let page = this.$route.params.page || Math.ceil(this.ending / this.countPerPage-1)
+            let page = this.$route.params.page || Math.trunc(this.ending / this.countPerPage)
             if (typeof page == "string"){
                 page = Number.parseInt(page)
                 return page;
@@ -74,9 +73,12 @@ export default {
             return this.page * this.countPerPage
         },
 
+        last(){
+            return Math.min( this.ending, ( this.page + 1  ) * this.countPerPage )
+        },
+
         lastBlocksInfo(){
-            const ending = Math.min( this.ending, ( this.page + 1  ) * this.countPerPage )
-            return this.$store.getters.blocksInfoSorted.filter(a => (a.height >= ending - this.countPerPage) && (a.height < ending) );
+            return this.$store.getters.blocksInfoSorted.filter(a => (a.height >= this.last - this.countPerPage) && (a.height < this.last) );
         },
 
         ending(){
@@ -88,25 +90,23 @@ export default {
     methods: {
         async loadBlocksInfo(){
             try{
-                this.loading = false
+                this.loaded = false
                 this.error = ''
-                await Consensus.syncPromise;
 
-                const ending = Math.min( this.ending, ( this.page + 1  ) * this.countPerPage )
-                await Consensus.getBlocksInfo( ending-this.countPerPage, true  )
+                await this.$store.state.blockchain.syncPromise;
 
-                this.loaded = true
+                await this.$store.dispatch('getBlocksInfo', { starting: this.last-this.countPerPage, blockchainEnd: this.$store.state.blockchain.end, view: true } )
+
             }catch(err){
                 this.error = err.toString()
+            }finally{
+                this.loaded = true
             }
         }
     },
 
     watch: {
         '$route' (to, from) {
-            return this.loadBlocksInfo();
-        },
-        'starting' (to, from){
             return this.loadBlocksInfo();
         },
     },

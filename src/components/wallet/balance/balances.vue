@@ -60,7 +60,7 @@ export default {
     computed:{
 
         account(){
-            return this.$store.state.addresses.accounts[this.publicKeyHash]
+            return this.$store.state.accounts.list[this.publicKeyHash]
         },
 
         balances(){

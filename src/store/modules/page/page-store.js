@@ -6,6 +6,9 @@ export default {
 
         refLoadingModal: null,
         refAccountTypeModal: null,
+        refQRCodeModal: null,
+        refTestnetFaucetModal:null,
+        refWalletPasswordModal:null,
 
         modalOpened: false,
 

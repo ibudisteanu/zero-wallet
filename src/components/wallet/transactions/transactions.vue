@@ -6,7 +6,6 @@
                 <div class="col">
                     <h5 class="mb-0">
                         Transactions
-
                         <template v-if="!txs">
                             <loading-spinner />
                         </template>
@@ -19,8 +18,11 @@
         </div>
         <div class="card-body p-3" v-if="txs && transactionsAll.length ">
             <show-transactions :transactions="transactionsAll"/>
-            <pagination class="right" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.ceil(ending/countPerPage)" :prefix="`/address/${address.addressEncoded}/`" suffix="#transactions" />
+            <pagination class="right" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="Math.trunc(ending/countPerPage)" :prefix="`/address/${address.addressEncoded}/`" suffix="#transactions" />
         </div>
+
+        <alert-box v-if="error" type="error">{{error}}</alert-box>
+
     </div>
 
 </template>
@@ -30,51 +32,46 @@
 import LoadingSpinner from "../../utils/loading-spinner";
 import ShowTransactions from "src/components/explorer/show-transactions"
 import consts from "../../../../consts/consts";
-import Pagination from "../../utils/pagination";
-import Consensus from "../../../consensus/consensus";
+import Pagination from "src/components/utils/pagination"
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: { LoadingSpinner, Pagination, ShowTransactions },
+    components: { LoadingSpinner, Pagination, ShowTransactions, AlertBox },
 
     props: {
-        publicKeyHash: {default: ""}
+        publicKeyHash: {default: ""},
+        page: {default: null},
     },
 
     data(){
         return {
             error: "",
-            loading: true,
+            loaded: true,
         }
     },
 
     computed:{
+
+        finalPage(){
+            if (this.page !== null) return this.page
+            return Math.trunc(this.txs.count / this.countPerPage)
+        },
 
         address(){
             return this.$store.state.addresses.list[this.publicKeyHash]
         },
 
         txs(){
-            return this.$store.state.addresses.txs[this.publicKeyHash]
+            return this.$store.state.accounts.txs[this.publicKeyHash]
         },
 
         countPerPage(){
             return consts.addressTxsPagination
         },
 
-        page(){
-            if (!this.txs) return 0
-            let page = this.$route.params.page || Math.ceil(this.ending / this.countPerPage-1)
-            if (typeof page == "string"){
-                page = Number.parseInt(page)
-                return page;
-            }
-            return page
-        },
-
         starting(){
             return ( this.page * this.countPerPage )
-
         },
 
         ending(){
@@ -86,18 +83,28 @@ export default {
             return [];
         },
 
+        last(){
+            return (this.page === null) ? undefined : ( this.page + 1 ) * this.countPerPage
+        },
+
         transactions(){
 
             if (!this.txs) return []
 
-            const txs = this.txs.list;
+            const txs = this.txs.hashes;
+
+            let ending = (this.page === null) ? this.txs.count : this.last
+            let starting = ending - this.countPerPage
 
             const out = [];
-            for (const hash of txs)
-                if (this.$store.state.transactions.txsByHash[ hash ])
-                    out.push( this.$store.state.transactions.txsByHash[ hash ] );
-                else
-                    out.push( hash  );
+            for ( const heightStr in txs) {
+                const height = Number.parseInt(heightStr)
+
+                if (height >= starting && height < ending ){
+                    console.log(height)
+                    out.push(txs[height]);
+                }
+            }
 
             return out;
         },
@@ -111,25 +118,25 @@ export default {
     methods: {
         async loadTransactions(){
             try{
-                this.loading = false
+                this.loaded = false
                 this.error = ''
-                await Consensus.syncPromise;
 
-                console.log("Consensus.downloadAccountTxs( this.publicKeyHash, this.starting  )", this.publicKeyHash, this.starting)
-                await Consensus.downloadAccountTxs( this.publicKeyHash, this.starting  )
+                await this.$store.state.blockchain.syncPromise;
+                await this.$store.dispatch('downloadAccountTxs', {publicKeyHash: this.publicKeyHash, next: this.last, view: true, updateViewPosition: (this.page === null) } )
 
-                this.loaded = true
             }catch(err){
                 this.error = err.toString()
+            }finally{
+                this.loaded = true
             }
         }
     },
 
     watch: {
-        'publicKeyHash' (to, from) {
+        publicKeyHash (to, from) {
             return this.loadTransactions();
         },
-        'starting' (to, from){
+        page (to, from) {
             return this.loadTransactions();
         },
     },
@@ -143,13 +150,4 @@ export default {
 </script>
 
 <style scoped>
-
-    .container{
-
-    }
-
-    .title{
-        font-size: 20px;
-    }
-
 </style>

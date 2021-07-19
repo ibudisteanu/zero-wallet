@@ -1,15 +1,17 @@
+import actions from "./blocks-actions"
 import getters from "./blocks-getters"
 import mutations from "./blocks-mutations"
 
 export default {
 
     state: {
-        blocks: {},
+        blocksByHeight: {},
         blocksByHash: {},
 
-        blocksInfo: {},
+        viewBlockHash: null,
     },
 
+    actions,
     mutations,
     getters,
 }

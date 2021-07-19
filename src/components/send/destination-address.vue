@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <span class="gray">Destination Address {{index !== null ? index+1 : ''}}</span>
+        <span >Destination Address {{index !== null ? index+1 : ''}}</span>
 
         <div :class="`${identicon ? 'destination': ''}-row`">
 
@@ -73,7 +73,7 @@ export default {
     },
 
     watch: {
-        'addressValidated' (to, from) {
+        addressValidated (to, from) {
             return this.$emit('changed', {
                 addressModel: to,
                 address: this.address,

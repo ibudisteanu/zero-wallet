@@ -16,7 +16,7 @@
                             If you think this is a mistake, contact the devs.
                         </p>
 
-                        <router-link class="btn btn-primary btn-sm mt-3" to="/">
+                        <router-link class="btn btn-falcon-primary btn-sm mt-3" to="/">
                             <i class="fa fa-home"></i>
                             Take me home
                         </router-link>

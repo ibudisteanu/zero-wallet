@@ -5,12 +5,12 @@
         <layout-title icon="fa-list-ol" title="Mem pool">View the latest transactions that are in pending for the next blocks.</layout-title>
 
         <div class="card mb-3">
-            <div class="card-header bg-light">
+            <div class="card-header bg-light" id="mempool">
                 <div class="row align-items-center">
                     <div class="col">
                         <h5 class="mb-0">Mem pool</h5>
                         <div class="subtitle">
-                            <h6>Pending Transactions: {{pendingCount}}</h6>
+                            <h6>Pending Transactions: {{mempoolCount}}</h6>
                             <i class="fa fa-sync pointer" @click="downloadMempool" v-tooltip.bottom="`Download again the mempool`" ></i>
                         </div>
                     </div>
@@ -18,17 +18,20 @@
             </div>
             <div class="card-body p-3">
 
-                <div v-for="(  hash, key ) in pendingTxs"
-                     :class="`row g-0  py-2  border-bottom border-200 d-flex ${key % 2 === 1 ?'bg-light':''}`" style="text-align: center"
-                     :key="`pending_${hash}`">
+                <template v-if="!loaded">
+                    <loading-spinner/>
+                </template>
+                <template v-else>
+                    <div v-for="(  hash, key ) in pendingTxs"
+                         :class="`row g-0  py-2  border-bottom border-200 d-flex ${key % 2 === 1 ?'bg-light':''}`" style="text-align: center"
+                         :key="`pending_${hash}`">
 
-                    <router-link :to="`/explorer/tx/${hash}`" >
-                        <span class="d-block text-truncate fs--1"> {{hash}} </span>
-                    </router-link>
-
-                </div>
-
-                <loading-button  v-if="hasMore" icon="fa fa-arrow-down" text="Load more" @submit="handleLoadMore" />
+                        <router-link :to="`/explorer/tx/${hash}`" >
+                            <span class="d-block text-truncate fs--1"> {{hash}} </span>
+                        </router-link>
+                    </div>
+                    <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.trunc(mempoolCount/countPerPage)" prefix="/explorer/mem-pool/" suffix="#mempool" />
+                </template>
 
             </div>
         </div>
@@ -41,13 +44,13 @@
 
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
-import Consensus from "src/consensus/consensus"
-import LoadingButton from "src/components/utils/loading-button.vue"
+import Pagination from "src/components/utils/pagination"
+import consts from "consts/consts"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 
 export default {
 
-    components: { Layout, LoadingButton, LoadingSpinner, LayoutTitle },
+    components: { Layout, LayoutTitle, Pagination, LoadingSpinner },
 
     data(){
         return {
@@ -57,47 +60,44 @@ export default {
     },
 
     computed:{
-        pendingCount(){
-            return this.$store.state.mempool.count
+        countPerPage(){
+            return consts.mempoolTxsPagination
         },
-        hasMore(){
-            return this.$store.state.mempool.hasMore
+        mempoolCount(){
+            return this.$store.state.mempool.count
         },
         pendingTxs(){
             return Object.keys(this.$store.state.mempool.list)
-        }
+        },
+        page(){
+            let page = this.$route.params.page || 0
+            if (typeof page == "string"){
+                page = Number.parseInt(page)
+                return page;
+            }
+            return page
+        },
     },
 
     methods:{
 
-        async downloadMempool(){
+        downloadMempool(){
+            return this.handleLoadMore( 0 )
+        },
 
+        async handleLoadMore(page = this.page){
             try{
-                this.error = ""
-                this.loaded = false
 
-                await Consensus.syncPromise;
-                await Consensus.downloadMempool(this.$store.state.mempool.next);
+                this.loaded = false
+                this.error = ""
+
+                await this.$store.state.blockchain.syncPromise;
+                await this.$store.dispatch('downloadMempool', page );
+
             }catch(err){
                 this.error = err.toString()
             }finally{
                 this.loaded = true
-            }
-
-        },
-
-        async handleLoadMore(resolver){
-            try{
-
-                this.error = ""
-
-                await Consensus.syncPromise;
-                await Consensus.downloadMempool();
-
-            }catch(err){
-                this.error = err.toString()
-            }finally{
-                resolver(true)
             }
         }
 

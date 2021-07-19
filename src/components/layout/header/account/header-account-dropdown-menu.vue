@@ -36,7 +36,10 @@
                     <span @click="importPrivateKey" v-tooltip.left="'Import an address from Private Key'" class="pointer dropdown-item fw-normal"><i class="fa fa-upload"></i> Import Private Key</span>
                     <div class="dropdown-divider"></div>
                     <span @click="viewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" class="pointer dropdown-item fw-normal"><i class="fa fa-key"></i>  View Seed Words</span>
-                    <span v-if="encrypted" @click="logout" class="pointer dropdown-item fw-normal"><i class="fa fa-sign-out-alt"></i>  Logout</span>
+                    <template v-if="encrypted">
+                        <div class="dropdown-divider"></div>
+                        <span @click="handleLogout" v-tooltip.left="'Return to the password screen'" class="pointer dropdown-item fw-normal"><i class="fa fa-sign-out-alt"></i>  Logout</span>
+                    </template>
                 </div>
             </div>
         </div>
@@ -48,6 +51,7 @@
 <script>
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
+import UtilsHelper from "src/utils/utils-helper";
 const {version} = PandoraPay.enums.wallet.address;
 
 export default {
@@ -75,7 +79,7 @@ export default {
         },
 
         encrypted(){
-            return this.$store.state.wallet.encrypted;
+            return this.$store.state.wallet.isEncrypted;
         }
 
     },
@@ -93,9 +97,14 @@ export default {
 
             try{
 
+                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+                if (password === null ) return
+
                 this.$store.state.page.refLoadingModal.showModal();
 
-                const out = await PandoraPay.wallet.manager.addNewWalletAddress(account.selectedType);
+                await UtilsHelper.sleep(50 )
+
+                const out = await PandoraPay.wallet.manager.addNewWalletAddress(password, account.selectedType);
                 if (!out) throw "Result is false"
 
                 this.$notify({
@@ -122,18 +131,24 @@ export default {
         },
 
         viewMnemonic(){
-            return this.$emit('viewMnemonic', true);
+            return this.$emit('viewMnemonic')
         },
 
-        logout(){
+        async handleLogout(){
 
-            const out = PandoraPay.wallet.encryption.logoutEncryptionWallet();
-            if (out)
+            try{
+                const out = await PandoraPay.wallet.manager.encryption.logoutWallet();
+                if (!out) throw "logout was not true"
+
                 this.$notify({
                     type: 'success',
                     title: `You have been logged out!`,
                     text: `You have been logged out. You need to login with the password to access your wallet.`,
                 });
+
+            }catch(err){
+                console.error(err)
+            }
 
         },
 

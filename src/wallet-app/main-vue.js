@@ -13,8 +13,6 @@ Vue.use(VTooltip);
 Vue.use(Notification);
 Vue.use(VueClipboard);
 
-import Consensus from "src/consensus/consensus"
-
 export default (params) => {
 
     const app = new Vue({
@@ -33,7 +31,6 @@ export default (params) => {
     }).$mount('#wallet');
 
     window.PandoraPayWalletApp = app;
-    window.PandoraPayConsensus = Consensus;
 
     return app
 

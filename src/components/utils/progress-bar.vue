@@ -1,8 +1,8 @@
 <template>
-    <div class="progress-bar">
-        <div class="fill" :style="`width: ${value}%;`">
-            <div class="centered">{{text ? text : `${value}%`}}</div>
+    <div class="progress mb-3  position-relative" style="height:15px">
+        <div class="progress-bar bg-primary progress-bar-striped" role="progressbar" :style="`width: ${value}%`">
         </div>
+        <small class="justify-content-center d-flex position-absolute w-100">{{text}}</small>
     </div>
 </template>
 
@@ -19,24 +19,4 @@ export default {
 
 <style scoped>
 
-    .progress-bar {
-        width: 100%;
-        background-color: #e0e0e0;
-        padding: 3px;
-        border-radius: 3px;
-        box-shadow: inset 0 1px 3px rgba(0, 0, 0, .2);
-    }
-
-    .progress-bar .centered{
-        position: relative;
-    }
-
-    .progress-bar .fill{
-        display: block;
-        height: 22px;
-        background-color: #659cef;
-        border-radius: 3px;
-
-        transition: width 500ms ease-in-out;
-    }
 </style>

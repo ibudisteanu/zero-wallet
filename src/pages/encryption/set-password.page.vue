@@ -1,38 +1,58 @@
 <template>
 
     <layout>
-        <div class="container pd-top-20">
-            <div class="boxed ">
 
-                <h1>Set Password</h1>
-                <span class="pd-bottom-20">Encrypting your wallet. Use a strong password to avoid brute forcing</span>
+        <layout-title icon="fa-lock" title="Encrypt wallet" >Set a password for your wallet. The password will be necessary on your machine to open and use the wallet.</layout-title>
 
-                TODO
+        <div class="card mb-3">
+            <div class="card-header bg-light">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="mb-0">Set the password of your wallet</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
 
-                <span class="gray">Password Strength</span>
-                <progress-bar :value="strengthPassword*20" :text="strengthPasswordMessage" />
+                <div class="row">
+                    <div class="col-12 col-sm-6">
+                        <label>Password</label>
+                        <password-input v-model="password"/>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <label >Retype Password</label>
+                        <password-input v-model="retypePassword"/>
+                    </div>
+                </div>
 
-                <span class="gray pd-top-20" >Password</span>
-                <password-input v-model="password"/>
-
-                <span class="gray" >Retype Password</span>
-                <password-input v-model="retypePassword"/>
-
-                <alert-box v-if="error" type="error">{{error}}</alert-box>
-
-                <loading-button text="Set Password" @submit="handleSetPassword" icon="fa fa-lock"  :disabled="password.length === 0 || retypePassword.length === 0" />
-
-                <span class="thick pd-top-20 pd-bottom-20">Tip: Write down your password. Use national specific characters.</span>
-
-                <div class="centered">
-                    <span class="danger">
-                        <strong>Warning:</strong> In case you lose your password, you will need your <strong>seed to recover your seed accounts!</strong>. <br/>
-                        Imported accounts generated from a different seed can not be recovered by using your seed.
-                    </span>
+                <div class="row pt-4">
+                    <div class="col-12 col-sm-6">
+                        <label>Encryption difficulty: {{encryptionDifficulty}} <i class="fa fa-question" v-tooltip.bottom="'The harder the encryption is, the harder for brute force is to crack it'" /> </label>
+                        <input class="form-range" type="range" min="1" max="10" v-model="encryptionDifficulty" />
+                        <label v-if="encryptionDifficulty > 1">WARNING: High Difficulty will require 40-60 seconds to verify the password</label>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <label>Password Strength <i class="fa fa-question" v-tooltip.bottom="'Avoid using guessable passwords as dictionary attacks can crack it.'" /> </label>
+                        <progress-bar :value="strengthPassword*20" :text="strengthPasswordMessage" />
+                    </div>
                 </div>
 
             </div>
+            <div class="card-body bg-light">
+                <alert-box v-if="error" type="error">{{error}}</alert-box>
+                <div class="text-center">
+                    <loading-button text="Set Password" @submit="handleSetPassword" icon="fa fa-lock"  :disabled="password.length === 0 || retypePassword.length === 0" />
+                </div>
+            </div>
         </div>
+
+        <alert-box type="info">
+            <strong>Warning:</strong> <br/> <br/>
+            In case you lose your password, you will need your <strong>seed to recover your seed accounts!</strong> <br/><br/>
+            Imported accounts generated from a different seed can not be recovered by using your seed.
+            Use a strong password to avoid brute forcing.
+        </alert-box>
+
     </layout>
 
 </template>
@@ -45,15 +65,18 @@ import LoadingButton from "src/components/utils/loading-button.vue"
 import ProgressBar from "src/components/utils/progress-bar"
 import strength from 'strength'
 import AlertBox from "src/components/utils/alert-box"
+import LayoutTitle from "src/components/layout/layout-title";
+import UtilsHelper from "src/utils/utils-helper"
 
 export default {
 
-    components: {PasswordInput, Layout, LoadingButton, ProgressBar, AlertBox},
+    components: {PasswordInput, Layout, LayoutTitle, LoadingButton, ProgressBar, AlertBox},
 
     data(){
         return {
             password: '',
             retypePassword: '',
+            encryptionDifficulty: 1,
             error: '',
         }
     },
@@ -80,50 +103,27 @@ export default {
             try{
 
                 this.error = '';
-
                 this.$store.state.page.refLoadingModal.showModal();
 
-                const promise = new Promise((resolve)=>{
+                await UtilsHelper.sleep(50 )
 
+                //if (this.password.length < 6) throw Error("password is too weak");
+                if (this.password !== this.retypePassword) throw Error("passwords are not matching");
 
-                    setTimeout( async ()=>{
+                const out = await PandoraPay.wallet.manager.encryption.encryptWallet( this.password, this.encryptionDifficulty );
 
-                        try{
+                if (!out) throw "Result is not true";
 
-                            //if (this.password.length < 6) throw Error("password is too weak");
-                            if (this.password !== this.retypePassword) throw Error("passwords are not matching");
-
-                            const out = await PandoraPay.wallet.encryption.encryptWallet( undefined, this.password );
-
-                            if (out) {
-
-                                this.$notify({
-                                    type: 'success',
-                                    title: `Wallet has been encrypted successfully`,
-                                    text: `Your wallet has been encrypted with the password provided`,
-                                });
-
-                                this.$router.push('/');
-
-                            }
-                            else
-                                throw Error("Result is not true");
-
-
-                        }catch(err){
-                            this.error = err.message;
-                        }
-
-                        resolve(true);
-
-                    }, 1000);
-
+                this.$notify({
+                    type: 'success',
+                    title: `Wallet has been encrypted successfully`,
+                    text: `Your wallet has been encrypted with the password provided`,
                 });
 
-                await promise;
+                this.$router.push('/');
 
-
-
+            }catch(err){
+                this.error = err.toString();
             }finally{
                 this.$store.state.page.refLoadingModal.closeModal();
                 resolve(true);
@@ -138,7 +138,5 @@ export default {
 </script>
 
 <style scoped>
-    .wordwrap{
-        display: block;
-    }
+
 </style>

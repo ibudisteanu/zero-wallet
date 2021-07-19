@@ -25,17 +25,16 @@ import store from "./../store/store"
 
 const guardDecrypted = (to, from, next) => {
 
-    if (store.state.wallet.loaded && !store.state.wallet.loggedIn ) return next('/login');
-
+//    if (store.state.wallet.initialized && !store.state.wallet.loaded ) return next('/login');
     next();
 
 };
 
 const guardLogin = (to, from, next) =>{
 
-    if (store.state.wallet.loaded && store.state.wallet.loggedIn ) return next('/');
-
+//    if (store.state.wallet.initialized && store.state.wallet.loaded ) return next('/');
     next();
+
 };
 
 const routes = [
@@ -44,12 +43,16 @@ const routes = [
 
     {path: '/receive', component: ReceivePage, beforeEnter: guardDecrypted },
     {path: '/wallet', component: WalletPage, beforeEnter: guardDecrypted },
+
     {path: '/set-password', component: SetPasswordPage , beforeEnter: guardDecrypted},
     {path: '/remove-password', component: RemovePasswordPage, beforeEnter: guardDecrypted },
 
     {path: '/explorer/block/:query', component: BlockExplorerPage },
-    {path: '/explorer/tx/:query', component: TransactionExplorerPage },
+    {path: '/explorer/tx/:query', component: TransactionExplorerPage
+    },
     {path: '/explorer/mem-pool', component: MemPoolExplorerPage },
+    {path: '/explorer/mem-pool/:page', component: MemPoolExplorerPage },
+
     {path: '/explorer', component: BlockchainExplorerPage },
     {path: '/explorer/:page', component: BlockchainExplorerPage },
 
@@ -64,8 +67,8 @@ const routes = [
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
 
     {path: '/', component: AddressPage, beforeEnter: guardDecrypted },
-    {path: '/address/:address', component: AddressPage },
-    {path: '/address/:address/:page', component: AddressPage },
+    {path: '/address/:address', component: AddressPage, beforeEnter: guardDecrypted  },
+    {path: '/address/:address/:page', component: AddressPage, beforeEnter: guardDecrypted  },
 
     { path: '*', name: 'not-found', component: NotFoundPage,}
 

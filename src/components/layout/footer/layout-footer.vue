@@ -20,6 +20,12 @@
             </div>
 
         </div>
+
+
+        <div class="fixed-button pointer" @click="handleShowTestnetFaucer" v-tooltip.top="`Testnet Faucet`">
+            <div class="rounded-fixed-btn btn-secondary"><i class="fa fa-coins"></i></div>
+        </div>
+
     </footer>
 
 </template>
@@ -29,7 +35,6 @@ import consts from 'consts/consts';
 export default {
 
     computed:{
-
         entity(){
             return consts.entity;
         },
@@ -53,27 +58,33 @@ export default {
 
             return 'na';
         },
-
-        chatIndex(){
-            return this.$store.state.chat.index;
-        },
-
-        chatStatus(){
-            const status = this.$store.state.chat.status;
-
-            if (status === 'sync') return 'Established';
-            if (status === 'syncing') return 'Synching';
-            if (status === 'offline') return 'Offline';
-            if (status === 'online') return 'Connected';
-
-            return 'na';
-        },
-
     },
+
+    methods:{
+        handleShowTestnetFaucer(){
+            this.$store.state.page.refTestnetFaucetModal.showModal()
+        },
+    }
 
 }
 </script>
 
 <style scoped>
+
+    .fixed-button{
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        padding: 0 20px 20px 20px;;
+    }
+    .rounded-fixed-btn{
+        height: 50px;
+        width: 50px;
+        line-height: 50px;
+        font-size: 1.5em;
+        border-radius: 50%;
+        text-align: center;
+        cursor: pointer;
+    }
 
 </style>

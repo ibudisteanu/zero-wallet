@@ -12,19 +12,21 @@
             </alert-box>
 
             <balances :publicKeyHash="publicKeyHash" />
-            <transactions :publicKeyHash="publicKeyHash" />
+            <transactions :publicKeyHash="publicKeyHash" :page="page" />
 
         </template>
-        <template class="py-3" v-else>
-            <loading-spinner />
-        </template>
+        <div class="py-3 text-center" v-else>
+            <loading-spinner class="fs-3" />
+        </div>
+
+        <alert-box v-if="error" type="error">{{error}}</alert-box>
+
     </layout>
 </template>
 
 <script>
 import Layout from "src/components/layout/layout";
 import LayoutTitle from "src/components/layout/layout-title";
-import Consensus from "src/consensus/consensus"
 import Balances from "../../components/wallet/balance/balances";
 import Transactions from "../../components/wallet/transactions/transactions";
 import AccountIdenticon from "../../components/wallet/account/account-identicon";
@@ -38,16 +40,27 @@ export default {
 
     data(){
         return {
-            publicKeyHash: ''
+            publicKeyHash: '',
+            error: "xxxx",
         }
     },
 
     computed:{
+
+        page(){
+            let page = this.$route.params.page
+            if (typeof page == "string"){
+                page = Number.parseInt(page)
+                return page;
+            }
+            return page
+        },
+
         address(){
             return this.$store.state.addresses.list[this.publicKeyHash];
         },
         account(){
-            return this.$store.state.addresses.accounts[this.publicKeyHash]
+            return this.$store.state.accounts.list[this.publicKeyHash]
         },
         mainPublicKeyHash(){
             return this.$store.state.wallet.mainPublicKeyHash
@@ -66,6 +79,7 @@ export default {
         async loadAddress(){
 
             try{
+
                 this.error = ""
 
                 let address = this.$route.params.address
@@ -77,6 +91,7 @@ export default {
                     publicKeyHash = addressJSON.publicKeyHash
                 } else {
                     publicKeyHash = this.mainPublicKeyHash
+                    if (!this.$store.state.wallet.addresses[publicKeyHash]) return
                     address = this.$store.state.wallet.addresses[publicKeyHash].addressEncoded
                 }
 
@@ -88,14 +103,15 @@ export default {
 
                 this.publicKeyHash = publicKeyHash
 
-                await Consensus.syncPromise;
+                await this.$store.state.blockchain.syncPromise;
 
                 if (!this.publicKeyHash) return
 
-                await Consensus.subscribeAccount( this.publicKeyHash )
+                await this.$store.dispatch('subscribeAccount', this.publicKeyHash )
 
             }catch(err){
                 this.error = err.toString()
+                console.error(err)
             }
 
         }
@@ -103,13 +119,15 @@ export default {
     },
 
     watch: {
-        '$route' (to, from) {
+        $route (to, from) {
             return this.loadAddress();
         },
-        'mainPublicKeyHash' (to, from){
-            if (this.mainPublicKeyHash && (from === this.publicKeyHash || !this.publicKeyHash) )
-                return this.loadAddress();
+        async mainPublicKeyHash (to, from){
+            if (this.mainPublicKeyHash && (from !== this.publicKeyHash || !this.publicKeyHash) )
+                await this.loadAddress();
 
+            if (!this.$store.getters.walletContains(from) && from !== to)
+                await this.$store.dispatch('unsubscribeAccount', from )
         },
     },
 
@@ -118,9 +136,8 @@ export default {
     },
 
     async beforeDestroy() {
-        const publicKeyHash = this.computedPublicKeyHash || this.publicKeyHash
-        if (!this.$store.getters.walletContains(publicKeyHash))
-            await Consensus.unsubscribeAccount(publicKeyHash )
+        if (!this.$store.getters.walletContains(this.publicKeyHash))
+            await this.$store.dispatch('unsubscribeAccount', this.publicKeyHash )
 
     }
 

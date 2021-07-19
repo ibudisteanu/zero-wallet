@@ -1,27 +1,32 @@
 <template>
 
-    <layout>
-        <div class="container pd-top-20">
-            <div class="centered">
+    <layout :disable-layout="true">
 
-                <loading-spinner v-if="!$store.state.wallet.loaded" />
+        <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
 
-                <div v-if="$store.state.wallet.loaded">
+            <div class="d-flex flex-center mb-3">
+                <img :src="require('src/assets/pandora-pay-logo-square.png').default" class="logo">
+            </div>
+            <h1 class="d-flex flex-center mb-3 logo-color">
+                Pandora Pay
+            </h1>
 
-                    <img :src="require('src/assets/pandora-pay-logo.png').default"  class="logo"> <br/>
+            <div class="d-flex flex-center mb-2 mb-sm-4">
+                <h2 class="fs-0 fs-sm-2 fs-md-3">The Anonymous Cash awaits</h2>
+            </div>
 
-                    <h1 class="title mg-bottom-0 mg-top-0">World's First Anonymous Cash</h1>
-                    <h2 class="sub-title gray mg-top-0 pd-bottom-40">The Anonymous Cash awaits</h2>
+            <div v-if="!$store.state.wallet.initialized" class="d-flex justify-content-center" >
+                <loading-spinner class="fs-3"/>
+            </div>
+            <div v-else>
 
-                    <div class="left">
-                        <span class="gray" >Password</span>
-                        <password-input v-model="password"/>
+                <label>Password</label>
+                <password-input v-model="password" v-on:keyup.native.enter="()=>$refs.refLoadingButton.handleClick()" />
 
-                        <alert-box v-if="error" type="error">{{error}}</alert-box>
+                <alert-box class="mt-3" v-if="error" type="error">{{error}}</alert-box>
 
-                        <loading-button text="Login" @submit="handleLogin" icon="fa fa-sign-in-alt"  :disabled="password.length === 0" />
-                    </div>
-
+                <div class="pt-3 d-flex justify-content-center">
+                    <loading-button ref="refLoadingButton" text="Login" @submit="handleLogin" icon="fa fa-sign-in-alt"  :disabled="!password.length" />
                 </div>
 
             </div>
@@ -38,7 +43,7 @@ import PasswordInput from "src/components/utils/password-input";
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import LoadingButton from "src/components/utils/loading-button.vue"
 import AlertBox from "src/components/utils/alert-box"
-
+import UtilsHelper from "src/utils/utils-helper"
 export default {
     components: {LoadingSpinner, PasswordInput, Layout, LoadingButton, AlertBox},
 
@@ -63,10 +68,14 @@ export default {
 
             try{
 
-                const out = await PandoraPay.wallet.encryption.decryptWallet(this.password);
+                await UtilsHelper.sleep(50)
+
+                const out = await PandoraPay.wallet.manager.encryption.decryptWallet(this.password);
 
                 if (!out)
                     throw Error("An error was encountered");
+
+                this.$store.dispatch('readWallet' )
 
                 if (this.$router.currentRoute.path !== '/')
                     this.$router.push('/');
@@ -91,21 +100,14 @@ export default {
 
 <style scoped>
 
-    .container{
-        max-width: 400px;
-    }
-
     .logo{
-        max-width: 200px;
-        max-height: 200px;
+        max-width: 100px;
+        max-height: 100px;
     }
 
-    .title{
-        font-weight: bolder;
-    }
-
-    .sub-title{
-        font-weight: normal;
+    .dark .logo{
+        -webkit-filter: drop-shadow( 0px 0px 25px rgba(255, 255, 255, 0.5));
+        filter: drop-shadow( 0px 0px 25px rgba(255, 255, 255, 0.5));
     }
 
 </style>

@@ -1,3 +1,4 @@
+import actions from "./wallet-actions"
 import mutations from "./wallet-mutations"
 import getters from "./wallet-getters"
 
@@ -5,11 +6,12 @@ export default {
 
     state: {
 
-        loaded: false,
-        loggedIn: false,
+        initialized: false, //wasm wallet initialized
+        loaded: false, //wasm wallet decrypted
+
+        isEncrypted: false,
 
         version: null,
-        mnemonic: null,
         seed: null,
         seedIndex: null,
         count: null,
@@ -23,6 +25,7 @@ export default {
 
     },
 
+    actions,
     getters,
     mutations,
 

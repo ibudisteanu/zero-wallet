@@ -10,16 +10,16 @@
 
       <ul class="navbar-nav navbar-nav-icons flex-row align-items-center">
 
-         <li class="nav-item">
+         <li class="nav-item" v-tooltip.bottom="`Switch theme`">
             <i :class="`fa fa-${$store.state.page.dark ?'sun':'moon'} nav-item-icon pointer`" @click="handleToggleDark"></i>
          </li>
 
-         <li class="nav-item">
+         <li class="nav-item pointer unselectable" v-tooltip.bottom="`${showNetworksMenu ? '' :'Select network'}`" @click="handleToggleNetworksMenu" v-on-clickaway="closeNetworksMenu">
             <i class="fa fa-globe-americas nav-item-icon"></i>
             <span class="badge badge-soft-success">{{$store.state.network.networkName}}</span>
             <i class="fa fa-chevron-down"></i>
 
-            <div :class="`dropdown-menu dropdown-menu-end py-0 ${0 ? 'show': ''}`">
+            <div :class="`dropdown-menu dropdown-menu-end py-0 ${showNetworksMenu ? 'show': ''}`">
                <div class="bg-white rounded-2 py-2">
                   <a class="dropdown-item" href="#">MAIN Net</a>
                   <a class="dropdown-item" href="#">DEV Net</a>
@@ -40,23 +40,42 @@
 
 import consts from "consts/consts"
 import HeaderAccount from "./account/header-account"
+import { mixin as clickaway } from 'vue-clickaway'
 
 export default {
 
    components: {HeaderAccount},
 
-    computed:{
-        title(){
-            return consts.title;
-        },
+   mixins: [ clickaway ],
+
+   data(){
+      return {
+         showNetworksMenu: false,
+      }
+   },
+
+   computed:{
+      title(){
+         return consts.title;
+      },
+      faucetTestnetEnabled(){
+         return this.$store.state.faucet.faucetTestnetEnabled
+      }
     },
 
    methods: {
+
       handleToggleDark(){
          this.$store.commit('setDark', !this.$store.state.page.dark)
       },
       handleToggleLeftSidebar(){
          this.$store.commit('setLeftSidebarShow', !this.$store.state.page.leftSidebarShow)
+      },
+      handleToggleNetworksMenu(){
+         this.showNetworksMenu = !this.showNetworksMenu
+      },
+      closeNetworksMenu(){
+         this.showNetworksMenu = false
       }
    }
 

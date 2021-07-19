@@ -5,7 +5,7 @@
         <steps-bar :length="3" :active="step" />
 
         <template v-if="step === 1">
-            <span class="gray">Node address</span>
+            <span >Node address</span>
             <select v-model="nodeAddress">
                 <option v-for="(node, key) in delegateStakesNodes"
                         :key="`node-${key}`"
@@ -87,12 +87,12 @@ export default {
             this.delegate = delegate;
             this.delegateStakeNonce = delegate ? delegate.delegateStakeNonce : 0;
 
-            this.$refs.modal.showModal();
+            return this.$refs.modal.showModal();
         },
 
 
         closeModal() {
-            this.$refs.modal.closeModal();
+            return this.$refs.modal.closeModal();
         },
 
         async handleConnectNode(resolve){

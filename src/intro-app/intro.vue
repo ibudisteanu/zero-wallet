@@ -1,12 +1,13 @@
 <template>
-    <div id="pandora-wallet-loading" >
+    <div id="pandora-wallet-intro" >
 
         <main class="container">
 
             <div class="center">
+
                 <img :src="require('src/assets/pandora-pay-logo-square.png').default" class="logo" >
 
-                <svg width="200px" height="200px" viewBox="0 0 35 35">
+                <svg width="200px" height="200px" viewBox="0 0 33 33">
                     <polygon class="triangle" fill="none" stroke="#fff" stroke-width="1" points="16,1 32,32 1,32" />
                 </svg>
 
@@ -31,7 +32,7 @@ import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: { AlertBox},
+    components: { AlertBox },
 
     data(){
         return {
@@ -46,7 +47,7 @@ export default {
 
         if (typeof window === "undefined") return;
 
-        if (typeof localStorage !== "undefined" && localStorage.getItem('dark') === 'true')
+        if (typeof localStorage !== "undefined" && ( localStorage.getItem('dark') === 'true' || !localStorage.getItem('dark') ))
             document.getElementsByTagName("html")[0].classList.add('dark');
 
         const self = this
@@ -163,18 +164,29 @@ export default {
     .logo{
         max-width: 60px;
         position: absolute;
-        margin-top: 90px;
+        margin-top: 95px;
         margin-left: 60px;
+    }
+
+    .dark .logo{
+        -webkit-filter: drop-shadow( 0px 0px 20px rgba(255, 255, 255, 1));
+        filter: drop-shadow( 0px 0px 20px rgba(255, 255, 255, 1));
     }
 
     .loading-text-div{
         text-align: center;
+        margin-top:20px
     }
 
     .loading-text{
         font-family: sans-serif;
         font-size: 12px;
         animation: blink .9s ease-in-out infinite;
+    }
+
+    .dark .loading-text{
+        -webkit-filter: drop-shadow( 0px 0px 4px rgba(255, 255, 255, 0.5));
+        filter: drop-shadow( 0px 0px 4px rgba(255, 255, 255, 0.5));
     }
 
     .container {
@@ -202,6 +214,9 @@ export default {
         stroke:#0EB4DB;
         stroke-dasharray: 17;
         animation: dash 2.5s cubic-bezier(0.35, 0.04, 0.63, 0.95) infinite;
+    }
+
+    .dark .logo{
     }
 
     @keyframes dash {

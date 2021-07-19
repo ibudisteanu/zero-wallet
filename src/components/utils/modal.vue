@@ -2,20 +2,23 @@
 
     <div class="modal fade show" v-if="open" style="display: flex !important">
 
-        <div class="modal-backdrop fade show" @click="closeModal"></div>
+        <div class="modal-backdrop fade show" @click="handleClickBackground"></div>
 
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content position-relative">
                 <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                    <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" @click="closeModal"></button>
+                    <button v-if="closeButton" class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" @click="closeModal"></button>
                 </div>
                 <div class="modal-body p-0">
                     <div v-if="title" class="rounded-top-lg py-3 ps-3 pe-6 bg-light">
-                        <h5 class="mb-1" id="modalExampleDemoLabel">{{title}}</h5>
+                        <h5 class="mb-1">{{title}}</h5>
                     </div>
-                    <div :class="`${contentClass} pb-20 d-inline-block w-100`">
-                        <slot/>
+                    <div v-if="hasBodySlot" :class="`${contentClass} pb-20 d-inline-block w-100`">
+                        <slot name="body"/>
                     </div>
+                </div>
+                <div v-if="hasFooterSlot" class="modal-footer bg-light">
+                    <slot name="footer"/>
                 </div>
             </div>
         </div>
@@ -39,10 +42,26 @@ export default{
     props:{
         title: {default: 'Modal Title'},
         closeButton: { default: true },
-        contentClass: {default: 'p-3'}
+        contentClass: {default: 'p-3 p-sm-4'}
+    },
+
+    computed:{
+        hasBodySlot () {
+            return !!this.$slots['body']
+        },
+        hasFooterSlot () {
+            return !!this.$slots['footer']
+        }
     },
 
     methods:{
+
+        handleClickBackground(e){
+            if ( e ) e.stopPropagation();
+            if (!this.closeButton) return
+
+            return this.closeModal()
+        },
 
         closeModal(e){
 
@@ -94,7 +113,7 @@ export default{
     }
 
     .modal-content{
-        max-width: 520px;
+        width: 520px;
     }
 
 </style>

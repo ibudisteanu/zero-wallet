@@ -1,35 +1,43 @@
 export default {
 
-    setDark(context, value ){
+    setDark(state, value ){
 
-        context.dark = value;
+        state.dark = value;
         if (value) {
             document.getElementsByTagName("html")[0].classList.add('dark');
             if (typeof localStorage !== "undefined") localStorage.setItem('dark', 'true' )
         } else {
             document.getElementsByTagName("html")[0].classList.remove('dark');
-            if (typeof localStorage !== "undefined") localStorage.removeItem('dark')
+            if (typeof localStorage !== "undefined") localStorage.setItem('dark', 'false')
         }
     },
 
-    setLoadingModal(context, ref){
-        context.refLoadingModal = ref;
+    setLoadingModal(state, ref){
+        state.refLoadingModal = ref;
     },
 
-    setAccountTypeModal(context, ref){
-        context.refAccountTypeModal = ref;
+    setAccountTypeModal(state, ref){
+        state.refAccountTypeModal = ref;
     },
 
-    setQRCodeModal(context, ref){
-        context.refQRCodeModal = ref;
+    setQRCodeModal(state, ref){
+        state.refQRCodeModal = ref;
     },
 
-    setModalOpened(context, value){
-        context.modalOpened = value
+    setTestnetFaucetModal(state, ref){
+        state.refTestnetFaucetModal = ref;
     },
 
-    setLeftSidebarShow(context, value){
-        context.leftSidebarShow = value
+    setWalletPasswordModal(state, ref){
+        state.refWalletPasswordModal = ref;
+    },
+
+    setModalOpened(state, value){
+        state.modalOpened = value
+    },
+
+    setLeftSidebarShow(state, value){
+        state.leftSidebarShow = value
     },
 
 }

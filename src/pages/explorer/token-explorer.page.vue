@@ -90,7 +90,6 @@
 <script>
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
-import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import AlertBox from "src/components/utils/alert-box"
@@ -125,14 +124,14 @@ export default {
 
                 if (!this.hash) throw 'Token hash was not specified';
 
-                await Consensus.syncPromise;
+                await this.$store.state.blockchain.syncPromise;
 
-                await Consensus.getTokenByHash(this.hash);
-
-                this.loaded = true
+                await this.$store.dispatch('getTokenByHash', this.hash);
 
             }catch(err){
                 this.error = err.toString()
+            }finally{
+                this.loaded = true
             }
 
         },

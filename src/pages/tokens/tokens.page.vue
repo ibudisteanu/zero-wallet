@@ -29,7 +29,6 @@
 
 <script>
 
-import Consensus from "src/consensus/consensus"
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
 import ShowTokensInfo from "src/components/explorer/show-tokens-info.vue"
@@ -65,7 +64,7 @@ export default {
     methods: {
 
         async startDownloadingTokens() {
-            await Consensus.syncPromise;
+            await this.$store.state.blockchain.syncPromise;
         },
 
         async handleViewMore(resolve){

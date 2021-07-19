@@ -2,7 +2,7 @@
 
     <div class="account" v-if="address">
 
-        <div class="toggle" @click="toggleMenu" v-on-clickaway="closeMenu">
+        <div class="toggle unselectable" @click="toggleMenu" v-on-clickaway="closeMenu" v-tooltip.bottom="`${menuOpen ? '' : address.addressEncoded}`" >
             <account-identicon :address="address.addressEncoded" :identicon="identicon" :size="20" :outer-size="7" :version="address.version" :disableRoute="true" />
             <i class="right-float chevron-down fa fa-chevron-down"></i>
         </div>
@@ -64,19 +64,15 @@ export default {
         },
 
         viewMnemonic(){
-            this.$refs.refWalletSeedModal.showModal( );
+            return this.$refs.refWalletSeedModal.showModal(  );
         },
 
         showImportAccount(){
-            this.$refs.refImportAccountModal.showModal( );
+            return this.$refs.refImportAccountModal.showModal( );
         },
 
-        async showImportPrivateKey(){
-
-            const account = await this.$store.state.page.refAccountTypeModal.showModal();
-            if (account.selectedType === -1) return;
-
-            this.$refs.refImportPrivateKeyModal.showModal( account.selectedType );
+        showImportPrivateKey(){
+            return this.$refs.refImportPrivateKeyModal.showModal( );
         },
 
     },

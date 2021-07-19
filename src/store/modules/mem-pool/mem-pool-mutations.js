@@ -2,11 +2,11 @@ import Vue from 'vue';
 
 export default {
 
-    setMemPool(context, { start, mempool, hasMore, next }) {
+    setMemPool(state, { page, mempool }) {
 
         let list
-        if (start !== 0)
-            list = {... ( context.list || {} ) };
+        if (page !== 0)
+            list = state.list || {};
         else
             list = {}
 
@@ -14,11 +14,9 @@ export default {
         for (const hash of mempool.hashes)
             list[hash] = true;
 
-        context.list = list;
-        context.start = start;
-        context.count = mempool.count;
-        context.hasMore = hasMore
-        context.next = next
+        state.list = {...list};
+        state.page = page+1;
+        state.count = mempool.count;
     },
 
 

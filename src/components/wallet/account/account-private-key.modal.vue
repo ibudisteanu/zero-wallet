@@ -2,7 +2,9 @@
 
     <modal ref="modal" :title="`Private Key ${ address ? 'of '+address.name : '' }`" >
 
-        <secret-text v-if="privateKey" class="pt-3" :text="privateKey" title="Private Key" warning="STEAL YOUR FUNDS FROM THIS ACCOUNT" />
+        <template slot="body">
+            <secret-text v-if="privateKey" class="pt-3" :text="privateKey" title="Private Key" warning="STEAL YOUR FUNDS FROM THIS ACCOUNT" />
+        </template>
 
     </modal>
 
@@ -30,55 +32,28 @@ export default {
     },
 
     computed:{
-
-        encrypted(){
-            return this.$store.state.wallet.encrypted;
-        }
-
     },
 
     methods: {
 
-        showModal(address,) {
+        async showModal(address,) {
 
             Object.assign(this.$data, this.$options.data());
 
             this.address = address;
 
-            this.handleShowPrivateKey();
+            const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+            if (password === null ) return
 
-            this.$refs.modal.showModal();
+            this.privateKey = await PandoraPay.wallet.getWalletAddressPrivateKey( password, this.address.addressEncoded )
+
+            return this.$refs.modal.showModal();
 
         },
 
         closeModal() {
-            this.$refs.modal.closeModal();
+            return this.$refs.modal.closeModal();
         },
-
-        handleShowPrivateKey(){
-
-            const privateKey = this.address.privateKey.key;
-            this.privateKey = privateKey.toString("hex");
-
-        },
-
-        copyPrivateKey(){
-
-            this.$copyText(this.privateKey).then( e =>
-                this.$notify({
-                    type: 'success',
-                    title: `Copied to clipboard successfully`,
-                    text: `Private Key ${this.privateKey} copied to clipboard`,
-                }),
-                e =>
-                this.$notify({
-                    type: 'error',
-                    title: `Clipboard failed`,
-                    text: `Failed to copy to clipboard`,
-                })
-            )
-
-        }
 
     }
 

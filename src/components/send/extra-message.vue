@@ -1,7 +1,7 @@
 <template>
     <div>
 
-        <span class="gray">Extra message</span>
+        <span >Extra message</span>
         <div :class="`extra-message-row ${identicon ? 'identicon':''}`">
 
 
@@ -71,12 +71,12 @@ export default {
     },
 
     watch: {
-        'extraMessage' (to, from) {
+        extraMessage (to, from) {
             return this.$emit('changed', {
                 extraMessage: to,
             });
         },
-        'extraEncryptionOption' (to, from) {
+        extraEncryptionOption (to, from) {
             return this.$emit('changed', {
                 extraEncryptionOption: this.selectedDestinationAddressModel ? this.selectedDestinationAddressModel.publicKey : '',
             });

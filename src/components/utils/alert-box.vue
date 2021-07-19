@@ -9,6 +9,7 @@
 
 <script>
 export default {
+
     props: {
         type: {default: "error"},
     },
@@ -16,13 +17,15 @@ export default {
     computed:{
         getIcon(){
             if (this.type === "warning") return "fa-exclamation-triangle"
-            if (this.type === "warning") return "fa-exclamation-circle"
+            if (this.type === "error") return "fa-exclamation-circle"
+            if (this.type === "info") return "fa-info"
             return ""
         },
 
         getBackground(){
             if (this.type === "warning") return "warning"
             if (this.type === "error") return "danger"
+            if (this.type === "info") return "info"
             return ""
         }
     },

@@ -117,7 +117,6 @@
 
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
-import Consensus from "src/consensus/consensus"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import StringHelper from "src/utils/string-helper"
@@ -167,10 +166,13 @@ export default {
                 if (this.height === undefined && !this.hash)
                     throw 'Tx height/hash was not specified';
 
-                await Consensus.syncPromise;
+                await this.$store.state.blockchain.syncPromise;
 
-                if (this.height !== undefined) await Consensus.getTransactionByHeight(this.height);
-                if (this.hash ) await Consensus.getTransactionByHash(this.hash);
+                if (this.height !== undefined) await this.$store.dispatch('getTransactionByHeight', this.height);
+                if (this.hash ) await this.$store.dispatch('getTransactionByHash', this.hash);
+
+                if (this.tx)
+                    this.$store.commit('addViewTransactionsHashes', [this.tx.bloom.hash] )
 
             }catch(err){
                 this.error = err.toString()
@@ -193,6 +195,12 @@ export default {
 
     mounted(){
         return this.loadTransaction();
+    },
+
+    beforeDestroy() {
+
+        if (this.tx)
+            this.$store.commit('removeViewTransactionsHashes', [this.tx.bloom.hash] )
     }
 
 }

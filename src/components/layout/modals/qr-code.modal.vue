@@ -1,9 +1,11 @@
 <template>
 
     <modal ref="modal" :title="`QR Code ${title ? ': '+title : ''}`" >
-        <div class="qr-code d-inline-block" >
-            <qr-code :data="address" />
-        </div>
+        <template slot="body">
+            <div class="w-100 d-inline-block" >
+                <qr-code :data="address" />
+            </div>
+        </template>
     </modal>
 
 </template>
@@ -38,12 +40,11 @@ export default {
             this.address = address;
             this.title = title;
 
-            this.$refs.modal.showModal();
-
+            return this.$refs.modal.showModal();
         },
 
         closeModal() {
-            this.$refs.modal.closeModal();
+            return this.$refs.modal.closeModal();
         },
 
 
@@ -53,5 +54,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

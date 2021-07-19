@@ -8,8 +8,10 @@
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0 text-truncate">Block Explorer {{height ? height : hash}}  </h5>
-                        <loading-spinner v-if="!loaded"/>
+                        <h5 class="mb-0 text-truncate">
+                            Block Explorer {{height ? height : hash}}
+                            <loading-spinner v-if="!loaded"/>
+                        </h5>
                     </div>
                 </div>
             </div>
@@ -138,7 +140,6 @@ import ShowTransactions from "src/components/explorer/show-transactions"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import AlertBox from "src/components/utils/alert-box"
 
-import Consensus from "src/consensus/consensus"
 import StringHelper from "src/utils/string-helper"
 
 export default {
@@ -172,13 +173,13 @@ export default {
         },
         blk(){
             if (this.height !== undefined )
-                return this.$store.state.blocks.blocks[this.height]
+                return this.$store.state.blocks.blocksByHeight[this.height]
 
             return this.$store.state.blocks.blocksByHash[this.hash]
         },
         txs(){
             if (!this.blk) return null;
-            return this.blk.txs
+            return this.blk.txs.map(it => it.bloom.hash)
         }
 
     },
@@ -195,16 +196,20 @@ export default {
 
                 this.loaded = false
                 this.error = '';
+                this.reward = ''
 
                 if (this.height === undefined && !this.hash) throw 'Block index was not specified';
 
-                await Consensus.syncPromise;
+                await this.$store.state.blockchain.syncPromise;
 
-                if (this.height !== undefined) await Consensus.getBlockByHeight(this.height);
-                if (this.hash ) await Consensus.getBlockByHash(this.hash);
+                if (this.height !== undefined) await this.$store.dispatch('getBlockByHeight', this.height);
+                if (this.hash ) await this.$store.dispatch('getBlockByHash', this.hash);
 
-                const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)
-                this.reward = await PandoraPay.config.coins.convertToBase( reward.toString() )
+                if (this.blk){
+                    this.$store.commit('setViewBlockHash', this.blk.hash )
+                    const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)
+                    this.reward = await PandoraPay.config.coins.convertToBase( reward.toString() )
+                }
 
             }catch(err){
                 this.error = err.toString()
@@ -224,6 +229,10 @@ export default {
 
     async mounted(){
         return this.loadBlock();
+    },
+
+    beforeDestroy(){
+        this.$store.commit('setViewBlockHash', null )
     }
 
 }

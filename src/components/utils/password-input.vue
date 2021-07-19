@@ -1,6 +1,6 @@
 <template>
     <div class="input-toggle-group">
-        <input :type="`${viewPassword ? 'text' : 'password'}`" v-model="inputVal">
+        <input class="form-control" :type="`${viewPassword ? 'text' : 'password'}`" v-model="inputVal">
         <i :class="`fa fa-eye${viewPassword ? '-slash':''} input-toggle`" @click="toggleSeen"></i>
     </div>
 </template>

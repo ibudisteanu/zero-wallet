@@ -2,14 +2,10 @@
 
     <div>
 
-        <template v-if="!error">
-
-            <!-- component matched by the route will render here -->
-            <router-view></router-view>
-
-        </template>
-
         <alert-box v-if="error" type="error">{{error}}</alert-box>
+        <template v-else>
+            <router-view></router-view>
+        </template>
 
         <notifications position="bottom left" />
 
@@ -19,9 +15,9 @@
 
 <script>
 
-import Consensus from "src/consensus/consensus"
 import Identicons from "src/utils/identicons"
 import AlertBox from "src/components/utils/alert-box"
+import consts from "consts/consts"
 
 export default {
 
@@ -36,14 +32,14 @@ export default {
 
     computed:{
 
-        pageActive(){
-            return this.$store.state.page.pageActive;
+        loaded(){
+            return this.$store.state.wallet.loaded;
         },
 
-        loggedIn(){
-            return this.$store.state.wallet.loggedIn;
-        },
+    },
 
+    beforeMount(){
+        this.$store.commit('createSyncPromise')
     },
 
     async mounted(){
@@ -53,6 +49,7 @@ export default {
         if (typeof localStorage !== "undefined" && localStorage.getItem('dark') === 'true')
             this.$store.commit('setDark', true)
 
+        setTimeout( ()=> this.clearUnusedDataStoreWorker(), 1000)
 
         this.$store.commit('setNetworkByte', {
             networkByte: PandoraPay.config.NETWORK_SELECTED,
@@ -60,62 +57,45 @@ export default {
             networkName: PandoraPay.config.NETWORK_SELECTED_NAME,
         })
 
-        Consensus.on("consensus/blockchain-info-updated", info => this.$store.commit('setBlockchainInfo', info) )
-
-        Consensus.on("consensus/tokenInfo-downloaded", data => this.$store.commit('setTokenInfo', data) );
-        Consensus.on("consensus/token-downloaded", data => this.$store.commit('setToken', data) );
-
-        Consensus.on("consensus/blocks-info-downloaded", data => this.$store.commit('setBlocksInfo', data) );
-        Consensus.on("consensus/blocks-info-delete", data => this.$store.commit('deleteBlocksInfo', data) );
-
-        Consensus.on("consensus/block-downloaded", data => this.$store.commit('setBlock', data ) );
-        Consensus.on("consensus/block-deleted", data => this.$store.commit('deleteBlock', data ) );
-
-        Consensus.on("consensus/tx-downloaded", async data => this.$store.commit('setTransactions', data  ) );
-
-        Consensus.on("consensus/status-update", status =>  this.$store.commit('setConsensusStatus', status) );
-
-        Consensus.on("consensus/account-transparent-update", status => this.$store.commit('setTransparentAddressUpdate', status))
-        Consensus.on("consensus/account-txs", status => this.$store.commit('setAccountTxs', status))
-
-        Consensus.on("consensus/mem-pool-update", data => this.$store.commit('setMemPool', data))
 
         let initialized = false
-        PandoraPay.events.listenEvents((name, data)=>{
+        PandoraPay.events.listenEvents( (name, data )=>{
 
-            if (name === "main") {
+            if (name === "main")
                 if (data === "initialized"){
                     initialized = true
 
-                    PandoraPay.events.listenNetworkNotifications(( subscriptionType, key, data)=>{
-                        console.log("listenNetworkNotifications", data)
+                    PandoraPay.events.listenNetworkNotifications(( subscriptionType, key, data, extraInfo)=>{
+
+                        console.log("listenNetworkNotifications", data, extraInfo)
+
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT)
-                            this.$store.commit('setTransparentAddressUpdate', {publicKeyHash: key, account: JSON.parse(data) })
+                            return this.$store.commit('accountNotification', {publicKeyHash: key, account: JSON.parse(data) })
+
+                        if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTIONS)
+                            return this.$store.dispatch('accountTransactionsNotification', { publicKeyHash: key, txHash:data.substr(1,64), extraInfo: JSON.parse(extraInfo) } )
                     })
 
                     this.readWallet()
                 }
-            }
 
             if (name === "sockets/totalSocketsChanged"){
-                if (data > 0){
-                    Consensus.status = "online"
-                } else {
-                    Consensus.status = "offline"
+                if (data > 0) {
+                    this.$store.commit('setConsensusStatus', "online")
+                    this.$store.dispatch('initializeFaucetInfo')
                 }
+                else this.$store.commit('setConsensusStatus', "offline")
             }
 
             if (initialized) {
-                if (name === "wallet/added")
-                    this.readWallet()
-                else
-                if (name === "wallet/removed")
-                    this.readWallet()
-                else
-                if (name === "consensus/update"){
-                    Consensus.processBlockchain(data)
-                    Consensus.setAccounts( this.$store.state.wallet.addresses, true );
-                }
+                if (name === "wallet/added") this.readWallet()
+                else if (name === "wallet/removed") this.readWallet()
+                else if (name === "wallet/encrypted") this.readWallet()
+                else if (name === "wallet/removed-encryption") this.readWallet()
+                else if (name === "wallet/logged-out") this.readWallet()
+                else if (name === "consensus/update")
+                    this.processUpdate(JSON.parse(data))
+
             }
             console.log("JS NAME:", name, "data", data)
         })
@@ -128,67 +108,82 @@ export default {
 
     methods:{
 
+        async processUpdate(data){
+            if (this.$store.state.blockchain.status === 'online')
+                this.$store.commit('setConsensusStatus', "sync")
+
+            this.$store.commit('setBlockchainInfo', data)
+            await this.$store.dispatch('getBlocksInfo',  {starting: this.$store.state.blockchain.end - consts.blocksInfoPagination, blockchainEnd: this.$store.state.blockchain.end } )
+
+            for (const key in this.$store.state.wallet.addresses)
+                await this.$store.dispatch('subscribeAccount', this.$store.state.wallet.addresses[key].publicKeyHash)
+        },
+
+
         async readWallet(){
 
-            const wallet = JSON.parse( await PandoraPay.wallet.getWallet() )
+            await this.$store.dispatch('readWallet')
 
-            const loggedIn = true;
-            this.$store.commit('setLoggedIn', loggedIn );
-
-            this.$store.commit('setWallet', wallet );
-
-            await this.readAddresses(wallet);
+            const loaded = this.$store.state.wallet.loaded
 
             const route = this.$router.currentRoute.path;
-            if (!loggedIn && route.indexOf('/login') === -1 ){
+            if (!loaded && route.indexOf('/login') === -1 ){
 
-                if ( route.indexOf('/explorer') === -1 && route.indexOf('/tokens') === -1 && route.indexOf('kad') === -1 )
+                if ( route.indexOf('/explorer') === -1 && route.indexOf('/tokens') === -1)
                     this.$router.push('/login');
 
             }
-            if (loggedIn && route.indexOf('/login') >= 0) this.$router.push('/');
-
-            this.$store.commit('setLoaded', true);
+            if (loaded && route.indexOf('/login') >= 0) this.$router.push('/');
 
         },
 
-        clearWallet(){
-            this.$store.commit('walletClear');
-            this.$store.state.page.refLoadingModal.closeModal();
-        },
+        clearUnusedDataStoreWorker(){
 
-        async readAddresses(wallet){
+            const timestamp = new Date().getTime()
+            const maxDiff = 5*60*1000
 
-            let mainPublicKeyHash = localStorage.getItem('mainPublicKeyHash') || null;
+            try{
+                const blocksRemoved = [], txsRemoved = []
 
-            let firstAddress;
-            const addresses = {};
-            for (let i=0; i < wallet.addresses.length; i++ ){
+                const blocksByHash = this.$store.state.blocks.blocksByHash
+                for (const hash in blocksByHash){
+                    const blk = blocksByHash[hash]
+                    if (blk.bloom.hash !== this.$store.state.blocks.viewBlockHash && timestamp - blk.__timestampUsed > maxDiff)
+                        blocksRemoved.push(blk)
+                }
 
-                const publicKeyHash = wallet.addresses[i].publicKeyHash
-                const addr = {
-                    ...wallet.addresses[i],
-                    loaded: false,
-                    identicon: await Identicons.getIdenticon(publicKeyHash),
-                };
+                const blocksByHeight = this.$store.state.blocks.blocksByHeight
+                for (const height in blocksByHeight){
+                    const blk = blocksByHeight[height]
+                    if (blk.bloom.hash !== this.$store.state.blocks.viewBlockHash && timestamp - blk.__timestampUsed > maxDiff)
+                        blocksRemoved.push(blk)
+                }
 
-                addresses[publicKeyHash] = addr;
+                const txsByHash = this.$store.state.transactions.txsByHash
+                for (const hash in txsByHash){
+                    const tx = txsByHash[hash]
+                    if (!this.$store.state.transactions.viewTransactionsHashes[tx.bloom.hash] && timestamp - tx.__timestampUsed > maxDiff)
+                        txsRemoved.push(tx)
+                }
 
-                if (i === 0)
-                    firstAddress = publicKeyHash;
+                const txsByHeight = this.$store.state.transactions.txsByHeight
+                for (const height in txsByHeight){
+                    const tx = txsByHeight[height]
+                    if (!this.$store.state.transactions.viewTransactionsHashes[tx.bloom.hash] && timestamp - tx.__timestampUsed > maxDiff)
+                        txsRemoved.push(tx)
+                }
+
+                if (txsRemoved.length)
+                    this.$store.commit('deleteTransactions', txsRemoved )
+
+                if (blocksRemoved.length)
+                    this.$store.commit('deleteBlocks', blocksRemoved )
+
+            }catch(err){
+                console.error("clearUnusedDataStoreWorker raised an error", err)
             }
 
-            //localstorage
-            if (mainPublicKeyHash && addresses[mainPublicKeyHash])
-                this.$store.commit('setMainPublicKeyHash', mainPublicKeyHash);
-
-            if (this.$store.state.wallet.mainPublicKeyHash && !addresses[this.$store.state.wallet.mainPublicKeyHash])
-                this.$store.commit('setMainPublicKeyHash', null );
-
-            if (!this.$store.state.wallet.mainPublicKeyHash && firstAddress )
-                this.$store.commit('setMainPublicKeyHash', firstAddress );
-
-            this.$store.commit('addWalletAddresses', addresses );
+            setTimeout( () => this.clearUnusedDataStoreWorker(), 1000)
 
         }
 
