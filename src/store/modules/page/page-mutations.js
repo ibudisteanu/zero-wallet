@@ -32,10 +32,6 @@ export default {
         state.refWalletPasswordModal = ref;
     },
 
-    setWalletSeedModal(state, ref){
-        state.refWalletSeedModal = ref;
-    },
-
     setModalOpened(state, value){
         state.modalOpened = value
     },

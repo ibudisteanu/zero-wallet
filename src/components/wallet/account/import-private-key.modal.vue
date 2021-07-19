@@ -8,22 +8,28 @@
                 <div class="card-header bg-light pt-0 pb-2">
                     <ul class="nav justify-content-between nav-wizard">
                         <li class="nav-item">
-                            <a :class="`nav-link ${tab===0?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(0)">
+                            <router-link :class="`nav-link ${tab===0?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(0)">
                                 <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-key"></i></span></span>
                                 <span class="d-none d-md-block mt-1 fs--1">Type of Account</span>
-                            </a>
+                            </router-link>
                         </li>
                         <li class="nav-item">
-                            <a :class="`nav-link ${tab===1?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(1)">
+                            <router-link :class="`nav-link ${tab===1?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(1)">
                                 <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-pencil-alt"></i></span></span>
                                 <span class="d-none d-md-block mt-1 fs--1">Information</span>
-                            </a>
+                            </router-link>
                         </li>
                         <li class="nav-item">
-                            <a :class="`nav-link ${tab===2?'active':''} fw-semi-bold`" href="#" @click="()=>setTab(2)">
+                            <router-link :class="`nav-link ${tab===2?'active':''} ${name ? '':'disabled'} fw-semi-bold`" to="#" @click.native="()=>name ? setTab(2) : false">
                                 <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-file-code"></i></span></span>
                                 <span class="d-none d-md-block mt-1 fs--1">Private Key</span>
-                            </a>
+                            </router-link>
+                        </li>
+                        <li class="nav-item">
+                            <router-link :class="`nav-link ${tab===3?'active':''} disabled fw-semi-bold`" to="#">
+                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-check"></i></span></span>
+                                <span class="d-none d-md-block mt-1 fs--1">Finish</span>
+                            </router-link>
                         </li>
                     </ul>
                 </div>
@@ -52,10 +58,10 @@
         <template slot="footer">
             <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
 
-            <button class="btn btn-link" type="button" v-if="tab > 0" @click="()=>increaseTab(-1)">
+            <button class="btn btn-link" type="button" v-if="tab > 0" @click="handleBack">
                 Back <i class="fas fa-chevron-left me-2" data-fa-transform="shrink-3"></i>
             </button>
-            <button class="btn btn-falcon-primary" type="button" v-if="tab < 2" @click="()=>increaseTab(1)">
+            <button class="btn btn-falcon-primary" type="button" v-if="tab < 2" @click="handleNext">
                 <i class="fas fa-chevron-right ms-2" data-fa-transform="shrink-3"> </i> Next
             </button>
             <loading-button v-if="tab===2" text="Import Private Key" @submit="importPrivateKey" icon="fa fa-file-upload"  />
@@ -102,18 +108,39 @@ export default {
             return this.$refs.modal.closeModal();
         },
 
+        handleBack(){
+            return this.increaseTab(-1)
+        },
+        handleNext(){
+            if (this.tab === 1 && !this.name){
+                return this.error = "Specify a name for the new account"
+            }
+            return this.increaseTab(1)
+        },
+
+        increaseTab(value){
+            this.tab = this.tab + value
+            if (this.tab === 3) this.importPrivateKey()
+        },
+        setTab(value){
+            this.tab = value
+            if (this.tab === 3) this.importPrivateKey()
+        },
+
         async importPrivateKey(resolve){
 
             try{
 
+                this.error = ""
+
                 if (this.privateKey.length !== 64) throw Error("Private key must be 64 hex numbers");
+
+                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+                if (password === null ) return
 
                 this.$store.state.page.refLoadingModal.showModal();
 
                 await UtilsHelper.sleep(50 )
-
-                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
-                if (password === null ) return
 
                 const out = await PandoraPay.wallet.manager.importWalletPrivateKey( password, this.privateKey, this.name, this.selectedType );
 
@@ -136,15 +163,6 @@ export default {
             }
 
         },
-
-        increaseTab(value){
-            this.tab = this.tab + value
-            if (this.tab === 3) this.handleClick()
-        },
-        setTab(value){
-            this.tab = value
-            if (this.tab === 3) this.handleClick()
-        }
 
     },
 

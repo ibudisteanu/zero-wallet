@@ -134,6 +134,12 @@ Scrollbar
     border-color: #f9f9f9;
 }
 
+a .disabled{
+    cursor: not-allowed;
+    opacity: 0.5;
+    text-decoration: none;
+}
+
 .tooltip[aria-hidden='true'] {
     visibility: hidden;
     opacity: 0;

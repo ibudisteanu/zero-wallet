@@ -4,7 +4,7 @@
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0">Account Details</h5>
+                        <h5 class="mb-0">{{title}}</h5>
                     </div>
                 </div>
             </div>
@@ -53,6 +53,7 @@ export default {
 
     props: {
         address: {default: null},
+        title: {default: "Account details"},
     },
 
     computed:{

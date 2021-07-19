@@ -94,12 +94,12 @@ export default {
 
             try{
 
+                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+                if (password === null ) return
+
                 this.$store.state.page.refLoadingModal.showModal();
 
                 await UtilsHelper.sleep(50 )
-
-                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
-                if (password === null ) return
 
                 const out = await PandoraPay.wallet.manager.addNewWalletAddress(password, account.selectedType);
                 if (!out) throw "Result is false"

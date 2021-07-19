@@ -40,7 +40,8 @@ export default {
 
     data(){
         return {
-            publicKeyHash: ''
+            publicKeyHash: '',
+            error: "",
         }
     },
 
