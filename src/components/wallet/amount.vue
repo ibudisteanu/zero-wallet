@@ -34,7 +34,7 @@ export default {
             return this.$store.getters.getTokenInfo( this.token );
         },
         amount(){
-            return StringHelper.formatMoney(this.value.toString(), this.getToken.decimalSeparator )
+            return StringHelper.formatMoney( PandoraPay.config.tokens.tokensConvertToBase( this.value.toString(), this.getToken.decimalSeparator.toString() ), this.getToken.decimalSeparator )
         }
     },
 }

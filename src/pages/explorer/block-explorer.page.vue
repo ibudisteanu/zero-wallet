@@ -68,7 +68,7 @@
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Reward</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{formatMoney(this.reward)}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{this.reward}}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Version</span>
@@ -207,8 +207,8 @@ export default {
 
                 if (this.blk){
                     this.$store.commit('setViewBlockHash', this.blk.hash )
-                    const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)
-                    this.reward = await PandoraPay.config.coins.convertToBase( reward.toString() )
+                    const reward = PandoraPay.config.reward.getRewardAt(this.blk.height)
+                    this.reward = StringHelper.formatMoney( PandoraPay.config.coins.convertToBase( reward.toString() ), PandoraPay.config.coins.DECIMAL_SEPARATOR )
                 }
 
             }catch(err){

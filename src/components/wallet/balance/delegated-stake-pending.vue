@@ -30,7 +30,7 @@ export default {
             return  this.$store.getters.getTokenInfo( PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX );
         },
         amount(){
-            return StringHelper.formatMoney( PandoraPay.config.coins.convertToBase( this.delegatedStakePending.pendingAmount.toString()), PandoraPay.config.coins.DECIMAL_SEPARATOR)
+            return StringHelper.formatMoney( PandoraPay.config.coins.convertToBase( this.delegatedStakePending.pendingAmount.toString() ), PandoraPay.config.coins.DECIMAL_SEPARATOR )
         }
     },
 

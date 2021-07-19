@@ -85,7 +85,6 @@ export default {
 
     methods:{
         timeAgo : (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
-        convertToBase: (amount, token) => PandoraPay.config.coins.convertToBase( amount.toString() , token.decimalSeparator ),
     },
 
     watch: {
