@@ -2,7 +2,7 @@
 
     <modal ref="modal" :title="`QR Code ${title ? ': '+title : ''}`" >
         <template slot="body">
-            <div class="qr-code d-inline-block" >
+            <div class="w-100 d-inline-block" >
                 <qr-code :data="address" />
             </div>
         </template>
@@ -54,5 +54,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

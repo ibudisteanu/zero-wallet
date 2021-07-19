@@ -11,11 +11,11 @@
                 <password-input v-model="password"/>
             </div>
 
-            <alert-box class="mt-4" v-if="error" type="error">{{error}}</alert-box>
-
         </template>
 
         <template slot="footer">
+            <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
+
             <button class="btn btn-falcon-danger" type="button" @click="handleSubmit">
                 <i class="fa fa-key"></i> Submit
             </button>

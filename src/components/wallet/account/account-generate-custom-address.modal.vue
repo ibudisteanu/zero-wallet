@@ -2,9 +2,9 @@
 
     <modal ref="modal" :title="`Custom Address ${title ? ': ' + title : ''}`" content-class="">
 
-        <template slot="body">
+        <template slot="body" v-if="account">
 
-            <div class="theme-wizard" v-if="account">
+            <div class="theme-wizard">
                 <div class="card-header bg-light pt-0 pb-2">
                     <ul class="nav justify-content-between nav-wizard">
                         <li class="nav-item">
@@ -64,8 +64,6 @@
                         </div>
                         <div :class="`tab-pane ${tab===3?'active':''} `">
 
-                            <alert-box v-if="error" type="error">{{error}}</alert-box>
-
                             <template v-if="this.addressGenerated">
 
                                 <div class="form-outline">
@@ -99,6 +97,8 @@
         </template>
 
         <template slot="footer">
+            <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
+
             <button class="btn btn-link" type="button" v-if="tab > 0" @click="()=>increaseTab(-1)">
                 Back <i class="fas fa-chevron-left me-2" data-fa-transform="shrink-3"></i>
             </button>

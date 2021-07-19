@@ -3,10 +3,11 @@
 
         <template slot="body" v-if="account">
             <p>Are you sure you want to <b>delete</b> address {{this.account.name}} - {{this.account.addressEncoded}} ? </p>
-            <alert-box v-if="error" type="error">{{error}}</alert-box>
         </template>
 
         <template slot="footer">
+            <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
+
             <button class="btn btn-falcon-danger" type="button" @click="handleDelete">
                 <i class="fa fa-times"></i> Yes, Delete account
             </button>
@@ -21,6 +22,7 @@
 <script>
 import Modal from "src/components/utils/modal"
 import AlertBox from "../../utils/alert-box";
+import UtilsHelper from "src/utils/utils-helper";
 export default {
 
     components: { Modal, AlertBox},
@@ -35,7 +37,7 @@ export default {
 
     methods: {
 
-        showModal(account) {
+        async showModal(account) {
 
             Object.assign(this.$data, this.$options.data());
 
@@ -54,11 +56,16 @@ export default {
 
             this.$store.state.page.refLoadingModal.showModal();
 
+            await UtilsHelper.sleep(50 )
+
             const address = this.account
 
             try{
 
-                const out = await PandoraPay.wallet.manager.removeWalletAddress( address.addressEncoded );
+                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+                if (password === null ) return
+
+                const out = await PandoraPay.wallet.manager.removeWalletAddress( password, address.addressEncoded );
                 if (out) {
                     this.$notify({
                         type: 'success',

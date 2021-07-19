@@ -20,7 +20,8 @@
         </template>
 
         <template slot="footer">
-            <alert-box v-if="error" type="error">{{error}}</alert-box>
+            <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
+
             <button class="btn btn-falcon-primary" type="button" @click="handleSubmit" :disabled="!captchaToken">
                 <i class="fa fa-coins"></i> Receive {{$store.state.faucet.faucetTestnetCoins}}
             </button>

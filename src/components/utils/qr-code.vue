@@ -36,6 +36,7 @@ export default {
 
 <style >
     .qr{
+        width: 100%;
         /* set border styling */
         border-color: #eeeeee;
         border-style: solid;

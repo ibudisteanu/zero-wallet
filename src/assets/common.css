@@ -147,6 +147,10 @@ Scrollbar
 }
 
 
+.theme-wizard .nav-link{
+    padding-left: 0 !important;
+    padding-right: 0 !important;;
+}
 
 .right{
     float: right;
@@ -166,6 +170,10 @@ Scrollbar
     cursor: pointer;
     color: #ccc;
     font-size: 20px;
+}
+
+.logo-color{
+    color: #025d90
 }
 
 .pointer{

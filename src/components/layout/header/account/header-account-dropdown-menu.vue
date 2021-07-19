@@ -48,6 +48,7 @@
 <script>
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
+import UtilsHelper from "src/utils/utils-helper";
 const {version} = PandoraPay.enums.wallet.address;
 
 export default {
@@ -95,7 +96,12 @@ export default {
 
                 this.$store.state.page.refLoadingModal.showModal();
 
-                const out = await PandoraPay.wallet.manager.addNewWalletAddress(account.selectedType);
+                await UtilsHelper.sleep(50 )
+
+                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+                if (password === null ) return
+
+                const out = await PandoraPay.wallet.manager.addNewWalletAddress(password, account.selectedType);
                 if (!out) throw "Result is false"
 
                 this.$notify({

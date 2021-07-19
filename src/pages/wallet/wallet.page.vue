@@ -118,7 +118,10 @@ export default {
                     text: `Update your browser`,
                 })
 
-            const json = await PandoraPay.wallet.manager.getWalletAddress( this.address.addressEncoded );
+            const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+            if (password === null ) return
+
+            const json = await PandoraPay.wallet.manager.getWalletAddress( password, this.address.addressEncoded );
             if (!json) return false;
 
             const fileName = consts.name + "_" +this.address.name + "_"+this.address.addressEncoded + ".pandora";

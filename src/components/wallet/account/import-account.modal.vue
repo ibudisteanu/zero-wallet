@@ -43,8 +43,9 @@
 
 <script>
 import Modal from "src/components/utils/modal"
-import PasswordInput from "../../utils/password-input";
+import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
+import UtilsHelper from "src/utils/utils-helper";
 
 export default {
 
@@ -150,6 +151,8 @@ export default {
             try{
 
                 this.$store.state.page.refLoadingModal.showModal();
+
+                await UtilsHelper.sleep(50 )
 
                 const out = await PandoraPay.wallet.manager.importWalletAddressJSON( this.addressData, this.addressPassword );
 

@@ -4,12 +4,15 @@
 
         <div class="col-sm-10 col-md-8 col-lg-6 col-xl-5 col-xxl-4">
 
-            <div class="d-flex flex-center mb-2">
-                <img :src="require('src/assets/pandora-pay-logo.png').default" class="logo">
+            <div class="d-flex flex-center mb-3">
+                <img :src="require('src/assets/pandora-pay-logo-square.png').default" class="logo">
             </div>
+            <h1 class="d-flex flex-center mb-3 logo-color">
+                Pandora Pay
+            </h1>
 
             <div class="d-flex flex-center mb-2 mb-sm-4">
-                <h1 class="fs-0 fs-sm-2 fs-md-3">The Anonymous Cash awaits</h1>
+                <h2 class="fs-0 fs-sm-2 fs-md-3">The Anonymous Cash awaits</h2>
             </div>
 
             <div v-if="!$store.state.wallet.initialized" class="d-flex justify-content-center" >
@@ -98,8 +101,13 @@ export default {
 <style scoped>
 
     .logo{
-        max-width: 200px;
-        max-height: 200px;
+        max-width: 100px;
+        max-height: 100px;
+    }
+
+    .dark .logo{
+        -webkit-filter: drop-shadow( 0px 0px 25px rgba(255, 255, 255, 0.5));
+        filter: drop-shadow( 0px 0px 25px rgba(255, 255, 255, 0.5));
     }
 
 </style>
