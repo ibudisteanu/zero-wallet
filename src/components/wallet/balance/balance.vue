@@ -5,7 +5,7 @@
             {{ amount }}
             <small class="fs--1 text-700">/
                 <router-link :to="`/tokens/${getToken.hash}`" class="currency">
-                    ${{getToken.ticker}}
+                    $0x00
                 </router-link>
             </small>
         </h4>

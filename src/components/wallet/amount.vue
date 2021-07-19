@@ -5,11 +5,11 @@
                 {{amount}}
             </span>
             <router-link :to="`/tokens/${getToken.hash}`" :class="tokenClass">
-                ${{getToken.ticker}}
+                $0x00
             </router-link>
         </template>
         <template v-else>
-            <loading-spinner />
+            <loading-spinner />`
         </template>
     </span>
 </template>
