@@ -165,7 +165,7 @@ export default {
         max-width: 60px;
         position: absolute;
         margin-top: 95px;
-        margin-left: 60px;
+        margin-left: 65px;
     }
 
     .dark .logo{

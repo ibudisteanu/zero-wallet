@@ -67,8 +67,11 @@ export default {
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT)
                             return this.$store.commit('accountNotification', {publicKeyHash: key, account: JSON.parse(data) })
 
-                        if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTIONS)
-                            return this.$store.dispatch('accountTransactionsNotification', { publicKeyHash: key, txHash:data.substr(1,64), extraInfo: JSON.parse(extraInfo) } )
+                        if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS)
+                            return this.$store.commit('accountTxUpdateNotification', { publicKeyHash: key, txHash:data.substr(1,64), extraInfo: JSON.parse(extraInfo) } )
+
+                        if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTION)
+                            return this.$store.commit('txNotification', { txHash: key, extraInfo: JSON.parse(extraInfo) } )
                     })
 
                     this.readWallet()
@@ -160,14 +163,14 @@ export default {
                 const txsByHash = this.$store.state.transactions.txsByHash
                 for (const hash in txsByHash){
                     const tx = txsByHash[hash]
-                    if (!this.$store.state.transactions.viewTransactionsHashes[tx.bloom.hash] && timestamp - tx.__timestampUsed > maxDiff)
+                    if (!this.$store.state.transactions.viewTxsHashes[tx.bloom.hash] && timestamp - tx.__timestampUsed > maxDiff)
                         txsRemoved.push(tx)
                 }
 
                 const txsByHeight = this.$store.state.transactions.txsByHeight
                 for (const height in txsByHeight){
                     const tx = txsByHeight[height]
-                    if (!this.$store.state.transactions.viewTransactionsHashes[tx.bloom.hash] && timestamp - tx.__timestampUsed > maxDiff)
+                    if (!this.$store.state.transactions.viewTxsHashes[tx.bloom.hash] && timestamp - tx.__timestampUsed > maxDiff)
                         txsRemoved.push(tx)
                 }
 

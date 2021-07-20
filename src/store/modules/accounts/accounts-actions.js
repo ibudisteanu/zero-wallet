@@ -9,10 +9,6 @@ const promises = {
 
 export default {
 
-    async accountTransactionsNotification( {state, dispatch, commit},  {publicKeyHash, txHash, extraInfo} ) {
-        commit('accountTxUpdateNotification', {publicKeyHash, txHash, extraInfo})
-    },
-
     async downloadAccountTxs({state, dispatch, commit}, {publicKeyHash, next, view = false, updateViewPosition = false } ){
 
         let starting, ending
@@ -76,32 +72,6 @@ export default {
         })
     },
 
-    async unsubscribeAccount({state, dispatch, commit}, publicKeyHash){
-
-        if (!state.subscribed[publicKeyHash])
-            return false
-
-        if (promises.unsubscribed[publicKeyHash]) return promises.unsubscribed[publicKeyHash]
-        return promises.unsubscribed[publicKeyHash] = new Promise( async(resolve, reject)=>{
-            try{
-
-                await Promise.all([
-                    PandoraPay.network.unsubscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT ),
-                    PandoraPay.network.unsubscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTIONS)
-                ]);
-
-                commit('setSubscribedAccountStatus', {publicKeyHash, status: false})
-
-                resolve(true)
-            }catch(err){
-                reject(err)
-            }finally{
-                delete promises.unsubscribed[publicKeyHash]
-            }
-        })
-
-    },
-
     async subscribeAccount({state, dispatch, commit}, publicKeyHash){
 
         if (state.subscribed[publicKeyHash])
@@ -114,12 +84,12 @@ export default {
 
                 await Promise.all([
                     PandoraPay.network.subscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT ),
-                    PandoraPay.network.subscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTIONS ),
+                    PandoraPay.network.subscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS ),
                 ])
 
-                resolve( await dispatch('_downloadAccount', publicKeyHash) )
-
                 commit('setSubscribedAccountStatus', {publicKeyHash, status: true})
+
+                resolve( await dispatch('_downloadAccount', publicKeyHash) )
 
             }catch(err){
                 reject(err)
@@ -128,6 +98,32 @@ export default {
             }
 
         })
+    },
+
+    async unsubscribeAccount({state, dispatch, commit}, publicKeyHash){
+
+        if (!state.subscribed[publicKeyHash])
+            return false
+
+        if (promises.unsubscribed[publicKeyHash]) return promises.unsubscribed[publicKeyHash]
+        return promises.unsubscribed[publicKeyHash] = new Promise( async(resolve, reject)=>{
+            try{
+
+                await Promise.all([
+                    PandoraPay.network.unsubscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT ),
+                    PandoraPay.network.unsubscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS)
+                ]);
+
+                commit('setSubscribedAccountStatus', {publicKeyHash, status: false})
+
+                resolve(true)
+            }catch(err){
+                reject(err)
+            }finally{
+                delete promises.unsubscribed[publicKeyHash]
+            }
+        })
+
     },
 
 }

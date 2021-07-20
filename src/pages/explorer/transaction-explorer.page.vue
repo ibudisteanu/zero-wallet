@@ -8,8 +8,9 @@
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0 text-truncate">Tx {{height ? height : hash}}  </h5>
-                        <loading-spinner v-if="!loaded"/>
+                        <h5 class="mb-0 text-truncate">Tx {{height ? height : hash}}
+                            <loading-spinner v-if="!loaded"/>
+                        </h5>
                     </div>
                 </div>
             </div>
@@ -168,11 +169,16 @@ export default {
 
                 await this.$store.state.blockchain.syncPromise;
 
+                if (this.tx)
+                    await this.removed()
+
                 if (this.height !== undefined) await this.$store.dispatch('getTransactionByHeight', this.height);
                 if (this.hash ) await this.$store.dispatch('getTransactionByHash', this.hash);
 
-                if (this.tx)
-                    this.$store.commit('addViewTransactionsHashes', [this.tx.bloom.hash] )
+                if (this.tx) {
+                    this.$store.commit('addViewTransactionsHashes', [this.tx.bloom.hash])
+                    await this.$store.dispatch('subscribeTransaction', this.tx.bloom.hash )
+                }
 
             }catch(err){
                 this.error = err.toString()
@@ -182,14 +188,22 @@ export default {
 
         },
 
+        async removed(){
+            this.$store.commit('removeViewTransactionsHashes', [this.tx.bloom.hash])
+            await this.$store.dispatch('unsubscribeTransaction', this.tx.bloom.hash )
+        },
+
         convertToBase: (amount) => PandoraPay.config.coins.convertToBase( amount.toString() ),
         timeAgo : (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
 
     },
 
     watch: {
-        '$route' (to, from) {
-            return this.loadTransaction();
+        '$route': {
+            handler: function (to, from) {
+                if (to === from) return
+                return this.loadTransaction();
+            }
         }
     },
 
@@ -198,10 +212,8 @@ export default {
     },
 
     beforeDestroy() {
-
-        if (this.tx)
-            this.$store.commit('removeViewTransactionsHashes', [this.tx.bloom.hash] )
-    }
+        if (this.tx) return this.removed()
+    },
 
 }
 </script>

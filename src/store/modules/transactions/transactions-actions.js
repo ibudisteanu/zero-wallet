@@ -1,9 +1,53 @@
 const promises = {
     txsByHeight: {},
     txsByHash: {},
+    unsubscribed: {},
+    subscribed: {},
 }
 
 export default {
+
+    async subscribeTransaction( {state, dispatch, commit}, txId ){
+
+        if (state.subscribed[txId]) return true
+
+        if (promises.subscribed[txId]) return promises.subscribed[txId];
+        return promises.subscribed[txId] = new Promise( async (resolve, reject) => {
+            try{
+
+                await PandoraPay.network.subscribeNetwork( txId, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTION )
+
+                commit('setSubscribedTxStatus', {txId, status: true})
+
+                resolve(true)
+            }catch(err){
+                reject(err)
+            }finally{
+                delete promises.subscribed[txId]
+            }
+        })
+    },
+
+    async unsubscribeTransaction( {state, dispatch, commit}, txId ){
+
+        if (!state.subscribed[txId]) return true
+
+        if (promises.unsubscribed[txId]) return promises.unsubscribed[txId];
+        return promises.unsubscribed[txId] = new Promise( async (resolve, reject) => {
+            try{
+
+                await PandoraPay.network.unsubscribeNetwork( txId, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTION )
+
+                commit('setSubscribedTxStatus', {txId, status: false})
+
+                resolve(true)
+            }catch(err){
+                reject(err)
+            }finally{
+                delete promises.unsubscribed[txId]
+            }
+        })
+    },
 
     async _includeTx( {state, dispatch, commit}, txJSON ){
 

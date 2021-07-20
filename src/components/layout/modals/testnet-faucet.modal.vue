@@ -86,6 +86,8 @@ export default {
 
                 this.$router.push('/explorer/tx/'+hash)
 
+                this.closeModal()
+
             }catch(err){
                 this.error = err.toString()
             }finally{

@@ -23,6 +23,7 @@ export default {
 
         const obj = {
             hashes: {},
+            count: 0,
         };
 
         if (accountTxs){
@@ -39,7 +40,11 @@ export default {
 
     accountTxUpdateNotification(state, {publicKeyHash, txHash, extraInfo }){
 
-        const obj = { ... state.txs[publicKeyHash]  };
+        const obj = {
+            hashes: {},
+            count: 0,
+            ...state.txs[publicKeyHash]
+        };
 
         const viewTxsPositions = state.viewTxsPositions[publicKeyHash]
 
