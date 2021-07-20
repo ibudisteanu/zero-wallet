@@ -114,7 +114,7 @@ export default {
 
                 if (!out) throw "Result is not true";
 
-                this.$notify({
+                this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Wallet has been encrypted successfully`,
                     text: `Your wallet has been encrypted with the password provided`,

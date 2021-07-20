@@ -37,18 +37,17 @@ export default {
 
         copySecret(){
 
-            this.$copyText(this.text).then( e =>
-                    this.$notify({
-                        type: 'success',
-                        title: `Copied to clipboard successfully`,
-                        text: `Copied ${this.title} to clipboard.`,
-                    }),
-                e =>
-                    this.$notify({
-                        type: 'error',
-                        title: `Clipboard failed`,
-                        text: `Failed to copy to clipboard`,
-                    })
+            this.$copyText(this.text).then(
+                e => this.$store.dispatch('addToast', {
+                    type: 'success',
+                    title: `Copied to clipboard successfully`,
+                    text: `Copied ${this.title} to clipboard.`,
+                }),
+                e => this.$store.dispatch('addToast', {
+                    type: 'error',
+                    title: `Clipboard failed`,
+                    text: `Failed to copy to clipboard`,
+                })
             );
 
         }

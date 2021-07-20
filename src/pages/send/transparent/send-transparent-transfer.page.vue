@@ -183,7 +183,7 @@ export default {
 
                 const hash = out.tx.hash().toString("hex");
 
-                this.$notify({
+                this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Transaction created`,
                     text: `A transaction has been made. \n TxId <strong>${hash}</strong>`,

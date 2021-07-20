@@ -85,7 +85,7 @@ export default {
 
                 Consensus.includeTransactionToPending(out.tx);
 
-                this.$notify({
+                this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Delegate Staking Transaction created`,
                     text: `Delegate Staking Transaction has been made. \n TxId ${out.tx.hash().toString("hex")}`,

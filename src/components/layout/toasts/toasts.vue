@@ -10,7 +10,7 @@
                 </div>
                 <div class="toast-body">
                     <i v-if="getIcon(toast)" :class="`fa ${getIcon(toast)} fs-2 p-2`"></i>
-                    {{toast.body}}
+                    {{toast.text}}
                 </div>
             </div>
         </div>

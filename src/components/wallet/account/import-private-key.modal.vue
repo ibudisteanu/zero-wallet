@@ -147,7 +147,7 @@ export default {
                 if (!out)
                     throw "Your address already exists!"
 
-                this.$notify({
+                this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Imported successfully`,
                     text: `Your Address has been successfully imported.`,

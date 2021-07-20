@@ -65,14 +65,13 @@ export default {
     methods: {
         copyAddress(){
 
-            this.$copyText(this.getAddress).then( e =>
-                this.$notify({
+            this.$copyText(this.getAddress).then(
+                e => this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Copied to clipboard successfully`,
                     text: `Address ${this.getAddress} copied to clipboard`,
                 }),
-                e =>
-                this.$notify({
+                e => this.$store.dispatch('addToast', {
                     type: 'error',
                     title: `Clipboard failed`,
                     text: `Failed to copy to clipboard`,

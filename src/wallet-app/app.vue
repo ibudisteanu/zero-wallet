@@ -7,8 +7,6 @@
             <router-view v-if="walletInitialized"></router-view>
         </template>
 
-        <notifications position="bottom left" />
-
     </div>
 
 </template>

@@ -183,14 +183,12 @@ export default {
                 }
 
                 if (out) {
-
-                    this.$notify({
+                    this.$store.dispatch('addToast', {
                         type: 'success',
                         title: `Your stake was delegated successfully to Node `,
                         text: `Your stake was delegated successfully to node. \n node ${this.nodeAddress}`,
                     });
                     this.step = 3;
-
                 }
 
                 console.log("out", out);

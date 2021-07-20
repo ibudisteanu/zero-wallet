@@ -107,14 +107,14 @@ export default {
                 const out = await PandoraPay.wallet.manager.addNewWalletAddress(password, account.selectedType);
                 if (!out) throw "Result is false"
 
-                this.$notify({
+                this.$store.dispatch('addToast',{
                     type: 'success',
                     title: 'Address has been added successfully',
                     text: 'A new address has been added and saved in your wallet'
                 });
 
             }catch(err){
-                this.$notify({
+                this.$store.dispatch('addToast',{
                     type: 'error',
                     title: 'Error creating an address',
                     text: 'An error was encountered: ' + err.toString()
@@ -140,7 +140,7 @@ export default {
                 const out = await PandoraPay.wallet.manager.encryption.logoutWallet();
                 if (!out) throw "logout was not true"
 
-                this.$notify({
+                this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `You have been logged out!`,
                     text: `You have been logged out. You need to login with the password to access your wallet.`,
@@ -165,14 +165,13 @@ export default {
             let addr;
             if (address.version === version.VERSION_TRANSPARENT) addr = address.addressEncoded;
 
-            this.$copyText(addr).then( e =>
-                this.$notify({
+            this.$copyText(addr).then(
+                e => this.$store.dispatch('addToast',{
                     type: 'success',
                     title: `Copied to clipboard successfully`,
                     text: `Address ${address.addressEncoded} copied to clipboard`,
                 }),
-                e =>
-                this.$notify({
+                e => this.$store.dispatch('addToast',{
                     type: 'error',
                     title: `Clipboard failed`,
                     text: `Failed to copy to clipboard`,

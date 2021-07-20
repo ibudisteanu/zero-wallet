@@ -54,7 +54,7 @@ export default {
             await this.$refs.modal.showModal();
 
             if (this.selectedType === -1)
-                this.$notify({
+                this.$store.dispatch('addToast', {
                     type: 'error',
                     title: 'Account type was not selected',
                     text: 'You have to select an account type'
