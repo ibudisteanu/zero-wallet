@@ -39,7 +39,6 @@ export default {
             progressStatus: "Initialized",
             isDownloading: false,
             error: "",
-            lastTransferred: 0,
         }
     },
 
@@ -66,7 +65,6 @@ export default {
             this.progressStatus = "WASM GO created";
 
             this.isDownloading = true;
-            this.lastTransferred = 0
 
             try{
                 const response = await fetch(PandoraPayWalletOptions.resPrefix+"PandoraPay-wallet.wasm", {
@@ -101,7 +99,7 @@ export default {
                         start(controller) {
                             const reader = response.body.getReader();
 
-                            read();
+                            let lastTransferred = 0
                             function read() {
                                 reader.read().then(({done, value}) => {
                                     if (done) {
@@ -110,8 +108,8 @@ export default {
                                     }
                                     loaded += value.byteLength;
 
-                                    if (loaded - self.lastTransferred > 1024) {
-                                        self.lastTransferred = loaded
+                                    if (loaded - lastTransferred > 1024) {
+                                        lastTransferred = loaded
                                         self.progressStatus = `WASM:  ${(loaded / 1024 / 1024 /3).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
                                     }
 
@@ -121,6 +119,9 @@ export default {
                                     controller.error(error)
                                 })
                             }
+
+                            read();
+
                         }
                     })
                 ) );

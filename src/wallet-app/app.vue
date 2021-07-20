@@ -52,7 +52,6 @@ export default {
             networkName: PandoraPay.config.NETWORK_SELECTED_NAME,
         })
 
-
         let initialized = false
         PandoraPay.events.listenEvents( (name, data )=>{
 

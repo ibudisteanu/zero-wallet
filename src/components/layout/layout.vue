@@ -20,12 +20,14 @@
                 <qr-code-modal ref="refQRCodeModal" />
                 <testnet-faucet-modal ref="refTestnetFaucetModal" />
                 <wallet-password-modal ref="refWalletPasswordModal" />
-
                 <layout-footer v-if="!disableLayout" />
 
             </div>
 
         </div>
+
+        <toasts />
+
     </main>
 
 </template>
@@ -43,10 +45,11 @@ import WalletPasswordModal from "./modals/wallet-password.modal"
 import QrCodeModal from "./modals/qr-code.modal"
 import LeftSidebar from "./left-sidebar/left-sidebar"
 import WarningBar from "./header/warning-bar"
+import Toasts from "./toasts/toasts"
 
 export default {
 
-    components: {AccountTypeModal, LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar, QrCodeModal, TestnetFaucetModal, WalletPasswordModal},
+    components: {AccountTypeModal, LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar, QrCodeModal, TestnetFaucetModal, WalletPasswordModal, Toasts},
 
     props: {
         disableLayout: false,

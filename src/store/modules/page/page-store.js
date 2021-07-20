@@ -12,7 +12,7 @@ export default {
 
         modalOpened: false,
 
-        dark: false,
+        dark: true,
         leftSidebarShow: false,
 
     },

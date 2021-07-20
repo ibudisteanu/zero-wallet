@@ -282,6 +282,7 @@ export default {
 </script>
 
 <style scoped>
-
-
+.navbar-vertical-content{
+    height: auto !important;
+}
 </style>
