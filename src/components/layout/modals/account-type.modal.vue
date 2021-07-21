@@ -10,16 +10,34 @@
 
             <div class="pt-2 d-inline-block">
 
-                <a class="category pointer" @click="select(0)" href="#" >
-
-                    <i class="fa fa-money-bill-alt fa-3x"></i>
-
-                    <span class="thick" >Transparent</span>
-                    <span>Address is public.</span>
-                    <span>All amounts are transparent.</span>
-                    <span>Staking</span>
-                    <span>Cold Staking</span>
-                </a>
+                <div class="card-group">
+                    <div class="card overflow-hidden pointer" @click="()=>select(0)">
+                        <div class="card-img-top">
+                            <img class="img-fluid" src="https://www.datadriveninvestor.com/wp-content/uploads/2020/02/bc-compressor.jpg" alt="Card image cap">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Transparent</h5>
+                            <p class="card-text">
+                                Address is public <br/>
+                                All amounts are transparent <br/>
+                                Staking <br/>
+                                Cold Staking <br/>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="card overflow-hidden">
+                        <div class="card-img-top">
+                            <img class="img-fluid" src="https://www.crypto-news.net/wp-content/uploads/2018/06/bigstock-Technology-Security-207471322.jpg" alt="Card image cap">
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Anonymous</h5>
+                            <p class="card-text">
+                                Unlinkable Transactions <br/>
+                                Confidential Amounts <br/>
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
             </div>
         </template>
@@ -53,13 +71,6 @@ export default {
             Object.assign(this.$data, this.$options.data());
             await this.$refs.modal.showModal();
 
-            if (this.selectedType === -1)
-                this.$store.dispatch('addToast', {
-                    type: 'error',
-                    title: 'Account type was not selected',
-                    text: 'You have to select an account type'
-                });
-
             return {
                 selectedType: this.selectedType,
             };
@@ -77,8 +88,7 @@ export default {
 
 <style scoped>
 
-    .category, .category > i, .category > span{
-        display: block;
+    .card-img-top img {
     }
 
 </style>

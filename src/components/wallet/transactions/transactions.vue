@@ -19,8 +19,8 @@
         <div class="card-body p-3" v-if="txs && transactionsAll.length ">
             <show-transactions :transactions="transactionsAll"/>
         </div>
-        <div class="card-footer bg-light g-0 d-block-inline p-3">
-            <pagination class="right" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="Math.trunc(ending/countPerPage)" :prefix="`/address/${address.addressEncoded}/`" suffix="#transactions" />
+        <div class="card-footer bg-light g-0 d-block-inline p-3" v-if="pages">
+            <pagination class="right" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="pages" :prefix="`/address/${address.addressEncoded}/`" suffix="#transactions" />
         </div>
 
         <alert-box v-if="error" type="error">{{error}}</alert-box>
@@ -70,6 +70,10 @@ export default {
 
         countPerPage(){
             return consts.addressTxsPagination
+        },
+
+        pages(){
+            return Math.trunc(this.ending/this.countPerPage)
         },
 
         starting(){

@@ -10,9 +10,10 @@
             <alert-box v-if="!isLoading && !isFound" type="warning" >
                 Address doesn't exist!
             </alert-box>
-
-            <balances :publicKeyHash="publicKeyHash" />
-            <transactions :publicKeyHash="publicKeyHash" :page="page" />
+            <template v-else>
+                <balances :publicKeyHash="publicKeyHash" />
+                <transactions :publicKeyHash="publicKeyHash" :page="page" />
+            </template>
 
         </template>
         <div class="py-3 text-center" v-else>

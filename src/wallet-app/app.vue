@@ -4,7 +4,10 @@
 
         <alert-box v-if="error" type="error">{{error}}</alert-box>
         <template v-else>
-            <router-view v-if="walletInitialized"></router-view>
+            <div class="d-flex flex-center" v-if="!walletInitialized" style="height: 100vh;" >
+                <loading-spinner class="fs-5"/>
+            </div>
+            <router-view v-else></router-view>
         </template>
 
     </div>
@@ -13,13 +16,13 @@
 
 <script>
 
-import Identicons from "src/utils/identicons"
 import AlertBox from "src/components/utils/alert-box"
 import consts from "consts/consts"
+import LoadingSpinner from "src/components/utils/loading-spinner";
 
 export default {
 
-    components: {  AlertBox },
+    components: {  AlertBox, LoadingSpinner },
 
     data(){
         return {
