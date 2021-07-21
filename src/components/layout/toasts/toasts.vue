@@ -1,6 +1,6 @@
 <template>
     <div class="position-fixed bottom-0 first-0">
-        <div class="p-3 toast-div pt-1 pb-1" v-for="(toast, key ) in list"
+        <div class="p-1 p-sm-3 toast-div pt-1 pb-1" v-for="(toast, key ) in list"
              :key="`toast_${key}`">
             <div class="toast show mb-2" >
                 <div :class="`toast-header ${getTitleBackground(toast)}`">

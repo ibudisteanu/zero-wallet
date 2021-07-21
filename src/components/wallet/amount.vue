@@ -2,7 +2,7 @@
     <span>
         <template v-if="getToken">
             <span :class="valueClass">
-                {{amount}}
+                {{sign?'':'-'}} {{amount}}
             </span>
             <router-link :to="`/tokens/${getToken.hash}`" :class="tokenClass">
                 $0x00
@@ -25,6 +25,7 @@ export default {
     props: {
         token: {default: ''},
         value: {default: 0},
+        sign: {default: false},
         valueClass: {default: ""},
         tokenClass: {default: ""}
     },

@@ -24,7 +24,7 @@
 
             <loading-button :text="`Receive ${$store.state.faucet.faucetTestnetCoins}`" @submit="handleSubmit" icon="fa fa-coins" :disabled="!captchaToken" />
 
-            <button class="btn btn-falcon-secondary" type="button" @click="closeModal" :disabled="!captchaToken">
+            <button class="btn btn-falcon-secondary" type="button" @click="closeModal">
                 <i class="fa fa-ban"></i> Cancel
             </button>
 
@@ -64,8 +64,11 @@ export default {
 
     methods:{
 
-        showModal() {
+        async showModal() {
             Object.assign(this.$data, this.$options.data());
+
+            await this.$store.state.blockchain.syncPromise;
+
             return this.$refs.modal.showModal();
         },
 

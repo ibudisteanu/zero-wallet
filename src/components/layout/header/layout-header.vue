@@ -74,8 +74,9 @@ export default {
       handleToggleDark(){
          this.$store.commit('setDark', !this.$store.state.page.dark)
       },
-      handleToggleLeftSidebar(){
+      handleToggleLeftSidebar(e){
          this.$store.commit('setLeftSidebarShow', !this.$store.state.page.leftSidebarShow)
+         if (e) e.stopPropagation()
       },
       handleToggleNetworksMenu(){
          this.showNetworksMenu = !this.showNetworksMenu

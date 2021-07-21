@@ -1,3 +1,11 @@
+:root, :root.light, :root .light {
+    --falcon-toast-background-color: rgba(255, 255, 255, 0.95);
+}
+
+.dark{
+    --falcon-toast-background-color: rgba(52, 64, 80, 0.95);
+}
+
 /**
 Scrollbar
  */
