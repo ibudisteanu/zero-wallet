@@ -34,6 +34,20 @@ Scrollbar
     -webkit-border-radius: 100px;
 }
 
+.dark ::-webkit-scrollbar {
+    background-color: rgba(255,255,255,0);
+}
+.dark ::-webkit-scrollbar:hover {
+    background-color: rgba(255, 255, 255, 0.09);
+}
+.dark ::-webkit-scrollbar-thumb:vertical {
+    background: rgba(255,255,255,0.5);
+}
+.dark ::-webkit-scrollbar-thumb:vertical:active {
+    background: rgba(255,255,255,0.61); /* Some darker color when you click it */
+}
+
+
 .div-scrollable{
     overflow-x: hidden;
     overflow-y: auto;
