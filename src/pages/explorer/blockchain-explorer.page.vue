@@ -19,12 +19,12 @@
                         <loading-spinner/>
                     </template>
                     <template v-else>
-
                         <show-blocks-info :blocksInfo="lastBlocksInfo" />
-                        <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.trunc(ending/countPerPage)" prefix="/explorer/" suffix="#chain" />
-
                     </template>
 
+                </div>
+                <div class="card-footer" v-if="loaded">
+                    <pagination class="py-0" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.trunc(ending/countPerPage)" prefix="/explorer/" suffix="#chain" />
                 </div>
 
             </div>

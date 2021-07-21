@@ -41,7 +41,8 @@ export default {
                 const blk = JSON.parse(blockData)
                 if (blk.bloom.hash !== hash) throw Error("Block hash was not matching")
 
-                resolve( await dispatch('_includeBlock', blk ) );
+                const out = await dispatch('_includeBlock', blk )
+                resolve( out );
 
             }catch(err){
                 reject(err);

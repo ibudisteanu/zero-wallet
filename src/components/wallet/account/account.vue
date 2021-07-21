@@ -22,7 +22,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="g-0 d-block-inline p-3">
+                <div class="card-footer bg-light g-0 d-block-inline p-3">
 
                     <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
                         <i class="fa fa-qrcode pointer" />

@@ -76,7 +76,7 @@ export default {
 
     methods:{
 
-        async loadAddress(){
+        async loadAddress(newAddress){
 
             try{
 
@@ -90,7 +90,7 @@ export default {
                     const addressJSON = JSON.parse(addressData)
                     publicKeyHash = addressJSON.publicKeyHash
                 } else {
-                    publicKeyHash = this.mainPublicKeyHash
+                    publicKeyHash = newAddress||this.mainPublicKeyHash
                     if (!this.$store.state.wallet.addresses[publicKeyHash]) return
                     address = this.$store.state.wallet.addresses[publicKeyHash].addressEncoded
                 }
@@ -123,8 +123,9 @@ export default {
             return this.loadAddress();
         },
         async mainPublicKeyHash (to, from){
-            if (this.mainPublicKeyHash && (from !== this.publicKeyHash || !this.publicKeyHash) )
-                await this.loadAddress();
+
+            if (to !== this.publicKeyHash || !this.publicKeyHash)
+                await this.loadAddress(to);
 
             if (!this.$store.getters.walletContains(from) && from !== to)
                 await this.$store.dispatch('unsubscribeAccount', from )

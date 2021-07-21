@@ -2,7 +2,7 @@
     <footer class="footer">
         <div class="g-0 justify-content-between fs--1 mt-4 mb-3 text-600">
 
-            <div class="row pb-1 mb-0">
+            <div class="row pb-0 mb-0">
                 <div class="col-12 col-auto text-center">
                     <span>Consensus</span>
                     <span v-if="$store.state.blockchain.status === 'sync'" class="text-success">{{blockchainStatus}}</span>

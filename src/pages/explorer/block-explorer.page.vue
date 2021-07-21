@@ -206,7 +206,7 @@ export default {
                 if (this.hash ) await this.$store.dispatch('getBlockByHash', this.hash);
 
                 if (this.blk){
-                    this.$store.commit('setViewBlockHash', this.blk.hash )
+                    this.$store.commit('setViewBlockHash', this.blk.bloom.hash )
                     const reward = PandoraPay.config.reward.getRewardAt(this.blk.height)
                     this.reward = StringHelper.formatMoney( PandoraPay.config.coins.convertToBase( reward.toString() ), PandoraPay.config.coins.DECIMAL_SEPARATOR )
                 }
