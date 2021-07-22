@@ -37,6 +37,7 @@
                                    :delegatedStakePending="delegatedStakePending">
                     </delegated-stake-pending>
                 </div>
+
             </div>
         </div>
     </div>

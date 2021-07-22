@@ -9,7 +9,6 @@
                 </router-link>
                 {{delegatedStakePending.activationHeight}}
             </small>
-        </span>
         </h4>
     </div>
 
