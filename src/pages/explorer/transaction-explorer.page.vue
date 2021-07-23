@@ -8,15 +8,15 @@
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0 text-truncate">Tx {{height ? height : hash}}
-                            <loading-spinner v-if="!loaded"/>
-                        </h5>
+                        <h5 class="mb-0 text-truncate">Tx {{height ? height : hash}}</h5>
                     </div>
                 </div>
             </div>
             <div class="card-body p-3 fs--1">
 
                 <alert-box v-if="error" type="error">{{error}}</alert-box>
+
+                <loading-spinner v-if="!loaded"/>
                 <div v-else-if="tx">
 
                     <div class="row pt-2 pb-2">

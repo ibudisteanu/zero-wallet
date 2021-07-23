@@ -108,7 +108,7 @@ export default {
                                     }
                                     loaded += value.byteLength;
 
-                                    if (loaded - lastTransferred > 1024) {
+                                    if (loaded - lastTransferred > 10240) {
                                         lastTransferred = loaded
                                         self.progressStatus = `WASM:  ${(loaded / 1024 / 1024 /3).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
                                     }

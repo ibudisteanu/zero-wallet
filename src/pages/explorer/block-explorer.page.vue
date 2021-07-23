@@ -10,7 +10,6 @@
                     <div class="col">
                         <h5 class="mb-0 text-truncate">
                             Block Explorer {{height ? height : hash}}
-                            <loading-spinner v-if="!loaded"/>
                         </h5>
                     </div>
                 </div>
@@ -19,7 +18,8 @@
 
                 <alert-box v-if="error" type="error">{{error}}</alert-box>
 
-                <template v-if="blk">
+                <loading-spinner v-if="!loaded"/>
+                <template v-else-if="blk">
 
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Hash</span>
