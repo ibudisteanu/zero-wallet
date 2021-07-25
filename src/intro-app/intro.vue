@@ -115,6 +115,7 @@ export default {
 
                                     controller.enqueue(value);
                                     read();
+
                                 }).catch(error => {
                                     controller.error(error)
                                 })
