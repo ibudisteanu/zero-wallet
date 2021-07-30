@@ -57,7 +57,7 @@ export default {
 
         finalPage(){
             if (this.page !== null) return this.page
-            return Math.trunc(this.txs.count / this.countPerPage)
+            return Math.trunc(this.ending / this.countPerPage)
         },
 
         address(){
@@ -103,8 +103,10 @@ export default {
 
             const txs = this.txs.hashes;
 
-            let ending = this.last
+            let ending = Math.min( this.ending, (this.page === null) ? Number.MAX_SAFE_INTEGER : ( this.page + 1 ) * this.countPerPage)
             let starting = ending - this.countPerPage
+
+          console.log("starting", starting, "ending", ending)
 
           const heights = []
           for ( const heightStr in txs)
@@ -119,6 +121,8 @@ export default {
                 out.push(txs[height]);
               }
           }
+
+          console.log(out)
 
             return out;
         },
