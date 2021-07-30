@@ -23,8 +23,9 @@
                     </template>
 
                 </div>
+
                 <div class="card-footer" v-if="loaded">
-                    <pagination class="py-0" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.trunc(ending/countPerPage)" prefix="/explorer/" suffix="#chain" />
+                    <pagination class="py-0" :inverted="true" :count-per-page="countPerPage" :current="page" :total="pages" prefix="/explorer/" suffix="#chain" />
                 </div>
 
             </div>
@@ -60,8 +61,12 @@ export default {
             return consts.blocksInfoPagination
         },
 
+        pages(){
+          return Math.floor((this.ending-1)/this.countPerPage)
+        },
+
         page(){
-            let page = this.$route.params.page || Math.trunc(this.ending / this.countPerPage)
+            let page = this.$route.params.page || this.pages
             if (typeof page == "string"){
                 page = Number.parseInt(page)
                 return page;

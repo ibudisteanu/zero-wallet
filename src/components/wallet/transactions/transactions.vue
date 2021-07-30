@@ -73,7 +73,7 @@ export default {
         },
 
         pages(){
-            return Math.trunc(this.ending/this.countPerPage)
+            return Math.floor((this.ending-1)/this.countPerPage)
         },
 
         starting(){
@@ -90,7 +90,11 @@ export default {
         },
 
         last(){
-            return (this.page === null) ? undefined : ( this.page + 1 ) * this.countPerPage
+            const out = (this.page === null) ? undefined : ( this.page + 1 ) * this.countPerPage
+            if (this.ending > 0)
+              return Math.min( this.ending, out );
+
+            return out
         },
 
         transactions(){
@@ -99,18 +103,22 @@ export default {
 
             const txs = this.txs.hashes;
 
-            let ending = (this.page === null) ? this.txs.count : this.last
+            let ending = this.last
             let starting = ending - this.countPerPage
 
-            const out = [];
-            for ( const heightStr in txs) {
-                const height = Number.parseInt(heightStr)
+          const heights = []
+          for ( const heightStr in txs)
+              heights.push( Number.parseInt(heightStr) )
 
-                if (height >= starting && height < ending ){
-                    console.log(height)
-                    out.push(txs[height]);
-                }
-            }
+          heights.sort((a,b) => b-a)
+
+          const out = [];
+          for (const height of heights ) {
+            console.log("height",height, !!txs[height], ending)
+            if (height >= starting && height < ending) {
+                out.push(txs[height]);
+              }
+          }
 
             return out;
         },

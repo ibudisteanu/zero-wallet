@@ -3,12 +3,12 @@
 
         <nav :aria-label="label">
             <ul class="pagination m-0">
-                <li class="page-item" v-if="inverted ? current > 1 : current < total - 2">
+                <li class="page-item" v-if="(!inverted) ? current < total -1 : current > 1">
                     <router-link :to="`${prefix}${inverted ? 0 : total-1}${suffix ? '/'+suffix : '' }`" class="page-link">
                         <span aria-hidden="true">{{inverted ? 0 : total-1}} «</span>
                     </router-link>
                 </li>
-                <li class="page-item" v-if="inverted ? current > 0 : current < total - 1">
+                <li class="page-item" v-if="(!inverted) ? current < total : current > 0">
                     <router-link :to="`${prefix}${inverted ? current - 1 : current + 1}${suffix ? '/'+suffix : '' }`"  class="page-link">
                         <span aria-hidden="true">{{inverted ? current - 1 : current + 1}}</span>
                     </router-link>
@@ -18,14 +18,14 @@
                         <span aria-hidden="true">{{ current }}</span>
                     </router-link>
                 </li>
-                <li class="page-item" v-if="current < total - 1">
+                <li class="page-item" v-if="inverted ? current < total : current > 0">
                     <router-link :to="`${prefix}${inverted ? current + 1 : current - 1}${suffix ? '/'+suffix : '' }`" class="page-link">
                         <span aria-hidden="true">{{inverted ? current + 1 : current - 1}}</span>
                     </router-link>
                 </li>
-                <li class="page-item" v-if="inverted ? current < total -2 : current < 0">
-                    <router-link :to="`${prefix}${inverted ? total -1 : 0}${suffix ? '/'+suffix : '' }`"  class="page-link">
-                        <span aria-hidden="true">» {{inverted ? total -1 : 0}}</span>
+                <li class="page-item" v-if="inverted ? current < total -1 : current > 1">
+                    <router-link :to="`${prefix}${inverted ? total : 0}${suffix ? '/'+suffix : '' }`"  class="page-link">
+                        <span aria-hidden="true">» {{inverted ? total : 0}}</span>
                     </router-link>
                 </li>
             </ul>

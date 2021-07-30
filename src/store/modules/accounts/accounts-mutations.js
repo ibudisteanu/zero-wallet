@@ -28,8 +28,10 @@ export default {
 
         if (accountTxs){
             obj.count = accountTxs.count
+
+            accountTxs.txs = (accountTxs.txs||[]).reverse()
             for (let i=0; i < accountTxs.txs.length; i++)
-                obj.hashes[starting + i] = accountTxs.txs[i]
+                obj.hashes[starting + i ] = accountTxs.txs[i]
         } else {
             obj.count = 0
             obj.next = 0
@@ -46,7 +48,7 @@ export default {
             ...state.txs[publicKeyHash]
         };
 
-        const viewTxsPositions = state.viewTxsPositions[publicKeyHash]
+        let viewTxsPositions = state.viewTxsPositions[publicKeyHash]
 
         if (!extraInfo.inserted){ //removed
             obj.count -= 1
@@ -64,6 +66,7 @@ export default {
 
         }
 
+        viewTxsPositions = state.viewTxsPositions[publicKeyHash]
         if (viewTxsPositions)
             for (const heightStr in obj.hashes) {
                 const height = Number.parseInt(heightStr)
