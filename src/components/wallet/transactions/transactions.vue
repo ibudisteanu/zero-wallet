@@ -138,7 +138,7 @@ export default {
                 this.error = ''
 
                 await this.$store.state.blockchain.syncPromise;
-                await this.$store.dispatch('downloadAccountTxs', {publicKeyHash: this.publicKeyHash, next: this.last, updateViewPosition: (this.page === null) } )
+                await this.$store.dispatch('downloadAccountTxs', {publicKeyHash: this.publicKeyHash, next: this.last, view: (this.page === null) } )
 
             }catch(err){
                 this.error = err.toString()

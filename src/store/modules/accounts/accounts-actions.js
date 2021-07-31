@@ -9,7 +9,7 @@ const promises = {
 
 export default {
 
-    async downloadAccountTxs({state, dispatch, commit}, {publicKeyHash, next, view = false, updateViewPosition = false } ){
+    async downloadAccountTxs({state, dispatch, commit}, {publicKeyHash, next, view = false, } ){
 
         let starting, ending
 
@@ -19,7 +19,7 @@ export default {
                 const out = await PandoraPay.network.getNetworkAccountTxs(publicKeyHash, (next === undefined) ? Number.MAX_SAFE_INTEGER : next  );
                 const accountTxs = JSON.parse(out)
 
-                console.log("next", next, updateViewPosition, accountTxs)
+                console.log("next", next, accountTxs)
 
                 if (accountTxs)
                     if (next === undefined){
@@ -30,9 +30,11 @@ export default {
                         ending = next
                     }
 
-                const viewStart = (Math.ceil( next / consts.addressTxsPagination )-1) * consts.addressTxsPagination
-                const viewEnd = viewStart + consts.addressTxsPagination
-                commit('setAccountTxsViewPosition', {publicKeyHash, starting: viewStart, ending: viewEnd, update: updateViewPosition })
+                if (view) {
+                    const viewStart = (Math.ceil( next / consts.addressTxsPagination )-1) * consts.addressTxsPagination
+                    const viewEnd = viewStart + consts.addressTxsPagination
+                    commit('setAccountTxsViewPosition', {publicKeyHash, starting: viewStart, ending: viewEnd })
+                }
 
                 commit('setAccountTxs', { publicKeyHash, starting, accountTxs })
 
