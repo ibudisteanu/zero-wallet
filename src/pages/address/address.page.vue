@@ -121,14 +121,17 @@ export default {
 
     watch: {
         $route (to, from) {
+          if (to === from) return
             return this.loadAddress();
         },
         async mainPublicKeyHash (to, from){
 
+            if (to === from) return
+
             if (to !== this.publicKeyHash || !this.publicKeyHash)
                 await this.loadAddress(to);
 
-            if (!this.$store.getters.walletContains(from) && from !== to)
+            if (!this.$store.getters.walletContains(from) )
                 await this.$store.dispatch('unsubscribeAccount', from )
         },
     },

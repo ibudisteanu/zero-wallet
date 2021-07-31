@@ -138,7 +138,7 @@ export default {
     computed:{
 
         query(){
-            return this.$route.params.query;
+            return (this.$route.params.query||'').toLowerCase();
         },
         height(){
             if (this.query && this.query.length < 10)
@@ -188,9 +188,9 @@ export default {
 
         },
 
-        async removed(){
-            this.$store.commit('removeViewTransactionsHashes', [this.tx.bloom.hash])
-            await this.$store.dispatch('unsubscribeTransaction', this.tx.bloom.hash )
+        async removed(tx = this.tx){
+            this.$store.commit('removeViewTransactionsHashes', [tx.bloom.hash])
+            await this.$store.dispatch('unsubscribeTransaction', tx.bloom.hash )
         },
 
         convertToBase: (amount) => PandoraPay.config.coins.convertToBase( amount.toString() ),
@@ -200,11 +200,26 @@ export default {
 
     watch: {
         '$route': {
-            handler: function (to, from) {
+            handler: async function (to, from) {
                 if (to === from) return
                 return this.loadTransaction();
-            }
-        }
+            },
+        },
+
+        async hash(from, to) {
+          if (from === to) return
+
+          this.$store.commit('removeViewTransactionsHashes', [from])
+          await this.$store.dispatch('unsubscribeTransaction', from )
+        },
+
+        async height(from, to){
+            if (from === to) return
+
+            const tx = this.$store.state.transactions.txsByHeight[from];
+            if (tx) return this.removed(tx)
+        },
+
     },
 
     mounted(){

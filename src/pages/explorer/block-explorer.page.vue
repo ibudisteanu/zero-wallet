@@ -151,9 +151,9 @@ export default {
 
     computed:{
 
-        query(){
-            return this.$route.params.query;
-        },
+      query(){
+        return (this.$route.params.query||'').toLowerCase();
+      },
         height(){
             if (this.query && this.query.length < 10)
                 return Number.parseInt(this.query)
@@ -215,7 +215,15 @@ export default {
     watch: {
         '$route' (to, from) {
             return this.loadBlock();
-        }
+        },
+
+        hash(from, to) {
+          if (from === to) return
+        },
+
+        height(from, to){
+          if (from === to) return
+        },
     },
 
     async mounted(){

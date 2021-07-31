@@ -1,4 +1,5 @@
 import Vue from "vue";
+import consts from 'consts/consts'
 
 export default {
 
@@ -52,7 +53,7 @@ export default {
 
         if (!extraInfo.inserted){ //removed
             obj.count -= 1
-            delete obj.hashes[ extraInfo.txsCount ]
+            delete obj.hashes[ extraInfo.txsCount - 1 ]
 
             if (viewTxsPositions && viewTxsPositions.ending === obj.count+1 && viewTxsPositions.update)
                 Vue.set(state.viewTxsPositions, publicKeyHash, { starting: viewTxsPositions.starting - 1, ending: viewTxsPositions.ending - 1, update: true })
@@ -67,12 +68,22 @@ export default {
         }
 
         viewTxsPositions = state.viewTxsPositions[publicKeyHash]
-        if (viewTxsPositions)
+        if (viewTxsPositions) {
+
+            let c = 0
             for (const heightStr in obj.hashes) {
                 const height = Number.parseInt(heightStr)
                 if (height < viewTxsPositions.starting || height > viewTxsPositions.ending)
-                    delete obj.hashes[heightStr]
+                    c++
             }
+
+            if (c >= consts.addressTxsPagination)
+                for (const heightStr in obj.hashes) {
+                    const height = Number.parseInt(heightStr)
+                    if (height < viewTxsPositions.starting || height > viewTxsPositions.ending)
+                        delete obj.hashes[heightStr]
+                }
+        }
 
         Vue.set(state.txs, publicKeyHash, obj );
     }

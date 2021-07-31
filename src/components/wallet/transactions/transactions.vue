@@ -106,23 +106,21 @@ export default {
             let ending = Math.min( this.ending, (this.page === null) ? Number.MAX_SAFE_INTEGER : ( this.page + 1 ) * this.countPerPage)
             let starting = ending - this.countPerPage
 
-          console.log("starting", starting, "ending", ending)
+            console.log("starting", starting, "ending", ending)
 
-          const heights = []
-          for ( const heightStr in txs)
-              heights.push( Number.parseInt(heightStr) )
+            const heights = []
+            for ( const heightStr in txs)
+                heights.push( Number.parseInt(heightStr) )
 
-          heights.sort((a,b) => b-a)
+            heights.sort((a,b) => b-a)
 
-          const out = [];
-          for (const height of heights ) {
-            console.log("height",height, !!txs[height], ending)
-            if (height >= starting && height < ending) {
-                out.push(txs[height]);
-              }
-          }
-
-          console.log(out)
+            const out = [];
+            for (const height of heights ) {
+              console.log("height",height, !!txs[height], ending)
+              if (height >= starting && height < ending) {
+                  out.push(txs[height]);
+                }
+            }
 
             return out;
         },
@@ -140,7 +138,7 @@ export default {
                 this.error = ''
 
                 await this.$store.state.blockchain.syncPromise;
-                await this.$store.dispatch('downloadAccountTxs', {publicKeyHash: this.publicKeyHash, next: this.last, view: true, updateViewPosition: (this.page === null) } )
+                await this.$store.dispatch('downloadAccountTxs', {publicKeyHash: this.publicKeyHash, next: this.last, updateViewPosition: (this.page === null) } )
 
             }catch(err){
                 this.error = err.toString()
