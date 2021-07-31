@@ -100,7 +100,7 @@ export default {
 
                 await this.$store.state.blockchain.syncPromise;
 
-                await this.$store.dispatch('getBlocksInfo', { starting: this.last-this.countPerPage, blockchainEnd: this.$store.state.blockchain.end, view: true } )
+                await this.$store.dispatch('getBlocksInfo', { starting: this.last-this.countPerPage, blockchainEnd: this.$store.state.blockchain.end, view: this.page !== this.pages } )
 
             }catch(err){
                 this.error = err.toString()

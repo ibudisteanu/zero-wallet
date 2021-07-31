@@ -30,15 +30,17 @@ export default {
 
     },
 
-    async getBlocksInfo( {state, dispatch, commit}, { starting, blockchainEnd, view = false} ){
+    async getBlocksInfo( {state, dispatch, commit}, { starting, blockchainEnd, view = null} ){
 
         starting = Math.max(0, starting )
         const ending = Math.min( starting + consts.blocksInfoPagination -1, blockchainEnd-1 )
 
-        if (view) {
+        if (view === true ) {
             const viewStart = (Math.ceil( ending / consts.blocksInfoPagination )-1) * consts.blocksInfoPagination
             const viewEnd = viewStart + consts.blocksInfoPagination
             commit('setBlocksInfoViewPosition', {starting: viewStart, ending: viewEnd})
+        } else if (view === false ) {
+            commit('setBlocksInfoViewPosition', null )
         }
 
         console.log("starting, ending", starting, ending)
@@ -70,7 +72,7 @@ export default {
             let c = 0
             for (const heightStr in listByHeight){
                 const height = Number.parseInt(heightStr)
-                if ( height <= viewPosition.ending && height >= viewPosition.starting )
+                if ( !( height > viewPosition.ending || height < viewPosition.starting ) )
                     c++
             }
 

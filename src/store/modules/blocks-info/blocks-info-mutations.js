@@ -6,11 +6,8 @@ export default {
         state.listByHeight = listByHeights
     },
 
-    setBlocksInfoViewPosition(state, {starting, ending}){
-        state.viewPosition = {
-            starting,
-            ending
-        }
+    setBlocksInfoViewPosition(state, viewPosition ){
+        state.viewPosition = viewPosition
     }
 
 }
