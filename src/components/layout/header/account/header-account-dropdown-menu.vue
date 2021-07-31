@@ -52,6 +52,7 @@
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
 import UtilsHelper from "src/utils/utils-helper";
+
 const {version} = PandoraPay.enums.wallet.address;
 
 export default {

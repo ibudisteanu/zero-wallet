@@ -41,7 +41,7 @@ export default {
         Vue.set(state.txs, publicKeyHash, obj );
     },
 
-    accountTxUpdateNotification(state, {publicKeyHash, txHash, extraInfo }){
+    addAccountTxUpdateNotification(state, {publicKeyHash, txHash, extraInfo }){
 
         const obj = {
             hashes: {},
@@ -69,7 +69,6 @@ export default {
 
         viewTxsPositions = state.viewTxsPositions[publicKeyHash]
         if (viewTxsPositions) {
-
             let c = 0
             for (const heightStr in obj.hashes) {
                 const height = Number.parseInt(heightStr)

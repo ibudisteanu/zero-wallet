@@ -127,4 +127,26 @@ export default {
 
     },
 
+
+    async accountTxUpdateNotification( {state, dispatch, commit, getters}, {publicKeyHash, txHash, extraInfo }){
+
+        if (getters.walletContains(publicKeyHash)){
+            if (extraInfo.inserted){
+                dispatch('addToast', {
+                    type: 'success',
+                    title: `Received a new transaction`,
+                    text: `Your address has received a transaction <strong>${txHash}</strong>`,
+                } )
+            } else {
+                dispatch('addToast', {
+                    type: 'warning',
+                    title: `A transaction was removed from blockchain`,
+                    text: `Your address got a transaction removed <strong>${txHash}</strong>`,
+                } )
+            }
+        }
+
+        return commit('addAccountTxUpdateNotification', { publicKeyHash, txHash, extraInfo } )
+    }
+
 }
