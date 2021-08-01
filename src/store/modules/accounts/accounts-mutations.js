@@ -16,8 +16,8 @@ export default {
         Vue.set(state.list, publicKeyHash, account );
     },
 
-    setAccountTxsViewPosition(state, {publicKeyHash, starting, ending, update}){
-        Vue.set( state.viewTxsPositions, publicKeyHash,  { starting,  ending,  update })
+    setAccountTxsViewPosition(state, {publicKeyHash, data } ){
+        Vue.set( state.viewTxsPositions, publicKeyHash,  data  )
     },
 
     setAccountTxs(state, {publicKeyHash, starting, accountTxs }){
@@ -79,7 +79,7 @@ export default {
             for (const heightStr in obj.hashes) {
                 const height = Number.parseInt(heightStr)
                 if ( height > obj.count || height < obj.count - consts.addressTxsPagination )
-                    delete(hashes[height])
+                    delete(obj.hashes[height])
             }
         }
 

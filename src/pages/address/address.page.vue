@@ -42,14 +42,14 @@ export default {
     data(){
         return {
             publicKeyHash: '',
-            error: "xxxx",
+            error: "",
         }
     },
 
     computed:{
 
         page(){
-            let page = this.$route.params.page
+            let page = this.$route.params.page || null
             if (typeof page == "string"){
                 page = Number.parseInt(page)
                 return page;

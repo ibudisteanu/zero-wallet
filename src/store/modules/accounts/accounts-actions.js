@@ -33,7 +33,9 @@ export default {
                 if (view) {
                     const viewStart = (Math.ceil( next / consts.addressTxsPagination )-1) * consts.addressTxsPagination
                     const viewEnd = viewStart + consts.addressTxsPagination
-                    commit('setAccountTxsViewPosition', {publicKeyHash, starting: viewStart, ending: viewEnd })
+                    commit('setAccountTxsViewPosition', {publicKeyHash, data: { starting: viewStart, ending: viewEnd}  })
+                } else {
+                    commit('setAccountTxsViewPosition', {publicKeyHash, data: null })
                 }
 
                 commit('setAccountTxs', { publicKeyHash, starting, accountTxs })

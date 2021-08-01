@@ -25,7 +25,7 @@
                 </div>
 
                 <div class="card-footer" v-if="loaded">
-                    <pagination class="py-0" :inverted="true" :count-per-page="countPerPage" :current="page" :total="pages" prefix="/explorer/" suffix="#chain" />
+                    <pagination class="py-0" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="pages" prefix="/explorer/" suffix="#chain" />
                 </div>
 
             </div>
@@ -61,12 +61,17 @@ export default {
             return consts.blocksInfoPagination
         },
 
-        pages(){
+        finalPage(){
+          if (this.page !== null) return this.page
+          return Math.trunc(this.ending / this.countPerPage)
+        },
+
+       pages(){
           return Math.floor((this.ending-1)/this.countPerPage)
         },
 
         page(){
-            let page = this.$route.params.page || this.pages
+            let page = this.$route.params.page || null
             if (typeof page == "string"){
                 page = Number.parseInt(page)
                 return page;
@@ -79,7 +84,11 @@ export default {
         },
 
         last(){
-            return Math.min( this.ending, ( this.page + 1  ) * this.countPerPage )
+          const out = ( this.finalPage  + 1 ) * this.countPerPage
+          if (this.ending > 0)
+            return Math.min( this.ending, out );
+
+          return out
         },
 
         lastBlocksInfo(){
@@ -100,7 +109,7 @@ export default {
 
                 await this.$store.state.blockchain.syncPromise;
 
-                await this.$store.dispatch('getBlocksInfo', { starting: this.last-this.countPerPage, blockchainEnd: this.$store.state.blockchain.end, view: this.page !== this.pages } )
+                await this.$store.dispatch('getBlocksInfo', { starting: this.last-this.countPerPage, blockchainEnd: this.$store.state.blockchain.end, view: this.page !== null  } )
 
             }catch(err){
                 this.error = err.toString()
