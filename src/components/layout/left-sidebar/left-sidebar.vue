@@ -287,7 +287,9 @@ export default {
 </script>
 
 <style scoped>
-.navbar-vertical-content{
-    height: auto !important;
+@media (min-width: 1200px) {
+  .navbar-vertical {
+    z-index: auto;
+  }
 }
 </style>

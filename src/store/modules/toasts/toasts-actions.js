@@ -4,9 +4,9 @@ export default {
         data.id = Math.random().toString()
         commit('setToast', data)
 
-        setTimeout(()=>{
-            commit('removeToast', data.id )
-        }, 5000)
+        // setTimeout(()=>{
+        //     commit('removeToast', data.id )
+        // }, 5000)
 
     }
 

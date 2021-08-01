@@ -146,39 +146,25 @@ export default {
             try{
                 const blocksRemoved = [], txsRemoved = []
 
-                const blocksByHash = this.$store.state.blocks.blocksByHash
-                for (const hash in blocksByHash){
-                    const blk = blocksByHash[hash]
-                    if (blk.bloom.hash !== this.$store.state.blocks.viewBlockHash && timestamp - blk.__timestampUsed > maxDiff)
-                        blocksRemoved.push(blk)
-                }
+               for (const map of [ this.$store.state.blocks.blocksByHash, this.$store.state.blocks.blocksByHeight ])
+                   for (const hash in map){
+                        const blk = map[hash]
+                        if (blk.bloom.hash !== this.$store.state.blocks.viewBlockHash && timestamp - blk.__timestampUsed > maxDiff)
+                            blocksRemoved.push(blk)
+                    }
 
-                const blocksByHeight = this.$store.state.blocks.blocksByHeight
-                for (const height in blocksByHeight){
-                    const blk = blocksByHeight[height]
-                    if (blk.bloom.hash !== this.$store.state.blocks.viewBlockHash && timestamp - blk.__timestampUsed > maxDiff)
-                        blocksRemoved.push(blk)
-                }
-
-                const txsByHash = this.$store.state.transactions.txsByHash
-                for (const hash in txsByHash){
-                    const tx = txsByHash[hash]
-                    if (!this.$store.state.transactions.viewTxsHashes[tx.bloom.hash] && timestamp - tx.__timestampUsed > maxDiff)
-                        txsRemoved.push(tx)
-                }
-
-                const txsByHeight = this.$store.state.transactions.txsByHeight
-                for (const height in txsByHeight){
-                    const tx = txsByHeight[height]
-                    if (!this.$store.state.transactions.viewTxsHashes[tx.bloom.hash] && timestamp - tx.__timestampUsed > maxDiff)
-                        txsRemoved.push(tx)
-                }
+              for (const map of [ this.$store.state.transactions.txsByHash, this.$store.state.transactions.txsByHeight ])
+                  for (const hash in map){
+                      const tx = map[hash]
+                      if (!this.$store.state.transactions.viewTxsHashes[tx.bloom.hash] && timestamp - tx.__timestampUsed > maxDiff)
+                          txsRemoved.push(tx)
+                  }
 
                 if (txsRemoved.length)
-                    this.$store.commit('deleteTransactions', txsRemoved )
+                  this.$store.commit('deleteTransactions', txsRemoved )
 
                 if (blocksRemoved.length)
-                    this.$store.commit('deleteBlocks', blocksRemoved )
+                  this.$store.commit('deleteBlocks', blocksRemoved )
 
             }catch(err){
                 console.error("clearUnusedDataStoreWorker raised an error", err)

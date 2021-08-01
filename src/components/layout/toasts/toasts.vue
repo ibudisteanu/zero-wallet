@@ -1,15 +1,15 @@
 <template>
     <div class="position-fixed bottom-0 first-0">
-        <div class="p-1 p-sm-3 toast-div pt-1 pb-1" v-for="(toast, key ) in list"
+        <div class="px-1 py-2 pt-0 px-sm-3 py-sm-2 toast-div" v-for="(toast, key ) in list"
              :key="`toast_${key}`">
-            <div class="toast show mb-2" >
+            <div class="toast show" >
                 <div :class="`toast-header ${getTitleBackground(toast)}`">
                     <strong class="me-auto">{{toast.title}}</strong>
                     <small v-if="toast.time" class="text-muted">{{toast.time}}</small>
                     <button class="ms-2 btn-close pointer" type="button" @click="() => closeToast(toast)"></button>
                 </div>
                 <div class="toast-body">
-                    <i v-if="getIcon(toast)" :class="`fa ${getIcon(toast)} fs-2 p-2`"></i>
+                    <i v-if="getIcon(toast)" :class="`fa ${getIcon(toast)} fs-2 p-2 pt-0`"></i>
                     {{toast.text}}
                 </div>
             </div>
@@ -51,6 +51,6 @@ export default {
 
 <style scoped>
     .toast-div{
-        z-index: 1000
+        z-index: 1040
     }
 </style>
