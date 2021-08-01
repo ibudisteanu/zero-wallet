@@ -63,7 +63,7 @@ export default {
 
         finalPage(){
           if (this.page !== null) return this.page
-          return Math.trunc(this.ending / this.countPerPage)
+          return Math.floor((this.ending-1)/this.countPerPage)
         },
 
        pages(){
