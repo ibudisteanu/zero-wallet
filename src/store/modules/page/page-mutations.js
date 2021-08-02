@@ -24,6 +24,10 @@ export default {
         state.refQRCodeModal = ref;
     },
 
+    setQRCodeScannerModal(state, ref){
+        state.refQRCodeScannerModal = ref;
+    },
+
     setTestnetFaucetModal(state, ref){
         state.refTestnetFaucetModal = ref;
     },

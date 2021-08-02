@@ -1,18 +1,20 @@
 <template>
-    <div class="amount-row">
-        <div>
-            <span >{{text}}</span>
-            <input type="number" v-model="amount" min="0" step="0.0001">
+    <div class="row">
+        <div class="col-12 col-sm-7">
+            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{text}}</label>
+            <input :class="`form-control ${validationAmountError ? 'is-invalid' :''}`" type="number" v-model.number="amount" min="0" :step="getSteps">
+            <div v-if="validationAmountError" class="invalid-feedback d-block">{{validationAmountError}}</div>
         </div>
-        <div>
-            <span >Currency</span>
-            <select v-model="tokenCurrency">
-                <option v-for="(balance, token) in balances"
-                        :key="`send-money-${token}`"
-                        :value="token">
-                    {{getTokenName(token)}}
+        <div class="col-12 col-sm-5">
+            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Token</label>
+            <select :class="`form-select ${validationTokenError ? 'is-invalid' :''}`" v-model="selectedToken">
+                <option v-for="(balance, id) in balances"
+                        :key="`send-money-${id}`"
+                        :value="balance.token">
+                    {{getTokenName(balance.token)}}
                 </option>
             </select>
+            <div v-if="validationTokenError" class="invalid-feedback d-block">{{validationTokenError}}</div>
         </div>
     </div>
 </template>
@@ -23,7 +25,7 @@ export default {
     data(){
         return {
             amount: 0,
-            tokenCurrency: '',
+            selectedToken: '',
         }
     },
 
@@ -32,35 +34,66 @@ export default {
         balances: {default: null }
     },
 
+    computed:{
+        selectedTokenInfo(){
+            return this.$store.getters.getTokenInfo( this.selectedToken );
+        },
+        getSteps(){
+            if (!this.selectedTokenInfo) return ""
+            return (1 / Math.pow(10, this.selectedTokenInfo.decimalSeparator)).toFixed(this.selectedTokenInfo.decimalSeparator)
+        },
+        validationAmountError(){
+            if ( Number.parseFloat(this.amount) === 0) return "Amount needs to be greater than 0"
+        },
+        validationTokenError(){
+            if ( !this.selectedTokenInfo) return "Token was not selected"
+        }
+    },
+
     methods:{
 
-        getTokenName(token){
-            if (!this.$store.state.tokens.list[token]) return '';
-            return this.$store.state.tokens.list[token].name;
+        getTokenInfo(token){
+            return this.$store.getters.getTokenInfo( token );
         },
+
+        getTokenName(token){
+            const tokenInfo = this.getTokenInfo( token )
+            if (tokenInfo)
+                return tokenInfo.name;
+        },
+
 
     },
 
     watch: {
         amount (to, from) {
+
+            if (!this.selectedTokenInfo){
+                this.amount = 0
+                return 0
+            }
+
+            // to = Number.parseFloat(to)
+            // const target = to.toFixed(this.selectedTokenInfo.decimalSeparator)
+            // if (to.toString() !== target ){
+            //     this.amount = target
+            //     return
+            // }
+
             return this.$emit('changed', {
-                amount: Math.floor( PandoraPay.argv.transactions.coins.convertToUnits( Number.parseFloat(to) ) ),
+                amount: to,
             });
         },
-        tokenCurrency (to, from) {
+        selectedToken (to, from) {
             return this.$emit('changed', {
-                tokenCurrency: to,
+                token: to,
             });
         },
+
     },
 
 }
 </script>
 
 <style scoped>
-    .amount-row{
-        display: grid;
-        grid-template-columns: 1fr 400px;
-        grid-column-gap: 10px;
-    }
 </style>

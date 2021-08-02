@@ -139,13 +139,13 @@ export default {
                 dispatch('addToast', {
                     type: 'success',
                     title: `Received a new transaction`,
-                    text: `Your address has received a transaction <strong>${txHash}</strong>`,
+                    text: `Your address has received a transaction ${txHash}`,
                 } )
             } else {
                 dispatch('addToast', {
                     type: 'warning',
                     title: `A transaction was removed from blockchain`,
-                    text: `Your address got a transaction removed <strong>${txHash}</strong>`,
+                    text: `Your address got a transaction removed ${txHash}`,
                 } )
             }
         }

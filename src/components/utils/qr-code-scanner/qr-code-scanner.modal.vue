@@ -2,9 +2,16 @@
 
     <modal ref="modal" title="Scan QR Code" >
 
-        <qrcode-stream class="qrcodeStream" @decode="onDecode" @init="onInit" />
+        <template slot="body">
+            <qrcode-stream class="qrcodeStream" @decode="onDecode" @init="onInit" />
+            <alert-box v-if="error" type="error">{{error}}</alert-box>
+        </template>
 
-        <alert-box v-if="error" type="error">{{error}}</alert-box>
+        <template slot="footer">
+            <button class="btn btn-falcon-secondary" type="button" @click="closeModal">
+                <i class="fa fa-ban"></i> Cancel
+            </button>
+        </template>
 
     </modal>
 
@@ -29,18 +36,21 @@ export default {
 
     data(){
         return {
+            decoded: "",
             error: '',
-            onDecoded: undefined,
         }
     },
 
     methods:{
 
-        showModal(onDecoded){
+        async showModal(){
 
-            this.onDecoded = onDecoded;
+            Object.assign(this.$data, this.$options.data());
+            await this.$refs.modal.showModal();
 
-            return this.$refs.modal.showModal();
+            return {
+                decoded: this.decoded,
+            };
         },
 
         closeModal(){
@@ -48,11 +58,9 @@ export default {
         },
 
         onDecode (decodedString) {
-
-            const result = decodedString;
-            if (this.onDecoded) {
-                this.onDecoded(decodedString);
-                this.$refs.refModal.closeModal();
+            if (decodedString !== ""){
+                this.decoded = decodedString
+                this.closeModal()
             }
         },
 

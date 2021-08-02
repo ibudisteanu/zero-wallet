@@ -45,8 +45,8 @@
                         </div>
                         <ul :class="`nav collapse ${navElementsShown['transfer'] ? 'show':''}`">
                             <li class="nav-item">
-                                <router-link to="#" class="nav-link" @click.native="disableNavbarMenu">
-                                    <div class="d-flex align-items-center" @click="disableNavbarMenu">
+                              <router-link :disabled="!isWalletLogged" to="/send/transparent" :class="`${ route === '/send/transparent' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
+                                  <div class="d-flex align-items-center">
                                         <span class="nav-link-text ps-1">Public</span>
                                     </div>
                                 </router-link>
