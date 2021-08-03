@@ -100,10 +100,10 @@
             <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
 
             <button class="btn btn-link" type="button" v-if="tab > 0" @click="()=>increaseTab(-1)">
-                Back <i class="fas fa-chevron-left me-2" data-fa-transform="shrink-3"></i>
+                Back <i class="fas fa-chevron-left me-2" ></i>
             </button>
             <button class="btn btn-falcon-primary" type="button" v-if="tab < 3" @click="()=>increaseTab(1)">
-                <i class="fas fa-chevron-right ms-2" data-fa-transform="shrink-3"> </i> Next
+                <i class="fas fa-chevron-right ms-2"> </i> Next
             </button>
         </template>
 

@@ -34,12 +34,6 @@
                                     <span class="d-none d-md-block mt-1 fs--1">Fee</span>
                                 </router-link>
                             </li>
-                            <li class="nav-item">
-                                <router-link :class="`nav-link ${tab===3?'active':''} disabled fw-semi-bold`" to="#">
-                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-check"></i></span></span>
-                                    <span class="d-none d-md-block mt-1 fs--1">Review</span>
-                                </router-link>
-                            </li>
                         </ul>
                     </div>
                     <div class="card-body py-3">
@@ -51,7 +45,9 @@
                                                      :class="`${index > 0 ? 'pt-5' : '0'}`"
                                                      :index="index"
                                                      :type="version.VERSION_TRANSPARENT"
-                                                     :balances="balances" @changed="e => changedDestination(index, e)">
+                                                     :balances="balances"
+                                                     @changed="e => changedDestination(index, e)"
+                                                     @deleted="e => deletedDestination(index, e)">
                                 </destination-address>
 
                                 <div class="text-center pt-3">
@@ -76,11 +72,12 @@
 
                         <div class="float-end">
                             <button class="btn btn-link" type="button" v-if="tab > 0" @click="handleBack">
-                                Back <i class="fas fa-chevron-left me-2" data-fa-transform="shrink-3"></i>
+                                Back <i class="fas fa-chevron-left me-2"></i>
                             </button>
-                            <button class="btn btn-falcon-primary" type="button" v-if="tab < 3" @click="handleNext">
-                                <i class="fas fa-chevron-right ms-2" data-fa-transform="shrink-3"> </i> Next
+                            <button class="btn btn-falcon-primary" type="button" v-if="tab < 2" @click="handleNext">
+                                <i class="fas fa-chevron-right ms-2"> </i> Next
                             </button>
+                            <loading-button v-if="tab===2" text="Send funds" @submit="handleSendFunds" icon="fa fa-credit-card"  />
                         </div>
                     </div>
                 </div>
@@ -123,7 +120,7 @@ export default {
 
             destinations: [],
             fee: 0,
-            feeTokenCurrency: '',
+            feeToken: '',
 
             extraMessage: '',
             extraEncryptionOption: '',
@@ -175,7 +172,7 @@ export default {
                 address: null,
                 validationError: 'Address is empty',
                 amount: 0,
-                tokenCurrency: '',
+                token: '',
             });
         },
 
@@ -186,9 +183,13 @@ export default {
             });
         },
 
+        deletedDestination(index, data){
+            Vue.delete(this.destinations, index )
+        },
+
         changedFee(data){
             if (data.amount !== undefined) this.fee = data.amount;
-            if (data.tokenCurrency) this.feeTokenCurrency = data.tokenCurrency;
+            if (data.token) this.feeToken = data.token;
         },
 
         changedExtra(data){
@@ -202,37 +203,42 @@ export default {
 
                 this.error = '';
 
-                for (const destination of this.destinations) {
-                    if (destination.address === this.address.address)
-                        throw Error("Destination can not be the same with from");
+                const amounts = {
 
-                    if (destination.validationError)
-                        throw Error(destination.validationError);
                 }
 
-                const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.addressEncoded );
-                if (nonce === undefined) throw Error("The connection to the node was dropped");
+                for (const destination of this.destinations) {
+
+                    if (destination.validationError) throw destination.validationError;
+                    if (destination.address === this.address.encodedAddress) throw "Destination can not be the same with from";
+
+                    if (!amounts[destination.token])
+                        amounts[destination.token] = 0
+
+                    amounts[destination.token] += destination.amount
+                }
 
                 //compute extra
-                const out = await PandoraPay.wallet.transfer.transferSimple({
-                    address: this.address.addressEncoded,
-                    txDsts: this.destinations.map( it => ({
-                        address: it.address,
-                        amount: it.amount,
-                        tokenCurrency: it.tokenCurrency,
-                    })),
-                    fee: this.fee,
-                    feeTokenCurrency: this.feeTokenCurrency,
-                    extra:{
-                        extraMessage: this.extraMessage,
-                        extraEncryptionOption: this.extraEncryptionOption,
-                    },
-                    nonce,
-                    memPoolValidateTxData: false,
-                });
+                const out = await PandoraPay.transactions.builder.createSimpleTx_Float( JSON.stringify({
+                    from: [this.address.addressEncoded],
+                    nonce: 0,
+                    amounts: Object.values(amounts),
+                    amountsTokens: Object.keys(amounts),
+                    dsts: this.destinations.map (it => it.address.encodedAddress),
+                    dstsAmounts: this.destinations.map (it => it.amount),
+                    dstsTokens: this.destinations.map (it => it.token),
+                    feeFixed: this.fee,
+                    feePerByte: 0,
+                    feePerByteAuto: false,
+                    feeToken: this.feeToken,
+                    // extra:{
+                    //     extraMessage: this.extraMessage,
+                    //     extraEncryptionOption: this.extraEncryptionOption,
+                    // },
+                }));
 
 
-                if (!out) throw Error("Transaction couldn't be made");
+                if (!out) throw "Transaction couldn't be made";
 
                 const outConsensus = await Consensus._client.emitAsync("mem-pool/new-tx", {tx: out.tx.toBuffer() }, 0);
                 if (!outConsensus)

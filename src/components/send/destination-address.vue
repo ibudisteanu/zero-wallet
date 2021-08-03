@@ -11,7 +11,7 @@
 
                 <div class="input-toggle-group">
                     <input :class="`form-control ${validationError ? 'is-invalid' : ''}`" type="text" v-model="destination">
-                    <i class="fa fa-qrcode input-toggle" @click="showQrCodeScanner" style="right: 35px"></i>
+                    <i class="fa fa-qrcode input-toggle" @click="showQrCodeScanner" :style="`${ validationError ?'right: 35px' : ''}`"></i>
                 </div>
 
             </div>
@@ -69,7 +69,15 @@ export default {
             }
 
             this.finalAddress = null
-        }
+        },
+
+        finalAddress (to, from){
+            return this.$emit('changed', {
+                address: this.finalAddress,
+                validationError: this.validationError,
+            });
+        },
+
     },
 
     methods: {
@@ -87,7 +95,7 @@ export default {
         },
 
         deleteDestinationAddress(){
-            return this.$emit('deleted', { index: this.index })
+            return this.$emit('deleted')
         }
 
     }
