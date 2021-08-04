@@ -1,11 +1,11 @@
 <template>
     <div class="row">
-        <div class="col-12 col-sm-7">
+        <div class="col-12 col-sm-7" v-if="allowAmount">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{text}}</label>
             <input :class="`form-control ${validationAmountError ? 'is-invalid' :''}`" type="number" v-model.number="amount" min="0" :step="getSteps">
             <div v-if="validationAmountError" class="invalid-feedback d-block">{{validationAmountError}}</div>
         </div>
-        <div class="col-12 col-sm-5">
+        <div :class="`col-12 ${allowAmount ? 'col-sm-5' : ''}`">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Token</label>
             <select :class="`form-select ${validationTokenError ? 'is-invalid' :''}`" v-model="selectedToken">
                 <option v-for="(balance, id) in balances"
@@ -31,19 +31,21 @@ export default {
 
     props:{
         text: {default: 'Amount'},
-        balances: {default: null }
+        balances: {default: null },
+        allowZero: {default: false,},
+        allowAmount: {default: true},
     },
 
     computed:{
         selectedTokenInfo(){
-            return this.$store.getters.getTokenInfo( this.selectedToken );
+            return this.$store.getters.getToken( this.selectedToken );
         },
         getSteps(){
             if (!this.selectedTokenInfo) return ""
             return (1 / Math.pow(10, this.selectedTokenInfo.decimalSeparator)).toFixed(this.selectedTokenInfo.decimalSeparator)
         },
         validationAmountError(){
-            if ( Number.parseFloat(this.amount) === 0) return "Amount needs to be greater than 0"
+            if ( !this.allowZero && Number.parseFloat(this.amount) === 0) return "Amount needs to be greater than 0"
         },
         validationTokenError(){
             if ( !this.selectedTokenInfo) return "Token was not selected"
@@ -52,12 +54,12 @@ export default {
 
     methods:{
 
-        getTokenInfo(token){
-            return this.$store.getters.getTokenInfo( token );
+        getToken(token){
+            return this.$store.getters.getToken( token );
         },
 
         getTokenName(token){
-            const tokenInfo = this.getTokenInfo( token )
+            const tokenInfo = this.getToken( token )
             if (tokenInfo)
                 return tokenInfo.name;
         },

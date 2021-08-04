@@ -63,7 +63,18 @@
                                 <!--                               @changed="changedExtra" />-->
                             </div>
                             <div :class="`tab-pane ${tab===2?'active':''} `">
-                                <destination-amount text="Fee Amount" :balances="balances" @changed="changedFee" />
+
+                                <div class="form-check">
+                                    <input class="form-check-input" id="feeAuto" type="radio" value="feeAuto" v-model="feeType" />
+                                    <label class="form-check-label" for="feeAuto">Auto fee</label>
+                                </div>
+                                <destination-amount class="pb-4" v-if="feeType === 'feeAuto'" text="Fee Amount" :balances="balances" @changed="changedFeeAuto" :allow-zero="true" :allow-amount="false" />
+
+                                <div class="form-check">
+                                    <input class="form-check-input" id="feeManual" type="radio" value="feeManual" v-model="feeType" />
+                                    <label class="form-check-label" for="feeManual">Manual fee</label>
+                                </div>
+                                <destination-amount v-if="feeType === 'feeManual'" text="Fee Amount" :balances="balances" @changed="changedFeeManual" :allow-zero="true" />
                             </div>
                         </div>
                     </div>
@@ -119,8 +130,12 @@ export default {
             tab: 0,
 
             destinations: [],
-            fee: 0,
-            feeToken: '',
+
+            feeType: "feeAuto",
+            feeManualValue: 0,
+            feeManualToken: '',
+
+            feeAutoToken: '',
 
             extraMessage: '',
             extraEncryptionOption: '',
@@ -187,9 +202,13 @@ export default {
             Vue.delete(this.destinations, index )
         },
 
-        changedFee(data){
-            if (data.amount !== undefined) this.fee = data.amount;
-            if (data.token) this.feeToken = data.token;
+        changedFeeManual(data){
+            if (data.amount !== undefined) this.feeManualValue = data.amount;
+            if (data.token) this.feeManualToken = data.token;
+        },
+
+        changedFeeAuto(data){
+            if (data.token) this.feeAutoToken = data.token;
         },
 
         changedExtra(data){
@@ -224,34 +243,30 @@ export default {
                     nonce: 0,
                     amounts: Object.values(amounts),
                     amountsTokens: Object.keys(amounts),
-                    dsts: this.destinations.map (it => it.address.encodedAddress),
+                    dsts: this.destinations.map (it => it.encodedAddress),
                     dstsAmounts: this.destinations.map (it => it.amount),
                     dstsTokens: this.destinations.map (it => it.token),
-                    feeFixed: this.fee,
+                    feeFixed: (this.feeType === 'feeAuto') ? 0 : this.feeManualValue,
                     feePerByte: 0,
-                    feePerByteAuto: false,
-                    feeToken: this.feeToken,
+                    feePerByteAuto: this.feeType === 'feeAuto',
+                    feeToken: this.feeType === 'feeAuto' ? this.feeAutoToken : this.feeManualToken,
+                    propagateTx: true,
+                    awaitAnswer: true,
                     // extra:{
                     //     extraMessage: this.extraMessage,
                     //     extraEncryptionOption: this.extraEncryptionOption,
                     // },
                 }));
 
-
                 if (!out) throw "Transaction couldn't be made";
 
-                const outConsensus = await Consensus._client.emitAsync("mem-pool/new-tx", {tx: out.tx.toBuffer() }, 0);
-                if (!outConsensus)
-                    throw Error("Transaction was not included in MemPool");
-
-                Consensus.includeTransactionToPending(out.tx);
-
-                const hash = out.tx.hash().toString("hex");
+                const tx = JSON.parse(out)
+                const hash = tx.bloom.hash;
 
                 this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Transaction created`,
-                    text: `A transaction has been made. \n TxId <strong>${hash}</strong>`,
+                    text: `A transaction has been made. \n TxId ${hash}`,
                 });
 
                 this.$router.push(`/explorer/tx/${hash}`);
@@ -277,8 +292,4 @@ export default {
 </script>
 
 <style scoped>
-.addMore{
-    max-width: 200px;
-}
-
 </style>

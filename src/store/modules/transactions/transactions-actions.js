@@ -63,8 +63,8 @@ export default {
             tx.__extra.timestamp = txJSON.info.timestamp
         }
 
-        for (const vin of tx.base.vin) await dispatch('getTokenInfoByHash', vin.token)
-        for (const vout of tx.base.vout) await dispatch('getTokenInfoByHash', vout.token)
+        for (const vin of tx.base.vin) await dispatch('getTokenByHash', vin.token)
+        for (const vout of tx.base.vout) await dispatch('getTokenByHash', vout.token)
 
         commit("setTransactions", [tx] )
 

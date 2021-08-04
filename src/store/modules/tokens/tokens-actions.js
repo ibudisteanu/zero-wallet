@@ -16,6 +16,9 @@ export default {
                 if (!token ) throw "Error getting block info"
 
                 token.hash = hash
+
+                await PandoraPay.store.storeAccount( hash, tokenData  )
+
                 commit('setToken',token)
 
                 resolve(token)

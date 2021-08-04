@@ -56,15 +56,17 @@ export default {
         if (promises.accounts[publicKeyHash]) return promises.accounts[publicKeyHash];
         return promises.accounts[publicKeyHash] = new Promise( async (resolve, reject) => {
             try{
-                const out = await PandoraPay.network.getNetworkAccount(publicKeyHash);
-                const account = JSON.parse(out)
+                const accountData = await PandoraPay.network.getNetworkAccount(publicKeyHash);
+                const account = JSON.parse(accountData)
 
                 if (account){
                     for (const balance of account.balances)
-                        await dispatch('getTokenInfoByHash', balance.token)
+                        await dispatch('getTokenByHash', balance.token)
 
-                    await dispatch('getTokenInfoByHash', "")
+                    await dispatch('getTokenByHash', "")
                 }
+
+                await PandoraPay.store.storeAccount( publicKeyHash, accountData  )
 
                 commit('setAccount', { publicKeyHash, account })
 
@@ -120,6 +122,8 @@ export default {
                 ]);
 
                 commit('setSubscribedAccountStatus', {publicKeyHash, status: false})
+
+                await PandoraPay.store.storeAccount( publicKeyHash, null )
 
                 resolve(true)
             }catch(err){

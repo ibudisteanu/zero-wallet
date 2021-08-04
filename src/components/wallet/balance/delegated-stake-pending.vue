@@ -26,7 +26,7 @@ export default {
 
     computed: {
         getToken(){
-            return  this.$store.getters.getTokenInfo( PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX );
+            return  this.$store.getters.getToken( PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX );
         },
         amount(){
             return StringHelper.formatMoney( PandoraPay.config.coins.convertToBase( this.delegatedStakePending.pendingAmount.toString() ), PandoraPay.config.coins.DECIMAL_SEPARATOR )
