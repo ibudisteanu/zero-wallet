@@ -56,6 +56,7 @@ export default {
         if (promises.accounts[publicKeyHash]) return promises.accounts[publicKeyHash];
         return promises.accounts[publicKeyHash] = new Promise( async (resolve, reject) => {
             try{
+
                 const accountData = await PandoraPay.network.getNetworkAccount(publicKeyHash);
                 const account = JSON.parse(accountData)
 
@@ -135,6 +136,9 @@ export default {
 
     },
 
+    async accountUpdateNotification( {state, dispatch, commit, getters}, {publicKeyHash, account }){
+        commit('setAccount', {publicKeyHash, account})
+    },
 
     async accountTxUpdateNotification( {state, dispatch, commit, getters}, {publicKeyHash, txHash, extraInfo }){
 

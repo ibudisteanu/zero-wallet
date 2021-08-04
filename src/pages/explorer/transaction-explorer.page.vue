@@ -109,7 +109,22 @@
 
 
             </div>
+
         </div>
+
+        <div class="card mb-3" v-if="tx">
+            <div class="card-header bg-light">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="mb-0">JSON Transaction {{tx.__extra.height}}  </h5>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-3 fs--1">
+                <p class="div-scrollable" style="text-align: left">{{tx}}</p>
+            </div>
+        </div>
+
     </layout>
 
 </template>

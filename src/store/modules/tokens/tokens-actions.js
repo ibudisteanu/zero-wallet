@@ -17,15 +17,14 @@ export default {
 
                 token.hash = hash
 
-                await PandoraPay.store.storeAccount( hash, tokenData  )
+                await PandoraPay.store.storeToken( hash, tokenData  )
 
                 commit('setToken',token)
 
                 resolve(token)
             }catch(err){
                 reject(err)
-            }
-            finally{
+            } finally{
                 delete promises[hash]
             }
         })

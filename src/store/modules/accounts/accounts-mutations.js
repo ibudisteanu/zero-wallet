@@ -12,10 +12,6 @@ export default {
         else Vue.delete(state.subscribed, publicKeyHash)
     },
 
-    accountNotification(state, {account, publicKeyHash}){
-        Vue.set(state.list, publicKeyHash, account );
-    },
-
     setAccountTxsViewPosition(state, {publicKeyHash, data } ){
         Vue.set( state.viewTxsPositions, publicKeyHash,  data  )
     },

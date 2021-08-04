@@ -22,7 +22,7 @@ export default {
     },
 
 
-    setTransactions( state, txs ) {
+    setTransactions( state, {txs, overwrite = true } ) {
 
         const timestamp = new Date().getTime()
         const {txsByHash,txsByHeight} = state
@@ -30,11 +30,20 @@ export default {
         for (const tx of txs){
 
             tx.__timestampUsed = timestamp
+            if (!tx.__extra)
+                tx.__extra = {}
 
-            txsByHash[tx.bloom.hash] = tx
+            if (overwrite || !txsByHash[tx.bloom.hash] ){
 
-            if (tx.__extra.height !== undefined)
-                txsByHeight[tx.__extra.height] = tx
+                const oldTx  = txsByHash[tx.bloom.hash]
+                if (oldTx && oldTx.__extra.height !== undefined)
+                    delete txsByHeight[oldTx.__extra.height]
+
+                txsByHash[tx.bloom.hash] = tx
+                if (tx.__extra && tx.__extra.height !== undefined)
+                    txsByHeight[tx.__extra.height] = tx
+            }
+
         }
 
         state.txsByHash = {...txsByHash}

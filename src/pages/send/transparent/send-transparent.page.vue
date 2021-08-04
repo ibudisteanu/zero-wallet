@@ -81,6 +81,8 @@
                     <div class="card-footer bg-light">
                         <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
 
+                        <label v-if="status">{{status}}</label>
+
                         <div class="float-end">
                             <button class="btn btn-link" type="button" v-if="tab > 0" @click="handleBack">
                                 Back <i class="fas fa-chevron-left me-2"></i>
@@ -141,6 +143,7 @@ export default {
             extraEncryptionOption: '',
 
             error: '',
+            status: '',
         }
     },
 
@@ -221,6 +224,7 @@ export default {
             try{
 
                 this.error = '';
+                this.status = '';
 
                 const amounts = {
 
@@ -256,11 +260,19 @@ export default {
                     //     extraMessage: this.extraMessage,
                     //     extraEncryptionOption: this.extraEncryptionOption,
                     // },
-                }));
+                }), (status) => {
+                    console.log(status)
+                    this.status = status
+                });
 
                 if (!out) throw "Transaction couldn't be made";
 
+                this.status = ''
+
                 const tx = JSON.parse(out)
+
+                this.$store.commit('setTransactions', { txs: [tx], overwrite: false, })
+
                 const hash = tx.bloom.hash;
 
                 this.$store.dispatch('addToast', {
