@@ -57,8 +57,15 @@ export default {
         return promises.accounts[publicKeyHash] = new Promise( async (resolve, reject) => {
             try{
 
-                const accountData = await PandoraPay.network.getNetworkAccount(publicKeyHash);
-                const account = JSON.parse(accountData)
+                const result = await Promise.all([
+                    PandoraPay.network.getNetworkAccount(publicKeyHash),
+                    PandoraPay.network.getNetworkAccountMempool(publicKeyHash),
+                ])
+
+                const account = JSON.parse( result[0] )
+                const accountTxsMempool = JSON.parse( result[1] )
+
+                console.log(accountTxsMempool)
 
                 if (account){
                     for (const balance of account.balances)
@@ -67,7 +74,18 @@ export default {
                     await dispatch('getTokenByHash', "")
                 }
 
-                await PandoraPay.store.storeAccount( publicKeyHash, accountData  )
+                await PandoraPay.store.storeAccount( publicKeyHash, result[0] )
+
+                if (accountTxsMempool) {
+
+                    const txs = await Promise.all( accountTxsMempool.map( txHash => dispatch('getTransactionByHash', txHash ) ))
+                    txs.sort( (a,b) => a.nonce - b.nonce )
+
+                    console.log(txs);
+
+                    await Promise.all(txs.map( tx => PandoraPay.mempool.mempoolInsertTx( tx.hash, JSON.stringify(tx)) ))
+                }
+
 
                 commit('setAccount', { publicKeyHash, account })
 
@@ -122,9 +140,11 @@ export default {
                     PandoraPay.network.unsubscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS)
                 ]);
 
-                commit('setSubscribedAccountStatus', {publicKeyHash, status: false})
-
                 await PandoraPay.store.storeAccount( publicKeyHash, null )
+
+                commit('removeAccount', { publicKeyHash })
+
+                commit('setSubscribedAccountStatus', {publicKeyHash, status: false})
 
                 resolve(true)
             }catch(err){
@@ -137,24 +157,36 @@ export default {
     },
 
     async accountUpdateNotification( {state, dispatch, commit, getters}, {publicKeyHash, account }){
+
+        await PandoraPay.store.storeAccount( publicKeyHash, null )
         commit('setAccount', {publicKeyHash, account})
+
     },
 
     async accountTxUpdateNotification( {state, dispatch, commit, getters}, {publicKeyHash, txHash, extraInfo }){
 
         if (getters.walletContains(publicKeyHash)){
             if (extraInfo.inserted){
+
                 dispatch('addToast', {
                     type: 'success',
                     title: `Received a new transaction`,
                     text: `Your address has received a transaction ${txHash}`,
                 } )
+
+                await PandoraPay.mempool.mempoolRemoveTx(txHash)
+
             } else {
+
                 dispatch('addToast', {
                     type: 'warning',
                     title: `A transaction was removed from blockchain`,
                     text: `Your address got a transaction removed ${txHash}`,
                 } )
+
+                const tx = await dispatch('getTransactionByHash', txHash )
+                await PandoraPay.mempool.mempoolInsertTx(txHash, JSON.stringify(tx) )
+
             }
         }
 

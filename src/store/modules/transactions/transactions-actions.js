@@ -63,8 +63,8 @@ export default {
             tx.__extra.timestamp = txJSON.info.timestamp
         }
 
-        for (const vin of tx.base.vin) await dispatch('getTokenByHash', vin.token)
-        for (const vout of tx.base.vout) await dispatch('getTokenByHash', vout.token)
+        for (const vin of tx.vin) await dispatch('getTokenByHash', vin.token)
+        for (const vout of tx.vout) await dispatch('getTokenByHash', vout.token)
 
         commit("setTransactions", { txs: [tx] } )
 
@@ -81,6 +81,7 @@ export default {
             try{
 
                 const txData = await PandoraPay.network.getNetworkTransaction( hash );
+
                 if (!txData) throw Error("tx fetch failed"); //disconnected
 
                 const tx = JSON.parse(txData)

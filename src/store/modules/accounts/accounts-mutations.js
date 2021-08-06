@@ -3,8 +3,12 @@ import consts from 'consts/consts'
 
 export default {
 
-    setAccount(state, {account, publicKeyHash }){
+    setAccount(state, {publicKeyHash, account  }){
         Vue.set(state.list, publicKeyHash, account );
+    },
+
+    removeAccount(state, { publicKeyHash }){
+        Vue.delete(state.list, publicKeyHash );
     },
 
     setSubscribedAccountStatus(state, {publicKeyHash,status} ){
@@ -48,12 +52,10 @@ export default {
 
         if (!extraInfo.inserted){ //removed
             obj.count -= 1
-            delete obj.hashes[ extraInfo.txsCount - 1 ]
-
+            delete obj.hashes[ extraInfo.txsCount ]
         } else {
             obj.count += 1
             obj.hashes[ extraInfo.txsCount ] = txHash
-
         }
 
         const viewTxsPositions = state.viewTxsPositions[publicKeyHash]

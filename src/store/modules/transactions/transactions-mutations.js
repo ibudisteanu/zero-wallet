@@ -12,7 +12,7 @@ export default {
         const {txsByHash,txsByHeight} = state
 
         for (const tx of transactions) {
-            delete txsByHash[tx.bloom.hash]
+            delete txsByHash[tx.hash]
 
             if (tx.__extra.height !== undefined)
                 delete txsByHeight[tx.__extra.height]
@@ -33,13 +33,13 @@ export default {
             if (!tx.__extra)
                 tx.__extra = {}
 
-            if (overwrite || !txsByHash[tx.bloom.hash] ){
+            if (overwrite || !txsByHash[tx.hash] ){
 
-                const oldTx  = txsByHash[tx.bloom.hash]
+                const oldTx  = txsByHash[tx.hash]
                 if (oldTx && oldTx.__extra.height !== undefined)
                     delete txsByHeight[oldTx.__extra.height]
 
-                txsByHash[tx.bloom.hash] = tx
+                txsByHash[tx.hash] = tx
                 if (tx.__extra && tx.__extra.height !== undefined)
                     txsByHeight[tx.__extra.height] = tx
             }

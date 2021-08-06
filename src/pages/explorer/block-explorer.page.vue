@@ -170,7 +170,7 @@ export default {
         },
         txs(){
             if (!this.blk) return null;
-            return this.blk.txs.map(it => it.bloom.hash)
+            return this.blk.txs.map(it => it.hash)
         }
 
     },

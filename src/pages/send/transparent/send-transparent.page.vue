@@ -273,7 +273,7 @@ export default {
 
                 this.$store.commit('setTransactions', { txs: [tx], overwrite: false, })
 
-                const hash = tx.bloom.hash;
+                const hash = tx.hash;
 
                 this.$store.dispatch('addToast', {
                     type: 'success',

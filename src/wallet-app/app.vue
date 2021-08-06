@@ -156,7 +156,7 @@ export default {
               for (const map of [ this.$store.state.transactions.txsByHash, this.$store.state.transactions.txsByHeight ])
                   for (const hash in map){
                       const tx = map[hash]
-                      if (!this.$store.state.transactions.viewTxsHashes[tx.bloom.hash] && timestamp - tx.__timestampUsed > maxDiff)
+                      if (!this.$store.state.transactions.viewTxsHashes[tx.hash] && timestamp - tx.__timestampUsed > maxDiff)
                           txsRemoved.push(tx)
                   }
 
