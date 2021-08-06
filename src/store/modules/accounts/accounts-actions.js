@@ -79,7 +79,8 @@ export default {
                 if (accountTxsMempool) {
 
                     const txs = await Promise.all( accountTxsMempool.map( txHash => dispatch('getTransactionByHash', txHash ) ))
-                    txs.sort( (a,b) => a.nonce - b.nonce )
+                    txs.sort( (a,b) => ( (a.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ? a.nonce : -1) -
+                                                 ( (b.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ? b.nonce : -1 ) ),
 
                     console.log(txs);
 
