@@ -7,7 +7,8 @@ export default {
         txsByHash: {},
         txsByHeight: {},
 
-        viewTransactionsHashes: {},
+        subscribed: {},
+        viewTxsHashes: {},
     },
 
     actions,

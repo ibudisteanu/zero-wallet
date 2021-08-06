@@ -18,7 +18,9 @@
         </div>
         <div class="card-body p-3" v-if="txs && transactionsAll.length ">
             <show-transactions :transactions="transactionsAll"/>
-            <pagination class="right" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="Math.trunc(ending/countPerPage)" :prefix="`/address/${address.addressEncoded}/`" suffix="#transactions" />
+        </div>
+        <div class="card-footer bg-light g-0 d-block-inline p-3" v-if="pages">
+            <pagination class="right" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="pages" :prefix="`/address/${address.addressEncoded}/`" suffix="#transactions" />
         </div>
 
         <alert-box v-if="error" type="error">{{error}}</alert-box>
@@ -55,7 +57,7 @@ export default {
 
         finalPage(){
             if (this.page !== null) return this.page
-            return Math.trunc(this.txs.count / this.countPerPage)
+            return Math.floor((this.ending-1)/this.countPerPage)
         },
 
         address(){
@@ -68,6 +70,10 @@ export default {
 
         countPerPage(){
             return consts.addressTxsPagination
+        },
+
+        pages(){
+            return Math.floor((this.ending-1)/this.countPerPage)
         },
 
         starting(){
@@ -84,7 +90,11 @@ export default {
         },
 
         last(){
-            return (this.page === null) ? undefined : ( this.page + 1 ) * this.countPerPage
+            const out = (this.page === null) ? undefined : ( this.page + 1 ) * this.countPerPage
+            if (this.ending > 0)
+              return Math.min( this.ending, out );
+
+            return out
         },
 
         transactions(){
@@ -93,16 +103,22 @@ export default {
 
             const txs = this.txs.hashes;
 
-            let ending = (this.page === null) ? this.txs.count : this.last
+            let ending = Math.min( this.ending, (this.page === null) ? Number.MAX_SAFE_INTEGER : ( this.page + 1 ) * this.countPerPage)
             let starting = ending - this.countPerPage
 
-            const out = [];
-            for ( const heightStr in txs) {
-                const height = Number.parseInt(heightStr)
+            console.log("starting", starting, "ending", ending)
 
-                if (height >= starting && height < ending ){
-                    console.log(height)
-                    out.push(txs[height]);
+            const heights = []
+            for ( const heightStr in txs)
+                heights.push( Number.parseInt(heightStr) )
+
+            heights.sort((a,b) => b-a)
+
+            const out = [];
+            for (const height of heights ) {
+              console.log("height",height, !!txs[height], ending)
+              if (height >= starting && height < ending) {
+                  out.push(txs[height]);
                 }
             }
 
@@ -122,7 +138,7 @@ export default {
                 this.error = ''
 
                 await this.$store.state.blockchain.syncPromise;
-                await this.$store.dispatch('downloadAccountTxs', {publicKeyHash: this.publicKeyHash, next: this.last, view: true, updateViewPosition: (this.page === null) } )
+                await this.$store.dispatch('downloadAccountTxs', {publicKeyHash: this.publicKeyHash, next: this.last, view: (this.page !== null) } )
 
             }catch(err){
                 this.error = err.toString()

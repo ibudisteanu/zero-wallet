@@ -9,7 +9,6 @@
                 <div class="row align-items-center">
                     <div class="col">
                         <h5 class="mb-0 text-truncate">Token Explorer {{hash}}  </h5>
-                        <loading-spinner v-if="!loaded"/>
                     </div>
                 </div>
             </div>
@@ -17,7 +16,8 @@
 
                 <alert-box v-if="error" type="error">{{error}}</alert-box>
 
-                <template v-if="token">
+                <loading-spinner v-if="!loaded"/>
+                <template v-else-if="token">
 
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Name</span>

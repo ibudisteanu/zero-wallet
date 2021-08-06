@@ -22,7 +22,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="g-0 d-block-inline p-3">
+                <div class="p-3" v-if="account">
+                    <small class="fs--1 text-700">
+                        Nonce: {{account.nonce}}
+                    </small>
+                </div>
+                <div class="card-footer bg-light g-0 d-block-inline p-3">
 
                     <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
                         <i class="fa fa-qrcode pointer" />
@@ -57,6 +62,10 @@ export default {
     },
 
     computed:{
+        account(){
+            return this.$store.state.accounts.list[this.address.publicKeyHash]
+        },
+
         getAddress(){
             return this.address.addressEncoded;
         },
@@ -65,14 +74,13 @@ export default {
     methods: {
         copyAddress(){
 
-            this.$copyText(this.getAddress).then( e =>
-                this.$notify({
+            this.$copyText(this.getAddress).then(
+                e => this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Copied to clipboard successfully`,
                     text: `Address ${this.getAddress} copied to clipboard`,
                 }),
-                e =>
-                this.$notify({
+                e => this.$store.dispatch('addToast', {
                     type: 'error',
                     title: `Clipboard failed`,
                     text: `Failed to copy to clipboard`,

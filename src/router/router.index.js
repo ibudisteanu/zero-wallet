@@ -2,7 +2,7 @@ import VueRouter from "vue-router"
 import Vue from "vue";
 
 import LoginPage from "src/pages/login/login.page"
-import SendTransparentTransferPage from "src/pages/send/transparent/send-transparent-transfer.page"
+import SendTransparentPage from "src/pages/send/transparent/send-transparent.page"
 import ReceivePage from "src/pages/receive/receive.page"
 import WalletPage from "src/pages/wallet/wallet.page"
 import AddressPage from "src/pages/address/address.page"
@@ -39,7 +39,7 @@ const guardLogin = (to, from, next) =>{
 
 const routes = [
 
-    {path: '/send', component: SendTransparentTransferPage, beforeEnter: guardDecrypted },
+    {path: '/send/transparent', component: SendTransparentPage, beforeEnter: guardDecrypted },
 
     {path: '/receive', component: ReceivePage, beforeEnter: guardDecrypted },
     {path: '/wallet', component: WalletPage, beforeEnter: guardDecrypted },
@@ -48,8 +48,8 @@ const routes = [
     {path: '/remove-password', component: RemovePasswordPage, beforeEnter: guardDecrypted },
 
     {path: '/explorer/block/:query', component: BlockExplorerPage },
-    {path: '/explorer/tx/:query', component: TransactionExplorerPage
-    },
+    {path: '/explorer/tx/:query', component: TransactionExplorerPage},
+
     {path: '/explorer/mem-pool', component: MemPoolExplorerPage },
     {path: '/explorer/mem-pool/:page', component: MemPoolExplorerPage },
 

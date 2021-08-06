@@ -25,7 +25,6 @@ export default {
 
     setViewBlockHash(state, hash){
         state.viewBlockHash = hash
-        if (hash) state.commit('setBlock', {hash} )
     }
 
 }

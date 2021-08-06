@@ -8,6 +8,12 @@
          </span>
       </button>
 
+      <router-link class="navbar-brand me-1 me-sm-3" to="/">
+         <div class="d-flex align-items-center">
+            <img class="me-2" :src="require('src/assets/pandora-pay-logo-square.png').default" alt="" width="40">
+         </div>
+      </router-link>
+
       <ul class="navbar-nav navbar-nav-icons flex-row align-items-center">
 
          <li class="nav-item" v-tooltip.bottom="`Switch theme`">
@@ -68,8 +74,9 @@ export default {
       handleToggleDark(){
          this.$store.commit('setDark', !this.$store.state.page.dark)
       },
-      handleToggleLeftSidebar(){
+      handleToggleLeftSidebar(e){
          this.$store.commit('setLeftSidebarShow', !this.$store.state.page.leftSidebarShow)
+         if (e) e.stopPropagation()
       },
       handleToggleNetworksMenu(){
          this.showNetworksMenu = !this.showNetworksMenu
@@ -92,7 +99,7 @@ export default {
       font-size: 16px;
    }
    .nav-item{
-      padding-right: 20px;
+      padding-right: 10px;
    }
    .fa-chevron-down{
       font-size: 10px;

@@ -73,7 +73,7 @@ export default {
                 if (!out)
                     throw Error("Result is not true");
 
-                this.$notify({
+                this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Wallet has been decrypted successfully`,
                     text: `Your wallet has been decrypted. No password is required from now. You can encrypt it with a new password.`,

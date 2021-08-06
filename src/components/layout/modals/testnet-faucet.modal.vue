@@ -22,12 +22,12 @@
         <template slot="footer">
             <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
 
-            <button class="btn btn-falcon-primary" type="button" @click="handleSubmit" :disabled="!captchaToken">
-                <i class="fa fa-coins"></i> Receive {{$store.state.faucet.faucetTestnetCoins}}
-            </button>
-            <button class="btn btn-falcon-secondary" type="button" @click="closeModal" :disabled="!captchaToken">
+            <loading-button :text="`Receive ${$store.state.faucet.faucetTestnetCoins}`" @submit="handleSubmit" icon="fa fa-coins" :disabled="!captchaToken" />
+
+            <button class="btn btn-falcon-secondary" type="button" @click="closeModal">
                 <i class="fa fa-ban"></i> Cancel
             </button>
+
         </template>
 
 
@@ -40,9 +40,10 @@ import AccountIdenticon from "../../wallet/account/account-identicon";
 import VueHcaptcha from '@hcaptcha/vue-hcaptcha';
 import AlertBox from "src/components/utils/alert-box"
 import LoadingSpinner from "src/components/utils/loading-spinner";
+import LoadingButton from "src/components/utils/loading-button.vue"
 export default {
 
-    components: {AccountIdenticon, Modal, VueHcaptcha, AlertBox, LoadingSpinner},
+    components: {AccountIdenticon, Modal, VueHcaptcha, AlertBox, LoadingSpinner, LoadingButton},
 
     data(){
         return{
@@ -63,8 +64,11 @@ export default {
 
     methods:{
 
-        showModal() {
+        async showModal() {
             Object.assign(this.$data, this.$options.data());
+
+            await this.$store.state.blockchain.syncPromise;
+
             return this.$refs.modal.showModal();
         },
 
@@ -76,7 +80,7 @@ export default {
             this.captchaToken = token
         },
 
-        async handleSubmit(){
+        async handleSubmit(resolver){
             try{
                 this.error = ""
                 this.loaded = false
@@ -84,12 +88,21 @@ export default {
                 const hash = await PandoraPay.network.getNetworkFaucetCoins( this.address.addressEncoded, this.captchaToken )
                 if (!hash || hash.length !== 64) throw "hash was not received"
 
+                this.$store.dispatch('addToast', {
+                    type: 'success',
+                    title: `Faucet created a Tx`,
+                    text: `The faucet created a transaction ${hash}`,
+                });
+
                 this.$router.push('/explorer/tx/'+hash)
+
+                this.closeModal()
 
             }catch(err){
                 this.error = err.toString()
             }finally{
                 this.loaded = true
+                resolver()
             }
         }
 

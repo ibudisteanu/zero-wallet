@@ -1,3 +1,11 @@
+:root, :root.light, :root .light {
+    --falcon-toast-background-color: rgba(255, 255, 255, 0.95);
+}
+
+.dark{
+    --falcon-toast-background-color: rgba(52, 64, 80, 0.95);
+}
+
 /**
 Scrollbar
  */
@@ -25,6 +33,20 @@ Scrollbar
     background: rgba(0,0,0,0.61); /* Some darker color when you click it */
     -webkit-border-radius: 100px;
 }
+
+.dark ::-webkit-scrollbar {
+    background-color: rgba(255,255,255,0);
+}
+.dark ::-webkit-scrollbar:hover {
+    background-color: rgba(255, 255, 255, 0.09);
+}
+.dark ::-webkit-scrollbar-thumb:vertical {
+    background: rgba(255,255,255,0.5);
+}
+.dark ::-webkit-scrollbar-thumb:vertical:active {
+    background: rgba(255,255,255,0.61); /* Some darker color when you click it */
+}
+
 
 .div-scrollable{
     overflow-x: hidden;

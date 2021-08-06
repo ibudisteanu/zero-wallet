@@ -15,9 +15,9 @@
                 <div class="list-group-item div-scrollable" style="max-height:19rem" >
                     <div v-for="(address, index) in addresses" :class="`notification notification-flush notification-unread ${ address.publicKeyHash === mainPublicKeyHash  ? 'fw-black' : ''} ` "
                          :key="`address-${index}`">
-                            <div class="notification-body address pointer">
-                                <account-identicon :address="address.addressEncoded" :identicon="address.identicon" :size="20" :outer-size="5" :version="address.version" />
-                                <div class="account-title" @click="setMainPublicKeyHash(address.publicKeyHash)">
+                            <div class="notification-body address">
+                                <account-identicon :address="address.addressEncoded" :identicon="address.identicon" :size="20" :outer-size="5" :version="address.version" :disable-route="true" />
+                                <div class="account-title pointer" @click="setMainPublicKeyHash(address.publicKeyHash)">
                                     <span class="fw-semi-bold text-truncate">{{address.name}}</span>
                                     <span class="fw-normal text-truncate">{{address.addressEncoded}} </span>
                                 </div>
@@ -52,6 +52,7 @@
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
 import UtilsHelper from "src/utils/utils-helper";
+
 const {version} = PandoraPay.enums.wallet.address;
 
 export default {
@@ -107,14 +108,14 @@ export default {
                 const out = await PandoraPay.wallet.manager.addNewWalletAddress(password, account.selectedType);
                 if (!out) throw "Result is false"
 
-                this.$notify({
+                this.$store.dispatch('addToast',{
                     type: 'success',
                     title: 'Address has been added successfully',
                     text: 'A new address has been added and saved in your wallet'
                 });
 
             }catch(err){
-                this.$notify({
+                this.$store.dispatch('addToast',{
                     type: 'error',
                     title: 'Error creating an address',
                     text: 'An error was encountered: ' + err.toString()
@@ -140,7 +141,7 @@ export default {
                 const out = await PandoraPay.wallet.manager.encryption.logoutWallet();
                 if (!out) throw "logout was not true"
 
-                this.$notify({
+                this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `You have been logged out!`,
                     text: `You have been logged out. You need to login with the password to access your wallet.`,
@@ -165,14 +166,13 @@ export default {
             let addr;
             if (address.version === version.VERSION_TRANSPARENT) addr = address.addressEncoded;
 
-            this.$copyText(addr).then( e =>
-                this.$notify({
+            this.$copyText(addr).then(
+                e => this.$store.dispatch('addToast',{
                     type: 'success',
                     title: `Copied to clipboard successfully`,
                     text: `Address ${address.addressEncoded} copied to clipboard`,
                 }),
-                e =>
-                this.$notify({
+                e => this.$store.dispatch('addToast',{
                     type: 'error',
                     title: `Clipboard failed`,
                     text: `Failed to copy to clipboard`,

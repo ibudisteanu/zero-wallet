@@ -10,7 +10,6 @@
                     <div class="col">
                         <h5 class="mb-0 text-truncate">
                             Block Explorer {{height ? height : hash}}
-                            <loading-spinner v-if="!loaded"/>
                         </h5>
                     </div>
                 </div>
@@ -19,7 +18,8 @@
 
                 <alert-box v-if="error" type="error">{{error}}</alert-box>
 
-                <template v-if="blk">
+                <loading-spinner v-if="!loaded"/>
+                <template v-else-if="blk">
 
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Hash</span>
@@ -68,7 +68,7 @@
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Reward</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{formatMoney(this.reward)}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{this.reward}}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Version</span>
@@ -80,9 +80,9 @@
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Forger</span>
-                        <div class="col-7 col-sm-9">
+                        <div class="col-7 col-sm-9 text-truncate">
                             <account-identicon class="vertical-center" :public-key-hash="blk.bloom.delegatedPublicKeyHash" :size="20" :outer-size="5"  />
-                            <span class="forger-address text-truncate">{{blk.bloom.delegatedPublicKeyHash}}</span>
+                            <span class="forger-address">{{blk.bloom.delegatedPublicKeyHash}}</span>
                         </div>
                     </div>
                 </template>
@@ -100,16 +100,7 @@
                 </div>
             </div>
             <div class="card-body p-3 fs--1">
-                <div class="row">
-                    <span class="col-4 col-sm-2 col-md-1 text-truncate">JSON</span>
-                    <div class="col-8 col-sm-10 col-md-11">
-                        <div class="card mb-3" >
-                            <div class="card-body ">
-                                <p class="mb-0  div-scrollable" style="text-align: left">{{blk}}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <p class="div-scrollable" style="text-align: left">{{blk}}</p>
             </div>
         </div>
 
@@ -160,9 +151,9 @@ export default {
 
     computed:{
 
-        query(){
-            return this.$route.params.query;
-        },
+      query(){
+        return (this.$route.params.query||'').toLowerCase();
+      },
         height(){
             if (this.query && this.query.length < 10)
                 return Number.parseInt(this.query)
@@ -179,7 +170,7 @@ export default {
         },
         txs(){
             if (!this.blk) return null;
-            return this.blk.txs.map(it => it.bloom.hash)
+            return this.blk.txs.map(it => it.hash)
         }
 
     },
@@ -206,9 +197,9 @@ export default {
                 if (this.hash ) await this.$store.dispatch('getBlockByHash', this.hash);
 
                 if (this.blk){
-                    this.$store.commit('setViewBlockHash', this.blk.hash )
-                    const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)
-                    this.reward = await PandoraPay.config.coins.convertToBase( reward.toString() )
+                    this.$store.commit('setViewBlockHash', this.blk.bloom.hash )
+                    const reward = PandoraPay.config.reward.getRewardAt(this.blk.height)
+                    this.reward = StringHelper.formatMoney( PandoraPay.config.coins.convertToBase( reward.toString() ), PandoraPay.config.coins.DECIMAL_SEPARATOR )
                 }
 
             }catch(err){
@@ -224,7 +215,15 @@ export default {
     watch: {
         '$route' (to, from) {
             return this.loadBlock();
-        }
+        },
+
+        hash(from, to) {
+          if (from === to) return
+        },
+
+        height(from, to){
+          if (from === to) return
+        },
     },
 
     async mounted(){

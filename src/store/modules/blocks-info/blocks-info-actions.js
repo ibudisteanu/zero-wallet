@@ -30,27 +30,36 @@ export default {
 
     },
 
-    async getBlocksInfo( {state, dispatch, commit}, { starting, blockchainEnd, view = false} ){
+    async getBlocksInfo( {state, dispatch, commit}, { starting, blockchainEnd, view = null} ){
 
         starting = Math.max(0, starting )
         const ending = Math.min( starting + consts.blocksInfoPagination -1, blockchainEnd-1 )
 
-        if (view)
-            commit('setBlocksInfoViewPosition', {starting, ending} )
+        if (view === true ) {
+            const viewStart = (Math.ceil( ending / consts.blocksInfoPagination )-1) * consts.blocksInfoPagination
+            const viewEnd = viewStart + consts.blocksInfoPagination
+            commit('setBlocksInfoViewPosition', {starting: viewStart, ending: viewEnd})
+        } else if (view === false ) {
+            commit('setBlocksInfoViewPosition', null )
+        }
 
-        const newBlocksInfo = {}
+        console.log("starting, ending", starting, ending)
+
+        const listByHeight = {
+            ...state.listByHeight,
+        }
 
         let found = false
         for (let i = ending; i >= starting ; i-- ){
 
             let beforeHash
-            if (state.listByHeight[i] && state.listByHeight[i].hash )
-                beforeHash = state.listByHeight[i].hash
+            if (listByHeight[i] && listByHeight[i].hash )
+                beforeHash = listByHeight[i].hash
 
-            if (!found || !state.listByHeight[i]) {
+            if (!found || !listByHeight[i]) {
 
                 let blockInfo = await this.dispatch('_getBlockInfo', i)
-                newBlocksInfo[i] = blockInfo
+                listByHeight[i] = blockInfo
 
                 if (!found && beforeHash === blockInfo.hash )
                     found = true
@@ -58,14 +67,30 @@ export default {
 
         }
 
-        const deletedBlocksInfo = []
-        for (const key in state.listByHeight){
-            const height = Number.parseInt(key)
-            if ( (height < starting || height > ending) && ( state.viewPosition && ( height > state.viewPosition.ending || height < state.viewPosition.starting) ) )
-                deletedBlocksInfo.push(key)
-        }
-        commit('setBlocksInfo', {newBlocksInfo, deletedBlocksInfo })
+        const viewPosition = state.viewPosition
+        if (viewPosition){
+            let c = 0
+            for (const heightStr in listByHeight){
+                const height = Number.parseInt(heightStr)
+                if ( !( height > viewPosition.ending || height < viewPosition.starting ) )
+                    c++
+            }
 
+            if (c >= consts.blocksInfoPagination)
+                for (const heightStr in listByHeight){
+                    const height = Number.parseInt(heightStr)
+                    if ( height > viewPosition.ending || height < viewPosition.starting )
+                        delete(listByHeight[height])
+                }
+        } else {
+            for (const heightStr in listByHeight){
+                const height = Number.parseInt(heightStr)
+                if ( height > ending || height < starting )
+                    delete(listByHeight[height])
+            }
+        }
+
+        commit('setBlocksInfo', listByHeight )
     },
 
 }

@@ -112,7 +112,7 @@ export default {
         async handleDownloadAddress(){
 
             if ( typeof Blob === "undefined")
-                return this.$notify({
+                return this.$store.dispatch('addToast', {
                     type: 'error',
                     title: `Blob is not supported by your Browser`,
                     text: `Update your browser`,
@@ -129,7 +129,7 @@ export default {
             const file = new Blob([json], {type: "application/json;charset=utf-8"});
             FileSaver.saveAs(file, fileName);
 
-            this.$notify({
+            this.$store.dispatch('addToast', {
                 type: 'success',
                 title: `Address ${this.address.name} has been saved in your machine`,
                 text: `The address ${this.address.addressEncoded} has been saved in the downloads folder.`,
@@ -148,14 +148,13 @@ export default {
 
         handleCopyAddress(key){
 
-            this.$copyText(key).then( e =>
-                this.$notify({
+            this.$copyText(key).then(
+                e => this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Copied to clipboard successfully`,
                     text: `${key} copied to clipboard`,
                 }),
-                e =>
-                this.$notify({
+                e => this.$store.dispatch('addToast', {
                     type: 'error',
                     title: `Clipboard failed`,
                     text: `Failed to copy to clipboard`,

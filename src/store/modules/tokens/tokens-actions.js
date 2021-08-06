@@ -16,13 +16,15 @@ export default {
                 if (!token ) throw "Error getting block info"
 
                 token.hash = hash
+
+                await PandoraPay.store.storeToken( hash, tokenData  )
+
                 commit('setToken',token)
 
                 resolve(token)
             }catch(err){
                 reject(err)
-            }
-            finally{
+            } finally{
                 delete promises[hash]
             }
         })

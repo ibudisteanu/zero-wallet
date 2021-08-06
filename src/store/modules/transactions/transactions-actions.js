@@ -1,9 +1,53 @@
 const promises = {
     txsByHeight: {},
     txsByHash: {},
+    unsubscribed: {},
+    subscribed: {},
 }
 
 export default {
+
+    async subscribeTransaction( {state, dispatch, commit}, txId ){
+
+        if (state.subscribed[txId]) return true
+
+        if (promises.subscribed[txId]) return promises.subscribed[txId];
+        return promises.subscribed[txId] = new Promise( async (resolve, reject) => {
+            try{
+
+                await PandoraPay.network.subscribeNetwork( txId, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTION )
+
+                commit('setSubscribedTxStatus', {txId, status: true})
+
+                resolve(true)
+            }catch(err){
+                reject(err)
+            }finally{
+                delete promises.subscribed[txId]
+            }
+        })
+    },
+
+    async unsubscribeTransaction( {state, dispatch, commit}, txId ){
+
+        if (!state.subscribed[txId]) return true
+
+        if (promises.unsubscribed[txId]) return promises.unsubscribed[txId];
+        return promises.unsubscribed[txId] = new Promise( async (resolve, reject) => {
+            try{
+
+                await PandoraPay.network.unsubscribeNetwork( txId, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTION )
+
+                commit('setSubscribedTxStatus', {txId, status: false})
+
+                resolve(true)
+            }catch(err){
+                reject(err)
+            }finally{
+                delete promises.unsubscribed[txId]
+            }
+        })
+    },
 
     async _includeTx( {state, dispatch, commit}, txJSON ){
 
@@ -19,10 +63,10 @@ export default {
             tx.__extra.timestamp = txJSON.info.timestamp
         }
 
-        for (const vin of tx.base.vin) await dispatch('getTokenInfoByHash', vin.token)
-        for (const vout of tx.base.vout) await dispatch('getTokenInfoByHash', vout.token)
+        for (const vin of tx.vin) await dispatch('getTokenByHash', vin.token)
+        for (const vout of tx.vout) await dispatch('getTokenByHash', vout.token)
 
-        commit("setTransactions", [tx] )
+        commit("setTransactions", { txs: [tx] } )
 
         return tx
     },
@@ -37,6 +81,7 @@ export default {
             try{
 
                 const txData = await PandoraPay.network.getNetworkTransaction( hash );
+
                 if (!txData) throw Error("tx fetch failed"); //disconnected
 
                 const tx = JSON.parse(txData)

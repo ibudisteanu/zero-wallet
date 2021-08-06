@@ -1,6 +1,6 @@
 <template>
 
-    <nav class="navbar navbar-light navbar-vertical navbar-expand-xl">
+    <nav class="navbar navbar-light navbar-vertical navbar-expand-xl" v-on-clickaway="closeMenu" >
         <div class="d-flex align-items-center">
             <router-link to="/" class="navbar-brand">
                 <div class="d-flex align-items-center py-3">
@@ -45,8 +45,8 @@
                         </div>
                         <ul :class="`nav collapse ${navElementsShown['transfer'] ? 'show':''}`">
                             <li class="nav-item">
-                                <router-link to="#" class="nav-link" @click.native="disableNavbarMenu">
-                                    <div class="d-flex align-items-center" @click="disableNavbarMenu">
+                              <router-link :disabled="!isWalletLogged" to="/send/transparent" :class="`${ route === '/send/transparent' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
+                                  <div class="d-flex align-items-center">
                                         <span class="nav-link-text ps-1">Public</span>
                                     </div>
                                 </router-link>
@@ -120,7 +120,7 @@
                                 </router-link>
                             </li>
                             <li class="nav-item">
-                                <router-link :class="`nav-link ${route.indexOf('/explorer/mem-pool') === 0 ? 'active' : ''}  nav-link`" to="/explorer/mem-pool" @click="disableNavbarMenu">
+                                <router-link :class="`nav-link ${route.indexOf('/explorer/mem-pool') === 0 ? 'active' : ''}  nav-link`" to="/explorer/mem-pool" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
                                         <span class="nav-link-text ps-1">Mem pool</span>
                                     </div>
@@ -224,6 +224,7 @@
 import { mixin as clickaway } from 'vue-clickaway'
 const {version} = PandoraPay.enums.wallet.address;
 import Vue from 'vue';
+
 export default {
 
     mixins: [ clickaway ],
@@ -263,6 +264,10 @@ export default {
     },
 
     methods:{
+        closeMenu(){
+            this.$store.commit('setLeftSidebarShow', false)
+        },
+
         toggleNavElement(e, key){
             if (!this.navElementsShown[key]) Vue.set(this.navElementsShown, key, true)
             else Vue.set(this.navElementsShown, key, false)
@@ -282,6 +287,9 @@ export default {
 </script>
 
 <style scoped>
-
-
+@media (min-width: 1200px) {
+  .navbar-vertical {
+    z-index: auto;
+  }
+}
 </style>

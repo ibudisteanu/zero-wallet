@@ -19,6 +19,7 @@ export default {
             if (this.type === "warning") return "fa-exclamation-triangle"
             if (this.type === "error") return "fa-exclamation-circle"
             if (this.type === "info") return "fa-info"
+            if (this.type === "success") return "fa-check"
             return ""
         },
 
@@ -26,6 +27,7 @@ export default {
             if (this.type === "warning") return "warning"
             if (this.type === "error") return "danger"
             if (this.type === "info") return "info"
+            if (this.type === "success") return "success"
             return ""
         }
     },

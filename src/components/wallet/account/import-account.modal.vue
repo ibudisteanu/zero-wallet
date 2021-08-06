@@ -63,10 +63,10 @@
             <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
 
             <button class="btn btn-link" type="button" v-if="tab > 0" @click="handleBack">
-                Back <i class="fas fa-chevron-left me-2" data-fa-transform="shrink-3"></i>
+                Back <i class="fas fa-chevron-left me-2" ></i>
             </button>
             <button class="btn btn-falcon-primary" type="button" v-if="tab < 2" @click="handleNext">
-                <i class="fas fa-chevron-right ms-2" data-fa-transform="shrink-3"> </i> Next
+                <i class="fas fa-chevron-right ms-2" > </i> Next
             </button>
         </template>
 
@@ -194,7 +194,7 @@ export default {
                 if (!out)
                     throw `Your address already exists`
 
-                this.$notify({
+                this.$store.dispatch('addToast',{
                     type: 'success',
                     title: `Imported successfully`,
                     text: `Your Address has been successfully imported.`,

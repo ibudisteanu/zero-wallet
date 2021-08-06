@@ -11,7 +11,8 @@
             <span class="col-4 d-block d-sm-none text-dark">Hash</span>
             <span class="col-8 col-md-2 text-truncate">
                 <router-link :to="`/explorer/tx/${txHash}`">
-                    {{tx.bloom.hash}}
+                    {{tx.nonce}}
+<!--                    {{tx.hash}}-->
                 </router-link>
            </span>
 
@@ -39,15 +40,15 @@
 
             <span class="col-4 d-block d-sm-none text-dark text-truncate">Data</span>
             <span class="col-8 col-md-7">
-                <div class="input" v-for="(vin, index) in tx.base.vin "
+                <div class="input" v-for="(vin, index) in tx.vin "
                      :key="`show-transaction-vin-${index}`">
-                    <account-identicon :publicKeyHash="vin.bloom.publicKeyHash" size="20" outer-size="7" />
-                    - <amount :token="vin.token" :value="vin.amount" />
+                    <account-identicon :publicKeyHash="vin.publicKeyHash" size="20" outer-size="7" />
+                    <amount :token="vin.token" :value="vin.amount" :sign="false" />
                 </div>
-                <div class="output" v-for="(vout, index) in tx.base.vout"
+                <div class="output" v-for="(vout, index) in tx.vout"
                      :key="`show-transaction-vout-${index}`">
                     <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="7" />
-                    <amount :token="vout.token" :value="vout.amount" />
+                    <amount :token="vout.token" :value="vout.amount" :sign="false" />
                 </div>
             </span>
 
@@ -85,13 +86,13 @@ export default {
 
     methods:{
         timeAgo : (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
-        convertToBase: (amount, token) => PandoraPay.config.coins.convertToBase( amount.toString() , token.decimalSeparator ),
     },
 
     watch: {
         txHash:{
             immediate: true,
             handler: function (to, from) {
+                if (to === from) return
                 return this.$store.dispatch('getTransactionByHash', to)
             }
         },

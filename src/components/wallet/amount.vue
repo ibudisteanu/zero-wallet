@@ -2,14 +2,14 @@
     <span>
         <template v-if="getToken">
             <span :class="valueClass">
-                {{amount}}
+                {{sign?'':'-'}} {{amount}}
             </span>
             <router-link :to="`/tokens/${getToken.hash}`" :class="tokenClass">
-                ${{getToken.ticker}}
+                $0x00
             </router-link>
         </template>
         <template v-else>
-            <loading-spinner />
+            <loading-spinner />`
         </template>
     </span>
 </template>
@@ -25,16 +25,17 @@ export default {
     props: {
         token: {default: ''},
         value: {default: 0},
+        sign: {default: false},
         valueClass: {default: ""},
         tokenClass: {default: ""}
     },
 
     computed: {
         getToken(){
-            return this.$store.getters.getTokenInfo( this.token );
+            return this.$store.getters.getToken( this.token );
         },
         amount(){
-            return StringHelper.formatMoney(this.value.toString(), this.getToken.decimalSeparator )
+            return StringHelper.formatMoney( PandoraPay.config.tokens.tokensConvertToBase( this.value.toString(), this.getToken.decimalSeparator.toString() ), this.getToken.decimalSeparator )
         }
     },
 }

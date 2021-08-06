@@ -15,11 +15,7 @@
                 <h2 class="fs-0 fs-sm-2 fs-md-3">The Anonymous Cash awaits</h2>
             </div>
 
-            <div v-if="!$store.state.wallet.initialized" class="d-flex justify-content-center" >
-                <loading-spinner class="fs-3"/>
-            </div>
-            <div v-else>
-
+            <div>
                 <label>Password</label>
                 <password-input v-model="password" v-on:keyup.native.enter="()=>$refs.refLoadingButton.handleClick()" />
 

@@ -87,14 +87,13 @@ export default {
 
         copyPrivateKey(){
 
-            this.$copyText(this.privateKey).then( e =>
-                    this.$notify({
+            this.$copyText(this.privateKey).then(
+                e => this.$store.dispatch('addToast', {
                         type: 'success',
                         title: `Copied to clipboard successfully`,
                         text: `Private Key ${this.privateKey} copied to clipboard`,
                     }),
-                e =>
-                    this.$notify({
+                e => this.$store.dispatch('addToast', {
                         type: 'error',
                         title: `Clipboard failed`,
                         text: `Failed to copy to clipboard`,

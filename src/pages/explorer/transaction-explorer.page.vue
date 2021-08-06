@@ -8,14 +8,15 @@
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0 text-truncate">Tx {{height ? height : hash}}  </h5>
-                        <loading-spinner v-if="!loaded"/>
+                        <h5 class="mb-0 text-truncate">Tx {{height ? height : hash}}</h5>
                     </div>
                 </div>
             </div>
             <div class="card-body p-3 fs--1">
 
                 <alert-box v-if="error" type="error">{{error}}</alert-box>
+
+                <loading-spinner v-if="!loaded"/>
                 <div v-else-if="tx">
 
                     <div class="row pt-2 pb-2">
@@ -69,8 +70,12 @@
                         <span class="col-7 col-sm-9 text-truncate">{{tx.__extra.mempool ? 'YES': ' No' }}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
+                        <span class="col-5 col-sm-3 text-truncate">Size</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{tx.size}}</span>
+                    </div>
+                    <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Nonce</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{tx.base.nonce}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{tx.nonce}}</span>
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Unlock Time</span>
@@ -79,15 +84,15 @@
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Data</span>
                         <div class="col-7 col-sm-9">
-                            <div v-for="(vin, index) in tx.base.vin" class="input"
+                            <div v-for="(vin, index) in tx.vin" class="input"
                                  :key="`transaction-explorer-vin-${index}`">
-                                <account-identicon :publicKeyHash="vin.bloom.publicKeyHash" size="20" outer-size="5" />
-                                <amount :value="vin.amount" :token="vin.token" />
+                                <account-identicon :publicKeyHash="vin.publicKeyHash" size="20" outer-size="5" />
+                                <amount :value="vin.amount" :token="vin.token" :sign="false" />
                             </div>
-                            <div v-for="(vout, index) in tx.base.vout" class="input"
+                            <div v-for="(vout, index) in tx.vout" class="input"
                                  :key="`transaction-explorer-vout-${index}`">
                                 <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="5" />
-                                <amount :value="vout.amount" :token="vout.token" />
+                                <amount :value="vout.amount" :token="vout.token" :sign="true" />
                             </div>
                         </div>
                     </div>
@@ -101,14 +106,29 @@
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Script Version</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{tx.base.txScript}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{tx.txScript}}</span>
                     </div>
 
                 </div>
 
 
             </div>
+
         </div>
+
+        <div class="card mb-3" v-if="tx">
+            <div class="card-header bg-light">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h5 class="mb-0">JSON Transaction {{tx.__extra.height}}  </h5>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-3 fs--1">
+                <p class="div-scrollable" style="text-align: left">{{tx}}</p>
+            </div>
+        </div>
+
     </layout>
 
 </template>
@@ -137,7 +157,7 @@ export default {
     computed:{
 
         query(){
-            return this.$route.params.query;
+            return (this.$route.params.query||'').toLowerCase();
         },
         height(){
             if (this.query && this.query.length < 10)
@@ -168,11 +188,16 @@ export default {
 
                 await this.$store.state.blockchain.syncPromise;
 
+                if (this.tx)
+                    await this.removed()
+
                 if (this.height !== undefined) await this.$store.dispatch('getTransactionByHeight', this.height);
                 if (this.hash ) await this.$store.dispatch('getTransactionByHash', this.hash);
 
-                if (this.tx)
-                    this.$store.commit('addViewTransactionsHashes', [this.tx.bloom.hash] )
+                if (this.tx) {
+                    this.$store.commit('addViewTransactionsHashes', [this.tx.hash])
+                    await this.$store.dispatch('subscribeTransaction', this.tx.hash )
+                }
 
             }catch(err){
                 this.error = err.toString()
@@ -182,15 +207,38 @@ export default {
 
         },
 
+        async removed(tx = this.tx){
+            this.$store.commit('removeViewTransactionsHashes', [tx.hash])
+            await this.$store.dispatch('unsubscribeTransaction', tx.hash )
+        },
+
         convertToBase: (amount) => PandoraPay.config.coins.convertToBase( amount.toString() ),
         timeAgo : (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
 
     },
 
     watch: {
-        '$route' (to, from) {
-            return this.loadTransaction();
-        }
+        '$route': {
+            handler: async function (to, from) {
+                if (to === from) return
+                return this.loadTransaction();
+            },
+        },
+
+        async hash(from, to) {
+          if (from === to) return
+
+          this.$store.commit('removeViewTransactionsHashes', [from])
+          await this.$store.dispatch('unsubscribeTransaction', from )
+        },
+
+        async height(from, to){
+            if (from === to) return
+
+            const tx = this.$store.state.transactions.txsByHeight[from];
+            if (tx) return this.removed(tx)
+        },
+
     },
 
     mounted(){
@@ -198,10 +246,8 @@ export default {
     },
 
     beforeDestroy() {
-
-        if (this.tx)
-            this.$store.commit('removeViewTransactionsHashes', [this.tx.bloom.hash] )
-    }
+        if (this.tx) return this.removed()
+    },
 
 }
 </script>

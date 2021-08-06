@@ -10,9 +10,10 @@
             <alert-box v-if="!isLoading && !isFound" type="warning" >
                 Address doesn't exist!
             </alert-box>
-
-            <balances :publicKeyHash="publicKeyHash" />
-            <transactions :publicKeyHash="publicKeyHash" :page="page" />
+            <template v-else>
+                <balances :publicKeyHash="publicKeyHash" />
+                <transactions :publicKeyHash="publicKeyHash" :page="page" />
+            </template>
 
         </template>
         <div class="py-3 text-center" v-else>
@@ -41,14 +42,14 @@ export default {
     data(){
         return {
             publicKeyHash: '',
-            error: "xxxx",
+            error: "",
         }
     },
 
     computed:{
 
         page(){
-            let page = this.$route.params.page
+            let page = this.$route.params.page || null
             if (typeof page == "string"){
                 page = Number.parseInt(page)
                 return page;
@@ -76,7 +77,7 @@ export default {
 
     methods:{
 
-        async loadAddress(){
+        async loadAddress(newAddress){
 
             try{
 
@@ -90,7 +91,7 @@ export default {
                     const addressJSON = JSON.parse(addressData)
                     publicKeyHash = addressJSON.publicKeyHash
                 } else {
-                    publicKeyHash = this.mainPublicKeyHash
+                    publicKeyHash = newAddress||this.mainPublicKeyHash
                     if (!this.$store.state.wallet.addresses[publicKeyHash]) return
                     address = this.$store.state.wallet.addresses[publicKeyHash].addressEncoded
                 }
@@ -120,13 +121,17 @@ export default {
 
     watch: {
         $route (to, from) {
+          if (to === from) return
             return this.loadAddress();
         },
         async mainPublicKeyHash (to, from){
-            if (this.mainPublicKeyHash && (from !== this.publicKeyHash || !this.publicKeyHash) )
-                await this.loadAddress();
 
-            if (!this.$store.getters.walletContains(from) && from !== to)
+            if (to === from) return
+
+            if (to !== this.publicKeyHash || !this.publicKeyHash)
+                await this.loadAddress(to);
+
+            if (!this.$store.getters.walletContains(from) )
                 await this.$store.dispatch('unsubscribeAccount', from )
         },
     },

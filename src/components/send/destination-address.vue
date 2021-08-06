@@ -1,23 +1,25 @@
 <template>
 
     <div>
-        <span >Destination Address {{index !== null ? index+1 : ''}}</span>
+        <div class="col">
+            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Destination Address {{index !== null ? index+1 : ''}}</label>
+            <i class="fa fa-times float-end pointer" @click="deleteDestinationAddress"></i>
 
-        <div :class="`${identicon ? 'destination': ''}-row`">
+            <div :class="`${finalAddress ? 'destination-row': ''} `" >
 
-            <account-identicon v-if="identicon" :identicon="identicon" size="35" outer-size="8" :version="version" />
+                <account-identicon v-if="finalAddress" :public-key="finalAddress.publicKey" :public-key-hash="finalAddress.publicKeyHash" size="30" outer-size="8" :version="finalAddress.version" />
 
-            <div class="input-toggle-group">
-                <input type="text" v-model="destination">
-                <i class="fa fa-qrcode input-toggle" @click="qrCodeScanner"></i>
+                <div class="input-toggle-group">
+                    <input :class="`form-control ${validationError ? 'is-invalid' : ''}`" type="text" v-model="destination">
+                    <i class="fa fa-qrcode input-toggle" @click="showQrCodeScanner" :style="`${ validationError ?'right: 35px' : ''}`"></i>
+                </div>
+
             </div>
+            <div v-if="validationError" class="invalid-feedback d-block">{{validationError}}</div>
 
         </div>
-
-        <destination-amount @changed="changedDestinationAmount" :balances="balances" />
-
+        <destination-amount class="pt-2" @changed="changedDestinationAmount" :balances="balances" />
     </div>
-
 
 </template>
 
@@ -25,16 +27,17 @@
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
 import DestinationAmount from "./destination-amount.vue"
-import QrCodeScanner from "src/components/utils/qr-code-scanner/qr-code-scanner";
-const {Version} = PandoraPay.enums.wallet.address;
+const {VERSION_TRANSPARENT} = PandoraPay.enums.wallet.address.version;
 
 export default {
 
-    components: {AccountIdenticon, DestinationAmount, QrCodeScanner},
+    components: {AccountIdenticon, DestinationAmount},
 
     data(){
         return {
             destination: '',
+            finalAddress: null,
+            identiconSrc: null,
         }
     },
 
@@ -45,53 +48,55 @@ export default {
     },
 
     computed:{
-
-        addressValidated(){
-            try{
-                if (this.type === Version.VERSION_TRANSPARENT) return PandoraPay.cryptography.addressValidator.validateAnyAddress( this.destination );
-            }catch(err){
-            }
-        },
-
-        address(){
-            if (!this.addressValidated) return '';
-
-            if (this.addressValidated.publicKey)
-                return this.addressValidated.generateAddress().calculateAddress();
-
-            return this.addressValidated.calculateAddress();
-        },
-
         validationError(){
-            if (!this.destination) return`Destination ${this.destination} Address not specified`;
-            if (!this.addressValidated) return `Address ${this.destination} is invalid`;
-        },
-
-        identicon(){
-            if (this.addressValidated) return this.addressValidated.identiconImg();
+            if (!this.destination) return`Destination Address not specified`;
+            if (!this.finalAddress) return `Address is invalid`;
         },
     },
 
     watch: {
-        addressValidated (to, from) {
+        async destination (to, from) {
+            try{
+
+                if (this.type === VERSION_TRANSPARENT){
+                    const addressData = await PandoraPay.addresses.decodeAddress(to)
+                    const address = JSON.parse(addressData)
+                    this.finalAddress = address
+                    return
+                }
+
+            }catch(err){
+            }
+
+            this.finalAddress = null
+        },
+
+        finalAddress (to, from){
             return this.$emit('changed', {
-                addressModel: to,
-                address: this.address,
+                address: this.finalAddress,
+                encodedAddress: this.destination,
                 validationError: this.validationError,
             });
-        }
+        },
+
     },
 
     methods: {
 
-        qrCodeScanner(){
-            this.$refs.refQRCodeScannerModal.showModal();
+        async showQrCodeScanner(){
+            const out = await this.$store.state.page.refQRCodeScannerModal.showModal();
+            if (out.decoded)
+                this.destination = out
         },
 
         changedDestinationAmount(data){
             return this.$emit('changed', {
                 ...data,
             });
+        },
+
+        deleteDestinationAddress(){
+            return this.$emit('deleted')
         }
 
     }
@@ -100,9 +105,9 @@ export default {
 </script>
 
 <style scoped>
-    .destination-row{
-        display: grid;
-        grid-template-columns: 50px 1fr;
-        grid-column-gap: 10px;
-    }
+.destination-row{
+    display: grid;
+    grid-template-columns: 45px 1fr;
+    grid-column-gap: 10px;
+}
 </style>

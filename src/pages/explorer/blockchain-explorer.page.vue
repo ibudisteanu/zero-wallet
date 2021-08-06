@@ -19,12 +19,13 @@
                         <loading-spinner/>
                     </template>
                     <template v-else>
-
                         <show-blocks-info :blocksInfo="lastBlocksInfo" />
-                        <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.trunc(ending/countPerPage)" prefix="/explorer/" suffix="#chain" />
-
                     </template>
 
+                </div>
+
+                <div class="card-footer" v-if="loaded">
+                    <pagination class="py-0" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="pages" prefix="/explorer/" suffix="#chain" />
                 </div>
 
             </div>
@@ -60,8 +61,17 @@ export default {
             return consts.blocksInfoPagination
         },
 
+        finalPage(){
+          if (this.page !== null) return this.page
+          return Math.floor((this.ending-1)/this.countPerPage)
+        },
+
+       pages(){
+          return Math.floor((this.ending-1)/this.countPerPage)
+        },
+
         page(){
-            let page = this.$route.params.page || Math.trunc(this.ending / this.countPerPage)
+            let page = this.$route.params.page || null
             if (typeof page == "string"){
                 page = Number.parseInt(page)
                 return page;
@@ -74,7 +84,11 @@ export default {
         },
 
         last(){
-            return Math.min( this.ending, ( this.page + 1  ) * this.countPerPage )
+          const out = ( this.finalPage  + 1 ) * this.countPerPage
+          if (this.ending > 0)
+            return Math.min( this.ending, out );
+
+          return out
         },
 
         lastBlocksInfo(){
@@ -95,7 +109,7 @@ export default {
 
                 await this.$store.state.blockchain.syncPromise;
 
-                await this.$store.dispatch('getBlocksInfo', { starting: this.last-this.countPerPage, blockchainEnd: this.$store.state.blockchain.end, view: true } )
+                await this.$store.dispatch('getBlocksInfo', { starting: this.last-this.countPerPage, blockchainEnd: this.$store.state.blockchain.end, view: this.page !== null  } )
 
             }catch(err){
                 this.error = err.toString()

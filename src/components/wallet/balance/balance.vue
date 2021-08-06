@@ -5,7 +5,7 @@
             {{ amount }}
             <small class="fs--1 text-700">/
                 <router-link :to="`/tokens/${getToken.hash}`" class="currency">
-                    ${{getToken.ticker}}
+                    $0x00
                 </router-link>
             </small>
         </h4>
@@ -30,10 +30,10 @@ export default {
 
     computed: {
         getToken(){
-            return this.$store.getters.getTokenInfo(this.token );
+            return this.$store.getters.getToken(this.token );
         },
         amount(){
-            return StringHelper.formatMoney(this.balance.toString(), this.getToken.decimalSeparator )
+            return StringHelper.formatMoney( PandoraPay.config.tokens.tokensConvertToBase(this.balance.toString(), this.getToken.decimalSeparator.toString() ), this.getToken.decimalSeparator)
         }
     },
 

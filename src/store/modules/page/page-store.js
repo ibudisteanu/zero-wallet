@@ -7,12 +7,13 @@ export default {
         refLoadingModal: null,
         refAccountTypeModal: null,
         refQRCodeModal: null,
+        refQRCodeScannerModal: null,
         refTestnetFaucetModal:null,
         refWalletPasswordModal:null,
 
         modalOpened: false,
 
-        dark: false,
+        dark: true,
         leftSidebarShow: false,
 
     },

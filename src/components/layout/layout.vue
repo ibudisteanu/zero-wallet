@@ -18,6 +18,7 @@
                 <loading-modal ref="refLoadingModal" />
                 <account-type-modal ref="refAccountTypeModal" />
                 <qr-code-modal ref="refQRCodeModal" />
+                <qr-code-scanner-modal ref="refQRCodeScannerModal" />
                 <testnet-faucet-modal ref="refTestnetFaucetModal" />
                 <wallet-password-modal ref="refWalletPasswordModal" />
 
@@ -26,6 +27,9 @@
             </div>
 
         </div>
+
+        <toasts />
+
     </main>
 
 </template>
@@ -43,10 +47,13 @@ import WalletPasswordModal from "./modals/wallet-password.modal"
 import QrCodeModal from "./modals/qr-code.modal"
 import LeftSidebar from "./left-sidebar/left-sidebar"
 import WarningBar from "./header/warning-bar"
+import Toasts from "./toasts/toasts"
+import QrCodeScannerModal from "src/components/utils/qr-code-scanner/qr-code-scanner.modal";
 
 export default {
 
-    components: {AccountTypeModal, LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar, QrCodeModal, TestnetFaucetModal, WalletPasswordModal},
+    components: {AccountTypeModal, LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar, QrCodeModal,
+        TestnetFaucetModal, WalletPasswordModal, Toasts, QrCodeScannerModal},
 
     props: {
         disableLayout: false,
@@ -69,6 +76,7 @@ export default {
         this.$store.commit('setLoadingModal', this.$refs.refLoadingModal);
         this.$store.commit('setAccountTypeModal', this.$refs.refAccountTypeModal);
         this.$store.commit('setQRCodeModal', this.$refs.refQRCodeModal);
+        this.$store.commit('setQRCodeScannerModal', this.$refs.refQRCodeScannerModal);
         this.$store.commit('setTestnetFaucetModal', this.$refs.refTestnetFaucetModal);
         this.$store.commit('setWalletPasswordModal', this.$refs.refWalletPasswordModal);
     }

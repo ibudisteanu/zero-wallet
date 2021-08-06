@@ -22,10 +22,6 @@
 
 <script>
 
-import AccountIdenticon from "src/components/wallet/account/account-identicon";
-import StringHelper from "src/utils/string-helper"
-import LoadingSpinner from "src/components/utils/loading-spinner";
-import Amount from "src/components/wallet/amount"
 import ShowTransaction from "./show-transaction";
 
 export default {

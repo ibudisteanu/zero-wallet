@@ -15,13 +15,13 @@ export default {
                 timestamp: blk.timestamp,
             };
 
-            for (const vin of tx.base.vin) await dispatch('getTokenInfoByHash', vin.token)
-            for (const vout of tx.base.vout) await dispatch('getTokenInfoByHash', vout.token)
+            for (const vin of tx.vin) await dispatch('getTokenByHash', vin.token)
+            for (const vout of tx.vout) await dispatch('getTokenByHash', vout.token)
 
             txs.push(tx)
         }
 
-        commit('setTransactions', txs )
+        commit('setTransactions', { txs } )
         commit('setBlock', {block: blk} )
 
         return blk;
@@ -41,7 +41,8 @@ export default {
                 const blk = JSON.parse(blockData)
                 if (blk.bloom.hash !== hash) throw Error("Block hash was not matching")
 
-                resolve( await dispatch('_includeBlock', blk ) );
+                const out = await dispatch('_includeBlock', blk )
+                resolve( out );
 
             }catch(err){
                 reject(err);

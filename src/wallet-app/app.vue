@@ -4,10 +4,11 @@
 
         <alert-box v-if="error" type="error">{{error}}</alert-box>
         <template v-else>
-            <router-view></router-view>
+            <div class="d-flex flex-center" v-if="!walletInitialized" style="height: 100vh;" >
+                <loading-spinner class="fs-5"/>
+            </div>
+            <router-view v-else></router-view>
         </template>
-
-        <notifications position="bottom left" />
 
     </div>
 
@@ -15,27 +16,22 @@
 
 <script>
 
-import Identicons from "src/utils/identicons"
 import AlertBox from "src/components/utils/alert-box"
 import consts from "consts/consts"
+import LoadingSpinner from "src/components/utils/loading-spinner";
 
 export default {
 
-    components: {  AlertBox },
+    components: {  AlertBox, LoadingSpinner },
 
     data(){
         return {
             error: '',
-
+            walletInitialized: false,
         }
     },
 
     computed:{
-
-        loaded(){
-            return this.$store.state.wallet.loaded;
-        },
-
     },
 
     beforeMount(){
@@ -57,7 +53,6 @@ export default {
             networkName: PandoraPay.config.NETWORK_SELECTED_NAME,
         })
 
-
         let initialized = false
         PandoraPay.events.listenEvents( (name, data )=>{
 
@@ -70,10 +65,13 @@ export default {
                         console.log("listenNetworkNotifications", data, extraInfo)
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT)
-                            return this.$store.commit('accountNotification', {publicKeyHash: key, account: JSON.parse(data) })
+                            return this.$store.dispatch('accountUpdateNotification', {publicKeyHash: key, account: JSON.parse(data) })
 
-                        if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTIONS)
-                            return this.$store.dispatch('accountTransactionsNotification', { publicKeyHash: key, txHash:data.substr(1,64), extraInfo: JSON.parse(extraInfo) } )
+                        if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS)
+                            return this.$store.dispatch('accountTxUpdateNotification', { publicKeyHash: key, txHash:data.substr(1,64), extraInfo: JSON.parse(extraInfo) } )
+
+                        if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTION)
+                            return this.$store.commit('txNotification', { txHash: key, extraInfo: JSON.parse(extraInfo) } )
                     })
 
                     this.readWallet()
@@ -122,6 +120,8 @@ export default {
 
         async readWallet(){
 
+            this.walletInitialized = true
+
             await this.$store.dispatch('readWallet')
 
             const loaded = this.$store.state.wallet.loaded
@@ -129,9 +129,10 @@ export default {
             const route = this.$router.currentRoute.path;
             if (!loaded && route.indexOf('/login') === -1 ){
 
-                if ( route.indexOf('/explorer') === -1 && route.indexOf('/tokens') === -1)
-                    this.$router.push('/login');
+                //TODO allow some functionalities even if the wallet was not
+                //if ( route.indexOf('/explorer') === -1 && route.indexOf('/tokens') === -1)
 
+                this.$router.push('/login');
             }
             if (loaded && route.indexOf('/login') >= 0) this.$router.push('/');
 
@@ -145,39 +146,25 @@ export default {
             try{
                 const blocksRemoved = [], txsRemoved = []
 
-                const blocksByHash = this.$store.state.blocks.blocksByHash
-                for (const hash in blocksByHash){
-                    const blk = blocksByHash[hash]
-                    if (blk.bloom.hash !== this.$store.state.blocks.viewBlockHash && timestamp - blk.__timestampUsed > maxDiff)
-                        blocksRemoved.push(blk)
-                }
+               for (const map of [ this.$store.state.blocks.blocksByHash, this.$store.state.blocks.blocksByHeight ])
+                   for (const hash in map){
+                        const blk = map[hash]
+                        if (blk.bloom.hash !== this.$store.state.blocks.viewBlockHash && timestamp - blk.__timestampUsed > maxDiff)
+                            blocksRemoved.push(blk)
+                    }
 
-                const blocksByHeight = this.$store.state.blocks.blocksByHeight
-                for (const height in blocksByHeight){
-                    const blk = blocksByHeight[height]
-                    if (blk.bloom.hash !== this.$store.state.blocks.viewBlockHash && timestamp - blk.__timestampUsed > maxDiff)
-                        blocksRemoved.push(blk)
-                }
-
-                const txsByHash = this.$store.state.transactions.txsByHash
-                for (const hash in txsByHash){
-                    const tx = txsByHash[hash]
-                    if (!this.$store.state.transactions.viewTransactionsHashes[tx.bloom.hash] && timestamp - tx.__timestampUsed > maxDiff)
-                        txsRemoved.push(tx)
-                }
-
-                const txsByHeight = this.$store.state.transactions.txsByHeight
-                for (const height in txsByHeight){
-                    const tx = txsByHeight[height]
-                    if (!this.$store.state.transactions.viewTransactionsHashes[tx.bloom.hash] && timestamp - tx.__timestampUsed > maxDiff)
-                        txsRemoved.push(tx)
-                }
+              for (const map of [ this.$store.state.transactions.txsByHash, this.$store.state.transactions.txsByHeight ])
+                  for (const hash in map){
+                      const tx = map[hash]
+                      if (!this.$store.state.transactions.viewTxsHashes[tx.hash] && timestamp - tx.__timestampUsed > maxDiff)
+                          txsRemoved.push(tx)
+                  }
 
                 if (txsRemoved.length)
-                    this.$store.commit('deleteTransactions', txsRemoved )
+                  this.$store.commit('deleteTransactions', txsRemoved )
 
                 if (blocksRemoved.length)
-                    this.$store.commit('deleteBlocks', blocksRemoved )
+                  this.$store.commit('deleteBlocks', blocksRemoved )
 
             }catch(err){
                 console.error("clearUnusedDataStoreWorker raised an error", err)
