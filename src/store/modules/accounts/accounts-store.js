@@ -6,12 +6,8 @@ export default {
     state: {
 
         list: {},
-        txs: {},
-        txsPending: {},
 
         subscribed: {},
-        viewTxsPositions: {},
-
     },
 
     actions,

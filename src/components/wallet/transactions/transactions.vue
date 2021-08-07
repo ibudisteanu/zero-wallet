@@ -65,7 +65,7 @@ export default {
         },
 
         txs(){
-            return this.$store.state.accounts.txs[this.publicKeyHash]
+            return this.$store.state.accountsTxs.list[this.publicKeyHash]
         },
 
         countPerPage(){
