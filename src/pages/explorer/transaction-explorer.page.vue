@@ -22,8 +22,8 @@
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Height</span>
                         <span class="col-7 col-sm-9 text-truncate">
-                            <template v-if="tx.__extra.height">
-                                {{tx.__extra.height}}
+                            <template v-if="tx.__height">
+                                {{tx.__height}}
                             </template>
                             <template v-else>
                                 -
@@ -33,8 +33,8 @@
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Block Height</span>
                         <span class="col-7 col-sm-9 text-truncate">
-                            <template v-if="tx.__extra.blkHeight ">
-                                <router-link :to="`/explorer/block/${tx.__extra.blkHeight}`">{{tx.__extra.blkHeight}}</router-link>
+                            <template v-if="tx.__blkHeight ">
+                                <router-link :to="`/explorer/block/${tx.__blkHeight}`">{{tx.__blkHeight}}</router-link>
                             </template>
                             <template v-else>
                                 -
@@ -44,8 +44,8 @@
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Block Timestamp</span>
                         <span class="col-7 col-sm-9 text-truncate">
-                            <template v-if="tx.__extra.timestamp">
-                                {{timeAgo( $store.state.blockchain.genesisTimestamp + tx.__extra.timestamp) }}
+                            <template v-if="tx.__timestamp">
+                                {{timeAgo( $store.state.blockchain.genesisTimestamp + tx.__timestamp) }}
                                 <i class="fa fa-clock"></i>
                             </template>
                             <template v-else>
@@ -56,9 +56,9 @@
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Confirmations</span>
                         <span class="col-7 col-sm-9 text-truncate">
-                            <template v-if="tx.__extra.blkHeight" >
-                                {{ $store.state.blockchain.end - tx.__extra.blkHeight -1 }}
-                                <i v-if="$store.state.blockchain.end - tx.__extra.blkHeight -1 > 8" class="fa fa-check"></i>
+                            <template v-if="tx.__blkHeight" >
+                                {{ $store.state.blockchain.end - tx.__blkHeight -1 }}
+                                <i v-if="$store.state.blockchain.end - tx.__blkHeight -1 > 8" class="fa fa-check"></i>
                             </template>
                             <template v-else>
                                 -
@@ -67,7 +67,7 @@
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Mem Pool</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{tx.__extra.mempool ? 'YES': ' No' }}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{tx.__mempool ? 'YES': ' No' }}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Size</span>
@@ -98,7 +98,7 @@
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Extra Message</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{tx.__extra.extra}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{tx.__extra}}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Version</span>
@@ -120,7 +120,7 @@
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0">JSON Transaction {{tx.__extra.height}}  </h5>
+                        <h5 class="mb-0">JSON Transaction {{tx.__height}}  </h5>
                     </div>
                 </div>
             </div>

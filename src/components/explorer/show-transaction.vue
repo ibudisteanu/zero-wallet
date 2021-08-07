@@ -19,7 +19,7 @@
             <span class="col-4 d-xs-none d-sm-none d-md-none text-dark">Time</span>
             <span class="col-8 col-md-1 text-truncate">
                 <template v-if="!isPending">
-                    {{ timeAgo( $store.state.blockchain.genesisTimestamp +  tx.__extra.timestamp) }}
+                    {{ timeAgo( $store.state.blockchain.genesisTimestamp +  tx.__timestamp) }}
                 </template>
                 <template v-else>
                     pending
@@ -29,8 +29,8 @@
             <span class="col-4 d-block d-sm-none text-dark text-truncate">Confirmations</span>
             <span class="col-8 col-md-1 text-truncate">
                 <template v-if="!isPending">
-                    <router-link :to="`/explorer/block/${tx.__extra.blkHeight}`">
-                        {{ $store.state.blockchain.end - tx.__extra.blkHeight }}
+                    <router-link :to="`/explorer/block/${tx.__blkHeight}`">
+                        {{ $store.state.blockchain.end - tx.__blkHeight }}
                     </router-link>
                 </template>
                 <template v-else>
@@ -79,8 +79,8 @@ export default {
 
         isPending(){
             const tx = this.tx
-            if (!tx || typeof tx === "string" || !tx.__extra) return false
-            return typeof tx.__extra.blkHeight === "undefined"
+            if (!tx || typeof tx === "string" ) return false
+            return typeof tx.__blkHeight === "undefined"
         }
     },
 

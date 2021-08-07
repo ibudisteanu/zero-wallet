@@ -14,8 +14,8 @@ export default {
         for (const tx of transactions) {
             delete txsByHash[tx.hash]
 
-            if (tx.__extra.height !== undefined)
-                delete txsByHeight[tx.__extra.height]
+            if (tx.__height !== undefined)
+                delete txsByHeight[tx.__height]
         }
         state.txsByHash = {...txsByHash}
         state.txsByHeight = {...txsByHeight}
@@ -30,18 +30,16 @@ export default {
         for (const tx of txs){
 
             tx.__timestampUsed = timestamp
-            if (!tx.__extra)
-                tx.__extra = {}
 
             if (overwrite || !txsByHash[tx.hash] ){
 
                 const oldTx  = txsByHash[tx.hash]
-                if (oldTx && oldTx.__extra.height !== undefined)
-                    delete txsByHeight[oldTx.__extra.height]
+                if (oldTx && oldTx.__height !== undefined)
+                    delete txsByHeight[oldTx__height]
 
                 txsByHash[tx.hash] = tx
-                if (tx.__extra && tx.__extra.height !== undefined)
-                    txsByHeight[tx.__extra.height] = tx
+                if (tx.__height !== undefined)
+                    txsByHeight[tx.__height] = tx
             }
 
         }
@@ -67,19 +65,19 @@ export default {
         const tx = {...state.txsByHash[txHash]};
 
         let removedHeight, addedHeight
-        if (tx.__extra.height !== undefined)
-            removedHeight = tx.__extra.height
+        if (tx.__height !== undefined)
+            removedHeight = tx.__height
 
         if (extraInfo.inserted){
-            delete tx.__extra.mempool
-            tx.__extra.blkHeight = extraInfo.blkHeight
-            tx.__extra.timestamp = extraInfo.blkTimestamp
-            tx.__extra.height = extraInfo.height
-            addedHeight = tx.__extra.height
+            delete tx.__mempool
+            tx.__blkHeight = extraInfo.blkHeight
+            tx.__timestamp = extraInfo.blkTimestamp
+            tx.__height = extraInfo.height
+            addedHeight = tx.height
         } else {
-            delete tx.__extra.blkHeight
-            delete tx.__extra.timestamp
-            delete tx.__extra.height
+            delete tx.__blkHeight
+            delete tx.__timestamp
+            delete tx.__height
         }
 
         Vue.set(state.txsByHash, txHash, tx );

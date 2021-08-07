@@ -49,7 +49,7 @@ export default {
         })
     },
 
-    async _downloadAccount({state, dispatch, commit},publicKeyHash){
+    async _downloadAccount({state, dispatch, commit, getters},publicKeyHash){
 
         if (promises.accounts[publicKeyHash]) return promises.accounts[publicKeyHash]
 
@@ -65,8 +65,6 @@ export default {
                 const account = JSON.parse( result[0] )
                 const accountTxsMempool = JSON.parse( result[1] )
 
-                console.log(accountTxsMempool)
-
                 if (account){
                     for (const balance of account.balances)
                         await dispatch('getTokenByHash', balance.token)
@@ -76,17 +74,13 @@ export default {
 
                 await PandoraPay.store.storeAccount( publicKeyHash, result[0] )
 
-                if (accountTxsMempool) {
-
+                if (accountTxsMempool && getters.walletContains(publicKeyHash)) {
                     const txs = await Promise.all( accountTxsMempool.map( txHash => dispatch('getTransactionByHash', txHash ) ))
+
                     txs.sort( (a,b) => ( (a.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ? a.nonce : -1) -
-                                                 ( (b.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ? b.nonce : -1 ) ),
-
-                    console.log(txs);
-
+                            ( (b.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ? b.nonce : -1 ) )
                     await Promise.all(txs.map( tx => PandoraPay.mempool.mempoolInsertTx( tx.hash, JSON.stringify(tx)) ))
                 }
-
 
                 commit('setAccount', { publicKeyHash, account })
 
@@ -167,31 +161,63 @@ export default {
     async accountTxUpdateNotification( {state, dispatch, commit, getters}, {publicKeyHash, txHash, extraInfo }){
 
         if (getters.walletContains(publicKeyHash)){
-            if (extraInfo.inserted){
 
-                dispatch('addToast', {
-                    type: 'success',
-                    title: `Received a new transaction`,
-                    text: `Your address has received a transaction ${txHash}`,
-                } )
+            if (extraInfo.blockchain){
 
-                await PandoraPay.mempool.mempoolRemoveTx(txHash)
+                if (extraInfo.blockchain.inserted){
+
+                    dispatch('addToast', {
+                        type: 'success',
+                        title: `Received a new transaction`,
+                        text: `Your address has received a transaction ${txHash}`,
+                    } )
+
+                    await PandoraPay.mempool.mempoolRemoveTx(txHash)
+
+                } else {
+
+                    dispatch('addToast', {
+                        type: 'warning',
+                        title: `A transaction was removed from blockchain`,
+                        text: `Your address got a transaction removed ${txHash}`,
+                    } )
+
+                    const tx = await dispatch('getTransactionByHash', txHash )
+                    await PandoraPay.mempool.mempoolInsertTx(txHash, JSON.stringify(tx) )
+
+                }
+
+                return commit('addAccountTxUpdateNotification', { publicKeyHash, txHash, extraInfo } )
 
             } else {
 
-                dispatch('addToast', {
-                    type: 'warning',
-                    title: `A transaction was removed from blockchain`,
-                    text: `Your address got a transaction removed ${txHash}`,
-                } )
+                if (extraInfo.mempool.inserted){
 
-                const tx = await dispatch('getTransactionByHash', txHash )
-                await PandoraPay.mempool.mempoolInsertTx(txHash, JSON.stringify(tx) )
+                    dispatch('addToast', {
+                        type: 'info',
+                        title: `A pending transaction`,
+                        text: `There is a pending transaction ${txHash}`,
+                    } )
+
+                    const tx = await dispatch('getTransactionByHash', txHash )
+                    await PandoraPay.mempool.mempoolInsertTx(txHash, JSON.stringify(tx) )
+
+                } else {
+
+                    dispatch('addToast', {
+                        type: 'warning',
+                        title: `A transaction was removed from the mempool`,
+                        text: `A pending transaction was removed from the mempool ${txHash}`,
+                    } )
+
+                    await PandoraPay.mempool.mempoolRemoveTx(txHash)
+
+                }
 
             }
+
         }
 
-        return commit('addAccountTxUpdateNotification', { publicKeyHash, txHash, extraInfo } )
     }
 
 }

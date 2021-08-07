@@ -53,14 +53,12 @@ export default {
 
         const tx = txJSON.tx
 
-        tx.__extra = {
-            mempool: txJSON.mempool,
-        };
-
         if (txJSON.info) {
-            tx.__extra.height = txJSON.info.height
-            tx.__extra.blkHeight = txJSON.info.blkHeight
-            tx.__extra.timestamp = txJSON.info.timestamp
+            tx.__height = txJSON.info.height
+            tx.__blkHeight = txJSON.info.blkHeight
+            tx.__timestamp = txJSON.info.timestamp
+        } else {
+            tx.__mempool = txJSON.mempool
         }
 
         for (const vin of tx.vin) await dispatch('getTokenByHash', vin.token)
