@@ -60,9 +60,10 @@ export default {
         state.viewTxsHashes = viewTxsHashes
     },
 
-    txNotification(state, {txHash, extraInfo }) {
+    updateTxNotification(state, {txHash, extraInfo }) {
 
         const tx = {...state.txsByHash[txHash]};
+        if (!tx) return
 
         const removedHeight = tx.__height
         let addedHeight

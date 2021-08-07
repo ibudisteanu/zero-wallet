@@ -187,7 +187,6 @@ export default {
 
                 }
 
-                return commit('addAccountTxUpdateNotification', { publicKeyHash, txHash, extraInfo } )
 
             } else {
 
@@ -202,6 +201,7 @@ export default {
                     const tx = await dispatch('getTransactionByHash', txHash )
                     await PandoraPay.mempool.mempoolInsertTx(txHash, JSON.stringify(tx) )
 
+                    return
                 } else {
 
                     dispatch('addToast', {
@@ -215,6 +215,10 @@ export default {
                 }
 
             }
+
+            await dispatch('txNotification', { txHash, extraInfo })
+
+            commit('addAccountTxUpdateNotification', { publicKeyHash, txHash, extraInfo } )
 
         }
 

@@ -4,8 +4,10 @@ import actions from "./accounts-actions"
 export default {
 
     state: {
+
         list: {},
         txs: {},
+        txsPending: {},
 
         subscribed: {},
         viewTxsPositions: {},

@@ -71,7 +71,7 @@ export default {
                             return this.$store.dispatch('accountTxUpdateNotification', { publicKeyHash: key, txHash:data.substr(1,64), extraInfo: JSON.parse(extraInfo) } )
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTION)
-                            return this.$store.commit('txNotification', { txHash: key, extraInfo: JSON.parse(extraInfo) } )
+                            return this.$store.dispatch('txNotification', { txHash: key, extraInfo: JSON.parse(extraInfo) } )
                     })
 
                     this.readWallet()

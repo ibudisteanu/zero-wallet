@@ -50,12 +50,12 @@ export default {
         };
 
 
-        if (!extraInfo.inserted){ //removed
+        if (!extraInfo.blockchain.inserted){ //removed
             obj.count -= 1
-            delete obj.hashes[ extraInfo.txsCount ]
+            delete obj.hashes[ extraInfo.blockchain.txsCount ]
         } else {
             obj.count += 1
-            obj.hashes[ extraInfo.txsCount ] = txHash
+            obj.hashes[ extraInfo.blockchain.txsCount ] = txHash
         }
 
         const viewTxsPositions = state.viewTxsPositions[publicKeyHash]

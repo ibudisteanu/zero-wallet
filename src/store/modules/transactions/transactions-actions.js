@@ -84,7 +84,9 @@ export default {
 
                 const tx = JSON.parse(txData)
 
-                resolve( await dispatch('_includeTx', tx) );
+                const output = await dispatch('_includeTx', tx)
+
+                resolve( output );
             }catch(err){
                 reject(err);
             } finally{
@@ -119,5 +121,9 @@ export default {
         } );
 
     },
+
+    txNotification({state, commit}, {txHash, extraInfo }) {
+        commit('updateTxNotification', {txHash, extraInfo})
+    }
 
 }

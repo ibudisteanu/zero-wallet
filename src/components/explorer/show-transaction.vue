@@ -92,6 +92,7 @@ export default {
         txHash:{
             immediate: true,
             handler: function (to, from) {
+                console.log("txHash", to, from)
                 if (to === from) return
                 return this.$store.dispatch('getTransactionByHash', to)
             }
