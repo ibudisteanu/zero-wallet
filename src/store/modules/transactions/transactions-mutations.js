@@ -64,25 +64,42 @@ export default {
 
         const tx = {...state.txsByHash[txHash]};
 
-        let removedHeight, addedHeight
-        if (tx.__height !== undefined)
-            removedHeight = tx.__height
+        const removedHeight = tx.__height
+        let addedHeight
 
-        if (extraInfo.inserted){
-            delete tx.__mempool
-            tx.__blkHeight = extraInfo.blkHeight
-            tx.__timestamp = extraInfo.blkTimestamp
-            tx.__height = extraInfo.height
-            addedHeight = tx.height
-        } else {
+        if (extraInfo.blockchain){
+
+            if (extraInfo.blockchain.inserted){
+                tx.__blkHeight = extraInfo.blockchain.blkHeight
+                tx.__timestamp = extraInfo.blockchain.blkTimestamp
+                tx.__height = extraInfo.blockchain.height
+                addedHeight = extraInfo.blockchain.height
+                delete tx.__mempool
+            } else {
+                delete tx.__blkHeight
+                delete tx.__timestamp
+                delete tx.__height
+            }
+
+        } else if (extraInfo.mempool) {
+
             delete tx.__blkHeight
             delete tx.__timestamp
             delete tx.__height
+
+            if (extraInfo.mempool.inserted){
+                tx.__mempool = true
+            } else {
+                delete tx.__mempool
+            }
+
+        } else {
+            throw("Invalid notification")
         }
 
         Vue.set(state.txsByHash, txHash, tx );
         if (addedHeight !== undefined) Vue.set(state.txsByHeight, addedHeight, tx );
-        if (removedHeight !== undefined) Vue.delete(state.txsByHeight, removedHeight);
+        if (removedHeight !== undefined && addedHeight !== removedHeight) Vue.delete(state.txsByHeight, removedHeight);
     },
 
 }

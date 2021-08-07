@@ -62,7 +62,7 @@ export default {
 
                     PandoraPay.events.listenNetworkNotifications(( subscriptionType, key, data, extraInfo)=>{
 
-                        console.log("listenNetworkNotifications", data, extraInfo)
+                        console.log("listenNetworkNotifications", key, data, extraInfo)
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT)
                             return this.$store.dispatch('accountUpdateNotification', {publicKeyHash: key, account: JSON.parse(data) })
