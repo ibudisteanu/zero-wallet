@@ -217,11 +217,11 @@ export default {
             return this.loadBlock();
         },
 
-        hash(from, to) {
+        hash(to, from) {
           if (from === to) return
         },
 
-        height(from, to){
+        height(to, from){
           if (from === to) return
         },
     },

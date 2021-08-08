@@ -12,6 +12,7 @@
             </alert-box>
             <template v-else>
                 <balances :publicKeyHash="publicKeyHash" />
+                <pending-transactions :publicKeyHash="publicKeyHash" />
                 <transactions :publicKeyHash="publicKeyHash" :page="page" />
             </template>
 
@@ -34,10 +35,13 @@ import AccountIdenticon from "../../components/wallet/account/account-identicon"
 import LoadingSpinner from "../../components/utils/loading-spinner";
 import Account from "src/components/wallet/account/account"
 import AlertBox from "src/components/utils/alert-box"
+import PendingTransactions from "../../components/wallet/transactions/pending-transactions";
 
 export default {
 
-    components: {Layout,  Balances, Transactions, AccountIdenticon, LoadingSpinner, AlertBox, Account, LayoutTitle},
+    components: {
+        PendingTransactions,
+        Layout,  Balances, Transactions, AccountIdenticon, LoadingSpinner, AlertBox, Account, LayoutTitle},
 
     data(){
         return {

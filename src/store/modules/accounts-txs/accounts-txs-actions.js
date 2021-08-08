@@ -77,7 +77,7 @@ export default {
                 }
 
 
-            } else {
+            } else if (extraInfo.mempool) {
 
                 if (extraInfo.mempool.inserted){
 
@@ -103,13 +103,14 @@ export default {
 
                 }
 
-            }
-
-            await dispatch('txNotification', { txHash, extraInfo })
-
-            commit('addAccountTxUpdateNotification', { publicKeyHash, txHash, extraInfo } )
+            } else throw "Invalid extraInfo"
 
         }
+
+        await dispatch('txNotification', { txHash, extraInfo })
+        await dispatch('accountPendingTransactionsTxUpdateNotification', { publicKeyHash, txHash, extraInfo } )
+
+        commit('addAccountTxUpdateNotification', { publicKeyHash, txHash, extraInfo } )
 
     }
 

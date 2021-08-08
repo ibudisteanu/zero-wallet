@@ -37,11 +37,11 @@ export default {
     },
 
     mounted(){
-        this.$store.commit('addViewTransactionsHashes', this.transactions )
+        this.$store.commit('updateViewTransactionsHashes', {txsHashes: this.transactions, insert: true } )
     },
 
     beforeDestroy() {
-        this.$store.commit('removeViewTransactionsHashes', this.transactions )
+        this.$store.commit('updateViewTransactionsHashes', {txsHashes: this.transactions, insert: false } )
     }
 
 }

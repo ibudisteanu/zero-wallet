@@ -195,7 +195,7 @@ export default {
                 if (this.hash ) await this.$store.dispatch('getTransactionByHash', this.hash);
 
                 if (this.tx) {
-                    this.$store.commit('addViewTransactionsHashes', [this.tx.hash])
+                    this.$store.commit('updateViewTransactionsHashes', {txsHashes: [this.tx.hash], insert: true} )
                     await this.$store.dispatch('subscribeTransaction', this.tx.hash )
                 }
 
@@ -219,20 +219,20 @@ export default {
 
     watch: {
         '$route': {
-            handler: async function (to, from) {
+            handler: async function (to, from ) {
                 if (to === from) return
                 return this.loadTransaction();
             },
         },
 
-        async hash(from, to) {
+        async hash(to, from) {
           if (from === to) return
 
-          this.$store.commit('removeViewTransactionsHashes', [from])
+          this.$store.commit('updateViewTransactionsHashes', {txsHashes: [from], insert: false } )
           await this.$store.dispatch('unsubscribeTransaction', from )
         },
 
-        async height(from, to){
+        async height(to, from){
             if (from === to) return
 
             const tx = this.$store.state.transactions.txsByHeight[from];

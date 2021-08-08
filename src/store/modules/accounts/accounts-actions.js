@@ -22,7 +22,6 @@ export default {
                 ])
 
                 const account = JSON.parse( result[0] )
-                const accountTxsMempool = JSON.parse( result[1] )
 
                 if (account){
                     for (const balance of account.balances)
@@ -33,13 +32,7 @@ export default {
 
                 await PandoraPay.store.storeAccount( publicKeyHash, result[0] )
 
-                if (accountTxsMempool && getters.walletContains(publicKeyHash)) {
-                    const txs = await Promise.all( accountTxsMempool.map( txHash => dispatch('getTransactionByHash', txHash ) ))
-
-                    txs.sort( (a,b) => ( (a.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ? a.nonce : -1) -
-                            ( (b.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ? b.nonce : -1 ) )
-                    await Promise.all(txs.map( tx => PandoraPay.mempool.mempoolInsertTx( tx.hash, JSON.stringify(tx)) ))
-                }
+                await dispatch('processAccountPendingTransactions', {publicKeyHash, list: JSON.parse(result[1]) })
 
                 commit('setAccount', { publicKeyHash, account })
 

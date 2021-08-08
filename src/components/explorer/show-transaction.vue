@@ -18,27 +18,27 @@
 
             <span class="col-4 d-xs-none d-sm-none d-md-none text-dark">Time</span>
             <span class="col-8 col-md-1 text-truncate">
-                <template v-if="!isPending">
-                    {{ timeAgo( $store.state.blockchain.genesisTimestamp +  tx.__timestamp) }}
+                <template v-if="tx.__mempool">
+                    pending
                 </template>
                 <template v-else>
-                    pending
+                    {{ timeAgo( $store.state.blockchain.genesisTimestamp +  tx.__timestamp) }}
                 </template>
             </span>
 
             <span class="col-4 d-block d-sm-none text-dark text-truncate">Confirmations</span>
             <span class="col-8 col-md-1 text-truncate">
-                <template v-if="!isPending">
+                <template v-if="tx.__mempool">
+                    pending
+                </template>
+                <template v-else>
                     <router-link :to="`/explorer/block/${tx.__blkHeight}`">
                         {{ $store.state.blockchain.end - tx.__blkHeight }}
                     </router-link>
                 </template>
-                <template v-else>
-                    pending
-                </template>
             </span>
 
-            <span class="col-4 d-block d-sm-none text-dark text-truncate">Data</span>
+            <span class="col-4 d-md-none text-dark text-truncate">Data</span>
             <span class="col-8 col-md-7">
                 <div class="input" v-for="(vin, index) in tx.vin "
                      :key="`show-transaction-vin-${index}`">
@@ -76,12 +76,6 @@ export default {
         tx(){
             return this.$store.state.transactions.txsByHash[this.txHash]
         },
-
-        isPending(){
-            const tx = this.tx
-            if (!tx || typeof tx === "string" ) return false
-            return typeof tx.__blkHeight === "undefined"
-        }
     },
 
     methods:{
@@ -92,7 +86,6 @@ export default {
         txHash:{
             immediate: true,
             handler: function (to, from) {
-                console.log("txHash", to, from)
                 if (to === from) return
                 return this.$store.dispatch('getTransactionByHash', to)
             }

@@ -30,12 +30,13 @@ export default {
 
     addAccountTxUpdateNotification(state, {publicKeyHash, txHash, extraInfo }){
 
+        if (!extraInfo.blockchain) return
+
         const obj = {
             hashes: {},
             count: 0,
             ...state.list[publicKeyHash]
         };
-
 
         if (!extraInfo.blockchain.inserted){ //removed
             obj.count -= 1

@@ -35,7 +35,7 @@ export default {
 
                 const oldTx  = txsByHash[tx.hash]
                 if (oldTx && oldTx.__height !== undefined)
-                    delete txsByHeight[oldTx__height]
+                    delete txsByHeight[oldTx.__height]
 
                 txsByHash[tx.hash] = tx
                 if (tx.__height !== undefined)
@@ -48,15 +48,12 @@ export default {
         state.txsByHeight = {...txsByHeight}
     },
 
-    addViewTransactionsHashes(state, txsHashes ) {
+    updateViewTransactionsHashes(state, {txsHashes, insert} ) {
         const viewTxsHashes = {...state.viewTxsHashes}
-        for (const txHash of txsHashes ) viewTxsHashes[txHash] = true
-        state.viewTxsHashes = viewTxsHashes
-    },
-
-    removeViewTransactionsHashes(state, txsHashes ) {
-        const viewTxsHashes = {...state.viewTxsHashes}
-        for (const txHash of txsHashes ) delete viewTxsHashes[txHash]
+        for (const txHash of txsHashes ){
+            if (insert) viewTxsHashes[txHash] = true
+            else delete viewTxsHashes[txHash]
+        }
         state.viewTxsHashes = viewTxsHashes
     },
 

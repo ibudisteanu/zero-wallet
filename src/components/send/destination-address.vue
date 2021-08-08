@@ -55,7 +55,7 @@ export default {
     },
 
     watch: {
-        async destination (to, from) {
+        async destination (to, ) {
             try{
 
                 if (this.type === VERSION_TRANSPARENT){
