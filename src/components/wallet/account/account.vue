@@ -37,6 +37,10 @@
                         <i class="fa fa-tools pointer" />
                     </button>
 
+                    <button v-if="$store.getters.walletContains(this.address.publicKeyHash)" class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="sendFunds"  v-tooltip.bottom="'Send Transparently Funds'">
+                        <i class="fa fa-money-check-alt pointer" />
+                    </button>
+
                 </div>
             </div>
         </div>
@@ -95,7 +99,11 @@ export default {
 
         showAccountQRCode(){
             return this.$store.state.page.refQRCodeModal.showModal(this.getAddress, this.address.name || '');
-        }
+        },
+
+        sendFunds(){
+            this.$router.push('/send/transparent')
+        },
 
     },
 

@@ -11,8 +11,8 @@
             <span class="col-4 d-block d-sm-none text-dark">Hash</span>
             <span class="col-8 col-md-2 text-truncate">
                 <router-link :to="`/explorer/tx/${txHash}`">
-                    {{tx.nonce}}
-<!--                    {{tx.hash}}-->
+<!--                    {{tx.nonce}}-->
+                    {{tx.hash}}
                 </router-link>
            </span>
 

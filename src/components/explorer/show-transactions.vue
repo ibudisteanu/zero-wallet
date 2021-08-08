@@ -36,8 +36,14 @@ export default {
 
     },
 
-    mounted(){
-        this.$store.commit('updateViewTransactionsHashes', {txsHashes: this.transactions, insert: true } )
+    watch: {
+        transactions: {
+            immediate: true,
+            handler: function (newVal, oldVal) {
+                this.$store.commit('updateViewTransactionsHashes', {txsHashes: oldVal, insert: false } )
+                this.$store.commit('updateViewTransactionsHashes', {txsHashes: newVal, insert: true } )
+            }
+        },
     },
 
     beforeDestroy() {

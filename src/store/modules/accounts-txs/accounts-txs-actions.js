@@ -72,7 +72,11 @@ export default {
                     } )
 
                     const tx = await dispatch('getTransactionByHash', txHash )
-                    await PandoraPay.mempool.mempoolInsertTx(txHash, JSON.stringify(tx) )
+                    try{
+                        await PandoraPay.mempool.mempoolInsertTx(txHash, JSON.stringify(tx) )
+                    }catch(err){
+
+                    }
 
                 }
 
@@ -88,9 +92,12 @@ export default {
                     } )
 
                     const tx = await dispatch('getTransactionByHash', txHash )
-                    await PandoraPay.mempool.mempoolInsertTx(txHash, JSON.stringify(tx) )
+                    try{
+                        await PandoraPay.mempool.mempoolInsertTx(txHash, JSON.stringify(tx) )
+                    }catch(err){
 
-                    return
+                    }
+
                 } else {
 
                     dispatch('addToast', {

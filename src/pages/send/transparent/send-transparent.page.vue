@@ -4,8 +4,6 @@
 
         <layout-title icon="fa-money-check-alt" title="Send Transparent Funds">Transfer funds transparently from your account.</layout-title>
 
-        TODO
-
         <template v-if="address">
 
             <alert-box v-if="!isLoading && !isFound" type="warning" >

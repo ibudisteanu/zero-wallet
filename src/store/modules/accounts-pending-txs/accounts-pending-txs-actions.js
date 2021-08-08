@@ -10,7 +10,13 @@ export default {
             txs.sort( (a,b) => ( (a.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ? a.nonce : -1) -
                     ( (b.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ? b.nonce : -1 ) )
 
-            await Promise.all(txs.map( tx => PandoraPay.mempool.mempoolInsertTx( tx.hash, JSON.stringify(tx)) ))
+            await Promise.all(txs.map( tx => ()=>{
+                try{
+                    PandoraPay.mempool.mempoolInsertTx( tx.hash, JSON.stringify(tx))
+                }catch(err){
+
+                }
+            } ))
         }
 
         const map = {}
@@ -27,19 +33,26 @@ export default {
             commit('updatePendingList', {publicKeyHash, txHash, inserted: false})
 
             if (extraInfo.blockchain.inserted){
-
-            }else {
-
+                await PandoraPay.mempool.mempoolRemoveTx(txHash)
             }
 
         } else if (extraInfo.mempool) {
 
             if (extraInfo.mempool.inserted){
 
+                const tx = await dispatch('getTransactionByHash', txHash )
+
+                try{
+                    await PandoraPay.mempool.mempoolInsertTx( txHash, JSON.stringify(tx) )
+                }catch(err){
+
+                }
+
                 commit('updatePendingList', {publicKeyHash, txHash, inserted: true })
 
             }else {
 
+                await PandoraPay.mempool.mempoolRemoveTx(txHash)
                 commit('updatePendingList', {publicKeyHash, txHash, inserted: false })
 
             }

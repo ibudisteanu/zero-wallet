@@ -49,6 +49,9 @@ export default {
     },
 
     updateViewTransactionsHashes(state, {txsHashes, insert} ) {
+
+        if (!txsHashes) return
+
         const viewTxsHashes = {...state.viewTxsHashes}
         for (const txHash of txsHashes ){
             if (insert) viewTxsHashes[txHash] = true
@@ -59,8 +62,9 @@ export default {
 
     updateTxNotification(state, {txHash, extraInfo }) {
 
+        if (!state.txsByHash[txHash]) return
+
         const tx = {...state.txsByHash[txHash]};
-        if (!tx) return
 
         const removedHeight = tx.__height
         let addedHeight

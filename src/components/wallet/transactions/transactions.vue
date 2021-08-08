@@ -86,7 +86,11 @@ export default {
         },
 
         last(){
-            const out = (this.page === null) ? undefined : ( this.page + 1 ) * this.countPerPage
+
+            if (this.page === null) return undefined
+
+            const out = ( this.page + 1 ) * this.countPerPage
+
             if (this.ending > 0)
               return Math.min( this.ending, out );
 
