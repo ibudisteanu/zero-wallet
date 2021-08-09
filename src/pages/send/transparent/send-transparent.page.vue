@@ -56,9 +56,9 @@
 
                             </div>
                             <div :class="`tab-pane ${tab===1?'active':''} `">
-                                <!--                <extra-message :destinations="destinations"-->
-                                <!--                               :type="version.VERSION_TRANSPARENT"-->
-                                <!--                               @changed="changedExtra" />-->
+                                <extra-data :destinations="destinations"
+                                               :version="version.VERSION_TRANSPARENT"
+                                               @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===2?'active':''} `">
 
@@ -114,7 +114,7 @@ import LoadingSpinner from "src/components/utils/loading-spinner";
 import LoadingButton from "src/components/utils/loading-button.vue"
 import DestinationAddress from "src/components/send/destination-address.vue"
 import DestinationAmount from "src/components/send/destination-amount.vue"
-import ExtraMessage from "src/components/send/extra-message"
+import ExtraData from "src/components/send/extra-data"
 import Vue from 'vue'
 import AlertBox from "src/components/utils/alert-box"
 import LayoutTitle from "src/components/layout/layout-title";
@@ -122,7 +122,7 @@ import LayoutTitle from "src/components/layout/layout-title";
 export default {
 
     components: { LayoutTitle, Layout, Account, LoadingSpinner, LoadingButton, DestinationAddress, DestinationAmount,
-        ExtraMessage, AlertBox
+        ExtraData, AlertBox
     },
 
     data(){
@@ -137,8 +137,9 @@ export default {
 
             feeAutoToken: '',
 
-            extraMessage: '',
-            extraEncryptionOption: '',
+            extraDataType: '',
+            extraData: '',
+            extraDataEncryptionOption: '',
 
             error: '',
             status: '',
@@ -212,8 +213,9 @@ export default {
             if (data.token) this.feeAutoToken = data.token;
         },
 
-        changedExtra(data){
-            if (data.extraMessage !== undefined) this.extraMessage = data.extraMessage;
+        changedExtraData(data){
+            if (data.type !== undefined) this.extraDataType = data.type;
+            if (data.data !== undefined) this.extraData = data.data;
             if (data.extraEncryptionOption) this.extraEncryptionOption = data.extraEncryptionOption;
         },
 
@@ -248,16 +250,18 @@ export default {
                     dsts: this.destinations.map (it => it.encodedAddress),
                     dstsAmounts: this.destinations.map (it => it.amount),
                     dstsTokens: this.destinations.map (it => it.token),
-                    feeFixed: (this.feeType === 'feeAuto') ? 0 : this.feeManualValue,
-                    feePerByte: 0,
-                    feePerByteAuto: this.feeType === 'feeAuto',
-                    feeToken: this.feeType === 'feeAuto' ? this.feeAutoToken : this.feeManualToken,
+                    fee: {
+                        fixed: (this.feeType === 'feeAuto') ? 0 : this.feeManualValue,
+                        perByte: 0,
+                        perByteAuto: this.feeType === 'feeAuto',
+                        token: this.feeType === 'feeAuto' ? this.feeAutoToken : this.feeManualToken,
+                    },
+                    data: {
+                        data: Buffer.from(this.extraData).toString("hex"),
+                        encrypt: this.extraDataType === "encrypted",
+                    },
                     propagateTx: true,
                     awaitAnswer: true,
-                    // extra:{
-                    //     extraMessage: this.extraMessage,
-                    //     extraEncryptionOption: this.extraEncryptionOption,
-                    // },
                 }), (status) => {
                     console.log(status)
                     this.status = status
@@ -269,7 +273,7 @@ export default {
 
                 const tx = JSON.parse(out)
 
-                this.$store.commit('setTransactions', { txs: [tx], overwrite: false, })
+                await this.$store.dispatch('includeTx', { tx } )
 
                 const hash = tx.hash;
 

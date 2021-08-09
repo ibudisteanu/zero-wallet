@@ -49,7 +49,7 @@ export default {
         })
     },
 
-    async _includeTx( {state, dispatch, commit}, txJSON ){
+    async includeTx( {state, dispatch, commit}, txJSON ){
 
         const tx = txJSON.tx
 
@@ -59,6 +59,12 @@ export default {
             tx.__timestamp = txJSON.info.timestamp
         } else {
             tx.__mempool = txJSON.mempool
+        }
+
+        if (tx.dataVersion === PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_NONE ){
+
+        } else if (tx.dataVersion === PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT ){
+            tx.__data = Buffer.from(tx.data, "hex").toString()
         }
 
         for (const vin of tx.vin) await dispatch('getTokenByHash', vin.token)
@@ -84,7 +90,7 @@ export default {
 
                 const tx = JSON.parse(txData)
 
-                const output = await dispatch('_includeTx', tx)
+                const output = await dispatch('includeTx', tx)
 
                 resolve( output );
             }catch(err){
@@ -111,7 +117,7 @@ export default {
 
                 const tx = JSON.parse(txData)
 
-                resolve( await dispatch('_includeTx', tx) );
+                resolve( await dispatch('includeTx', tx) );
 
             }catch(err){
                 reject(err);

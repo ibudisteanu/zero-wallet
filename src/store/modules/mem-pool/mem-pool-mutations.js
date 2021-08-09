@@ -15,6 +15,7 @@ export default {
             list[hash] = true;
 
         state.list = {...list};
+        state.chainHash = mempool.chainHash
         state.page = page+1;
         state.count = mempool.count;
     },
