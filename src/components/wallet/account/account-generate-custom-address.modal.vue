@@ -51,7 +51,8 @@
                                 <input class="form-check-input" id="amount" type="checkbox"  name="checkbox" v-model="hasAmount"  >
                                 <label class="form-check-label" for="amount"> Amount </label>
                                 <i class="fa fa-question" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
-                                <input class="form-control" v-if="hasAmount" type="number" v-model="amount" min="0" style="width: 14rem;">
+                                <input :class="`form-control ${validateAmount ? 'is-invalid' : ''}`" v-if="hasAmount" type="number" v-model="amount" min="0" style="width: 14rem;">
+                                <div v-if="validateAmount" class="invalid-feedback d-block">{{validateAmount}}</div>
                             </div>
                         </div>
                         <div :class="`tab-pane ${tab===2?'active':''} `">
@@ -59,7 +60,8 @@
                                 <input class="form-check-input" id="paymentId" type="checkbox"  name="checkbox" v-model="hasPaymentId"  >
                                 <label class="form-check-label" for="paymentId"> PaymentId</label>
                                 <i class="fa fa-question" v-tooltip.bottom="'Specify a default message(paymentId)'" ></i>  <br>
-                                <input class="form-control" v-if="hasPaymentId" type="text" v-model="paymentId" >
+                                <input :class="`form-control ${validationPaymentId ? 'is-invalid' : ''}`" v-if="hasPaymentId" type="text" v-model="paymentId" >
+                                <div v-if="validationPaymentId" class="invalid-feedback d-block">{{validationPaymentId}}</div>
                             </div>
                         </div>
                         <div :class="`tab-pane ${tab===3?'active':''} `">
@@ -141,6 +143,39 @@ export default {
     },
 
     computed:{
+
+        validateAmount(){
+            try{
+                if (!this.hasAmount) return ""
+
+                try{
+                    const x = Number.parseFloat(this.amount)
+                    if (x === Number.NaN) throw "NaN"
+                    if (x < 0) throw "Number can't be negative"
+                }catch(err){
+                    throw "Invalid Number"
+                }
+            }catch(err){
+                return err.toString()
+            }
+        },
+
+        validationPaymentId(){
+            try{
+                if (!this.hasPaymentId) return ""
+                if (this.paymentId.length !== 16) throw "PaymentId should be an 8 byte hexadecimal number"
+                let buf
+                try{
+                    buf = Buffer.from(this.paymentId, "hex")
+                }catch(err){
+                    throw "PaymentId must be a hexadeciaml number"
+                }
+                if (buf.length !== 8) throw "PaymentId should be an 8 byte hexadecimal number"
+
+            }catch(err){
+                return err.toString()
+            }
+        }
 
     },
 

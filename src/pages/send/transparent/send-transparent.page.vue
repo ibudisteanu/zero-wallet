@@ -42,7 +42,7 @@
                                                      :key="`destinationAddress-${index}`"
                                                      :class="`${index > 0 ? 'pt-5' : '0'}`"
                                                      :index="index"
-                                                     :type="version.VERSION_TRANSPARENT"
+                                                     :version="version.VERSION_TRANSPARENT"
                                                      :balances="balances"
                                                      @changed="e => changedDestination(index, e)"
                                                      @deleted="e => deletedDestination(index, e)">
@@ -53,6 +53,8 @@
                                         <i class="fa fa-plus"></i>
                                     </button>
                                 </div>
+
+                                <alert-box v-if="checkDestinationError" class="w-100" type="error">{{checkDestinationError}}</alert-box>
 
                             </div>
                             <div :class="`tab-pane ${tab===1?'active':''} `">
@@ -77,6 +79,7 @@
                         </div>
                     </div>
                     <div class="card-footer bg-light">
+
                         <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
 
                         <label v-if="status">{{status}}</label>
@@ -165,6 +168,29 @@ export default {
         isFound(){
             return this.account !== null
         },
+
+        checkDestinationError(){
+
+            try{
+
+                const PaymentIDs = []
+
+                for (const destination of this.destinations) {
+                    if (destination.address === this.address.encodedAddress) throw "Destination can not be the same with from";
+                    if (destination.paymentId)
+                        PaymentIDs.push(destination.paymentId)
+                }
+
+                if (PaymentIDs.length > 1)
+                    throw "Multiple PaymentIDs are not allowed"
+
+                return ""
+            }catch (err){
+                return err.toString()
+            }
+
+        },
+
     },
 
     methods:{
@@ -226,20 +252,19 @@ export default {
                 this.error = '';
                 this.status = '';
 
-                const amounts = {
-
-                }
+                const amounts = { }
 
                 for (const destination of this.destinations) {
 
                     if (destination.validationError) throw destination.validationError;
-                    if (destination.address === this.address.encodedAddress) throw "Destination can not be the same with from";
-
                     if (!amounts[destination.token])
                         amounts[destination.token] = 0
 
                     amounts[destination.token] += destination.amount
                 }
+
+                if (this.checkDestinationError !== "")
+                    throw this.checkDestinationError
 
                 //compute extra
                 const out = await PandoraPay.transactions.builder.createSimpleTx_Float( JSON.stringify({

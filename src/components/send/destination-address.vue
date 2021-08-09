@@ -43,7 +43,7 @@ export default {
 
     props:{
         index: {default: null},
-        type: {default: 0},
+        version: {default: 0},
         balances: {default: null },
     },
 
@@ -58,7 +58,7 @@ export default {
         async destination (to, ) {
             try{
 
-                if (this.type === VERSION_TRANSPARENT){
+                if (this.version === VERSION_TRANSPARENT){
                     const addressData = await PandoraPay.addresses.decodeAddress(to)
                     const address = JSON.parse(addressData)
                     this.finalAddress = address
