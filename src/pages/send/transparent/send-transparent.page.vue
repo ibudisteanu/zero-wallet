@@ -48,8 +48,8 @@
                                                      @deleted="e => deletedDestination(index, e)">
                                 </destination-address>
 
-                                <div class="text-center pt-3">
-                                    <button class="btn btn-falcon-primary rounded-pill me-1 mb-1" type="button" @click="addDestination" v-tooltip.bottom="'Add another address'" >
+                                <div class="text-center py-3">
+                                    <button class="btn btn-falcon-primary rounded-pill me-1" type="button" @click="addDestination" v-tooltip.bottom="'Add another address'" >
                                         <i class="fa fa-plus"></i>
                                     </button>
                                 </div>
@@ -59,8 +59,9 @@
                             </div>
                             <div :class="`tab-pane ${tab===1?'active':''} `">
                                 <extra-data :destinations="destinations"
-                                               :version="version.VERSION_TRANSPARENT"
-                                               @changed="changedExtraData" />
+                                            :version="version.VERSION_TRANSPARENT"
+                                            :paymentId="identifiedPaymentID"
+                                            @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===2?'active':''} `">
 
@@ -175,20 +176,28 @@ export default {
 
                 const PaymentIDs = []
 
-                for (const destination of this.destinations) {
-                    if (destination.address === this.address.encodedAddress) throw "Destination can not be the same with from";
-                    if (destination.paymentId)
-                        PaymentIDs.push(destination.paymentId)
-                }
+                for (const destination of this.destinations)
+                    if (destination.address) {
+                        if (destination.addressEncoded === this.address.addressEncoded) throw "Destination can not be the same with from";
+                        if (destination.address.paymentId)
+                            PaymentIDs.push(destination.address.paymentId)
+                    }
 
                 if (PaymentIDs.length > 1)
                     throw "Multiple PaymentIDs are not allowed"
 
-                return ""
             }catch (err){
                 return err.toString()
             }
 
+        },
+
+        identifiedPaymentID(){
+            for (const destination of this.destinations)
+                if (destination.address) {
+                    if (destination.address.paymentId)
+                        return destination.address.paymentId
+                }
         },
 
     },
@@ -196,9 +205,26 @@ export default {
     methods:{
 
         increaseTab(value){
-            this.tab = this.tab + value
+            this.setTab(this.tab + value)
         },
         setTab(value){
+            try{
+
+                if (this.tab === 0){
+
+                    if (this.checkDestinationError) throw this.checkDestinationError
+
+                    for (const destination of this.destinations)
+                        if (destination.validationError) throw destination.validationError;
+
+                }
+
+                value = Math.max( value, 0)
+                value = Math.min( value, 2)
+
+            }catch(err){
+                return
+            }
             this.tab = value
         },
 
@@ -255,16 +281,8 @@ export default {
                 const amounts = { }
 
                 for (const destination of this.destinations) {
-
-                    if (destination.validationError) throw destination.validationError;
-                    if (!amounts[destination.token])
-                        amounts[destination.token] = 0
-
-                    amounts[destination.token] += destination.amount
+                    amounts[destination.token] = (amounts[destination.token] || 0) + destination.amount
                 }
-
-                if (this.checkDestinationError !== "")
-                    throw this.checkDestinationError
 
                 //compute extra
                 const out = await PandoraPay.transactions.builder.createSimpleTx_Float( JSON.stringify({
@@ -272,7 +290,7 @@ export default {
                     nonce: 0,
                     amounts: Object.values(amounts),
                     amountsTokens: Object.keys(amounts),
-                    dsts: this.destinations.map (it => it.encodedAddress),
+                    dsts: this.destinations.map (it => it.addressEncoded),
                     dstsAmounts: this.destinations.map (it => it.amount),
                     dstsTokens: this.destinations.map (it => it.token),
                     fee: {
@@ -284,6 +302,7 @@ export default {
                     data: {
                         data: Buffer.from(this.extraData).toString("hex"),
                         encrypt: this.extraDataType === "encrypted",
+                        publicKeyToEncrypt: null,
                     },
                     propagateTx: true,
                     awaitAnswer: true,

@@ -74,7 +74,7 @@ export default {
         finalAddress (to, from){
             return this.$emit('changed', {
                 address: this.finalAddress,
-                encodedAddress: this.destination,
+                addressEncoded: this.destination,
                 validationError: this.validationError,
             });
         },
