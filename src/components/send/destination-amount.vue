@@ -46,9 +46,14 @@ export default {
         },
         validationAmountError(){
             if ( !this.allowZero && Number.parseFloat(this.amount) === 0) return "Amount needs to be greater than 0"
+            if (this.amount === Number.NaN || this.amount < 0) return "Amount can not be negative"
         },
         validationTokenError(){
             if ( !this.selectedTokenInfo) return "Token was not selected"
+        },
+        validationError(){
+            if (this.validationTokenError) return this.validationTokenError
+            if (this.validationAmountError) return this.validationAmountError
         }
     },
 
@@ -87,9 +92,10 @@ export default {
             });
         },
         selectedToken (to, from) {
-            return this.$emit('changed', {
-                token: to,
-            });
+            return this.$emit('changed', { token: to, });
+        },
+        validationError(to, from){
+            return this.$emit('changed', { validationError: to, });
         },
 
     },

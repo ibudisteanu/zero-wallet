@@ -136,14 +136,21 @@ export default {
             destinations: [],
 
             feeType: "feeAuto",
-            feeManualValue: 0,
-            feeManualToken: '',
+            feeAuto: {
+                amount: 0,
+                token: "",
+            },
+            feeManual: {
+                amount: 0,
+                token: "",
+            },
 
-            feeAutoToken: '',
-
-            extraDataType: '',
-            extraData: '',
-            extraDataEncryptionOption: '',
+            extraData: {
+                data: "",
+                type: "public",
+                publicKeyToEncrypt: "",
+                validationError: null,
+            },
 
             error: '',
             status: '',
@@ -210,7 +217,10 @@ export default {
         setTab(value){
             try{
 
-                if (this.tab === 0){
+                value = Math.max( value, 0)
+                value = Math.min( value, 2)
+
+                if (this.tab === 0 && value === 1){
 
                     if (this.checkDestinationError) throw this.checkDestinationError
 
@@ -218,9 +228,9 @@ export default {
                         if (destination.validationError) throw destination.validationError;
 
                 }
-
-                value = Math.max( value, 0)
-                value = Math.min( value, 2)
+                if (this.tab === 1 && value === 2){
+                    if (this.extraData.validationError) throw this.extraData.validationError
+                }
 
             }catch(err){
                 return
@@ -257,18 +267,24 @@ export default {
         },
 
         changedFeeManual(data){
-            if (data.amount !== undefined) this.feeManualValue = data.amount;
-            if (data.token) this.feeManualToken = data.token;
+            this.feeManual = {
+                ...this.feeManual,
+                ...data,
+            }
         },
 
         changedFeeAuto(data){
-            if (data.token) this.feeAutoToken = data.token;
+            this.feeAuto = {
+                ...this.feeAuto,
+                ...data,
+            }
         },
 
         changedExtraData(data){
-            if (data.type !== undefined) this.extraDataType = data.type;
-            if (data.data !== undefined) this.extraData = data.data;
-            if (data.extraEncryptionOption) this.extraEncryptionOption = data.extraEncryptionOption;
+            this.extraData = {
+                ...this.extraData,
+                ...data,
+            }
         },
 
         async handleSendFunds(resolve){
@@ -280,9 +296,11 @@ export default {
 
                 const amounts = { }
 
-                for (const destination of this.destinations) {
+                for (const destination of this.destinations)
                     amounts[destination.token] = (amounts[destination.token] || 0) + destination.amount
-                }
+
+                if (this.feeAuto.validationError) throw this.feeAuto.validationError
+                if (this.feeManual.validationError) throw this.feeManual.validationError
 
                 //compute extra
                 const out = await PandoraPay.transactions.builder.createSimpleTx_Float( JSON.stringify({
@@ -294,15 +312,15 @@ export default {
                     dstsAmounts: this.destinations.map (it => it.amount),
                     dstsTokens: this.destinations.map (it => it.token),
                     fee: {
-                        fixed: (this.feeType === 'feeAuto') ? 0 : this.feeManualValue,
+                        fixed: (this.feeType === 'feeAuto') ? 0 : this.feeManual.amount,
                         perByte: 0,
                         perByteAuto: this.feeType === 'feeAuto',
-                        token: this.feeType === 'feeAuto' ? this.feeAutoToken : this.feeManualToken,
+                        token: this.feeType === 'feeAuto' ? this.feeAuto.token : this.feeManual.token,
                     },
                     data: {
-                        data: Buffer.from(this.extraData).toString("hex"),
-                        encrypt: this.extraDataType === "encrypted",
-                        publicKeyToEncrypt: null,
+                        data: Buffer.from(this.extraData.data).toString("hex"),
+                        encrypt: this.extraData.type === "encrypted",
+                        publicKeyToEncrypt: this.extraData.publicKeyToEncrypt,
                     },
                     propagateTx: true,
                     awaitAnswer: true,

@@ -208,7 +208,7 @@ export default {
         },
 
         async removed(tx = this.tx){
-            this.$store.commit('removeViewTransactionsHashes', [tx.hash])
+            this.$store.commit('updateViewTransactionsHashes', {txsHashes: [tx.hash], insert: false} )
             await this.$store.dispatch('unsubscribeTransaction', tx.hash )
         },
 

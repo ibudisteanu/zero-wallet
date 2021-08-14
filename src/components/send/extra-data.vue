@@ -21,20 +21,21 @@
             <div v-if="type === 'encrypted'">
                 <div class="form-check">
                     <label class="form-check-label">Message:</label>
-                    <input class="form-control" type="text" v-model="dataEncrypted" :disabled="!!paymentId">
+                    <input class="form-control" type="text" v-model="data" :disabled="!!paymentId">
                 </div>
                 <div class="form-check">
                     <label class="form-check-label">Address to encrypt:</label>
 
-                    <div :class="`${selectedDestinationToEncrypt ? 'destination-row' : '' }`" >
+                    <div :class="`${publicKeyToEncrypt ? 'destination-row' : '' }`" >
 
-                        <account-identicon v-if="selectedDestinationToEncrypt" :public-key="selectedDestinationToEncrypt.publicKey" size="30" outer-size="8" :version="selectedDestinationToEncrypt.version" />
-                        <select :class="`form-select`" v-model="selectedDestinationToEncrypt">
+                        <account-identicon v-if="publicKeyToEncrypt" :public-key="publicKeyToEncrypt" size="30" outer-size="8" />
+
+                        <select :class="`form-select ${validationPublicKeyToEncrypt ? 'is-invalid' :''} `" v-model="publicKeyToEncrypt">
                             <option v-for="(destination, id) in destinations"
                                     :key="`selected-address-${id}`"
-                                    :value="destination.publicKey ? destination : null"
-                                    :class="`${destination.publicKey ? '' : 'fs-error'}`">
-                                <template v-if="destination.publicKey">
+                                    :value="(destination.address && destination.address.publicKey) ? destination.address.publicKey : '' "
+                                    :class="`${ (destination.address && destination.address.publicKey) ? '' : 'text-danger'}`">
+                                <template v-if="destination.address && destination.address.publicKey">
                                     {{destination.addressEncoded}}
                                 </template>
                                 <template v-else>
@@ -42,8 +43,9 @@
                                 </template>
                             </option>
                         </select>
-
                     </div>
+                    <div v-if="validationPublicKeyToEncrypt" class="invalid-feedback d-block">{{validationPublicKeyToEncrypt}}</div>
+
                 </div>
             </div>
 
@@ -70,12 +72,25 @@ export default {
             error: '',
             type: "public",
             data: '',
-            dataEncrypted: '',
-            selectedDestinationToEncrypt: null,
+            publicKeyToEncrypt: null,
         }
     },
 
     computed:{
+
+        validationData(){
+            if (this.data.length > 512) return "length is invalid"
+        },
+
+        validationPublicKeyToEncrypt(){
+            if (this.type === "public") return
+            if (!this.publicKeyToEncrypt) return "No selected address"
+        },
+
+        validationError(){
+            if (this.validationPublicKeyToEncrypt) return this.validationPublicKeyToEncrypt
+            if (this.validationData) return this.validationData
+        }
 
     },
 
@@ -84,17 +99,15 @@ export default {
         paymentId( to, from ){
             if (to){
                 this.data = to
-                this.dataEncrypted = to
             } else {
                 if (this.data === from) this.data = ""
-                if (this.dataEncrypted === from) this.dataEncrypted = ""
             }
         },
 
         type (to, from) {
             return this.$emit('changed', {
                 type: to,
-                data: (to === 'public') ? this.data : this.dataEncrypted,
+                publicKeyToEncrypt: (to === 'public') ? null : this.publicKeyToEncrypt,
             });
         },
 
@@ -102,9 +115,13 @@ export default {
             return this.$emit('changed', { data: to, });
         },
 
-        dataEncrypted (to, from) {
-            return this.$emit('changed', { data: to, });
+        publicKeyToEncrypt(to, from) {
+            return this.$emit('changed', { publicKeyToEncrypt: to, });
         },
+
+        validationError(to, from){
+            return this.$emit('changed', { validationError: to, });
+        }
 
     },
 
@@ -113,12 +130,10 @@ export default {
 
 
 <style scoped>
-    .extra-message-row {
+
+    .destination-row{
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 45px 1fr;
         grid-column-gap: 10px;
-    }
-    .identicon {
-        grid-template-columns: 50px 1fr 1fr;
     }
 </style>
