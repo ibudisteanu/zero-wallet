@@ -7,13 +7,20 @@
 
             <account :address="address" />
 
-            <alert-box v-if="!isLoading && !isFound" type="warning" >
-                Address doesn't exist!
-            </alert-box>
-            <template v-else>
-                <balances :publicKeyHash="publicKeyHash" />
-                <pending-transactions :publicKeyHash="publicKeyHash" />
-                <transactions :publicKeyHash="publicKeyHash" :page="page" />
+            <template v-if="!isLoading">
+
+                <template v-if="!isFound">
+                    <alert-box type="warning" >
+                        Address doesn't exist!
+                    </alert-box>
+                    <pending-transactions :publicKeyHash="publicKeyHash" />
+                </template>
+                <template v-else>
+                    <balances :publicKeyHash="publicKeyHash" />
+                    <pending-transactions :publicKeyHash="publicKeyHash" />
+                    <transactions :publicKeyHash="publicKeyHash" :page="page" />
+                </template>
+
             </template>
 
         </template>
