@@ -49,7 +49,7 @@ export default {
         })
     },
 
-    async includeTx( {state, dispatch, commit}, txJSON ){
+    async includeTx( {state, dispatch, commit, getters}, txJSON ){
 
         const tx = txJSON.tx
 
@@ -62,9 +62,13 @@ export default {
         }
 
         if (tx.dataVersion === PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_NONE ){
-
         } else if (tx.dataVersion === PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT ){
             tx.__data = Buffer.from(tx.data, "hex").toString()
+        } else if (tx.dataVersion === PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_ENCRYPTED ){
+
+            tx.__data = tx.data
+            await dispatch('decryptTxData', { tx, commitNow: false })
+
         }
 
         for (const vin of tx.vin) await dispatch('getTokenByHash', vin.token)
@@ -73,6 +77,53 @@ export default {
         commit("setTransactions", { txs: [tx] } )
 
         return tx
+    },
+
+    async decryptTxData( {state, dispatch, commit, getters}, {tx, hash, password = "", commitNow } ){
+
+        if (!tx) tx = state.txsByHash[hash]
+
+        let decrypted = false
+
+        for (const vout of tx.vout){
+            const walletAddress = getters.walletContains( vout.publicKeyHash)
+            if ( walletAddress ){
+                tx.__dataCanBeDecrypted = true
+
+                try{
+
+                    if ( password || !getters.isWalletEncrypted() ) {
+                        const data = await PandoraPay.wallet.manager.encryption.decryptMessageWalletAddress(tx.data, walletAddress.addressEncoded, password)
+                        tx.__dataDecrypted = Buffer.from(data, "hex").toString()
+                        tx.__dataDecryptedError = ""
+                        decrypted = true
+                        break
+                    }
+
+                    if ( !password && getters.isWalletEncrypted() ) {
+                        decrypted = true
+                        break
+                    }
+
+
+                }catch(err){
+                    tx.__dataDecrypted = ""
+                    tx.__dataDecryptedError = err.toString()
+                    decrypted = true
+                    break
+                }
+
+            }
+        }
+
+        if (!decrypted){
+            tx.__dataDecrypted = ""
+            tx.__dataDecryptedError = "Data can't be decrypted"
+        }
+
+        if (commitNow)
+            commit("setTransactions", { txs: [tx] } )
+
     },
 
     async getTransactionByHash( {state, dispatch, commit}, hash){

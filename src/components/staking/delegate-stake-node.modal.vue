@@ -69,10 +69,6 @@ export default {
 
     computed:{
 
-        isWalletEncrypted() {
-            return this.$store.state.wallet.encrypted;
-        },
-
         delegateStakesNodes(){
             return consts.delegateStakesNodes;
         },

@@ -6,5 +6,10 @@ export default {
             }
         }
         return null
+    },
+
+    isWalletEncrypted: (state) => () => {
+        return state.isEncrypted
     }
+
 }

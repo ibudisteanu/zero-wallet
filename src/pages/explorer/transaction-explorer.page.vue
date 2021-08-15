@@ -97,14 +97,35 @@
                         </div>
                     </div>
                     <div class="row pt-2 pb-2">
-                        <span class="col-5 col-sm-3 text-truncate">Extra Data</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{tx.__data}}</span>
+                        <span class="col-5 col-sm-3 text-truncate">Extra Data as HEX</span>
+                        <span class="col-7 col-sm-9 text-truncate">
+                            {{tx.data}}
+                        </span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
+                        <span class="col-5 col-sm-3 text-truncate">Extra Data</span>
+                        <span class="col-7 col-sm-9 text-truncate">
+                            <template v-if="tx.dataVersion === transactionDataVersion.TX_DATA_PLAIN_TEXT">
+                                {{tx.__data}}
+                            </template>
+                            <template v-if="tx.dataVersion === transactionDataVersion.TX_DATA_ENCRYPTED">
+                                <span v-if="tx.__dataDecryptedError" class="text-danger">
+                                    {{tx.__dataDecryptedError}}
+                                </span>
+                                <span v-else-if="tx.__dataDecrypted">
+                                    {{tx.__dataDecrypted}}
+                                </span>
+                                <span v-else>
+                                    <loading-button :text="`Decrypt message`" @submit="handleDecryptExtraData" icon="fa fa-eye" />
+                                </span>
+                            </template>
+                        </span>
+                    </div>
+                    <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Version</span>
                         <span class="col-7 col-sm-9 text-truncate">{{tx.version}}</span>
                     </div>
-                    <div class="row pt-2 pb-2">
+                    <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Script Version</span>
                         <span class="col-7 col-sm-9 text-truncate">{{tx.txScript}}</span>
                     </div>
@@ -142,10 +163,11 @@ import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import StringHelper from "src/utils/string-helper"
 import Amount from "src/components/wallet/amount"
 import AlertBox from "src/components/utils/alert-box"
+import LoadingButton from "../../components/utils/loading-button";
 
 export default {
 
-    components: {Layout, LoadingSpinner, AccountIdenticon, Amount, AlertBox, LayoutTitle},
+    components: {LoadingButton, Layout, LoadingSpinner, AccountIdenticon, Amount, AlertBox, LayoutTitle},
 
     data(){
         return {
@@ -171,6 +193,10 @@ export default {
         tx(){
             if (this.height !== undefined) return this.$store.state.transactions.txsByHeight[this.height];
             if (this.hash) return this.$store.state.transactions.txsByHash[this.hash];
+        },
+
+        transactionDataVersion(){
+            return PandoraPay.enums.transactions.TransactionDataVersion
         },
 
     },
@@ -214,6 +240,19 @@ export default {
 
         convertToBase: (amount) => PandoraPay.config.coins.convertToBase( amount.toString() ),
         timeAgo : (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
+
+        async handleDecryptExtraData(resolver){
+            try{
+
+                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+                if (password === null ) return
+
+                await this.$store.dispatch('decryptTxData', {tx: this.tx, password, commitNow: true })
+
+            }finally{
+                resolver()
+            }
+        }
 
     },
 
