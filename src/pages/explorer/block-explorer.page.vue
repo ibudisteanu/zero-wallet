@@ -36,8 +36,10 @@
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Time</span>
                         <span class="col-7 col-sm-9 text-truncate">
-                            {{  timeAgo( $store.state.blockchain.genesisTimestamp + blk.timestamp ) }} ago
-                            <i class="fa fa-clock"></i>
+                            <span  v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  blk.timestamp) }`">
+                                {{  timeAgo( $store.state.blockchain.genesisTimestamp + blk.timestamp ) }} ago
+                                <i class="fa fa-clock"></i>
+                            </span>
                         </span>
                     </div>
                     <div class="row pt-2 pb-2">
@@ -76,7 +78,11 @@
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Size</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{formatBytes( blk.bloomBlkComplete.size) }}</span>
+                        <div class="col-7 col-sm-9 text-truncate" >
+                            <span v-tooltip.bottom="`${ formatBytes(blk.bloomBlkComplete.size) }`">
+                                {{formatSize( blk.bloomBlkComplete.size) }}
+                            </span>
+                        </div>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Forger</span>
@@ -177,8 +183,10 @@ export default {
 
     methods: {
 
-        timeAgo: (timestamp) => StringHelper.timeSince( timestamp*1000 ),
-        formatBytes: (bytes) => StringHelper.formatBytes(bytes, 1),
+        timeAgo: (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
+        formatTime : (timestamp) => StringHelper.formatTime( timestamp*1000 ),
+        formatSize: (bytes) => StringHelper.formatSize(bytes, 1),
+        formatBytes: (bytes) => StringHelper.formatBytes(bytes),
         formatMoney: (amount) => StringHelper.formatMoney(amount, PandoraPay.config.coins.DECIMAL_SEPARATOR  ),
 
         async loadBlock(){

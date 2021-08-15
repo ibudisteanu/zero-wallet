@@ -10,6 +10,7 @@ export default {
         const txs = [];
         for (const tx of blk.txs) {
 
+            tx.__height = ""
             tx.__blkHeight = blk.height
             tx.__timestamp = blk.timestamp
 

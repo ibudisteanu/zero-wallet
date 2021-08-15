@@ -21,49 +21,49 @@
 
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Height</span>
-                        <span class="col-7 col-sm-9 text-truncate">
-                            <template v-if="tx.__height">
+                        <div class="col-7 col-sm-9 text-truncate">
+                            <span v-if="tx.__height">
                                 {{tx.__height}}
-                            </template>
-                            <template v-else>
+                            </span>
+                            <span v-else>
                                 -
-                            </template>
-                        </span>
+                            </span>
+                        </div>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Block Height</span>
-                        <span class="col-7 col-sm-9 text-truncate">
-                            <template v-if="tx.__blkHeight ">
+                        <div class="col-7 col-sm-9 text-truncate">
+                            <span v-if="tx.__blkHeight ">
                                 <router-link :to="`/explorer/block/${tx.__blkHeight}`">{{tx.__blkHeight}}</router-link>
-                            </template>
-                            <template v-else>
+                            </span>
+                            <span v-else>
                                 -
-                            </template>
-                        </span>
+                            </span>
+                        </div>
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Block Timestamp</span>
-                        <span class="col-7 col-sm-9 text-truncate">
-                            <template v-if="tx.__timestamp">
+                        <div class="col-7 col-sm-9 text-truncate" >
+                            <span v-if="tx.__timestamp" v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  tx.__timestamp ) }`">
                                 {{timeAgo( $store.state.blockchain.genesisTimestamp + tx.__timestamp) }}
                                 <i class="fa fa-clock"></i>
-                            </template>
-                            <template v-else>
+                            </span>
+                            <span v-else>
                                 -
-                            </template>
-                        </span>
+                            </span>
+                        </div>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Confirmations</span>
-                        <span class="col-7 col-sm-9 text-truncate">
-                            <template v-if="tx.__blkHeight" >
+                        <div class="col-7 col-sm-9 text-truncate">
+                            <span v-if="tx.__blkHeight" >
                                 {{ $store.state.blockchain.end - tx.__blkHeight -1 }}
                                 <i v-if="$store.state.blockchain.end - tx.__blkHeight -1 > 8" class="fa fa-check"></i>
-                            </template>
-                            <template v-else>
+                            </span>
+                            <span v-else>
                                 -
-                            </template>
-                        </span>
+                            </span>
+                        </div>
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Mem Pool</span>
@@ -71,17 +71,21 @@
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Size</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{tx.size}}</span>
+                        <div class="col-7 col-sm-9 text-truncate">
+                            <span v-tooltip.bottom="`${ formatBytes(tx.size) }`">
+                                {{formatSize(tx.size)}}
+                            </span>
+                        </div>
                     </div>
-                    <div class="row pt-2 pb-2 bg-light">
+                    <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Nonce</span>
                         <span class="col-7 col-sm-9 text-truncate">{{tx.nonce}}</span>
                     </div>
-                    <div class="row pt-2 pb-2">
+                    <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Unlock Time</span>
                         <span class="col-7 col-sm-9 text-truncate">{{tx.unlockTime}}</span>
                     </div>
-                    <div class="row pt-2 pb-2 bg-light">
+                    <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Data</span>
                         <div class="col-7 col-sm-9">
                             <div v-for="(vin, index) in tx.vin" class="input"
@@ -96,13 +100,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row pt-2 pb-2">
+                    <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Extra Data as HEX</span>
                         <span class="col-7 col-sm-9 text-truncate">
                             {{tx.data}}
                         </span>
                     </div>
-                    <div class="row pt-2 pb-2 bg-light">
+                    <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Extra Data</span>
                         <span class="col-7 col-sm-9 text-truncate">
                             <template v-if="tx.dataVersion === transactionDataVersion.TX_DATA_PLAIN_TEXT">
@@ -121,11 +125,11 @@
                             </template>
                         </span>
                     </div>
-                    <div class="row pt-2 pb-2">
+                    <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Version</span>
                         <span class="col-7 col-sm-9 text-truncate">{{tx.version}}</span>
                     </div>
-                    <div class="row pt-2 pb-2 bg-light">
+                    <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Script Version</span>
                         <span class="col-7 col-sm-9 text-truncate">{{tx.txScript}}</span>
                     </div>
@@ -240,6 +244,9 @@ export default {
 
         convertToBase: (amount) => PandoraPay.config.coins.convertToBase( amount.toString() ),
         timeAgo : (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
+        formatTime : (timestamp) => StringHelper.formatTime( timestamp*1000 ),
+        formatSize: (bytes) => StringHelper.formatSize(bytes, 1),
+        formatBytes: (bytes) => StringHelper.formatBytes(bytes),
 
         async handleDecryptExtraData(resolver){
             try{

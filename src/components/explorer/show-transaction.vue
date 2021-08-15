@@ -17,26 +17,26 @@
            </span>
 
             <span class="col-4 d-xs-none d-sm-none d-md-none text-dark">Time</span>
-            <span class="col-8 col-md-1 text-truncate">
-                <template v-if="tx.__mempool">
+            <div class="col-8 col-md-1 text-truncate">
+                <span v-if="tx.__mempool">
                     pending
-                </template>
-                <template v-else>
+                </span>
+                <span v-else v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  tx.__timestamp ) }`"  >
                     {{ timeAgo( $store.state.blockchain.genesisTimestamp +  tx.__timestamp) }}
-                </template>
-            </span>
+                </span>
+            </div>
 
             <span class="col-4 d-block d-sm-none text-dark text-truncate">Confirmations</span>
-            <span class="col-8 col-md-1 text-truncate">
-                <template v-if="tx.__mempool">
+            <div class="col-8 col-md-1 text-truncate">
+                <span v-if="tx.__mempool">
                     pending
-                </template>
-                <template v-else>
+                </span>
+                <span v-else v-tooltip.bottom="`${ tx.__blkHeight }`" >
                     <router-link :to="`/explorer/block/${tx.__blkHeight}`">
                         {{ $store.state.blockchain.end - tx.__blkHeight }}
                     </router-link>
-                </template>
-            </span>
+                </span>
+            </div>
 
             <span class="col-4 d-md-none text-dark text-truncate">Data</span>
             <span class="col-8 col-md-7">
@@ -80,6 +80,7 @@ export default {
 
     methods:{
         timeAgo : (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
+        formatTime : (timestamp) => StringHelper.formatTime( timestamp*1000 ),
     },
 
     watch: {
