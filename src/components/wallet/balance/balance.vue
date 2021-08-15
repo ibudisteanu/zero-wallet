@@ -17,10 +17,10 @@
 
 const {VERSION_TRANSPARENT} = PandoraPay.enums.wallet.address.version;
 import StringHelper from "src/utils/string-helper"
-import amount from "src/components/wallet/amount"
+import Amount from "src/components/wallet/amount"
 export default {
 
-    components: {amount},
+    components: {Amount},
 
     props: {
         version: {default: VERSION_TRANSPARENT},
