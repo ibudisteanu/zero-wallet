@@ -33,7 +33,7 @@ export default {
             return this.$store.getters.getToken(this.token );
         },
         amount(){
-            return StringHelper.formatMoney( PandoraPay.config.tokens.tokensConvertToBase(this.balance.toString(), this.getToken.decimalSeparator.toString() ), this.getToken.decimalSeparator)
+            return StringHelper.formatMoney( PandoraPay.config.tokens.tokensConvertToBase(this.balance.toString(), this.getToken.decimalSeparator ), this.getToken.decimalSeparator)
         }
     },
 

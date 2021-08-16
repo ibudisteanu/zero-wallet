@@ -24,7 +24,8 @@
             </template>
 
         </template>
-        <div class="py-3 text-center" v-else>
+
+        <div class="py-3 text-center" v-if="!address || isLoading">
             <loading-spinner class="fs-3" />
         </div>
 

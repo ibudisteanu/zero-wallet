@@ -63,10 +63,10 @@
                 </div>
             </div>
 
-        </template>
+            <account-private-key-modal ref="refAccountPrivateKeyModal" :address="address"/>
+            <account-delete-modal ref="refAccountDeleteModal" :address="address"/>
 
-        <account-private-key-modal ref="refAccountPrivateKeyModal" :address="address"/>
-        <account-delete-modal ref="refAccountDeleteModal" :address="address"/>
+        </template>
 
     </layout>
 
