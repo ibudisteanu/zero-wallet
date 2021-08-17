@@ -41,9 +41,7 @@
                     <div class="card-body py-3">
                         <div class="tab-content">
                             <div :class="`tab-pane ${tab===0?'active':''} `">
-                                <div class="form-group">
-                                    <destination-amount :allow-zero="true" :allow-token="false" :balances="balancesOnlyNative" @changed="amountChanged" />
-                                </div>
+                                <destination-amount :allow-zero="true" :allow-token="false" :balances="balancesOnlyNative" @changed="amountChanged" text="Amount to stake" />
                             </div>
                             <div :class="`tab-pane ${tab===1?'active':''} `">
 
@@ -55,7 +53,7 @@
                                 <div v-if="newDelegatedStakePublicKeyHash" class="pt-2 ms-2">
 
                                     <div class="form-group">
-                                        <label>Delegate Nonce</label>
+                                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Delegate Nonce</label>
                                         <input class="form-control" type="number" v-model="delegateStakeNonce" min="0"  >
                                     </div>
 
@@ -66,14 +64,14 @@
 
                                     <template v-if="!delegateNewPublicKeyHashGenerate">
                                         <div class="form-group pt-2">
-                                            <label>Delegate PublicKeyHash</label>
+                                            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Delegate PublicKeyHash</label>
                                             <input :class="`form-control ${validationDelegateStakePublicKeyHash ? 'is-invalid' : ''}`" type="text" v-model="delegateStakePublicKeyHash">
                                             <div v-if="validationDelegateStakePublicKeyHash" class="invalid-feedback d-block">{{validationDelegateStakePublicKeyHash}}</div>
                                         </div>
                                     </template>
 
                                     <div class="form-group pt-2">
-                                        <label >Delegate Fee in Percentage</label>
+                                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Delegate Fee in Percentage</label>
                                         <input class="form-control" type="number" v-model="delegateStakeFee" min="0" max="100" step="0.01">
                                     </div>
 
@@ -81,8 +79,7 @@
 
                             </div>
                             <div :class="`tab-pane ${tab===2?'active':''} `">
-                                <extra-data :version="version.VERSION_TRANSPARENT"
-                                            @changed="changedExtraData" />
+                                <extra-data :version="version.VERSION_TRANSPARENT" @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===3?'active':''} `">
                                 <div class="form-check">
@@ -308,7 +305,7 @@ export default {
                     nonce: this.delegateStakeNonce,
                     delegateAmount: this.delegateStakeAmount,
                     delegateNewPublicKeyHashGenerate: this.newDelegatedStakePublicKeyHash ? this.delegateNewPublicKeyHashGenerate : false,
-                    delegateNewPubKeyHash: this.newDelegatedStakePublicKeyHash ? (this.delegateStakePublicKeyHash ? this.delegateStakePublicKeyHash : null) : null,
+                    delegateNewPubKeyHash: this.newDelegatedStakePublicKeyHash ? (this.delegateStakePublicKeyHash ? this.delegateStakePublicKeyHash : "") : "",
                     data: {
                         data: Buffer.from(this.extraData.data).toString("hex"),
                         encrypt: this.extraData.type === "encrypted",

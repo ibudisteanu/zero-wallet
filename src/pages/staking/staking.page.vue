@@ -54,13 +54,17 @@
                     <div class="card-footer bg-light g-0 d-block-inline p-3">
 
                         <div v-if="isDelegateStakeInPending">
-                            <span>Your delegating transaction is in pending right now...</span>
+                            <span>Your delegating transaction is in the mempool right now...</span>
                             <loading-spinner />
                         </div>
                         <div v-else >
 
                             <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="handleShowDelegateStake" v-tooltip.bottom="'Delegate your stake'" >
-                                <i class="fa fa-piggy-bank pointer" />
+                                <i class="fa fa-link pointer" />
+                            </button>
+
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="handleShowUnstake" v-tooltip.bottom="'Unstaking'" >
+                                <i class="fa fa-unlink text-danger pointer" />
                             </button>
 
                         </div>
@@ -69,7 +73,7 @@
                 </div>
 
                 <delegate-stake-modal ref="refDelegateStakeModal" />
-                <stop-delegate-stake-modal ref="refStopDelegateStakeModal" :address="address" />
+                <stop-delegate-stake-modal ref="refUnstakeModal" />
                 <delegate-stake-private-key-modal ref="refDelegateStakePrivateKeyModal" :address="address" />
                 <delegate-stake-node-modal ref="refDelegateStakeNodeModal" :address="address"/>
 
@@ -95,7 +99,7 @@ import Account from "src/components/wallet/account/account"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 
 import DelegateStakeModal from "src/components/staking/delegate-stake.modal.vue"
-import StopDelegateStakeModal from "src/components/staking/stop-delegate-stake.modal.vue"
+import StopDelegateStakeModal from "src/components/staking/unstake.modal.vue"
 import DelegateStakePrivateKeyModal from "src/components/staking/delegate-stake-private-key.modal.vue"
 import DelegateStakeNodeModal from "src/components/staking/delegate-stake-node.modal.vue"
 import StringHelper from "../../utils/string-helper";
@@ -117,11 +121,14 @@ export default {
 
     computed:{
 
+        publicKeyHash(){
+            return this.$store.state.wallet.mainPublicKeyHash
+        },
         address(){
-            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKeyHash];
+            return this.$store.state.wallet.addresses[this.publicKeyHash];
         },
         account(){
-            return this.$store.state.accounts.list[this.$store.state.wallet.mainPublicKeyHash]
+            return this.$store.state.accounts.list[this.publicKeyHash]
         },
         isLoading(){
             return this.account === undefined
@@ -170,26 +177,13 @@ export default {
         },
 
         pendingTransactions(){
-
-            const txs = this.pendingTxs;
-
-            const out = [];
-            for (const key in txs)
-                if (this.$store.state.transactions.txsByHash[txs[key]])
-                    out.push( this.$store.state.transactions.txsByHash[txs[key]] );
-
-            return out;
+            if (!this.$store.state.accountsPendingTxs.list[this.publicKeyHash]) return
+            return Object.keys( this.$store.state.accountsPendingTxs.list[this.publicKeyHash] )
         },
 
         isDelegateStakeInPending(){
-
-            const pendingTxs = this.pendingTransactions;
-
-            for (let i=0; i < pendingTxs.length; i++)
-                if (pendingTxs[i].scriptVersion === 1)
-                    return true;
-
-            return false;
+            if (this.pendingTransactions.length > 0) return true
+            return false
         }
 
     },
@@ -206,8 +200,8 @@ export default {
             return this.$refs.refDelegateStakeModal.showModal(  );
         },
 
-        handleShowStopDelegateStake(){
-            return this.$refs.refStopDelegateStakeModal.showModal( this.address.delegate );
+        handleShowUnstake(){
+            return this.$refs.refUnstakeModal.showModal( );
         },
 
         handleShowDelegatePrivateKey(){

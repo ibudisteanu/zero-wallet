@@ -2,14 +2,25 @@
 
     <modal ref="modal" title="Stop Delegate Stake">
 
-        <span>Delegate Nonce</span>
-        <input type="number" v-model="delegateStakeNonce" min="0" disabled="true" >
+        <template slot="body">
 
-        <alert-box v-if="error" type="error">{{error}}</alert-box>
+            <destination-amount :allow-zero="true" :allow-token="false" :balances="balancesOnlyNative" @changed="amountChanged" />
 
-        <loading-button text="Stop Delegate Stake" @submit="handleStopDelegateStake" icon="fa fa-unlink"  />
+            <extra-data :version="version.VERSION_TRANSPARENT" @changed="changedExtraData" />
 
-        <span class="center">A transaction will be created in order to stop delegating your funds for staking. You will need to wait for the transaction to be confirmed.</span>
+        </template>
+
+        <template slot="footer">
+
+            <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
+
+            <label v-if="status">{{status}}</label>
+
+            <div class="float-end">
+                <loading-button text="Withdraw Delegated Stake" @submit="handleStopDelegateStake" icon="fa fa-unlink"  />
+            </div>
+
+        </template>
 
     </modal>
 
@@ -20,44 +31,65 @@ import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
 import AlertBox from "src/components/utils/alert-box"
+import DestinationAmount from "src/components/send/destination-amount"
 
 export default {
 
-    components: {Modal, PasswordInput, LoadingButton, AlertBox},
+    components: {Modal, PasswordInput, LoadingButton, AlertBox, DestinationAmount},
 
 
     data(){
         return {
-            delegate: null,
-            delegateStakeNonce: 0,
+            withdrawStakeAmount: 0,
             error: '',
+            status: '',
         }
     },
 
     props:{
-        address: {default: null},
     },
 
     computed:{
 
+        publicKeyHash(){
+            return this.$store.state.wallet.mainPublicKeyHash
+        },
+        address(){
+            return this.$store.state.wallet.addresses[this.publicKeyHash];
+        },
+        account(){
+            return this.$store.state.accounts.list[this.publicKeyHash]
+        },
+        isLoading(){
+            return this.account === undefined
+        },
+        isFound(){
+            return this.account !== null
+        },
+        balancesOnlyNative(){
+            const account = this.account
+            if (!account || !account.delegatedStake) return [{ amount: 0, token: ""}]
+            return [{ amount: account.delegatedStake.stakeAvailable, token: ""}]
+        },
     },
 
     methods:{
 
-        showModal( delegate ) {
+        amountChanged(data){
+            if (data.amount !== undefined) this.withdrawStakeAmount = data.amount
+        },
+
+        showModal( ) {
             Object.assign(this.$data, this.$options.data());
 
-            this.delegate = delegate;
-            this.delegateStakeNonce = delegate ? delegate.delegateStakeNonce : 0;
+            this.withdrawStakeAmount = (this.account && this.account.delegatedStake) ? this.account.delegatedStake.stakeAvailable : 0;
 
             return this.$refs.modal.showModal();
         },
 
-
         closeModal() {
             return this.$refs.modal.closeModal();
         },
-
 
         async handleStopDelegateStake(resolve){
 

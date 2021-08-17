@@ -9,7 +9,7 @@
             </div>
             <div v-if="type === 'public'">
                 <div class="form-check">
-                    <label class="form-check-label">Message:</label>
+                    <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Message:</label>
                     <input class="form-control" type="text" v-model="data" :disabled="!!paymentId">
                 </div>
             </div>
@@ -22,11 +22,11 @@
                 </div>
                 <div v-if="type === 'encrypted'">
                     <div class="form-check">
-                        <label class="form-check-label">Message:</label>
+                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Message:</label>
                         <input class="form-control" type="text" v-model="data" :disabled="!!paymentId">
                     </div>
                     <div class="form-check">
-                        <label class="form-check-label">Address to encrypt:</label>
+                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Address to encrypt:</label>
 
                         <div :class="`${publicKeyToEncrypt ? 'destination-row' : '' }`" >
 

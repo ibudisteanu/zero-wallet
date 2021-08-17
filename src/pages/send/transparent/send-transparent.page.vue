@@ -15,22 +15,22 @@
                     <div class="card-header bg-light py-3">
                         <ul class="nav justify-content-between nav-wizard">
                             <li class="nav-item">
-                                <router-link :class="`nav-link ${tab===0?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(0)">
+                                <span :class="`nav-link ${tab===0?'active':''} fw-semi-bold`" >
                                     <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-users"></i></span></span>
                                     <span class="d-none d-md-block mt-1 fs--1">Receivers</span>
-                                </router-link>
+                                </span>
                             </li>
                             <li class="nav-item">
-                                <router-link :class="`nav-link ${tab===1?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(1)">
+                                <span :class="`nav-link ${tab===1?'active':''} fw-semi-bold`">
                                     <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-pen"></i></span></span>
                                     <span class="d-none d-md-block mt-1 fs--1">Extra Info</span>
-                                </router-link>
+                                </span>
                             </li>
                             <li class="nav-item">
-                                <router-link :class="`nav-link ${tab===2?'active':''}  fw-semi-bold`" to="#" @click.native="()=> setTab(2)">
+                                <span :class="`nav-link ${tab===2?'active':''}  fw-semi-bold`" >
                                     <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-dollar-sign"></i></span></span>
                                     <span class="d-none d-md-block mt-1 fs--1">Fee</span>
-                                </router-link>
+                                </span>
                             </li>
                         </ul>
                     </div>
