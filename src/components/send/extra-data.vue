@@ -14,40 +14,44 @@
                 </div>
             </div>
 
-            <div class="form-check pt-4">
-                <input class="form-check-input" id="typeEncrypted" type="radio" value="encrypted" v-model="type" />
-                <label class="form-check-label" for="typeEncrypted">Encrypted Message</label>
-            </div>
-            <div v-if="type === 'encrypted'">
-                <div class="form-check">
-                    <label class="form-check-label">Message:</label>
-                    <input class="form-control" type="text" v-model="data" :disabled="!!paymentId">
+            <template v-if="destinations">
+
+                <div class="form-check pt-4">
+                    <input class="form-check-input" id="typeEncrypted" type="radio" value="encrypted" v-model="type" />
+                    <label class="form-check-label" for="typeEncrypted">Encrypted Message</label>
                 </div>
-                <div class="form-check">
-                    <label class="form-check-label">Address to encrypt:</label>
-
-                    <div :class="`${publicKeyToEncrypt ? 'destination-row' : '' }`" >
-
-                        <account-identicon v-if="publicKeyToEncrypt" :public-key="publicKeyToEncrypt" size="30" outer-size="8" />
-
-                        <select :class="`form-select ${validationPublicKeyToEncrypt ? 'is-invalid' :''} `" v-model="publicKeyToEncrypt">
-                            <option v-for="(destination, id) in destinations"
-                                    :key="`selected-address-${id}`"
-                                    :value="(destination.address && destination.address.publicKey) ? destination.address.publicKey : '' "
-                                    :class="`${ (destination.address && destination.address.publicKey) ? '' : 'text-danger'}`">
-                                <template v-if="destination.address && destination.address.publicKey">
-                                    {{destination.addressEncoded}}
-                                </template>
-                                <template v-else>
-                                    Public Key is missing - {{destination.addressEncoded}}
-                                </template>
-                            </option>
-                        </select>
+                <div v-if="type === 'encrypted'">
+                    <div class="form-check">
+                        <label class="form-check-label">Message:</label>
+                        <input class="form-control" type="text" v-model="data" :disabled="!!paymentId">
                     </div>
-                    <div v-if="validationPublicKeyToEncrypt" class="invalid-feedback d-block">{{validationPublicKeyToEncrypt}}</div>
+                    <div class="form-check">
+                        <label class="form-check-label">Address to encrypt:</label>
 
+                        <div :class="`${publicKeyToEncrypt ? 'destination-row' : '' }`" >
+
+                            <account-identicon v-if="publicKeyToEncrypt" :public-key="publicKeyToEncrypt" size="30" outer-size="8" />
+
+                            <select :class="`form-select ${validationPublicKeyToEncrypt ? 'is-invalid' :''} `" v-model="publicKeyToEncrypt">
+                                <option v-for="(destination, id) in destinations"
+                                        :key="`selected-address-${id}`"
+                                        :value="(destination.address && destination.address.publicKey) ? destination.address.publicKey : '' "
+                                        :class="`${ (destination.address && destination.address.publicKey) ? '' : 'text-danger'}`">
+                                    <template v-if="destination.address && destination.address.publicKey">
+                                        {{destination.addressEncoded}}
+                                    </template>
+                                    <template v-else>
+                                        Public Key is missing - {{destination.addressEncoded}}
+                                    </template>
+                                </option>
+                            </select>
+                        </div>
+                        <div v-if="validationPublicKeyToEncrypt" class="invalid-feedback d-block">{{validationPublicKeyToEncrypt}}</div>
+
+                    </div>
                 </div>
-            </div>
+
+            </template>
 
         </div>
 
@@ -97,11 +101,11 @@ export default {
     watch: {
 
         paymentId( to, from ){
-            if (to){
+
+            if (to) {
                 this.data = to
-            } else {
+            } else
                 if (this.data === from) this.data = ""
-            }
         },
 
         type (to, from) {

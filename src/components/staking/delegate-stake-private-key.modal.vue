@@ -108,10 +108,5 @@ export default {
 </script>
 
 <style scoped>
-    span{
-        display: inline-block
-    }
-    .wordwrap{
-        display: block;
-    }
+
 </style>

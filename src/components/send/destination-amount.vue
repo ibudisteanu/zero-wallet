@@ -1,11 +1,11 @@
 <template>
     <div class="row">
-        <div class="col-12 col-sm-7" v-if="allowAmount">
+        <div :class="`col-12 ${allowToken ? 'col-sm-7' : ''}`" v-if="allowAmount">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{text}}</label>
             <input :class="`form-control ${validationAmountError ? 'is-invalid' :''}`" type="number" v-model.number="amount" min="0" :step="getSteps">
             <div v-if="validationAmountError" class="invalid-feedback d-block">{{validationAmountError}}</div>
         </div>
-        <div :class="`col-12 ${allowAmount ? 'col-sm-5' : ''}`">
+        <div :class="`col-12 ${allowAmount ? 'col-sm-5' : ''}`" v-if="allowToken">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Token</label>
             <select :class="`form-select ${validationTokenError ? 'is-invalid' :''}`" v-model="selectedToken">
                 <option v-for="(balance, id) in balances"
@@ -34,6 +34,7 @@ export default {
         balances: {default: null },
         allowZero: {default: false,},
         allowAmount: {default: true},
+        allowToken: {default: true},
     },
 
     computed:{

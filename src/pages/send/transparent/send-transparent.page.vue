@@ -242,7 +242,7 @@ export default {
             return this.increaseTab(-1)
         },
 
-        async handleNext(){
+        handleNext(){
             return this.increaseTab(1)
         },
 
@@ -302,6 +302,9 @@ export default {
                 if (this.feeAuto.validationError) throw this.feeAuto.validationError
                 if (this.feeManual.validationError) throw this.feeManual.validationError
 
+                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+                if (password === null ) return
+
                 //compute extra
                 const out = await PandoraPay.transactions.builder.createSimpleTx_Float( JSON.stringify({
                     from: [this.address.addressEncoded],
@@ -324,13 +327,11 @@ export default {
                     },
                     propagateTx: true,
                     awaitAnswer: true,
-                }), (status) => {
-                    console.log(status)
+                } ), (status) => {
                     this.status = status
-                });
+                }, password );
 
                 if (!out) throw "Transaction couldn't be made";
-
                 this.status = ''
 
                 const tx = JSON.parse(out)

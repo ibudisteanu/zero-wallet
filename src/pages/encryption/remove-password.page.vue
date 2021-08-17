@@ -98,7 +98,4 @@ export default {
 
 <style scoped>
 
-    .wordwrap{
-        display: block;
-    }
 </style>

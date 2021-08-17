@@ -22,23 +22,32 @@
 
                         <span class="d-block">Available coins for Staking: <strong>{{balance}}</strong></span>
                         <span v-if="balance < minimumForStaking" class="text-danger d-block" >Minimum required for Staking {{minimumForStaking}}</span>
-                        <span class="d-block">Delegated: <strong>{{isDelegated ? 'YES': 'NO'}}</strong> </span>
 
-                        <div v-if="delegatedStake">
-                            <span class="fw-bold fs-0 pt-4">Delegated Stake</span>
-                            <balance :key="`delegated-balance`"
-                                     :balance="delegatedStake.stakeAvailable"
-                                     token=""
-                                     :version="0">
-                            </balance>
-                        </div>
-                        <div v-if="delegatedStakesPending.length" >
-                            <span class="fw-bold fs-0 pt-4">Delegated Stakes in pending</span>
-                            <delegated-stake-pending v-for="(delegatedStakePending, index) in delegatedStakesPending"
-                                                     :key="`delegated-stake-pending-${index}`"
-                                                     :delegatedStakePending="delegatedStakePending">
-                            </delegated-stake-pending>
-                        </div>
+                        <template v-if="!isDelegated" >
+                            <span class="d-block pt-4">Delegated: <strong>NO</strong> </span>
+                        </template>
+                        <template v-else>
+                            <span class="d-block pt-4">Delegated: <strong>YES</strong> </span>
+                            <span class="d-block">Delegated public key {{account.delegatedStake.delegatedPublicKeyHash}}</span>
+                            <span class="d-block">Delegated fee {{delegateFeePercentage}} %</span>
+                        </template>
+
+                        <template v-if="delegatedStake">
+
+                            <div class=" pt-4">
+                                <span class="fw-bold fs-0">Delegated Stake</span>
+                                <balance :key="`delegated-balance`"  :balance="delegatedStake.stakeAvailable"  token="" :version="0">
+                                </balance>
+                            </div>
+                            <div class="pt-4" >
+                                <span class="fw-bold fs-0">Delegated Stakes in pending {{!delegatedStakesPending.length ? 'None' : ''}}</span>
+                                <delegated-stake-pending v-for="(delegatedStakePending, index) in delegatedStakesPending"
+                                                         :key="`delegated-stake-pending-${index}`"
+                                                         :delegatedStakePending="delegatedStakePending">
+                                </delegated-stake-pending>
+                            </div>
+
+                        </template>
 
                     </div>
 
@@ -50,11 +59,6 @@
                         </div>
                         <div v-else >
 
-                            <div v-if="isDelegated" >
-                                <span>Delegated public key {{account.delegatedStake.delegatedPublicKeyHash}}</span>
-                                <span>Delegated fee {{delegateFeePercentage}} %</span>
-                            </div>
-
                             <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="handleShowDelegateStake" v-tooltip.bottom="'Delegate your stake'" >
                                 <i class="fa fa-piggy-bank pointer" />
                             </button>
@@ -64,7 +68,7 @@
                     </div>
                 </div>
 
-                <delegate-stake-modal ref="refDelegateStakeModal" :address="address" />
+                <delegate-stake-modal ref="refDelegateStakeModal" />
                 <stop-delegate-stake-modal ref="refStopDelegateStakeModal" :address="address" />
                 <delegate-stake-private-key-modal ref="refDelegateStakePrivateKeyModal" :address="address" />
                 <delegate-stake-node-modal ref="refDelegateStakeNodeModal" :address="address"/>
@@ -152,7 +156,7 @@ export default {
         },
 
         isDelegated(){
-            if (this.delegatedStake && this.delegatedStake.delegatedStakeVersion === 1) return true;
+            if (this.delegatedStake && this.account.delegatedStakeVersion === 1) return true;
             return false;
         },
 
@@ -199,7 +203,7 @@ export default {
                     title: `Can't delegate`,
                     text: `You can't delegate as your wallet is empty`,
                 })
-            return this.$refs.refDelegateStakeModal.showModal( this.address.delegate );
+            return this.$refs.refDelegateStakeModal.showModal(  );
         },
 
         handleShowStopDelegateStake(){
