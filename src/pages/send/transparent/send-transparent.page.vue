@@ -69,13 +69,13 @@
                                     <input class="form-check-input" id="feeAuto" type="radio" value="feeAuto" v-model="feeType" />
                                     <label class="form-check-label" for="feeAuto">Auto fee</label>
                                 </div>
-                                <destination-amount class="pb-4" v-if="feeType === 'feeAuto'" text="Fee Amount" :balances="balances" @changed="changedFeeAuto" :allow-zero="true" :allow-amount="false" />
+                                <tx-amount class="pb-4" v-if="feeType === 'feeAuto'" text="Fee Amount" :balances="balances" @changed="changedFeeAuto" :allow-zero="true" :allow-amount="false" />
 
                                 <div class="form-check">
                                     <input class="form-check-input" id="feeManual" type="radio" value="feeManual" v-model="feeType" />
                                     <label class="form-check-label" for="feeManual">Manual fee</label>
                                 </div>
-                                <destination-amount v-if="feeType === 'feeManual'" text="Fee Amount" :balances="balances" @changed="changedFeeManual" :allow-zero="true" />
+                                <tx-amount v-if="feeType === 'feeManual'" text="Fee Amount" :balances="balances" @changed="changedFeeManual" :allow-zero="true" />
                             </div>
                         </div>
                     </div>
@@ -117,7 +117,7 @@ import Account from "src/components/wallet/account/account"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import LoadingButton from "src/components/utils/loading-button.vue"
 import DestinationAddress from "src/components/send/destination-address.vue"
-import DestinationAmount from "src/components/send/destination-amount.vue"
+import TxAmount from "src/components/send/tx-amount.vue"
 import ExtraData from "src/components/send/extra-data"
 import Vue from 'vue'
 import AlertBox from "src/components/utils/alert-box"
@@ -125,7 +125,7 @@ import LayoutTitle from "src/components/layout/layout-title";
 
 export default {
 
-    components: { LayoutTitle, Layout, Account, LoadingSpinner, LoadingButton, DestinationAddress, DestinationAmount,
+    components: { LayoutTitle, Layout, Account, LoadingSpinner, LoadingButton, DestinationAddress, TxAmount,
         ExtraData, AlertBox
     },
 
@@ -267,24 +267,13 @@ export default {
         },
 
         changedFeeManual(data){
-            this.feeManual = {
-                ...this.feeManual,
-                ...data,
-            }
+            this.feeManual = { ...this.feeManual,  ...data, }
         },
-
         changedFeeAuto(data){
-            this.feeAuto = {
-                ...this.feeAuto,
-                ...data,
-            }
+            this.feeAuto = { ...this.feeAuto,  ...data, }
         },
-
         changedExtraData(data){
-            this.extraData = {
-                ...this.extraData,
-                ...data,
-            }
+            this.extraData = { ...this.extraData,  ...data, }
         },
 
         async handleSendFunds(resolve){

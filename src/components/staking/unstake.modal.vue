@@ -1,15 +1,55 @@
 <template>
 
-    <modal ref="modal" title="Stop Delegate Stake">
+    <modal ref="modal" title="Unstake" content-class="">
 
         <template slot="body">
 
-            <destination-amount :allow-zero="true" :allow-token="false" :balances="balancesOnlyNative" @changed="amountChanged" />
+            <alert-box v-if="!isLoading && !isFound" type="warning" >
+                Address doesn't exist!
+            </alert-box>
+            <template v-else>
 
-            <extra-data :version="version.VERSION_TRANSPARENT" @changed="changedExtraData" />
+                <div class="card theme-wizard">
+                    <div class="card-header bg-light py-3">
+                        <ul class="nav justify-content-between nav-wizard">
+                            <li class="nav-item">
+                                <span :class="`nav-link ${tab===0?'active':''} fw-semi-bold`">
+                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-users"></i></span></span>
+                                    <span class="d-none d-md-block mt-1 fs--1">Amount</span>
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <span :class="`nav-link ${tab===1?'active':''} fw-semi-bold`">
+                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-pen"></i></span></span>
+                                    <span class="d-none d-md-block mt-1 fs--1">Extra Info</span>
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <span :class="`nav-link ${tab===2?'active':''} fw-semi-bold`">
+                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-dollar-sign"></i></span></span>
+                                    <span class="d-none d-md-block mt-1 fs--1">Fee</span>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body py-3">
+                        <div class="tab-content">
+                            <div :class="`tab-pane ${tab===0?'active':''} `">
+                                <destination-amount :allow-zero="true" :allow-token="false" :balances="balancesOnlyNative" @changed="amountChanged" text="Amount to unstake" />
+                            </div>
+                            <div :class="`tab-pane ${tab===1?'active':''} `">
+                                <extra-data :version="version.VERSION_TRANSPARENT" @changed="changedExtraData" />
+                            </div>
+                            <div :class="`tab-pane ${tab===2?'active':''} `">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </template>
 
         </template>
-
         <template slot="footer">
 
             <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
@@ -17,6 +57,12 @@
             <label v-if="status">{{status}}</label>
 
             <div class="float-end">
+                <button class="btn btn-link" type="button" v-if="tab > 0" @click="handleBack">
+                    Back <i class="fas fa-chevron-left me-2"></i>
+                </button>
+                <button class="btn btn-falcon-primary" type="button" v-if="tab < 3" @click="handleNext">
+                    <i class="fas fa-chevron-right ms-2"> </i> Next
+                </button>
                 <loading-button text="Withdraw Delegated Stake" @submit="handleStopDelegateStake" icon="fa fa-unlink"  />
             </div>
 
@@ -27,11 +73,12 @@
 </template>
 
 <script>
+const {version} = PandoraPay.enums.wallet.address;
 import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
 import AlertBox from "src/components/utils/alert-box"
-import DestinationAmount from "src/components/send/destination-amount"
+import DestinationAmount from "src/components/send/tx-amount"
 
 export default {
 
@@ -40,6 +87,8 @@ export default {
 
     data(){
         return {
+            tab: 0,
+
             withdrawStakeAmount: 0,
             error: '',
             status: '',
@@ -50,7 +99,7 @@ export default {
     },
 
     computed:{
-
+        version: () => version,
         publicKeyHash(){
             return this.$store.state.wallet.mainPublicKeyHash
         },
@@ -75,8 +124,42 @@ export default {
 
     methods:{
 
+        setTab(value){
+            try{
+
+                value = Math.max( value, 0)
+                value = Math.min( value, 3)
+
+                if (this.tab === 1 && value === 2){
+                    if (this.validationDelegateStakePublicKeyHash) throw this.validationDelegateStakePublicKeyHash
+                    if (this.validationDelegateFee) throw this.validationDelegateFee
+                }
+
+            }catch(err){
+                return
+            }
+            this.tab = value
+        },
+
+        handleBack(){
+            return this.setTab(this.tab - 1)
+        },
+        handleNext(){
+            return this.setTab(this.tab + 1)
+        },
+
         amountChanged(data){
             if (data.amount !== undefined) this.withdrawStakeAmount = data.amount
+        },
+
+        changedFeeManual(data){
+            this.feeManual = { ...this.feeManual,  ...data, }
+        },
+        changedFeeAuto(data){
+            this.feeAuto = { ...this.feeAuto,  ...data, }
+        },
+        changedExtraData(data){
+            this.extraData = { ...this.extraData,  ...data, }
         },
 
         showModal( ) {

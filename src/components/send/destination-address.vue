@@ -18,7 +18,7 @@
             <div v-if="validationError" class="invalid-feedback d-block">{{validationError}}</div>
 
         </div>
-        <destination-amount class="pt-2" @changed="changedDestinationAmount" :balances="balances" />
+        <tx-amount class="pt-2" @changed="changedDestinationAmount" :balances="balances" />
     </div>
 
 </template>
@@ -26,12 +26,12 @@
 <script>
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
-import DestinationAmount from "./destination-amount.vue"
+import TxAmount from "./tx-amount.vue"
 const {VERSION_TRANSPARENT} = PandoraPay.enums.wallet.address.version;
 
 export default {
 
-    components: {AccountIdenticon, DestinationAmount},
+    components: {AccountIdenticon, TxAmount},
 
     data(){
         return {

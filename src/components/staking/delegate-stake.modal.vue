@@ -82,17 +82,7 @@
                                 <extra-data :version="version.VERSION_TRANSPARENT" @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===3?'active':''} `">
-                                <div class="form-check">
-                                    <input class="form-check-input" id="feeAuto" type="radio" value="feeAuto" v-model="feeType" />
-                                    <label class="form-check-label" for="feeAuto">Auto fee</label>
-                                </div>
-                                <destination-amount class="pb-4" v-if="feeType === 'feeAuto'" text="Fee Amount" :balances="balancesOnlyNative" @changed="changedFeeAuto" :allow-zero="true" :allow-amount="false" />
-
-                                <div class="form-check">
-                                    <input class="form-check-input" id="feeManual" type="radio" value="feeManual" v-model="feeType" />
-                                    <label class="form-check-label" for="feeManual">Manual fee</label>
-                                </div>
-                                <destination-amount v-if="feeType === 'feeManual'" text="Fee Amount" :balances="balancesOnlyNative" @changed="changedFeeManual" :allow-zero="true" />
+                                <tx-fee @changed="changedFee" :balances="balancesOnlyNative" :allow-zero="true" />
                             </div>
                         </div>
                     </div>
@@ -124,18 +114,19 @@
 </template>
 
 <script>
+import TxFee from "../send/tx-fee";
 const {version} = PandoraPay.enums.wallet.address;
 
 import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
 import AlertBox from "src/components/utils/alert-box"
-import DestinationAmount from "src/components/send/destination-amount"
+import DestinationAmount from "src/components/send/tx-amount"
 import ExtraData from "src/components/send/extra-data"
 
 export default {
 
-    components: {Modal, PasswordInput, LoadingButton, AlertBox, DestinationAmount, ExtraData},
+    components: {TxFee, Modal, PasswordInput, LoadingButton, AlertBox, DestinationAmount, ExtraData},
 
 
     data(){
@@ -150,15 +141,18 @@ export default {
             delegateStakeAmount: 0,
             delegateStakeFee: 0,
 
-            feeType: "feeAuto",
-            feeAuto: {
-                amount: 0,
-                token: "",
+            fee: {
+                feeType: "feeAuto",
+                feeAuto: {
+                    amount: 0,
+                    token: "",
+                },
+                feeManual: {
+                    amount: 0,
+                    token: "",
+                }
             },
-            feeManual: {
-                amount: 0,
-                token: "",
-            },
+
             extraData: {
                 data: "",
                 type: "public",
@@ -177,7 +171,6 @@ export default {
 
     computed:{
         version: () => version,
-
         address(){
             return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKeyHash] ;
         },
@@ -226,9 +219,6 @@ export default {
 
     methods:{
 
-        increaseTab(value){
-            this.setTab(this.tab + value)
-        },
         setTab(value){
             try{
 
@@ -247,10 +237,10 @@ export default {
         },
 
         handleBack(){
-            return this.increaseTab(-1)
+            return this.setTab(this.tab - 1)
         },
         handleNext(){
-            return this.increaseTab(1)
+            return this.setTab(this.tab + 1)
         },
 
         showModal(  ) {
@@ -262,25 +252,12 @@ export default {
             this.$refs.modal.closeModal();
         },
 
-        changedFeeManual(data){
-            this.feeManual = {
-                ...this.feeManual,
-                ...data,
-            }
-        },
-
-        changedFeeAuto(data){
-            this.feeAuto = {
-                ...this.feeAuto,
-                ...data,
-            }
+        changedFee(data){
+            this.fee = { ...this.fee, ...data }
         },
 
         changedExtraData(data){
-            this.extraData = {
-                ...this.extraData,
-                ...data,
-            }
+            this.extraData = { ...this.extraData,  ...data, }
         },
 
         amountChanged(data){
@@ -312,10 +289,10 @@ export default {
                         publicKeyToEncrypt: this.extraData.publicKeyToEncrypt,
                     },
                     fee: {
-                        fixed: (this.feeType === 'feeAuto') ? 0 : this.feeManual.amount,
+                        fixed: (this.fee.feeType === 'feeAuto') ? 0 : this.fee.feeManual.amount,
                         perByte: 0,
-                        perByteAuto: this.feeType === 'feeAuto',
-                        token: this.feeType === 'feeAuto' ? this.feeAuto.token : this.feeManual.token,
+                        perByteAuto: this.fee.feeType === 'feeAuto',
+                        token: this.fee.feeType === 'feeAuto' ? this.fee.feeAuto.token : this.fee.feeManual.token,
                     },
                     propagateTx: true,
                     awaitAnswer: true,
