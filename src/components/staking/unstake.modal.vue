@@ -35,13 +35,13 @@
                     <div class="card-body py-3">
                         <div class="tab-content">
                             <div :class="`tab-pane ${tab===0?'active':''} `">
-                                <destination-amount :allow-zero="true" :allow-token="false" :balances="balancesOnlyNative" @changed="amountChanged" text="Amount to unstake" />
+                                <tx-amount :allow-zero="true" :allow-token="false" :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" />
                             </div>
                             <div :class="`tab-pane ${tab===1?'active':''} `">
                                 <extra-data :version="version.VERSION_TRANSPARENT" @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===2?'active':''} `">
-
+                                <tx-fee :balances="balances" :allow-zero="true" @changed="changedFee" />
                             </div>
                         </div>
                     </div>
@@ -73,16 +73,18 @@
 </template>
 
 <script>
+import TxFee from "../send/tx-fee";
 const {version} = PandoraPay.enums.wallet.address;
 import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
 import AlertBox from "src/components/utils/alert-box"
-import DestinationAmount from "src/components/send/tx-amount"
+import TxAmount from "src/components/send/tx-amount"
+import ExtraData from "src/components/send/extra-data"
 
 export default {
 
-    components: {Modal, PasswordInput, LoadingButton, AlertBox, DestinationAmount},
+    components: {TxFee, Modal, PasswordInput, LoadingButton, AlertBox, ExtraData, TxAmount},
 
 
     data(){
@@ -90,6 +92,27 @@ export default {
             tab: 0,
 
             withdrawStakeAmount: 0,
+
+            fee: {
+                feeType: "feeAuto",
+                feeAuto: {
+                    amount: 0,
+                    token: "",
+                    validationError: "",
+                },
+                feeManual: {
+                    amount: 0,
+                    token: "",
+                    validationError: "",
+                }
+            },
+            extraData: {
+                data: "",
+                type: "public",
+                publicKeyToEncrypt: "",
+                validationError: null,
+            },
+
             error: '',
             status: '',
         }
@@ -115,10 +138,11 @@ export default {
         isFound(){
             return this.account !== null
         },
-        balancesOnlyNative(){
-            const account = this.account
-            if (!account || !account.delegatedStake) return [{ amount: 0, token: ""}]
-            return [{ amount: account.delegatedStake.stakeAvailable, token: ""}]
+        balances(){
+            return this.account ? this.account.balances : [];
+        },
+        balancesStakeAvailable(){
+            return (this.account && this.account.delegatedStake) ? [{ amount: this.account.delegatedStake.stakeAvailable, token: ""}] : [{ amount: 0, token: ""}]
         },
     },
 
@@ -161,12 +185,12 @@ export default {
         changedExtraData(data){
             this.extraData = { ...this.extraData,  ...data, }
         },
+        changedFee(data){
+            this.fee = { ...this.fee, ...data }
+        },
 
         showModal( ) {
             Object.assign(this.$data, this.$options.data());
-
-            this.withdrawStakeAmount = (this.account && this.account.delegatedStake) ? this.account.delegatedStake.stakeAvailable : 0;
-
             return this.$refs.modal.showModal();
         },
 
@@ -178,32 +202,43 @@ export default {
 
             try {
 
-                const nonce = await Consensus.downloadNonceIncludingMemPool( this.address.address );
-                if (nonce === undefined) throw Error("The connection to the node was dropped");
+                this.error = '';
+                this.status = '';
 
-                const out = await PandoraPay.wallet.transfer.delegateStake({
+                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+                if (password === null ) return
+
+                const out = await PandoraPay.transactions.builder.createUnstakeTx_Float( JSON.stringify({
                     address: this.address.address,
-                    fee: 1,
-                    nonce,
-                    delegate:{
-                        delegateStakeNonce: this.delegateStakeNonce,
-                        delegateStakePublicKey: Buffer.alloc(20),
-                        delegateStakeFee: 0,
+                    nonce: 0,
+                    unstakeAmount: this.unstakeAmount,
+                    data: {
+                        data: Buffer.from(this.extraData.data).toString("hex"),
+                        encrypt: this.extraData.type === "encrypted",
+                        publicKeyToEncrypt: this.extraData.publicKeyToEncrypt,
+                    },
+                    fee: {
+                        fixed: (this.fee.feeType === 'feeAuto') ? 0 : this.fee.feeManual.amount,
+                        perByte: 0,
+                        perByteAuto: this.fee.feeType === 'feeAuto',
+                        token: this.fee.feeType === 'feeAuto' ? this.fee.feeAuto.token : this.fee.feeManual.token,
                     },
                     memPoolValidateTxData: false,
-                });
+                }), (status) => {
+                    this.status = status
+                }, password);
 
-                if (!out) throw Error("Transaction couldn't be made");
+                if (!out) throw "Transaction couldn't be made";
+                this.status = ''
 
-                const outConsensus = await Consensus._client.emitAsync("mem-pool/new-tx", {tx: out.tx.toBuffer() }, 0);
-                if (!outConsensus) throw Error("Transaction was not included in MemPool");
+                const tx = JSON.parse(out)
 
-                Consensus.includeTransactionToPending(out.tx);
+                await this.$store.dispatch('includeTx', {tx } )
 
-                this.$store.dispatch('addToast', {
+                await this.$store.dispatch('addToast', {
                     type: 'success',
-                    title: `Delegate Staking Transaction created`,
-                    text: `Delegate Staking Transaction has been made. \n TxId ${out.bloom.tx}`,
+                    title: `Unstake Transaction created`,
+                    text: `Unstake Transaction has been made. \n TxId ${out.tx}`,
                 });
 
                 this.$router.push(`/explorer/tx/${out.tx.hash()}`);

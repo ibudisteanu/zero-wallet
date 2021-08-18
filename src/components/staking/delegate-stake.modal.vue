@@ -41,7 +41,7 @@
                     <div class="card-body py-3">
                         <div class="tab-content">
                             <div :class="`tab-pane ${tab===0?'active':''} `">
-                                <destination-amount :allow-zero="true" :allow-token="false" :balances="balancesOnlyNative" @changed="amountChanged" text="Amount to stake" />
+                                <tx-amount :allow-zero="true" :allow-token="false" :balances="balancesOnlyNative" @changed="amountChanged" text="Amount to stake" />
                             </div>
                             <div :class="`tab-pane ${tab===1?'active':''} `">
 
@@ -82,7 +82,7 @@
                                 <extra-data :version="version.VERSION_TRANSPARENT" @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===3?'active':''} `">
-                                <tx-fee @changed="changedFee" :balances="balancesOnlyNative" :allow-zero="true" />
+                                <tx-fee :balances="balancesOnlyNative" :allow-zero="true" @changed="changedFee" />
                             </div>
                         </div>
                     </div>
@@ -121,12 +121,12 @@ import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button.vue"
 import AlertBox from "src/components/utils/alert-box"
-import DestinationAmount from "src/components/send/tx-amount"
+import TxAmount from "src/components/send/tx-amount"
 import ExtraData from "src/components/send/extra-data"
 
 export default {
 
-    components: {TxFee, Modal, PasswordInput, LoadingButton, AlertBox, DestinationAmount, ExtraData},
+    components: {TxFee, Modal, PasswordInput, LoadingButton, AlertBox, TxAmount, ExtraData},
 
 
     data(){
@@ -146,10 +146,12 @@ export default {
                 feeAuto: {
                     amount: 0,
                     token: "",
+                    validationError: "",
                 },
                 feeManual: {
                     amount: 0,
                     token: "",
+                    validationError: "",
                 }
             },
 
@@ -229,6 +231,9 @@ export default {
                     if (this.validationDelegateStakePublicKeyHash) throw this.validationDelegateStakePublicKeyHash
                     if (this.validationDelegateFee) throw this.validationDelegateFee
                 }
+                if (this.tab === 2 && value === 3){
+                    if (this.extraData.validationError) throw this.extraData.validationError
+                }
 
             }catch(err){
                 return
@@ -271,8 +276,8 @@ export default {
                 this.error = '';
                 this.status = '';
 
-                if (this.validationDelegateStakePublicKeyHash) throw this.validationDelegateStakePublicKeyHash
-                if (this.validationDelegateFee) throw this.validationDelegateFee
+                if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
+                if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
 
                 const password = await this.$store.state.page.refWalletPasswordModal.showModal()
                 if (password === null ) return
@@ -300,22 +305,20 @@ export default {
                     this.status = status
                 }, password);
 
-                if (!out) throw Error("Transaction couldn't be made");
+                if (!out) throw "Transaction couldn't be made";
                 this.status = ''
 
                 const tx = JSON.parse(out)
 
-                await this.$store.dispatch('includeTx', { tx } )
+                await this.$store.dispatch('includeTx', {tx } )
 
-                const hash = tx.hash;
-
-                this.$store.dispatch('addToast', {
+                await this.$store.dispatch('addToast', {
                     type: 'success',
-                    title: `Transaction created`,
-                    text: `A transaction has been made. \n TxId ${hash}`,
+                    title: `Delegate Staking Transaction created`,
+                    text: `Delegate Staking Transaction has been made. \n TxId ${tx.hash}`,
                 });
 
-                this.$router.push(`/explorer/tx/${hash}`);
+                this.$router.push(`/explorer/tx/${tx.hash}`);
 
                 this.closeModal();
 

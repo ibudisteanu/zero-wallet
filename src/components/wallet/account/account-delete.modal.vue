@@ -67,7 +67,7 @@ export default {
 
                 const out = await PandoraPay.wallet.manager.removeWalletAddress( password, address.addressEncoded );
                 if (out) {
-                    this.$store.dispatch('addToast', {
+                    await this.$store.dispatch('addToast', {
                         type: 'success',
                         title: `Address ${address.name} has been removed successfully`,
                         text: `The address ${address.addressEncoded} has been removed and deleted from your wallet`,
@@ -76,7 +76,7 @@ export default {
                 }
 
             }catch(err){
-                this.$store.dispatch('addToast', {
+                await this.$store.dispatch('addToast', {
                     type: 'error',
                     title: `Address ${address.addressEncoded} could not been removed`,
                     text: `Raised an error ${err.message}`,

@@ -31,10 +31,12 @@ export default {
             feeAuto: {
                 amount: 0,
                 token: "",
+                validationError: "",
             },
             feeManual: {
                 amount: 0,
                 token: "",
+                validationError: "",
             },
         }
     },

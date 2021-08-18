@@ -18,7 +18,7 @@
             <div v-if="validationError" class="invalid-feedback d-block">{{validationError}}</div>
 
         </div>
-        <tx-amount class="pt-2" @changed="changedDestinationAmount" :balances="balances" />
+        <tx-amount class="pt-2" @changed="changedTxAmount" :balances="balances" />
     </div>
 
 </template>
@@ -89,7 +89,7 @@ export default {
                 this.destination = out
         },
 
-        changedDestinationAmount(data){
+        changedTxAmount(data){
             return this.$emit('changed', {
                 ...data,
             });

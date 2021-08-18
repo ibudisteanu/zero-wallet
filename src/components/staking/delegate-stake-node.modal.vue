@@ -179,7 +179,7 @@ export default {
                 }
 
                 if (out) {
-                    this.$store.dispatch('addToast', {
+                    await this.$store.dispatch('addToast', {
                         type: 'success',
                         title: `Your stake was delegated successfully to Node `,
                         text: `Your stake was delegated successfully to node. \n node ${this.nodeAddress}`,

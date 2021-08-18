@@ -64,18 +64,7 @@
                                             @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===2?'active':''} `">
-
-                                <div class="form-check">
-                                    <input class="form-check-input" id="feeAuto" type="radio" value="feeAuto" v-model="feeType" />
-                                    <label class="form-check-label" for="feeAuto">Auto fee</label>
-                                </div>
-                                <tx-amount class="pb-4" v-if="feeType === 'feeAuto'" text="Fee Amount" :balances="balances" @changed="changedFeeAuto" :allow-zero="true" :allow-amount="false" />
-
-                                <div class="form-check">
-                                    <input class="form-check-input" id="feeManual" type="radio" value="feeManual" v-model="feeType" />
-                                    <label class="form-check-label" for="feeManual">Manual fee</label>
-                                </div>
-                                <tx-amount v-if="feeType === 'feeManual'" text="Fee Amount" :balances="balances" @changed="changedFeeManual" :allow-zero="true" />
+                                <tx-fee :balances="balances" :allow-zero="true" @changed="changedFee" />
                             </div>
                         </div>
                     </div>
@@ -118,6 +107,7 @@ import LoadingSpinner from "src/components/utils/loading-spinner";
 import LoadingButton from "src/components/utils/loading-button.vue"
 import DestinationAddress from "src/components/send/destination-address.vue"
 import TxAmount from "src/components/send/tx-amount.vue"
+import TxFee from "src/components/send/tx-fee.vue"
 import ExtraData from "src/components/send/extra-data"
 import Vue from 'vue'
 import AlertBox from "src/components/utils/alert-box"
@@ -126,7 +116,7 @@ import LayoutTitle from "src/components/layout/layout-title";
 export default {
 
     components: { LayoutTitle, Layout, Account, LoadingSpinner, LoadingButton, DestinationAddress, TxAmount,
-        ExtraData, AlertBox
+        ExtraData, AlertBox, TxFee
     },
 
     data(){
@@ -135,14 +125,18 @@ export default {
 
             destinations: [],
 
-            feeType: "feeAuto",
-            feeAuto: {
-                amount: 0,
-                token: "",
-            },
-            feeManual: {
-                amount: 0,
-                token: "",
+            fee: {
+                feeType: "feeAuto",
+                feeAuto: {
+                    amount: 0,
+                    token: "",
+                    validationError: "",
+                },
+                feeManual: {
+                    amount: 0,
+                    token: "",
+                    validationError: "",
+                }
             },
 
             extraData: {
@@ -211,9 +205,6 @@ export default {
 
     methods:{
 
-        increaseTab(value){
-            this.setTab(this.tab + value)
-        },
         setTab(value){
             try{
 
@@ -239,11 +230,11 @@ export default {
         },
 
         handleBack(){
-            return this.increaseTab(-1)
+            return this.setTab(this.tab - 1)
         },
 
         handleNext(){
-            return this.increaseTab(1)
+            return this.setTab(this.tab + 1)
         },
 
         addDestination(){
@@ -266,11 +257,8 @@ export default {
             Vue.delete(this.destinations, index )
         },
 
-        changedFeeManual(data){
-            this.feeManual = { ...this.feeManual,  ...data, }
-        },
-        changedFeeAuto(data){
-            this.feeAuto = { ...this.feeAuto,  ...data, }
+        changedFee(data){
+            this.fee = { ...this.fee,  ...data, }
         },
         changedExtraData(data){
             this.extraData = { ...this.extraData,  ...data, }
@@ -288,8 +276,8 @@ export default {
                 for (const destination of this.destinations)
                     amounts[destination.token] = (amounts[destination.token] || 0) + destination.amount
 
-                if (this.feeAuto.validationError) throw this.feeAuto.validationError
-                if (this.feeManual.validationError) throw this.feeManual.validationError
+                if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
+                if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
 
                 const password = await this.$store.state.page.refWalletPasswordModal.showModal()
                 if (password === null ) return
@@ -304,10 +292,10 @@ export default {
                     dstsAmounts: this.destinations.map (it => it.amount),
                     dstsTokens: this.destinations.map (it => it.token),
                     fee: {
-                        fixed: (this.feeType === 'feeAuto') ? 0 : this.feeManual.amount,
+                        fixed: (this.fee.feeType === 'feeAuto') ? 0 : this.fee.feeManual.amount,
                         perByte: 0,
-                        perByteAuto: this.feeType === 'feeAuto',
-                        token: this.feeType === 'feeAuto' ? this.feeAuto.token : this.feeManual.token,
+                        perByteAuto: this.fee.feeType === 'feeAuto',
+                        token: this.fee.feeType === 'feeAuto' ? this.fee.feeAuto.token : this.fee.feeManual.token,
                     },
                     data: {
                         data: Buffer.from(this.extraData.data).toString("hex"),
@@ -327,15 +315,13 @@ export default {
 
                 await this.$store.dispatch('includeTx', { tx } )
 
-                const hash = tx.hash;
-
-                this.$store.dispatch('addToast', {
+                await this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Transaction created`,
-                    text: `A transaction has been made. \n TxId ${hash}`,
+                    text: `A transaction has been made. \n TxId ${tx.hash}`,
                 });
 
-                this.$router.push(`/explorer/tx/${hash}`);
+                this.$router.push(`/explorer/tx/${tx.hash}`);
 
             }catch(err){
                 console.error(err);

@@ -48,6 +48,13 @@ export default {
         validationAmountError(){
             if ( !this.allowZero && Number.parseFloat(this.amount) === 0) return "Amount needs to be greater than 0"
             if (this.amount === Number.NaN || this.amount < 0) return "Amount can not be negative"
+
+            for (const key in this.balances) {
+                const balance = this.balances[key]
+                if (balance.token === this.selectedToken)
+                    if (this.amount > PandoraPay.config.tokens.tokensConvertToBase( balance.amount.toString(), this.selectedTokenInfo.decimalSeparator ))
+                        return "Not enough funds"
+            }
         },
         validationTokenError(){
             if ( !this.selectedTokenInfo) return "Token was not selected"
