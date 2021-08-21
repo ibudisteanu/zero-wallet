@@ -1,35 +1,73 @@
 <template>
 
-    <modal ref="modal" title="Delegate Stake">
+    <modal ref="modal" title="Delegate Stake to Node" content-class="">
 
-        <steps-bar :length="3" :active="step" />
+        <template slot="body">
 
-        <template v-if="step === 1">
-            <span >Node address</span>
-            <select v-model="nodeAddress">
-                <option v-for="(node, key) in delegateStakesNodes"
-                        :key="`node-${key}`"
-                        :value="node.address">
-                    {{node.address}} Fee: {{node.fee}} %
-                </option>
-            </select>
-            <loading-button text="Connect to delegated node" @submit="handleConnectNode" icon="fa fa-laptop-code"  />
+            <alert-box v-if="!isLoading && !isFound" type="warning" >
+                Address doesn't exist!
+            </alert-box>
+            <template v-else>
+
+                <div class="card theme-wizard">
+                    <div class="card-header bg-light py-3">
+                        <ul class="nav justify-content-between nav-wizard">
+                            <li class="nav-item">
+                                <span :class="`nav-link ${tab===0?'active':''} fw-semi-bold`">
+                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-users"></i></span></span>
+                                    <span class="d-none d-md-block mt-1 fs--1">Select Node</span>
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <span :class="`nav-link ${tab===1?'active':''} fw-semi-bold`">
+                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-pen"></i></span></span>
+                                    <span class="d-none d-md-block mt-1 fs--1">Node Info</span>
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <span :class="`nav-link ${tab===2?'active':''} fw-semi-bold`">
+                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-pen"></i></span></span>
+                                    <span class="d-none d-md-block mt-1 fs--1">Delegate</span>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body py-3">
+                        <div class="tab-content">
+                            <div :class="`tab-pane ${tab===0?'active':''} `">
+
+                                <div class="form">
+                                    <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Selecting Node to delegate:</label>
+                                    <select class="form-select" v-model="selectedDelegateNode">
+                                        <option v-for="(node, id) in delegatesNodes"
+                                                :key="`send-money-${id}`"
+                                                :value="node">
+                                            {{node.name}} || {{node.url.Scheme}}://{{node.url.Host}}
+                                        </option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </template>
+
         </template>
-        <template v-if="step === 2">
-            <div v-if="nodeInfo">
-                <span>Allow Delegating: <strong>{{nodeInfo.allowDelegating}}</strong></span>
-                <span>Already included: <strong>{{nodeInfo.alreadyIncluded}}</strong></span>
-                <span>Available slots: <strong>{{nodeInfo.maximumDelegates - nodeInfo.availableSlots}}</strong>  / {{nodeInfo.maximumDelegates}} </span>
-                <span>Minimum Fee: <strong>{{nodeInfo.minimumFeePercentage}}</strong></span>
+        <template slot="footer">
+
+            <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
+
+            <label v-if="status">{{status}}</label>
+
+            <div class="float-end">
+                <loading-button v-if="tab > 0" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
+                <loading-button :text="`${tab === maxTab ? 'Stake to Node' : 'Next'}`" @submit="handleNext" :icon="`${ tab === maxTab ? 'fa fa-laptop-code' : 'fas fa-chevron-right ms-2' }`"  />
             </div>
 
-            <loading-button text="Delegate your stake to node" @submit="handleDelegateStake" icon="fa fa-laptop-code"  />
-        </template>
-        <template v-if="step === 3">
-            <span>Your stake has been delegated!</span>
         </template>
 
-        <alert-box v-if="error" type="error">{{error}}</alert-box>
 
     </modal>
 
@@ -51,40 +89,70 @@ export default {
     data() {
         return {
 
-            step: 1,
+            publicKeyHash: "",
 
-            delegate: null,
-            delegateStakeNonce: 0,
+            tab: 0,
+            maxTab: 3,
+
             error: '',
+            status: "",
 
-            nodeAddress:'',
-            nodeInfo: null,
+            delegatesNodes: null,
+
+            selectedDelegateNode: null,
         }
-    },
-
-    props:{
-        address: {default: null},
     },
 
     computed:{
 
-        delegateStakesNodes(){
-            return consts.delegateStakesNodes;
+        version: () => version,
+        address(){
+            return this.$store.state.wallet.addresses[this.publicKeyHash];
+        },
+        account(){
+            return this.$store.state.accounts.list[this.publicKeyHash]
+        },
+        isLoading(){
+            return this.account === undefined
+        },
+        isFound(){
+            return this.account !== null
         },
 
     },
 
     methods: {
 
-        showModal(delegate) {
-            Object.assign(this.$data, this.$options.data());
+        setTab(resolver, value){
+            try{
 
-            this.delegate = delegate;
-            this.delegateStakeNonce = delegate ? delegate.delegateStakeNonce : 0;
+                value = Math.max( value, 0)
+                value = Math.min( value, this.maxTab + 1)
 
-            return this.$refs.modal.showModal();
+                if (this.tab === 1 && value === 2){
+                }
+                if (this.tab === 2 && value === 3){
+                }
+
+                this.tab = value
+            }finally{
+                resolver()
+            }
         },
 
+        handleBack(resolver){
+            return this.setTab(resolver, this.tab - 1)
+        },
+        handleNext(resolver){
+            return this.setTab(resolver, this.tab + 1)
+        },
+
+        showModal(publicKeyHash) {
+            Object.assign(this.$data, this.$options.data());
+            this.publicKeyHash = publicKeyHash
+            this.delegatesNodes = JSON.parse( PandoraPay.config.helpers.getNetworkSelectedDelegatesNodes() )
+            return this.$refs.modal.showModal();
+        },
 
         closeModal() {
             return this.$refs.modal.closeModal();
@@ -197,10 +265,6 @@ export default {
         }
 
     },
-
-    mounted(){
-        this.nodeAddress = this.delegateStakesNodes[0];
-    }
 
 }
 </script>

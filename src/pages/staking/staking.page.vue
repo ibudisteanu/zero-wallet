@@ -67,6 +67,10 @@
                                 <i class="fa fa-unlink text-danger " />
                             </button>
 
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowDelegateStakeNode" v-tooltip.bottom="'Delegate your Stake to a Node'" >
+                                <i class="fa fa-laptop-code " />
+                            </button>
+
                         </div>
 
                     </div>
@@ -203,7 +207,7 @@ export default {
         },
 
         handleShowDelegateStakeNode(){
-            return this.$refs.refDelegateStakeNodeModal.showModal( this.address.delegate );
+            return this.$refs.refDelegateStakeNodeModal.showModal( this.publicKeyHash );
         }
 
     },

@@ -59,13 +59,8 @@
             </div>
 
             <div class="float-end">
-                <button class="btn btn-link" type="button" v-if="tab > 0" @click="handleBack">
-                    Back <i class="fas fa-chevron-left me-2"></i>
-                </button>
-                <button class="btn btn-falcon-primary" type="button" v-if="tab < 2" @click="handleNext">
-                    <i class="fas fa-chevron-right ms-2"> </i> Next
-                </button>
-                <loading-button v-if="tab === 2" text="Unstake" @submit="handleStopDelegateStake" icon="fa fa-unlink"  />
+                <loading-button v-if="tab > 0" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
+                <loading-button :text="`${tab === maxTab ? 'Unstake' : 'Next'}`" @submit="handleNext" :icon="`${ tab === maxTab ? 'fa fa-unlink' : 'fas fa-chevron-right ms-2' }`"  />
             </div>
 
         </template>
@@ -95,12 +90,11 @@ export default {
             publicKeyHash: "",
 
             tab: 0,
+            maxTab: 2,
 
             unstakeAmount: 0,
 
-            fee: {
-            },
-
+            fee: {},
             extraData: { },
 
             error: '',
@@ -135,28 +129,33 @@ export default {
 
     methods:{
 
-        setTab(value){
+        async setTab(resolver, value){
             try{
 
                 value = Math.max( value, 0)
-                value = Math.min( value, 3)
+                value = Math.min( value, this.maxTab + 1)
 
                 if (this.tab === 1 && value === 2){
-                    if (this.validationDelegateStakePublicKeyHash) throw this.validationDelegateStakePublicKeyHash
-                    if (this.validationDelegateFee) throw this.validationDelegateFee
+                    if (this.extraData.validationError) throw this.extraData.validationError
+                }
+                if (this.tab === 2 && value === 3){
+                    if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
+                    if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
+
+                    await this.handleUnstake()
                 }
 
-            }catch(err){
-                return
+                this.tab = value
+            }finally{
+                resolver()
             }
-            this.tab = value
         },
 
-        handleBack(){
-            return this.setTab(this.tab - 1)
+        handleBack(resolver){
+            return this.setTab(resolver, this.tab - 1)
         },
-        handleNext(){
-            return this.setTab(this.tab + 1)
+        handleNext(resolver){
+            return this.setTab(resolver, this.tab + 1)
         },
 
         amountChanged(data){
@@ -176,8 +175,9 @@ export default {
             this.fee = { ...this.fee, ...data }
         },
 
-        showModal( ) {
+        showModal( publicKeyHash ) {
             Object.assign(this.$data, this.$options.data());
+            this.publicKeyHash = publicKeyHash;
             return this.$refs.modal.showModal();
         },
 
@@ -185,7 +185,7 @@ export default {
             return this.$refs.modal.closeModal();
         },
 
-        async handleStopDelegateStake(resolve){
+        async handleUnstake(){
 
             try {
 
@@ -235,10 +235,7 @@ export default {
 
             }catch(err){
                 this.error = err.message;
-            }finally{
-                resolve(true);
             }
-
         }
 
     },
