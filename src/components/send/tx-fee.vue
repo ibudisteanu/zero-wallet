@@ -51,14 +51,23 @@ export default {
     },
 
     watch:{
-        feeType(to, from){
-            this.$emit('changed', { feeType: to, })
+        feeType: {
+            immediate: true,
+            handler: function (to, from) {
+                return this.$emit('changed', {feeType: to,})
+            }
         },
-        feeAuto(to, from){
-            this.$emit('changed', { feeAuto: to, })
+        feeAuto: {
+            immediate: true,
+            handler: function (to, from) {
+                return this.$emit('changed', {feeAuto: to,})
+            }
         },
-        feeManual(to, from){
-            this.$emit('changed', { feeManual: to, })
+        feeManual: {
+            immediate: true,
+            handler: function (to, from) {
+                return this.$emit('changed', {feeManual: to,})
+            }
         }
     }
 

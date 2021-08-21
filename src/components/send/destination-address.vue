@@ -71,12 +71,15 @@ export default {
             this.finalAddress = null
         },
 
-        finalAddress (to, from){
-            return this.$emit('changed', {
-                address: this.finalAddress,
-                addressEncoded: this.destination,
-                validationError: this.validationError,
-            });
+        finalAddress: {
+            immediate: true,
+            handler: function (to, from) {
+                return this.$emit('changed', {
+                    address: this.finalAddress,
+                    addressEncoded: this.destination,
+                    validationError: this.validationError,
+                });
+            }
         },
 
     },

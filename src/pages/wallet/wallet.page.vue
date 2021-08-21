@@ -42,20 +42,20 @@
 
                 <div class="card-body bg-light">
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="handleDownloadAddress" v-tooltip.bottom="'Download Account'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleDownloadAddress" v-tooltip.bottom="'Download Account'" >
                         <i class="fa fa-download"></i>
                     </button>
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="handleDeleteAddress" v-tooltip.bottom="'Delete Account'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleDeleteAddress" v-tooltip.bottom="'Delete Account'" >
                         <i class="danger fa fa-times"></i>
                     </button>
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="handleShowPrivateKey" v-tooltip.bottom="'View Private Key'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowPrivateKey" v-tooltip.bottom="'View Private Key'" >
                         <i class="fa fa-eye"></i>
                     </button>
 
                     <router-link to="/staking" v-if="address.version === version.VERSION_TRANSPARENT">
-                        <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" v-tooltip.bottom="'Delegate stake'">
+                        <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" v-tooltip.bottom="'Delegate stake'">
                             <i class="fa fa-piggy-bank"></i>
                         </button>
                     </router-link>

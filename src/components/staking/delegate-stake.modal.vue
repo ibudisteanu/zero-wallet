@@ -84,6 +84,7 @@
                             <div :class="`tab-pane ${tab===3?'active':''} `">
                                 <tx-fee :balances="balancesOnlyNative" :allow-zero="true" @changed="changedFee" />
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -131,6 +132,9 @@ export default {
 
     data(){
         return {
+
+            publicKeyHash: "",
+
             tab: 0,
 
             delegateNewPublicKeyHashGenerate: true,
@@ -141,26 +145,8 @@ export default {
             delegateStakeAmount: 0,
             delegateStakeFee: 0,
 
-            fee: {
-                feeType: "feeAuto",
-                feeAuto: {
-                    amount: 0,
-                    token: "",
-                    validationError: "",
-                },
-                feeManual: {
-                    amount: 0,
-                    token: "",
-                    validationError: "",
-                }
-            },
-
-            extraData: {
-                data: "",
-                type: "public",
-                publicKeyToEncrypt: "",
-                validationError: null,
-            },
+            fee: {},
+            extraData: { },
 
             error: '',
             status: '',
@@ -174,10 +160,10 @@ export default {
     computed:{
         version: () => version,
         address(){
-            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKeyHash] ;
+            return this.$store.state.wallet.addresses[this.publicKeyHash];
         },
         account(){
-            return this.$store.state.accounts.list[this.$store.state.wallet.mainPublicKeyHash]
+            return this.$store.state.accounts.list[this.publicKeyHash]
         },
         isLoading(){
             return this.account === undefined
@@ -248,8 +234,9 @@ export default {
             return this.setTab(this.tab + 1)
         },
 
-        showModal(  ) {
+        showModal( publicKeyHash ) {
             Object.assign(this.$data, this.$options.data());
+            this.publicKeyHash = publicKeyHash
             return this.$refs.modal.showModal();
         },
 

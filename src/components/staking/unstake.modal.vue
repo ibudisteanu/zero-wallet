@@ -54,16 +54,18 @@
 
             <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
 
-            <label v-if="status">{{status}}</label>
+            <div v-if="status" class="py-2">
+                <label>{{status}}</label>
+            </div>
 
             <div class="float-end">
                 <button class="btn btn-link" type="button" v-if="tab > 0" @click="handleBack">
                     Back <i class="fas fa-chevron-left me-2"></i>
                 </button>
-                <button class="btn btn-falcon-primary" type="button" v-if="tab < 3" @click="handleNext">
+                <button class="btn btn-falcon-primary" type="button" v-if="tab < 2" @click="handleNext">
                     <i class="fas fa-chevron-right ms-2"> </i> Next
                 </button>
-                <loading-button text="Withdraw Delegated Stake" @submit="handleStopDelegateStake" icon="fa fa-unlink"  />
+                <loading-button v-if="tab === 2" text="Unstake" @submit="handleStopDelegateStake" icon="fa fa-unlink"  />
             </div>
 
         </template>
@@ -89,29 +91,17 @@ export default {
 
     data(){
         return {
+
+            publicKeyHash: "",
+
             tab: 0,
 
-            withdrawStakeAmount: 0,
+            unstakeAmount: 0,
 
             fee: {
-                feeType: "feeAuto",
-                feeAuto: {
-                    amount: 0,
-                    token: "",
-                    validationError: "",
-                },
-                feeManual: {
-                    amount: 0,
-                    token: "",
-                    validationError: "",
-                }
             },
-            extraData: {
-                data: "",
-                type: "public",
-                publicKeyToEncrypt: "",
-                validationError: null,
-            },
+
+            extraData: { },
 
             error: '',
             status: '',
@@ -123,9 +113,6 @@ export default {
 
     computed:{
         version: () => version,
-        publicKeyHash(){
-            return this.$store.state.wallet.mainPublicKeyHash
-        },
         address(){
             return this.$store.state.wallet.addresses[this.publicKeyHash];
         },
@@ -173,7 +160,7 @@ export default {
         },
 
         amountChanged(data){
-            if (data.amount !== undefined) this.withdrawStakeAmount = data.amount
+            if (data.amount !== undefined) this.unstakeAmount = data.amount
         },
 
         changedFeeManual(data){
@@ -209,7 +196,7 @@ export default {
                 if (password === null ) return
 
                 const out = await PandoraPay.transactions.builder.createUnstakeTx_Float( JSON.stringify({
-                    address: this.address.address,
+                    from: this.address.addressEncoded,
                     nonce: 0,
                     unstakeAmount: this.unstakeAmount,
                     data: {
@@ -223,7 +210,8 @@ export default {
                         perByteAuto: this.fee.feeType === 'feeAuto',
                         token: this.fee.feeType === 'feeAuto' ? this.fee.feeAuto.token : this.fee.feeManual.token,
                     },
-                    memPoolValidateTxData: false,
+                    propagateTx: true,
+                    awaitAnswer: true,
                 }), (status) => {
                     this.status = status
                 }, password);
@@ -238,10 +226,10 @@ export default {
                 await this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Unstake Transaction created`,
-                    text: `Unstake Transaction has been made. \n TxId ${out.tx}`,
+                    text: `Unstake Transaction has been made. \n TxId ${tx.hash}`,
                 });
 
-                this.$router.push(`/explorer/tx/${out.tx.hash()}`);
+                this.$router.push(`/explorer/tx/${tx.hash}`);
 
                 this.closeModal();
 

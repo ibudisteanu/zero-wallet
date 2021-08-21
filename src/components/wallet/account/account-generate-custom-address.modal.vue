@@ -81,12 +81,12 @@
                                 <hr/>
 
                                 <div class="g-0 d-block-inline ">
-                                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="copyAddress" v-tooltip.bottom="'Copy Address'" >
-                                        <i class="fa fa-copy pointer" />
+                                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="copyAddress" v-tooltip.bottom="'Copy Address'" >
+                                        <i class="fa fa-copy" />
                                     </button>
 
-                                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
-                                        <i class="fa fa-qrcode pointer" />
+                                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
+                                        <i class="fa fa-qrcode" />
                                     </button>
                                 </div>
                             </template>

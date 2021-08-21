@@ -100,31 +100,46 @@ export default {
 
     watch: {
 
-        paymentId( to, from ){
+        paymentId: {
+            immediate: true,
+            handler: function (to, from) {
 
-            if (to) {
-                this.data = to
-            } else
+                if (to && this.data !== to )
+                    return this.data = to
+
                 if (this.data === from) this.data = ""
+            },
         },
 
-        type (to, from) {
-            return this.$emit('changed', {
-                type: to,
-                publicKeyToEncrypt: (to === 'public') ? null : this.publicKeyToEncrypt,
-            });
+        type: {
+            immediate: true,
+            handler: function (to, from) {
+                return this.$emit('changed', {
+                    type: to,
+                    publicKeyToEncrypt: (to === 'public') ? null : this.publicKeyToEncrypt,
+                })
+            }
         },
 
-        data (to, from) {
-            return this.$emit('changed', { data: to, });
+        data: {
+            immediate: true,
+            handler: function (to, from) {
+                return this.$emit('changed', {data: to,})
+            }
         },
 
-        publicKeyToEncrypt(to, from) {
-            return this.$emit('changed', { publicKeyToEncrypt: to, });
+        publicKeyToEncrypt: {
+            immediate: true,
+            handler: function (to, from) {
+                return this.$emit('changed', {publicKeyToEncrypt: to,})
+            }
         },
 
-        validationError(to, from){
-            return this.$emit('changed', { validationError: to, });
+        validationError: {
+            immediate: true,
+            handler: function (to, from) {
+                return this.$emit('changed', {validationError: to,})
+            }
         }
 
     },

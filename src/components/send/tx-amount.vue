@@ -81,29 +81,39 @@ export default {
     },
 
     watch: {
-        amount (to, from) {
 
-            if (!this.selectedTokenInfo){
-                this.amount = 0
-                return 0
+        amount: {
+            immediate: true,
+            handler: function (to, from) {
+                if (!this.selectedTokenInfo){
+                    this.amount = 0
+                    return 0
+                }
+
+                // to = Number.parseFloat(to)
+                // const target = to.toFixed(this.selectedTokenInfo.decimalSeparator)
+                // if (to.toString() !== target ){
+                //     this.amount = target
+                //     return
+                // }
+
+                return this.$emit('changed', {
+                    amount: to,
+                });
             }
-
-            // to = Number.parseFloat(to)
-            // const target = to.toFixed(this.selectedTokenInfo.decimalSeparator)
-            // if (to.toString() !== target ){
-            //     this.amount = target
-            //     return
-            // }
-
-            return this.$emit('changed', {
-                amount: to,
-            });
         },
-        selectedToken (to, from) {
-            return this.$emit('changed', { token: to, });
+
+        selectedToken: {
+            immediate: true,
+            handler: function (to, from) {
+                return this.$emit('changed', {token: to,})
+            }
         },
-        validationError(to, from){
-            return this.$emit('changed', { validationError: to, });
+        validationError: {
+            immediate: true,
+            handler: function (to, from) {
+                return this.$emit('changed', {validationError: to,})
+            }
         },
 
     },

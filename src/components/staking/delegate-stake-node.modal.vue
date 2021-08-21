@@ -48,7 +48,6 @@ export default {
 
     components: {Modal, PasswordInput, LoadingButton, StepsBar, AlertBox},
 
-
     data() {
         return {
 

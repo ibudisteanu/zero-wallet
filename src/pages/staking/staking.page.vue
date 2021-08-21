@@ -59,12 +59,12 @@
                         </div>
                         <div v-else >
 
-                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="handleShowDelegateStake" v-tooltip.bottom="'Delegate your stake'" >
-                                <i class="fa fa-link pointer" />
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowDelegateStake" v-tooltip.bottom="'Delegate your stake'" >
+                                <i class="fa fa-link " />
                             </button>
 
-                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="handleShowUnstake" v-tooltip.bottom="'Unstaking'" >
-                                <i class="fa fa-unlink text-danger pointer" />
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowUnstake" v-tooltip.bottom="'Unstaking'" >
+                                <i class="fa fa-unlink text-danger " />
                             </button>
 
                         </div>
@@ -73,9 +73,8 @@
                 </div>
 
                 <delegate-stake-modal ref="refDelegateStakeModal" />
-                <stop-delegate-stake-modal ref="refUnstakeModal" />
-                <delegate-stake-private-key-modal ref="refDelegateStakePrivateKeyModal" :address="address" />
-                <delegate-stake-node-modal ref="refDelegateStakeNodeModal" :address="address"/>
+                <unstake-modal ref="refUnstakeModal" />
+                <delegate-stake-node-modal ref="refDelegateStakeNodeModal"/>
 
             </div>
 
@@ -99,8 +98,7 @@ import Account from "src/components/wallet/account/account"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 
 import DelegateStakeModal from "src/components/staking/delegate-stake.modal.vue"
-import StopDelegateStakeModal from "src/components/staking/unstake.modal.vue"
-import DelegateStakePrivateKeyModal from "src/components/staking/delegate-stake-private-key.modal.vue"
+import UnstakeModal from "src/components/staking/unstake.modal.vue"
 import DelegateStakeNodeModal from "src/components/staking/delegate-stake-node.modal.vue"
 import StringHelper from "../../utils/string-helper";
 import Balance from "src/components/wallet/balance/balance.vue"
@@ -109,7 +107,7 @@ import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {AccountIdenticon, Layout, Account, LoadingSpinner, DelegateStakeModal, StopDelegateStakeModal, DelegateStakePrivateKeyModal, DelegateStakeNodeModal, LayoutTitle, DelegatedStakePending, Balance, AlertBox},
+    components: {AccountIdenticon, Layout, Account, LoadingSpinner, DelegateStakeModal, UnstakeModal, DelegateStakeNodeModal, LayoutTitle, DelegatedStakePending, Balance, AlertBox},
 
     data() {
         return {
@@ -197,15 +195,11 @@ export default {
                     title: `Can't delegate`,
                     text: `You can't delegate as your wallet is empty`,
                 })
-            return this.$refs.refDelegateStakeModal.showModal(  );
+            return this.$refs.refDelegateStakeModal.showModal( this.publicKeyHash );
         },
 
         handleShowUnstake(){
-            return this.$refs.refUnstakeModal.showModal( );
-        },
-
-        handleShowDelegatePrivateKey(){
-            return this.$refs.refDelegateStakePrivateKeyModal.showModal( this.address.delegate );
+            return this.$refs.refUnstakeModal.showModal( this.publicKeyHash );
         },
 
         handleShowDelegateStakeNode(){

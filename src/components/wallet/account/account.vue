@@ -29,16 +29,16 @@
                 </div>
                 <div class="card-footer bg-light g-0 d-block-inline p-3">
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
-                        <i class="fa fa-qrcode pointer" />
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
+                        <i class="fa fa-qrcode" />
                     </button>
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="createCustomAddress"  v-tooltip.bottom="'Create custom address'">
-                        <i class="fa fa-tools pointer" />
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="createCustomAddress"  v-tooltip.bottom="'Create custom address'">
+                        <i class="fa fa-tools" />
                     </button>
 
-                    <button v-if="$store.getters.walletContains(this.address.publicKeyHash)" class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="sendFunds"  v-tooltip.bottom="'Send Transparently Funds'">
-                        <i class="fa fa-money-check-alt pointer" />
+                    <button v-if="$store.getters.walletContains(this.address.publicKeyHash)" class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="sendFunds"  v-tooltip.bottom="'Send Transparently Funds'">
+                        <i class="fa fa-money-check-alt" />
                     </button>
 
                 </div>
