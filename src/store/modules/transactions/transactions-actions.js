@@ -93,7 +93,7 @@ export default {
                 try{
 
                     if ( password || !getters.isWalletEncrypted() ) {
-                        const data = await PandoraPay.wallet.manager.encryption.decryptMessageWalletAddress(tx.data, walletAddress.addressEncoded, password)
+                        const data = await PandoraPay.wallet.decryptMessageWalletAddress(tx.data, walletAddress.addressEncoded, password)
                         tx.__dataDecrypted = Buffer.from(data, "hex").toString()
                         tx.__dataDecryptedError = ""
                         decrypted = true

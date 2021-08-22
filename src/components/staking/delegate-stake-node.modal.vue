@@ -42,11 +42,18 @@
                                         <option v-for="(node, id) in delegatesNodes"
                                                 :key="`send-money-${id}`"
                                                 :value="node">
-                                            {{node.name}} || {{node.url.Scheme}}://{{node.url.Host}}
+                                            {{node.name}} || {{delegateNodeAddress(node)}}
                                         </option>
                                     </select>
                                 </div>
 
+                            </div>
+                            <div :class="`tab-pane ${tab===1?'active':''} `">
+                                <template v-if="nodeInfo">
+                                    <label class="form-label">Delegates MAXIMUM slots: <strong>{{nodeInfo.maximumAllowed}}</strong></label> <br/>
+                                    <label class="form-label">Delegates Already: <strong>{{nodeInfo.delegatesCount}}</strong></label> <br/>
+                                    <label class="form-label">Delegates SLOTS: <strong>{{nodeInfo.maximumAllowed - nodeInfo.delegatesCount}}</strong></label> <br/>
+                                </template>
                             </div>
                         </div>
                     </div>
@@ -98,8 +105,9 @@ export default {
             status: "",
 
             delegatesNodes: null,
-
             selectedDelegateNode: null,
+
+            nodeInfo: null,
         }
     },
 
@@ -123,15 +131,17 @@ export default {
 
     methods: {
 
-        setTab(resolver, value){
+        async setTab(resolver, value){
             try{
 
                 value = Math.max( value, 0)
                 value = Math.min( value, this.maxTab + 1)
 
-                if (this.tab === 1 && value === 2){
+                if (this.tab === 0 && value === 1){
+                    await this.handleConnectNode()
                 }
-                if (this.tab === 2 && value === 3){
+                if (this.tab === 1 && value === 2){
+                    await this.handleDelegateAsk()
                 }
 
                 this.tab = value
@@ -158,111 +168,78 @@ export default {
             return this.$refs.modal.closeModal();
         },
 
-        async handleConnectNode(resolve){
+        delegateNodeAddress(delegateNode){
+            return `${delegateNode.url.Scheme.replace("ws","http")}://${delegateNode.url.Host}`
+        },
 
-            this.error = ''
-            this.nodeInfo = null;
+        async handleConnectNode(){
 
             try{
 
-                const out = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/is-delegating-open', {
-                    address: this.address.addressEncoded,
-                } );
-                if (!out ) throw Error("Node is offline");
+                this.error = ''
+                this.nodeInfo = null;
 
-                if (typeof out.allowDelegating !== "boolean") throw Error("allowDelegating is not Bool");
-                if (typeof out.alreadyIncluded !== "boolean") throw Error("alreadyIncluded is not Bool");
-                if (typeof out.availableSlots !== "number") throw Error("availableSlots is not Number");
-                if (typeof out.maximumDelegates !== "number") throw Error("maximumDelegates is not Number");
-                if (typeof out.minimumFeePercentage !== "number") throw Error("minimumFeePercentage is not Number");
+                const json = await HttpHelper.get(this.delegateNodeAddress( this.selectedDelegateNode ) +'/delegates/info', {} );
 
-                if (!out.allowDelegating) this.error = "Your selected node doesn't accept delegations";
-                if (out.alreadyIncluded) this.error = "You already delegated to this node";
-                if (!out.availableSlots) this.error = "The node is completely full";
+                if (!json) throw Error("Node is offline");
+
+                const out = JSON.parse(json)
+
+                if (typeof out.delegatesCount !== "number") throw "delegatesCount is missing"
+                if (typeof out.maximumAllowed !== "number") throw "maximumAllowed is missing"
+                if (typeof out.challenge !== "string" || out.challenge.length !== 64) throw "challenge is missing"
+
+                if (out.maximumAllowed <= out.delegatesCount) throw "Node is Full"
 
                 this.nodeInfo = out;
-                this.step = 2;
 
             }catch(err){
-                this.error = err.message;
-            }finally{
-                resolve(true);
+                this.error = err.toString();
+                throw err
             }
 
         },
 
-        async handleDelegateStake(resolve){
-
-            this.error = '';
+        async handleDelegateAsk(){
 
             try{
+                this.error = '';
 
-                if (!this.nodeAddress) throw Error("Node Address is not selected");
+                if (!this.nodeInfo) throw Error("NodeInfo was not assigned");
 
-                let challenge = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/challenge', );
-                if (!challenge ) throw Error("Challenge couldn't be get. Maybe node is offline");
+                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+                if (password === null ) return
 
-                if (typeof challenge === "string") challenge = Buffer.from(challenge, "hex");
+                const signature = await PandoraPay.wallet.signMessageWalletAddress(this.nodeInfo.challenge, this.address.addressEncoded, password )
 
-                const publicKey = Buffer.from( this.address.publicKey, "hex");
+                const json = await HttpHelper.get(this.delegateNodeAddress( this.selectedDelegateNode ) +'/delegates/ask', {
+                    qs: {
+                        challengeSignature: signature,
+                    }
+                } );
 
-                //getting private key
-                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.addressEncoded, false);
-                const delegateStakePrivateKeyModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegate.delegateStakeNonce );
-                const delegateStakeAddressModel = delegateStakePrivateKeyModel.getAddressPublicKey();
+                if (!json) throw "Node is offline";
 
-                const delegateStakePublicKey = delegateStakeAddressModel.publicKey;
-                if (!delegateStakePublicKey.equals( Buffer.from(this.delegate.delegateStakePublicKey, 'hex') ))
-                    throw Error("Delegated Private Key is different")
+                const out = JSON.parse(json)
 
-                const concat = Buffer.concat([
-                    challenge,
-                    publicKey,
-                    delegateStakePublicKey,
-                    delegateStakePrivateKeyModel ? delegateStakePrivateKeyModel.privateKey : Buffer.alloc(0),
-                ]);
+                if (typeof out.exists !== "boolean") throw "exists is not a boolean"
+                if (out.exists) throw "Your address already has been delegated"
 
-                const signature = addressWallet.keys.sign( PandoraLibrary.helpers.crypto.CryptoHelper.dkeccak256(concat) );
-                if (!signature) throw Error("Message couldn't be signed");
+                if (typeof out.delegatePublicKeyHash !== "string") throw "delegatePublicKeyHash is missing"
 
-                const out = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/import-wallet-stake', {
-                    publicKey: publicKey.toString("hex"),
-                    signature: signature.toString("hex"),
-                    delegateStakePrivateKey: delegateStakePrivateKeyModel.privateKey.toString('hex'),
-                });
+                const promise = new Promise((resolver, reject )=>{
+                    this.$emit('onDelegateStake', {delegatePublicKeyHash: out.delegatePublicKeyHash, resolver, reject } )
+                })
 
-                if (!out) throw Error("An error has occurred");
+                await promise
 
-                if ( !out.result && out.error ){
-
-                    if (out.error === "Your stake delegate's public key is not matching with the private key" && PandoraLibrary.helpers.StringHelper.isHex(out.errorData) )
-                        throw out.error + " " + out.errorData;
-
-                    if (out.error === "You need to delegate your stake to the following public key" && PandoraLibrary.helpers.StringHelper.isHex(out.errorData) )
-                        throw out.error + " " + out.errorData;
-
-                    throw out.error;
-
-                }
-
-                if (out) {
-                    await this.$store.dispatch('addToast', {
-                        type: 'success',
-                        title: `Your stake was delegated successfully to Node `,
-                        text: `Your stake was delegated successfully to node. \n node ${this.nodeAddress}`,
-                    });
-                    this.step = 3;
-                }
-
-                console.log("out", out);
+                this.closeModal()
 
             }catch(err){
-                console.error(err);
-                this.error = err.message;
-            }finally{
-                resolve(true);
+                this.error = err.toString();
+                throw err
             }
-        }
+        },
 
     },
 

@@ -78,7 +78,7 @@
 
                 <delegate-stake-modal ref="refDelegateStakeModal" />
                 <unstake-modal ref="refUnstakeModal" />
-                <delegate-stake-node-modal ref="refDelegateStakeNodeModal"/>
+                <delegate-stake-node-modal ref="refDelegateStakeNodeModal" @onDelegateStake="onDelegateStake" />
 
             </div>
 
@@ -192,14 +192,14 @@ export default {
 
     methods:{
 
-        handleShowDelegateStake(){
+        handleShowDelegateStake(data){
             if (!this.balance)
                 return this.$store.dispatch('addToast', {
                     type: 'warning',
                     title: `Can't delegate`,
                     text: `You can't delegate as your wallet is empty`,
                 })
-            return this.$refs.refDelegateStakeModal.showModal( this.publicKeyHash );
+            return this.$refs.refDelegateStakeModal.showModal( this.publicKeyHash, data );
         },
 
         handleShowUnstake(){
@@ -208,6 +208,10 @@ export default {
 
         handleShowDelegateStakeNode(){
             return this.$refs.refDelegateStakeNodeModal.showModal( this.publicKeyHash );
+        },
+
+        onDelegateStake(data){
+            return this.handleShowDelegateStake(data)
         }
 
     },

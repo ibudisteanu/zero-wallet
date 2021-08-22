@@ -36,8 +36,8 @@ export default {
         state.refWalletPasswordModal = ref;
     },
 
-    setModalOpened(state, value){
-        state.modalOpened = value
+    incrementModalIndex(state, value){
+        state.modalIndex = state.modalIndex + value
     },
 
     setLeftSidebarShow(state, value){

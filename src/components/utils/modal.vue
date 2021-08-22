@@ -1,10 +1,10 @@
 <template>
 
-    <div class="modal fade show" v-if="open" style="display: flex !important">
+    <div class="modal fade show" v-if="open" :style="`display: flex !important; z-index: ${this.zIndex}`">
 
         <div class="modal-backdrop fade show" @click="handleClickBackground"></div>
 
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered" :style="`z-index: ${this.zIndex}`">
             <div class="modal-content position-relative">
                 <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
                     <button v-if="closeButton" class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" @click="closeModal"></button>
@@ -36,6 +36,7 @@ export default{
             open: false,
             promise: null,
             resolver: null,
+            zIndex: 1060
         }
     },
 
@@ -74,7 +75,7 @@ export default{
                 delete this.resolver;
             }
 
-            this.$store.commit('setModalOpened', false)
+            this.$store.commit('incrementModalIndex', - 1 )
 
             this.$emit('closed');
 
@@ -84,6 +85,9 @@ export default{
 
             if ( e ) e.stopPropagation();
 
+            Object.assign(this.$data, this.$options.data());
+            this.zIndex = 1060 + this.$store.state.page.modalIndex
+
             this.promise = new Promise((resolve)=>{
                 this.resolver = resolve;
             });
@@ -91,7 +95,7 @@ export default{
             this.open = true;
             this.$emit('opened');
 
-            this.$store.commit('setModalOpened', true)
+            this.$store.commit('incrementModalIndex', 1 )
 
             return this.promise;
         },
@@ -102,9 +106,7 @@ export default{
 </script>
 
 <style scoped>
-    .modal-dialog{
-        z-index: 1070;
-    }
+
 
     .modal-dialog { /* Width */
         max-width: 100%;

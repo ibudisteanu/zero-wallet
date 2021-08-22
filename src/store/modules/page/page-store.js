@@ -11,7 +11,7 @@ export default {
         refTestnetFaucetModal:null,
         refWalletPasswordModal:null,
 
-        modalOpened: false,
+        modalIndex: 0,
 
         dark: true,
         leftSidebarShow: false,

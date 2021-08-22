@@ -46,17 +46,16 @@
                             <div :class="`tab-pane ${tab===1?'active':''} `">
 
                                 <div class="form-group">
-                                    <input class="form-check-input" id="newDelegatedStakePublicKeyHash" type="checkbox"  name="checkbox" v-model="newDelegatedStakePublicKeyHash"  >
-                                    <label class="form-check-label" for="newDelegatedStakePublicKeyHash"> Set a new Delegated Public Key Hash </label>
+                                    <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Nonce</label>
+                                    <input class="form-control" type="number" v-model="nonce" min="0"  >
                                 </div>
 
-                                <div v-if="newDelegatedStakePublicKeyHash" class="pt-2 ms-2">
+                                <div class="form-group pt-4">
+                                    <input class="form-check-input" id="hasNewDelegatedStakePublicKeyHash" type="checkbox"  name="checkbox" v-model="hasNewDelegatedStakePublicKeyHash"  >
+                                    <label class="form-check-label" for="hasNewDelegatedStakePublicKeyHash"> Set a new Delegated Public Key Hash </label>
+                                </div>
 
-                                    <div class="form-group">
-                                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Delegate Nonce</label>
-                                        <input class="form-control" type="number" v-model="delegateStakeNonce" min="0"  >
-                                    </div>
-
+                                <div v-if="hasNewDelegatedStakePublicKeyHash" class="pt-2 ms-2">
                                     <div class="form-group pt-2">
                                         <input class="form-check-input" id="delegateNewPublicKeyHashGenerate" type="checkbox"  name="checkbox" v-model="delegateNewPublicKeyHashGenerate"  >
                                         <label class="form-check-label" for="delegateNewPublicKeyHashGenerate"> Auto Generate Public Key Hash </label>
@@ -133,11 +132,12 @@ export default {
             tab: 0,
             maxTab: 3,
 
+            hasNewDelegatedStakePublicKeyHash: false,
             delegateNewPublicKeyHashGenerate: true,
-            newDelegatedStakePublicKeyHash: false,
+
+            nonce: 0,
 
             delegateStakePublicKeyHash: '',
-            delegateStakeNonce: 0,
             delegateStakeAmount: 0,
             delegateStakeFee: 0,
 
@@ -184,7 +184,7 @@ export default {
 
         validationDelegateStakePublicKeyHash(){
 
-            if (this.delegateNewPublicKeyHashGenerate || !this.newDelegatedStakePublicKeyHash) return
+            if (this.delegateNewPublicKeyHashGenerate || !this.hasNewDelegatedStakePublicKeyHash) return
 
             try{
                 const buffer = Buffer.from(this.delegateStakePublicKeyHash, "hex")
@@ -237,10 +237,26 @@ export default {
             return this.setTab(resolver, this.tab + 1)
         },
 
-        showModal( publicKeyHash ) {
+        async showModal( publicKeyHash, data ) {
             Object.assign(this.$data, this.$options.data());
+
             this.publicKeyHash = publicKeyHash
-            return this.$refs.modal.showModal();
+            if (data && data.delegatePublicKeyHash){
+                this.hasNewDelegatedStakePublicKeyHash = true
+                this.delegateNewPublicKeyHashGenerate = false
+                this.delegateStakePublicKeyHash = data.delegatePublicKeyHash
+            }
+
+            try{
+                const out = await this.$refs.modal.showModal();
+                if (data && data.resolver)
+                    data.resolver(out)
+                return out
+            }catch(err){
+                if (data && data.reject)
+                    data.reject(err)
+            }
+
         },
 
         closeModal() {
@@ -271,10 +287,10 @@ export default {
 
                 const out = await PandoraPay.transactions.builder.createDelegateTx_Float( JSON.stringify( {
                     from: this.address.addressEncoded,
-                    nonce: this.delegateStakeNonce,
+                    nonce: this.nonce,
                     delegateAmount: this.delegateStakeAmount,
-                    delegateNewPublicKeyHashGenerate: this.newDelegatedStakePublicKeyHash ? this.delegateNewPublicKeyHashGenerate : false,
-                    delegateNewPubKeyHash: this.newDelegatedStakePublicKeyHash ? (this.delegateStakePublicKeyHash ? this.delegateStakePublicKeyHash : "") : "",
+                    delegateNewPublicKeyHashGenerate: this.hasNewDelegatedStakePublicKeyHash ? this.delegateNewPublicKeyHashGenerate : false,
+                    delegateNewPubKeyHash: this.hasNewDelegatedStakePublicKeyHash ? (this.delegateStakePublicKeyHash ? this.delegateStakePublicKeyHash : "") : "",
                     data: {
                         data: Buffer.from(this.extraData.data).toString("hex"),
                         encrypt: this.extraData.type === "encrypted",
