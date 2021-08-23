@@ -8,7 +8,10 @@
 
             <account :address="address" />
 
-            <div class="pt-4" v-if="!isLoading">
+            <alert-box v-if="!isLoading && !isFound" type="warning" >
+                Address doesn't exist (is empty)!
+            </alert-box>
+            <div v-else class="pt-4">
 
                 <div class="card mb-3">
                     <div class="card-header bg-light">

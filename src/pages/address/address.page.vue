@@ -11,7 +11,7 @@
 
                 <template v-if="!isFound">
                     <alert-box type="warning" >
-                        Address doesn't exist!
+                        Address doesn't exist (is empty)!
                     </alert-box>
                     <pending-transactions :publicKeyHash="publicKeyHash" />
                 </template>
