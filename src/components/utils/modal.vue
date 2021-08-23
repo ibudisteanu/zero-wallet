@@ -71,8 +71,8 @@ export default{
             this.open = false;
             if (this.resolver) {
                 this.resolver(this);
-                delete this.promise;
-                delete this.resolver;
+                this.promise = null;
+                this.resolver = null;
             }
 
             this.$store.commit('incrementModalIndex', - 1 )

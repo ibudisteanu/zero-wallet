@@ -20,15 +20,15 @@
                     </div>
                     <div class="card-body border-bottom border-200">
 
-                        <span class="d-block">Available coins for Staking: <strong>{{balance}}</strong></span>
-                        <span v-if="balance < minimumForStaking" class="text-danger d-block" >Minimum required for Staking {{minimumForStaking}}</span>
+                        <span class="d-block">Your balance: <strong>{{balance}}</strong></span>
+                        <span v-if="balance < minimumForStaking" class="text-danger d-block"> Minimum balance required for Staking {{minimumForStaking}}</span>
 
                         <template v-if="!isDelegated" >
                             <span class="d-block pt-4">Delegated: <strong>NO</strong> </span>
                         </template>
                         <template v-else>
                             <span class="d-block pt-4">Delegated: <strong>YES</strong> </span>
-                            <span class="d-block">Delegated public key {{account.delegatedStake.delegatedPublicKeyHash}}</span>
+                            <span class="d-block">Delegated public key hash {{account.delegatedStake.delegatedPublicKeyHash}}</span>
                             <span class="d-block">Delegated fee {{delegateFeePercentage}} %</span>
                         </template>
 

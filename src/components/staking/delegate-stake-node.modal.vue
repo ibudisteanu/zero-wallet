@@ -145,6 +145,8 @@ export default {
                 }
 
                 this.tab = value
+            }catch(err) {
+                console.error(err)
             }finally{
                 resolver()
             }
@@ -181,7 +183,7 @@ export default {
 
                 const json = await HttpHelper.get(this.delegateNodeAddress( this.selectedDelegateNode ) +'/delegates/info', {} );
 
-                if (!json) throw Error("Node is offline");
+                if (!json) throw "Node is offline";
 
                 const out = JSON.parse(json)
 
@@ -232,8 +234,6 @@ export default {
                 })
 
                 await promise
-
-                this.closeModal()
 
             }catch(err){
                 this.error = err.toString();

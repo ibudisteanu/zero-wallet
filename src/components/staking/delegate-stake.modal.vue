@@ -224,7 +224,8 @@ export default {
                 }
 
                 this.tab = value
-            }catch(err){
+            }catch(err) {
+                console.error(err)
             }finally{
                 resolver()
             }

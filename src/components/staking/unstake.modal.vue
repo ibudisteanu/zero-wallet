@@ -146,6 +146,8 @@ export default {
                 }
 
                 this.tab = value
+            }catch(err) {
+                console.error(err)
             }finally{
                 resolver()
             }
