@@ -39,8 +39,8 @@
 
                             <div class=" pt-4">
                                 <span class="fw-bold fs-0">Delegated Stake</span>
-                                <balance :key="`delegated-balance`"  :balance="delegatedStake.stakeAvailable"  token="" :version="0">
-                                </balance>
+                                <balance :key="`delegated-balance`"  :balance="delegatedStake.stakeAvailable"  token="" :version="0"></balance>
+                                <span v-if="delegatedStake.stakeAvailable < minimumForStaking" class="text-danger d-block"> Minimum balance required for Staking {{minimumForStaking}}</span>
                             </div>
                             <div class="pt-4" >
                                 <span class="fw-bold fs-0">Delegated Stakes in pending {{!delegatedStakesPending.length ? 'None' : ''}}</span>
@@ -57,21 +57,21 @@
                     <div class="card-footer bg-light g-0 d-block-inline p-3">
 
                         <div v-if="isDelegateStakeInPending">
-                            <span>Your delegating transaction is in the mempool right now...</span>
+                            <span>You have a transaction in mempool...</span>
                             <loading-spinner />
                         </div>
                         <div v-else >
 
-                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowDelegateStake" v-tooltip.bottom="'Delegate your stake'" >
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowDelegateStakeNode" v-tooltip.bottom="'Delegate your Stake to a Node'" >
+                                <i class="fa fa-laptop-code " />
+                            </button>
+
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowDelegateStake" v-tooltip.bottom="'Manual Delegating your stake'" >
                                 <i class="fa fa-link " />
                             </button>
 
-                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowUnstake" v-tooltip.bottom="'Unstaking'" >
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowUnstake" v-tooltip.bottom="'Unstaking'" :disabled="!isDelegated" >
                                 <i class="fa fa-unlink text-danger " />
-                            </button>
-
-                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowDelegateStakeNode" v-tooltip.bottom="'Delegate your Stake to a Node'" >
-                                <i class="fa fa-laptop-code " />
                             </button>
 
                         </div>
@@ -168,13 +168,12 @@ export default {
         },
 
         isDelegated(){
-            if (this.delegatedStake && this.account.delegatedStakeVersion === 1) return true;
-            return false;
+            return (this.delegatedStake && this.account.delegatedStakeVersion === 1)
         },
 
         delegateFeePercentage(){
-            return 0
-            return this.address.delegate.delegateStakeFee / PandoraPay.argv.transactions.staking.delegateStakingFeePercentage * 100;
+            if (!this.delegatedStake) return 0
+            return this.delegatedStake.delegatedStakeFee / 65535 * 100;
         },
 
         pendingTxs(){
@@ -182,13 +181,11 @@ export default {
         },
 
         pendingTransactions(){
-            if (!this.$store.state.accountsPendingTxs.list[this.publicKeyHash]) return
-            return Object.keys( this.$store.state.accountsPendingTxs.list[this.publicKeyHash] )
+            return Object.keys( this.$store.state.accountsPendingTxs.list[this.publicKeyHash] || {} )
         },
 
         isDelegateStakeInPending(){
-            if (this.pendingTransactions.length > 0) return true
-            return false
+            return this.pendingTransactions.length > 0;
         }
 
     },

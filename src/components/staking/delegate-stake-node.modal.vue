@@ -53,6 +53,7 @@
                                     <label class="form-label">Delegates MAXIMUM slots: <strong>{{nodeInfo.maximumAllowed}}</strong></label> <br/>
                                     <label class="form-label">Delegates Already: <strong>{{nodeInfo.delegatesCount}}</strong></label> <br/>
                                     <label class="form-label">Delegates SLOTS: <strong>{{nodeInfo.maximumAllowed - nodeInfo.delegatesCount}}</strong></label> <br/>
+                                    <label class="form-label">Delegates Fee: <strong>{{nodeInfo.delegatesFee / 65535 * 100}}%</strong></label> <br/>
                                 </template>
                             </div>
                         </div>
@@ -190,6 +191,8 @@ export default {
                 if (typeof out.delegatesCount !== "number") throw "delegatesCount is missing"
                 if (typeof out.maximumAllowed !== "number") throw "maximumAllowed is missing"
                 if (typeof out.challenge !== "string" || out.challenge.length !== 64) throw "challenge is missing"
+                if (typeof out.delegatesFee !== "number") throw "delegatesFee is missing"
+                if (out.delegatesFee > 65535) throw "delegatesFee exceeded 65535"
 
                 if (out.maximumAllowed <= out.delegatesCount) throw "Node is Full"
 
@@ -230,7 +233,12 @@ export default {
                 if (typeof out.delegatePublicKeyHash !== "string") throw "delegatePublicKeyHash is missing"
 
                 const promise = new Promise((resolver, reject )=>{
-                    this.$emit('onDelegateStake', {delegatePublicKeyHash: out.delegatePublicKeyHash, resolver, reject } )
+                    this.$emit('onDelegateStake', {
+                        delegatePublicKeyHash: out.delegatePublicKeyHash,
+                        resolver,
+                        reject,
+                        delegatesFee: this.nodeInfo.delegatesFee,
+                    } )
                 })
 
                 await promise
