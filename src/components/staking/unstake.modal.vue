@@ -87,7 +87,7 @@ export default {
     data(){
         return {
 
-            publicKeyHash: "",
+            publicKey: "",
 
             tab: 0,
             maxTab: 2,
@@ -108,10 +108,10 @@ export default {
     computed:{
         version: () => version,
         address(){
-            return this.$store.state.wallet.addresses[this.publicKeyHash];
+            return this.$store.state.wallet.addresses[this.publicKey];
         },
         account(){
-            return this.$store.state.accounts.list[this.publicKeyHash]
+            return this.$store.state.accounts.list[this.publicKey]
         },
         isLoading(){
             return this.account === undefined
@@ -177,9 +177,9 @@ export default {
             this.fee = { ...this.fee, ...data }
         },
 
-        showModal( publicKeyHash ) {
+        showModal( publicKe ) {
             Object.assign(this.$data, this.$options.data());
-            this.publicKeyHash = publicKeyHash;
+            this.publicKey = publicKey;
             return this.$refs.modal.showModal();
         },
 

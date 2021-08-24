@@ -55,13 +55,13 @@ export default {
     components: {AccountIdenticon, LoadingSpinner, Balance, DelegatedStakePending},
 
     props: {
-        publicKeyHash: {default: ""}
+        publicKey: {default: ""}
     },
 
     computed:{
 
         account(){
-            return this.$store.state.accounts.list[this.publicKeyHash]
+            return this.$store.state.accounts.list[this.publicKey]
         },
 
         balances(){

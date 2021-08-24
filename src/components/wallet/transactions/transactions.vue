@@ -42,7 +42,7 @@ export default {
     components: { LoadingSpinner, Pagination, ShowTransactions, AlertBox },
 
     props: {
-        publicKeyHash: {default: ""},
+        publicKey: {default: ""},
         page: {default: null},
     },
 
@@ -61,11 +61,11 @@ export default {
         },
 
         address(){
-            return this.$store.state.addresses.list[this.publicKeyHash]
+            return this.$store.state.addresses.list[this.publicKey]
         },
 
         txs(){
-            return this.$store.state.accountsTxs.list[this.publicKeyHash]
+            return this.$store.state.accountsTxs.list[this.publicKey]
         },
 
         countPerPage(){
@@ -135,7 +135,7 @@ export default {
                 this.error = ''
 
                 await this.$store.state.blockchain.syncPromise;
-                await this.$store.dispatch('downloadAccountTxs', {publicKeyHash: this.publicKeyHash, next: this.last, view: (this.page !== null) } )
+                await this.$store.dispatch('downloadAccountTxs', {publicKey: this.publicKey, next: this.last, view: (this.page !== null) } )
 
             }catch(err){
                 this.error = err.toString()
@@ -146,7 +146,7 @@ export default {
     },
 
     watch: {
-        publicKeyHash (to, from) {
+        publicKey (to, from) {
             return this.loadTransactions();
         },
         page (to, from) {

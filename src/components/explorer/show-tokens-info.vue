@@ -16,7 +16,7 @@
 
             <span class="col-5 d-block d-sm-none text-dark">Name</span>
             <span class="col-7 col-sm-4 col-lg-3 text-truncate">
-                <account-identicon v-if="key && key.length === 40" :publicKeyHash="key" :size="20" :outer-size="5"  />
+                <account-identicon v-if="key && key.length === 66" :public-key="key" :size="20" :outer-size="5"  />
                 <router-link :to="`/tokens/${key ? key : 'PBOX'}`">
                     {{token.name}}
                 </router-link>

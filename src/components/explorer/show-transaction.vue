@@ -42,12 +42,12 @@
             <span class="col-8 col-md-7">
                 <div class="input" v-for="(vin, index) in tx.vin "
                      :key="`show-transaction-vin-${index}`">
-                    <account-identicon :publicKeyHash="vin.publicKeyHash" size="20" outer-size="7" />
+                    <account-identicon :publicKey="vin.publicKey" size="20" outer-size="7" />
                     <amount :token="vin.token" :value="vin.amount" :sign="false" />
                 </div>
                 <div class="output" v-for="(vout, index) in tx.vout"
                      :key="`show-transaction-vout-${index}`">
-                    <account-identicon :publicKeyHash="vout.publicKeyHash" size="20" outer-size="7" />
+                    <account-identicon :publicKey="vout.publicKey" size="20" outer-size="7" />
                     <amount :token="vout.token" :value="vout.amount" :sign="false" />
                 </div>
             </span>

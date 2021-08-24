@@ -13,7 +13,7 @@
                     <div class="col px-1 py-1 position-static">
                         <div class="d-flex align-items-center d-block">
                             <div class="avatar avatar-xxl me-3">
-                                <account-identicon :public-key-hash="address.publicKeyHash" :size="60" :outer-size="20" :version="address.version" />
+                                <account-identicon :public-key="address.publicKey" :size="60" :outer-size="20" :version="address.version" />
                             </div>
                             <span class="fw-bold d-block text-break">
                                 {{address.addressEncoded}}
@@ -37,7 +37,7 @@
                         <i class="fa fa-tools" />
                     </button>
 
-                    <button v-if="$store.getters.walletContains(this.address.publicKeyHash)" class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="sendFunds"  v-tooltip.bottom="'Send Transparently Funds'">
+                    <button v-if="$store.getters.walletContains(this.address.publicKey)" class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="sendFunds"  v-tooltip.bottom="'Send Transparently Funds'">
                         <i class="fa fa-money-check-alt" />
                     </button>
 
@@ -67,7 +67,7 @@ export default {
 
     computed:{
         account(){
-            return this.$store.state.accounts.list[this.address.publicKeyHash]
+            return this.$store.state.accounts.list[this.address.publicKey]
         },
 
         getAddress(){

@@ -65,10 +65,10 @@ export default {
                         console.log("listenNetworkNotifications", key, data, extraInfo)
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT)
-                            return this.$store.dispatch('accountUpdateNotification', {publicKeyHash: key, account: JSON.parse(data) })
+                            return this.$store.dispatch('accountUpdateNotification', {publicKey: key, account: JSON.parse(data) })
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS)
-                            return this.$store.dispatch('accountTxUpdateNotification', { publicKeyHash: key, txHash:data.substr(1,64), extraInfo: JSON.parse(extraInfo) } )
+                            return this.$store.dispatch('accountTxUpdateNotification', { publicKey: key, txHash:data.substr(1,64), extraInfo: JSON.parse(extraInfo) } )
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTION)
                             return this.$store.dispatch('txNotification', { txHash: key, extraInfo: JSON.parse(extraInfo) } )
@@ -114,7 +114,7 @@ export default {
             await this.$store.dispatch('getBlocksInfo',  {starting: this.$store.state.blockchain.end - consts.blocksInfoPagination, blockchainEnd: this.$store.state.blockchain.end } )
 
             for (const key in this.$store.state.wallet.addresses)
-                await this.$store.dispatch('subscribeAccount', this.$store.state.wallet.addresses[key].publicKeyHash)
+                await this.$store.dispatch('subscribeAccount', this.$store.state.wallet.addresses[key].publicKey)
         },
 
 

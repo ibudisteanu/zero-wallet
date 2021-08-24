@@ -21,7 +21,6 @@ export default {
         identicon: {default: null},
         address: {default: ""},
         publicKey: {default: null},
-        publicKeyHash: {default: null},
 
         disableRoute: { default: false }
     },
@@ -40,29 +39,13 @@ export default {
                 this.identiconSrc = newVal
             }
         },
-        publicKeyHash: {
-            immediate: true,
-            handler: async function(newVal, oldVal){
-                if (newVal) {
-                    try{
-                        const out = await PandoraPay.addresses.generateAddress(newVal)
-                        this.identiconSrc = await Identicons.getIdenticon(newVal)
-                        this.finalAddress = out[1]
-                    }catch(err){
-                        this.finalAddress = ""
-                        this.identiconSrc = ""
-                    }
-                }
-            }
-        },
         publicKey: {
             immediate: true,
             handler: async function(newVal, oldVal){
                 if (newVal){
                     try{
-                        const publicKeyHash = await PandoraPay.cryptography.computePublicKeyHash(newVal)
-                        const out = await PandoraPay.addresses.generateAddress(publicKeyHash)
-                        this.identiconSrc = await Identicons.getIdenticon(publicKeyHash)
+                        const out = await PandoraPay.addresses.generateAddress(newVal)
+                        this.identiconSrc = await Identicons.getIdenticon(newVal)
                         this.finalAddress = out[1]
                     }catch(err){
                         this.finalAddress = ""
@@ -78,7 +61,7 @@ export default {
                     try{
                         const addressData = await PandoraPay.addresses.decodeAddress(newVal)
                         const address = JSON.parse(addressData)
-                        this.identiconSrc = await Identicons.getIdenticon(address.publicKeyHash)
+                        this.identiconSrc = await Identicons.getIdenticon(address.publicKey)
                         this.finalAddress = newVal
                     }catch(err){
                         this.finalAddress = ""

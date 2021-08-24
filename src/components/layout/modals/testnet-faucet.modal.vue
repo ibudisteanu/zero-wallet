@@ -55,7 +55,7 @@ export default {
 
     computed:{
         address(){
-            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKeyHash] ;
+            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey] ;
         },
         hCaptchaSiteKey(){
             return this.$store.state.faucet.hCaptchaSiteKey

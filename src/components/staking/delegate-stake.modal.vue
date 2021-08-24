@@ -51,28 +51,28 @@
                                 </div>
 
                                 <div class="form-group pt-4">
-                                    <input class="form-check-input" id="hasNewDelegatedStakePublicKeyHash" type="checkbox"  name="checkbox" v-model="hasNewDelegatedStakePublicKeyHash"  >
-                                    <label class="form-check-label" for="hasNewDelegatedStakePublicKeyHash"> Set a new Delegated Public Key Hash </label>
+                                    <input class="form-check-input" id="hasNewDelegatedStakePublicKey" type="checkbox"  name="checkbox" v-model="hasNewDelegatedStakePublicKey"  >
+                                    <label class="form-check-label" for="hasNewDelegatedStakePublicKey"> Set a new Delegated Public Key Hash </label>
                                 </div>
 
-                                <div v-if="hasNewDelegatedStakePublicKeyHash" class="pt-2 ms-2">
+                                <div v-if="hasNewDelegatedStakePublicKey" class="pt-2 ms-2">
 
                                     <div class="form-group pt-2">
-                                        <input class="form-check-input" id="delegateNewPublicKeyHashGenerate" type="checkbox"  name="checkbox" v-model="delegateNewPublicKeyHashGenerate"  :disabled="disableNewDelegatedStakePublicKeyHash" >
-                                        <label class="form-check-label" for="delegateNewPublicKeyHashGenerate"> Auto Generate Public Key Hash </label>
+                                        <input class="form-check-input" id="delegateNewPublicKeyGenerate" type="checkbox"  name="checkbox" v-model="delegateNewPublicKeyGenerate"  :disabled="disableNewDelegatedStakePublicKey" >
+                                        <label class="form-check-label" for="delegateNewPublicKeyGenerate"> Auto Generate Public Key Hash </label>
                                     </div>
 
-                                    <template v-if="!delegateNewPublicKeyHashGenerate">
+                                    <template v-if="!delegateNewPublicKeyGenerate">
                                         <div class="form-group pt-2">
-                                            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Delegate PublicKeyHash</label>
-                                            <input :class="`form-control ${validationDelegateStakePublicKeyHash ? 'is-invalid' : ''}`" type="text" v-model="delegateStakePublicKeyHash"  :disabled="disableNewDelegatedStakePublicKeyHash" >
-                                            <div v-if="validationDelegateStakePublicKeyHash" class="invalid-feedback d-block">{{validationDelegateStakePublicKeyHash}}</div>
+                                            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Delegate PublicKey</label>
+                                            <input :class="`form-control ${validationDelegateStakePublicKey ? 'is-invalid' : ''}`" type="text" v-model="delegateStakePublicKey"  :disabled="disableNewDelegatedStakePublicKey" >
+                                            <div v-if="validationDelegateStakePublicKey" class="invalid-feedback d-block">{{validationDelegateStakePublicKey}}</div>
                                         </div>
                                     </template>
 
                                     <div class="form-group pt-2">
                                         <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Delegate Fee in Percentage: {{delegateStakeFee/65535*100}}%</label>
-                                        <input class="form-control" type="number" v-model="delegateStakeFee" min="0" max="65535" step="1"  :disabled="disableNewDelegatedStakePublicKeyHash" >
+                                        <input class="form-control" type="number" v-model="delegateStakeFee" min="0" max="65535" step="1"  :disabled="disableNewDelegatedStakePublicKey" >
                                     </div>
 
                                 </div>
@@ -128,19 +128,19 @@ export default {
     data(){
         return {
 
-            publicKeyHash: "",
+            publicKey: "",
 
             tab: 0,
             maxTab: 3,
 
-            disableNewDelegatedStakePublicKeyHash: false,
+            disableNewDelegatedStakePublicKey: false,
 
-            hasNewDelegatedStakePublicKeyHash: false,
-            delegateNewPublicKeyHashGenerate: true,
+            hasNewDelegatedStakePublicKey: false,
+            delegateNewPublicKeyGenerate: true,
 
             nonce: 0,
 
-            delegateStakePublicKeyHash: '',
+            delegateStakePublicKey: '',
             delegateStakeAmount: 0,
             delegateStakeFee: 0,
 
@@ -159,10 +159,10 @@ export default {
     computed:{
         version: () => version,
         address(){
-            return this.$store.state.wallet.addresses[this.publicKeyHash];
+            return this.$store.state.wallet.addresses[this.publicKey];
         },
         account(){
-            return this.$store.state.accounts.list[this.publicKeyHash]
+            return this.$store.state.accounts.list[this.publicKey]
         },
         isLoading(){
             return this.account === undefined
@@ -185,13 +185,13 @@ export default {
             return balances
         },
 
-        validationDelegateStakePublicKeyHash(){
+        validationDelegateStakePublicKey(){
 
-            if (this.delegateNewPublicKeyHashGenerate || !this.hasNewDelegatedStakePublicKeyHash) return
+            if (this.delegateNewPublicKeyGenerate || !this.hasNewDelegatedStakePublicKey) return
 
             try{
-                const buffer = Buffer.from(this.delegateStakePublicKeyHash, "hex")
-                if (buffer.length !== 20) return "It must be 40 hex"
+                const buffer = Buffer.from(this.delegateStakePublicKey, "hex")
+                if (buffer.length !== 33) return "It must be 66 hex"
             }catch(err){
                 return "Invalid Hex input"
             }
@@ -210,7 +210,7 @@ export default {
                 value = Math.min( value, this.maxTab + 1)
 
                 if (this.tab === 1 && value === 2){
-                    if (this.validationDelegateStakePublicKeyHash) throw this.validationDelegateStakePublicKeyHash
+                    if (this.validationDelegateStakePublicKey) throw this.validationDelegateStakePublicKey
                 }
                 if (this.tab === 2 && value === 3){
                     if (this.extraData.validationError) throw this.extraData.validationError
@@ -237,16 +237,16 @@ export default {
             return this.setTab(resolver, this.tab + 1)
         },
 
-        async showModal( publicKeyHash, data ) {
+        async showModal( publicKey, data ) {
             Object.assign(this.$data, this.$options.data());
 
-            this.publicKeyHash = publicKeyHash
-            if (data && data.delegatePublicKeyHash){
-                this.hasNewDelegatedStakePublicKeyHash = true
-                this.delegateNewPublicKeyHashGenerate = false
-                this.delegateStakePublicKeyHash = data.delegatePublicKeyHash
+            this.publicKey = publicKey
+            if (data && data.delegatePublicKey){
+                this.hasNewDelegatedStakePublicKey = true
+                this.delegateNewPublicKeyGenerate = false
+                this.delegateStakePublicKey = data.delegatePublicKey
                 this.delegateStakeFee = data.delegatesFee
-                this.disableNewDelegatedStakePublicKeyHash = true
+                this.disableNewDelegatedStakePublicKey = true
             }
 
             try{
@@ -291,9 +291,9 @@ export default {
                     from: this.address.addressEncoded,
                     nonce: this.nonce,
                     delegateAmount: this.delegateStakeAmount,
-                    delegateNewPublicKeyHashGenerate: this.hasNewDelegatedStakePublicKeyHash ? this.delegateNewPublicKeyHashGenerate : false,
-                    delegateNewPubKeyHash: this.hasNewDelegatedStakePublicKeyHash ? (this.delegateStakePublicKeyHash ? this.delegateStakePublicKeyHash : "") : "",
-                    delegateNewFee: this.hasNewDelegatedStakePublicKeyHash ? this.delegateStakeFee : "",
+                    delegateNewPublicKeyGenerate: this.hasNewDelegatedStakePublicKey ? this.delegateNewPublicKeyGenerate : false,
+                    delegateNewPubKeyHash: this.hasNewDelegatedStakePublicKey ? (this.delegateStakePublicKey ? this.delegateStakePublicKey : "") : "",
+                    delegateNewFee: this.hasNewDelegatedStakePublicKey ? this.delegateStakeFee : "",
                     data: {
                         data: Buffer.from(this.extraData.data).toString("hex"),
                         encrypt: this.extraData.type === "encrypted",

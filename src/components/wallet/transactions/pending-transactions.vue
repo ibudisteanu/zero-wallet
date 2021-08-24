@@ -38,7 +38,7 @@ export default {
     components: { LoadingSpinner, Pagination, ShowTransactions, AlertBox },
 
     props: {
-        publicKeyHash: {default: ""},
+        publicKey: {default: ""},
     },
 
     data(){
@@ -50,12 +50,12 @@ export default {
     computed:{
 
         address(){
-            return this.$store.state.addresses.list[this.publicKeyHash]
+            return this.$store.state.addresses.list[this.publicKey]
         },
 
         txs(){
-            if (!this.$store.state.accountsPendingTxs.list[this.publicKeyHash]) return
-            return Object.keys( this.$store.state.accountsPendingTxs.list[this.publicKeyHash] )
+            if (!this.$store.state.accountsPendingTxs.list[this.publicKey]) return
+            return Object.keys( this.$store.state.accountsPendingTxs.list[this.publicKey] )
         },
 
     },

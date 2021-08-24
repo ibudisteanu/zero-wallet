@@ -28,16 +28,6 @@
                         </div>
                     </div>
 
-                    <div class="row py-2">
-                        <div v-if="!showPublicKeyHash" class="pointer w-auto" @click="showPublicKeyHash = true">
-                            View Public Key Hash
-                        </div>
-                        <div v-else >
-                            Public Key Hash: {{address.publicKeyHash}}
-                            <i class="fa fa-copy pointer d-inline-block" v-tooltip.bottom="'Copy Public Key Hash'" @click="handleCopyAddress(address.publicKeyHash)" />
-                        </div>
-                    </div>
-
                 </div>
 
                 <div class="card-body bg-light">
@@ -91,7 +81,6 @@ export default {
     data(){
         return {
             showPublicKey: false,
-            showPublicKeyHash: false,
         }
     },
 
@@ -101,7 +90,7 @@ export default {
         version: () => version,
 
         address(){
-            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKeyHash];
+            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey];
         }
 
     },
@@ -129,13 +118,11 @@ export default {
             const file = new Blob([json], {type: "application/json;charset=utf-8"});
             FileSaver.saveAs(file, fileName);
 
-            this.$store.dispatch('addToast', {
+            return this.$store.dispatch('addToast', {
                 type: 'success',
                 title: `Address ${this.address.name} has been saved in your machine`,
                 text: `The address ${this.address.addressEncoded} has been saved in the downloads folder.`,
             });
-
-
         },
 
         handleShowPrivateKey(){

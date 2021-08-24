@@ -8,17 +8,17 @@ export default {
 
 
 
-    async _downloadAccount({state, dispatch, commit, getters},publicKeyHash){
+    async _downloadAccount({state, dispatch, commit, getters}, publicKey){
 
-        if (promises.accounts[publicKeyHash]) return promises.accounts[publicKeyHash]
+        if (promises.accounts[publicKey]) return promises.accounts[publicKey]
 
-        if (promises.accounts[publicKeyHash]) return promises.accounts[publicKeyHash];
-        return promises.accounts[publicKeyHash] = new Promise( async (resolve, reject) => {
+        if (promises.accounts[publicKey]) return promises.accounts[publicKey];
+        return promises.accounts[publicKey] = new Promise( async (resolve, reject) => {
             try{
 
                 const result = await Promise.all([
-                    PandoraPay.network.getNetworkAccount(publicKeyHash),
-                    PandoraPay.network.getNetworkAccountMempool(publicKeyHash),
+                    PandoraPay.network.getNetworkAccount(publicKey),
+                    PandoraPay.network.getNetworkAccountMempool(publicKey),
                 ])
 
                 const account = JSON.parse( result[0] )
@@ -30,82 +30,82 @@ export default {
                     await dispatch('getTokenByHash', "")
                 }
 
-                await PandoraPay.store.storeAccount( publicKeyHash, result[0] )
+                await PandoraPay.store.storeAccount( publicKey, result[0] )
 
-                await dispatch('processAccountPendingTransactions', {publicKeyHash, list: JSON.parse(result[1]) })
+                await dispatch('processAccountPendingTransactions', {publicKey, list: JSON.parse(result[1]) })
 
-                commit('setAccount', { publicKeyHash, account })
+                commit('setAccount', { publicKey, account })
 
                 resolve(account)
             }catch(err){
                 reject(err)
             }finally{
-                delete promises.accounts[publicKeyHash];
+                delete promises.accounts[publicKey];
             }
         })
     },
 
-    async subscribeAccount({state, dispatch, commit}, publicKeyHash){
+    async subscribeAccount({state, dispatch, commit}, publicKey){
 
-        if (state.subscribed[publicKeyHash])
-            return dispatch('_downloadAccount', publicKeyHash)
+        if (state.subscribed[publicKey])
+            return dispatch('_downloadAccount', publicKey)
 
-        if (promises.subscribed[publicKeyHash]) return promises.subscribed[publicKeyHash];
-        return promises.subscribed[publicKeyHash] = new Promise( async (resolve, reject) => {
+        if (promises.subscribed[publicKey]) return promises.subscribed[publicKey];
+        return promises.subscribed[publicKey] = new Promise( async (resolve, reject) => {
 
             try{
 
                 await Promise.all([
-                    PandoraPay.network.subscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT ),
-                    PandoraPay.network.subscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS ),
+                    PandoraPay.network.subscribeNetwork( publicKey, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT ),
+                    PandoraPay.network.subscribeNetwork( publicKey, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS ),
                 ])
 
-                commit('setSubscribedAccountStatus', {publicKeyHash, status: true})
+                commit('setSubscribedAccountStatus', {publicKey, status: true})
 
-                resolve( await dispatch('_downloadAccount', publicKeyHash) )
+                resolve( await dispatch('_downloadAccount', publicKey) )
 
             }catch(err){
                 reject(err)
             }finally{
-                delete promises.subscribed[publicKeyHash];
+                delete promises.subscribed[publicKey];
             }
 
         })
     },
 
-    async unsubscribeAccount({state, dispatch, commit}, publicKeyHash){
+    async unsubscribeAccount({state, dispatch, commit}, publicKey){
 
-        if (!state.subscribed[publicKeyHash])
+        if (!state.subscribed[publicKey])
             return false
 
-        if (promises.unsubscribed[publicKeyHash]) return promises.unsubscribed[publicKeyHash]
-        return promises.unsubscribed[publicKeyHash] = new Promise( async(resolve, reject)=>{
+        if (promises.unsubscribed[publicKey]) return promises.unsubscribed[publicKey]
+        return promises.unsubscribed[publicKey] = new Promise( async(resolve, reject)=>{
             try{
 
                 await Promise.all([
-                    PandoraPay.network.unsubscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT ),
-                    PandoraPay.network.unsubscribeNetwork( publicKeyHash, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS)
+                    PandoraPay.network.unsubscribeNetwork( publicKey, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT ),
+                    PandoraPay.network.unsubscribeNetwork( publicKey, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS)
                 ]);
 
-                await PandoraPay.store.storeAccount( publicKeyHash, null )
+                await PandoraPay.store.storeAccount( publicKey, null )
 
-                commit('removeAccount', { publicKeyHash })
+                commit('removeAccount', { publicKey })
 
-                commit('setSubscribedAccountStatus', {publicKeyHash, status: false})
+                commit('setSubscribedAccountStatus', {publicKey, status: false})
 
                 resolve(true)
             }catch(err){
                 reject(err)
             }finally{
-                delete promises.unsubscribed[publicKeyHash]
+                delete promises.unsubscribed[publicKey]
             }
         })
 
     },
 
-    async accountUpdateNotification( {state, dispatch, commit, getters}, {publicKeyHash, account }){
-        await PandoraPay.store.storeAccount( publicKeyHash, null )
-        commit('setAccount', {publicKeyHash, account})
+    async accountUpdateNotification( {state, dispatch, commit, getters}, {publicKey, account }){
+        await PandoraPay.store.storeAccount( publicKey, null )
+        commit('setAccount', {publicKey, account})
     },
 
 }

@@ -2,7 +2,7 @@ import Vue from 'vue';
 
 export default {
 
-    setWallet( state, { wallet, addresses, mainPublicKeyHash } ){
+    setWallet( state, { wallet, addresses, mainPublicKey } ){
         state.isEncrypted = wallet.isEncrypted
         state.version = wallet.version;
         state.seed = wallet.seed;
@@ -15,20 +15,20 @@ export default {
 
         state.addresses = addresses
 
-        state.mainPublicKeyHash = mainPublicKeyHash
+        state.mainPublicKey = mainPublicKey
     },
 
-    setMainPublicKeyHash( state, value){
-        state.mainPublicKeyHash = value;
-        localStorage.setItem('mainPublicKeyHash', value);
+    setMainPublicKey( state, value){
+        state.mainPublicKey = value;
+        localStorage.setItem('mainPublicKey', value);
     },
 
     addWalletAddress(state, address){
-        Vue.set(state.addresses, address.publicKeyHash, address )
+        Vue.set(state.addresses, address.publicKey, address )
     },
 
     removeWalletAddress(state, address){
-        Vue.delete(state.addresses, address.publicKeyHash, address )
+        Vue.delete(state.addresses, address.publicKey, address )
     },
 
 }

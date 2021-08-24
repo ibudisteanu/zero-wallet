@@ -7,7 +7,7 @@
 
             <div :class="`${finalAddress ? 'destination-row': ''} `" >
 
-                <account-identicon v-if="finalAddress" :public-key="finalAddress.publicKey" :public-key-hash="finalAddress.publicKeyHash" size="30" outer-size="8" :version="finalAddress.version" />
+                <account-identicon v-if="finalAddress" :public-key="finalAddress.publicKey" size="30" outer-size="8" :version="finalAddress.version" />
 
                 <div class="input-toggle-group">
                     <input :class="`form-control ${validationError ? 'is-invalid' : ''}`" type="text" v-model="destination">

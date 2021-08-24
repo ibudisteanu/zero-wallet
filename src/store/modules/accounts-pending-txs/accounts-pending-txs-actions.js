@@ -1,10 +1,10 @@
 export default {
 
-    async processAccountPendingTransactions({dispatch, state, getters, commit }, { publicKeyHash, list }){
+    async processAccountPendingTransactions({dispatch, state, getters, commit }, { publicKey, list }){
 
         if (!list) list = []
 
-        if (list.length && getters.walletContains(publicKeyHash)) {
+        if (list.length && getters.walletContains(publicKey)) {
             const txs = await Promise.all( list.map( txHash => dispatch('getTransactionByHash', txHash ) ))
 
             txs.sort( (a,b) => ( (a.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ? a.nonce : -1) -
@@ -22,15 +22,15 @@ export default {
         const map = {}
         list.map( it => map[it] = true )
 
-        commit('setPendingList', { publicKeyHash, map })
+        commit('setPendingList', { publicKey, map })
 
     },
 
-    async accountPendingTransactionsTxUpdateNotification({dispatch, state, getters, commit}, {publicKeyHash, txHash, extraInfo }){
+    async accountPendingTransactionsTxUpdateNotification({dispatch, state, getters, commit}, {publicKey, txHash, extraInfo }){
 
         if (extraInfo.blockchain){
 
-            commit('updatePendingList', {publicKeyHash, txHash, inserted: false})
+            commit('updatePendingList', {publicKey, txHash, inserted: false})
 
             if (extraInfo.blockchain.inserted){
                 await PandoraPay.mempool.mempoolRemoveTx(txHash)
@@ -48,12 +48,12 @@ export default {
 
                 }
 
-                commit('updatePendingList', {publicKeyHash, txHash, inserted: true })
+                commit('updatePendingList', {publicKey, txHash, inserted: true })
 
             }else {
 
                 await PandoraPay.mempool.mempoolRemoveTx(txHash)
-                commit('updatePendingList', {publicKeyHash, txHash, inserted: false })
+                commit('updatePendingList', {publicKey, txHash, inserted: false })
 
             }
 

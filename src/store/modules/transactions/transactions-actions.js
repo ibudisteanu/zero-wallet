@@ -86,7 +86,8 @@ export default {
         let decrypted = false
 
         for (const vout of tx.vout){
-            const walletAddress = getters.walletContains( vout.publicKeyHash)
+
+            const walletAddress = getters.walletContains( vout.publicKey )
             if ( walletAddress ){
                 tx.__dataCanBeDecrypted = true
 

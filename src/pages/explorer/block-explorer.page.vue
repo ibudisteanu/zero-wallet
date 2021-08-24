@@ -89,8 +89,8 @@
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Forger</span>
                         <div class="col-7 col-sm-9 text-truncate">
-                            <account-identicon class="vertical-center" :public-key-hash="blk.bloom.delegatedPublicKeyHash" :size="20" :outer-size="5"  />
-                            <span class="forger-address">{{blk.bloom.delegatedPublicKeyHash}}</span>
+                            <account-identicon class="vertical-center" :public-key="blk.bloom.delegatedPublicKey" :size="20" :outer-size="5"  />
+                            <span class="forger-address">{{blk.bloom.delegatedPublicKey}}</span>
                         </div>
                     </div>
                 </template>

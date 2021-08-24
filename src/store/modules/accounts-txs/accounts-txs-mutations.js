@@ -3,11 +3,11 @@ import consts from "../../../../consts/consts";
 
 export default {
 
-    setAccountTxsViewPosition(state, {publicKeyHash, data } ){
-        Vue.set( state.viewTxsPositions, publicKeyHash,  data  )
+    setAccountTxsViewPosition(state, {publicKey, data } ){
+        Vue.set( state.viewTxsPositions, publicKey,  data  )
     },
 
-    setAccountTxs(state, {publicKeyHash, starting, accountTxs }){
+    setAccountTxs(state, {publicKey, starting, accountTxs }){
 
         const obj = {
             hashes: {},
@@ -25,17 +25,17 @@ export default {
             obj.next = 0
         }
 
-        Vue.set(state.list, publicKeyHash, obj );
+        Vue.set(state.list, publicKey, obj );
     },
 
-    addAccountTxUpdateNotification(state, {publicKeyHash, txHash, extraInfo }){
+    addAccountTxUpdateNotification(state, {publicKey, txHash, extraInfo }){
 
         if (!extraInfo.blockchain) return
 
         const obj = {
             hashes: {},
             count: 0,
-            ...state.list[publicKeyHash]
+            ...state.list[publicKey]
         };
 
         if (!extraInfo.blockchain.inserted){ //removed
@@ -46,7 +46,7 @@ export default {
             obj.hashes[ extraInfo.blockchain.txsCount ] = txHash
         }
 
-        const viewTxsPositions = state.viewTxsPositions[publicKeyHash]
+        const viewTxsPositions = state.viewTxsPositions[publicKey]
         if (viewTxsPositions) {
             let c = 0
             for (const heightStr in obj.hashes) {
@@ -69,7 +69,7 @@ export default {
             }
         }
 
-        Vue.set(state.list, publicKeyHash, obj );
+        Vue.set(state.list, publicKey, obj );
     }
 
 }

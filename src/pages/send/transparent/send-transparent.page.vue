@@ -155,10 +155,10 @@ export default {
 
         version: () => version,
         address(){
-            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKeyHash] ;
+            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey] ;
         },
         account(){
-            return this.$store.state.accounts.list[this.$store.state.wallet.mainPublicKeyHash]
+            return this.$store.state.accounts.list[this.$store.state.wallet.mainPublicKey]
         },
         balances(){
             if (this.account) return this.account.balances;

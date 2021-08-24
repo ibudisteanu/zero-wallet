@@ -13,11 +13,11 @@
             <div class="list-group list-group-flush fs--1">
                 <div class="list-group-title border-bottom">All accounts:</div>
                 <div class="list-group-item div-scrollable" style="max-height:19rem" >
-                    <div v-for="(address, index) in addresses" :class="`notification notification-flush notification-unread ${ address.publicKeyHash === mainPublicKeyHash  ? 'fw-black' : ''} ` "
+                    <div v-for="(address, index) in addresses" :class="`notification notification-flush notification-unread ${ address.publicKey === mainPublicKey  ? 'fw-black' : ''} ` "
                          :key="`address-${index}`">
                             <div class="notification-body address">
                                 <account-identicon :address="address.addressEncoded" :identicon="address.identicon" :size="20" :outer-size="5" :version="address.version" :disable-route="true" />
-                                <div class="account-title pointer" @click="setMainPublicKeyHash(address.publicKeyHash)">
+                                <div class="account-title pointer" @click="setMainPublicKey(address.publicKey)">
                                     <span class="fw-semi-bold text-truncate">{{address.name}}</span>
                                     <span class="fw-normal text-truncate">{{address.addressEncoded}} </span>
                                 </div>
@@ -68,15 +68,15 @@ export default {
     computed: {
 
         address(){
-            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKeyHash];
+            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey];
         },
 
         addresses(){
             return this.$store.state.wallet.addresses;
         },
 
-        mainPublicKeyHash(){
-            return this.$store.state.wallet.mainPublicKeyHash;
+        mainPublicKey(){
+            return this.$store.state.wallet.mainPublicKey;
         },
 
         encrypted(){
@@ -127,8 +127,8 @@ export default {
 
         },
 
-        setMainPublicKeyHash(publicKeyHash){
-            return this.$store.commit('setMainPublicKeyHash', publicKeyHash );
+        setMainPublicKey(publicKey){
+            return this.$store.commit('setMainPublicKey', publicKey );
         },
 
         viewMnemonic(){

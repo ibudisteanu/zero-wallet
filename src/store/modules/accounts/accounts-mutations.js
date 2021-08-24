@@ -2,17 +2,17 @@ import Vue from "vue";
 
 export default {
 
-    setAccount(state, {publicKeyHash, account  }){
-        Vue.set(state.list, publicKeyHash, account );
+    setAccount(state, {publicKey, account  }){
+        Vue.set(state.list, publicKey, account );
     },
 
-    removeAccount(state, { publicKeyHash }){
-        Vue.delete(state.list, publicKeyHash );
+    removeAccount(state, { publicKey }){
+        Vue.delete(state.list, publicKey );
     },
 
-    setSubscribedAccountStatus(state, {publicKeyHash,status} ){
-        if (status) Vue.set(state.subscribed, publicKeyHash, true)
-        else Vue.delete(state.subscribed, publicKeyHash)
+    setSubscribedAccountStatus(state, {publicKey,status} ){
+        if (status) Vue.set(state.subscribed, publicKey, true)
+        else Vue.delete(state.subscribed, publicKey)
     },
 
 }

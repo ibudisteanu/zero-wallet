@@ -31,7 +31,7 @@
                         </template>
                         <template v-else>
                             <span class="d-block pt-4">Delegated: <strong>YES</strong> </span>
-                            <span class="d-block">Delegated public key hash {{account.delegatedStake.delegatedPublicKeyHash}}</span>
+                            <span class="d-block">Delegated public key {{account.delegatedStake.delegatedPublicKey}}</span>
                             <span class="d-block">Delegated fee {{delegateFeePercentage}} %</span>
                         </template>
 
@@ -119,21 +119,20 @@ export default {
     data() {
         return {
             showPublicKey: false,
-            showPublicKeyHash: false,
             error: "",
         }
     },
 
     computed:{
 
-        publicKeyHash(){
-            return this.$store.state.wallet.mainPublicKeyHash
+        publicKey(){
+            return this.$store.state.wallet.mainPublicKey
         },
         address(){
-            return this.$store.state.wallet.addresses[this.publicKeyHash];
+            return this.$store.state.wallet.addresses[this.publicKey];
         },
         account(){
-            return this.$store.state.accounts.list[this.publicKeyHash]
+            return this.$store.state.accounts.list[this.publicKey]
         },
         isLoading(){
             return this.account === undefined
@@ -181,7 +180,7 @@ export default {
         },
 
         pendingTransactions(){
-            return Object.keys( this.$store.state.accountsPendingTxs.list[this.publicKeyHash] || {} )
+            return Object.keys( this.$store.state.accountsPendingTxs.list[this.publicKey] || {} )
         },
 
         isDelegateStakeInPending(){
@@ -199,15 +198,15 @@ export default {
                     title: `Can't delegate`,
                     text: `You can't delegate as your wallet is empty`,
                 })
-            return this.$refs.refDelegateStakeModal.showModal( this.publicKeyHash, data );
+            return this.$refs.refDelegateStakeModal.showModal( this.publicKey, data );
         },
 
         handleShowUnstake(){
-            return this.$refs.refUnstakeModal.showModal( this.publicKeyHash );
+            return this.$refs.refUnstakeModal.showModal( this.publicKey );
         },
 
         handleShowDelegateStakeNode(){
-            return this.$refs.refDelegateStakeNodeModal.showModal( this.publicKeyHash );
+            return this.$refs.refDelegateStakeNodeModal.showModal( this.publicKey );
         },
 
         onDelegateStake(data){

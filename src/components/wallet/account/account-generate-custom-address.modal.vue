@@ -8,25 +8,19 @@
                 <div class="card-header bg-light pt-0 pb-2">
                     <ul class="nav justify-content-between nav-wizard">
                         <li class="nav-item">
-                            <router-link :class="`nav-link ${tab===0?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(0)">
-                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-key"></i></span></span>
-                                <span class="d-none d-md-block mt-1 fs--1">Public Key</span>
-                            </router-link>
-                        </li>
-                        <li class="nav-item">
-                            <router-link :class="`nav-link ${tab===1?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(1)">
+                            <router-link :class="`nav-link ${tab===0?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(1)">
                                 <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-dollar-sign"></i></span></span>
                                 <span class="d-none d-md-block mt-1 fs--1">Amount</span>
                             </router-link>
                         </li>
                         <li class="nav-item">
-                            <router-link :class="`nav-link ${tab===2?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(2)">
+                            <router-link :class="`nav-link ${tab===1?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(2)">
                                 <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-hand-holding-usd"></i></span></span>
                                 <span class="d-none d-md-block mt-1 fs--1">Payment ID</span>
                             </router-link>
                         </li>
                         <li class="nav-item">
-                            <router-link :class="`nav-link ${tab===3?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(3)">
+                            <router-link :class="`nav-link ${tab===2?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(3)">
                                 <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-check"></i></span></span>
                                 <span class="d-none d-md-block mt-1 fs--1">Done</span>
                             </router-link>
@@ -35,18 +29,7 @@
                 </div>
                 <div class="card-body py-3">
                     <div class="tab-content">
-                        <div :class="`tab-pane ${tab===0?'active':''} `">
-                            <div class="form-check">
-                                <input class="form-check-input" id="publicKeyHash" type="radio" value="publicKeyHash" v-model="keyType" />
-                                <label class="form-check-label" for="publicKeyHash">Public Key Hash</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" id="publicKey" type="radio" value="publicKey" v-model="keyType" :disabled="!this.account.publicKey" />
-                                <label class="form-check-label" for="publicKey">Public Key</label>
-                                <i class="fa fa-question" v-tooltip.bottom="'It will allow users to send you encrypt messages'" ></i> <br>
-                            </div>
-                        </div>
-                        <div :class="`tab-pane ${tab===1?'active':''}`">
+                        <div :class="`tab-pane ${tab===0?'active':''}`">
                             <div class="form-check">
                                 <input class="form-check-input" id="amount" type="checkbox"  name="checkbox" v-model="hasAmount"  >
                                 <label class="form-check-label" for="amount"> Amount </label>
@@ -55,7 +38,7 @@
                                 <div v-if="validateAmount" class="invalid-feedback d-block">{{validateAmount}}</div>
                             </div>
                         </div>
-                        <div :class="`tab-pane ${tab===2?'active':''} `">
+                        <div :class="`tab-pane ${tab===1?'active':''} `">
                             <div class="form-check">
                                 <input class="form-check-input" id="paymentId" type="checkbox"  name="checkbox" v-model="hasPaymentId"  >
                                 <label class="form-check-label" for="paymentId"> PaymentId</label>
@@ -64,7 +47,7 @@
                                 <div v-if="validationPaymentId" class="invalid-feedback d-block">{{validationPaymentId}}</div>
                             </div>
                         </div>
-                        <div :class="`tab-pane ${tab===3?'active':''} `">
+                        <div :class="`tab-pane ${tab===2?'active':''} `">
 
                             <template v-if="this.addressGenerated">
 
@@ -129,7 +112,6 @@ export default {
             error: '',
             account: null,
             title: "",
-            keyType: "publicKeyHash",
             hasAmount: false,
             hasPaymentId: false,
 
@@ -223,11 +205,7 @@ export default {
 
                 let args = []
 
-                if (this.keyType === "publicKeyHash")
-                    args.push( this.account.publicKeyHash )
-                else
-                if (this.keyType === "publicKey")
-                    args.push( this.account.publicKey )
+                args.push( this.account.publicKey )
 
                 if (this.hasAmount )
                     args.push( Number.parseInt(this.amount) )
@@ -251,11 +229,11 @@ export default {
 
         increaseTab(value){
             this.tab = this.tab + value
-            if (this.tab === 3) this.handleClick()
+            if (this.tab === 2) this.handleClick()
         },
         setTab(value){
             this.tab = value
-            if (this.tab === 3) this.handleClick()
+            if (this.tab === 2) this.handleClick()
         }
 
     }

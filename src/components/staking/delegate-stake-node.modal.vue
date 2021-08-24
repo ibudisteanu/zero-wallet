@@ -97,7 +97,7 @@ export default {
     data() {
         return {
 
-            publicKeyHash: "",
+            publicKey: "",
 
             tab: 0,
             maxTab: 3,
@@ -116,10 +116,10 @@ export default {
 
         version: () => version,
         address(){
-            return this.$store.state.wallet.addresses[this.publicKeyHash];
+            return this.$store.state.wallet.addresses[this.publicKey];
         },
         account(){
-            return this.$store.state.accounts.list[this.publicKeyHash]
+            return this.$store.state.accounts.list[this.publicKey]
         },
         isLoading(){
             return this.account === undefined
@@ -160,9 +160,9 @@ export default {
             return this.setTab(resolver, this.tab + 1)
         },
 
-        showModal(publicKeyHash) {
+        showModal(publicKey) {
             Object.assign(this.$data, this.$options.data());
-            this.publicKeyHash = publicKeyHash
+            this.publicKey = publicKey
             this.delegatesNodes = JSON.parse( PandoraPay.config.helpers.getNetworkSelectedDelegatesNodes() )
             return this.$refs.modal.showModal();
         },
@@ -230,11 +230,11 @@ export default {
                 if (typeof out.exists !== "boolean") throw "exists is not a boolean"
                 if (out.exists) throw "Your address already has been delegated"
 
-                if (typeof out.delegatePublicKeyHash !== "string") throw "delegatePublicKeyHash is missing"
+                if (typeof out.delegatePublicKey !== "string") throw "delegatePublicKey is missing"
 
                 const promise = new Promise((resolver, reject )=>{
                     this.$emit('onDelegateStake', {
-                        delegatePublicKeyHash: out.delegatePublicKeyHash,
+                        delegatePublicKey: out.delegatePublicKey,
                         resolver,
                         reject,
                         delegatesFee: this.nodeInfo.delegatesFee,
