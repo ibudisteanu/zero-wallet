@@ -71,8 +71,7 @@ export default {
 
         }
 
-        for (const vin of tx.vin) await dispatch('getTokenByHash', vin.token)
-        for (const vout of tx.vout) await dispatch('getTokenByHash', vout.token)
+        await dispatch('getTokenByHash', tx.token)
 
         commit("setTransactions", { txs: [tx] } )
 

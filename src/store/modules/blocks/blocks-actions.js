@@ -14,8 +14,7 @@ export default {
             tx.__blkHeight = blk.height
             tx.__timestamp = blk.timestamp
 
-            for (const vin of tx.vin) await dispatch('getTokenByHash', vin.token)
-            for (const vout of tx.vout) await dispatch('getTokenByHash', vout.token)
+            await dispatch('getTokenByHash', tx.token)
 
             txs.push(tx)
         }

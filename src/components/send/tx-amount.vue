@@ -1,20 +1,9 @@
 <template>
     <div class="row">
-        <div :class="`col-12 ${allowToken ? 'col-sm-7' : ''}`" v-if="allowAmount">
+        <div class="col-12">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{text}}</label>
             <input :class="`form-control ${validationAmountError ? 'is-invalid' :''}`" type="number" v-model.number="amount" min="0" :step="getSteps">
             <div v-if="validationAmountError" class="invalid-feedback d-block">{{validationAmountError}}</div>
-        </div>
-        <div :class="`col-12 ${allowAmount ? 'col-sm-5' : ''}`" v-if="allowToken">
-            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Token</label>
-            <select :class="`form-select ${validationTokenError ? 'is-invalid' :''}`" v-model="selectedToken">
-                <option v-for="(balance, id) in balances"
-                        :key="`send-money-${id}`"
-                        :value="balance.token">
-                    {{getTokenName(balance.token)}}
-                </option>
-            </select>
-            <div v-if="validationTokenError" class="invalid-feedback d-block">{{validationTokenError}}</div>
         </div>
     </div>
 </template>
@@ -25,25 +14,23 @@ export default {
     data(){
         return {
             amount: 0,
-            selectedToken: '',
         }
     },
 
     props:{
         text: {default: 'Amount'},
+        token: {default: ""},
         balances: {default: null },
         allowZero: {default: false,},
-        allowAmount: {default: true},
-        allowToken: {default: true},
     },
 
     computed:{
-        selectedTokenInfo(){
-            return this.$store.getters.getToken( this.selectedToken );
+        tokenInfo(){
+            return this.$store.getters.getToken( this.token );
         },
         getSteps(){
-            if (!this.selectedTokenInfo) return ""
-            return (1 / Math.pow(10, this.selectedTokenInfo.decimalSeparator)).toFixed(this.selectedTokenInfo.decimalSeparator)
+            if (!this.tokenInfo) return ""
+            return (1 / Math.pow(10, this.tokenInfo.decimalSeparator)).toFixed(this.tokenInfo.decimalSeparator)
         },
         validationAmountError(){
             if ( !this.allowZero && Number.parseFloat(this.amount) === 0) return "Amount needs to be greater than 0"
@@ -51,33 +38,22 @@ export default {
 
             for (const key in this.balances) {
                 const balance = this.balances[key]
-                if (balance.token === this.selectedToken)
-                    if (this.amount > PandoraPay.config.tokens.tokensConvertToBase( balance.amount.toString(), this.selectedTokenInfo.decimalSeparator ))
+                if (balance.token === this.token)
+                    if (this.amount > PandoraPay.config.tokens.tokensConvertToBase( balance.amount.toString(), this.tokenInfo.decimalSeparator )){
                         return "Not enough funds"
+                    } else {
+                        return
+                    }
             }
-        },
-        validationTokenError(){
-            if ( !this.selectedTokenInfo) return "Token was not selected"
+
+            return "Token not found"
         },
         validationError(){
-            if (this.validationTokenError) return this.validationTokenError
             if (this.validationAmountError) return this.validationAmountError
         }
     },
 
     methods:{
-
-        getToken(token){
-            return this.$store.getters.getToken( token );
-        },
-
-        getTokenName(token){
-            const tokenInfo = this.getToken( token )
-            if (tokenInfo)
-                return tokenInfo.name;
-        },
-
-
     },
 
     watch: {
@@ -85,13 +61,13 @@ export default {
         amount: {
             immediate: true,
             handler: function (to, from) {
-                if (!this.selectedTokenInfo){
+                if (!this.tokenInfo){
                     this.amount = 0
                     return 0
                 }
 
                 // to = Number.parseFloat(to)
-                // const target = to.toFixed(this.selectedTokenInfo.decimalSeparator)
+                // const target = to.toFixed(this.tokenInfo.decimalSeparator)
                 // if (to.toString() !== target ){
                 //     this.amount = target
                 //     return
@@ -103,12 +79,6 @@ export default {
             }
         },
 
-        selectedToken: {
-            immediate: true,
-            handler: function (to, from) {
-                return this.$emit('changed', {token: to,})
-            }
-        },
         validationError: {
             immediate: true,
             handler: function (to, from) {

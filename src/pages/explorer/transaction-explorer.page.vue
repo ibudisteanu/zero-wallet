@@ -91,12 +91,12 @@
                             <div v-for="(vin, index) in tx.vin" class="input"
                                  :key="`transaction-explorer-vin-${index}`">
                                 <account-identicon :publicKey="vin.publicKey" size="20" outer-size="5" />
-                                <amount :value="vin.amount" :token="vin.token" :sign="false" />
+                                <amount :value="vin.amount" :token="tx.token" :sign="false" />
                             </div>
                             <div v-for="(vout, index) in tx.vout" class="input"
                                  :key="`transaction-explorer-vout-${index}`">
                                 <account-identicon :publicKey="vout.publicKey" size="20" outer-size="5" />
-                                <amount :value="vout.amount" :token="vout.token" :sign="true" />
+                                <amount :value="vout.amount" :token="tx.token" :sign="true" />
                             </div>
                         </div>
                     </div>

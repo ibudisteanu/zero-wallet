@@ -219,6 +219,7 @@ export default {
 
                 const json = await HttpHelper.get(this.delegateNodeAddress( this.selectedDelegateNode ) +'/delegates/ask', {
                     qs: {
+                        publicKey: this.address.publicKey,
                         challengeSignature: signature,
                     }
                 } );

@@ -41,7 +41,7 @@
                     <div class="card-body py-3">
                         <div class="tab-content">
                             <div :class="`tab-pane ${tab===0?'active':''} `">
-                                <tx-amount :allow-zero="true" :allow-token="false" :balances="balancesOnlyNative" @changed="amountChanged" text="Amount to stake" />
+                                <tx-amount :allow-zero="true" :balances="balancesOnlyNative" @changed="amountChanged" text="Amount to stake" :token="''" />
                             </div>
                             <div :class="`tab-pane ${tab===1?'active':''} `">
 
@@ -82,7 +82,7 @@
                                 <extra-data :version="version.VERSION_TRANSPARENT" @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===3?'active':''} `">
-                                <tx-fee :balances="balancesOnlyNative" :allow-zero="true" @changed="changedFee" />
+                                <tx-fee :balances="balancesOnlyNative" :allow-zero="true" @changed="changedFee" :token="''" />
                             </div>
 
                         </div>
@@ -292,7 +292,7 @@ export default {
                     nonce: this.nonce,
                     delegateAmount: this.delegateStakeAmount,
                     delegateNewPublicKeyGenerate: this.hasNewDelegatedStakePublicKey ? this.delegateNewPublicKeyGenerate : false,
-                    delegateNewPubKeyHash: this.hasNewDelegatedStakePublicKey ? (this.delegateStakePublicKey ? this.delegateStakePublicKey : "") : "",
+                    delegateNewPubKey: this.hasNewDelegatedStakePublicKey ? (this.delegateStakePublicKey ? this.delegateStakePublicKey : "") : "",
                     delegateNewFee: this.hasNewDelegatedStakePublicKey ? this.delegateStakeFee : "",
                     data: {
                         data: Buffer.from(this.extraData.data).toString("hex"),
@@ -303,7 +303,6 @@ export default {
                         fixed: (this.fee.feeType === 'feeAuto') ? 0 : this.fee.feeManual.amount,
                         perByte: 0,
                         perByteAuto: this.fee.feeType === 'feeAuto',
-                        token: this.fee.feeType === 'feeAuto' ? this.fee.feeAuto.token : this.fee.feeManual.token,
                     },
                     propagateTx: true,
                     awaitAnswer: true,

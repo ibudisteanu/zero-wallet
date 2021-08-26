@@ -35,13 +35,13 @@
                     <div class="card-body py-3">
                         <div class="tab-content">
                             <div :class="`tab-pane ${tab===0?'active':''} `">
-                                <tx-amount :allow-zero="true" :allow-token="false" :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" />
+                                <tx-amount :allow-zero="true" :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" :token="''" />
                             </div>
                             <div :class="`tab-pane ${tab===1?'active':''} `">
                                 <extra-data :version="version.VERSION_TRANSPARENT" @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===2?'active':''} `">
-                                <tx-fee :balances="balances" :allow-zero="true" @changed="changedFee" />
+                                <tx-fee :balances="balances" :allow-zero="true" @changed="changedFee" :token="''" />
                             </div>
                         </div>
                     </div>
@@ -177,7 +177,7 @@ export default {
             this.fee = { ...this.fee, ...data }
         },
 
-        showModal( publicKe ) {
+        showModal( publicKey ) {
             Object.assign(this.$data, this.$options.data());
             this.publicKey = publicKey;
             return this.$refs.modal.showModal();
@@ -210,7 +210,6 @@ export default {
                         fixed: (this.fee.feeType === 'feeAuto') ? 0 : this.fee.feeManual.amount,
                         perByte: 0,
                         perByteAuto: this.fee.feeType === 'feeAuto',
-                        token: this.fee.feeType === 'feeAuto' ? this.fee.feeAuto.token : this.fee.feeManual.token,
                     },
                     propagateTx: true,
                     awaitAnswer: true,

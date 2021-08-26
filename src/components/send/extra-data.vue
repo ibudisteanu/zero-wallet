@@ -37,11 +37,8 @@
                                         :key="`selected-address-${id}`"
                                         :value="(destination.address && destination.address.publicKey) ? destination.address.publicKey : '' "
                                         :class="`${ (destination.address && destination.address.publicKey) ? '' : 'text-danger'}`">
-                                    <template v-if="destination.address && destination.address.publicKey">
+                                    <template v-if="destination.address">
                                         {{destination.addressEncoded}}
-                                    </template>
-                                    <template v-else>
-                                        Public Key is missing - {{destination.addressEncoded}}
                                     </template>
                                 </option>
                             </select>

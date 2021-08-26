@@ -43,12 +43,12 @@
                 <div class="input" v-for="(vin, index) in tx.vin "
                      :key="`show-transaction-vin-${index}`">
                     <account-identicon :publicKey="vin.publicKey" size="20" outer-size="7" />
-                    <amount :token="vin.token" :value="vin.amount" :sign="false" />
+                    <amount :token="tx.token" :value="vin.amount" :sign="false" />
                 </div>
                 <div class="output" v-for="(vout, index) in tx.vout"
                      :key="`show-transaction-vout-${index}`">
                     <account-identicon :publicKey="vout.publicKey" size="20" outer-size="7" />
-                    <amount :token="vout.token" :value="vout.amount" :sign="false" />
+                    <amount :token="tx.token" :value="vout.amount" :sign="false" />
                 </div>
             </span>
 

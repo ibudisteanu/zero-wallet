@@ -38,12 +38,15 @@
                         <div class="tab-content">
                             <div :class="`tab-pane ${tab===0?'active':''} `">
 
+                                <tx-token :balances="balances" @changed="changedToken" class="pb-5" />
+
                                 <destination-address v-for="(destination, index) in destinations"
                                                      :key="`destinationAddress-${index}`"
                                                      :class="`${index > 0 ? 'pt-5' : '0'}`"
                                                      :index="index"
                                                      :version="version.VERSION_TRANSPARENT"
                                                      :balances="balances"
+                                                     :token="token.token"
                                                      @changed="e => changedDestination(index, e)"
                                                      @deleted="e => deletedDestination(index, e)">
                                 </destination-address>
@@ -64,7 +67,7 @@
                                             @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===2?'active':''} `">
-                                <tx-fee :balances="balances" :allow-zero="true" @changed="changedFee" />
+                                <tx-fee :balances="balances" :token="token" :allow-zero="true" @changed="changedFee" />
                             </div>
                         </div>
                     </div>
@@ -107,6 +110,7 @@ import LoadingSpinner from "src/components/utils/loading-spinner";
 import LoadingButton from "src/components/utils/loading-button.vue"
 import DestinationAddress from "src/components/send/destination-address.vue"
 import TxAmount from "src/components/send/tx-amount.vue"
+import TxToken from "src/components/send/tx-token.vue"
 import TxFee from "src/components/send/tx-fee.vue"
 import ExtraData from "src/components/send/extra-data"
 import Vue from 'vue'
@@ -116,28 +120,17 @@ import LayoutTitle from "src/components/layout/layout-title";
 export default {
 
     components: { LayoutTitle, Layout, Account, LoadingSpinner, LoadingButton, DestinationAddress, TxAmount,
-        ExtraData, AlertBox, TxFee
+        ExtraData, AlertBox, TxFee, TxToken,
     },
 
     data(){
         return {
             tab: 0,
 
+            token: { }, //contains token.token and token.validation
             destinations: [],
 
-            fee: {
-                feeType: "feeAuto",
-                feeAuto: {
-                    amount: 0,
-                    token: "",
-                    validationError: "",
-                },
-                feeManual: {
-                    amount: 0,
-                    token: "",
-                    validationError: "",
-                }
-            },
+            fee: {  },
 
             extraData: {
                 data: "",
@@ -213,6 +206,8 @@ export default {
 
                 if (this.tab === 0 && value === 1){
 
+                    if (this.token.validationError) throw this.token.validationError
+
                     if (this.checkDestinationError) throw this.checkDestinationError
 
                     for (const destination of this.destinations)
@@ -257,6 +252,9 @@ export default {
             Vue.delete(this.destinations, index )
         },
 
+        changedToken(data){
+            this.token = { ...this.token,  ...data, }
+        },
         changedFee(data){
             this.fee = { ...this.fee,  ...data, }
         },
@@ -286,16 +284,14 @@ export default {
                 const out = await PandoraPay.transactions.builder.createSimpleTx_Float( JSON.stringify({
                     from: [this.address.addressEncoded],
                     nonce: 0,
+                    token: this.token.token,
                     amounts: Object.values(amounts),
-                    amountsTokens: Object.keys(amounts),
                     dsts: this.destinations.map (it => it.addressEncoded),
                     dstsAmounts: this.destinations.map (it => it.amount),
-                    dstsTokens: this.destinations.map (it => it.token),
                     fee: {
                         fixed: (this.fee.feeType === 'feeAuto') ? 0 : this.fee.feeManual.amount,
                         perByte: 0,
                         perByteAuto: this.fee.feeType === 'feeAuto',
-                        token: this.fee.feeType === 'feeAuto' ? this.fee.feeAuto.token : this.fee.feeManual.token,
                     },
                     data: {
                         data: Buffer.from(this.extraData.data).toString("hex"),
