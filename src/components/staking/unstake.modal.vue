@@ -74,7 +74,7 @@ import TxFee from "../send/tx-fee";
 const {version} = PandoraPay.enums.wallet.address;
 import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
-import LoadingButton from "src/components/utils/loading-button.vue"
+import LoadingButton from "src/components/utils/loading-button"
 import AlertBox from "src/components/utils/alert-box"
 import TxAmount from "src/components/send/tx-amount"
 import ExtraData from "src/components/send/extra-data"
@@ -92,7 +92,7 @@ export default {
             tab: 0,
             maxTab: 2,
 
-            unstakeAmount: 0,
+            unstakeAmount: {},
 
             fee: {},
             extraData: { },
@@ -135,6 +135,9 @@ export default {
                 value = Math.max( value, 0)
                 value = Math.min( value, this.maxTab + 1)
 
+                if (this.tab === 0 && value === 1){
+                    if (this.unstakeAmount.validationError) throw this.unstakeAmount.validationError
+                }
                 if (this.tab === 1 && value === 2){
                     if (this.extraData.validationError) throw this.extraData.validationError
                 }
@@ -161,7 +164,7 @@ export default {
         },
 
         amountChanged(data){
-            if (data.amount !== undefined) this.unstakeAmount = data.amount
+            this.unstakeAmount = {...this.unstakeAmount, ...data}
         },
 
         changedFeeManual(data){
@@ -200,7 +203,7 @@ export default {
                 const out = await PandoraPay.transactions.builder.createUnstakeTx_Float( JSON.stringify({
                     from: this.address.addressEncoded,
                     nonce: 0,
-                    unstakeAmount: this.unstakeAmount,
+                    unstakeAmount: this.unstakeAmount.amount,
                     data: {
                         data: Buffer.from(this.extraData.data).toString("hex"),
                         encrypt: this.extraData.type === "encrypted",

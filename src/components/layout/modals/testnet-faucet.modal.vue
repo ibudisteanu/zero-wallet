@@ -40,7 +40,7 @@ import AccountIdenticon from "../../wallet/account/account-identicon";
 import VueHcaptcha from '@hcaptcha/vue-hcaptcha';
 import AlertBox from "src/components/utils/alert-box"
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import LoadingButton from "src/components/utils/loading-button.vue"
+import LoadingButton from "src/components/utils/loading-button"
 export default {
 
     components: {AccountIdenticon, Modal, VueHcaptcha, AlertBox, LoadingSpinner, LoadingButton},

@@ -74,6 +74,7 @@ export default {
                             return this.$store.dispatch('txNotification', { txHash: key, extraInfo: JSON.parse(extraInfo) } )
                     })
 
+
                     this.readWallet()
                 }
 
@@ -81,6 +82,7 @@ export default {
                 if (data > 0) {
                     this.$store.commit('setConsensusStatus', "online")
                     this.$store.dispatch('initializeFaucetInfo')
+                    this.$store.dispatch('getTokenByHash', "")
                 }
                 else this.$store.commit('setConsensusStatus', "offline")
             }

@@ -70,6 +70,8 @@ export default {
         },
 
         address(){
+            if (this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey])
+                return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey];
             return this.$store.state.addresses.list[this.publicKey];
         },
         account(){

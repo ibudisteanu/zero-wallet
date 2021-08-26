@@ -41,7 +41,7 @@
 
 import PasswordInput from "src/components/utils/password-input";
 import Layout from "src/components/layout/layout"
-import LoadingButton from "src/components/utils/loading-button.vue"
+import LoadingButton from "src/components/utils/loading-button"
 import AlertBox from "src/components/utils/alert-box"
 import LayoutTitle from "src/components/layout/layout-title"
 import UtilsHelper from "src/utils/utils-helper"

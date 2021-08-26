@@ -44,7 +44,7 @@ export default {
             handler: async function(newVal, oldVal){
                 if (newVal){
                     try{
-                        const out = await PandoraPay.addresses.generateAddress(newVal)
+                        const out = await PandoraPay.addresses.generateAddress(newVal, "", 0, "")
                         this.identiconSrc = await Identicons.getIdenticon(newVal)
                         this.finalAddress = out[1]
                     }catch(err){

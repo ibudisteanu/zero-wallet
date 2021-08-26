@@ -14,7 +14,7 @@
 
 import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
-import LoadingButton from "src/components/utils/loading-button.vue"
+import LoadingButton from "src/components/utils/loading-button"
 import SecretText from "src/components/utils/secret-text"
 
 export default {

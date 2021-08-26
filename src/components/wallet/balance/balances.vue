@@ -46,7 +46,7 @@
 
 <script>
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import Balance from "./balance.vue"
+import Balance from "./balance"
 import AccountIdenticon from "../account/account-identicon";
 import DelegatedStakePending from "./delegated-stake-pending"
 

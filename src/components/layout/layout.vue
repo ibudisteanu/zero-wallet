@@ -38,8 +38,8 @@
 
 require('src/assets/common.css');
 
-import LayoutHeader from "./header/layout-header.vue";
-import LayoutFooter from "./footer/layout-footer.vue";
+import LayoutHeader from "./header/layout-header";
+import LayoutFooter from "./footer/layout-footer";
 import LoadingModal from "./modals/loading.modal"
 import AccountTypeModal from "./modals/account-type.modal"
 import TestnetFaucetModal from "./modals/testnet-faucet.modal"

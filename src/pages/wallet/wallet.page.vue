@@ -28,6 +28,16 @@
                         </div>
                     </div>
 
+                    <div class="row py-2">
+                        <div v-if="!showRegistration" class="pointer w-auto" @click="showRegistration = true">
+                            View Registration Key
+                        </div>
+                        <div v-else>
+                            Registration Key: {{address.registration}}
+                            <i class="fa fa-copy pointer d-inline-block" v-tooltip.bottom="'Copy Registration'"  @click="handleCopyAddress(address.registration)" />
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="card-body bg-light">
@@ -81,6 +91,7 @@ export default {
     data(){
         return {
             showPublicKey: false,
+            showRegistration: false,
         }
     },
 

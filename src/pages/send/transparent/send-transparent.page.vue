@@ -78,13 +78,8 @@
                         <label v-if="status">{{status}}</label>
 
                         <div class="float-end">
-                            <button class="btn btn-link" type="button" v-if="tab > 0" @click="handleBack">
-                                Back <i class="fas fa-chevron-left me-2"></i>
-                            </button>
-                            <button class="btn btn-falcon-primary" type="button" v-if="tab < 2" @click="handleNext">
-                                <i class="fas fa-chevron-right ms-2"> </i> Next
-                            </button>
-                            <loading-button v-if="tab===2" text="Send funds" @submit="handleSendFunds" icon="fa fa-credit-card"  />
+                            <loading-button v-if="tab > 0" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
+                            <loading-button :text="`${tab === maxTab ? 'Delegate' : 'Next'}`" @submit="handleNext" :icon="`${ tab === maxTab ? 'fa fa-credit-card' : 'fas fa-chevron-right ms-2' }`"  />
                         </div>
                     </div>
                 </div>
@@ -107,11 +102,11 @@ const {version} = PandoraPay.enums.wallet.address;
 import Layout from "src/components/layout/layout"
 import Account from "src/components/wallet/account/account"
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import LoadingButton from "src/components/utils/loading-button.vue"
-import DestinationAddress from "src/components/send/destination-address.vue"
-import TxAmount from "src/components/send/tx-amount.vue"
-import TxToken from "src/components/send/tx-token.vue"
-import TxFee from "src/components/send/tx-fee.vue"
+import LoadingButton from "src/components/utils/loading-button"
+import DestinationAddress from "src/components/send/destination-address"
+import TxAmount from "src/components/send/tx-amount"
+import TxToken from "src/components/send/tx-token"
+import TxFee from "src/components/send/tx-fee"
 import ExtraData from "src/components/send/extra-data"
 import Vue from 'vue'
 import AlertBox from "src/components/utils/alert-box"
@@ -126,10 +121,10 @@ export default {
     data(){
         return {
             tab: 0,
+            maxTab: 3,
 
             token: { }, //contains token.token and token.validation
             destinations: [],
-
             fee: {  },
 
             extraData: {
@@ -198,11 +193,11 @@ export default {
 
     methods:{
 
-        setTab(value){
+        async setTab(resolver, value){
             try{
 
                 value = Math.max( value, 0)
-                value = Math.min( value, 2)
+                value = Math.min( value, this.maxTab + 1)
 
                 if (this.tab === 0 && value === 1){
 
@@ -217,19 +212,25 @@ export default {
                 if (this.tab === 1 && value === 2){
                     if (this.extraData.validationError) throw this.extraData.validationError
                 }
+                if (this.tab === 2 && value === 3){
+                    if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
+                    if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
 
-            }catch(err){
-                return
+                    await this.handleSendFunds()
+                }
+
+            }catch(err) {
+                console.error(err)
+            }finally{
+                resolver()
             }
-            this.tab = value
         },
 
-        handleBack(){
-            return this.setTab(this.tab - 1)
+        handleBack(resolver){
+            return this.setTab(resolver, this.tab - 1)
         },
-
-        handleNext(){
-            return this.setTab(this.tab + 1)
+        handleNext(resolver){
+            return this.setTab(resolver, this.tab + 1)
         },
 
         addDestination(){
@@ -262,7 +263,7 @@ export default {
             this.extraData = { ...this.extraData,  ...data, }
         },
 
-        async handleSendFunds(resolve){
+        async handleSendFunds(){
 
             try{
 
@@ -272,10 +273,7 @@ export default {
                 const amounts = { }
 
                 for (const destination of this.destinations)
-                    amounts[destination.token] = (amounts[destination.token] || 0) + destination.amount
-
-                if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
-                if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
+                    amounts.push = destination.amount
 
                 const password = await this.$store.state.page.refWalletPasswordModal.showModal()
                 if (password === null ) return
@@ -322,8 +320,6 @@ export default {
             }catch(err){
                 console.error(err);
                 this.error = err.message;
-            }finally{
-                resolve(true);
             }
 
         },

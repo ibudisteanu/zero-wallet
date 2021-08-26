@@ -115,7 +115,7 @@ const {version} = PandoraPay.enums.wallet.address;
 
 import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
-import LoadingButton from "src/components/utils/loading-button.vue"
+import LoadingButton from "src/components/utils/loading-button"
 import AlertBox from "src/components/utils/alert-box"
 import TxAmount from "src/components/send/tx-amount"
 import ExtraData from "src/components/send/extra-data"
@@ -141,7 +141,7 @@ export default {
             nonce: 0,
 
             delegateStakePublicKey: '',
-            delegateStakeAmount: 0,
+            delegateStakeAmount: {},
             delegateStakeFee: 0,
 
             fee: {},
@@ -209,6 +209,9 @@ export default {
                 value = Math.max( value, 0)
                 value = Math.min( value, this.maxTab + 1)
 
+                if (this.tab === 0 && value === 1){
+                    if (this.delegateStakeAmount.validationError) throw this.delegateStakeAmount.validationError
+                }
                 if (this.tab === 1 && value === 2){
                     if (this.validationDelegateStakePublicKey) throw this.validationDelegateStakePublicKey
                 }
@@ -274,7 +277,7 @@ export default {
         },
 
         amountChanged(data){
-            if (data.amount !== undefined) this.delegateStakeAmount = data.amount
+            this.delegateStakeAmount = {...this.delegateStakeAmount, ...data}
         },
 
         async handleDelegateStake(){
@@ -290,7 +293,7 @@ export default {
                 const out = await PandoraPay.transactions.builder.createDelegateTx_Float( JSON.stringify( {
                     from: this.address.addressEncoded,
                     nonce: this.nonce,
-                    delegateAmount: this.delegateStakeAmount,
+                    delegateAmount: this.delegateStakeAmount.amount,
                     delegateNewPublicKeyGenerate: this.hasNewDelegatedStakePublicKey ? this.delegateNewPublicKeyGenerate : false,
                     delegateNewPubKey: this.hasNewDelegatedStakePublicKey ? (this.delegateStakePublicKey ? this.delegateStakePublicKey : "") : "",
                     delegateNewFee: this.hasNewDelegatedStakePublicKey ? this.delegateStakeFee : "",

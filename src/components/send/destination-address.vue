@@ -26,7 +26,7 @@
 <script>
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
-import TxAmount from "./tx-amount.vue"
+import TxAmount from "./tx-amount"
 const {VERSION_TRANSPARENT} = PandoraPay.enums.wallet.address.version;
 
 export default {

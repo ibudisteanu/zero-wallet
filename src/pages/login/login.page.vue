@@ -37,7 +37,7 @@ import Layout from "src/components/layout/layout";
 import consts from 'consts/consts';
 import PasswordInput from "src/components/utils/password-input";
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import LoadingButton from "src/components/utils/loading-button.vue"
+import LoadingButton from "src/components/utils/loading-button"
 import AlertBox from "src/components/utils/alert-box"
 import UtilsHelper from "src/utils/utils-helper"
 export default {
