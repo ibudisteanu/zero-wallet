@@ -1,4 +1,5 @@
 import mutations from "./accounts-mutations"
+import getters from "./accounts-getters"
 import actions from "./accounts-actions"
 
 export default {
@@ -11,6 +12,7 @@ export default {
     },
 
     actions,
+    getters,
     mutations,
 
 }

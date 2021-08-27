@@ -167,7 +167,7 @@ export default {
 
                 for (const destination of this.destinations)
                     if (destination.address) {
-                        if (destination.addressEncoded === this.address.addressEncoded) throw "Destination can not be the same with from";
+                        if (destination.publicKey === this.address.publicKey) throw "Destination can not be the same with from";
                         if (destination.address.paymentId)
                             PaymentIDs.push(destination.address.paymentId)
                     }

@@ -19,7 +19,7 @@
                                 <account-identicon :address="address.addressEncoded" :identicon="address.identicon" :size="20" :outer-size="5" :version="address.version" :disable-route="true" />
                                 <div class="account-title pointer" @click="setMainPublicKey(address.publicKey)">
                                     <span class="fw-semi-bold text-truncate">{{address.name}}</span>
-                                    <span class="fw-normal text-truncate">{{address.addressEncoded}} </span>
+                                    <span class="fw-normal text-truncate">{{$store.getters.addressDisplay(address)}} </span>
                                 </div>
                                 <div class="account-tools">
                                     <span class="fw-light" >{{ (address.seedIndex !== undefined) ? '#'+address.seedIndex : '&nbsp;'}}</span>
@@ -163,14 +163,13 @@ export default {
 
         copyAddress( address ){
 
-            let addr;
-            if (address.version === version.VERSION_TRANSPARENT) addr = address.addressEncoded;
+            let addr = this.$store.getters.addressDisplay(address)
 
             this.$copyText(addr).then(
                 e => this.$store.dispatch('addToast',{
                     type: 'success',
                     title: `Copied to clipboard successfully`,
-                    text: `Address ${address.addressEncoded} copied to clipboard`,
+                    text: `Address ${addr} copied to clipboard`,
                 }),
                 e => this.$store.dispatch('addToast',{
                     type: 'error',

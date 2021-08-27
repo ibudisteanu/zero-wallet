@@ -16,7 +16,7 @@
                                 <account-identicon :public-key="address.publicKey" :size="60" :outer-size="20" :version="address.version" />
                             </div>
                             <span class="fw-bold d-block text-break">
-                                {{address.addressEncoded}}
+                                {{ getAddress }}
                                 <i class="fa fa-copy pointer" @click="copyAddress" v-tooltip.bottom="'Copy Address'"  ></i>
                             </span>
                         </div>
@@ -69,9 +69,8 @@ export default {
         account(){
             return this.$store.state.accounts.list[this.address.publicKey]
         },
-
         getAddress(){
-            return this.address.addressEncoded;
+            return this.$store.getters.addressDisplay(this.address)
         },
     },
 

@@ -6,7 +6,7 @@
                 <label class="pb-2">Receive your coins to this address:</label>
                 <div class="address align-items-center">
                     <account-identicon :address="address.addressEncoded" :size="30" :outer-size="10" />
-                    <span class="text-break">{{address.addressEncoded}}</span>
+                    <span class="text-break">{{ $store.getters.addressDisplay(this.address) }}</span>
                 </div>
             </div>
             <div class="text-center">
@@ -85,7 +85,7 @@ export default {
                 this.error = ""
                 this.loaded = false
 
-                const hash = await PandoraPay.network.getNetworkFaucetCoins( this.address.addressEncoded, this.captchaToken )
+                const hash = await PandoraPay.network.getNetworkFaucetCoins( this.$store.getters.addressDisplay(this.address), this.captchaToken )
                 if (!hash || hash.length !== 64) throw "hash was not received"
 
                 await this.$store.dispatch('addToast', {
