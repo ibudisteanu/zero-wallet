@@ -45,7 +45,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            this.privateKey = await PandoraPay.wallet.getWalletAddressPrivateKey( this.address.publicKey, password )
+            this.privateKey = await PandoraPay.wallet.getWalletAddressPrivateKey( this.address.addressEncoded, password )
 
             return this.$refs.modal.showModal();
 

@@ -49,6 +49,24 @@ export default {
         })
     },
 
+    async processTx( {state, dispatch, commit, getters}, tx ){
+
+        if (tx.dataVersion === PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_NONE ){
+        } else if (tx.dataVersion === PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT ){
+            tx.__data = Buffer.from(tx.data, "hex").toString()
+        } else if (tx.dataVersion === PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_ENCRYPTED ){
+            tx.__data = tx.data
+            await dispatch('decryptTxData', { tx, commitNow: false })
+        }
+
+        if (tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE){
+            await dispatch('getTokenByHash', PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX )
+        } else if (tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER){
+            await Promise.all( tx.payloads.map( payload => dispatch('getTokenByHash', payload.token ) ) )
+        }
+
+    },
+
     async includeTx( {state, dispatch, commit, getters}, txJSON ){
 
         const tx = txJSON.tx
@@ -61,17 +79,7 @@ export default {
             tx.__mempool = txJSON.mempool
         }
 
-        if (tx.dataVersion === PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_NONE ){
-        } else if (tx.dataVersion === PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT ){
-            tx.__data = Buffer.from(tx.data, "hex").toString()
-        } else if (tx.dataVersion === PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_ENCRYPTED ){
-
-            tx.__data = tx.data
-            await dispatch('decryptTxData', { tx, commitNow: false })
-
-        }
-
-        await dispatch('getTokenByHash', tx.token)
+        await dispatch('processTx', tx)
 
         commit("setTransactions", { txs: [tx] } )
 

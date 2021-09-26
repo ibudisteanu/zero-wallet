@@ -88,16 +88,7 @@
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Data</span>
                         <div class="col-7 col-sm-9">
-                            <div v-for="(vin, index) in tx.vin" class="input"
-                                 :key="`transaction-explorer-vin-${index}`">
-                                <account-identicon :publicKey="vin.publicKey" size="20" outer-size="5" />
-                                <amount :value="vin.amount" :token="tx.token" :sign="false" />
-                            </div>
-                            <div v-for="(vout, index) in tx.vout" class="input"
-                                 :key="`transaction-explorer-vout-${index}`">
-                                <account-identicon :publicKey="vout.publicKey" size="20" outer-size="5" />
-                                <amount :value="vout.amount" :token="tx.token" :sign="true" />
-                            </div>
+                            <show-transaction-data :tx="tx" />
                         </div>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
@@ -167,11 +158,12 @@ import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import StringHelper from "src/utils/string-helper"
 import Amount from "src/components/wallet/amount"
 import AlertBox from "src/components/utils/alert-box"
-import LoadingButton from "../../components/utils/loading-button";
+import LoadingButton from "src/components/utils/loading-button";
+import ShowTransactionData from "src/components/explorer/show-transaction-data"
 
 export default {
 
-    components: {LoadingButton, Layout, LoadingSpinner, AccountIdenticon, Amount, AlertBox, LayoutTitle},
+    components: {LoadingButton, Layout, LoadingSpinner, AccountIdenticon, Amount, AlertBox, LayoutTitle, ShowTransactionData},
 
     data(){
         return {
@@ -230,6 +222,7 @@ export default {
                 }
 
             }catch(err){
+                console.error(err)
                 this.error = err.toString()
             }finally{
                 this.loaded = true

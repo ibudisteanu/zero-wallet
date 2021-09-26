@@ -14,7 +14,7 @@ export default {
             tx.__blkHeight = blk.height
             tx.__timestamp = blk.timestamp
 
-            await dispatch('getTokenByHash', tx.token)
+            await dispatch('processTx', tx)
 
             txs.push(tx)
         }

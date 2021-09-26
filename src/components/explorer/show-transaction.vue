@@ -40,16 +40,9 @@
 
             <span class="col-4 d-md-none text-dark text-truncate">Data</span>
             <span class="col-8 col-md-7">
-                <div class="input" v-for="(vin, index) in tx.vin "
-                     :key="`show-transaction-vin-${index}`">
-                    <account-identicon :publicKey="vin.publicKey" size="20" outer-size="7" />
-                    <amount :token="tx.token" :value="vin.amount" :sign="false" />
-                </div>
-                <div class="output" v-for="(vout, index) in tx.vout"
-                     :key="`show-transaction-vout-${index}`">
-                    <account-identicon :publicKey="vout.publicKey" size="20" outer-size="7" />
-                    <amount :token="tx.token" :value="vout.amount" :sign="false" />
-                </div>
+
+                <show-transaction-data :tx="tx" />
+
             </span>
 
         </template>
@@ -60,22 +53,21 @@
 <script>
 import StringHelper from "../../utils/string-helper";
 import LoadingSpinner from "../utils/loading-spinner";
-import Amount from "../wallet/amount";
-import AccountIdenticon from "../wallet/account/account-identicon";
+import ShowTransactionData from "./show-transaction-data"
 
 export default {
 
-    components: {AccountIdenticon, LoadingSpinner, Amount},
+    components: { LoadingSpinner, ShowTransactionData},
 
     props: {
         txHash: {default: null}
     },
 
     computed:{
-
         tx(){
             return this.$store.state.transactions.txsByHash[this.txHash]
         },
+
     },
 
     methods:{
@@ -102,9 +94,5 @@ export default {
     }
 
 
-    .input, .output{
-        display: inline-block;
-        padding-right: 10px;
-    }
 
-    </style>
+</style>

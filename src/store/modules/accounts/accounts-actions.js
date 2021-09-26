@@ -22,17 +22,18 @@ export default {
                 ])
 
                 const account = JSON.parse( result[0] )
+                console.log("account", account )
 
-                if (account){
-                    for (const balance of account.balances)
-                        await dispatch('getTokenByHash', balance.token)
+                // if (account){
+                //     for (const balance of account.balances)
+                //         await dispatch('getTokenByHash', balance.token)
+                //
+                //     await dispatch('getTokenByHash', "")
+                // }
+                //
+                // await PandoraPay.store.storeAccount( publicKey, token, result[0] )
 
-                    await dispatch('getTokenByHash', "")
-                }
-
-                await PandoraPay.store.storeAccount( publicKey, result[0] )
-
-                await dispatch('processAccountPendingTransactions', {publicKey, list: JSON.parse(result[1]) })
+                // await dispatch('processAccountPendingTransactions', {publicKey, list: JSON.parse(result[1]) })
 
                 commit('setAccount', { publicKey, account })
 
