@@ -40,6 +40,7 @@ export default {
 
                 resolve(accountTxs)
             }catch(err){
+                console.error(err)
                 reject(err)
             }finally{
                 delete promises.accountsTxs[publicKey];

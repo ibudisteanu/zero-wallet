@@ -2,7 +2,13 @@
 
     <div class="row">
         <h4 class="fw-medium pt-2" v-if="getToken" >
-            {{ amount }}
+            <template v-if="version === 'zether'">
+                <i class="fa fa-question" v-tooltip.bottom="balance" />
+                <i class="fa fa-eye" v-tooltip.bottom="'Decrypt balance'" v-if="canBeDecrypted"></i>
+            </template>
+            <template v-if="version === 'transparent'">
+                {{ amount }}
+            </template>
             <small class="fs--1 text-700">/
                 <router-link :to="`/tokens/${getToken.hash}`" class="currency">
                     $0x00
@@ -15,7 +21,6 @@
 
 <script>
 
-const {VERSION_TRANSPARENT} = PandoraPay.enums.wallet.address.version;
 import StringHelper from "src/utils/string-helper"
 import Amount from "src/components/wallet/amount"
 export default {
@@ -23,9 +28,10 @@ export default {
     components: {Amount},
 
     props: {
-        version: {default: VERSION_TRANSPARENT},
+        version: {default: "transparent"},
         token: {default: ''},
         balance: {default: 0},
+        canBeDecrypted: {default: false}
     },
 
     computed: {
@@ -33,7 +39,13 @@ export default {
             return this.$store.getters.getToken(this.token );
         },
         amount(){
-            return StringHelper.formatMoney( PandoraPay.config.tokens.tokensConvertToBase(this.balance.toString(), this.getToken.decimalSeparator ), this.getToken.decimalSeparator)
+            let amount
+            if (this.version === "transparent") {
+                amount = this.balance
+            }else {
+                return
+            }
+            return StringHelper.formatMoney( PandoraPay.config.tokens.tokensConvertToBase( amount.toString(), this.getToken.decimalSeparator ), this.getToken.decimalSeparator)
         }
     },
 

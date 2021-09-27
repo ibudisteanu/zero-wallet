@@ -22,9 +22,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="p-3" v-if="account">
+                <div class="p-3" v-if="account && account.plainAccount">
                     <small class="fs--1 text-700">
-                        Nonce: {{account.nonce}}
+                        Nonce: {{account.plainAccount.nonce}}
                     </small>
                 </div>
                 <div class="card-footer bg-light g-0 d-block-inline p-3">

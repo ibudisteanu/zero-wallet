@@ -78,43 +78,8 @@
                         </div>
                     </div>
                     <div class="row pt-2 pb-2">
-                        <span class="col-5 col-sm-3 text-truncate">Nonce</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{tx.nonce}}</span>
-                    </div>
-                    <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Unlock Time</span>
                         <span class="col-7 col-sm-9 text-truncate">{{tx.unlockTime}}</span>
-                    </div>
-                    <div class="row pt-2 pb-2">
-                        <span class="col-5 col-sm-3 text-truncate">Data</span>
-                        <div class="col-7 col-sm-9">
-                            <show-transaction-data :tx="tx" />
-                        </div>
-                    </div>
-                    <div class="row pt-2 pb-2 bg-light">
-                        <span class="col-5 col-sm-3 text-truncate">Extra Data as HEX</span>
-                        <span class="col-7 col-sm-9 text-truncate">
-                            {{tx.data}}
-                        </span>
-                    </div>
-                    <div class="row pt-2 pb-2">
-                        <span class="col-5 col-sm-3 text-truncate">Extra Data</span>
-                        <span class="col-7 col-sm-9 text-truncate">
-                            <template v-if="tx.dataVersion === transactionDataVersion.TX_DATA_PLAIN_TEXT">
-                                {{tx.__data}}
-                            </template>
-                            <template v-if="tx.dataVersion === transactionDataVersion.TX_DATA_ENCRYPTED">
-                                <span v-if="tx.__dataDecryptedError" class="text-danger">
-                                    {{tx.__dataDecryptedError}}
-                                </span>
-                                <span v-else-if="tx.__dataDecrypted">
-                                    {{tx.__dataDecrypted}}
-                                </span>
-                                <span v-else>
-                                    <loading-button :text="`Decrypt message`" @submit="handleDecryptExtraData" icon="fa fa-eye" />
-                                </span>
-                            </template>
-                        </span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Version</span>
@@ -124,6 +89,66 @@
                         <span class="col-5 col-sm-3 text-truncate">Script Version</span>
                         <span class="col-7 col-sm-9 text-truncate">{{tx.txScript}}</span>
                     </div>
+
+                    <template v-if="tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE" >
+
+                        <div class="row pt-2 pb-2 bg-light">
+                            <span class="col-5 col-sm-3 text-truncate">Nonce</span>
+                            <span class="col-7 col-sm-9 text-truncate">{{tx.nonce}}</span>
+                        </div>
+
+                        <div class="row pt-2 pb-2">
+                            <span class="col-5 col-sm-3 text-truncate">Fee</span>
+                            <span class="col-7 col-sm-9 text-truncate">{{tx.fee}}</span>
+                        </div>
+
+                        <div class="row pt-2 pb-2 bg-light">
+                            <span class="col-5 col-sm-3 text-truncate">Data</span>
+                            <span class="col-7 col-sm-9 text-truncate">
+                                <show-transaction-data :tx="tx" />
+                            </span>
+                        </div>
+
+                        <div class="row pt-2 pb-2">
+                            <span class="col-5 col-sm-3 text-truncate">Extra Data</span>
+                            <span class="col-7 col-sm-9 text-truncate">
+                                <show-transaction-data-extra :dataVersion="tx.dataVersion" :data="tx.data" />
+                            </span>
+                        </div>
+
+                        <div class="row pt-2 pb-2  bg-light">
+                            <span class="col-5 col-sm-3 text-truncate">Extra Data as HEX</span>
+                            <span class="col-7 col-sm-9 text-truncate">
+                                {{payload.data}}
+                            </span>
+                        </div>
+
+                    </template>
+                    <template v-if="tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER">
+
+                        <div v-for="(payload, index) in tx.payloads"
+                             :key="`tx_payload_${index}`" class="d-inline-block">
+                            <div class="row pt-2 pb-2  bg-light">
+                                <span class="col-5 col-sm-3 text-truncate">Payload Data {{index}}</span>
+                                <span class="col-7 col-sm-9">
+                                    <show-transaction-data :tx="tx" :id="index" />
+                                </span>
+                            </div>
+                            <div class="row pt-2 pb-2 ">
+                                <span class="col-5 col-sm-3 text-truncate">Payload Extra {{index}}</span>
+                                <span class="col-7 col-sm-9 text-truncate">
+                                    <show-transaction-data-extra :dataVersion="payload.dataVersion" :data="payload.data" />
+                                </span>
+                            </div>
+                            <div class="row pt-2 pb-2 bg-light">
+                                <span class="col-5 col-sm-3 text-truncate">Payload Extra HEX {{index}}</span>
+                                <span class="col-7 col-sm-9 text-truncate">
+                                    {{payload.data}}
+                                </span>
+                            </div>
+                        </div>
+
+                    </template>
 
                 </div>
 
@@ -160,10 +185,13 @@ import Amount from "src/components/wallet/amount"
 import AlertBox from "src/components/utils/alert-box"
 import LoadingButton from "src/components/utils/loading-button";
 import ShowTransactionData from "src/components/explorer/show-transaction-data"
+import ShowTransactionDataExtra from "src/components/explorer/show-transaction-data-extra";
 
 export default {
 
-    components: {LoadingButton, Layout, LoadingSpinner, AccountIdenticon, Amount, AlertBox, LayoutTitle, ShowTransactionData},
+    components: {
+        ShowTransactionDataExtra,
+        LoadingButton, Layout, LoadingSpinner, AccountIdenticon, Amount, AlertBox, LayoutTitle, ShowTransactionData},
 
     data(){
         return {
@@ -191,8 +219,8 @@ export default {
             if (this.hash) return this.$store.state.transactions.txsByHash[this.hash];
         },
 
-        transactionDataVersion(){
-            return PandoraPay.enums.transactions.TransactionDataVersion
+        PandoraPay(){
+            return PandoraPay
         },
 
     },

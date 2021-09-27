@@ -24,21 +24,23 @@ export default {
                 const account = JSON.parse( result[0] )
                 console.log("account", account )
 
-                // if (account){
-                //     for (const balance of account.balances)
-                //         await dispatch('getTokenByHash', balance.token)
-                //
-                //     await dispatch('getTokenByHash', "")
-                // }
-                //
-                // await PandoraPay.store.storeAccount( publicKey, token, result[0] )
+                if (account){
 
+                    if (account.accounts)
+                        await Promise.all( account.tokens.map( token => dispatch('getTokenByHash', token) ) )
+
+                    if (account.plainAccount)
+                        await dispatch('getTokenByHash', "")
+                }
+
+                // await PandoraPay.store.storeAccount( publicKey, token, result[0] )
                 // await dispatch('processAccountPendingTransactions', {publicKey, list: JSON.parse(result[1]) })
 
                 commit('setAccount', { publicKey, account })
 
                 resolve(account)
             }catch(err){
+                console.error(err)
                 reject(err)
             }finally{
                 delete promises.accounts[publicKey];

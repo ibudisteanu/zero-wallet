@@ -1,6 +1,7 @@
 <template>
     <div>
         <template v-if="tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE">
+
             <div class="input">
                 <account-identicon :publicKey="tx.vin.publicKey" size="20" outer-size="7" />
                 <amount :value="vinAmount" :sign="false" />
@@ -15,15 +16,17 @@
             </template>
 
         </template>
-        <template v-if="tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER">
+        <template v-else-if="tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER">
+
             <div v-for="(payload, payloadId) in tx.payloads"
                  :key="`show-tx-payload-${payloadId}`">
-                <div class="output" v-for="(publicKey, index) in payload.statement.publickeylist"
+                <div v-if="!id || payloadId === id" class="output" v-for="(publicKey, index) in payload.statement.publickeylist"
                      :key="`show-transaction-vout-${index}`">
                     <account-identicon :publicKey="publicKey" size="20" outer-size="7" />
                     ?
                 </div>
             </div>
+
         </template>
     </div>
 </template>
@@ -37,7 +40,8 @@ export default {
     components: {AccountIdenticon, Amount},
 
     props: {
-        tx: {default: null}
+        tx: {default: null},
+        id: {default: "" },
     },
 
     computed:{

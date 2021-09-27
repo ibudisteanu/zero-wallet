@@ -15,28 +15,44 @@
         </div>
         <div class="card-body p-0" v-if="!isLoading && isFound">
             <div class="row g-0 align-items-center py-2 position-relative border-bottom border-200 text-center">
-                <h5 class="fw-bold fs-0 pt-4">All holdings</h5>
-                <balance v-for="(balance, index) in balances"
+
+                <h5 class="fw-bold fs-0 pt-4">All private holdings</h5>
+                <balance v-for="(accountBalance, index) in account.accounts"
                          :key="`balance-token-${index}`"
-                         :balance="balance.amount"
-                         :token="balance.token"
-                         :version="account.version">
+                         :balance="accountBalance.balance"
+                         :token="account.tokens[index]"
+                         :canBeDecrypted="$store.getters.walletContains(account.publicKey)"
+                         version="zether">
                 </balance>
-                <div v-if="delegatedStake">
-                    <h5 class="fw-bold fs-0 pt-4">Delegated Stake</h5>
+
+                <tmeplate v-if="account.plainAccount">
+
+                    <h5 class="fw-bold fs-0 pt-4">Claimable</h5>
                     <balance :key="`delegated-balance`"
-                            :balance="delegatedStake.stakeAvailable"
-                            token=""
-                            :version="0">
+                             :balance="account.plainAccount.claimable"
+                             token=""
+                             version="transparent">
                     </balance>
-                </div>
-                <div v-if="delegatedStakesPending.length" >
-                    <h5 class="fw-bold fs-0 pt-4">Delegated Stakes in pending</h5>
-                    <delegated-stake-pending v-for="(delegatedStakePending, index) in delegatedStakesPending"
-                                   :key="`delegated-stake-pending-${index}`"
-                                   :delegatedStakePending="delegatedStakePending">
-                    </delegated-stake-pending>
-                </div>
+
+                    <div v-if="delegatedStake">
+
+                        <h5 class="fw-bold fs-0 pt-4">Delegated Stake</h5>
+                        <balance :key="`delegated-balance`"
+                                 :balance="delegatedStake.stakeAvailable"
+                                 token=""
+                                 version="transparent">
+                        </balance>
+
+                        <div v-if="delegatedStakesPending.length" >
+                            <h5 class="fw-bold fs-0 pt-4">Delegated Stakes in pending</h5>
+                            <delegated-stake-pending v-for="(delegatedStakePending, index) in delegatedStakesPending"
+                                                     :key="`delegated-stake-pending-${index}`"
+                                                     :delegatedStakePending="delegatedStakePending">
+                            </delegated-stake-pending>
+                        </div>
+                    </div>
+
+                </tmeplate>
 
             </div>
         </div>
@@ -64,12 +80,8 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
 
-        balances(){
-            return this.account.balances;
-        },
-
         delegatedStake(){
-            return this.account.delegatedStake
+            return this.account.plainAccount ? this.account.plainAccount.delegatedStake : null
         },
 
         delegatedStakesPending(){
