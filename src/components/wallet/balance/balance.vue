@@ -3,14 +3,14 @@
     <div class="row">
         <h4 class="fw-medium pt-2" v-if="getToken" >
             <template v-if="version === 'zether'">
-                <i class="fa fa-question" v-tooltip.bottom="balance" />
-                <i class="fa fa-eye" v-tooltip.bottom="'Decrypt balance'" v-if="canBeDecrypted"></i>
+                <i class="fa fa-question " v-tooltip.bottom="`Homomorphic Encrypted Amount: ${balance}`" />
+                <i class="fa fa-eye fw-light" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecrypted"></i>
             </template>
             <template v-if="version === 'transparent'">
                 {{ amount }}
             </template>
             <small class="fs--1 text-700">/
-                <router-link :to="`/tokens/${getToken.hash}`" class="currency">
+                <router-link :to="`/tokens/${getToken.hash}`" class="currency" v-tooltip.bottom="getToken.hash" >
                     $0x00
                 </router-link>
             </small>

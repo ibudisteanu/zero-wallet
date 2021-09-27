@@ -134,7 +134,7 @@ export default {
 
     },
 
-    async getTransactionByHash( {state, dispatch, commit}, hash){
+    getTransactionByHash( {state, dispatch, commit}, hash){
 
         if (state.txsByHash[hash]) return state.txsByHash[hash];
         if (promises.txsByHash[hash]) return promises.txsByHash[hash];
@@ -153,6 +153,7 @@ export default {
 
                 resolve( output );
             }catch(err){
+                console.error(err)
                 reject(err);
             } finally{
                 delete promises.txsByHash[hash];
@@ -160,7 +161,7 @@ export default {
         } );
     },
 
-    getTransactionByHeight( {state, dispatch, commit}, height){
+    async getTransactionByHeight( {state, dispatch, commit}, height){
 
         if (typeof height === "string") height = Number.parseInt(height)
 
@@ -179,6 +180,7 @@ export default {
                 resolve( await dispatch('includeTx', tx) );
 
             }catch(err){
+                console.error(err)
                 reject(err);
             } finally{
                 delete promises.txsByHeight[height];

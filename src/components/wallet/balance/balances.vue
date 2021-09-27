@@ -17,17 +17,18 @@
             <div class="row g-0 align-items-center py-2 position-relative border-bottom border-200 text-center">
 
                 <h5 class="fw-bold fs-0 pt-4">All private holdings</h5>
-                <balance v-for="(accountBalance, index) in account.accounts"
+                <h4 v-if="!account.accounts || !account.accounts.length" class="fs-0 pt-1">Empty!</h4>
+                <balance v-else v-for="(accountBalance, index) in account.accounts"
                          :key="`balance-token-${index}`"
                          :balance="accountBalance.balance"
                          :token="account.tokens[index]"
-                         :canBeDecrypted="$store.getters.walletContains(account.publicKey)"
+                         :can-be-decrypted="$store.getters.walletContains(publicKey)"
                          version="zether">
                 </balance>
 
-                <tmeplate v-if="account.plainAccount">
+                <template v-if="account.plainAccount">
 
-                    <h5 class="fw-bold fs-0 pt-4">Claimable</h5>
+                    <h5 class="fw-bold fs-0 pt-4">Claimable Unstake</h5>
                     <balance :key="`delegated-balance`"
                              :balance="account.plainAccount.claimable"
                              token=""
@@ -35,7 +36,6 @@
                     </balance>
 
                     <div v-if="delegatedStake">
-
                         <h5 class="fw-bold fs-0 pt-4">Delegated Stake</h5>
                         <balance :key="`delegated-balance`"
                                  :balance="delegatedStake.stakeAvailable"
@@ -52,7 +52,7 @@
                         </div>
                     </div>
 
-                </tmeplate>
+                </template>
 
             </div>
         </div>

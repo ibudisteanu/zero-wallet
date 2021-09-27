@@ -21,8 +21,12 @@ export default {
                     PandoraPay.network.getNetworkAccountMempool(publicKey),
                 ])
 
-                const account = JSON.parse( result[0] )
-                console.log("account", account )
+                let account = JSON.parse( result[0] )
+
+                if ( !Object.keys(account).length ){
+                    account = null
+                    result[0] = null
+                }
 
                 if (account){
 
@@ -33,8 +37,8 @@ export default {
                         await dispatch('getTokenByHash', "")
                 }
 
-                // await PandoraPay.store.storeAccount( publicKey, token, result[0] )
-                // await dispatch('processAccountPendingTransactions', {publicKey, list: JSON.parse(result[1]) })
+                await PandoraPay.store.storeAccount( publicKey,  result[0] )
+                await dispatch('processAccountPendingTransactions', {publicKey, list: JSON.parse(result[1]) })
 
                 commit('setAccount', { publicKey, account })
 

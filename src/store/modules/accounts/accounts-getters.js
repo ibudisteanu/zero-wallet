@@ -8,7 +8,8 @@ export default {
         const isLoading = account === undefined;
         const isFound = account !== null;
 
-        return  (!isLoading && !isFound) ? address.addressRegistrationEncoded : address.addressEncoded
+        console.log(isLoading, isFound)
+        return  ( (!isLoading && !isFound) || (account && !account.plainAccount && !account.registered) ) ? address.addressRegistrationEncoded : address.addressEncoded
     }
 
 

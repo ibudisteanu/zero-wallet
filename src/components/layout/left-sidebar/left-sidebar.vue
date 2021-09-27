@@ -37,53 +37,19 @@
                     </li>
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <router-link class="nav-link" to="#" @click.native="e => toggleNavElement(e, 'transfer')">
+                            <router-link :disabled="!isWalletLogged" to="/send" :class="`${ route === '/send' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
                                 <i class="fa fa-money-check-alt"></i>
-                                <span class="nav-link-text ps-1">Transfer</span>
-                                <i :class="`nav-chevron fa fa-chevron-${navElementsShown['transfer'] ? 'up' : 'down' }`"></i>
+                                <span class="nav-link-text ps-1">Transfer Privately</span>
                             </router-link>
                         </div>
-                        <ul :class="`nav collapse ${navElementsShown['transfer'] ? 'show':''}`">
-                            <li class="nav-item">
-                              <router-link :disabled="!isWalletLogged" to="/send/transparent" :class="`${ route === '/send/transparent' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
-                                  <div class="d-flex align-items-center">
-                                        <span class="nav-link-text ps-1">Public</span>
-                                    </div>
-                                </router-link>
-                            </li>
-                            <li class="nav-item">
-                                <router-link to="#" class="nav-link" @click.native="disableNavbarMenu">
-                                    <div class="d-flex align-items-center">
-                                        <span class="nav-link-text ps-1">Anonymously</span>
-                                    </div>
-                                </router-link>
-                            </li>
-                        </ul>
                     </li>
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <router-link class="nav-link" to="#" @click.native="e => toggleNavElement(e, 'receive')" >
+                            <router-link :disabled="!isWalletLogged" to="/receive" :class="`${ route === '/receive' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
                                 <i class="fa fa-hand-holding-usd"></i>
-                                <span class="nav-link-text ps-1">Receive</span>
-                                <i :class="`nav-chevron fa fa-chevron-${navElementsShown['transfer'] ? 'up' : 'down' }`"></i>
+                                <span class="nav-link-text ps-1">Receive Privately</span>
                             </router-link>
                         </div>
-                        <ul :class="`nav collapse ${navElementsShown['receive'] ? 'show':''}`">
-                            <li class="nav-item">
-                                <router-link :disabled="!isWalletLogged" to="/receive" :class="`nav-link ${ route === '/receive' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
-                                    <div class="d-flex align-items-center">
-                                        <span class="nav-link-text ps-1">Public</span>
-                                    </div>
-                                </router-link>
-                            </li>
-                            <li class="nav-item">
-                                <router-link to="#" class="nav-link" @click.native="disableNavbarMenu">
-                                    <div class="d-flex align-items-center">
-                                        <span class="nav-link-text ps-1">Anonymously</span>
-                                    </div>
-                                </router-link>
-                            </li>
-                        </ul>
                     </li>
 
                     <li class="nav-item">
