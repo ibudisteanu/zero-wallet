@@ -141,16 +141,6 @@ export default {
             return this.account !== null
         },
 
-        balance(){
-            const balances = { "": { amount: 0 } }
-            if (this.account)
-                for (const balance of this.account.balances)
-                    balances[balance.token] = { amount: balance.amount }
-
-            const amount = balances[""].amount || 0;
-            return StringHelper.formatMoney( PandoraPay.config.coins.convertToBase( amount.toString() ), PandoraPay.config.coins.DECIMAL_SEPARATOR)
-        },
-
         delegatedStake(){
             if (!this.account) return null
             return this.account.delegatedStake
@@ -159,11 +149,6 @@ export default {
         delegatedStakesPending(){
             if (!this.delegatedStake) return []
             return this.delegatedStake.stakesPending
-        },
-
-        minimumForStaking(){
-            const minimum = PandoraPay.config.stake.getRequiredStake( this.$store.state.blockchain.end.toString() )
-            return StringHelper.formatMoney( PandoraPay.config.coins.convertToBase( minimum ), PandoraPay.config.coins.DECIMAL_SEPARATOR )
         },
 
         isDelegated(){
@@ -186,6 +171,25 @@ export default {
         isDelegateStakeInPending(){
             return this.pendingTransactions.length > 0;
         }
+
+    },
+
+    asyncComputed:{
+
+        async balance(){
+            const balances = { "": { amount: 0 } }
+            if (this.account)
+                for (const balance of this.account.balances)
+                    balances[balance.token] = { amount: balance.amount }
+
+            const amount = balances[""].amount || 0;
+            return StringHelper.formatMoney( await PandoraPay.config.coins.convertToBase( amount.toString() ), PandoraPay.config.coins.DECIMAL_SEPARATOR)
+        },
+
+        async minimumForStaking(){
+            const minimum = await PandoraPay.config.stake.getRequiredStake( this.$store.state.blockchain.end.toString() )
+            return StringHelper.formatMoney( await PandoraPay.config.coins.convertToBase( minimum ), PandoraPay.config.coins.DECIMAL_SEPARATOR )
+        },
 
     },
 

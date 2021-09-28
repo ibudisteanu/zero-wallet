@@ -27,6 +27,7 @@ export default {
             balance: "",
             token: "",
             password: "",
+            decodedBalance: null,
         }
     },
 
@@ -36,14 +37,17 @@ export default {
 
     methods: {
 
-        showModal(publicKey, balance, token, password ) {
+        async showModal(publicKey, balance, token, password ) {
+
             Object.assign(this.$data, this.$options.data());
+
             this.publicKey = publicKey
             this.balance = balance
             this.token = token
             this.password = password
 
-            return this.$refs.modal.showModal();
+            await this.$refs.modal.showModal();
+            return this.decodedBalance
         },
 
         closeModal() {
@@ -56,8 +60,10 @@ export default {
             this.startMatrix()
 
             const data = await PandoraPay.wallet.decodeBalanceWalletAddress( this.publicKey, this.balance, this.token, this.password )
+            console.log("data", data)
 
-            console.log("DECODED", data)
+            this.decodedBalance = data
+            this.closeModal()
 
         },
 

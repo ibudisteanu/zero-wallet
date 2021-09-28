@@ -6,9 +6,12 @@ import router from "../router/router.index"
 
 import VueClipboard from 'vue-clipboard2'
 import VTooltip from 'v-tooltip'
+import AsyncComputed from 'vue-async-computed'
 
 Vue.use(VTooltip);
 Vue.use(VueClipboard);
+
+Vue.use(AsyncComputed)
 
 export default (params) => {
 

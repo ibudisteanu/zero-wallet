@@ -28,6 +28,7 @@
     "strength": "^0.1.4",
     "v-tooltip": "^2.1.2",
     "vue": "^2.6.12",
+    "vue-async-computed": "^3.9.0",
     "vue-clickaway": "^2.2.2",
     "vue-clipboard2": "^0.3.1",
     "vue-qrcode-reader": "^2.3.16",

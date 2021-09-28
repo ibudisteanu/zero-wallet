@@ -160,10 +160,10 @@ export default {
             return this.setTab(resolver, this.tab + 1)
         },
 
-        showModal(publicKey) {
+        async showModal(publicKey) {
             Object.assign(this.$data, this.$options.data());
             this.publicKey = publicKey
-            this.delegatesNodes = JSON.parse( PandoraPay.config.helpers.getNetworkSelectedDelegatesNodes() )
+            this.delegatesNodes = await JSON.parse( PandoraPay.config.helpers.getNetworkSelectedDelegatesNodes() )
             return this.$refs.modal.showModal();
         },
 

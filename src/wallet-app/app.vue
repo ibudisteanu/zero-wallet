@@ -54,13 +54,13 @@ export default {
         })
 
         let initialized = false
-        PandoraPay.events.listenEvents( (name, data )=>{
+        PandoraPay.events.listenEvents( async (name, data )=>{
 
             if (name === "main")
                 if (data === "initialized"){
                     initialized = true
 
-                    PandoraPay.events.listenNetworkNotifications(( subscriptionType, key, data, extraInfo)=>{
+                    await PandoraPay.events.listenNetworkNotifications(( subscriptionType, key, data, extraInfo)=>{
 
                         console.log("listenNetworkNotifications", key, data, extraInfo)
 

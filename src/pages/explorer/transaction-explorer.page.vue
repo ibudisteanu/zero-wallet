@@ -263,7 +263,6 @@ export default {
             await this.$store.dispatch('unsubscribeTransaction', tx.hash )
         },
 
-        convertToBase: (amount) => PandoraPay.config.coins.convertToBase( amount.toString() ),
         timeAgo : (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
         formatTime : (timestamp) => StringHelper.formatTime( timestamp*1000 ),
         formatSize: (bytes) => StringHelper.formatSize(bytes, 1),

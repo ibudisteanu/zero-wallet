@@ -10,7 +10,6 @@ self.onmessage = async function(event) {
     if (event.type === "message"){
 
         const data = event.data
-        console.log("Promise", Promise)
 
         if (data.type === "initialize"){
 

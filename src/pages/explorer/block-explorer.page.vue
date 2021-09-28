@@ -208,7 +208,7 @@ export default {
 
                 if (this.blk){
                     this.$store.commit('setViewBlockHash', this.blk.bloom.hash )
-                    const reward = PandoraPay.config.reward.getRewardAt(this.blk.height)
+                    const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)
                     this.reward = reward.toString()
                 }
 

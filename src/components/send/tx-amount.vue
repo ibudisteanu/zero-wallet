@@ -34,7 +34,10 @@ export default {
             if (!this.tokenInfo) return ""
             return (1 / Math.pow(10, this.tokenInfo.decimalSeparator)).toFixed(this.tokenInfo.decimalSeparator)
         },
-        validationAmountError(){
+    },
+
+    asyncComputed:{
+        async validationAmountError(){
             if ( !this.allowZero && Number.parseFloat(this.amount) === 0) return "Amount needs to be greater than 0"
             if (this.amount === Number.NaN || this.amount < 0) return "Amount can not be negative"
 
@@ -42,7 +45,7 @@ export default {
                 for (const key in this.balances) {
                     const balance = this.balances[key]
                     if (balance.token === this.token)
-                        if (this.amount > PandoraPay.config.tokens.tokensConvertToBase( balance.amount.toString(), this.tokenInfo.decimalSeparator )){
+                        if (this.amount > await PandoraPay.config.tokens.tokensConvertToBase( balance.amount.toString(), this.tokenInfo.decimalSeparator )){
                             return "Not enough funds"
                         } else {
                             return
@@ -52,8 +55,8 @@ export default {
                 return "Token not found"
             }
         },
-        validationError(){
-            if (this.validationAmountError) return this.validationAmountError
+        async validationError(){
+            if (await this.validationAmountError) return await this.validationAmountError
         }
     },
 

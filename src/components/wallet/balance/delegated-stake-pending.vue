@@ -28,10 +28,13 @@ export default {
         getToken(){
             return  this.$store.getters.getToken( PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX );
         },
-        amount(){
-            return StringHelper.formatMoney( PandoraPay.config.coins.convertToBase( this.delegatedStakePending.pendingAmount.toString() ), PandoraPay.config.coins.DECIMAL_SEPARATOR )
-        }
     },
+
+    asyncComputed:{
+        async amount(){
+            return StringHelper.formatMoney( await PandoraPay.config.coins.convertToBase( this.delegatedStakePending.pendingAmount.toString() ), PandoraPay.config.coins.DECIMAL_SEPARATOR )
+        }
+    }
 
 }
 </script>

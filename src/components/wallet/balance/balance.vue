@@ -2,11 +2,11 @@
 
     <div class="row">
         <h4 class="fw-medium pt-2" v-if="getToken" >
-            <template v-if="version === 'zether'">
+            <template v-if="version === 'zether' && balanceDecoded === null ">
                 <i class="fa fa-question " v-tooltip.bottom="`Homomorphic Encrypted Amount: ${balance}`" />
                 <i class="fa fa-eye fw-light" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecoded" @click="decodeBalance"></i>
             </template>
-            <template v-if="version === 'transparent'">
+            <template v-else>
                 {{ amount }}
             </template>
             <small class="fs--1 text-700">/
@@ -35,19 +35,31 @@ export default {
         canBeDecoded: {default: false}  //required for version zether
     },
 
-    computed: {
-        getToken(){
-            return this.$store.getters.getToken(this.token );
-        },
-        amount(){
+    data(){
+        return {
+            balanceDecoded: null,
+        }
+    },
+
+    asyncComputed:{
+        async amount(){
             let amount
             if (this.version === "transparent") {
                 amount = this.balance
             }else {
-                return
+                if (this.balanceDecoded === null )
+                    return
+                else
+                    amount = this.balanceDecoded
             }
-            return StringHelper.formatMoney( PandoraPay.config.tokens.tokensConvertToBase( amount.toString(), this.getToken.decimalSeparator ), this.getToken.decimalSeparator)
+            return StringHelper.formatMoney( await PandoraPay.config.tokens.tokensConvertToBase( amount.toString(), this.getToken.decimalSeparator ), this.getToken.decimalSeparator)
         }
+    },
+
+    computed: {
+        getToken(){
+            return this.$store.getters.getToken(this.token );
+        },
     },
 
     methods: {
@@ -55,7 +67,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.publicKey, this.balance, this.token, password )
+            this.balanceDecoded = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.publicKey, this.balance, this.token, password )
         }
     },
 
