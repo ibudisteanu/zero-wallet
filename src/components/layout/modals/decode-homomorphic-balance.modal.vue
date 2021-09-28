@@ -1,6 +1,6 @@
 <template>
 
-    <modal ref="modal" title="Decoding" contentClass="" @closed="stopMatrix" @opened="startMatrix"  >
+    <modal ref="modal" title="Decoding" contentClass="" @closed="stopMatrix" @opened="start" :close-button="false"  >
 
         <template slot="body">
 
@@ -23,6 +23,10 @@ export default {
     data(){
         return {
             matrixInterval: null,
+            publicKey: "",
+            balance: "",
+            token: "",
+            password: "",
         }
     },
 
@@ -32,13 +36,29 @@ export default {
 
     methods: {
 
-        showModal() {
+        showModal(publicKey, balance, token, password ) {
             Object.assign(this.$data, this.$options.data());
+            this.publicKey = publicKey
+            this.balance = balance
+            this.token = token
+            this.password = password
+
             return this.$refs.modal.showModal();
         },
 
         closeModal() {
             return this.$refs.modal.closeModal();
+        },
+
+
+        async start(){
+
+            this.startMatrix()
+
+            const data = await PandoraPay.wallet.decodeBalanceWalletAddress( this.publicKey, this.balance, this.token, this.password )
+
+            console.log("DECODED", data)
+
         },
 
         stopMatrix(){

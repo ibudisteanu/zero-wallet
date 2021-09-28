@@ -31,7 +31,8 @@ export default {
         version: {default: "transparent"},
         token: {default: ''},
         balance: {default: 0},
-        canBeDecoded: {default: false}
+        publicKey: {default: null},     //required for version zether
+        canBeDecoded: {default: false}  //required for version zether
     },
 
     computed: {
@@ -54,7 +55,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal()
+            await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.publicKey, this.balance, this.token, password )
         }
     },
 
