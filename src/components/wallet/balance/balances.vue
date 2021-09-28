@@ -22,7 +22,7 @@
                          :key="`balance-token-${index}`"
                          :balance="accountBalance.balance"
                          :token="account.tokens[index]"
-                         :can-be-decrypted="$store.getters.walletContains(publicKey)"
+                         :can-be-decoded="$store.getters.walletContains(publicKey)"
                          version="zether">
                 </balance>
 

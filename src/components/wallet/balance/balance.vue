@@ -4,7 +4,7 @@
         <h4 class="fw-medium pt-2" v-if="getToken" >
             <template v-if="version === 'zether'">
                 <i class="fa fa-question " v-tooltip.bottom="`Homomorphic Encrypted Amount: ${balance}`" />
-                <i class="fa fa-eye fw-light" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecrypted"></i>
+                <i class="fa fa-eye fw-light" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecoded" @click="decodeBalance"></i>
             </template>
             <template v-if="version === 'transparent'">
                 {{ amount }}
@@ -31,7 +31,7 @@ export default {
         version: {default: "transparent"},
         token: {default: ''},
         balance: {default: 0},
-        canBeDecrypted: {default: false}
+        canBeDecoded: {default: false}
     },
 
     computed: {
@@ -46,6 +46,15 @@ export default {
                 return
             }
             return StringHelper.formatMoney( PandoraPay.config.tokens.tokensConvertToBase( amount.toString(), this.getToken.decimalSeparator ), this.getToken.decimalSeparator)
+        }
+    },
+
+    methods: {
+        async decodeBalance(){
+            const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+            if (password === null ) return
+
+            await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal()
         }
     },
 

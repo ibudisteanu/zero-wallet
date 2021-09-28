@@ -9,7 +9,7 @@
                 <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
                     <button v-if="closeButton" class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" @click="closeModal"></button>
                 </div>
-                <div class="modal-body p-0">
+                <div class="modal-body p-0" ref="refModalBody">
                     <div v-if="title" class="rounded-top-lg py-3 ps-3 pe-6 bg-light">
                         <h5 class="mb-1">{{title}}</h5>
                     </div>
@@ -93,9 +93,12 @@ export default{
             });
 
             this.open = true;
-            this.$emit('opened');
 
             this.$store.commit('incrementModalIndex', 1 )
+
+            setTimeout ( ()=>{
+                this.$emit('opened');
+            }, 10)
 
             return this.promise;
         },

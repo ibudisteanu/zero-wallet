@@ -12,28 +12,14 @@ export default {
         }
     },
 
-    setLoadingModal(state, ref){
-        state.refLoadingModal = ref;
-    },
-
-    setAccountTypeModal(state, ref){
-        state.refAccountTypeModal = ref;
-    },
-
-    setQRCodeModal(state, ref){
-        state.refQRCodeModal = ref;
-    },
-
-    setQRCodeScannerModal(state, ref){
-        state.refQRCodeScannerModal = ref;
-    },
-
-    setTestnetFaucetModal(state, ref){
-        state.refTestnetFaucetModal = ref;
-    },
-
-    setWalletPasswordModal(state, ref){
-        state.refWalletPasswordModal = ref;
+    setModals(state, modals ){
+        state.refLoadingModal = modals.refLoadingModal;
+        state.refAccountTypeModal = modals.refAccountTypeModal;
+        state.refQRCodeModal = modals.refQRCodeModal;
+        state.refQRCodeScannerModal = modals.refQRCodeScannerModal;
+        state.refTestnetFaucetModal = modals.refTestnetFaucetModal;
+        state.refWalletPasswordModal = modals.refWalletPasswordModal;
+        state.refDecodeHomomorphicBalanceModal = modals.refDecodeHomomorphicBalanceModal;
     },
 
     incrementModalIndex(state, value){
