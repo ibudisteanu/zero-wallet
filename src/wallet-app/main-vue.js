@@ -7,8 +7,6 @@ import router from "../router/router.index"
 import VueClipboard from 'vue-clipboard2'
 import VTooltip from 'v-tooltip'
 
-import VueObserveVisibility from 'vue-observe-visibility'
-
 Vue.use(VTooltip);
 Vue.use(VueClipboard);
 

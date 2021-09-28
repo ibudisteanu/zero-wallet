@@ -8,6 +8,7 @@
   "scripts": {
     "build-deploy": "webpack --config build/deploy/webpack-deploy.config.js",
     "build-wallet": "webpack --config build/webpack-wallet.config.js",
+    "build-pandorapay-webworker": "webpack --config build/webpack-pandorapay-websocket.config.js",
     "build-wallet-analyzer": "webpack --config build/webpack-wallet.config.js --mode development --analyzer",
     "build": "npm run build-wallet && npm run deploy",
     "test": "npm run build-wallet",

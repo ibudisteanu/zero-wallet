@@ -24,7 +24,7 @@ module.exports = merge(base, {
         hot: true,
         open: true,
         overlay: true,
-        port: 8080,
+        port: 8081,
         stats: {
             normal: true
         },
