@@ -62,10 +62,6 @@ export default {
                         text: `Your address has received a transaction ${txHash}`,
                     } )
 
-                    console.log("mempoolRemoveTx 111111")
-                    await PandoraPay.mempool.mempoolRemoveTx(txHash)
-                    console.log("mempoolRemoveTx 222222")
-
                 } else {
 
                     dispatch('addToast', {
@@ -73,13 +69,6 @@ export default {
                         title: `A transaction was removed from blockchain`,
                         text: `Your address got a transaction removed ${txHash}`,
                     } )
-
-                    const tx = await dispatch('getTransactionByHash', txHash )
-                    try{
-                        await PandoraPay.mempool.mempoolInsertTx(txHash, JSON.stringify(tx) )
-                    }catch(err){
-
-                    }
 
                 }
 
@@ -94,12 +83,6 @@ export default {
                         text: `There is a pending transaction ${txHash}`,
                     } )
 
-                    const tx = await dispatch('getTransactionByHash', txHash )
-                    try{
-                        await PandoraPay.mempool.mempoolInsertTx(txHash, JSON.stringify(tx) )
-                    }catch(err){
-
-                    }
 
                 } else {
 
@@ -108,8 +91,6 @@ export default {
                         title: `A transaction was removed from the mempool`,
                         text: `A pending transaction was removed from the mempool ${txHash}`,
                     } )
-
-                    await PandoraPay.mempool.mempoolRemoveTx(txHash)
 
                 }
 

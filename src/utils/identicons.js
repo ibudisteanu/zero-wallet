@@ -20,9 +20,13 @@ class Identicons {
             delete this.map[item.key]
         }
 
+        const data = await PandoraPay.helpers.getIdenticon( key, 64, 64)
+
+        const blob = new Blob( [ data ],  { type: 'image/png' } );
+
         const item = {
             key: key,
-            identicon: await PandoraPay.helpers.getIdenticon( key, 64, 64),
+            identicon: URL.createObjectURL(blob),
         }
 
         this.map[key] = item;
