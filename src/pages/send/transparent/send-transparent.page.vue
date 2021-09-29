@@ -4,12 +4,10 @@
 
         <layout-title icon="fa-money-check-alt" title="Send Transparent Funds">Transfer funds transparently from your account.</layout-title>
 
-        TODO
-
         <template v-if="address">
 
             <alert-box v-if="!isLoading && !isFound" type="warning" >
-                Address doesn't exist!
+                Address doesn't exist (is empty)!
             </alert-box>
             <template v-else>
 
@@ -17,22 +15,22 @@
                     <div class="card-header bg-light py-3">
                         <ul class="nav justify-content-between nav-wizard">
                             <li class="nav-item">
-                                <router-link :class="`nav-link ${tab===0?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(0)">
+                                <span :class="`nav-link ${tab===0?'active':''} fw-semi-bold`" >
                                     <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-users"></i></span></span>
                                     <span class="d-none d-md-block mt-1 fs--1">Receivers</span>
-                                </router-link>
+                                </span>
                             </li>
                             <li class="nav-item">
-                                <router-link :class="`nav-link ${tab===1?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(1)">
+                                <span :class="`nav-link ${tab===1?'active':''} fw-semi-bold`">
                                     <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-pen"></i></span></span>
                                     <span class="d-none d-md-block mt-1 fs--1">Extra Info</span>
-                                </router-link>
+                                </span>
                             </li>
                             <li class="nav-item">
-                                <router-link :class="`nav-link ${tab===2?'active':''}  fw-semi-bold`" to="#" @click.native="()=> setTab(2)">
+                                <span :class="`nav-link ${tab===2?'active':''}  fw-semi-bold`" >
                                     <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-dollar-sign"></i></span></span>
                                     <span class="d-none d-md-block mt-1 fs--1">Fee</span>
-                                </router-link>
+                                </span>
                             </li>
                         </ul>
                     </div>
@@ -40,57 +38,48 @@
                         <div class="tab-content">
                             <div :class="`tab-pane ${tab===0?'active':''} `">
 
+                                <tx-token :balances="balances" @changed="changedToken" class="pb-5" />
+
                                 <destination-address v-for="(destination, index) in destinations"
                                                      :key="`destinationAddress-${index}`"
                                                      :class="`${index > 0 ? 'pt-5' : '0'}`"
                                                      :index="index"
-                                                     :type="version.VERSION_TRANSPARENT"
+                                                     :version="version.VERSION_TRANSPARENT"
                                                      :balances="balances"
+                                                     :token="token.token"
                                                      @changed="e => changedDestination(index, e)"
                                                      @deleted="e => deletedDestination(index, e)">
                                 </destination-address>
 
-                                <div class="text-center pt-3">
-                                    <button class="btn btn-falcon-primary rounded-pill me-1 mb-1" type="button" @click="addDestination" v-tooltip.bottom="'Add another address'" >
+                                <div class="text-center py-3">
+                                    <button class="btn btn-falcon-primary rounded-pill me-1" type="button" @click="addDestination" v-tooltip.bottom="'Add another address'" >
                                         <i class="fa fa-plus"></i>
                                     </button>
                                 </div>
 
+                                <alert-box v-if="checkDestinationError" class="w-100" type="error">{{checkDestinationError}}</alert-box>
+
                             </div>
                             <div :class="`tab-pane ${tab===1?'active':''} `">
-                                <!--                <extra-message :destinations="destinations"-->
-                                <!--                               :type="version.VERSION_TRANSPARENT"-->
-                                <!--                               @changed="changedExtra" />-->
+                                <extra-data :destinations="destinations"
+                                            :version="version.VERSION_TRANSPARENT"
+                                            :paymentId="identifiedPaymentID"
+                                            @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===2?'active':''} `">
-
-                                <div class="form-check">
-                                    <input class="form-check-input" id="feeAuto" type="radio" value="feeAuto" v-model="feeType" />
-                                    <label class="form-check-label" for="feeAuto">Auto fee</label>
-                                </div>
-                                <destination-amount class="pb-4" v-if="feeType === 'feeAuto'" text="Fee Amount" :balances="balances" @changed="changedFeeAuto" :allow-zero="true" :allow-amount="false" />
-
-                                <div class="form-check">
-                                    <input class="form-check-input" id="feeManual" type="radio" value="feeManual" v-model="feeType" />
-                                    <label class="form-check-label" for="feeManual">Manual fee</label>
-                                </div>
-                                <destination-amount v-if="feeType === 'feeManual'" text="Fee Amount" :balances="balances" @changed="changedFeeManual" :allow-zero="true" />
+                                <tx-fee :balances="balances" :token="token" :allow-zero="true" @changed="changedFee" />
                             </div>
                         </div>
                     </div>
                     <div class="card-footer bg-light">
+
                         <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
 
                         <label v-if="status">{{status}}</label>
 
                         <div class="float-end">
-                            <button class="btn btn-link" type="button" v-if="tab > 0" @click="handleBack">
-                                Back <i class="fas fa-chevron-left me-2"></i>
-                            </button>
-                            <button class="btn btn-falcon-primary" type="button" v-if="tab < 2" @click="handleNext">
-                                <i class="fas fa-chevron-right ms-2"> </i> Next
-                            </button>
-                            <loading-button v-if="tab===2" text="Send funds" @submit="handleSendFunds" icon="fa fa-credit-card"  />
+                            <loading-button v-if="tab > 0" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
+                            <loading-button :text="`${tab === maxTab ? 'Delegate' : 'Next'}`" @submit="handleNext" :icon="`${ tab === maxTab ? 'fa fa-credit-card' : 'fas fa-chevron-right ms-2' }`"  />
                         </div>
                     </div>
                 </div>
@@ -113,34 +102,37 @@ const {version} = PandoraPay.enums.wallet.address;
 import Layout from "src/components/layout/layout"
 import Account from "src/components/wallet/account/account"
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import LoadingButton from "src/components/utils/loading-button.vue"
-import DestinationAddress from "src/components/send/destination-address.vue"
-import DestinationAmount from "src/components/send/destination-amount.vue"
-import ExtraMessage from "src/components/send/extra-message"
+import LoadingButton from "src/components/utils/loading-button"
+import DestinationAddress from "src/components/send/destination-address"
+import TxAmount from "src/components/send/tx-amount"
+import TxToken from "src/components/send/tx-token"
+import TxFee from "src/components/send/tx-fee"
+import ExtraData from "src/components/send/extra-data"
 import Vue from 'vue'
 import AlertBox from "src/components/utils/alert-box"
 import LayoutTitle from "src/components/layout/layout-title";
 
 export default {
 
-    components: { LayoutTitle, Layout, Account, LoadingSpinner, LoadingButton, DestinationAddress, DestinationAmount,
-        ExtraMessage, AlertBox
+    components: { LayoutTitle, Layout, Account, LoadingSpinner, LoadingButton, DestinationAddress, TxAmount,
+        ExtraData, AlertBox, TxFee, TxToken,
     },
 
     data(){
         return {
             tab: 0,
+            maxTab: 3,
 
+            token: { }, //contains token.token and token.validation
             destinations: [],
+            fee: {  },
 
-            feeType: "feeAuto",
-            feeManualValue: 0,
-            feeManualToken: '',
-
-            feeAutoToken: '',
-
-            extraMessage: '',
-            extraEncryptionOption: '',
+            extraData: {
+                data: "",
+                type: "public",
+                publicKeyToEncrypt: "",
+                validationError: null,
+            },
 
             error: '',
             status: '',
@@ -151,10 +143,10 @@ export default {
 
         version: () => version,
         address(){
-            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKeyHash] ;
+            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey] ;
         },
         account(){
-            return this.$store.state.accounts.list[this.$store.state.wallet.mainPublicKeyHash]
+            return this.$store.state.accounts.list[this.$store.state.wallet.mainPublicKey]
         },
         balances(){
             if (this.account) return this.account.balances;
@@ -166,23 +158,79 @@ export default {
         isFound(){
             return this.account !== null
         },
+
+        checkDestinationError(){
+
+            try{
+
+                const PaymentIDs = []
+
+                for (const destination of this.destinations)
+                    if (destination.address) {
+                        if (destination.publicKey === this.address.publicKey) throw "Destination can not be the same with from";
+                        if (destination.address.paymentId)
+                            PaymentIDs.push(destination.address.paymentId)
+                    }
+
+                if (PaymentIDs.length > 1)
+                    throw "Multiple PaymentIDs are not allowed"
+
+            }catch (err){
+                return err.toString()
+            }
+
+        },
+
+        identifiedPaymentID(){
+            for (const destination of this.destinations)
+                if (destination.address) {
+                    if (destination.address.paymentId)
+                        return destination.address.paymentId
+                }
+        },
+
     },
 
     methods:{
 
-        increaseTab(value){
-            this.tab = this.tab + value
-        },
-        setTab(value){
-            this.tab = value
+        async setTab(resolver, value){
+            try{
+
+                value = Math.max( value, 0)
+                value = Math.min( value, this.maxTab + 1)
+
+                if (this.tab === 0 && value === 1){
+
+                    if (this.token.validationError) throw this.token.validationError
+
+                    if (this.checkDestinationError) throw this.checkDestinationError
+
+                    for (const destination of this.destinations)
+                        if (destination.validationError) throw destination.validationError;
+
+                }
+                if (this.tab === 1 && value === 2){
+                    if (this.extraData.validationError) throw this.extraData.validationError
+                }
+                if (this.tab === 2 && value === 3){
+                    if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
+                    if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
+
+                    await this.handleSendFunds()
+                }
+
+            }catch(err) {
+                console.error(err)
+            }finally{
+                resolver()
+            }
         },
 
-        handleBack(){
-            return this.increaseTab(-1)
+        handleBack(resolver){
+            return this.setTab(resolver, this.tab - 1)
         },
-
-        async handleNext(){
-            return this.increaseTab(1)
+        handleNext(resolver){
+            return this.setTab(resolver, this.tab + 1)
         },
 
         addDestination(){
@@ -205,89 +253,73 @@ export default {
             Vue.delete(this.destinations, index )
         },
 
-        changedFeeManual(data){
-            if (data.amount !== undefined) this.feeManualValue = data.amount;
-            if (data.token) this.feeManualToken = data.token;
+        changedToken(data){
+            this.token = { ...this.token,  ...data, }
+        },
+        changedFee(data){
+            this.fee = { ...this.fee,  ...data, }
+        },
+        changedExtraData(data){
+            this.extraData = { ...this.extraData,  ...data, }
         },
 
-        changedFeeAuto(data){
-            if (data.token) this.feeAutoToken = data.token;
-        },
-
-        changedExtra(data){
-            if (data.extraMessage !== undefined) this.extraMessage = data.extraMessage;
-            if (data.extraEncryptionOption) this.extraEncryptionOption = data.extraEncryptionOption;
-        },
-
-        async handleSendFunds(resolve){
+        async handleSendFunds(){
 
             try{
 
                 this.error = '';
                 this.status = '';
 
-                const amounts = {
+                const amounts = { }
 
-                }
+                for (const destination of this.destinations)
+                    amounts.push = destination.amount
 
-                for (const destination of this.destinations) {
-
-                    if (destination.validationError) throw destination.validationError;
-                    if (destination.address === this.address.encodedAddress) throw "Destination can not be the same with from";
-
-                    if (!amounts[destination.token])
-                        amounts[destination.token] = 0
-
-                    amounts[destination.token] += destination.amount
-                }
+                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+                if (password === null ) return
 
                 //compute extra
                 const out = await PandoraPay.transactions.builder.createSimpleTx_Float( JSON.stringify({
                     from: [this.address.addressEncoded],
                     nonce: 0,
+                    token: this.token.token,
                     amounts: Object.values(amounts),
-                    amountsTokens: Object.keys(amounts),
-                    dsts: this.destinations.map (it => it.encodedAddress),
+                    dsts: this.destinations.map (it => it.addressEncoded),
                     dstsAmounts: this.destinations.map (it => it.amount),
-                    dstsTokens: this.destinations.map (it => it.token),
-                    feeFixed: (this.feeType === 'feeAuto') ? 0 : this.feeManualValue,
-                    feePerByte: 0,
-                    feePerByteAuto: this.feeType === 'feeAuto',
-                    feeToken: this.feeType === 'feeAuto' ? this.feeAutoToken : this.feeManualToken,
+                    fee: {
+                        fixed: (this.fee.feeType === 'feeAuto') ? 0 : this.fee.feeManual.amount,
+                        perByte: 0,
+                        perByteAuto: this.fee.feeType === 'feeAuto',
+                    },
+                    data: {
+                        data: Buffer.from(this.extraData.data).toString("hex"),
+                        encrypt: this.extraData.type === "encrypted",
+                        publicKeyToEncrypt: this.extraData.publicKeyToEncrypt,
+                    },
                     propagateTx: true,
                     awaitAnswer: true,
-                    // extra:{
-                    //     extraMessage: this.extraMessage,
-                    //     extraEncryptionOption: this.extraEncryptionOption,
-                    // },
-                }), (status) => {
-                    console.log(status)
+                } ), (status) => {
                     this.status = status
-                });
+                }, password );
 
                 if (!out) throw "Transaction couldn't be made";
-
                 this.status = ''
 
                 const tx = JSON.parse(out)
 
-                this.$store.commit('setTransactions', { txs: [tx], overwrite: false, })
+                await this.$store.dispatch('includeTx', { tx } )
 
-                const hash = tx.hash;
-
-                this.$store.dispatch('addToast', {
+                await this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Transaction created`,
-                    text: `A transaction has been made. \n TxId ${hash}`,
+                    text: `A transaction has been made. \n TxId ${tx.hash}`,
                 });
 
-                this.$router.push(`/explorer/tx/${hash}`);
+                this.$router.push(`/explorer/tx/${tx.hash}`);
 
             }catch(err){
                 console.error(err);
                 this.error = err.message;
-            }finally{
-                resolve(true);
             }
 
         },

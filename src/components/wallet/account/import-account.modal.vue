@@ -76,7 +76,7 @@
 
 <script>
 import Modal from "src/components/utils/modal"
-import LoadingButton from "src/components/utils/loading-button.vue"
+import LoadingButton from "src/components/utils/loading-button"
 import UtilsHelper from "src/utils/utils-helper";
 import AlertBox from "src/components/utils/alert-box"
 import PasswordInput from "src/components/utils/password-input";

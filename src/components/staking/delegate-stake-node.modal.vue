@@ -1,35 +1,81 @@
 <template>
 
-    <modal ref="modal" title="Delegate Stake">
+    <modal ref="modal" title="Delegate Stake to Node" content-class="">
 
-        <steps-bar :length="3" :active="step" />
+        <template slot="body">
 
-        <template v-if="step === 1">
-            <span >Node address</span>
-            <select v-model="nodeAddress">
-                <option v-for="(node, key) in delegateStakesNodes"
-                        :key="`node-${key}`"
-                        :value="node.address">
-                    {{node.address}} Fee: {{node.fee}} %
-                </option>
-            </select>
-            <loading-button text="Connect to delegated node" @submit="handleConnectNode" icon="fa fa-laptop-code"  />
+            <alert-box v-if="!isLoading && !isFound" type="warning" >
+                Address doesn't exist (is empty)!
+            </alert-box>
+            <template v-else>
+
+                <div class="card theme-wizard">
+                    <div class="card-header bg-light py-3">
+                        <ul class="nav justify-content-between nav-wizard">
+                            <li class="nav-item">
+                                <span :class="`nav-link ${tab===0?'active':''} fw-semi-bold`">
+                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-users"></i></span></span>
+                                    <span class="d-none d-md-block mt-1 fs--1">Select Node</span>
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <span :class="`nav-link ${tab===1?'active':''} fw-semi-bold`">
+                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-pen"></i></span></span>
+                                    <span class="d-none d-md-block mt-1 fs--1">Node Info</span>
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <span :class="`nav-link ${tab===2?'active':''} fw-semi-bold`">
+                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-pen"></i></span></span>
+                                    <span class="d-none d-md-block mt-1 fs--1">Delegate</span>
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body py-3">
+                        <div class="tab-content">
+                            <div :class="`tab-pane ${tab===0?'active':''} `">
+
+                                <div class="form">
+                                    <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Selecting Node to delegate:</label>
+                                    <select class="form-select" v-model="selectedDelegateNode">
+                                        <option v-for="(node, id) in delegatesNodes"
+                                                :key="`send-money-${id}`"
+                                                :value="node">
+                                            {{node.name}} || {{delegateNodeAddress(node)}}
+                                        </option>
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div :class="`tab-pane ${tab===1?'active':''} `">
+                                <template v-if="nodeInfo">
+                                    <label class="form-label">Delegates MAXIMUM slots: <strong>{{nodeInfo.maximumAllowed}}</strong></label> <br/>
+                                    <label class="form-label">Delegates Already: <strong>{{nodeInfo.delegatesCount}}</strong></label> <br/>
+                                    <label class="form-label">Delegates SLOTS: <strong>{{nodeInfo.maximumAllowed - nodeInfo.delegatesCount}}</strong></label> <br/>
+                                    <label class="form-label">Delegates Fee: <strong>{{nodeInfo.delegatesFee / 65535 * 100}}%</strong></label> <br/>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </template>
+
         </template>
-        <template v-if="step === 2">
-            <div v-if="nodeInfo">
-                <span>Allow Delegating: <strong>{{nodeInfo.allowDelegating}}</strong></span>
-                <span>Already included: <strong>{{nodeInfo.alreadyIncluded}}</strong></span>
-                <span>Available slots: <strong>{{nodeInfo.maximumDelegates - nodeInfo.availableSlots}}</strong>  / {{nodeInfo.maximumDelegates}} </span>
-                <span>Minimum Fee: <strong>{{nodeInfo.minimumFeePercentage}}</strong></span>
+        <template slot="footer">
+
+            <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
+
+            <label v-if="status">{{status}}</label>
+
+            <div class="float-end">
+                <loading-button v-if="tab > 0" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
+                <loading-button :text="`${tab === maxTab ? 'Stake to Node' : 'Next'}`" @submit="handleNext" :icon="`${ tab === maxTab ? 'fa fa-laptop-code' : 'fas fa-chevron-right ms-2' }`"  />
             </div>
 
-            <loading-button text="Delegate your stake to node" @submit="handleDelegateStake" icon="fa fa-laptop-code"  />
-        </template>
-        <template v-if="step === 3">
-            <span>Your stake has been delegated!</span>
         </template>
 
-        <alert-box v-if="error" type="error">{{error}}</alert-box>
 
     </modal>
 
@@ -39,7 +85,7 @@
 import consts from "consts/consts"
 import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
-import LoadingButton from "src/components/utils/loading-button.vue"
+import LoadingButton from "src/components/utils/loading-button"
 import StepsBar from "src/components/utils/steps-bar"
 import HttpHelper from "src/utils/http-helper"
 import AlertBox from "src/components/utils/alert-box"
@@ -48,164 +94,163 @@ export default {
 
     components: {Modal, PasswordInput, LoadingButton, StepsBar, AlertBox},
 
-
     data() {
         return {
 
-            step: 1,
+            publicKey: "",
 
-            delegate: null,
-            delegateStakeNonce: 0,
+            tab: 0,
+            maxTab: 3,
+
             error: '',
+            status: "",
 
-            nodeAddress:'',
+            delegatesNodes: null,
+            selectedDelegateNode: null,
+
             nodeInfo: null,
         }
     },
 
-    props:{
-        address: {default: null},
-    },
-
     computed:{
 
-        isWalletEncrypted() {
-            return this.$store.state.wallet.encrypted;
+        version: () => version,
+        address(){
+            return this.$store.state.wallet.addresses[this.publicKey];
         },
-
-        delegateStakesNodes(){
-            return consts.delegateStakesNodes;
+        account(){
+            return this.$store.state.accounts.list[this.publicKey]
+        },
+        isLoading(){
+            return this.account === undefined
+        },
+        isFound(){
+            return this.account !== null
         },
 
     },
 
     methods: {
 
-        showModal(delegate) {
-            Object.assign(this.$data, this.$options.data());
+        async setTab(resolver, value){
+            try{
 
-            this.delegate = delegate;
-            this.delegateStakeNonce = delegate ? delegate.delegateStakeNonce : 0;
+                value = Math.max( value, 0)
+                value = Math.min( value, this.maxTab + 1)
 
-            return this.$refs.modal.showModal();
+                if (this.tab === 0 && value === 1){
+                    await this.handleConnectNode()
+                }
+                if (this.tab === 1 && value === 2){
+                    await this.handleDelegateAsk()
+                }
+
+                this.tab = value
+            }catch(err) {
+                console.error(err)
+            }finally{
+                resolver()
+            }
         },
 
+        handleBack(resolver){
+            return this.setTab(resolver, this.tab - 1)
+        },
+        handleNext(resolver){
+            return this.setTab(resolver, this.tab + 1)
+        },
+
+        async showModal(publicKey) {
+            Object.assign(this.$data, this.$options.data());
+            this.publicKey = publicKey
+            this.delegatesNodes = await JSON.parse( PandoraPay.config.helpers.getNetworkSelectedDelegatesNodes() )
+            return this.$refs.modal.showModal();
+        },
 
         closeModal() {
             return this.$refs.modal.closeModal();
         },
 
-        async handleConnectNode(resolve){
+        delegateNodeAddress(delegateNode){
+            return `${delegateNode.url.Scheme.replace("ws","http")}://${delegateNode.url.Host}`
+        },
 
-            this.error = ''
-            this.nodeInfo = null;
+        async handleConnectNode(){
 
             try{
 
-                const out = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/is-delegating-open', {
-                    address: this.address.addressEncoded,
-                } );
-                if (!out ) throw Error("Node is offline");
+                this.error = ''
+                this.nodeInfo = null;
 
-                if (typeof out.allowDelegating !== "boolean") throw Error("allowDelegating is not Bool");
-                if (typeof out.alreadyIncluded !== "boolean") throw Error("alreadyIncluded is not Bool");
-                if (typeof out.availableSlots !== "number") throw Error("availableSlots is not Number");
-                if (typeof out.maximumDelegates !== "number") throw Error("maximumDelegates is not Number");
-                if (typeof out.minimumFeePercentage !== "number") throw Error("minimumFeePercentage is not Number");
+                const json = await HttpHelper.get(this.delegateNodeAddress( this.selectedDelegateNode ) +'/delegates/info', {} );
 
-                if (!out.allowDelegating) this.error = "Your selected node doesn't accept delegations";
-                if (out.alreadyIncluded) this.error = "You already delegated to this node";
-                if (!out.availableSlots) this.error = "The node is completely full";
+                if (!json) throw "Node is offline";
+
+                const out = JSON.parse(json)
+
+                if (typeof out.delegatesCount !== "number") throw "delegatesCount is missing"
+                if (typeof out.maximumAllowed !== "number") throw "maximumAllowed is missing"
+                if (typeof out.challenge !== "string" || out.challenge.length !== 64) throw "challenge is missing"
+                if (typeof out.delegatesFee !== "number") throw "delegatesFee is missing"
+                if (out.delegatesFee > 65535) throw "delegatesFee exceeded 65535"
+
+                if (out.maximumAllowed <= out.delegatesCount) throw "Node is Full"
 
                 this.nodeInfo = out;
-                this.step = 2;
 
             }catch(err){
-                this.error = err.message;
-            }finally{
-                resolve(true);
+                this.error = err.toString();
+                throw err
             }
 
         },
 
-        async handleDelegateStake(resolve){
-
-            this.error = '';
+        async handleDelegateAsk(){
 
             try{
+                this.error = '';
 
-                if (!this.nodeAddress) throw Error("Node Address is not selected");
+                if (!this.nodeInfo) throw Error("NodeInfo was not assigned");
 
-                let challenge = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/challenge', );
-                if (!challenge ) throw Error("Challenge couldn't be get. Maybe node is offline");
+                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+                if (password === null ) return
 
-                if (typeof challenge === "string") challenge = Buffer.from(challenge, "hex");
+                const signature = await PandoraPay.wallet.signMessageWalletAddress(this.nodeInfo.challenge, this.address.addressEncoded, password )
 
-                const publicKey = Buffer.from( this.address.publicKey, "hex");
+                const json = await HttpHelper.get(this.delegateNodeAddress( this.selectedDelegateNode ) +'/delegates/ask', {
+                    qs: {
+                        publicKey: this.address.publicKey,
+                        challengeSignature: signature,
+                    }
+                } );
 
-                //getting private key
-                const addressWallet = PandoraPay.wallet.manager.getWalletAddressByAddress( this.address.addressEncoded, false);
-                const delegateStakePrivateKeyModel = addressWallet.decryptGetDelegateStakePrivateKeyModel(this.delegate.delegateStakeNonce );
-                const delegateStakeAddressModel = delegateStakePrivateKeyModel.getAddressPublicKey();
+                if (!json) throw "Node is offline";
 
-                const delegateStakePublicKey = delegateStakeAddressModel.publicKey;
-                if (!delegateStakePublicKey.equals( Buffer.from(this.delegate.delegateStakePublicKey, 'hex') ))
-                    throw Error("Delegated Private Key is different")
+                const out = JSON.parse(json)
 
-                const concat = Buffer.concat([
-                    challenge,
-                    publicKey,
-                    delegateStakePublicKey,
-                    delegateStakePrivateKeyModel ? delegateStakePrivateKeyModel.privateKey : Buffer.alloc(0),
-                ]);
+                if (typeof out.exists !== "boolean") throw "exists is not a boolean"
+                if (out.exists) throw "Your address already has been delegated"
 
-                const signature = addressWallet.keys.sign( PandoraLibrary.helpers.crypto.CryptoHelper.dkeccak256(concat) );
-                if (!signature) throw Error("Message couldn't be signed");
+                if (typeof out.delegatePublicKey !== "string") throw "delegatePublicKey is missing"
 
-                const out = await HttpHelper.post(this.nodeAddress+'/wallet-stakes/import-wallet-stake', {
-                    publicKey: publicKey.toString("hex"),
-                    signature: signature.toString("hex"),
-                    delegateStakePrivateKey: delegateStakePrivateKeyModel.privateKey.toString('hex'),
-                });
+                const promise = new Promise((resolver, reject )=>{
+                    this.$emit('onDelegateStake', {
+                        delegatePublicKey: out.delegatePublicKey,
+                        resolver,
+                        reject,
+                        delegatesFee: this.nodeInfo.delegatesFee,
+                    } )
+                })
 
-                if (!out) throw Error("An error has occurred");
-
-                if ( !out.result && out.error ){
-
-                    if (out.error === "Your stake delegate's public key is not matching with the private key" && PandoraLibrary.helpers.StringHelper.isHex(out.errorData) )
-                        throw out.error + " " + out.errorData;
-
-                    if (out.error === "You need to delegate your stake to the following public key" && PandoraLibrary.helpers.StringHelper.isHex(out.errorData) )
-                        throw out.error + " " + out.errorData;
-
-                    throw out.error;
-
-                }
-
-                if (out) {
-                    this.$store.dispatch('addToast', {
-                        type: 'success',
-                        title: `Your stake was delegated successfully to Node `,
-                        text: `Your stake was delegated successfully to node. \n node ${this.nodeAddress}`,
-                    });
-                    this.step = 3;
-                }
-
-                console.log("out", out);
+                await promise
 
             }catch(err){
-                console.error(err);
-                this.error = err.message;
-            }finally{
-                resolve(true);
+                this.error = err.toString();
+                throw err
             }
-        }
+        },
 
     },
-
-    mounted(){
-        this.nodeAddress = this.delegateStakesNodes[0];
-    }
 
 }
 </script>

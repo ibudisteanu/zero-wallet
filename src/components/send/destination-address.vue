@@ -7,7 +7,7 @@
 
             <div :class="`${finalAddress ? 'destination-row': ''} `" >
 
-                <account-identicon v-if="finalAddress" :public-key="finalAddress.publicKey" :public-key-hash="finalAddress.publicKeyHash" size="30" outer-size="8" :version="finalAddress.version" />
+                <account-identicon v-if="finalAddress" :public-key="finalAddress.publicKey" size="30" outer-size="8" :version="finalAddress.version" />
 
                 <div class="input-toggle-group">
                     <input :class="`form-control ${validationError ? 'is-invalid' : ''}`" type="text" v-model="destination">
@@ -18,7 +18,7 @@
             <div v-if="validationError" class="invalid-feedback d-block">{{validationError}}</div>
 
         </div>
-        <destination-amount class="pt-2" @changed="changedDestinationAmount" :balances="balances" />
+        <tx-amount class="pt-2" @changed="changedTxAmount" :balances="balances" :token="token" />
     </div>
 
 </template>
@@ -26,12 +26,12 @@
 <script>
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
-import DestinationAmount from "./destination-amount.vue"
+import TxAmount from "./tx-amount"
 const {VERSION_TRANSPARENT} = PandoraPay.enums.wallet.address.version;
 
 export default {
 
-    components: {AccountIdenticon, DestinationAmount},
+    components: {AccountIdenticon, TxAmount},
 
     data(){
         return {
@@ -43,7 +43,8 @@ export default {
 
     props:{
         index: {default: null},
-        type: {default: 0},
+        version: {default: 0},
+        token: {default: ""},
         balances: {default: null },
     },
 
@@ -55,10 +56,10 @@ export default {
     },
 
     watch: {
-        async destination (to, from) {
+        async destination (to, ) {
             try{
 
-                if (this.type === VERSION_TRANSPARENT){
+                if (this.version === VERSION_TRANSPARENT){
                     const addressData = await PandoraPay.addresses.decodeAddress(to)
                     const address = JSON.parse(addressData)
                     this.finalAddress = address
@@ -71,12 +72,15 @@ export default {
             this.finalAddress = null
         },
 
-        finalAddress (to, from){
-            return this.$emit('changed', {
-                address: this.finalAddress,
-                encodedAddress: this.destination,
-                validationError: this.validationError,
-            });
+        finalAddress: {
+            immediate: true,
+            handler: function (to, from) {
+                return this.$emit('changed', {
+                    address: this.finalAddress,
+                    addressEncoded: this.destination,
+                    validationError: this.validationError,
+                });
+            }
         },
 
     },
@@ -89,7 +93,7 @@ export default {
                 this.destination = out
         },
 
-        changedDestinationAmount(data){
+        changedTxAmount(data){
             return this.$emit('changed', {
                 ...data,
             });

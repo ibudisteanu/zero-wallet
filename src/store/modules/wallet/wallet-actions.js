@@ -17,32 +17,32 @@ export default {
 
     async readAddresses( {state, dispatch, commit}, wallet ){
 
-        let mainPublicKeyHash = state.mainPublicKeyHash || localStorage.getItem('mainPublicKeyHash') || null;
+        let mainPublicKey = state.mainPublicKey || localStorage.getItem('mainPublicKey') || null;
 
         let firstAddress;
         const addresses = {};
         for (let i=0; i < wallet.addresses.length; i++ ){
 
-            const publicKeyHash = wallet.addresses[i].publicKeyHash
+            const publicKey = wallet.addresses[i].publicKey
             const addr = {
                 ...wallet.addresses[i],
-                identicon: await Identicons.getIdenticon(publicKeyHash),
+                identicon: await Identicons.getIdenticon(publicKey),
             };
 
-            addresses[publicKeyHash] = addr;
+            addresses[publicKey] = addr;
 
             if (i === 0)
-                firstAddress = publicKeyHash;
+                firstAddress = publicKey;
         }
 
         //localstorage
-        if (mainPublicKeyHash && !addresses[mainPublicKeyHash])
-            mainPublicKeyHash = null
+        if (mainPublicKey && !addresses[mainPublicKey])
+            mainPublicKey = null
 
-        if (!mainPublicKeyHash && firstAddress )
-            mainPublicKeyHash = firstAddress;
+        if (!mainPublicKey && firstAddress )
+            mainPublicKey = firstAddress;
 
-        commit('setWallet', { addresses, wallet, mainPublicKeyHash } );
+        commit('setWallet', { addresses, wallet, mainPublicKey } );
 
     },
 

@@ -2,9 +2,15 @@
 
     <div class="row">
         <h4 class="fw-medium pt-2" v-if="getToken" >
-            {{ amount }}
+            <template v-if="version === 'zether' && balanceDecoded === null ">
+                <i class="fa fa-question " v-tooltip.bottom="`Homomorphic Encrypted Amount: ${balance}`" />
+                <i class="fa fa-eye fw-light pointer" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecoded" @click="decodeBalance"></i>
+            </template>
+            <template v-else>
+                {{ amount }}
+            </template>
             <small class="fs--1 text-700">/
-                <router-link :to="`/tokens/${getToken.hash}`" class="currency">
+                <router-link :to="`/tokens/${getToken.hash}`" class="currency" v-tooltip.bottom="getToken.hash" >
                     $0x00
                 </router-link>
             </small>
@@ -15,25 +21,53 @@
 
 <script>
 
-const {VERSION_TRANSPARENT} = PandoraPay.enums.wallet.address.version;
 import StringHelper from "src/utils/string-helper"
-import amount from "src/components/wallet/amount"
+import Amount from "src/components/wallet/amount"
 export default {
 
-    components: {amount},
+    components: {Amount},
 
     props: {
-        version: {default: VERSION_TRANSPARENT},
+        version: {default: "transparent"},
         token: {default: ''},
         balance: {default: 0},
+        publicKey: {default: null},     //required for version zether
+        canBeDecoded: {default: false}  //required for version zether
+    },
+
+    data(){
+        return {
+            balanceDecoded: null,
+        }
+    },
+
+    asyncComputed:{
+        async amount(){
+            let amount
+            if (this.version === "transparent") {
+                amount = this.balance
+            }else {
+                if (this.balanceDecoded === null )
+                    return
+                else
+                    amount = this.balanceDecoded
+            }
+            return StringHelper.formatMoney( await PandoraPay.config.tokens.tokensConvertToBase( amount.toString(), this.getToken.decimalSeparator ), this.getToken.decimalSeparator)
+        }
     },
 
     computed: {
         getToken(){
             return this.$store.getters.getToken(this.token );
         },
-        amount(){
-            return StringHelper.formatMoney( PandoraPay.config.tokens.tokensConvertToBase(this.balance.toString(), this.getToken.decimalSeparator.toString() ), this.getToken.decimalSeparator)
+    },
+
+    methods: {
+        async decodeBalance(){
+            const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+            if (password === null ) return
+
+            this.balanceDecoded = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.publicKey, this.balance, this.token, password )
         }
     },
 

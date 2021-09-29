@@ -61,7 +61,7 @@
 
 import PasswordInput from "src/components/utils/password-input";
 import Layout from "src/components/layout/layout"
-import LoadingButton from "src/components/utils/loading-button.vue"
+import LoadingButton from "src/components/utils/loading-button"
 import ProgressBar from "src/components/utils/progress-bar"
 import strength from 'strength'
 import AlertBox from "src/components/utils/alert-box"
@@ -114,7 +114,7 @@ export default {
 
                 if (!out) throw "Result is not true";
 
-                this.$store.dispatch('addToast', {
+                await this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Wallet has been encrypted successfully`,
                     text: `Your wallet has been encrypted with the password provided`,

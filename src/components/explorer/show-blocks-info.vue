@@ -29,19 +29,23 @@
             </span>
 
             <span class="col-5 d-block d-sm-none text-dark">Timestamp</span>
-            <span class="col-7 col-sm-2 col-md-1  text-truncate">
+            <span class="col-7 col-sm-2 col-md-1  text-truncate" v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  blockInfo.timestamp) }`" >
                 {{timeAgo( $store.state.blockchain.genesisTimestamp +  blockInfo.timestamp)  }}
             </span>
 
             <span class="col-5 d-block d-sm-none text-dark">Size</span>
-            <span class="col-7 col-sm-2 col-md-1  text-truncate"> {{formatBytes(blockInfo.size)}} </span>
+            <div class="col-7 col-sm-2 col-md-1 text-truncate">
+                <span v-tooltip.bottom="`${ formatBytes(blockInfo.size) }`">
+                    {{formatSize(blockInfo.size)}}
+                </span>
+            </div>
 
             <span class="col-5 d-block d-sm-none text-dark">Transactions</span>
             <span class="col-7 col-sm-1 col-md-1  text-truncate">{{blockInfo.txs}} </span>
 
             <span class="col-5 d-block d-sm-none text-dark">Forged By</span>
             <span class="col-7 col-sm-2 col-md-1  text-truncate">
-                <account-identicon  :publicKeyHash="blockInfo.forger" :size="20" :outer-size="5"  />
+                <account-identicon  :publicKey="blockInfo.forger" :size="20" :outer-size="5"  />
             </span>
         </div>
 
@@ -65,7 +69,9 @@ export default {
     methods: {
 
         timeAgo : (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
-        formatBytes: (bytes) => StringHelper.formatBytes(bytes, 1),
+        formatTime : (timestamp) => StringHelper.formatTime( timestamp*1000 ),
+        formatSize: (bytes) => StringHelper.formatSize(bytes, 1),
+        formatBytes: (bytes) => StringHelper.formatBytes(bytes),
 
     },
 

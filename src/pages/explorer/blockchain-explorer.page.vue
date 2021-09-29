@@ -2,13 +2,13 @@
 
     <layout>
 
-        <layout-title icon="fa-cubes" title="Blockchain" >View the latest blocks.</layout-title>
+        <layout-title icon="fa-cubes" title="Blockchain">View the latest blocks.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0">Blockchain Explorer {{ ending ? ending : ''}}</h5>
+                        <h5 class="mb-0">Blockchain Explorer {{ ending ? ending : '' }}</h5>
                     </div>
                 </div>
             </div>
@@ -19,13 +19,14 @@
                         <loading-spinner/>
                     </template>
                     <template v-else>
-                        <show-blocks-info :blocksInfo="lastBlocksInfo" />
+                        <show-blocks-info :blocksInfo="lastBlocksInfo"/>
                     </template>
 
                 </div>
 
                 <div class="card-footer" v-if="loaded">
-                    <pagination class="py-0" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="pages" prefix="/explorer/" suffix="#chain" />
+                    <pagination class="py-0" :inverted="true" :count-per-page="countPerPage" :current="finalPage"
+                                :total="pages" prefix="/explorer/" suffix="#chain"/>
                 </div>
 
             </div>
@@ -46,86 +47,91 @@ import consts from "consts/consts"
 
 export default {
 
-    components: { Layout, Pagination, ShowBlocksInfo, LoadingSpinner, LayoutTitle },
+    components: {Layout, Pagination, ShowBlocksInfo, LoadingSpinner, LayoutTitle},
 
-    data(){
+    data() {
         return {
             error: '',
             loaded: false,
         }
     },
 
-    computed:{
+    computed: {
 
-        countPerPage(){
+        countPerPage() {
             return consts.blocksInfoPagination
         },
 
-        finalPage(){
-          if (this.page !== null) return this.page
-          return Math.floor((this.ending-1)/this.countPerPage)
+        finalPage() {
+            if (this.page !== null) return this.page
+            return Math.floor((this.ending - 1) / this.countPerPage)
         },
 
-       pages(){
-          return Math.floor((this.ending-1)/this.countPerPage)
+        pages() {
+            return Math.floor((this.ending - 1) / this.countPerPage)
         },
 
-        page(){
+        page() {
             let page = this.$route.params.page || null
-            if (typeof page == "string"){
+            if (typeof page == "string") {
                 page = Number.parseInt(page)
                 return page;
             }
             return page
         },
 
-        starting(){
+        starting() {
             return this.page * this.countPerPage
         },
 
-        last(){
-          const out = ( this.finalPage  + 1 ) * this.countPerPage
-          if (this.ending > 0)
-            return Math.min( this.ending, out );
+        last() {
 
-          return out
+            const out = (this.finalPage + 1) * this.countPerPage
+            if (this.ending > 0)
+                return Math.min(this.ending, out);
+
+            return out
         },
 
-        lastBlocksInfo(){
-            return this.$store.getters.blocksInfoSorted.filter(a => (a.height >= this.last - this.countPerPage) && (a.height < this.last) );
+        lastBlocksInfo() {
+            return this.$store.getters.blocksInfoSorted.filter(a => (a.height >= this.last - this.countPerPage) && (a.height < this.last));
         },
 
-        ending(){
+        ending() {
             return this.$store.state.blockchain.end;
         },
 
     },
 
     methods: {
-        async loadBlocksInfo(){
-            try{
+        async loadBlocksInfo() {
+            try {
                 this.loaded = false
                 this.error = ''
 
                 await this.$store.state.blockchain.syncPromise;
 
-                await this.$store.dispatch('getBlocksInfo', { starting: this.last-this.countPerPage, blockchainEnd: this.$store.state.blockchain.end, view: this.page !== null  } )
+                await this.$store.dispatch('getBlocksInfo', {
+                    starting: this.last - this.countPerPage,
+                    blockchainEnd: this.$store.state.blockchain.end,
+                    view: this.page !== null
+                })
 
-            }catch(err){
+            } catch (err) {
                 this.error = err.toString()
-            }finally{
+            } finally {
                 this.loaded = true
             }
         }
     },
 
     watch: {
-        '$route' (to, from) {
+        '$route'(to, from) {
             return this.loadBlocksInfo();
         },
     },
 
-    mounted(){
+    mounted() {
         return this.loadBlocksInfo();
     }
 

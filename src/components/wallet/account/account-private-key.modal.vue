@@ -14,7 +14,7 @@
 
 import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
-import LoadingButton from "src/components/utils/loading-button.vue"
+import LoadingButton from "src/components/utils/loading-button"
 import SecretText from "src/components/utils/secret-text"
 
 export default {
@@ -45,7 +45,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            this.privateKey = await PandoraPay.wallet.getWalletAddressPrivateKey( password, this.address.addressEncoded )
+            this.privateKey = await PandoraPay.wallet.getWalletAddressPrivateKey( this.address.addressEncoded, password )
 
             return this.$refs.modal.showModal();
 
@@ -61,10 +61,5 @@ export default {
 </script>
 
 <style scoped>
-    span{
-        display: inline-block
-    }
-    .wordwrap{
-        display: block;
-    }
+
 </style>

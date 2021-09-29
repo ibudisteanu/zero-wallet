@@ -13,7 +13,7 @@
                 <div class="card-group">
                     <div class="card overflow-hidden pointer" @click="()=>select(0)">
                         <div class="card-img-top">
-                            <img class="img-fluid" src="https://www.datadriveninvestor.com/wp-content/uploads/2020/02/bc-compressor.jpg" alt="Card image cap">
+                            <img class="img-fluid" src="https://iln.ieee.org/CServer/Image/A2086DFA901C41A9B9C7AB4EBFF56BFF/EDP550.jpg" alt="Transparent addresses">
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">Transparent</h5>
@@ -27,7 +27,7 @@
                     </div>
                     <div class="card overflow-hidden">
                         <div class="card-img-top">
-                            <img class="img-fluid" src="https://www.crypto-news.net/wp-content/uploads/2018/06/bigstock-Technology-Security-207471322.jpg" alt="Card image cap">
+                            <img class="img-fluid" src="https://www.rocklandtrust.com/assets/content/fsJif803/2017/05/30/security_pg.jpg" alt="Anonymous addresses">
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">Anonymous</h5>

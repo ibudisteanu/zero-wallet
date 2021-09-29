@@ -7,7 +7,7 @@ export default {
         if (promises[page]) return promises[page]
         return promises[page] = new Promise(async (resolve, reject)=>{
             try{
-                const data = await PandoraPay.network.getNetworkMempool(page, 0)
+                const data = await PandoraPay.network.getNetworkMempool( (page === 0) ? "" : state.chainHash, page, 0)
                 const mempool = JSON.parse(data)
                 if (!mempool) throw "Mempool is invalid"
 

@@ -34,10 +34,12 @@ export default {
         getToken(){
             return this.$store.getters.getToken( this.token );
         },
-        amount(){
-            return StringHelper.formatMoney( PandoraPay.config.tokens.tokensConvertToBase( this.value.toString(), this.getToken.decimalSeparator.toString() ), this.getToken.decimalSeparator )
-        }
     },
+    asyncComputed:{
+        async amount(){
+            return StringHelper.formatMoney( await PandoraPay.config.tokens.tokensConvertToBase( this.value.toString(), this.getToken.decimalSeparator ), this.getToken.decimalSeparator )
+        }
+    }
 }
 </script>
 

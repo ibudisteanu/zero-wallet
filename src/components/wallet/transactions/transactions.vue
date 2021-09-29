@@ -16,8 +16,8 @@
                 </div>
             </div>
         </div>
-        <div class="card-body p-3" v-if="txs && transactionsAll.length ">
-            <show-transactions :transactions="transactionsAll"/>
+        <div class="card-body p-3" v-if="txs && transactions.length ">
+            <show-transactions :transactions="transactions"/>
         </div>
         <div class="card-footer bg-light g-0 d-block-inline p-3" v-if="pages">
             <pagination class="right" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="pages" :prefix="`/address/${address.addressEncoded}/`" suffix="#transactions" />
@@ -42,7 +42,7 @@ export default {
     components: { LoadingSpinner, Pagination, ShowTransactions, AlertBox },
 
     props: {
-        publicKeyHash: {default: ""},
+        publicKey: {default: ""},
         page: {default: null},
     },
 
@@ -61,11 +61,11 @@ export default {
         },
 
         address(){
-            return this.$store.state.addresses.list[this.publicKeyHash]
+            return this.$store.state.addresses.list[this.publicKey]
         },
 
         txs(){
-            return this.$store.state.accounts.txs[this.publicKeyHash]
+            return this.$store.state.accountsTxs.list[this.publicKey]
         },
 
         countPerPage(){
@@ -85,12 +85,12 @@ export default {
             return this.txs.count;
         },
 
-        pendingTransactions(){
-            return [];
-        },
-
         last(){
-            const out = (this.page === null) ? undefined : ( this.page + 1 ) * this.countPerPage
+
+            if (this.page === null) return undefined
+
+            const out = ( this.page + 1 ) * this.countPerPage
+
             if (this.ending > 0)
               return Math.min( this.ending, out );
 
@@ -125,9 +125,6 @@ export default {
             return out;
         },
 
-        transactionsAll(){
-            return this.pendingTransactions.concat( this.transactions );
-        },
 
     },
 
@@ -138,7 +135,7 @@ export default {
                 this.error = ''
 
                 await this.$store.state.blockchain.syncPromise;
-                await this.$store.dispatch('downloadAccountTxs', {publicKeyHash: this.publicKeyHash, next: this.last, view: (this.page !== null) } )
+                await this.$store.dispatch('downloadAccountTxs', {publicKey: this.publicKey, next: this.last, view: (this.page !== null) } )
 
             }catch(err){
                 this.error = err.toString()
@@ -149,7 +146,7 @@ export default {
     },
 
     watch: {
-        publicKeyHash (to, from) {
+        publicKey (to, from) {
             return this.loadTransactions();
         },
         page (to, from) {

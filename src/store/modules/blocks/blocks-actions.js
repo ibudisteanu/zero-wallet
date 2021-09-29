@@ -10,13 +10,11 @@ export default {
         const txs = [];
         for (const tx of blk.txs) {
 
-            tx.__extra = {
-                blkHeight: blk.height,
-                timestamp: blk.timestamp,
-            };
+            tx.__height = ""
+            tx.__blkHeight = blk.height
+            tx.__timestamp = blk.timestamp
 
-            for (const vin of tx.vin) await dispatch('getTokenByHash', vin.token)
-            for (const vout of tx.vout) await dispatch('getTokenByHash', vout.token)
+            await dispatch('processTx', tx)
 
             txs.push(tx)
         }

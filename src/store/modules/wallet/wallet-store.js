@@ -21,7 +21,7 @@ export default {
 
         addresses: {},
 
-        mainPublicKeyHash: null,
+        mainPublicKey: null,
 
     },
 

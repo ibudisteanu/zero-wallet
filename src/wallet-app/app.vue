@@ -54,25 +54,26 @@ export default {
         })
 
         let initialized = false
-        PandoraPay.events.listenEvents( (name, data )=>{
+        PandoraPay.events.listenEvents( async (name, data )=>{
 
             if (name === "main")
                 if (data === "initialized"){
                     initialized = true
 
-                    PandoraPay.events.listenNetworkNotifications(( subscriptionType, key, data, extraInfo)=>{
+                    await PandoraPay.events.listenNetworkNotifications(( subscriptionType, key, data, extraInfo)=>{
 
-                        console.log("listenNetworkNotifications", data, extraInfo)
+                        console.log("listenNetworkNotifications", key, data, extraInfo)
 
-                        if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT)
-                            return this.$store.dispatch('accountUpdateNotification', {publicKeyHash: key, account: JSON.parse(data) })
+                        if (subscriptionType in [ PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_PLAIN_ACCOUNT, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_REGISTRATION ])
+                            return this.$store.dispatch('accountUpdateNotification', {publicKey: key, type: subscriptionType, data: JSON.parse(data), extraInfo: extraInfo ? JSON.parse(extraInfo) : null })
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS)
-                            return this.$store.dispatch('accountTxUpdateNotification', { publicKeyHash: key, txHash:data.substr(1,64), extraInfo: JSON.parse(extraInfo) } )
+                            return this.$store.dispatch('accountTxUpdateNotification', { publicKey: key, txHash:data.substr(1,64), extraInfo: JSON.parse(extraInfo) } )
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTION)
-                            return this.$store.commit('txNotification', { txHash: key, extraInfo: JSON.parse(extraInfo) } )
+                            return this.$store.dispatch('txNotification', { txHash: key, extraInfo: JSON.parse(extraInfo) } )
                     })
+
 
                     this.readWallet()
                 }
@@ -81,6 +82,7 @@ export default {
                 if (data > 0) {
                     this.$store.commit('setConsensusStatus', "online")
                     this.$store.dispatch('initializeFaucetInfo')
+                    this.$store.dispatch('getTokenByHash', "")
                 }
                 else this.$store.commit('setConsensusStatus', "offline")
             }
@@ -114,7 +116,7 @@ export default {
             await this.$store.dispatch('getBlocksInfo',  {starting: this.$store.state.blockchain.end - consts.blocksInfoPagination, blockchainEnd: this.$store.state.blockchain.end } )
 
             for (const key in this.$store.state.wallet.addresses)
-                await this.$store.dispatch('subscribeAccount', this.$store.state.wallet.addresses[key].publicKeyHash)
+                await this.$store.dispatch('subscribeAccount', this.$store.state.wallet.addresses[key].publicKey)
         },
 
 

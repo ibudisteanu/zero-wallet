@@ -75,7 +75,7 @@
 
 import Modal from "src/components/utils/modal"
 import PasswordInput from "src/components/utils/password-input";
-import LoadingButton from "src/components/utils/loading-button.vue"
+import LoadingButton from "src/components/utils/loading-button"
 import AlertBox from "src/components/utils/alert-box"
 import UtilsHelper from "src/utils/utils-helper";
 
@@ -147,7 +147,7 @@ export default {
                 if (!out)
                     throw "Your address already exists!"
 
-                this.$store.dispatch('addToast', {
+                await this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Imported successfully`,
                     text: `Your Address has been successfully imported.`,

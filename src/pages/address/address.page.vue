@@ -7,16 +7,25 @@
 
             <account :address="address" />
 
-            <alert-box v-if="!isLoading && !isFound" type="warning" >
-                Address doesn't exist!
-            </alert-box>
-            <template v-else>
-                <balances :publicKeyHash="publicKeyHash" />
-                <transactions :publicKeyHash="publicKeyHash" :page="page" />
+            <template v-if="!isLoading">
+
+                <template v-if="!isFound">
+                    <alert-box type="warning" >
+                        Address doesn't exist (is empty)!
+                    </alert-box>
+                    <pending-transactions :publicKey="publicKey" />
+                </template>
+                <template v-else>
+                    <balances :publicKey="publicKey" />
+                    <pending-transactions :publicKey="publicKey" />
+                    <transactions :publicKey="publicKey" :page="page" />
+                </template>
+
             </template>
 
         </template>
-        <div class="py-3 text-center" v-else>
+
+        <div class="py-3 text-center" v-if="!address || isLoading">
             <loading-spinner class="fs-3" />
         </div>
 
@@ -34,14 +43,17 @@ import AccountIdenticon from "../../components/wallet/account/account-identicon"
 import LoadingSpinner from "../../components/utils/loading-spinner";
 import Account from "src/components/wallet/account/account"
 import AlertBox from "src/components/utils/alert-box"
+import PendingTransactions from "../../components/wallet/transactions/pending-transactions";
 
 export default {
 
-    components: {Layout,  Balances, Transactions, AccountIdenticon, LoadingSpinner, AlertBox, Account, LayoutTitle},
+    components: {
+        PendingTransactions,
+        Layout,  Balances, Transactions, AccountIdenticon, LoadingSpinner, AlertBox, Account, LayoutTitle},
 
     data(){
         return {
-            publicKeyHash: '',
+            publicKey: '',
             error: "",
         }
     },
@@ -58,13 +70,15 @@ export default {
         },
 
         address(){
-            return this.$store.state.addresses.list[this.publicKeyHash];
+            if (this.$store.state.wallet.addresses[this.publicKey])
+                return this.$store.state.wallet.addresses[this.publicKey];
+            return this.$store.state.addresses.list[this.publicKey];
         },
         account(){
-            return this.$store.state.accounts.list[this.publicKeyHash]
+            return this.$store.state.accounts.list[this.publicKey]
         },
-        mainPublicKeyHash(){
-            return this.$store.state.wallet.mainPublicKeyHash
+        mainPublicKey(){
+            return this.$store.state.wallet.mainPublicKey
         },
         isLoading(){
             return this.account === undefined
@@ -84,31 +98,31 @@ export default {
                 this.error = ""
 
                 let address = this.$route.params.address
-                let publicKeyHash
+                let publicKey
 
                 if (address){
                     const addressData = await PandoraPay.addresses.decodeAddress(address)
                     const addressJSON = JSON.parse(addressData)
-                    publicKeyHash = addressJSON.publicKeyHash
+                    publicKey = addressJSON.publicKey
                 } else {
-                    publicKeyHash = newAddress||this.mainPublicKeyHash
-                    if (!this.$store.state.wallet.addresses[publicKeyHash]) return
-                    address = this.$store.state.wallet.addresses[publicKeyHash].addressEncoded
+                    publicKey = newAddress||this.mainPublicKey
+                    if (!this.$store.state.wallet.addresses[publicKey]) return
+                    address = this.$store.state.wallet.addresses[publicKey].addressEncoded
                 }
 
                 const addressData = {}
                 addressData.addressEncoded = address
-                addressData.publicKeyHash = publicKeyHash
+                addressData.publicKey = publicKey
 
                 this.$store.commit('addAddress', addressData )
 
-                this.publicKeyHash = publicKeyHash
+                this.publicKey = publicKey
 
                 await this.$store.state.blockchain.syncPromise;
 
-                if (!this.publicKeyHash) return
+                if (!this.publicKey) return
 
-                await this.$store.dispatch('subscribeAccount', this.publicKeyHash )
+                await this.$store.dispatch('subscribeAccount', this.publicKey )
 
             }catch(err){
                 this.error = err.toString()
@@ -124,11 +138,11 @@ export default {
           if (to === from) return
             return this.loadAddress();
         },
-        async mainPublicKeyHash (to, from){
+        async mainPublicKey (to, from){
 
             if (to === from) return
 
-            if (to !== this.publicKeyHash || !this.publicKeyHash)
+            if (to !== this.publicKey || !this.publicKey)
                 await this.loadAddress(to);
 
             if (!this.$store.getters.walletContains(from) )
@@ -141,8 +155,8 @@ export default {
     },
 
     async beforeDestroy() {
-        if (!this.$store.getters.walletContains(this.publicKeyHash))
-            await this.$store.dispatch('unsubscribeAccount', this.publicKeyHash )
+        if (!this.$store.getters.walletContains(this.publicKey))
+            await this.$store.dispatch('unsubscribeAccount', this.publicKey )
 
     }
 

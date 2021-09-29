@@ -2,76 +2,95 @@
 
     <layout>
 
-        <layout-title icon="fa-piggy-bank" title="Staking" >Delegate your stakes to a staking node.</layout-title>
-
-        TODO
+        <layout-title icon="fa-piggy-bank" title="Staking">Delegate your stakes to a staking node.</layout-title>
 
         <div class="account-info" v-if="address">
 
             <account :address="address" />
 
-            <loading-spinner v-if="!address.loaded" />
+            <alert-box v-if="!isLoading && !isFound" type="warning" >
+                Address doesn't exist (is empty)!
+            </alert-box>
+            <div v-else class="pt-4">
 
-            <div class="pd-top-40" v-else>
-
-                <span>Available coins for Staking <strong>{{balance}}</strong></span>
-                <span v-if="balance < minimumForStaking" class="danger">Minimum required for Staking {{minimumForStaking}}</span>
-
-                <div class="pd-bottom-20"></div>
-
-                <span>Delegated: <strong>{{isDelegated}}</strong> </span>
-
-                <div v-if="isDelegateStakeInPending">
-                    <span>Your delegating transaction is in pending right now...</span>
-                    <loading-spinner />
-                </div>
-                <div v-else >
-
-                    <div v-if="address.delegate" >
-                        <span>Delegated nonce {{address.delegate.delegateStakeNonce}}</span>
-                        <span>Delegated public key {{address.delegate.delegateStakePublicKey}}</span>
-                        <span>Delegated fee {{delegateFeePercentage}} %</span>
+                <div class="card mb-3">
+                    <div class="card-header bg-light">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h5 class="mb-0">Staking</h5>
+                            </div>
+                        </div>
                     </div>
+                    <div class="card-body border-bottom border-200">
 
-                    <div class="buttons-row pd-top-20">
+                        <span class="d-block">Your balance: <strong>{{balance}}</strong></span>
+                        <span v-if="balance < minimumForStaking" class="text-danger d-block"> Minimum balance required for Staking {{minimumForStaking}}</span>
 
-                        <div class="btn">
-                            <div class="btn-round pointer" @click="handleShowDelegateStake" v-tooltip.bottom="'Delegate your stake'" :disabled="!balance" >
-                                <i class="fa fa-link" :disabled="!balance"  />
+                        <template v-if="!isDelegated" >
+                            <span class="d-block pt-4">Delegated: <strong>NO</strong> </span>
+                        </template>
+                        <template v-else>
+                            <span class="d-block pt-4">Delegated: <strong>YES</strong> </span>
+                            <span class="d-block">Delegated public key {{account.delegatedStake.delegatedPublicKey}}</span>
+                            <span class="d-block">Delegated fee {{delegateFeePercentage}} %</span>
+                        </template>
+
+                        <template v-if="delegatedStake">
+
+                            <div class=" pt-4">
+                                <span class="fw-bold fs-0">Delegated Stake</span>
+                                <balance :key="`delegated-balance`"  :balance="delegatedStake.stakeAvailable"  token="" :version="0"></balance>
+                                <span v-if="delegatedStake.stakeAvailable < minimumForStaking" class="text-danger d-block"> Minimum balance required for Staking {{minimumForStaking}}</span>
                             </div>
-                        </div>
-
-                        <div class="btn">
-                            <div class="btn-round pointer" @click="handleShowStopDelegateStake" v-tooltip.bottom="'Stop delegating your stake'" :disabled="!isDelegated || !balance" >
-                                <i class="fa fa-unlink danger" :disabled="!isDelegated || !balance" />
+                            <div class="pt-4" >
+                                <span class="fw-bold fs-0">Delegated Stakes in pending {{!delegatedStakesPending.length ? 'None' : ''}}</span>
+                                <delegated-stake-pending v-for="(delegatedStakePending, index) in delegatedStakesPending"
+                                                         :key="`delegated-stake-pending-${index}`"
+                                                         :delegatedStakePending="delegatedStakePending">
+                                </delegated-stake-pending>
                             </div>
-                        </div>
 
-                        <div class="btn">
-                            <div class="btn-round pointer" @click="handleShowDelegatePrivateKey" v-tooltip.bottom="'View Delegate Stake private key'" :disabled="!balance">
-                                <i class="fa fa-eye" :disabled="!balance" />
-                            </div>
-                        </div>
-
-                        <div class="btn">
-                            <div class="btn-round pointer" @click="handleShowDelegateStakeNode" v-tooltip.bottom="'Delegate Stake to node'" :disabled="!balance" >
-                                <i class="fa fa-laptop-code" :disabled="!balance" ></i>
-                            </div>
-                        </div>
+                        </template>
 
                     </div>
 
+                    <div class="card-footer bg-light g-0 d-block-inline p-3">
 
+                        <div v-if="isDelegateStakeInPending">
+                            <span>You have a transaction in mempool...</span>
+                            <loading-spinner />
+                        </div>
+                        <div v-else >
+
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowDelegateStakeNode" v-tooltip.bottom="'Delegate your Stake to a Node'" >
+                                <i class="fa fa-laptop-code " />
+                            </button>
+
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowDelegateStake" v-tooltip.bottom="'Manual Delegating your stake'" >
+                                <i class="fa fa-link " />
+                            </button>
+
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowUnstake" v-tooltip.bottom="'Unstaking'" :disabled="!isDelegated" >
+                                <i class="fa fa-unlink text-danger " />
+                            </button>
+
+                        </div>
+
+                    </div>
                 </div>
 
-                <delegate-stake-modal ref="refDelegateStakeModal" :address="address" />
-                <stop-delegate-stake-modal ref="refStopDelegateStakeModal" :address="address" />
-                <delegate-stake-private-key-modal ref="refDelegateStakePrivateKeyModal" :address="address" />
-                <delegate-stake-node-modal ref="refDelegateStakeNodeModal" :address="address"/>
+                <delegate-stake-modal ref="refDelegateStakeModal" />
+                <unstake-modal ref="refUnstakeModal" />
+                <delegate-stake-node-modal ref="refDelegateStakeNodeModal" @onDelegateStake="onDelegateStake" />
 
             </div>
 
         </div>
+
+        <div class="py-3 text-center" v-if="!address || isLoading">
+            <loading-spinner class="fs-3" />
+        </div>
+        <alert-box v-if="error" type="error">{{error}}</alert-box>
 
     </layout>
 
@@ -85,45 +104,60 @@ import LayoutTitle from "src/components/layout/layout-title"
 import Account from "src/components/wallet/account/account"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 
-import DelegateStakeModal from "src/components/staking/delegate-stake.modal.vue"
-import StopDelegateStakeModal from "src/components/staking/stop-delegate-stake.modal.vue"
-import DelegateStakePrivateKeyModal from "src/components/staking/delegate-stake-private-key.modal.vue"
-import DelegateStakeNodeModal from "src/components/staking/delegate-stake-node.modal.vue"
+import DelegateStakeModal from "src/components/staking/delegate-stake.modal"
+import UnstakeModal from "src/components/staking/unstake.modal"
+import DelegateStakeNodeModal from "src/components/staking/delegate-stake-node.modal"
+import StringHelper from "../../utils/string-helper";
+import Balance from "src/components/wallet/balance/balance"
+import DelegatedStakePending from "src/components/wallet/balance/delegated-stake-pending"
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {AccountIdenticon, Layout, Account, LoadingSpinner, DelegateStakeModal, StopDelegateStakeModal, DelegateStakePrivateKeyModal, DelegateStakeNodeModal, LayoutTitle},
+    components: {AccountIdenticon, Layout, Account, LoadingSpinner, DelegateStakeModal, UnstakeModal, DelegateStakeNodeModal, LayoutTitle, DelegatedStakePending, Balance, AlertBox},
 
     data() {
         return {
             showPublicKey: false,
-            showPublicKeyHash: false,
+            error: "",
         }
     },
 
     computed:{
 
+        publicKey(){
+            return this.$store.state.wallet.mainPublicKey
+        },
         address(){
-            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKeyHash] ;
+            return this.$store.state.wallet.addresses[this.publicKey];
+        },
+        account(){
+            return this.$store.state.accounts.list[this.publicKey]
+        },
+        isLoading(){
+            return this.account === undefined
+        },
+        isFound(){
+            return this.account !== null
         },
 
-        balance(){
-            const balances = this.address.balances || {"": {amount: 0}};
-            const amount = balances[""].amount || 0;
-            return PandoraPay.argv.transactions.coins.convertToBase( amount );
+        delegatedStake(){
+            if (!this.account) return null
+            return this.account.delegatedStake
         },
 
-        minimumForStaking(){
-            return PandoraPay.argv.transactions.coins.convertToBase( PandoraPay.argv.transactions.staking.getMinimumStakeRequiredForForging( this.$store.state.blockchain.end ) );
+        delegatedStakesPending(){
+            if (!this.delegatedStake) return []
+            return this.delegatedStake.stakesPending
         },
 
         isDelegated(){
-            if (this.address.delegate && this.address.delegateVersion === 1) return true;
-            return false;
+            return (this.delegatedStake && this.account.delegatedStakeVersion === 1)
         },
 
         delegateFeePercentage(){
-            return this.address.delegate.delegateStakeFee / PandoraPay.argv.transactions.staking.delegateStakingFeePercentage * 100;
+            if (!this.delegatedStake) return 0
+            return this.delegatedStake.delegatedStakeFee / 65535 * 100;
         },
 
         pendingTxs(){
@@ -131,52 +165,61 @@ export default {
         },
 
         pendingTransactions(){
-
-            const txs = this.pendingTxs;
-
-            const out = [];
-            for (const key in txs)
-                if (this.$store.state.transactions.txsByHash[txs[key]])
-                    out.push( this.$store.state.transactions.txsByHash[txs[key]] );
-
-            return out;
+            return Object.keys( this.$store.state.accountsPendingTxs.list[this.publicKey] || {} )
         },
 
         isDelegateStakeInPending(){
-
-            const pendingTxs = this.pendingTransactions;
-
-            for (let i=0; i < pendingTxs.length; i++)
-                if (pendingTxs[i].scriptVersion === 1)
-                    return true;
-
-            return false;
+            return this.pendingTransactions.length > 0;
         }
+
+    },
+
+    asyncComputed:{
+
+        async balance(){
+            const balances = { "": { amount: 0 } }
+            if (this.account)
+                for (const balance of this.account.balances)
+                    balances[balance.token] = { amount: balance.amount }
+
+            const amount = balances[""].amount || 0;
+            return StringHelper.formatMoney( await PandoraPay.config.coins.convertToBase( amount.toString() ), PandoraPay.config.coins.DECIMAL_SEPARATOR)
+        },
+
+        async minimumForStaking(){
+            const minimum = await PandoraPay.config.stake.getRequiredStake( this.$store.state.blockchain.end.toString() )
+            return StringHelper.formatMoney( await PandoraPay.config.coins.convertToBase( minimum ), PandoraPay.config.coins.DECIMAL_SEPARATOR )
+        },
 
     },
 
     methods:{
 
-        handleShowDelegateStake(){
-            return this.$refs.refDelegateStakeModal.showModal( this.address.delegate );
+        handleShowDelegateStake(data){
+            if (!this.balance)
+                return this.$store.dispatch('addToast', {
+                    type: 'warning',
+                    title: `Can't delegate`,
+                    text: `You can't delegate as your wallet is empty`,
+                })
+            return this.$refs.refDelegateStakeModal.showModal( this.publicKey, data );
         },
 
-        handleShowStopDelegateStake(){
-            return this.$refs.refStopDelegateStakeModal.showModal( this.address.delegate );
-        },
-
-        handleShowDelegatePrivateKey(){
-            return this.$refs.refDelegateStakePrivateKeyModal.showModal( this.address.delegate );
+        handleShowUnstake(){
+            return this.$refs.refUnstakeModal.showModal( this.publicKey );
         },
 
         handleShowDelegateStakeNode(){
-            return this.$refs.refDelegateStakeNodeModal.showModal( this.address.delegate );
+            return this.$refs.refDelegateStakeNodeModal.showModal( this.publicKey );
+        },
+
+        onDelegateStake(data){
+            return this.handleShowDelegateStake(data)
         }
 
     },
 
     async mounted(){
-
         if (typeof window === "undefined") return;
     }
 
@@ -184,21 +227,4 @@ export default {
 </script>
 
 <style scoped>
-
-    .buttons-row .btn{
-        display: inline-block;
-    }
-
-    .btn-round{
-        font-size: 20px;
-        width: 40px;
-        height: 40px;
-        margin-bottom: 10px;
-        margin-right: 30px;
-    }
-
-    .btn-round i{
-        margin-top: 10px;
-    }
-
 </style>

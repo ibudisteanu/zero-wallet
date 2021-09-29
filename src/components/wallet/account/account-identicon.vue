@@ -21,7 +21,6 @@ export default {
         identicon: {default: null},
         address: {default: ""},
         publicKey: {default: null},
-        publicKeyHash: {default: null},
 
         disableRoute: { default: false }
     },
@@ -40,24 +39,18 @@ export default {
                 this.identiconSrc = newVal
             }
         },
-        publicKeyHash: {
-            immediate: true,
-            handler: async function(newVal, oldVal){
-                if (newVal) {
-                    this.identiconSrc = await Identicons.getIdenticon(newVal)
-                    const out = await PandoraPay.addresses.generateAddress(newVal)
-                    this.finalAddress = out[1]
-                }
-            }
-        },
         publicKey: {
             immediate: true,
             handler: async function(newVal, oldVal){
                 if (newVal){
-                    const publicKeyHash = await PandoraPay.cryptography.computePublicKeyHash(newVal)
-                    this.identiconSrc = await Identicons.getIdenticon(publicKeyHash)
-                    const out = await PandoraPay.addresses.generateAddress(publicKeyHash)
-                    this.finalAddress = out[1]
+                    try{
+                        const out = await PandoraPay.addresses.generateAddress(newVal, "", 0, "")
+                        this.identiconSrc = await Identicons.getIdenticon(newVal)
+                        this.finalAddress = out[1]
+                    }catch(err){
+                        this.finalAddress = ""
+                        this.identiconSrc = ""
+                    }
                 }
             }
         },
@@ -65,10 +58,15 @@ export default {
             immediate: true,
             handler: async function(newVal, oldVal){
                 if (newVal) {
-                    const addressData = await PandoraPay.addresses.decodeAddress(newVal)
-                    const address = JSON.parse(addressData)
-                    this.identiconSrc = await Identicons.getIdenticon(address.publicKeyHash)
-                    this.finalAddress = newVal
+                    try{
+                        const addressData = await PandoraPay.addresses.decodeAddress(newVal)
+                        const address = JSON.parse(addressData)
+                        this.identiconSrc = await Identicons.getIdenticon(address.publicKey)
+                        this.finalAddress = newVal
+                    }catch(err){
+                        this.finalAddress = ""
+                        this.identiconSrc = ""
+                    }
                 }
             }
         }

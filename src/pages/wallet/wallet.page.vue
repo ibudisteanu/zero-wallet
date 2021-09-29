@@ -29,12 +29,12 @@
                     </div>
 
                     <div class="row py-2">
-                        <div v-if="!showPublicKeyHash" class="pointer w-auto" @click="showPublicKeyHash = true">
-                            View Public Key Hash
+                        <div v-if="!showRegistration" class="pointer w-auto" @click="showRegistration = true">
+                            View Registration Key
                         </div>
-                        <div v-else >
-                            Public Key Hash: {{address.publicKeyHash}}
-                            <i class="fa fa-copy pointer d-inline-block" v-tooltip.bottom="'Copy Public Key Hash'" @click="handleCopyAddress(address.publicKeyHash)" />
+                        <div v-else>
+                            Registration Key: {{address.registration}}
+                            <i class="fa fa-copy pointer d-inline-block" v-tooltip.bottom="'Copy Registration'"  @click="handleCopyAddress(address.registration)" />
                         </div>
                     </div>
 
@@ -42,20 +42,20 @@
 
                 <div class="card-body bg-light">
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="handleDownloadAddress" v-tooltip.bottom="'Download Account'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleDownloadAddress" v-tooltip.bottom="'Download Account'" >
                         <i class="fa fa-download"></i>
                     </button>
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="handleDeleteAddress" v-tooltip.bottom="'Delete Account'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleDeleteAddress" v-tooltip.bottom="'Delete Account'" >
                         <i class="danger fa fa-times"></i>
                     </button>
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" @click="handleShowPrivateKey" v-tooltip.bottom="'View Private Key'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowPrivateKey" v-tooltip.bottom="'View Private Key'" >
                         <i class="fa fa-eye"></i>
                     </button>
 
                     <router-link to="/staking" v-if="address.version === version.VERSION_TRANSPARENT">
-                        <button class="btn btn-falcon-default rounded-pill me-1 mb-1" type="button" v-tooltip.bottom="'Delegate stake'">
+                        <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" v-tooltip.bottom="'Delegate stake'">
                             <i class="fa fa-piggy-bank"></i>
                         </button>
                     </router-link>
@@ -63,10 +63,10 @@
                 </div>
             </div>
 
-        </template>
+            <account-private-key-modal ref="refAccountPrivateKeyModal" :address="address"/>
+            <account-delete-modal ref="refAccountDeleteModal" :address="address"/>
 
-        <account-private-key-modal ref="refAccountPrivateKeyModal" :address="address"/>
-        <account-delete-modal ref="refAccountDeleteModal" :address="address"/>
+        </template>
 
     </layout>
 
@@ -91,7 +91,7 @@ export default {
     data(){
         return {
             showPublicKey: false,
-            showPublicKeyHash: false,
+            showRegistration: false,
         }
     },
 
@@ -101,7 +101,7 @@ export default {
         version: () => version,
 
         address(){
-            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKeyHash] ;
+            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey];
         }
 
     },
@@ -121,7 +121,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const json = await PandoraPay.wallet.manager.getWalletAddress( password, this.address.addressEncoded );
+            const json = await PandoraPay.wallet.manager.getWalletAddress(  this.address.addressEncoded, password );
             if (!json) return false;
 
             const fileName = consts.name + "_" +this.address.name + "_"+this.address.addressEncoded + ".pandora";
@@ -129,13 +129,11 @@ export default {
             const file = new Blob([json], {type: "application/json;charset=utf-8"});
             FileSaver.saveAs(file, fileName);
 
-            this.$store.dispatch('addToast', {
+            return this.$store.dispatch('addToast', {
                 type: 'success',
                 title: `Address ${this.address.name} has been saved in your machine`,
                 text: `The address ${this.address.addressEncoded} has been saved in the downloads folder.`,
             });
-
-
         },
 
         handleShowPrivateKey(){

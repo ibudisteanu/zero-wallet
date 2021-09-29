@@ -36,8 +36,10 @@
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Time</span>
                         <span class="col-7 col-sm-9 text-truncate">
-                            {{  timeAgo( $store.state.blockchain.genesisTimestamp + blk.timestamp ) }} ago
-                            <i class="fa fa-clock"></i>
+                            <span  v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  blk.timestamp) }`">
+                                {{  timeAgo( $store.state.blockchain.genesisTimestamp + blk.timestamp ) }} ago
+                                <i class="fa fa-clock"></i>
+                            </span>
                         </span>
                     </div>
                     <div class="row pt-2 pb-2">
@@ -68,7 +70,9 @@
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Reward</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{this.reward}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">
+                            <amount :value="this.reward" :sign="true" />
+                        </span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Version</span>
@@ -76,13 +80,17 @@
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Size</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{formatBytes( blk.bloomBlkComplete.size) }}</span>
+                        <div class="col-7 col-sm-9 text-truncate" >
+                            <span v-tooltip.bottom="`${ formatBytes(blk.bloomBlkComplete.size) }`">
+                                {{formatSize( blk.bloomBlkComplete.size) }}
+                            </span>
+                        </div>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Forger</span>
                         <div class="col-7 col-sm-9 text-truncate">
-                            <account-identicon class="vertical-center" :public-key-hash="blk.bloom.delegatedPublicKeyHash" :size="20" :outer-size="5"  />
-                            <span class="forger-address">{{blk.bloom.delegatedPublicKeyHash}}</span>
+                            <account-identicon class="vertical-center" :public-key="blk.bloom.delegatedPublicKey" :size="20" :outer-size="5"  />
+                            <span class="forger-address">{{blk.bloom.delegatedPublicKey}}</span>
                         </div>
                     </div>
                 </template>
@@ -130,12 +138,12 @@ import LoadingSpinner from "src/components/utils/loading-spinner";
 import ShowTransactions from "src/components/explorer/show-transactions"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import AlertBox from "src/components/utils/alert-box"
-
+import Amount from "src/components/wallet/amount"
 import StringHelper from "src/utils/string-helper"
 
 export default {
 
-    components: {LoadingSpinner, Layout, ShowBlocksInfo, ShowTransactions, AccountIdenticon, AlertBox, LayoutTitle },
+    components: {LoadingSpinner, Layout, ShowBlocksInfo, ShowTransactions, AccountIdenticon, AlertBox, LayoutTitle, Amount },
 
     data(){
         return {
@@ -177,8 +185,10 @@ export default {
 
     methods: {
 
-        timeAgo: (timestamp) => StringHelper.timeSince( timestamp*1000 ),
-        formatBytes: (bytes) => StringHelper.formatBytes(bytes, 1),
+        timeAgo: (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
+        formatTime : (timestamp) => StringHelper.formatTime( timestamp*1000 ),
+        formatSize: (bytes) => StringHelper.formatSize(bytes, 1),
+        formatBytes: (bytes) => StringHelper.formatBytes(bytes),
         formatMoney: (amount) => StringHelper.formatMoney(amount, PandoraPay.config.coins.DECIMAL_SEPARATOR  ),
 
         async loadBlock(){
@@ -198,11 +208,12 @@ export default {
 
                 if (this.blk){
                     this.$store.commit('setViewBlockHash', this.blk.bloom.hash )
-                    const reward = PandoraPay.config.reward.getRewardAt(this.blk.height)
-                    this.reward = StringHelper.formatMoney( PandoraPay.config.coins.convertToBase( reward.toString() ), PandoraPay.config.coins.DECIMAL_SEPARATOR )
+                    const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)
+                    this.reward = reward.toString()
                 }
 
             }catch(err){
+                console.error(err)
                 this.error = err.toString()
             }finally{
                 this.loaded = true
@@ -217,11 +228,11 @@ export default {
             return this.loadBlock();
         },
 
-        hash(from, to) {
+        hash(to, from) {
           if (from === to) return
         },
 
-        height(from, to){
+        height(to, from){
           if (from === to) return
         },
     },

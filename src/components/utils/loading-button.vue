@@ -1,11 +1,12 @@
 <template>
-    <button class="btn btn-falcon-primary me-1 mb-1" type="button" @click="handleClick">
+    <button :class="`${classCustom}`" type="button" @click="handleClick">
 
         <loading-spinner v-if="!loaded" />
 
         <template v-else>
-            <i v-if="icon" :class="icon" />
+            <i v-if="icon && iconLeft" :class="icon" />
             <span class="hidden-xs">{{text}}</span>
+            <i v-if="icon && !iconLeft" :class="icon" />
         </template>
 
     </button>
@@ -22,9 +23,11 @@ export default{
         }
     },
     props: {
+        classCustom: {default: "btn btn-falcon-primary me-1 mb-1"},
         canDisable: {default: true},
         text: {default: 'Submit'},
         icon : {default: 'fa fa-share'},
+        iconLeft: {default: true}
     },
     methods: {
         handleClick(e){

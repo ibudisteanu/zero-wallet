@@ -13,9 +13,6 @@ export default {
             for (const address in state.list)
                 if ( state.list[address].publicKey === vin.publicKey ) return true;
 
-        for (const vout of tx.vout)
-            for (const address in state.list)
-                if (state.list[address].publicKeyHash === vout.publicKeyHash ) return true;
 
     },
 

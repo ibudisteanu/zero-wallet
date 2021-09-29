@@ -14,8 +14,8 @@ export default {
         for (const tx of transactions) {
             delete txsByHash[tx.hash]
 
-            if (tx.__extra.height !== undefined)
-                delete txsByHeight[tx.__extra.height]
+            if (tx.__height !== undefined)
+                delete txsByHeight[tx.__height]
         }
         state.txsByHash = {...txsByHash}
         state.txsByHeight = {...txsByHeight}
@@ -30,18 +30,16 @@ export default {
         for (const tx of txs){
 
             tx.__timestampUsed = timestamp
-            if (!tx.__extra)
-                tx.__extra = {}
 
             if (overwrite || !txsByHash[tx.hash] ){
 
                 const oldTx  = txsByHash[tx.hash]
-                if (oldTx && oldTx.__extra.height !== undefined)
-                    delete txsByHeight[oldTx.__extra.height]
+                if (oldTx && oldTx.__height !== undefined)
+                    delete txsByHeight[oldTx.__height]
 
                 txsByHash[tx.hash] = tx
-                if (tx.__extra && tx.__extra.height !== undefined)
-                    txsByHeight[tx.__extra.height] = tx
+                if (tx.__height !== undefined)
+                    txsByHeight[tx.__height] = tx
             }
 
         }
@@ -50,41 +48,60 @@ export default {
         state.txsByHeight = {...txsByHeight}
     },
 
-    addViewTransactionsHashes(state, txsHashes ) {
+    updateViewTransactionsHashes(state, {txsHashes, insert} ) {
+
+        if (!txsHashes) return
+
         const viewTxsHashes = {...state.viewTxsHashes}
-        for (const txHash of txsHashes ) viewTxsHashes[txHash] = true
+        for (const txHash of txsHashes ){
+            if (insert) viewTxsHashes[txHash] = true
+            else delete viewTxsHashes[txHash]
+        }
         state.viewTxsHashes = viewTxsHashes
     },
 
-    removeViewTransactionsHashes(state, txsHashes ) {
-        const viewTxsHashes = {...state.viewTxsHashes}
-        for (const txHash of txsHashes ) delete viewTxsHashes[txHash]
-        state.viewTxsHashes = viewTxsHashes
-    },
+    updateTxNotification(state, {txHash, extraInfo }) {
 
-    txNotification(state, {txHash, extraInfo }) {
+        if (!state.txsByHash[txHash]) return
 
         const tx = {...state.txsByHash[txHash]};
 
-        let removedHeight, addedHeight
-        if (tx.__extra.height !== undefined)
-            removedHeight = tx.__extra.height
+        const removedHeight = tx.__height
+        let addedHeight
 
-        if (extraInfo.inserted){
-            delete tx.__extra.mempool
-            tx.__extra.blkHeight = extraInfo.blkHeight
-            tx.__extra.timestamp = extraInfo.blkTimestamp
-            tx.__extra.height = extraInfo.height
-            addedHeight = tx.__extra.height
+        if (extraInfo.blockchain){
+
+            if (extraInfo.blockchain.inserted){
+                tx.__blkHeight = extraInfo.blockchain.blkHeight
+                tx.__timestamp = extraInfo.blockchain.blkTimestamp
+                tx.__height = extraInfo.blockchain.height
+                addedHeight = extraInfo.blockchain.height
+                delete tx.__mempool
+            } else {
+                delete tx.__blkHeight
+                delete tx.__timestamp
+                delete tx.__height
+            }
+
+        } else if (extraInfo.mempool) {
+
+            delete tx.__blkHeight
+            delete tx.__timestamp
+            delete tx.__height
+
+            if (extraInfo.mempool.inserted){
+                tx.__mempool = true
+            } else {
+                delete tx.__mempool
+            }
+
         } else {
-            delete tx.__extra.blkHeight
-            delete tx.__extra.timestamp
-            delete tx.__extra.height
+            throw("Invalid notification")
         }
 
         Vue.set(state.txsByHash, txHash, tx );
         if (addedHeight !== undefined) Vue.set(state.txsByHeight, addedHeight, tx );
-        if (removedHeight !== undefined) Vue.delete(state.txsByHeight, removedHeight);
+        if (removedHeight !== undefined && addedHeight !== removedHeight) Vue.delete(state.txsByHeight, removedHeight);
     },
 
 }

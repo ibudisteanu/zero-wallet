@@ -6,7 +6,7 @@
                 <label class="pb-2">Receive your coins to this address:</label>
                 <div class="address align-items-center">
                     <account-identicon :address="address.addressEncoded" :size="30" :outer-size="10" />
-                    <span class="text-break">{{address.addressEncoded}}</span>
+                    <span class="text-break">{{ $store.getters.addressDisplay(this.address) }}</span>
                 </div>
             </div>
             <div class="text-center">
@@ -40,7 +40,7 @@ import AccountIdenticon from "../../wallet/account/account-identicon";
 import VueHcaptcha from '@hcaptcha/vue-hcaptcha';
 import AlertBox from "src/components/utils/alert-box"
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import LoadingButton from "src/components/utils/loading-button.vue"
+import LoadingButton from "src/components/utils/loading-button"
 export default {
 
     components: {AccountIdenticon, Modal, VueHcaptcha, AlertBox, LoadingSpinner, LoadingButton},
@@ -55,7 +55,7 @@ export default {
 
     computed:{
         address(){
-            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKeyHash] ;
+            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey] ;
         },
         hCaptchaSiteKey(){
             return this.$store.state.faucet.hCaptchaSiteKey
@@ -85,10 +85,10 @@ export default {
                 this.error = ""
                 this.loaded = false
 
-                const hash = await PandoraPay.network.getNetworkFaucetCoins( this.address.addressEncoded, this.captchaToken )
+                const hash = await PandoraPay.network.getNetworkFaucetCoins( this.$store.getters.addressDisplay(this.address), this.captchaToken )
                 if (!hash || hash.length !== 64) throw "hash was not received"
 
-                this.$store.dispatch('addToast', {
+                await this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Faucet created a Tx`,
                     text: `The faucet created a transaction ${hash}`,

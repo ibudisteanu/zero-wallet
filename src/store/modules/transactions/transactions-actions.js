@@ -49,29 +49,92 @@ export default {
         })
     },
 
-    async _includeTx( {state, dispatch, commit}, txJSON ){
+    async processTx( {state, dispatch, commit, getters}, tx ){
+
+        if (tx.dataVersion === PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_NONE ){
+        } else if (tx.dataVersion === PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT ){
+            tx.__data = Buffer.from(tx.data, "hex").toString()
+        } else if (tx.dataVersion === PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_ENCRYPTED ){
+            tx.__data = tx.data
+            await dispatch('decryptTxData', { tx, commitNow: false })
+        }
+
+        if (tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE){
+            await dispatch('getTokenByHash', PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX )
+        } else if (tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER){
+            await Promise.all( tx.payloads.map( payload => dispatch('getTokenByHash', payload.token ) ) )
+        }
+
+    },
+
+    async includeTx( {state, dispatch, commit, getters}, txJSON ){
 
         const tx = txJSON.tx
 
-        tx.__extra = {
-            mempool: txJSON.mempool,
-        };
-
         if (txJSON.info) {
-            tx.__extra.height = txJSON.info.height
-            tx.__extra.blkHeight = txJSON.info.blkHeight
-            tx.__extra.timestamp = txJSON.info.timestamp
+            tx.__height = txJSON.info.height
+            tx.__blkHeight = txJSON.info.blkHeight
+            tx.__timestamp = txJSON.info.timestamp
+        } else {
+            tx.__mempool = txJSON.mempool
         }
 
-        for (const vin of tx.vin) await dispatch('getTokenByHash', vin.token)
-        for (const vout of tx.vout) await dispatch('getTokenByHash', vout.token)
+        await dispatch('processTx', tx)
 
         commit("setTransactions", { txs: [tx] } )
 
         return tx
     },
 
-    async getTransactionByHash( {state, dispatch, commit}, hash){
+    async decryptTxData( {state, dispatch, commit, getters}, {tx, hash, password = "", commitNow } ){
+
+        if (!tx) tx = state.txsByHash[hash]
+
+        let decrypted = false
+
+        for (const vout of tx.vout){
+
+            const walletAddress = getters.walletContains( vout.publicKey )
+            if ( walletAddress ){
+                tx.__dataCanBeDecrypted = true
+
+                try{
+
+                    if ( password || !getters.isWalletEncrypted() ) {
+                        const data = await PandoraPay.wallet.decryptMessageWalletAddress(tx.data, walletAddress.addressEncoded, password)
+                        tx.__dataDecrypted = Buffer.from(data, "hex").toString()
+                        tx.__dataDecryptedError = ""
+                        decrypted = true
+                        break
+                    }
+
+                    if ( !password && getters.isWalletEncrypted() ) {
+                        decrypted = true
+                        break
+                    }
+
+
+                }catch(err){
+                    tx.__dataDecrypted = ""
+                    tx.__dataDecryptedError = err.toString()
+                    decrypted = true
+                    break
+                }
+
+            }
+        }
+
+        if (!decrypted){
+            tx.__dataDecrypted = ""
+            tx.__dataDecryptedError = "Data can't be decrypted"
+        }
+
+        if (commitNow)
+            commit("setTransactions", { txs: [tx] } )
+
+    },
+
+    getTransactionByHash( {state, dispatch, commit}, hash){
 
         if (state.txsByHash[hash]) return state.txsByHash[hash];
         if (promises.txsByHash[hash]) return promises.txsByHash[hash];
@@ -86,8 +149,11 @@ export default {
 
                 const tx = JSON.parse(txData)
 
-                resolve( await dispatch('_includeTx', tx) );
+                const output = await dispatch('includeTx', tx)
+
+                resolve( output );
             }catch(err){
+                console.error(err)
                 reject(err);
             } finally{
                 delete promises.txsByHash[hash];
@@ -95,7 +161,7 @@ export default {
         } );
     },
 
-    getTransactionByHeight( {state, dispatch, commit}, height){
+    async getTransactionByHeight( {state, dispatch, commit}, height){
 
         if (typeof height === "string") height = Number.parseInt(height)
 
@@ -111,9 +177,10 @@ export default {
 
                 const tx = JSON.parse(txData)
 
-                resolve( await dispatch('_includeTx', tx) );
+                resolve( await dispatch('includeTx', tx) );
 
             }catch(err){
+                console.error(err)
                 reject(err);
             } finally{
                 delete promises.txsByHeight[height];
@@ -121,5 +188,9 @@ export default {
         } );
 
     },
+
+    txNotification({state, commit}, {txHash, extraInfo }) {
+        commit('updateTxNotification', {txHash, extraInfo})
+    }
 
 }

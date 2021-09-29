@@ -2,8 +2,8 @@
 
     <div class="account" v-if="address">
 
-        <div class="toggle unselectable" @click="toggleMenu" v-on-clickaway="closeMenu" v-tooltip.bottom="`${menuOpen ? '' : address.addressEncoded}`" >
-            <account-identicon :address="address.addressEncoded" :identicon="identicon" :size="20" :outer-size="7" :version="address.version" :disableRoute="true" />
+        <div class="toggle unselectable" @click="toggleMenu" v-on-clickaway="closeMenu" v-tooltip.bottom="`${menuOpen ? '' : $store.getters.addressDisplay(this.address) }`" >
+            <account-identicon :address="$store.getters.addressDisplay(this.address)" :identicon="identicon" :size="20" :outer-size="7" :version="address.version" :disableRoute="true" />
             <i class="right-float chevron-down fa fa-chevron-down"></i>
         </div>
 
@@ -43,7 +43,7 @@ export default {
     computed: {
 
         address(){
-            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKeyHash];
+            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey];
         },
 
         identicon(){

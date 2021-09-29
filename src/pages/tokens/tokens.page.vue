@@ -31,8 +31,8 @@
 
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
-import ShowTokensInfo from "src/components/explorer/show-tokens-info.vue"
-import LoadingButton from "src/components/utils/loading-button.vue"
+import ShowTokensInfo from "src/components/explorer/show-tokens-info"
+import LoadingButton from "src/components/utils/loading-button"
 import AlertBox from "src/components/utils/alert-box"
 
 export default {
