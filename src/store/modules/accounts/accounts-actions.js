@@ -110,9 +110,60 @@ export default {
 
     },
 
-    async accountUpdateNotification( {state, dispatch, commit, getters}, {publicKey, account }){
-        await PandoraPay.store.storeAccount( publicKey, null )
+    async accountUpdateNotification( {state, dispatch, commit, getters}, {publicKey, type, data, extraInfo }){
+
+        let account = { ... ( state.list[publicKey] || {} ) }
+
+        if (type === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT){
+
+            const {token} = extraInfo
+            if (data === null ){
+
+                if (account.tokens ) {
+                    for (let index = 0; index < account.tokens.length; index++)
+                        if (account.tokens[index] === token) {
+                            account.tokens.splice(index, 1)
+                            account.accounts.splice(index, 1)
+                            break
+                        }
+                    if (!account.tokens.length){
+                        delete account.tokens
+                        delete account.accounts
+                    }
+                }
+
+            } else {
+
+                if (!account.tokens){
+                    account.tokens = []
+                    account.accounts = []
+                }
+                account.tokens.push(token)
+                account.accounts.push(data)
+
+            }
+
+        } else if (type === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_PLAIN_ACCOUNT){
+
+            if (data === null )
+                delete account.plainAccount
+            else
+                account.plainAccount = data
+
+        }else if (type === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_REGISTRATION){
+            if (data === null ){
+                account.registration = data
+            } else {
+                delete account.registration
+            }
+        }
+
+        if (!Object.keys(account).length)
+            account = null
+
+        await PandoraPay.store.storeAccount( publicKey, account )
         commit('setAccount', {publicKey, account})
+
     },
 
 }

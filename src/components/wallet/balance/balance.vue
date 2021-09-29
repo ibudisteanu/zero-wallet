@@ -4,7 +4,7 @@
         <h4 class="fw-medium pt-2" v-if="getToken" >
             <template v-if="version === 'zether' && balanceDecoded === null ">
                 <i class="fa fa-question " v-tooltip.bottom="`Homomorphic Encrypted Amount: ${balance}`" />
-                <i class="fa fa-eye fw-light" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecoded" @click="decodeBalance"></i>
+                <i class="fa fa-eye fw-light pointer" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecoded" @click="decodeBalance"></i>
             </template>
             <template v-else>
                 {{ amount }}

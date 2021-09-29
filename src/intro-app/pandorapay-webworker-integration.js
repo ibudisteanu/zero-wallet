@@ -66,7 +66,7 @@ export default class PandorapayWebworkerIntegration{
 
         for (const key in src) {
 
-            if (typeof src[key] === "object" && src[key].__type === "function" && src[key].__id) {
+            if (typeof src[key] === "object" && src[key] !== null && src[key].__type === "function" && src[key].__id) {
 
                 dst[key] =  (...args) => {
 
