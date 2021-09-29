@@ -8,16 +8,16 @@
         </template>
         <template v-else>
 
-            <span class="col-4 d-block d-sm-none text-dark">Hash</span>
-            <span class="col-8 col-md-2 text-truncate">
+            <span class="col-5 d-block d-sm-none text-dark">Hash</span>
+            <span class="col-7 col-sm-2 col-md-2 text-truncate">
                 <router-link :to="`/explorer/tx/${txHash}`">
 <!--                    {{tx.nonce}}-->
                     {{tx.hash}}
                 </router-link>
            </span>
 
-            <span class="col-4 d-xs-none d-sm-none d-md-none text-dark">Time</span>
-            <div class="col-8 col-md-1 text-truncate">
+            <span class="col-5 d-block d-sm-none text-dark">Time</span>
+            <div class="col-7 col-sm-2 col-md-1 text-truncate">
                 <span v-if="tx.__mempool">
                     pending
                 </span>
@@ -26,8 +26,8 @@
                 </span>
             </div>
 
-            <span class="col-4 d-block d-sm-none text-dark text-truncate">Confirmations</span>
-            <div class="col-8 col-md-1 text-truncate">
+            <span class="col-5 d-block d-sm-none text-dark">Confirmations</span>
+            <div class="col-7 col-sm-2 col-md-1 text-truncate">
                 <span v-if="tx.__mempool">
                     pending
                 </span>
@@ -38,8 +38,8 @@
                 </span>
             </div>
 
-            <span class="col-4 d-md-none text-dark text-truncate">Data</span>
-            <span class="col-8 col-md-7">
+            <span class="col-5 d-block d-sm-none text-dark">Data</span>
+            <span class="col-7 col-sm-5 col-md-7">
 
                 <show-transaction-data :tx="tx" />
 
