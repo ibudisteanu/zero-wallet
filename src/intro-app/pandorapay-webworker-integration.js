@@ -1,4 +1,5 @@
-import consts from "../../consts/consts";
+import consts from "consts/consts";
+import StringHelper from "src/utils/string-helper"
 
 const PandoraPayWorkerAnswers = {}
 const PandoraPayWorkerCallbacks = {}
@@ -36,10 +37,10 @@ export default class PandorapayWebworkerIntegration{
                 } else if (data.type === "callPandoraPayFunctionAnswer") {
                     const {resolve, reject} = PandoraPayWorkerAnswers[data.id]
 
-                    if (data.answer)
-                        resolve(data.answer)
-                    else if (data.error)
+                    if (data.error)
                         reject(data.error)
+                    else
+                        resolve(data.answer)
 
                     delete PandoraPayWorkerAnswers[data.id]
                 } else if (data.type === "PandoraPayFunctionCallback") {
@@ -70,25 +71,24 @@ export default class PandorapayWebworkerIntegration{
 
                 dst[key] =  (...args) => {
 
-                    const id = Math.random().toString() + Math.random().toString()
+                    const id = StringHelper.generateRandomId()
 
                     const promise = new Promise((resolve, reject) => {
                         PandoraPayWorkerAnswers[id] = {resolve, reject}
                     })
 
                     let newArguments = [...args]
-                    let deleteCallbacks = []
+
                     for (let i=0; i < newArguments.length; i++){
                         if (typeof newArguments[i] === "function"){
 
-                            const callbackId = Math.random().toString() + Math.random().toString()
+                            const callbackId = StringHelper.generateRandomId()
                             PandoraPayWorkerCallbacks[callbackId] = newArguments[i]
                             newArguments[i] = {
                                 __type: "callback",
                                 __id: callbackId,
                             }
 
-                            deleteCallbacks.push(callbackId)
                         }
                     }
 
@@ -103,14 +103,6 @@ export default class PandorapayWebworkerIntegration{
                         console.error("error postMessage", err)
                     }
 
-                    // promise.then(function() {
-                    //     for (const key of deleteCallbacks)
-                    //         delete(PandoraPayWorkerCallbacks[key])
-                    // }).catch(function() {
-                    //     for (const key of deleteCallbacks)
-                    //         delete(PandoraPayWorkerCallbacks[key])
-                    // });
-
                     return promise
                 }
 
@@ -124,3 +116,4 @@ export default class PandorapayWebworkerIntegration{
     }
 
 }
+

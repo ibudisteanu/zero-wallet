@@ -62,7 +62,9 @@ export default {
                         text: `Your address has received a transaction ${txHash}`,
                     } )
 
+                    console.log("mempoolRemoveTx 111111")
                     await PandoraPay.mempool.mempoolRemoveTx(txHash)
+                    console.log("mempoolRemoveTx 222222")
 
                 } else {
 

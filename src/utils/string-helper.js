@@ -80,6 +80,10 @@ class StringHelper{
         return new Date(timestamp).toLocaleString()
     }
 
+    generateRandomId( ){
+        return Math.random().toString()+Math.random().toString()
+    }
+
 }
 
 export default new StringHelper()

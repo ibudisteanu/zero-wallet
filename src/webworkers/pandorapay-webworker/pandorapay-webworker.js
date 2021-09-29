@@ -46,12 +46,7 @@ self.onmessage = async function(event) {
                 }
             }
 
-            let answer
-            try{
-                answer = await cb(...newArguments)
-            }catch(err){
-                answer =err
-            }
+            let answer = await cb(...newArguments)
 
             if (answer instanceof Error)
                 self.postMessage({type: "callPandoraPayFunctionAnswer", id: data.answerId, error: answer.message })
@@ -70,7 +65,7 @@ function clonePandoraPay(src, dst ){
 
         if (typeof src[key] === "function"){
 
-            const id = Math.random().toString()+Math.random().toString()
+            const id = generateRandomId()
             PandoraPayFunctions[id] = src[key]
 
             dst[key] = {
@@ -85,4 +80,8 @@ function clonePandoraPay(src, dst ){
             dst[key] = src[key]
 
     }
+}
+
+function generateRandomId( ){
+    return Math.random().toString()+Math.random().toString()
 }
