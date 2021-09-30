@@ -20,7 +20,7 @@ class Identicons {
 
         if (this.list.length === MAX_CACHE){
             const item = this.list[0]
-            this.list.splice(0,1)
+            this.list.slice(0,1)
             delete this.map[item.key]
         }
 

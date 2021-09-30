@@ -122,8 +122,8 @@ export default {
                 if (account.tokens ) {
                     for (let index = 0; index < account.tokens.length; index++)
                         if (account.tokens[index] === token) {
-                            account.tokens.splice(index, 1)
-                            account.accounts.splice(index, 1)
+                            account.tokens.slice(index, 1)
+                            account.accounts.slice(index, 1)
                             break
                         }
                     if (!account.tokens.length){
@@ -138,8 +138,19 @@ export default {
                     account.tokens = []
                     account.accounts = []
                 }
-                account.tokens.push(token)
-                account.accounts.push(data)
+
+                let found = false
+                for (let index = 0; index < account.tokens.length; index++)
+                    if (account.tokens[index] === token) {
+                        account.accounts[index] = data
+                        found = true
+                        break
+                    }
+
+                if (!found){
+                    account.tokens.push(token)
+                    account.accounts.push(data)
+                }
 
             }
 
