@@ -1,8 +1,9 @@
 <template>
 
-    <router-link :to="`/address/${finalAddress}`" :class="{ disabled: !finalAddress || disableRoute }" :alt="finalAddress">
+    <router-link :to="`/address/${finalAddress}`" v-tooltip.bottom="`${ showTooltip ? finalAddressShort : '' }`"
+                 :is=" !finalAddress || disableRoute ? 'span' : 'router-link'" >
         <div class="identicon outer" :style="`padding: ${outerSize}px`">
-            <img :src="identiconSrc" class="identicon" :style="`width: ${size}px`" >
+            <img :src="identiconSrc" class="identicon" :style="`width: ${size}px`" :alt="showTooltip ? finalAddressShort : ''"  >
         </div>
     </router-link>
 
@@ -11,18 +12,18 @@
 <script>
 
 import Identicons from "src/utils/identicons"
-
+import StringHelper from "src/utils/string-helper";
 export default {
 
     props:{
         size: {default: 40},
         outerSize: {default: 34},
 
-        identicon: {default: null},
         address: {default: ""},
         publicKey: {default: null},
 
-        disableRoute: { default: false }
+        disableRoute: { default: false },
+        showTooltip: {default: true },
     },
 
     data(){
@@ -33,46 +34,45 @@ export default {
     },
 
     watch:{
-        identicon: {
-            immediate: true,
-            handler: function(newVal, oldVal){
-                this.identiconSrc = newVal
-            }
-        },
+
         publicKey: {
             immediate: true,
             handler: async function(newVal, oldVal){
-                if (newVal){
-                    try{
-                        const out = await PandoraPay.addresses.generateAddress(newVal, "", 0, "")
-                        this.identiconSrc = await Identicons.getIdenticon(newVal)
-                        this.finalAddress = out[1]
-                    }catch(err){
-                        this.finalAddress = ""
-                        this.identiconSrc = ""
-                    }
+                if (!newVal)
+                    return
+                try{
+                    const out = await PandoraPay.addresses.generateAddress(newVal, "", 0, "")
+                    this.identiconSrc = await Identicons.getIdenticon(newVal, this.size )
+                    this.finalAddress = out[1]
+                }catch(err){
+                    this.finalAddress = ""
+                    this.identiconSrc = ""
                 }
             }
         },
         address: {
             immediate: true,
             handler: async function(newVal, oldVal){
-                if (newVal) {
-                    try{
-                        const addressData = await PandoraPay.addresses.decodeAddress(newVal)
-                        const address = JSON.parse(addressData)
-                        this.identiconSrc = await Identicons.getIdenticon(address.publicKey)
-                        this.finalAddress = newVal
-                    }catch(err){
-                        this.finalAddress = ""
-                        this.identiconSrc = ""
-                    }
+                if (!newVal)
+                    return
+
+                try{
+                    const addressData = await PandoraPay.addresses.decodeAddress(newVal)
+                    const address = JSON.parse(addressData)
+                    this.identiconSrc = await Identicons.getIdenticon(address.publicKey, this.size)
+                    this.finalAddress = newVal
+                }catch(err){
+                    this.finalAddress = ""
+                    this.identiconSrc = ""
                 }
             }
         }
     },
 
     computed:{
+        finalAddressShort(){
+            return StringHelper.truncateText(this.finalAddress, 4, 8)
+        }
     }
 
 

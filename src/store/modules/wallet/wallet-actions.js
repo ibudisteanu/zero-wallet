@@ -26,7 +26,7 @@ export default {
             const publicKey = wallet.addresses[i].publicKey
             const addr = {
                 ...wallet.addresses[i],
-                identicon: await Identicons.getIdenticon(publicKey),
+                identicon: await Identicons.getIdenticon(publicKey, 64),
             };
 
             addresses[publicKey] = addr;

@@ -2,8 +2,8 @@
 
     <div class="account" v-if="address">
 
-        <div class="toggle unselectable" @click="toggleMenu" v-on-clickaway="closeMenu" v-tooltip.bottom="`${menuOpen ? '' : $store.getters.addressDisplay(this.address) }`" >
-            <account-identicon :address="$store.getters.addressDisplay(this.address)" :identicon="identicon" :size="20" :outer-size="7" :version="address.version" :disableRoute="true" />
+        <div class="toggle unselectable" @click="toggleMenu" v-on-clickaway="closeMenu" >
+            <account-identicon :address="$store.getters.addressDisplay(this.address)" :size="21" :outer-size="7" :disable-route="true" :show-tooltip="!menuOpen" />
             <i class="right-float chevron-down fa fa-chevron-down"></i>
         </div>
 
@@ -45,11 +45,6 @@ export default {
         address(){
             return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey];
         },
-
-        identicon(){
-            if (!this.address) return null;
-            else return this.address.identicon;
-        }
 
     },
 
