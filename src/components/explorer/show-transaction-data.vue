@@ -3,14 +3,14 @@
         <template v-if="tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE">
 
             <div class="input">
-                <account-identicon :publicKey="tx.vin.publicKey" size="20" outer-size="7" />
+                <account-identicon :publicKey="tx.vin.publicKey" size="21" outer-size="7" />
                 <amount :value="vinAmount" :sign="false" />
             </div>
 
             <template v-if="tx.txScript === PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_CLAIM">
                 <div class="output" v-for="(out, index) in tx.output"
                      :key="`show-transaction-vout-${index}`">
-                    <account-identicon :publicKey="out.publicKey" size="20" outer-size="7" />
+                    <account-identicon :publicKey="out.publicKey" size="21" outer-size="7" />
                     <amount :value="out.amount" :sign="true" />
                 </div>
             </template>
@@ -22,7 +22,7 @@
                  :key="`show-tx-payload-${payloadId}`">
                 <div v-if="!id || payloadId === id" class="output" v-for="(publicKey, index) in payload.statement.publickeylist"
                      :key="`show-transaction-vout-${index}`">
-                    <account-identicon :publicKey="publicKey" size="20" outer-size="7" />
+                    <account-identicon :publicKey="publicKey" size="21" outer-size="7" />
                     ?
                 </div>
             </div>

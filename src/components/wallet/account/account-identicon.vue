@@ -2,7 +2,7 @@
 
     <router-link :to="`/address/${finalAddress}`" v-tooltip.bottom="`${ showTooltip ? finalAddressShort : '' }`"
                  :is=" !finalAddress || disableRoute ? 'span' : 'router-link'" >
-        <div class="identicon outer" :style="`padding: ${outerSize}px`">
+        <div class="identicon outer" :style="`padding: ${outerSize}px`" v-if="identiconSrc">
             <img :src="identiconSrc" class="identicon" :style="`width: ${size}px`" :alt="showTooltip ? finalAddressShort : ''"  >
         </div>
     </router-link>
@@ -59,7 +59,7 @@ export default {
                 try{
                     const addressData = await PandoraPay.addresses.decodeAddress(newVal)
                     const address = JSON.parse(addressData)
-                    this.identiconSrc = await Identicons.getIdenticon(address.publicKey, this.size)
+                    this.identiconSrc = await Identicons.getIdenticon(address.publicKey, this.size )
                     this.finalAddress = newVal
                 }catch(err){
                     this.finalAddress = ""

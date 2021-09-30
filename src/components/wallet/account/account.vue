@@ -13,7 +13,7 @@
                     <div class="col px-1 py-1 position-static">
                         <div class="d-flex align-items-center d-block">
                             <div class="avatar avatar-xxl me-3">
-                                <account-identicon :public-key="address.publicKey" :size="56" :outer-size="20" />
+                                <account-identicon :public-key="address.publicKey" size="56" outer-size="20" />
                             </div>
                             <span class="fw-bold d-block text-break">
                                 {{ getAddress }}

@@ -11,6 +11,8 @@ class Identicons {
 
         const key = `${size}::${publicKey}`
 
+        if ( typeof size === "string") size = Number.parseInt(size)
+
         const found = this.map[key]
         if (found){
             return found.identicon;

@@ -3,7 +3,7 @@
     <div class="account" v-if="address">
 
         <div class="toggle unselectable" @click="toggleMenu" v-on-clickaway="closeMenu" >
-            <account-identicon :address="$store.getters.addressDisplay(this.address)" :size="21" :outer-size="7" :disable-route="true" :show-tooltip="!menuOpen" />
+            <account-identicon :address="$store.getters.addressDisplay(this.address)" size="21" outer-size="7" :disable-route="true" :show-tooltip="!menuOpen" />
             <i class="right-float chevron-down fa fa-chevron-down"></i>
         </div>
 
