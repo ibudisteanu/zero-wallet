@@ -38,7 +38,9 @@ self.onmessage = async function(event) {
 
             let newArguments = data.arguments
             for (let i=0; i < newArguments.length; i++){
-                if (typeof newArguments[i] === "object" && newArguments[i] != null && newArguments[i].__type === "callback" && newArguments[i].__id){
+                if ( newArguments[i] instanceof ArrayBuffer){
+                    newArguments[i] = new Uint8Array(newArguments[i])
+                }else if (typeof newArguments[i] === "object" && newArguments[i] != null && newArguments[i].__type === "callback" && newArguments[i].__id){
                     let callbackId = newArguments[i].__id
                     newArguments[i] = function (...args){
                         self.postMessage({ type: "PandoraPayFunctionCallback", id:callbackId, data: args } )
@@ -52,10 +54,10 @@ self.onmessage = async function(event) {
                 self.postMessage({type: "callPandoraPayFunctionAnswer", id: data.answerId, error: answer.message })
             else{
 
-                let transfers
+                const transfers = []
                 if (answer instanceof Uint8Array) {
-                    answer = answer.buffer //requried
-                    transfers = [answer]
+                    answer = answer.buffer
+                    transfers.push(answer)
                 }
 
                 self.postMessage({type: "callPandoraPayFunctionAnswer", id: data.answerId, answer: answer }, transfers)

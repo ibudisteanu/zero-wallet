@@ -40,7 +40,7 @@ export default class PandorapayWebworkerIntegration{
                     if (data.error)
                         reject(data.error)
                     else
-                        resolve(data.answer)
+                        resolve( data.answer )
 
                     delete PandoraPayWorkerAnswers[data.id]
                 } else if (data.type === "PandoraPayFunctionCallback") {
@@ -78,6 +78,7 @@ export default class PandorapayWebworkerIntegration{
                     })
 
                     let newArguments = [...args]
+                    let transfers = []
 
                     for (let i=0; i < newArguments.length; i++){
                         if (typeof newArguments[i] === "function"){
@@ -89,6 +90,9 @@ export default class PandorapayWebworkerIntegration{
                                 __id: callbackId,
                             }
 
+                        } else if (newArguments[i] instanceof Uint8Array) {
+                            newArguments[i] = newArguments[i].buffer //requried
+                            transfers.push(newArguments[i])
                         }
                     }
 
@@ -98,7 +102,7 @@ export default class PandorapayWebworkerIntegration{
                             id: src[key].__id,
                             answerId: id,
                             arguments: newArguments,
-                        })
+                        }, transfers)
                     } catch (err) {
                         console.error("error postMessage", err)
                     }

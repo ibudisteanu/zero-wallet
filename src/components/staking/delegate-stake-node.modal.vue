@@ -163,7 +163,7 @@ export default {
         async showModal(publicKey) {
             Object.assign(this.$data, this.$options.data());
             this.publicKey = publicKey
-            this.delegatesNodes = await JSON.parse( PandoraPay.config.helpers.getNetworkSelectedDelegatesNodes() )
+            this.delegatesNodes = await JSON.parse( MyTextDecoder.decode( PandoraPay.config.helpers.getNetworkSelectedDelegatesNodes() ) )
             return this.$refs.modal.showModal();
         },
 
@@ -210,7 +210,7 @@ export default {
             try{
                 this.error = '';
 
-                if (!this.nodeInfo) throw Error("NodeInfo was not assigned");
+                if (!this.nodeInfo) throw "NodeInfo was not assigned"
 
                 const password = await this.$store.state.page.refWalletPasswordModal.showModal()
                 if (password === null ) return

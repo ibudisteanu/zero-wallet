@@ -12,9 +12,10 @@ export default {
             try{
 
                 const tokenInfoData = await PandoraPay.network.getNetworkTokenInfo(hash);
-                const tokenInfo = JSON.parse(tokenInfoData)
+                if (!tokenInfoData ) throw "Error getting block info"
 
-                if (!tokenInfo ) throw "Error getting block info"
+                const tokenInfo = JSON.parse(MyTextDecoder.decode(tokenInfoData))
+
 
                 tokenInfo.hash = hash
                 commit('setTokenInfo', tokenInfo)

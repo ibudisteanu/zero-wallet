@@ -133,7 +133,7 @@ export default {
 
                 this.error = ""
 
-                if (this.privateKey.length !== 64) throw Error("Private key must be 64 hex numbers");
+                if (this.privateKey.length !== 64) throw "Private key must be 64 hex numbers"
 
                 const password = await this.$store.state.page.refWalletPasswordModal.showModal()
                 if (password === null ) return
@@ -143,9 +143,7 @@ export default {
                 await UtilsHelper.sleep(50 )
 
                 const out = await PandoraPay.wallet.manager.importWalletPrivateKey( password, this.privateKey, this.name, this.selectedType );
-
-                if (!out)
-                    throw "Your address already exists!"
+                if (!out) throw "Your address already exists!"
 
                 await this.$store.dispatch('addToast', {
                     type: 'success',

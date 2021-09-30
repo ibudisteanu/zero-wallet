@@ -2,6 +2,9 @@ class Main {
 
     constructor(){
 
+        global.MyTextDecoder = new TextDecoder("utf-8")
+        global.MyTextEncoder = new TextEncoder("utf-8")
+
         window.addEventListener("load", () => {
             this.initialize()
         } );

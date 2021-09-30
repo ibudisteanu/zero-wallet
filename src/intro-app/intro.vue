@@ -62,10 +62,10 @@ export default {
             })
 
             if (!response.ok)
-                throw Error(response.status+' '+response.statusText)
+                throw response.status+' '+response.statusText
 
             if (!response.body)
-                throw Error('ReadableStream not yet supported in this browser.')
+                throw 'ReadableStream not yet supported in this browser.'
 
             // to access headers, server must send CORS header "Access-Control-Expose-Headers: content-encoding, content-length x-file-size"
             // server must send custom x-file-size header if gzip or other content-encoding is used

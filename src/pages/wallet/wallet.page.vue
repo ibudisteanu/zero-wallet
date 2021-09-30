@@ -121,8 +121,10 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const json = await PandoraPay.wallet.manager.getWalletAddress(  this.address.addressEncoded, password );
-            if (!json) return false;
+            const jsonData = await PandoraPay.wallet.manager.getWalletAddress(  this.address.addressEncoded, password );
+            if (!jsonData) return false;
+
+            const json = MyTextDecoder.decode(jsonData)
 
             const fileName = consts.name + "_" +this.address.name + "_"+this.address.addressEncoded + ".pandora";
 

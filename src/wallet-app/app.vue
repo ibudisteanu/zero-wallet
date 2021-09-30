@@ -64,14 +64,17 @@ export default {
 
                         console.log("listenNetworkNotifications", subscriptionType, key, data, extraInfo)
 
+                        if (extraInfo)
+                            extraInfo = JSON.parse(MyTextDecoder.decode( extraInfo ) )
+
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT || subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_PLAIN_ACCOUNT || subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_REGISTRATION )
-                            return this.$store.dispatch('accountUpdateNotification', {publicKey: key, type: subscriptionType, data: JSON.parse(data), extraInfo: extraInfo ? JSON.parse(extraInfo) : null })
+                            return this.$store.dispatch('accountUpdateNotification', {publicKey: key, type: subscriptionType, data: JSON.parse(MyTextDecoder.decode(data)), extraInfo: extraInfo })
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS)
-                            return this.$store.dispatch('accountTxUpdateNotification', { publicKey: key, txHash:data.substr(1,64), extraInfo: JSON.parse(extraInfo) } )
+                            return this.$store.dispatch('accountTxUpdateNotification', { publicKey: key, txHash:data.substr(1,64), extraInfo: extraInfo } )
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTION)
-                            return this.$store.dispatch('txNotification', { txHash: key, extraInfo: JSON.parse(extraInfo) } )
+                            return this.$store.dispatch('txNotification', { txHash: key, extraInfo: extraInfo } )
                     })
 
 
@@ -94,7 +97,7 @@ export default {
                 else if (name === "wallet/removed-encryption") this.readWallet()
                 else if (name === "wallet/logged-out") this.readWallet()
                 else if (name === "consensus/update")
-                    this.processUpdate(JSON.parse(data))
+                    this.processUpdate(JSON.parse( MyTextDecoder.decode(data) ))
 
             }
             console.log("JS NAME:", name, "data", data)

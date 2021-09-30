@@ -6,8 +6,6 @@ const promises = {
 
 export default {
 
-
-
     async _downloadAccount({state, dispatch, commit, getters}, publicKey){
 
         if (promises.accounts[publicKey]) return promises.accounts[publicKey]
@@ -21,7 +19,11 @@ export default {
                     PandoraPay.network.getNetworkAccountMempool(publicKey),
                 ])
 
-                let account = JSON.parse( result[0] )
+                if ( !result[0] ) throw "Account was not received"
+                const accountData = result[0]
+
+                let account = JSON.parse(MyTextDecoder.decode(accountData))
+                const pendingTxsList = JSON.parse( MyTextDecoder.decode(result[1]) )
 
                 if ( !Object.keys(account).length ){
                     account = null
@@ -38,7 +40,8 @@ export default {
                 }
 
                 await PandoraPay.store.storeAccount( publicKey,  result[0] )
-                await dispatch('processAccountPendingTransactions', {publicKey, list: JSON.parse(result[1]) })
+
+                await dispatch('processAccountPendingTransactions', {publicKey, list: pendingTxsList })
 
                 commit('setAccount', { publicKey, account })
 
@@ -172,7 +175,7 @@ export default {
         if (!Object.keys(account).length)
             account = null
 
-        await PandoraPay.store.storeAccount( publicKey, account )
+        await PandoraPay.store.storeAccount( publicKey, MyTextEncoder.encode(JSON.stringify(account)) )
         commit('setAccount', {publicKey, account})
 
     },

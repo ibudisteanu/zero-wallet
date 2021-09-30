@@ -61,7 +61,7 @@ export default {
 
                 if (this.version === VERSION_TRANSPARENT){
                     const addressData = await PandoraPay.addresses.decodeAddress(to)
-                    const address = JSON.parse(addressData)
+                    const address = JSON.parse(MyTextDecoder.decode(addressData))
                     this.finalAddress = address
                     return
                 }

@@ -39,7 +39,7 @@
             </div>
 
             <span class="col-3 d-block d-sm-none text-dark">Data</span>
-            <span class="col-9 col-sm-5 col-md-7">
+            <span class="col-9 col-sm-6 col-md-8">
 
                 <show-transaction-data :tx="tx" />
 

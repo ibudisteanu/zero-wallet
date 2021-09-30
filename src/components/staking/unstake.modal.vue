@@ -223,7 +223,7 @@ export default {
                 if (!out) throw "Transaction couldn't be made";
                 this.status = ''
 
-                const tx = JSON.parse(out)
+                const tx = JSON.parse( MyTextDecoder.decode(out) )
 
                 await this.$store.dispatch('includeTx', {tx } )
 
