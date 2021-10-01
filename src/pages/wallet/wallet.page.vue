@@ -124,7 +124,7 @@ export default {
             const jsonData = await PandoraPay.wallet.manager.getWalletAddress(  this.address.addressEncoded, password );
             if (!jsonData) return false;
 
-            const json = MyTextDecoder.decode(jsonData)
+            const json = MyTextDecode(jsonData)
 
             const fileName = consts.name + "_" +this.address.name + "_"+this.address.addressEncoded + ".pandora";
 

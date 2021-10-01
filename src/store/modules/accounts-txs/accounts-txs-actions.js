@@ -15,7 +15,7 @@ export default {
         return promises.accountsTxs[publicKey] = new Promise( async (resolve, reject) => {
             try{
                 const out = await PandoraPay.network.getNetworkAccountTxs(publicKey, (next === undefined) ? Number.MAX_SAFE_INTEGER : next  );
-                const accountTxs = JSON.parse(out)
+                const accountTxs = JSON.parse(MyTextDecode( out) )
 
                 console.log("next", next, accountTxs)
 

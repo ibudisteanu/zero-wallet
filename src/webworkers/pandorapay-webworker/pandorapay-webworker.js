@@ -1,9 +1,9 @@
 require('./wasm_exec.js')
 const PandoraStorage = require('./storage/pandora-storage')
+const Helper = require('./helper')
+const {header} = require("request/lib/hawk");
 
 PandoraStorage.exportStorage()
-
-const PandoraPayFunctions = {}
 
 self.onmessage = async function(event) {
 
@@ -27,71 +27,14 @@ self.onmessage = async function(event) {
 
             self.postMessage({ type: "initialize-answer", status: "PandoraPay WASM executed", })
 
-            const PandoraPayClone = {}
-            clonePandoraPay(PandoraPay, PandoraPayClone)
+            const transferable = []
+            const PandoraPayClone = Helper.ProcessObject( PandoraPay, transferable )
 
-            self.postMessage({ type: "initialize-done", PandoraPayClone, })
-
-        } else if (data.type === "callPandoraPayFunction"){
-
-            const cb = PandoraPayFunctions[data.id]
-
-            let newArguments = data.arguments
-            for (let i=0; i < newArguments.length; i++){
-                if ( newArguments[i] instanceof ArrayBuffer){
-                    newArguments[i] = new Uint8Array(newArguments[i])
-                }else if (typeof newArguments[i] === "object" && newArguments[i] != null && newArguments[i].__type === "callback" && newArguments[i].__id){
-                    let callbackId = newArguments[i].__id
-                    newArguments[i] = function (...args){
-                        self.postMessage({ type: "PandoraPayFunctionCallback", id:callbackId, data: args } )
-                    }
-                }
-            }
-
-            let answer = await cb(...newArguments)
-
-            if (answer instanceof Error)
-                self.postMessage({type: "callPandoraPayFunctionAnswer", id: data.answerId, error: answer.message })
-            else{
-
-                const transfers = []
-                if (answer instanceof Uint8Array) {
-                    answer = answer.buffer
-                    transfers.push(answer)
-                }
-
-                self.postMessage({type: "callPandoraPayFunctionAnswer", id: data.answerId, answer: answer }, transfers)
-            }
+            self.postMessage({ type: "initialize-done", PandoraPayClone, }, transferable)
 
         }
 
+        return Helper.OnMessage(self, data)
     }
 
-}
-
-
-function clonePandoraPay(src, dst ){
-    for (const key in src ){
-
-        if (typeof src[key] === "function"){
-
-            const id = generateRandomId()
-            PandoraPayFunctions[id] = src[key]
-
-            dst[key] = {
-                __type: "function",
-                __id: id,
-            }
-
-        }else if (typeof src[key] === "object"){
-            dst[key] = {}
-            clonePandoraPay(src[key], dst[key])
-        }else
-            dst[key] = src[key]
-
-    }
-}
-
-function generateRandomId( ){
-    return Math.random().toString()+Math.random().toString()
 }

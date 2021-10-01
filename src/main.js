@@ -2,8 +2,11 @@ class Main {
 
     constructor(){
 
-        global.MyTextDecoder = new TextDecoder("utf-8")
-        global.MyTextEncoder = new TextEncoder("utf-8")
+        const decoder = new TextDecoder("utf-8")
+        const encoder = new TextEncoder("utf-8")
+
+        global.MyTextDecode = (a)=> a ? decoder.decode(a) : null
+        global.MyTextEncode = (a)=> a ? encoder.encode(a) : null
 
         window.addEventListener("load", () => {
             this.initialize()

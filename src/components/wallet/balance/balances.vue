@@ -99,7 +99,7 @@ export default {
         },
 
         isEmpty(){
-            return !this.account.balances.length
+            return !this.account.accounts.length
         }
 
 

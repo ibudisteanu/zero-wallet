@@ -22,8 +22,8 @@ export default {
                 if ( !result[0] ) throw "Account was not received"
                 const accountData = result[0]
 
-                let account = JSON.parse(MyTextDecoder.decode(accountData))
-                const pendingTxsList = JSON.parse( MyTextDecoder.decode(result[1]) )
+                let account = JSON.parse(MyTextDecode(accountData))
+                const pendingTxsList = JSON.parse( MyTextDecode(result[1]) )
 
                 if ( !Object.keys(account).length ){
                     account = null
@@ -146,6 +146,7 @@ export default {
                 for (let index = 0; index < account.tokens.length; index++)
                     if (account.tokens[index] === token) {
                         account.accounts[index] = data
+                        account.accounts[index].token = token
                         found = true
                         break
                     }
@@ -175,7 +176,7 @@ export default {
         if (!Object.keys(account).length)
             account = null
 
-        await PandoraPay.store.storeAccount( publicKey, MyTextEncoder.encode(JSON.stringify(account)) )
+        await PandoraPay.store.storeAccount( publicKey, MyTextEncode(JSON.stringify(account)) )
         commit('setAccount', {publicKey, account})
 
     },

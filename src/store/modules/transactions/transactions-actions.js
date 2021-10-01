@@ -146,7 +146,7 @@ export default {
                 const data = await PandoraPay.network.getNetworkTransaction( hash );
                 if (!data) throw "tx fetch failed"; //disconnected
 
-                const tx = JSON.parse(MyTextDecoder.decode(data))
+                const tx = JSON.parse(MyTextDecode(data))
 
                 resolve( await dispatch('includeTx', tx) );
             }catch(err){
@@ -172,7 +172,7 @@ export default {
                 const data = await PandoraPay.network.getNetworkTransaction( height );
                 if (!data) throw "tx fetch failed"; //disconnected
 
-                const tx = JSON.parse(MyTextDecoder.decode(data))
+                const tx = JSON.parse(MyTextDecode(data))
 
                 resolve( await dispatch('includeTx', tx) );
 

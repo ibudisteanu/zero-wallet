@@ -13,7 +13,7 @@ export default {
                 const tokenData = await PandoraPay.network.getNetworkToken(hash);
                 if (!tokenData ) throw "Error getting block info"
 
-                const token = JSON.parse(MyTextDecoder.decode(tokenData) )
+                const token = JSON.parse(MyTextDecode(tokenData) )
 
                 token.hash = hash
 

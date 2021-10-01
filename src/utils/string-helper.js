@@ -1,6 +1,6 @@
 class StringHelper{
 
-    truncateText(string, size1 = 8, size2 = 8){
+    truncateText(string = "", size1 = 8, size2 = 8){
         if (string.length <= size1 + size2 ) return string
         return string.slice(0, size1)+'...'+string.slice(string.length-size2)
     }

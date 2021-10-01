@@ -41,7 +41,7 @@
                     <div class="card-body py-3">
                         <div class="tab-content">
                             <div :class="`tab-pane ${tab===0?'active':''} `">
-                                <tx-amount :allow-zero="true" :balances="balancesOnlyNative" @changed="amountChanged" text="Amount to stake" :token="''" />
+                                <tx-amount :allow-zero="true" :accounts="accountsOnlyNative" @changed="amountChanged" text="Amount to stake" :token="''" />
                             </div>
                             <div :class="`tab-pane ${tab===1?'active':''} `">
 
@@ -82,7 +82,7 @@
                                 <extra-data :version="version.VERSION_TRANSPARENT" @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===3?'active':''} `">
-                                <tx-fee :balances="balancesOnlyNative" :allow-zero="true" @changed="changedFee" :token="''" />
+                                <tx-fee :accounts="accountsOnlyNative" :allow-zero="true" @changed="changedFee" :token="''" />
                             </div>
 
                         </div>
@@ -170,19 +170,21 @@ export default {
         isFound(){
             return this.account !== null
         },
-        balances(){
-            if (this.account) return this.account.balances;
+        accounts(){
+            if (this.account) return this.account.accounts;
             return null
         },
-        balancesOnlyNative(){
-            const balances = []
-            if (this.account){
-                for (const balance of this.account.balances)
-                    if (balance.token === "")
-                        balances.push(balance)
+
+        accountsOnlyNative(){
+
+            const accounts = []
+            if (this.account && this.account.accounts){
+                for (let i=0; i < this.account.accounts.length; i++ )
+                    if (this.account.accounts[i].token === "" || this.account.accounts[i].token === PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX )
+                        accounts.push(this.account.accounts[i])
             }
 
-            return balances
+            return accounts
         },
 
         validationDelegateStakePublicKey(){
@@ -316,7 +318,7 @@ export default {
                 if (!out) throw "Transaction couldn't be made";
                 this.status = ''
 
-                const tx = JSON.parse(out)
+                const tx = JSON.parse( MyTextDecode( out ) )
 
                 await this.$store.dispatch('includeTx', {tx } )
 

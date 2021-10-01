@@ -36,7 +36,7 @@ export default {
                 const data = await PandoraPay.network.getNetworkBlockComplete( hash );
                 if (!data) throw "Block was not received"
 
-                const blk = JSON.parse(MyTextDecoder.decode(data))
+                const blk = JSON.parse(MyTextDecode(data))
                 if (blk.bloom.hash !== hash) throw "Block hash was not matching"
 
                 const out = await dispatch('_includeBlock', blk )
@@ -64,7 +64,7 @@ export default {
                 const data = await PandoraPay.network.getNetworkBlockComplete( height );
                 if (!data) throw "Block was not received"
 
-                const blk = JSON.parse(MyTextDecoder.decode(data))
+                const blk = JSON.parse(MyTextDecode(data))
                 if (blk.height !== height) throw "Block height was not matching"
 
                 resolve( await dispatch('_includeBlock', blk ) );

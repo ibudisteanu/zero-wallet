@@ -177,9 +177,11 @@ export default {
     asyncComputed:{
 
         async balance(){
+
             const balances = { "": { amount: 0 } }
+
             if (this.account)
-                for (const balance of this.account.balances)
+                for (const balance of this.account.accounts)
                     balances[balance.token] = { amount: balance.amount }
 
             const amount = balances[""].amount || 0;

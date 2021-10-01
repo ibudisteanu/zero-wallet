@@ -18,7 +18,7 @@
             <div v-if="validationError" class="invalid-feedback d-block">{{validationError}}</div>
 
         </div>
-        <tx-amount class="pt-2" @changed="changedTxAmount" :balances="balances" :token="token" />
+        <tx-amount class="pt-2" @changed="changedTxAmount" :accounts="accounts" :token="token" />
     </div>
 
 </template>
@@ -45,7 +45,7 @@ export default {
         index: {default: null},
         version: {default: 0},
         token: {default: ""},
-        balances: {default: null },
+        accounts: {default: null },
     },
 
     computed:{
@@ -61,7 +61,7 @@ export default {
 
                 if (this.version === VERSION_TRANSPARENT){
                     const addressData = await PandoraPay.addresses.decodeAddress(to)
-                    const address = JSON.parse(MyTextDecoder.decode(addressData))
+                    const address = JSON.parse( MyTextDecode(addressData) )
                     this.finalAddress = address
                     return
                 }

@@ -20,7 +20,7 @@ export default {
     props:{
         text: {default: 'Amount'},
         token: {default: ""},
-        balances: {default: null },
+        accounts: {default: null },
         allowZero: {default: false,},
         allowEmptyToken: {default: false},
         disabled: {default: false},
@@ -42,8 +42,8 @@ export default {
             if (this.amount === Number.NaN || this.amount < 0) return "Amount can not be negative"
 
             if (!this.allowEmptyToken){
-                for (const key in this.balances) {
-                    const balance = this.balances[key]
+                for (const key in this.accounts) {
+                    const balance = this.accounts[key]
                     if (balance.token === this.token)
                         if (this.amount > await PandoraPay.config.tokens.tokensConvertToBase( balance.amount.toString(), this.tokenInfo.decimalSeparator )){
                             return "Not enough funds"

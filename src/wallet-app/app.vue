@@ -57,7 +57,7 @@ export default {
         PandoraPay.events.listenEvents( async (name, data )=>{
 
             if (data instanceof Uint8Array)
-                data = MyTextDecoder.decode(data)
+                data = MyTextDecode(data)
 
             console.log("JS NAME:", name, "data", data)
 
@@ -67,8 +67,8 @@ export default {
 
                     await PandoraPay.events.listenNetworkNotifications(( subscriptionType, key, data, extraInfo)=>{
 
-                        if (extraInfo) extraInfo = MyTextDecoder.decode( extraInfo )
-                        if (data) data = MyTextDecoder.decode( data )
+                        if (extraInfo) extraInfo = MyTextDecode( extraInfo )
+                        if (data) data = MyTextDecode( data )
 
                         console.log("listenNetworkNotifications", subscriptionType, key, data, extraInfo)
 

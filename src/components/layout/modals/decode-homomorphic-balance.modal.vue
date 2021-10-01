@@ -1,6 +1,6 @@
 <template>
 
-    <modal ref="modal" title="Decoding" contentClass="" @closed="stopMatrix" @opened="start" :close-button="false"  >
+    <modal ref="modal" title="Decoding" contentClass="" @closed="stop" @opened="start" >
 
         <template slot="body">
 
@@ -28,6 +28,7 @@ export default {
             token: "",
             password: "",
             decodedBalance: null,
+            cancelCallback: null,
         }
     },
 
@@ -60,11 +61,22 @@ export default {
             this.startMatrix()
 
             const data = await PandoraPay.wallet.decodeBalanceWalletAddress( this.publicKey, this.balance, this.token, this.password )
-            console.log("data", data)
+            console.log("decodeBalanceWalletAddress222 data", data)
 
-            this.decodedBalance = data
+            this.cancelCallback = data[1]
+
+            this.decodedBalance = await data[0]
+            this.cancelCallback = null
             this.closeModal()
 
+        },
+
+        async stop(){
+
+            if (this.cancelCallback)
+                await this.cancelCallback()
+
+            this.stopMatrix()
         },
 
         stopMatrix(){

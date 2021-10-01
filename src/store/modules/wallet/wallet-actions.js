@@ -5,7 +5,7 @@ export default {
     async readWallet( {state, dispatch, commit} ){
 
         const walletData = await PandoraPay.wallet.getWallet()
-        const wallet = JSON.parse( walletData )
+        const wallet = JSON.parse( MyTextDecode( walletData ) )
 
         wallet.isEncrypted = wallet.encryption.encrypted === PandoraPay.enums.wallet.encryptedVersion.ENCRYPTED_VERSION_ENCRYPTION_ARGON2
 

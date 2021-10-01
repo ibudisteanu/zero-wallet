@@ -1,8 +1,5 @@
 import consts from "consts/consts";
-import StringHelper from "src/utils/string-helper"
-
-const PandoraPayWorkerAnswers = {}
-const PandoraPayWorkerCallbacks = {}
+import Helper from "src/webworkers/pandorapay-webworker/helper"
 
 export default class PandorapayWebworkerIntegration{
 
@@ -24,9 +21,7 @@ export default class PandorapayWebworkerIntegration{
 
                     const {PandoraPayClone} = data
 
-                    global.PandoraPay = {}
-
-                    this.fixPandoraPay(PandoraPayClone, PandoraPay)
+                    this.fixPandoraPay(PandoraPayClone)
 
                     await PandoraPay.helpers.helloPandora()
 
@@ -34,20 +29,9 @@ export default class PandorapayWebworkerIntegration{
 
                     PandoraPayWallet.loadWallet()
 
-                } else if (data.type === "callPandoraPayFunctionAnswer") {
-                    const {resolve, reject} = PandoraPayWorkerAnswers[data.id]
-
-                    if (data.error)
-                        reject(data.error)
-                    else
-                        resolve( data.answer )
-
-                    delete PandoraPayWorkerAnswers[data.id]
-                } else if (data.type === "PandoraPayFunctionCallback") {
-                    const cb = PandoraPayWorkerCallbacks[data.id]
-                    cb(...data.data)
                 }
 
+                return Helper.OnMessage(this.worker, data)
             }
 
         }
@@ -62,62 +46,9 @@ export default class PandorapayWebworkerIntegration{
         });
     }
 
-    //let's fix the functions
-    fixPandoraPay(src, dst) {
-
-        for (const key in src) {
-
-            if (typeof src[key] === "object" && src[key] !== null && src[key].__type === "function" && src[key].__id) {
-
-                dst[key] =  (...args) => {
-
-                    const id = StringHelper.generateRandomId()
-
-                    const promise = new Promise((resolve, reject) => {
-                        PandoraPayWorkerAnswers[id] = {resolve, reject}
-                    })
-
-                    let newArguments = [...args]
-                    let transfers = []
-
-                    for (let i=0; i < newArguments.length; i++){
-                        if (typeof newArguments[i] === "function"){
-
-                            const callbackId = StringHelper.generateRandomId()
-                            PandoraPayWorkerCallbacks[callbackId] = newArguments[i]
-                            newArguments[i] = {
-                                __type: "callback",
-                                __id: callbackId,
-                            }
-
-                        } else if (newArguments[i] instanceof Uint8Array) {
-                            newArguments[i] = newArguments[i].buffer //requried
-                            transfers.push(newArguments[i])
-                        }
-                    }
-
-                    try {
-                        this.worker.postMessage({
-                            type: "callPandoraPayFunction",
-                            id: src[key].__id,
-                            answerId: id,
-                            arguments: newArguments,
-                        }, transfers)
-                    } catch (err) {
-                        console.error("error postMessage", err)
-                    }
-
-                    return promise
-                }
-
-            } else if (typeof src[key] === "object") {
-                dst[key] = {}
-                this.fixPandoraPay(src[key], dst[key])
-            } else
-                dst[key] = src[key]
-
-        }
+    fixPandoraPay(src){
+        const dst = Helper.ProcessObject(src, [] )
+        global.PandoraPay = Helper.FixObject(this.worker, dst)
     }
 
 }
-
