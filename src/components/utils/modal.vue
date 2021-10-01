@@ -43,7 +43,8 @@ export default{
     props:{
         title: {default: 'Modal Title'},
         closeButton: { default: true },
-        contentClass: {default: 'p-3 p-sm-4'}
+        contentClass: {default: 'p-3 p-sm-4'},
+        closingFunction: {default: null},
     },
 
     computed:{
@@ -64,9 +65,14 @@ export default{
             return this.closeModal()
         },
 
-        closeModal(e){
+        async closeModal(e){
 
             if ( e ) e.stopPropagation();
+
+            this.$emit('closed');
+
+            if (this.closingFunction)
+                await this.closingFunction()
 
             this.open = false;
             if (this.resolver) {
@@ -74,10 +80,7 @@ export default{
                 this.promise = null;
                 this.resolver = null;
             }
-
             this.$store.commit('incrementModalIndex', - 1 )
-
-            this.$emit('closed');
 
         },
 

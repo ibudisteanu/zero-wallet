@@ -16,31 +16,22 @@ async function OnMessage(worker, data ){
 
         let result, err
 
-        try{
-            if (data.isArray)
-                result = await cb(out)
-            else
-                result = await cb(...out)
-        }catch(x){
-            err = x
-        }
+        if (data.isArray)
+            result = await cb(out)
+        else
+            result = await cb(...out)
 
         //console.log(result, err)
 
         if (data.answerId){
-            if (err){
-                worker.postMessage({type: "callback", id: data.answerId, arguments: [err]})
-            } else {
-
-                let isArray = true
-                if ( !Array.isArray(result) ) {
-                    result = [result]
-                    isArray = false
-                }
-
-                result = ProcessObject(result, [] )
-                worker.postMessage({type: "callback", id: data.answerId, arguments: [...result], isArray })
+            let isArray = true
+            if ( !Array.isArray(result) ) {
+                result = [result]
+                isArray = false
             }
+
+            result = ProcessObject(result, [] )
+            worker.postMessage({type: "callback", id: data.answerId, arguments: [...result], isArray })
         }
 
     }
@@ -50,13 +41,13 @@ function ProcessObject(src, transferable = []){
 
     let dst = src
 
-    if ( src === null || src === undefined) { }
-    else if ( src instanceof ArrayBuffer ){
+    if ( src instanceof Error  || src === null || src === undefined) { }
+    else if ( src instanceof ArrayBuffer )
         transferable.push(dst)
-    } else if ( src instanceof Uint8Array ){
+    else if ( src instanceof Uint8Array ) {
         dst = src.buffer
         transferable.push(dst)
-    }else if (typeof src === "function"){
+    } else if (typeof src === "function"){
 
         const id = GenerateRandomId()
         Callbacks[id] = src
@@ -84,7 +75,7 @@ function FixObject(worker, src){
 
     let dst = src
 
-    if ( src === null || src === undefined) { }
+    if ( src instanceof Error  || src === null || src === undefined) { }
     else if ( src instanceof ArrayBuffer ) dst = new Uint8Array(src)
     else if (src instanceof Uint8Array ){ }
     else if (typeof src === "object" && src.__type === "callback" && src.__id ){

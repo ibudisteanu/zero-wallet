@@ -1,6 +1,6 @@
 <template>
 
-    <modal ref="modal" title="Decoding" contentClass="" @closed="stop" @opened="start" >
+    <modal ref="modal" title="Decoding" contentClass="" @opened="start" :closing-function="stop" >
 
         <template slot="body">
 
@@ -55,20 +55,43 @@ export default {
             return this.$refs.modal.closeModal();
         },
 
-
         async start(){
 
             this.startMatrix()
 
             const data = await PandoraPay.wallet.decodeBalanceWalletAddress( this.publicKey, this.balance, this.token, this.password )
-            console.log("decodeBalanceWalletAddress222 data", data)
 
             this.cancelCallback = data[1]
 
-            this.decodedBalance = await data[0]
-            this.cancelCallback = null
-            this.closeModal()
+            const checkBalance = async () => {
 
+                const result = await data[0]()
+
+                if (result[2] && result[2] instanceof Error) {
+                    this.$store.dispatch('addToast', {
+                        type: 'error',
+                        title: `Error decoding your homormorphic balance`,
+                        text: `${result[2].message}`,
+                    })
+                    this.cancelCallback = null
+                    return this.closeModal()
+                } else if (result[0]){
+
+                    this.$store.dispatch('addToast', {
+                        type: 'success',
+                        title: `Homormorphic Balance was decoded`,
+                        text: `Decoded successfully!`,
+                    })
+
+                    this.decodedBalance = result[1]
+                    this.cancelCallback = null
+                    return this.closeModal()
+                }
+
+                setTimeout( () => checkBalance(), 500 )
+            }
+
+            setTimeout(  () => checkBalance(), 500 )
         },
 
         async stop(){
@@ -77,6 +100,7 @@ export default {
                 await this.cancelCallback()
 
             this.stopMatrix()
+
         },
 
         stopMatrix(){
