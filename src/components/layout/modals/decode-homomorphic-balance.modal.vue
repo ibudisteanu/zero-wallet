@@ -29,6 +29,7 @@ export default {
             password: "",
             decodedBalance: null,
             cancelCallback: null,
+            status: "",
         }
     },
 
@@ -59,7 +60,9 @@ export default {
 
             this.startMatrix()
 
-            const data = await PandoraPay.wallet.decodeBalanceWalletAddress( this.publicKey, this.balance, this.token, this.password )
+            const data = await PandoraPay.wallet.decodeBalanceWalletAddress( this.publicKey, this.balance, this.token, this.password, (status)=>{
+                this.status = status;
+            }  )
 
             this.cancelCallback = data[1]
 
@@ -124,23 +127,45 @@ export default {
             for(var i=0; i<columns;i++)
                 heights[i]=1;
 
-            const lines = [
-                createLine(".........."),
-                createLine(".DECODING."),
-                createLine(".........."),
-            ]
+            let lines = [ ]
             let hasText = []
-            for (let i=0; i < heights.length; i++){
-                let foundText = false
-                for (const line of lines )
-                    if (line[i] !== ' ') {
-                        foundText = true
-                        break
-                    }
-                hasText[i] = hasText
-            }
 
             let middleLine = Math.floor( c.height / letterSize / 2 )
+
+            const createLines = ()=>{
+                lines = [
+                    "",
+                    "DECODING",
+                    this.status,
+                    "",
+                ].reverse()
+
+                let maxLength = 0
+                for (const line of lines)
+                    if (maxLength < line.length)
+                        maxLength = line.length
+
+                maxLength += 2
+                for (let i=0; i<lines.length; i++) {
+                    const initLength = lines[i].length
+                    lines[i] = new Array( Math.floor ( (maxLength - initLength) / 2 ) + 1).join('.') + lines[i]
+                    lines[i] = lines[i] + new Array( (maxLength - lines[i].length) + 1).join('.')
+                }
+
+                for (let i=0; i<lines.length; i++)
+                    lines[i] = createLine(lines[i])
+
+                hasText = []
+                for (let i=0; i < heights.length; i++){
+                    let foundText = false
+                    for (const line of lines )
+                        if (line[i] !== ' ') {
+                            foundText = true
+                            break
+                        }
+                    hasText[i] = hasText
+                }
+            }
 
             function createLine(text ){
                 text = new Array( Math.floor( (heights.length - text.length) / 2) +1 ).join(" ")+text
@@ -156,6 +181,8 @@ export default {
                 context.fillStyle= "#0f0";
                 context.font= letterSize+"px arial";
 
+                createLines()
+
                 for(let i=0;i<heights.length;i++){
 
                     let finalCharacter = ''
@@ -170,11 +197,9 @@ export default {
 
                     context.fillText(finalCharacter.split(""),i*letterSize, heights[i]*letterSize);
 
-                    if(heights[i]*letterSize > c.height){
-                        if (Math.random()>0.975)
-                            heights[i]=0;
-                        else if (hasText[i] && Math.random() > 0.7)
-                                heights[i] = 0;
+                    if (heights[i]*letterSize > c.height){
+                        if (Math.random()>0.975) heights[i]=0;
+                        else if (hasText[i] && Math.random() > 0.7) heights[i] = 0;
                     }
 
                     heights[i]++;
