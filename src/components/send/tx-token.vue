@@ -3,10 +3,10 @@
         <div class="col-12" >
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Token</label>
             <select :class="`form-select ${validationTokenError ? 'is-invalid' :''}`" v-model="selectedToken">
-                <option v-for="(account, id) in accounts"
+                <option v-for="(token, id) in tokens"
                         :key="`send-money-${id}`"
-                        :value="account.token">
-                    {{getTokenName(account.token)}} {{account.token}}
+                        :value="token">
+                    {{getTokenName(token)}} {{token}}
                 </option>
             </select>
             <div v-if="validationTokenError" class="invalid-feedback d-block">{{validationTokenError}}</div>
@@ -25,7 +25,7 @@ export default {
 
     props:{
         text: {default: 'Amount'},
-        accounts: {default: null },
+        tokens: {default: null },
     },
 
     computed:{

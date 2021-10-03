@@ -16,6 +16,7 @@ export default {
 
                 const tokenInfo = JSON.parse(MyTextDecode(tokenInfoData))
 
+                tokenInfo.name = "$0x00"
 
                 tokenInfo.hash = hash
                 commit('setTokenInfo', tokenInfo)

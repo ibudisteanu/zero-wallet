@@ -5,7 +5,7 @@
                 {{sign?'':'-'}} {{amount}}
             </span>
             <router-link :to="`/tokens/${getToken.hash}`" :class="tokenClass">
-                $0x00
+                {{getToken.name}}
             </router-link>
         </template>
         <template v-else>

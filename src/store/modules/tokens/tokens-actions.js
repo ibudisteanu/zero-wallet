@@ -19,6 +19,8 @@ export default {
 
                 await PandoraPay.store.storeToken( hash, tokenData  )
 
+                token.name = "$0x00"
+
                 commit('setToken',token)
 
                 resolve(token)

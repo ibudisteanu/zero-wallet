@@ -11,7 +11,7 @@
             </template>
             <small class="fs--1 text-700">/
                 <router-link :to="`/tokens/${getToken.hash}`" class="currency" v-tooltip.bottom="getToken.hash" >
-                    $0x00
+                    {{getToken.name}}
                 </router-link>
             </small>
         </h4>

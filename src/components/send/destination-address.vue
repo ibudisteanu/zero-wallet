@@ -3,11 +3,11 @@
     <div>
         <div class="col">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Destination Address {{index !== null ? index+1 : ''}}</label>
-            <i class="fa fa-times float-end pointer" @click="deleteDestinationAddress"></i>
+            <i v-if="index !== null" class="fa fa-times float-end pointer" @click="deleteDestinationAddress"></i>
 
             <div :class="`${finalAddress ? 'destination-row': ''} `" >
 
-                <account-identicon v-if="finalAddress" :public-key="finalAddress.publicKey" size="30" outer-size="8" :version="finalAddress.version" />
+                <account-identicon v-if="finalAddress" :public-key="finalAddress.publicKey" size="30" outer-size="8" />
 
                 <div class="input-toggle-group">
                     <input :class="`form-control ${validationError ? 'is-invalid' : ''}`" type="text" v-model="destination">
@@ -27,7 +27,6 @@
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
 import TxAmount from "./tx-amount"
-const {VERSION_TRANSPARENT} = PandoraPay.enums.wallet.address.version;
 
 export default {
 
@@ -43,7 +42,6 @@ export default {
 
     props:{
         index: {default: null},
-        version: {default: 0},
         token: {default: ""},
         accounts: {default: null },
     },
@@ -58,14 +56,10 @@ export default {
     watch: {
         async destination (to, ) {
             try{
-
-                if (this.version === VERSION_TRANSPARENT){
-                    const addressData = await PandoraPay.addresses.decodeAddress(to)
-                    const address = JSON.parse( MyTextDecode(addressData) )
-                    this.finalAddress = address
-                    return
-                }
-
+                const addressData = await PandoraPay.addresses.decodeAddress(to)
+                const address = JSON.parse( MyTextDecode(addressData) )
+                this.finalAddress = address
+                return
             }catch(err){
             }
 
