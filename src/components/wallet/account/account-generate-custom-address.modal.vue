@@ -245,7 +245,8 @@ export default {
                 console.log(args)
 
                 const out = await PandoraPay.addresses.generateAddress( ...args )
-                this.addressGenerated = out[1]
+                const json = JSON.parse( MyTextDecode(out) )
+                this.addressGenerated = json[1]
 
             }catch(err){
                 this.error = err.toString()

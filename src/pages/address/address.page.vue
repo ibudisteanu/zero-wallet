@@ -118,12 +118,6 @@ export default {
 
                 this.publicKey = publicKey
 
-                await this.$store.state.blockchain.syncPromise;
-
-                if (!this.publicKey) return
-
-                await this.$store.dispatch('subscribeAccount', this.publicKey )
-
             }catch(err){
                 this.error = err.toString()
                 console.error(err)
@@ -144,10 +138,19 @@ export default {
 
             if (to !== this.publicKey || !this.publicKey)
                 await this.loadAddress(to);
-
-            if (!this.$store.getters.walletContains(from) )
-                await this.$store.dispatch('unsubscribeAccount', from )
         },
+
+        async publicKey (to, from){
+            if (to === from) return
+
+            await this.$store.state.blockchain.syncPromise;
+
+            if (to)
+                await this.$store.dispatch('subscribeAccount', to )
+
+            if (from && !this.$store.getters.walletContains(from) )
+                await this.$store.dispatch('unsubscribeAccount', from )
+        }
     },
 
     async mounted(){
@@ -155,9 +158,8 @@ export default {
     },
 
     async beforeDestroy() {
-        if (!this.$store.getters.walletContains(this.publicKey))
+        if (this.publicKey && !this.$store.getters.walletContains(this.publicKey))
             await this.$store.dispatch('unsubscribeAccount', this.publicKey )
-
     }
 
 };

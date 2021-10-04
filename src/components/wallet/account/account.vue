@@ -37,7 +37,7 @@
                         <i class="fa fa-tools" />
                     </button>
 
-                    <button v-if="$store.getters.walletContains(this.address.publicKey)" class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="sendFunds"  v-tooltip.bottom="'Send Transparently Funds'">
+                    <button v-if="$store.getters.walletContains(this.address.publicKey)" class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="sendFunds"  v-tooltip.bottom="'Send Privately Funds'">
                         <i class="fa fa-money-check-alt" />
                     </button>
 
@@ -101,7 +101,7 @@ export default {
         },
 
         sendFunds(){
-            this.$router.push('/send/transparent')
+            this.$router.push('/send/private')
         },
 
     },

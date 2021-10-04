@@ -44,7 +44,6 @@
                                                      :key="`destinationAddress-${index}`"
                                                      :class="`${index > 0 ? 'pt-5' : '0'}`"
                                                      :index="index"
-                                                     :version="version.VERSION_TRANSPARENT"
                                                      :accounts="accounts"
                                                      :token="token.token"
                                                      @changed="e => changedDestination(index, e)"
@@ -62,7 +61,6 @@
                             </div>
                             <div :class="`tab-pane ${tab===1?'active':''} `">
                                 <extra-data :destinations="destinations"
-                                            :version="version.VERSION_TRANSPARENT"
                                             :paymentId="identifiedPaymentID"
                                             @changed="changedExtraData" />
                             </div>

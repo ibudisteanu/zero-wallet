@@ -38,7 +38,7 @@
                                 <tx-amount :allow-zero="true" :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" :token="''" />
                             </div>
                             <div :class="`tab-pane ${tab===1?'active':''} `">
-                                <extra-data :version="version.VERSION_TRANSPARENT" @changed="changedExtraData" />
+                                <extra-data @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===2?'active':''} `">
                                 <tx-fee :balances="balances" :allow-zero="true" @changed="changedFee" :token="''" />

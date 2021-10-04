@@ -79,7 +79,7 @@
 
                             </div>
                             <div :class="`tab-pane ${tab===2?'active':''} `">
-                                <extra-data :version="version.VERSION_TRANSPARENT" @changed="changedExtraData" />
+                                <extra-data @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===3?'active':''} `">
                                 <tx-fee :accounts="accountsOnlyNative" :allow-zero="true" @changed="changedFee" :token="''" />
