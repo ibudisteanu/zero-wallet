@@ -103,7 +103,10 @@
 
                         <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
 
-                        <label v-if="status">{{status}}</label>
+                        <template v-if="status">
+                            <span>Transaction is being created. It will take 1-2 minutes.</span>
+                            <label>Status: {{status}}</label>
+                        </template>
 
                         <div class="float-end">
                             <loading-button v-if="tab > 0" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
