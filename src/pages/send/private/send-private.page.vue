@@ -107,7 +107,7 @@
 
                         <div class="float-end">
                             <loading-button v-if="tab > 0" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
-                            <loading-button :text="`${tab === maxTab ? 'Delegate' : 'Next'}`" @submit="handleNext" :icon="`${ tab === maxTab ? 'fa fa-credit-card' : 'fas fa-chevron-right ms-2' }`"  />
+                            <loading-button :text="`${tab === maxTab ? 'Transfer Privately' : 'Next'}`" @submit="handleNext" :icon="`${ tab === maxTab ? 'fa fa-credit-card' : 'fas fa-chevron-right ms-2' }`"  />
                         </div>
                     </div>
                 </div>
@@ -262,7 +262,7 @@ export default {
                     if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
                     if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
 
-                    await this.handleSendFunds()
+                    await this.handleSendFunds(resolver)
                 }
 
                 this.tab = value
@@ -304,7 +304,7 @@ export default {
             try{
 
                 this.error = ""
-                const holders = await PandoraPay.network.getNetworkAccountsHolders(this.token.token)
+                const holders = await PandoraPay.network.getNetworkAccountsCount(this.token.token)
 
                 const ringSize = this.ringSize
                 let newAccounts = this.ringNewAddresses
@@ -344,10 +344,15 @@ export default {
                     alreadyUsedIndexes[index] = true
                 }
 
-                let str = Object.keys(alreadyUsedIndexes).join(',')
-                if (str.length && str[str.length-1] === ',') str = str.splice(0, str.length-1 )
+                const alreadyUsedIndexesArray = Object.keys(alreadyUsedIndexes).map(it => Number.parseInt(it) )
+                alreadyUsedIndexesArray.sort((a,b) => a - b )
 
-                const out = await PandoraPay.network.getNetworkAccountsByIndex( str, this.token.token, false )
+                const out = await PandoraPay.network.getNetworkAccountsKeysByIndex( MyTextEncode( JSON.stringify({
+                    indexes: alreadyUsedIndexesArray,
+                    token: this.token.token,
+                    encodeAddresses: false,
+                })));
+
                 let publicKeys = JSON.parse( MyTextDecode(out) ).publicKeys
 
                 const publicKeysMap = {}
@@ -367,22 +372,19 @@ export default {
                 delete publicKeysMap[this.destination.address.publicKey]
                 publicKeys = Object.keys(publicKeysMap)
 
-                let c = 0
-                for ( let i =0; i < ringSize-2; i++){
+                for ( let i =0; ringMembers.length < ringSize - newAccounts; i++){
+                    if (alreadyUsedPublicKeys[ publicKeys[i] ]) throw `Ring contains duplicate member`
+                    alreadyUsedPublicKeys[ publicKeys[i] ] = true
 
-                    if (i < newAccounts || holders - 2 + newAccounts <= i ){
-                        let out = await PandoraPay.addresses.generateNewAddress()
-                        const data = JSON.parse( MyTextDecode(out) )
-                        alreadyUsedPublicKeys[ data[2] ] = true
-                        ringMembers[i] = data[1]
-                    }else {
-                        alreadyUsedPublicKeys[ publicKeys[c] ] = true
-                        const out = await PandoraPay.addresses.generateAddress(publicKeys[c], "", 0, "")
-                        const json = JSON.parse( MyTextDecode(out) )
-                        ringMembers[i] = json[1]
-                        c += 1
-                    }
+                    const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( {publicKey: publicKeys[i], registration: "", amount: 0, paymentId: ""} ) ) ) ) )
+                    ringMembers.push( json[1] )
+                }
 
+                for (let i=0; ringMembers.length < ringSize; i++){
+                    const data = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
+                    if (alreadyUsedPublicKeys[ data[2] ]) throw `Ring contains duplicate member`
+                    alreadyUsedPublicKeys[ data[2] ] = true
+                    ringMembers.push( data[1] )
                 }
 
                 this.ringMembers = ringMembers
@@ -394,42 +396,50 @@ export default {
             }
         },
 
-        async handleSendFunds(){
+        async handleSendFunds(resolver){
 
             try{
 
                 this.error = '';
                 this.status = '';
 
-                const amounts = { }
-
-                for (const destination of this.destinations)
-                    amounts.push = destination.amount
-
                 const password = await this.$store.state.page.refWalletPasswordModal.showModal()
                 if (password === null ) return
 
-                //compute extra
-                const out = await PandoraPay.transactions.builder.createSimpleTx_Float( JSON.stringify({
-                    from: [this.address.addressEncoded],
-                    nonce: 0,
+                const shuffle = JSON.parse( MyTextDecode( await PandoraPay.helpers.shuffleArray_for_Zether( this.ringMembers.length.toString() ) ))
+                const ringShuffled = shuffle.map( index => this.ringMembers[index] )
+
+                console.log(ringShuffled)
+
+                let out = await PandoraPay.network.getNetworkAccountsByKeys(MyTextEncode(JSON.stringify({
+                    addresses: ringShuffled,
                     token: this.token.token,
-                    amounts: Object.values(amounts),
-                    dsts: this.destinations.map (it => it.addressEncoded),
-                    dstsAmounts: this.destinations.map (it => it.amount),
-                    fee: {
+                    includeMempool: true,
+                })))
+
+                const data = JSON.parse(MyTextDecode( out ))
+                console.log(data)
+
+                //compute extra
+                out = await PandoraPay.transactions.builder.createZetherTx_Float( MyTextEncode( JSON.stringify({
+                    from: [this.address.addressEncoded],
+                    tokens: [this.token.token],
+                    amounts: [this.destination.amount],
+                    dsts: [this.destination.addressEncoded],
+                    burns: [0],
+                    ringMembers: [this.ringMembers],
+                    fees: [{
                         fixed: (this.fee.feeType === 'feeAuto') ? 0 : this.fee.feeManual.amount,
                         perByte: 0,
                         perByteAuto: this.fee.feeType === 'feeAuto',
-                    },
-                    data: {
+                    }],
+                    data: [{
                         data: Buffer.from(this.extraData.data).toString("hex"),
                         encrypt: this.extraData.type === "encrypted",
-                        publicKeyToEncrypt: this.extraData.publicKeyToEncrypt,
-                    },
+                    }],
                     propagateTx: true,
                     awaitAnswer: true,
-                } ), (status) => {
+                } ) ), (status) => {
                     this.status = status
                 }, password );
 
@@ -450,7 +460,9 @@ export default {
 
             }catch(err){
                 console.error(err);
-                this.error = err.message;
+                this.error = err.toString();
+            }finally{
+                resolver()
             }
 
         },

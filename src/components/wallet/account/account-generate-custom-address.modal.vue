@@ -235,16 +235,16 @@ export default {
 
             try{
 
-                let args = [
-                    this.account.publicKey,
-                    this.hasRegistration ? this.account.registration : "",
-                    this.hasAmount ? Number.parseInt(this.amount.amount) : 0,
-                    this.hasPaymentId ? this.paymentId : "" ,
-                ]
+                let args = {
+                    publicKey: this.account.publicKey,
+                    registration: this.hasRegistration ? this.account.registration : "",
+                    amount: this.hasAmount ? Number.parseInt(this.amount.amount) : 0,
+                    paymentId: this.hasPaymentId ? this.paymentId : "",
+                }
 
                 console.log(args)
 
-                const out = await PandoraPay.addresses.generateAddress( ...args )
+                const out = await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( args )  ))
                 const json = JSON.parse( MyTextDecode(out) )
                 this.addressGenerated = json[1]
 

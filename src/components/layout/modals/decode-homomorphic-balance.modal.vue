@@ -60,7 +60,7 @@ export default {
 
             this.startMatrix()
 
-            const data = await PandoraPay.wallet.decodeBalanceWalletAddress( this.publicKey, this.balance, this.token, this.password, (status)=>{
+            const data = await PandoraPay.wallet.decodeBalanceWalletAddress( MyTextEncode(JSON.stringify({ publicKey: this.publicKey, balanceEncoded: this.balance, token: this.token })), this.password, (status)=>{
                 this.status = status;
             }  )
 
