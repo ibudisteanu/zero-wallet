@@ -262,7 +262,7 @@ export default {
                     if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
                     if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
 
-                    await this.handleSendFunds(resolver)
+                    await this.handleSendFunds()
                 }
 
                 this.tab = value
@@ -302,8 +302,8 @@ export default {
         async handleGenerateRing(resolver){
 
             try{
-
                 this.error = ""
+
                 const holders = await PandoraPay.network.getNetworkAccountsCount(this.token.token)
 
                 const ringSize = this.ringSize
@@ -394,76 +394,55 @@ export default {
             }finally{
                 resolver()
             }
+
+
         },
 
-        async handleSendFunds(resolver){
+        async handleSendFunds(){
 
-            try{
+            this.status = '';
 
-                this.error = '';
-                this.status = '';
+            const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+            if (password === null ) return
 
-                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
-                if (password === null ) return
+            //compute extra
+            let out = await PandoraPay.transactions.builder.createZetherTx_Float( MyTextEncode( JSON.stringify({
+                from: [this.address.addressEncoded],
+                tokens: [this.token.token],
+                amounts: [this.destination.amount],
+                dsts: [this.destination.addressEncoded],
+                burns: [0],
+                ringMembers: [this.ringMembers],
+                fees: [{
+                    fixed: (this.fee.feeType === 'feeAuto') ? 0 : this.fee.feeManual.amount,
+                    perByte: 0,
+                    perByteAuto: this.fee.feeType === 'feeAuto',
+                }],
+                data: [{
+                    data: Buffer.from(this.extraData.data).toString("hex"),
+                    encrypt: this.extraData.type === "encrypted",
+                }],
+                propagateTx: true,
+                awaitAnswer: true,
+            } ) ), (status) => {
+                this.status = status
+                console.log(status)
+            }, password );
 
-                const shuffle = JSON.parse( MyTextDecode( await PandoraPay.helpers.shuffleArray_for_Zether( this.ringMembers.length.toString() ) ))
-                const ringShuffled = shuffle.map( index => this.ringMembers[index] )
+            if (!out) throw "Transaction couldn't be made";
+            this.status = ''
 
-                console.log(ringShuffled)
+            const tx = JSON.parse( MyTextDecode( out) )
 
-                let out = await PandoraPay.network.getNetworkAccountsByKeys(MyTextEncode(JSON.stringify({
-                    addresses: ringShuffled,
-                    token: this.token.token,
-                    includeMempool: true,
-                })))
+            await this.$store.dispatch('includeTx', { tx } )
 
-                const data = JSON.parse(MyTextDecode( out ))
-                console.log(data)
+            await this.$store.dispatch('addToast', {
+                type: 'success',
+                title: `Transaction created`,
+                text: `A transaction has been made. \n TxId ${tx.hash}`,
+            });
 
-                //compute extra
-                out = await PandoraPay.transactions.builder.createZetherTx_Float( MyTextEncode( JSON.stringify({
-                    from: [this.address.addressEncoded],
-                    tokens: [this.token.token],
-                    amounts: [this.destination.amount],
-                    dsts: [this.destination.addressEncoded],
-                    burns: [0],
-                    ringMembers: [this.ringMembers],
-                    fees: [{
-                        fixed: (this.fee.feeType === 'feeAuto') ? 0 : this.fee.feeManual.amount,
-                        perByte: 0,
-                        perByteAuto: this.fee.feeType === 'feeAuto',
-                    }],
-                    data: [{
-                        data: Buffer.from(this.extraData.data).toString("hex"),
-                        encrypt: this.extraData.type === "encrypted",
-                    }],
-                    propagateTx: true,
-                    awaitAnswer: true,
-                } ) ), (status) => {
-                    this.status = status
-                }, password );
-
-                if (!out) throw "Transaction couldn't be made";
-                this.status = ''
-
-                const tx = JSON.parse( MyTextDecode( out) )
-
-                await this.$store.dispatch('includeTx', { tx } )
-
-                await this.$store.dispatch('addToast', {
-                    type: 'success',
-                    title: `Transaction created`,
-                    text: `A transaction has been made. \n TxId ${tx.hash}`,
-                });
-
-                this.$router.push(`/explorer/tx/${tx.hash}`);
-
-            }catch(err){
-                console.error(err);
-                this.error = err.toString();
-            }finally{
-                resolver()
-            }
+            this.$router.push(`/explorer/tx/${tx.hash}`);
 
         },
 

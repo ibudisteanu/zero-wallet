@@ -16,10 +16,14 @@ async function OnMessage(worker, data ){
 
         let result, err
 
-        if (data.isArray)
-            result = await cb(out)
-        else
-            result = await cb(...out)
+        try{
+            if (data.isArray)
+                result = await cb(out)
+            else
+                result = await cb(...out)
+        }catch(err){
+            result = err
+        }
 
         //console.log(result, err)
 
