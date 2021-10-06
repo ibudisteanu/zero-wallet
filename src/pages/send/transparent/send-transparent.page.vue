@@ -316,7 +316,6 @@ export default {
                 this.$router.push(`/explorer/tx/${tx.hash}`);
 
             }catch(err){
-                console.error(err);
                 this.error = err.message;
             }
 
