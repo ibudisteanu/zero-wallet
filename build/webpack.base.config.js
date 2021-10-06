@@ -6,26 +6,30 @@ const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
+const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
+const gitRevisionPlugin = new GitRevisionPlugin()
 
 const isProd = process.env.NODE_ENV === 'production';
-const isAnalyze = process.argv.includes('--analyze') || process.argv.includes('--analyse');
+const isAnalyze = process.argv.includes('--analyzer');
 
-//const isAnalyze = true;
+const commonPlugins = [
+    new VueLoaderPlugin(),
+    new webpack.DefinePlugin({
+        VERSION: JSON.stringify(gitRevisionPlugin.version()),
+        COMMITHASH: JSON.stringify(gitRevisionPlugin.commithash()),
+        BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
+        LASTCOMMITDATETIME: JSON.stringify(gitRevisionPlugin.lastcommitdatetime()),
+    }),
+    new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+    })
+]
 
 module.exports = webpackConfig = {
 
-    node: {
-        child_process: "empty",
-        dgram: "empty",
-        fs: 'empty',
-        net: 'empty',
-        tls: 'empty',
-        uws: 'empty'
-    },
-
     //define entry point
-    entry: ['babel-regenerator-runtime'],
-    devtool: isProd ? false : '#cheap-module-source-map',
+    devtool: isProd ? false : 'eval-cheap-module-source-map',
+
     // send to distribution
     output: {
         path: path.resolve(__dirname, './../dist'),
@@ -37,10 +41,26 @@ module.exports = webpackConfig = {
         alias: {
             src: path.resolve(__dirname + '/../src'),
             consts: path.resolve(__dirname + '/../consts'),
+        },
+        fallback: {
+            fs: false,
+            assert: false,
+            crypto: false,
+            stream: false,
+            util: false,
+            http: false,
+            https: false,
+            net: false,
+            path: false,
+            tls: false,
+            zlib: false,
+            buffer: false,
+            child_process: false,
+            dgram: false,
+            uws: false,
         }
     },
     module: {
-        noParse: /es6-promise\.js$/, // avoid webpack shimming process
 
         rules: [
             {
@@ -78,14 +98,15 @@ module.exports = webpackConfig = {
             new webpack.optimize.UglifyJsPlugin({
                 compress: { warnings: false }
             }),
+
             new ExtractTextPlugin({
                 filename: 'common.[chunkhash].css'
             }),
-            new VueLoaderPlugin(),
+            ...commonPlugins,
         ]
         : [
             ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
             new FriendlyErrorsPlugin(),
-            new VueLoaderPlugin(),
+            ...commonPlugins,
         ]
 };

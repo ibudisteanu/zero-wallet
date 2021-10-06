@@ -5,7 +5,7 @@ import store from "../store/store";
 import router from "../router/router.index"
 
 import VueClipboard from 'vue-clipboard2'
-import VTooltip from 'v-tooltip'
+import VTooltip from 'v-tooltip/src/index'
 import AsyncComputed from 'vue-async-computed'
 
 Vue.use(VTooltip);

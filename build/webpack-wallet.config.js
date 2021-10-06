@@ -2,10 +2,11 @@ const webpack = require('webpack')
 const base = require('./webpack.base.config')
 const merge = require('webpack-merge')
 const path = require('path')
-const CopyPlugin = require('copy-webpack-plugin');
+const CompressionWebpackPlugin = require('compression-webpack-plugin')
 
 module.exports = merge(base, {
     target: 'web',
+    mode: 'production',
 
     //define entry point
     entry: {
@@ -23,8 +24,13 @@ module.exports = merge(base, {
                 BROWSER: 'true'
             },
         }),
-        new CopyPlugin([
-        ])
+        new CompressionWebpackPlugin({
+            filename: '[path][base].gz',
+            algorithm: 'gzip',
+            test: new RegExp('\\.(js|css)$'),
+            threshold:10240,
+            minRatio: 0.8,
+        })
     ]
 
 });

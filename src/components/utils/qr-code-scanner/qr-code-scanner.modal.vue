@@ -25,7 +25,7 @@ import AlertBox from "src/components/utils/alert-box"
 
 let VueQrcodeReader = undefined;
 if (typeof window !== "undefined") {
-    VueQrcodeReader = require("vue-qrcode-reader");
+    VueQrcodeReader = require("vue-qrcode-reader/src/index");
     Vue.use(VueQrcodeReader);
     VueQrcodeReader = VueQrcodeReader.QrcodeStream;
 }
