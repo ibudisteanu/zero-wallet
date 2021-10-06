@@ -15,7 +15,10 @@
 
             <div class="row pb-0 mb-0">
                 <div class="col-12 col-auto text-center">
-                    <span>2019 - 2021 <a href="https://PandoraPay.org" target="_blank">{{entity}}</a> Wallet v {{version}} </span>
+                    <span>Wallet: {{version}} WASM: {{buildVersion}} </span>
+                </div>
+                <div class="col-12 col-auto text-center">
+                    <span>2019 - 2021 <a href="https://PandoraPay.org" target="_blank">{{entity}}</a> </span>
                 </div>
             </div>
 
@@ -40,7 +43,7 @@ export default {
         },
 
         version(){
-            return consts.version;
+
         },
 
         blockHeight(){
@@ -58,6 +61,11 @@ export default {
 
             return 'na';
         },
+
+        buildVersion(){
+            return PandoraPay.config.BUILD_VERSION
+        }
+
     },
 
     methods:{

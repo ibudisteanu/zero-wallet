@@ -104,8 +104,8 @@
                         <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
 
                         <template v-if="status">
-                            <span>Transaction is being created. It will take 1-2 minutes.</span>
-                            <label>Status: {{status}}</label>
+                            <span class="d-block">Transaction is being created. It will take 1-2 minutes.</span>
+                            <label class="d-block">Status: {{status}}</label>
                         </template>
 
                         <div class="float-end">
