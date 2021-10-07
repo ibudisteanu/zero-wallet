@@ -50,22 +50,56 @@ export default {
         if (typeof localStorage !== "undefined" && ( localStorage.getItem('dark') === 'true' || !localStorage.getItem('dark') ))
             document.getElementsByTagName("html")[0].classList.add('dark');
 
-        const self = this
-
         try{
 
             this.isDownloading = true;
 
             const integration = new PandoraPayWebworkerIntegration( "PandoraPay", "wasm/PandoraPay-wallet-main.wasm", "workers/PandoraPay-webworker.js",(status)=>{
-                self.progressStatus = status
+                this.progressStatus = status
             }, async ()=>{
+
                 await PandoraPay.helpers.helloPandora()
                 this.progressStatus = "PandoraPay WASM is working!"
                 PandoraPayWallet.loadWallet()
+
+                global.PandoraPayHelperPromise = new Promise((resolver)=>{
+
+                    //let download the
+                    setTimeout(async ()=>{
+
+                        const integrationHelper = new PandoraPayWebworkerIntegration("PandoraPayHelper", "wasm/PandoraPay-wallet-helper.wasm", "workers/PandoraPay-helper-webworker.js", (status)=>{
+                            console.log("PandoraPayHelper status:", status)
+                        }, async ()=>{
+
+                            await PandoraPayHelper.helloPandoraHelper()
+                            console.log("PandoraPayHelper WASM is working")
+
+                            resolver(true)
+
+                            PandoraPayHelper.promiseDecoder = PandoraPayHelper.wallet.initializeBalanceDecoder((status)=>{
+                                if (PandoraPayHelper.balanceDecoderCallback) PandoraPayHelper.balanceDecoderCallback(status)
+                                console.log(status)
+                            })
+
+                            await PandoraPayHelper.promiseDecoder
+
+                        } )
+
+                        const r = await integrationHelper.downloadWasm((loaded, total)=>{
+                            console.log( `WASM:  ${(loaded / 1024 / 1024 /3).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb` )
+                        })
+                        const data = await r.arrayBuffer()
+                        integrationHelper.createWorker()
+                        integrationHelper.initialize(data)
+
+                    }, 100)
+
+                })
+
             })
 
             const r = await integration.downloadWasm((loaded, total)=>{
-                self.progressStatus = `WASM:  ${(loaded / 1024 / 1024 /3).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
+                this.progressStatus = `WASM:  ${(loaded / 1024 / 1024 /3).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
             })
 
             this.isDownloading = false;
@@ -75,7 +109,6 @@ export default {
             this.progressStatus = "PandoraPay WASM instantiating...";
 
             integration.createWorker()
-
             integration.initialize(data)
 
         }catch(err){

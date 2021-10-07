@@ -60,15 +60,38 @@ export default {
 
             this.startMatrix()
 
-            const data = await PandoraPay.wallet.decodeBalanceWalletAddress( MyTextEncode(JSON.stringify({ publicKey: this.publicKey, balanceEncoded: this.balance, token: this.token })), this.password, (status)=>{
-                this.status = status;
-            }  )
+            this.status = "Downloading wasm"
+            await global.PandoraPayHelperPromise
+            this.status = ""
 
-            this.cancelCallback = data[1]
+            PandoraPayHelper.balanceDecoderCallback = (status)=>{
+                this.status = "Step1  "+status
+            }
+
+            await PandoraPayHelper.promiseDecoder
+            this.status = ""
+
+            const data = await PandoraPay.wallet.getDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
+                publicKey: this.publicKey,
+                token: this.token
+            })), this.password, )
+
+            const params = JSON.parse( MyTextDecode( data ) )
+
+            const decodedData = await PandoraPayHelper.wallet.decodeBalance(MyTextEncode(JSON.stringify( {
+                privateKey: params.privateKey,
+                previousValue: params.previousValue,
+                balanceEncoded: this.balance,
+                token: this.token,
+            } )), (status)=>{
+                this.status = status
+            })
+
+            this.cancelCallback = decodedData[1]
 
             const checkBalance = async () => {
 
-                const result = await data[0]()
+                const result = await decodedData[0]()
 
                 if (result[2] && result[2] instanceof Error) {
                     this.$store.dispatch('addToast', {
@@ -95,6 +118,7 @@ export default {
             }
 
             setTimeout(  () => checkBalance(), 500 )
+
         },
 
         async stop(){
@@ -119,12 +143,11 @@ export default {
             c.height = this.$refs.modal.$refs.refModalBody.clientHeight;
             c.width = this.$refs.modal.$refs.refModalBody.clientWidth;
 
-
-            var letterSize=15;
-            var columns=c.width/letterSize;
+            let letterSize=15;
+            let columns=c.width/letterSize;
 
             const heights=[];
-            for(var i=0; i<columns;i++)
+            for(let i=0; i<columns;i++)
                 heights[i]=1;
 
             let lines = [ ]
@@ -136,7 +159,7 @@ export default {
                 lines = [
                     "",
                     "DECODING",
-                    this.status,
+                    this.status.replaceAll(" ","^"),
                     "",
                 ].reverse()
 
@@ -188,8 +211,10 @@ export default {
                     let finalCharacter = ''
 
                     for (let j =0; j < lines.length; j++){
-                        if (heights[i]  === middleLine - Math.floor( j - (lines.length / 2) ) && lines[j][i] !== ' ' )
+                        if (heights[i]  === middleLine - Math.floor( j - (lines.length / 2) ) && lines[j][i] !== ' ' ){
                             finalCharacter = lines[j][i]
+                            if (finalCharacter === '^') finalCharacter = ' '
+                        }
                     }
 
                     if (finalCharacter === '')
