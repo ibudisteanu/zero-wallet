@@ -143,6 +143,5 @@ module.exports ={
     OnMessage,
     ProcessObject,
     FixObject,
-    GenerateRandomId,
     Callbacks,
 }

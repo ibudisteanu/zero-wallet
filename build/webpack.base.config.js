@@ -1,15 +1,15 @@
 const path = require('path');
 const webpack = require('webpack');
 const vueConfig = require('./vue-loader.config');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
-
+const TerserPlugin = require('terser-webpack-plugin');
 const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
+const CompressionWebpackPlugin = require("compression-webpack-plugin");
 const gitRevisionPlugin = new GitRevisionPlugin()
 
-const isProd = process.env.NODE_ENV === 'production';
+const isProd = process.argv.includes('--production')
 const isAnalyze = process.argv.includes('--analyzer');
 
 const commonPlugins = [
@@ -58,12 +58,11 @@ module.exports = webpackConfig = {
             child_process: false,
             dgram: false,
             uws: false,
+            os: false,
         }
     },
     module: {
-
-        rules: [
-            {
+        rules: [{
                 test: /\.(png|jpe?g|gif|svg)$/,
                 use: [
                     {
@@ -74,35 +73,32 @@ module.exports = webpackConfig = {
                         },
                     },
                 ],
-            },
-            {
+            }, {
                 test: /\.vue$/,
                 loader: 'vue-loader',
                 options: vueConfig
-            },
-            {
+            }, {
                 test: /\.css$/,
-                use: isProd
-                    ? ExtractTextPlugin.extract({
-                        use: 'css-loader?minimize',
-                        fallback: 'vue-style-loader'
-                    })
-                    : ['vue-style-loader', 'css-loader']
+                use: ['vue-style-loader', 'css-loader']
             }
         ]
     },
+    optimization: {
+        minimize: true,
+        minimizer: [new TerserPlugin()],
+    },
     plugins: isProd
         ? [
+            new TerserPlugin(),
             ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
-
-            new webpack.optimize.UglifyJsPlugin({
-                compress: { warnings: false }
-            }),
-
-            new ExtractTextPlugin({
-                filename: 'common.[chunkhash].css'
-            }),
             ...commonPlugins,
+            new CompressionWebpackPlugin({
+                filename: '[path][base].gz',
+                algorithm: 'gzip',
+                test: new RegExp('\\.(js|css)$'),
+                threshold:10240,
+                minRatio: 0.8,
+            })
         ]
         : [
             ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
