@@ -27,9 +27,12 @@ export default {
             balance: "",
             token: "",
             password: "",
-            decodedBalance: null,
+            balanceDecoded: null,
+            privateKey: null,
+            returnPrivateKey: false,
             cancelCallback: null,
             status: "",
+            closed: false,
         }
     },
 
@@ -39,7 +42,7 @@ export default {
 
     methods: {
 
-        async showModal(publicKey, balance, token, password ) {
+        async showModal(publicKey, balance, token, returnPrivateKey, password ) {
 
             Object.assign(this.$data, this.$options.data());
 
@@ -47,9 +50,13 @@ export default {
             this.balance = balance
             this.token = token
             this.password = password
+            this.returnPrivateKey = returnPrivateKey
 
             await this.$refs.modal.showModal();
-            return this.decodedBalance
+            return {
+                balanceDecoded: this.balanceDecoded,
+                privateKey: returnPrivateKey ? this.privateKey : undefined,
+            }
         },
 
         closeModal() {
@@ -71,12 +78,19 @@ export default {
             await PandoraPayHelper.promiseDecoder
             this.status = ""
 
+            if (this.closed) return
+
             const data = await PandoraPay.wallet.getDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
                 publicKey: this.publicKey,
                 token: this.token
             })), this.password, )
 
             const params = JSON.parse( MyTextDecode( data ) )
+
+            if (this.closed) return
+
+            if (this.returnPrivateKey)
+                this.privateKey = params.privateKey
 
             const decodedData = await PandoraPayHelper.wallet.decodeBalance(MyTextEncode(JSON.stringify( {
                 privateKey: params.privateKey,
@@ -96,7 +110,7 @@ export default {
                 if (result[2] && result[2] instanceof Error) {
                     this.$store.dispatch('addToast', {
                         type: 'error',
-                        title: `Error decoding your homormorphic balance`,
+                        title: `Error decoding your homomorphic balance`,
                         text: `${result[2].message}`,
                     })
                     this.cancelCallback = null
@@ -105,14 +119,16 @@ export default {
 
                     this.$store.dispatch('addToast', {
                         type: 'success',
-                        title: `Homormorphic Balance was decoded`,
+                        title: `Homomorphic Balance was decoded`,
                         text: `Decoded successfully!`,
                     })
 
-                    this.decodedBalance = result[1]
+                    this.balanceDecoded = result[1]
                     this.cancelCallback = null
                     return this.closeModal()
                 }
+
+                if (this.closed) return
 
                 setTimeout( () => checkBalance(), 500 )
             }
@@ -122,6 +138,8 @@ export default {
         },
 
         async stop(){
+
+            this.closed = true
 
             if (this.cancelCallback)
                 await this.cancelCallback()

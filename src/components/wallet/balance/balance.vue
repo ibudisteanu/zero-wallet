@@ -81,7 +81,8 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            this.balanceDecoded = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.publicKey, this.balance, this.token, password )
+            const {balanceDecoded} = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.publicKey, this.balance, this.token, true, password )
+            this.balanceDecoded = balanceDecoded
         }
     },
 

@@ -219,6 +219,10 @@ export default {
             }
         },
 
+        getToken(){
+            return this.$store.getters.getToken( this.token ? this.token.token : null );
+        },
+
     },
 
     watch: {
@@ -408,16 +412,52 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
+            let balance
+            for (const availableAccount of this.availableAccounts)
+                if (availableAccount.token === this.token.token){
+                    balance = availableAccount.balance
+                    break
+                }
+
+            const {privateKey, balanceDecoded} = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.$store.state.wallet.mainPublicKey, balance, this.token.token, true, password )
+            if (balanceDecoded === null) throw "Decoding was canceled"
+
+            let token = this.token.token
+            if (token === PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX) token = ""
+
+            const accs = {}
+            accs[token] = {}
+            const regs = {}
+
+            const shuffle =  JSON.parse( MyTextDecode( await PandoraPay.helpers.shuffleArray_for_Zether( this.ringMembers.length.toString()  )) )
+            const ringShuffle = shuffle.map( it => this.ringMembers[it] )
+
+            const ringShufflePublicKeys = await Promise.all( ringShuffle.map( async it => JSON.parse( MyTextDecode( await PandoraPay.addresses.decodeAddress(it) )).publicKey ) )
+
+            const outData = await PandoraPay.network.getNetworkAccountsByKeys(MyTextEncode(JSON.stringify({
+                keys: ringShufflePublicKeys.map(it => ({publicKey: it }) ),
+                token: token,
+                includeMempool: true,
+            })))
+
+            let out = JSON.parse( MyTextDecode( outData ) )
+
+            for (let i=0; i < out.accSerialized.length; i++){
+                accs[token][ringShufflePublicKeys[i]] = out.accSerialized[i]
+                regs[ringShufflePublicKeys[i]] = out.registrationSerialized[i]
+            }
+
             //compute extra
-            let out = await PandoraPay.transactions.builder.createZetherTx_Float( MyTextEncode( JSON.stringify({
-                from: [this.address.addressEncoded],
-                tokens: [this.token.token],
-                amounts: [this.destination.amount],
+            out = await PandoraPayHelper.transactions.builder.createZetherTx( MyTextEncode( JSON.stringify({
+                fromPrivateKeys: [privateKey],
+                fromBalancesDecoded: [balanceDecoded],
+                tokens: [token],
+                amounts: [ Number.parseInt( await PandoraPay.config.tokens.tokensConvertToUnits( this.destination.amount.toString(), this.getToken.decimalSeparator ) ) ],
                 dsts: [this.destination.addressEncoded],
                 burns: [0],
                 ringMembers: [this.ringMembers],
                 fees: [{
-                    fixed: (this.fee.feeType === 'feeAuto') ? 0 : this.fee.feeManual.amount,
+                    fixed: (this.fee.feeType === 'feeAuto') ? 0 : Number.parseInt( await PandoraPay.config.tokens.tokensConvertToUnits( this.fee.feeManual.amount.toString(), this.getToken.decimalSeparator ) ),
                     perByte: 0,
                     perByteAuto: this.fee.feeType === 'feeAuto',
                 }],
@@ -425,17 +465,22 @@ export default {
                     data: Buffer.from(this.extraData.data).toString("hex"),
                     encrypt: this.extraData.type === "encrypted",
                 }],
-                propagateTx: true,
-                awaitAnswer: true,
+                height: this.$store.state.blockchain.end,
+                hash: this.$store.state.blockchain.hash,
+                accs,
+                regs,
             } ) ), (status) => {
                 this.status = status
-                console.log(status)
-            }, password );
+            } );
 
             if (!out) throw "Transaction couldn't be made";
-            this.status = ''
+            this.status = 'Propagating transaction...'
 
-            const tx = JSON.parse( MyTextDecode( out) )
+            const tx = JSON.parse( MyTextDecode( out[0] ) )
+            const txSerialized = out[1]
+
+            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( txSerialized )
+            if (!finalAnswer) throw "Transaction couldn't be broadcasted"
 
             await this.$store.dispatch('includeTx', { tx } )
 
