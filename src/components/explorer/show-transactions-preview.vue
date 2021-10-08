@@ -13,7 +13,7 @@
 
         <div v-for="(tx, key) in transactions"
              :key="`show-transaction-${key}`">
-            <show-transaction :class="`row py-2 fs--1 align-items-center ${key % 2 === 1 ?'bg-light':''}`" :txHash="tx" />
+            <show-transaction-preview :class="`row py-2 fs--1 align-items-center ${key % 2 === 1 ?'bg-light':''}`" :txHash="tx" />
         </div>
 
     </div>
@@ -22,11 +22,11 @@
 
 <script>
 
-import ShowTransaction from "./show-transaction";
+import ShowTransactionPreview from "./show-transaction-preview";
 
 export default {
 
-    components: {ShowTransaction },
+    components: { ShowTransactionPreview },
 
     props:{
         transactions: {default: null},
@@ -40,14 +40,14 @@ export default {
         transactions: {
             immediate: true,
             handler: function (newVal, oldVal) {
-                this.$store.commit('updateViewTransactionsHashes', {txsHashes: oldVal, insert: false } )
-                this.$store.commit('updateViewTransactionsHashes', {txsHashes: newVal, insert: true } )
+                this.$store.commit('updateViewTransactionsPreviewHashes', {txsHashes: oldVal, insert: false } )
+                this.$store.commit('updateViewTransactionsPreviewHashes', {txsHashes: newVal, insert: true } )
             }
         },
     },
 
     beforeDestroy() {
-        this.$store.commit('updateViewTransactionsHashes', {txsHashes: this.transactions, insert: false } )
+        this.$store.commit('updateViewTransactionsPreviewHashes', {txsHashes: this.transactions, insert: false } )
     }
 
 }

@@ -66,7 +66,7 @@ export default {
 
     computed:{
         tx(){
-            return this.$store.state.transactions.txsByHash[this.txHash]
+            return this.$store.state.transactionsPreview.txsByHash[this.txHash]
         },
         txInfo(){
             return this.$store.state.transactionsInfo.list[this.txHash]
@@ -83,7 +83,7 @@ export default {
             immediate: true,
             handler: function (to, from) {
                 if (to === from) return
-                return this.$store.dispatch('getTransactionByHash', to)
+                return this.$store.dispatch('getTransactionPreviewByHash', to)
             }
         },
     },

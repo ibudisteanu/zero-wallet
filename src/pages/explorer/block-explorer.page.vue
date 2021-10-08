@@ -121,7 +121,7 @@
                 </div>
             </div>
             <div class="card-body p-3 fs--1">
-                <show-transactions :transactions="txs"/>
+                <show-transactions-preview :transactions="txs"/>
             </div>
         </div>
 
@@ -135,7 +135,7 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
 import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import ShowTransactions from "src/components/explorer/show-transactions"
+import ShowTransactionsPreview from "src/components/explorer/show-transactions-preview"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import AlertBox from "src/components/utils/alert-box"
 import Amount from "src/components/wallet/amount"
@@ -143,7 +143,7 @@ import StringHelper from "src/utils/string-helper"
 
 export default {
 
-    components: {LoadingSpinner, Layout, ShowBlocksInfo, ShowTransactions, AccountIdenticon, AlertBox, LayoutTitle, Amount },
+    components: {LoadingSpinner, Layout, ShowBlocksInfo, ShowTransactionsPreview, AccountIdenticon, AlertBox, LayoutTitle, Amount },
 
     data(){
         return {

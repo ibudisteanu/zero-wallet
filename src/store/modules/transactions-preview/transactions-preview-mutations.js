@@ -2,12 +2,12 @@ import Vue from 'vue';
 
 export default {
 
-    setSubscribedTxStatus(state, {txId, status} ){
+    setSubscribedTxPreviewStatus(state, {txId, status}) {
         if (status) Vue.set(state.subscribed, txId, true)
         else Vue.delete(state.subscribed, txId)
     },
 
-    deleteTransactions(state, transactions ){
+    deleteTransactionsPreview(state, transactions) {
 
         const txsByHash = {...state.txsByHash}, txsByHeight = {...state.txsByHeight}
 
@@ -21,8 +21,7 @@ export default {
         state.txsByHeight = txsByHeight
     },
 
-
-    setTransactions( state, {txs, overwrite = true } ) {
+    setTransactionsPreview( state, {txs, overwrite = true } ) {
         const timestamp = new Date().getTime()
         const txsByHash = {...state.txsByHash}, txsByHeight = {...state.txsByHeight}
 
@@ -42,7 +41,7 @@ export default {
         state.txsByHeight = txsByHeight
     },
 
-    updateViewTransactionsHashes(state, {txsHashes, insert} ) {
+    updateViewTransactionsPreviewHashes(state, {txsHashes, insert} ) {
         if (!txsHashes) return
         const viewTxsHashes = {...state.viewTxsHashes}
 
@@ -53,7 +52,7 @@ export default {
         state.viewTxsHashes = viewTxsHashes
     },
 
-    updateTxNotification(state, {txHash, extraInfo }) {
+    updateTxPreviewNotification(state, {txHash, extraInfo }) {
         if (!state.txsByHash[txHash]) return
 
         const txsByHeight = {...state.txsByHeight}

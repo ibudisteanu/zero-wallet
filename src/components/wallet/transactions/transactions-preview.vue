@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="card-body p-3" v-if="txs && transactions.length ">
-            <show-transactions :transactions="transactions"/>
+            <show-transactions-preview :transactions="transactions"/>
         </div>
         <div class="card-footer bg-light g-0 d-block-inline p-3" v-if="pages">
             <pagination class="right" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="pages" :prefix="`/address/${address.addressEncoded}/`" suffix="#transactions" />
@@ -32,14 +32,14 @@
 <script>
 
 import LoadingSpinner from "../../utils/loading-spinner";
-import ShowTransactions from "src/components/explorer/show-transactions"
+import ShowTransactionsPreview from "src/components/explorer/show-transactions-preview"
 import consts from "../../../../consts/consts";
 import Pagination from "src/components/utils/pagination"
 import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: { LoadingSpinner, Pagination, ShowTransactions, AlertBox },
+    components: { LoadingSpinner, Pagination, ShowTransactionsPreview, AlertBox },
 
     props: {
         publicKey: {default: ""},

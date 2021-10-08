@@ -24,7 +24,7 @@ export default {
 
             if (extraInfo.blockchain.inserted){
                 txInfo.blkHeight = extraInfo.blockchain.blkHeight
-                txInfo.timestamp = extraInfo.blockchain.timestamp
+                txInfo.timestamp = extraInfo.blockchain.blkTimestamp
                 txInfo.height = extraInfo.blockchain.height
                 delete txInfo.mempool
             } else {

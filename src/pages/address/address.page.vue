@@ -13,12 +13,12 @@
                     <alert-box type="warning" >
                         Address doesn't exist (is empty)!
                     </alert-box>
-                    <pending-transactions :publicKey="publicKey" />
+                    <pending-transactions-preview :publicKey="publicKey" />
                 </template>
                 <template v-else>
                     <balances :publicKey="publicKey" />
-                    <pending-transactions :publicKey="publicKey" />
-                    <transactions :publicKey="publicKey" :page="page" />
+                    <pending-transactions-preview :publicKey="publicKey" />
+                    <transactions-preview :publicKey="publicKey" :page="page" />
                 </template>
 
             </template>
@@ -38,18 +38,18 @@
 import Layout from "src/components/layout/layout";
 import LayoutTitle from "src/components/layout/layout-title";
 import Balances from "../../components/wallet/balance/balances";
-import Transactions from "../../components/wallet/transactions/transactions";
 import AccountIdenticon from "../../components/wallet/account/account-identicon";
 import LoadingSpinner from "../../components/utils/loading-spinner";
 import Account from "src/components/wallet/account/account"
 import AlertBox from "src/components/utils/alert-box"
-import PendingTransactions from "../../components/wallet/transactions/pending-transactions";
+import TransactionsPreview from "../../components/wallet/transactions/transactions-preview";
+import PendingTransactionsPreview from "../../components/wallet/transactions/pending-transactions-preview";
 
 export default {
 
     components: {
-        PendingTransactions,
-        Layout,  Balances, Transactions, AccountIdenticon, LoadingSpinner, AlertBox, Account, LayoutTitle},
+        PendingTransactionsPreview, TransactionsPreview,
+        Layout,  Balances, AccountIdenticon, LoadingSpinner, AlertBox, Account, LayoutTitle},
 
     data(){
         return {

@@ -16,7 +16,7 @@
         </div>
 
         <div class="card-body p-3" v-if="txs && txs.length">
-            <show-transactions :transactions="txs"/>
+            <show-transactions-preview :transactions="txs"/>
         </div>
 
         <alert-box v-if="error" type="error">{{error}}</alert-box>
@@ -28,14 +28,14 @@
 <script>
 
 import LoadingSpinner from "../../utils/loading-spinner";
-import ShowTransactions from "src/components/explorer/show-transactions"
+import ShowTransactionsPreview from "src/components/explorer/show-transactions-preview"
 import consts from "../../../../consts/consts";
 import Pagination from "src/components/utils/pagination"
 import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: { LoadingSpinner, Pagination, ShowTransactions, AlertBox },
+    components: { LoadingSpinner, Pagination, ShowTransactionsPreview, AlertBox },
 
     props: {
         publicKey: {default: ""},
