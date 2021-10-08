@@ -56,22 +56,30 @@ export default {
         let initialized = false
         PandoraPay.events.listenEvents( async (name, data )=>{
 
+            if (data instanceof Uint8Array)
+                data = MyTextDecode(data)
+
+            console.log("JS NAME:", name, "data", data)
+
             if (name === "main")
                 if (data === "initialized"){
                     initialized = true
 
                     await PandoraPay.events.listenNetworkNotifications(( subscriptionType, key, data, extraInfo)=>{
 
-                        console.log("listenNetworkNotifications", key, data, extraInfo)
+                        if (extraInfo) extraInfo = MyTextDecode( extraInfo )
+                        if (data) data = MyTextDecode( data )
 
-                        if (subscriptionType in [ PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_PLAIN_ACCOUNT, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_REGISTRATION ])
-                            return this.$store.dispatch('accountUpdateNotification', {publicKey: key, type: subscriptionType, data: JSON.parse(data), extraInfo: extraInfo ? JSON.parse(extraInfo) : null })
+                        console.log("listenNetworkNotifications", subscriptionType, key, data, extraInfo)
+
+                        if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT || subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_PLAIN_ACCOUNT || subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_REGISTRATION )
+                            return this.$store.dispatch('accountUpdateNotification', {publicKey: key, type: subscriptionType, data: JSON.parse(data), extraInfo: extraInfo ? JSON.parse(extraInfo) : null   })
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS)
-                            return this.$store.dispatch('accountTxUpdateNotification', { publicKey: key, txHash:data.substr(1,64), extraInfo: JSON.parse(extraInfo) } )
+                            return this.$store.dispatch('accountTxUpdateNotification', { publicKey: key, txHash:data.substr(1,64), extraInfo: extraInfo ? JSON.parse(extraInfo) : null  } )
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTION)
-                            return this.$store.dispatch('txNotification', { txHash: key, extraInfo: JSON.parse(extraInfo) } )
+                            return this.$store.dispatch('txNotification', { txHash: key, extraInfo: extraInfo ? JSON.parse(extraInfo) : null } )
                     })
 
 
@@ -94,10 +102,9 @@ export default {
                 else if (name === "wallet/removed-encryption") this.readWallet()
                 else if (name === "wallet/logged-out") this.readWallet()
                 else if (name === "consensus/update")
-                    this.processUpdate(JSON.parse(data))
+                    this.processUpdate( JSON.parse( data ) )
 
             }
-            console.log("JS NAME:", name, "data", data)
         })
 
         PandoraPay.helpers.start().then(()=>{

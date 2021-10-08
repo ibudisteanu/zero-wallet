@@ -5,7 +5,7 @@
             {{delegatedStakePending.pendingType ? '' : '-'}} {{ amount }}
             <small class="fs--1 text-700">/
                 <router-link v-if="getToken" :to="`/tokens/${getToken.hash}`" v-tooltip.bottom="getToken.hash" >
-                    $0x00
+                    {{getToken.name}}
                 </router-link>
                 <span v-tooltip.bottom="'Activation Block'" >{{delegatedStakePending.activationHeight}}</span>
             </small>

@@ -50,83 +50,65 @@ export default {
         if (typeof localStorage !== "undefined" && ( localStorage.getItem('dark') === 'true' || !localStorage.getItem('dark') ))
             document.getElementsByTagName("html")[0].classList.add('dark');
 
-        const self = this
-
-        this.isDownloading = true;
-
         try{
-            const response = await fetch(PandoraPayWalletOptions.resPrefix+"PandoraPay-wallet.wasm", {
-                headers: {
-                    'Content-Encoding': 'gzip',
-                }
+
+            this.isDownloading = true;
+
+            const integration = new PandoraPayWebworkerIntegration( "PandoraPay", "wasm/PandoraPay-wallet-main.wasm", "workers/PandoraPay-webworker.js",(status)=>{
+                this.progressStatus = status
+            }, async ()=>{
+
+                await PandoraPay.helpers.helloPandora()
+                this.progressStatus = "PandoraPay WASM is working!"
+                PandoraPayWallet.loadWallet()
+
+                global.PandoraPayHelperPromise = new Promise((resolver)=>{
+
+                    //let download the
+                    setTimeout(async ()=>{
+
+                        const integrationHelper = new PandoraPayWebworkerIntegration("PandoraPayHelper", "wasm/PandoraPay-wallet-helper.wasm", "workers/PandoraPay-helper-webworker.js", (status)=>{
+                            console.log("PandoraPayHelper status:", status)
+                        }, async ()=>{
+
+                            await PandoraPayHelper.helloPandoraHelper()
+                            console.log("PandoraPayHelper WASM is working")
+
+                            resolver(true)
+
+                            PandoraPayHelper.promiseDecoder = PandoraPayHelper.wallet.initializeBalanceDecoder((status)=>{
+                                if (PandoraPayHelper.balanceDecoderCallback) PandoraPayHelper.balanceDecoderCallback(status)
+                                console.log(status)
+                            })
+
+                            await PandoraPayHelper.promiseDecoder
+
+                        } )
+
+                        const r = await integrationHelper.downloadWasm((loaded, total)=>{
+                            console.log( `WASM:  ${(loaded / 1024 / 1024 /3).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb` )
+                        })
+                        const data = await r.arrayBuffer()
+                        integrationHelper.createWorker()
+                        integrationHelper.initialize(data)
+
+                    }, 100)
+
+                })
+
             })
 
-            if (!response.ok)
-                throw Error(response.status+' '+response.statusText)
-
-            if (!response.body)
-                throw Error('ReadableStream not yet supported in this browser.')
-
-            // to access headers, server must send CORS header "Access-Control-Expose-Headers: content-encoding, content-length x-file-size"
-            // server must send custom x-file-size header if gzip or other content-encoding is used
-            const contentEncoding = response.headers.get('content-encoding');
-            let contentLength = response.headers.get( contentEncoding ? 'x-file-size' : 'content-length');
-            if (contentLength === null && contentEncoding) {
-                console.error('Response size header unavailable for encoded');
-                contentLength = response.headers.get('content-length');
-            }
-
-            if (contentLength === null)
-                throw "Response size header unavailable"
-
-            const total = parseInt(contentLength, 10);
-            let loaded = 0;
-
-            let r = await ( new Response(
-                new ReadableStream({
-                    start(controller) {
-                        const reader = response.body.getReader();
-
-                        let lastTransferred = 0
-                        function read() {
-                            reader.read().then(({done, value}) => {
-                                if (done) {
-                                    controller.close();
-                                    return;
-                                }
-                                loaded += value.byteLength;
-
-                                if (loaded - lastTransferred > 10240) {
-                                    lastTransferred = loaded
-                                    self.progressStatus = `WASM:  ${(loaded / 1024 / 1024 /3).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
-                                }
-
-                                controller.enqueue(value);
-                                read();
-
-                            }).catch(error => {
-                                controller.error(error)
-                            })
-                        }
-
-                        read();
-
-                    }
-                })
-            ) );
+            const r = await integration.downloadWasm((loaded, total)=>{
+                this.progressStatus = `WASM:  ${(loaded / 1024 / 1024 /3).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
+            })
 
             this.isDownloading = false;
 
             this.progressStatus = "WASM serializing...";
-
-            let data = await r.arrayBuffer()
-
+            const data = await r.arrayBuffer()
             this.progressStatus = "PandoraPay WASM instantiating...";
 
-            const integration = new PandoraPayWebworkerIntegration()
-            integration.initializeStatusEvent = (status)=>{
-                self.progressStatus = status
-            }
+            integration.createWorker()
             integration.initialize(data)
 
         }catch(err){

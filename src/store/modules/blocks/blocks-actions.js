@@ -33,11 +33,11 @@ export default {
         return promises.blocksByHash[hash] = new Promise( async (resolve, reject) => {
             try{
 
-                const blockData = await PandoraPay.network.getNetworkBlockComplete( hash );
-                if (!blockData) throw Error("Block was not received")
+                const data = await PandoraPay.network.getNetworkBlockComplete( hash );
+                if (!data) throw "Block was not received"
 
-                const blk = JSON.parse(blockData)
-                if (blk.bloom.hash !== hash) throw Error("Block hash was not matching")
+                const blk = JSON.parse(MyTextDecode(data))
+                if (blk.bloom.hash !== hash) throw "Block hash was not matching"
 
                 const out = await dispatch('_includeBlock', blk )
                 resolve( out );
@@ -61,11 +61,11 @@ export default {
 
             try{
 
-                const blockData = await PandoraPay.network.getNetworkBlockComplete( height );
-                if (!blockData) throw Error("Block was not received")
+                const data = await PandoraPay.network.getNetworkBlockComplete( height );
+                if (!data) throw "Block was not received"
 
-                const blk = JSON.parse(blockData)
-                if (blk.height !== height) throw Error("Block height was not matching")
+                const blk = JSON.parse(MyTextDecode(data))
+                if (blk.height !== height) throw "Block height was not matching"
 
                 resolve( await dispatch('_includeBlock', blk ) );
 

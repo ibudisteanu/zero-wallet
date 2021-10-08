@@ -1,4 +1,4 @@
-const MAX_CACHE = 200
+const MAX_CACHE = 1000
 
 class Identicons {
 
@@ -7,7 +7,11 @@ class Identicons {
         this.map = {}
     }
 
-    async getIdenticon(key){
+    async getIdenticon( publicKey, size = 64 ){
+
+        const key = `${size}::${publicKey}`
+
+        if ( typeof size === "string") size = Number.parseInt(size)
 
         const found = this.map[key]
         if (found){
@@ -16,13 +20,17 @@ class Identicons {
 
         if (this.list.length === MAX_CACHE){
             const item = this.list[0]
-            this.list.splice(0,1)
+            this.list.slice(0,1)
             delete this.map[item.key]
         }
 
+        const data = await PandoraPay.helpers.getIdenticon( publicKey, size, size )
+
+        const blob = new Blob( [ data ],  { type: 'image/png' } );
+
         const item = {
             key: key,
-            identicon: await PandoraPay.helpers.getIdenticon( key, 64, 64),
+            identicon: URL.createObjectURL(blob),
         }
 
         this.map[key] = item;

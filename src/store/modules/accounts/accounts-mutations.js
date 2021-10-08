@@ -3,6 +3,11 @@ import Vue from "vue";
 export default {
 
     setAccount(state, {publicKey, account  }){
+
+        if (account && account.tokens)
+            for (let i=0; i < account.tokens.length; i++)
+                account.accounts[i].token = account.tokens[i]
+
         Vue.set(state.list, publicKey, account );
     },
 

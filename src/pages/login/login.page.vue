@@ -69,7 +69,7 @@ export default {
                 const out = await PandoraPay.wallet.manager.encryption.decryptWallet(this.password);
 
                 if (!out)
-                    throw Error("An error was encountered");
+                    throw "An error was encountered";
 
                 this.$store.dispatch('readWallet' )
 

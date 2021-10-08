@@ -71,7 +71,7 @@ export default {
                 const out = await PandoraPay.wallet.manager.encryption.removeEncryptionWallet( this.password );
 
                 if (!out)
-                    throw Error("Result is not true");
+                    throw "Result is not true"
 
                 await this.$store.dispatch('addToast', {
                     type: 'success',

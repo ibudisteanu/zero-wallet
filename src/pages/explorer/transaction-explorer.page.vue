@@ -250,7 +250,6 @@ export default {
                 }
 
             }catch(err){
-                console.error(err)
                 this.error = err.toString()
             }finally{
                 this.loaded = true

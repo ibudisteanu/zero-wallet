@@ -107,8 +107,8 @@ export default {
 
                 await UtilsHelper.sleep(50 )
 
-                //if (this.password.length < 6) throw Error("password is too weak");
-                if (this.password !== this.retypePassword) throw Error("passwords are not matching");
+                //if (this.password.length < 6) throw "password is too weak";
+                if (this.password !== this.retypePassword) throw "passwords are not matching";
 
                 const out = await PandoraPay.wallet.manager.encryption.encryptWallet( this.password, this.encryptionDifficulty );
 

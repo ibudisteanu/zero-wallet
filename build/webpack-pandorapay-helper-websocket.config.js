@@ -5,16 +5,16 @@ const path = require('path')
 
 module.exports = merge(base, {
     target: 'web',
-    mode: 'production',
 
     //define entry point
     entry: {
-        app: "./src/main.js",
+        app: "./src/webworkers/pandorapay-helper-webworker/pandorapay-helper-webworker.js",
     },
+
     output: {
-        path: path.resolve(__dirname, "./../dist/dev"),
+        path: path.resolve(__dirname, "./../dist/dev/workers"),
         publicPath: "/",
-        filename: "Wallet-User-Interface.js"
+        filename: "PandoraPay-helper-webworker.js"
     },
 
     plugins: [

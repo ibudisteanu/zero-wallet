@@ -89,8 +89,8 @@
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Forger</span>
                         <div class="col-7 col-sm-9 text-truncate">
-                            <account-identicon class="vertical-center" :public-key="blk.bloom.delegatedPublicKey" :size="20" :outer-size="5"  />
-                            <span class="forger-address">{{blk.bloom.delegatedPublicKey}}</span>
+                            <account-identicon class="vertical-center" :public-key="blk.delegatedPublicKey" size="21" outer-size="7"  />
+                            <span class="forger-address">{{blk.delegatedPublicKey}}</span>
                         </div>
                     </div>
                 </template>
@@ -213,7 +213,6 @@ export default {
                 }
 
             }catch(err){
-                console.error(err)
                 this.error = err.toString()
             }finally{
                 this.loaded = true

@@ -38,7 +38,7 @@
                                 <tx-amount :allow-zero="true" :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" :token="''" />
                             </div>
                             <div :class="`tab-pane ${tab===1?'active':''} `">
-                                <extra-data :version="version.VERSION_TRANSPARENT" @changed="changedExtraData" />
+                                <extra-data @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===2?'active':''} `">
                                 <tx-fee :balances="balances" :allow-zero="true" @changed="changedFee" :token="''" />
@@ -120,7 +120,7 @@ export default {
             return this.account !== null
         },
         balances(){
-            return this.account ? this.account.balances : [];
+            return this.account && this.account.accounts ? this.account.accounts : [];
         },
         balancesStakeAvailable(){
             return (this.account && this.account.delegatedStake) ? [{ amount: this.account.delegatedStake.stakeAvailable, token: ""}] : [{ amount: 0, token: ""}]
@@ -223,7 +223,7 @@ export default {
                 if (!out) throw "Transaction couldn't be made";
                 this.status = ''
 
-                const tx = JSON.parse(out)
+                const tx = JSON.parse( MyTextDecode(out) )
 
                 await this.$store.dispatch('includeTx', {tx } )
 

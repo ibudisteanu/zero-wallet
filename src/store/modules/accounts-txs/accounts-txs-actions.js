@@ -15,7 +15,7 @@ export default {
         return promises.accountsTxs[publicKey] = new Promise( async (resolve, reject) => {
             try{
                 const out = await PandoraPay.network.getNetworkAccountTxs(publicKey, (next === undefined) ? Number.MAX_SAFE_INTEGER : next  );
-                const accountTxs = JSON.parse(out)
+                const accountTxs = JSON.parse(MyTextDecode( out) )
 
                 console.log("next", next, accountTxs)
 
@@ -62,8 +62,6 @@ export default {
                         text: `Your address has received a transaction ${txHash}`,
                     } )
 
-                    await PandoraPay.mempool.mempoolRemoveTx(txHash)
-
                 } else {
 
                     dispatch('addToast', {
@@ -71,13 +69,6 @@ export default {
                         title: `A transaction was removed from blockchain`,
                         text: `Your address got a transaction removed ${txHash}`,
                     } )
-
-                    const tx = await dispatch('getTransactionByHash', txHash )
-                    try{
-                        await PandoraPay.mempool.mempoolInsertTx(txHash, JSON.stringify(tx) )
-                    }catch(err){
-
-                    }
 
                 }
 
@@ -92,12 +83,6 @@ export default {
                         text: `There is a pending transaction ${txHash}`,
                     } )
 
-                    const tx = await dispatch('getTransactionByHash', txHash )
-                    try{
-                        await PandoraPay.mempool.mempoolInsertTx(txHash, JSON.stringify(tx) )
-                    }catch(err){
-
-                    }
 
                 } else {
 
@@ -106,8 +91,6 @@ export default {
                         title: `A transaction was removed from the mempool`,
                         text: `A pending transaction was removed from the mempool ${txHash}`,
                     } )
-
-                    await PandoraPay.mempool.mempoolRemoveTx(txHash)
 
                 }
 

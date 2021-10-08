@@ -2,7 +2,7 @@ import VueRouter from "vue-router"
 import Vue from "vue";
 
 import LoginPage from "src/pages/login/login.page"
-import SendTransparentPage from "src/pages/send/transparent/send-transparent.page"
+import SendPrivatePage from "src/pages/send/private/send-private.page"
 import ReceivePage from "src/pages/receive/receive.page"
 import WalletPage from "src/pages/wallet/wallet.page"
 import AddressPage from "src/pages/address/address.page"
@@ -39,7 +39,7 @@ const guardLogin = (to, from, next) =>{
 
 const routes = [
 
-    {path: '/send/transparent', component: SendTransparentPage, beforeEnter: guardDecrypted },
+    {path: '/send/private', component: SendPrivatePage, beforeEnter: guardDecrypted },
 
     {path: '/receive', component: ReceivePage, beforeEnter: guardDecrypted },
     {path: '/wallet', component: WalletPage, beforeEnter: guardDecrypted },

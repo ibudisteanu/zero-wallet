@@ -72,6 +72,9 @@ export default {
 
     methods:{
         storeModals(){
+
+            if (!this.$refs.refDecodeHomomorphicBalanceModal) return
+
             this.$store.commit('setModals', {
                 refLoadingModal: this.$refs.refLoadingModal,
                 refAccountTypeModal: this.$refs.refAccountTypeModal,
@@ -85,7 +88,6 @@ export default {
     },
 
     mounted(){
-        setInterval(()=> this.storeModals(), 100)
         this.storeModals()
     }
 

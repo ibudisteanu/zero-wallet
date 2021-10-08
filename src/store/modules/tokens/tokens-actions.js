@@ -11,13 +11,15 @@ export default {
         return promises[hash] = new Promise( async (resolve, reject) => {
             try{
                 const tokenData = await PandoraPay.network.getNetworkToken(hash);
-                const token = JSON.parse(tokenData)
+                if (!tokenData ) throw "Error getting block info"
 
-                if (!token ) throw "Error getting block info"
+                const token = JSON.parse(MyTextDecode(tokenData) )
 
                 token.hash = hash
 
                 await PandoraPay.store.storeToken( hash, tokenData  )
+
+                token.name = "$0x00"
 
                 commit('setToken',token)
 

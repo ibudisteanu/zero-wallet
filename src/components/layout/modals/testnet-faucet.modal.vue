@@ -5,7 +5,7 @@
             <div class="pb-4">
                 <label class="pb-2">Receive your coins to this address:</label>
                 <div class="address align-items-center">
-                    <account-identicon :address="address.addressEncoded" :size="30" :outer-size="10" />
+                    <account-identicon :address="address.addressEncoded" size="35" outer-size="13" />
                     <span class="text-break">{{ $store.getters.addressDisplay(this.address) }}</span>
                 </div>
             </div>
@@ -114,7 +114,7 @@ export default {
 <style scoped>
     .address{
         display: grid;
-        grid-template-columns: 50px 1fr;
+        grid-template-columns: 60px 1fr;
         grid-column-gap: 10px;
     }
 </style>

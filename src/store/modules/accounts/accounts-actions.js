@@ -6,8 +6,6 @@ const promises = {
 
 export default {
 
-
-
     async _downloadAccount({state, dispatch, commit, getters}, publicKey){
 
         if (promises.accounts[publicKey]) return promises.accounts[publicKey]
@@ -21,7 +19,11 @@ export default {
                     PandoraPay.network.getNetworkAccountMempool(publicKey),
                 ])
 
-                let account = JSON.parse( result[0] )
+                if ( !result[0] ) throw "Account was not received"
+                const accountData = result[0]
+
+                let account = JSON.parse(MyTextDecode(accountData))
+                const pendingTxsList = JSON.parse( MyTextDecode(result[1]) )
 
                 if ( !Object.keys(account).length ){
                     account = null
@@ -38,7 +40,8 @@ export default {
                 }
 
                 await PandoraPay.store.storeAccount( publicKey,  result[0] )
-                await dispatch('processAccountPendingTransactions', {publicKey, list: JSON.parse(result[1]) })
+
+                await dispatch('processAccountPendingTransactions', {publicKey, list: pendingTxsList })
 
                 commit('setAccount', { publicKey, account })
 
@@ -122,8 +125,8 @@ export default {
                 if (account.tokens ) {
                     for (let index = 0; index < account.tokens.length; index++)
                         if (account.tokens[index] === token) {
-                            account.tokens.splice(index, 1)
-                            account.accounts.splice(index, 1)
+                            account.tokens.slice(index, 1)
+                            account.accounts.slice(index, 1)
                             break
                         }
                     if (!account.tokens.length){
@@ -138,8 +141,20 @@ export default {
                     account.tokens = []
                     account.accounts = []
                 }
-                account.tokens.push(token)
-                account.accounts.push(data)
+
+                let found = false
+                for (let index = 0; index < account.tokens.length; index++)
+                    if (account.tokens[index] === token) {
+                        account.accounts[index] = data
+                        account.accounts[index].token = token
+                        found = true
+                        break
+                    }
+
+                if (!found){
+                    account.tokens.push(token)
+                    account.accounts.push(data)
+                }
 
             }
 
@@ -161,7 +176,7 @@ export default {
         if (!Object.keys(account).length)
             account = null
 
-        await PandoraPay.store.storeAccount( publicKey, account )
+        await PandoraPay.store.storeAccount( publicKey, MyTextEncode(JSON.stringify(account)) )
         commit('setAccount', {publicKey, account})
 
     },

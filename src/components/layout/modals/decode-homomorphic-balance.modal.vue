@@ -1,6 +1,6 @@
 <template>
 
-    <modal ref="modal" title="Decoding" contentClass="" @closed="stopMatrix" @opened="start" :close-button="false"  >
+    <modal ref="modal" title="Decoding" contentClass="" @opened="start" :closing-function="stop" >
 
         <template slot="body">
 
@@ -27,7 +27,12 @@ export default {
             balance: "",
             token: "",
             password: "",
-            decodedBalance: null,
+            balanceDecoded: null,
+            privateKey: null,
+            returnPrivateKey: false,
+            cancelCallback: null,
+            status: "",
+            closed: false,
         }
     },
 
@@ -37,7 +42,7 @@ export default {
 
     methods: {
 
-        async showModal(publicKey, balance, token, password ) {
+        async showModal(publicKey, balance, token, returnPrivateKey, password ) {
 
             Object.assign(this.$data, this.$options.data());
 
@@ -45,25 +50,101 @@ export default {
             this.balance = balance
             this.token = token
             this.password = password
+            this.returnPrivateKey = returnPrivateKey
 
             await this.$refs.modal.showModal();
-            return this.decodedBalance
+            return {
+                balanceDecoded: this.balanceDecoded,
+                privateKey: returnPrivateKey ? this.privateKey : undefined,
+            }
         },
 
         closeModal() {
             return this.$refs.modal.closeModal();
         },
 
-
         async start(){
 
             this.startMatrix()
 
-            const data = await PandoraPay.wallet.decodeBalanceWalletAddress( this.publicKey, this.balance, this.token, this.password )
-            console.log("data", data)
+            this.status = "Downloading wasm"
+            await global.PandoraPayHelperPromise
+            this.status = ""
 
-            this.decodedBalance = data
-            this.closeModal()
+            PandoraPayHelper.balanceDecoderCallback = (status)=>{
+                this.status = "Step1  "+status
+            }
+
+            await PandoraPayHelper.promiseDecoder
+            this.status = ""
+
+            if (this.closed) return
+
+            const data = await PandoraPay.wallet.getDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
+                publicKey: this.publicKey,
+                token: this.token
+            })), this.password, )
+
+            const params = JSON.parse( MyTextDecode( data ) )
+
+            if (this.closed) return
+
+            if (this.returnPrivateKey)
+                this.privateKey = params.privateKey
+
+            const decodedData = await PandoraPayHelper.wallet.decodeBalance(MyTextEncode(JSON.stringify( {
+                privateKey: params.privateKey,
+                previousValue: params.previousValue,
+                balanceEncoded: this.balance,
+                token: this.token,
+            } )), (status)=>{
+                this.status = status
+            })
+
+            this.cancelCallback = decodedData[1]
+
+            const checkBalance = async () => {
+
+                const result = await decodedData[0]()
+
+                if (result[2] && result[2] instanceof Error) {
+                    this.$store.dispatch('addToast', {
+                        type: 'error',
+                        title: `Error decoding your homomorphic balance`,
+                        text: `${result[2].message}`,
+                    })
+                    this.cancelCallback = null
+                    return this.closeModal()
+                } else if (result[0]){
+
+                    this.$store.dispatch('addToast', {
+                        type: 'success',
+                        title: `Homomorphic Balance was decoded`,
+                        text: `Decoded successfully!`,
+                    })
+
+                    this.balanceDecoded = result[1]
+                    this.cancelCallback = null
+                    return this.closeModal()
+                }
+
+                if (this.closed) return
+
+                setTimeout( () => checkBalance(), 500 )
+            }
+
+            setTimeout(  () => checkBalance(), 500 )
+
+        },
+
+        async stop(){
+
+            this.closed = true
+
+            if (this.cancelCallback)
+                await this.cancelCallback()
+
+            this.stopMatrix()
 
         },
 
@@ -80,31 +161,52 @@ export default {
             c.height = this.$refs.modal.$refs.refModalBody.clientHeight;
             c.width = this.$refs.modal.$refs.refModalBody.clientWidth;
 
-
-            var letterSize=15;
-            var columns=c.width/letterSize;
+            let letterSize=15;
+            let columns=c.width/letterSize;
 
             const heights=[];
-            for(var i=0; i<columns;i++)
+            for(let i=0; i<columns;i++)
                 heights[i]=1;
 
-            const lines = [
-                createLine(".........."),
-                createLine(".DECODING."),
-                createLine(".........."),
-            ]
+            let lines = [ ]
             let hasText = []
-            for (let i=0; i < heights.length; i++){
-                let foundText = false
-                for (const line of lines )
-                    if (line[i] !== ' ') {
-                        foundText = true
-                        break
-                    }
-                hasText[i] = hasText
-            }
 
             let middleLine = Math.floor( c.height / letterSize / 2 )
+
+            const createLines = ()=>{
+                lines = [
+                    "",
+                    "DECODING",
+                    this.status.replaceAll(" ","^"),
+                    "",
+                ].reverse()
+
+                let maxLength = 0
+                for (const line of lines)
+                    if (maxLength < line.length)
+                        maxLength = line.length
+
+                maxLength += 2
+                for (let i=0; i<lines.length; i++) {
+                    const initLength = lines[i].length
+                    lines[i] = new Array( Math.floor ( (maxLength - initLength) / 2 ) + 1).join('.') + lines[i]
+                    lines[i] = lines[i] + new Array( (maxLength - lines[i].length) + 1).join('.')
+                }
+
+                for (let i=0; i<lines.length; i++)
+                    lines[i] = createLine(lines[i])
+
+                hasText = []
+                for (let i=0; i < heights.length; i++){
+                    let foundText = false
+                    for (const line of lines )
+                        if (line[i] !== ' ') {
+                            foundText = true
+                            break
+                        }
+                    hasText[i] = hasText
+                }
+            }
 
             function createLine(text ){
                 text = new Array( Math.floor( (heights.length - text.length) / 2) +1 ).join(" ")+text
@@ -120,13 +222,17 @@ export default {
                 context.fillStyle= "#0f0";
                 context.font= letterSize+"px arial";
 
+                createLines()
+
                 for(let i=0;i<heights.length;i++){
 
                     let finalCharacter = ''
 
                     for (let j =0; j < lines.length; j++){
-                        if (heights[i]  === middleLine - Math.floor( j - (lines.length / 2) ) && lines[j][i] !== ' ' )
+                        if (heights[i]  === middleLine - Math.floor( j - (lines.length / 2) ) && lines[j][i] !== ' ' ){
                             finalCharacter = lines[j][i]
+                            if (finalCharacter === '^') finalCharacter = ' '
+                        }
                     }
 
                     if (finalCharacter === '')
@@ -134,11 +240,9 @@ export default {
 
                     context.fillText(finalCharacter.split(""),i*letterSize, heights[i]*letterSize);
 
-                    if(heights[i]*letterSize > c.height){
-                        if (Math.random()>0.975)
-                            heights[i]=0;
-                        else if (hasText[i] && Math.random() > 0.7)
-                                heights[i] = 0;
+                    if (heights[i]*letterSize > c.height){
+                        if (Math.random()>0.975) heights[i]=0;
+                        else if (hasText[i] && Math.random() > 0.7) heights[i] = 0;
                     }
 
                     heights[i]++;

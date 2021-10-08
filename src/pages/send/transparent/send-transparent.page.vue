@@ -38,14 +38,13 @@
                         <div class="tab-content">
                             <div :class="`tab-pane ${tab===0?'active':''} `">
 
-                                <tx-token :balances="balances" @changed="changedToken" class="pb-5" />
+                                <tx-token :accounts="accounts" @changed="changedToken" class="pb-5" />
 
                                 <destination-address v-for="(destination, index) in destinations"
                                                      :key="`destinationAddress-${index}`"
                                                      :class="`${index > 0 ? 'pt-5' : '0'}`"
                                                      :index="index"
-                                                     :version="version.VERSION_TRANSPARENT"
-                                                     :balances="balances"
+                                                     :accounts="accounts"
                                                      :token="token.token"
                                                      @changed="e => changedDestination(index, e)"
                                                      @deleted="e => deletedDestination(index, e)">
@@ -62,12 +61,11 @@
                             </div>
                             <div :class="`tab-pane ${tab===1?'active':''} `">
                                 <extra-data :destinations="destinations"
-                                            :version="version.VERSION_TRANSPARENT"
                                             :paymentId="identifiedPaymentID"
                                             @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===2?'active':''} `">
-                                <tx-fee :balances="balances" :token="token" :allow-zero="true" @changed="changedFee" />
+                                <tx-fee :accounts="accounts" :token="token" :allow-zero="true" @changed="changedFee" />
                             </div>
                         </div>
                     </div>
@@ -148,8 +146,8 @@ export default {
         account(){
             return this.$store.state.accounts.list[this.$store.state.wallet.mainPublicKey]
         },
-        balances(){
-            if (this.account) return this.account.balances;
+        accounts(){
+            if (this.account && this.account.accounts ) return this.account.accounts;
             return null
         },
         isLoading(){
@@ -305,7 +303,7 @@ export default {
                 if (!out) throw "Transaction couldn't be made";
                 this.status = ''
 
-                const tx = JSON.parse(out)
+                const tx = JSON.parse( MyTextDecode( out) )
 
                 await this.$store.dispatch('includeTx', { tx } )
 
@@ -318,7 +316,6 @@ export default {
                 this.$router.push(`/explorer/tx/${tx.hash}`);
 
             }catch(err){
-                console.error(err);
                 this.error = err.message;
             }
 

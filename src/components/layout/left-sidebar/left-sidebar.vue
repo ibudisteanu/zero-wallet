@@ -37,7 +37,7 @@
                     </li>
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <router-link :disabled="!isWalletLogged" to="/send" :class="`${ route === '/send' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
+                            <router-link :disabled="!isWalletLogged" to="/send/private" :class="`${ route === '/send/private' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
                                 <i class="fa fa-money-check-alt"></i>
                                 <span class="nav-link-text ps-1">Transfer Privately</span>
                             </router-link>

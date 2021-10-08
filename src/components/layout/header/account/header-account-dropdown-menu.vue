@@ -16,7 +16,7 @@
                     <div v-for="(address, index) in addresses" :class="`notification notification-flush notification-unread ${ address.publicKey === mainPublicKey  ? 'fw-black' : ''} ` "
                          :key="`address-${index}`">
                             <div class="notification-body address">
-                                <account-identicon :address="address.addressEncoded" :identicon="address.identicon" :size="20" :outer-size="5" :version="address.version" :disable-route="true" />
+                                <account-identicon :address="address.addressEncoded" size="21" outer-size="7"  :disable-route="true" />
                                 <div class="account-title pointer" @click="setMainPublicKey(address.publicKey)">
                                     <span class="fw-semi-bold text-truncate">{{address.name}}</span>
                                     <span class="fw-normal text-truncate">{{$store.getters.addressDisplay(address)}} </span>

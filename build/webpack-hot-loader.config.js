@@ -5,7 +5,7 @@ const merge = require('webpack-merge');
 
 module.exports = merge(base, {
 
-    devtool: 'cheap-module-eval-source-map',
+    devtool: 'eval-cheap-module-source-map',
     mode: 'development',
 
     entry: [
@@ -35,7 +35,6 @@ module.exports = merge(base, {
         new webpack.DefinePlugin({
             "process.env": {
                 DEV_SERVER: 'true',
-                BROWSER: 'true'
             }
         }),
 

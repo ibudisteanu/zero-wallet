@@ -1,19 +1,21 @@
-const request = require('request-promise-native');
+import fetch from 'node-fetch';
 
 class HttpHelper {
 
     async get(address, body = {}, timeout = 20000){
-        return request.get(address, {
-            ...body,
+        const out = await fetch(address, { method: 'POST',
+            body: JSON.stringify(body),
             timeout,
         } )
+        return out.json()
     }
 
     async post(address, body, timeout = 20000){
-        return request.post(address, {
-            form: body,
+        const out = await fetch(address, { method: 'POST',
+            body: JSON.stringify(body),
             timeout,
         } )
+        return out.json()
     }
 
 }

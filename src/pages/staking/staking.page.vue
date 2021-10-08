@@ -39,7 +39,7 @@
 
                             <div class=" pt-4">
                                 <span class="fw-bold fs-0">Delegated Stake</span>
-                                <balance :key="`delegated-balance`"  :balance="delegatedStake.stakeAvailable"  token="" :version="0"></balance>
+                                <balance :key="`delegated-balance`"  :balance="delegatedStake.stakeAvailable" token=""></balance>
                                 <span v-if="delegatedStake.stakeAvailable < minimumForStaking" class="text-danger d-block"> Minimum balance required for Staking {{minimumForStaking}}</span>
                             </div>
                             <div class="pt-4" >
@@ -177,9 +177,11 @@ export default {
     asyncComputed:{
 
         async balance(){
+
             const balances = { "": { amount: 0 } }
+
             if (this.account)
-                for (const balance of this.account.balances)
+                for (const balance of this.account.accounts)
                     balances[balance.token] = { amount: balance.amount }
 
             const amount = balances[""].amount || 0;

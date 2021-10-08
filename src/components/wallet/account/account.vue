@@ -13,7 +13,7 @@
                     <div class="col px-1 py-1 position-static">
                         <div class="d-flex align-items-center d-block">
                             <div class="avatar avatar-xxl me-3">
-                                <account-identicon :public-key="address.publicKey" :size="60" :outer-size="20" />
+                                <account-identicon :public-key="address.publicKey" size="56" outer-size="20" />
                             </div>
                             <span class="fw-bold d-block text-break">
                                 {{ getAddress }}
@@ -37,7 +37,7 @@
                         <i class="fa fa-tools" />
                     </button>
 
-                    <button v-if="$store.getters.walletContains(this.address.publicKey)" class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="sendFunds"  v-tooltip.bottom="'Send Transparently Funds'">
+                    <button v-if="$store.getters.walletContains(this.address.publicKey)" class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="sendFunds"  v-tooltip.bottom="'Send Privately Funds'">
                         <i class="fa fa-money-check-alt" />
                     </button>
 
@@ -101,7 +101,7 @@ export default {
         },
 
         sendFunds(){
-            this.$router.push('/send/transparent')
+            this.$router.push('/send/private')
         },
 
     },

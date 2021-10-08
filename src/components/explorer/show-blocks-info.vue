@@ -45,7 +45,7 @@
 
             <span class="col-5 d-block d-sm-none text-dark">Forged By</span>
             <span class="col-7 col-sm-2 col-md-1  text-truncate">
-                <account-identicon  :publicKey="blockInfo.forger" :size="20" :outer-size="5"  />
+                <account-identicon  :publicKey="blockInfo.forger" size="21" outer-size="7"  />
             </span>
         </div>
 

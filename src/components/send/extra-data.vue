@@ -6,6 +6,7 @@
             <div class="form-check">
                 <input class="form-check-input" id="typePublic" type="radio" value="public" v-model="type" />
                 <label class="form-check-label" for="typePublic">Public Message</label>
+                <i class="fa fa-question " v-tooltip.bottom="`The message will be public on the chain. Anybody can see this message attached to this transaction.`" />
             </div>
             <div v-if="type === 'public'">
                 <div class="form-check">
@@ -16,9 +17,10 @@
 
             <template v-if="destinations">
 
-                <div class="form-check pt-4">
+                <div class="form-check pt-2">
                     <input class="form-check-input" id="typeEncrypted" type="radio" value="encrypted" v-model="type" />
                     <label class="form-check-label" for="typeEncrypted">Encrypted Message</label>
+                    <i class="fa fa-question " v-tooltip.bottom="`The message will encrypted to the destination. Only the receiver can decrypt the message attached to this transaction.`" />
                 </div>
                 <div v-if="type === 'encrypted'">
                     <div class="form-check">
@@ -26,23 +28,28 @@
                         <input class="form-control" type="text" v-model="data" :disabled="!!paymentId">
                     </div>
                     <div class="form-check">
-                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Address to encrypt:</label>
 
-                        <div :class="`${publicKeyToEncrypt ? 'destination-row' : '' }`" >
+                        <template v-if="destinations.length > 1">
+                            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Address to encrypt:</label>
 
-                            <account-identicon v-if="publicKeyToEncrypt" :public-key="publicKeyToEncrypt" size="30" outer-size="8" />
+                            <div :class="`${publicKeyToEncrypt ? 'destination-row' : '' }`" >
 
-                            <select :class="`form-select ${validationPublicKeyToEncrypt ? 'is-invalid' :''} `" v-model="publicKeyToEncrypt">
-                                <option v-for="(destination, id) in destinations"
-                                        :key="`selected-address-${id}`"
-                                        :value="(destination.address && destination.address.publicKey) ? destination.address.publicKey : '' "
-                                        :class="`${ (destination.address && destination.address.publicKey) ? '' : 'text-danger'}`">
-                                    <template v-if="destination.address">
-                                        {{destination.addressEncoded}}
-                                    </template>
-                                </option>
-                            </select>
-                        </div>
+                                <account-identicon v-if="publicKeyToEncrypt" :public-key="publicKeyToEncrypt" size="30" outer-size="8" />
+
+                                <select :class="`form-select ${validationPublicKeyToEncrypt ? 'is-invalid' :''} `" v-model="publicKeyToEncrypt">
+                                    <option v-for="(destination, id) in destinations"
+                                            :key="`selected-address-${id}`"
+                                            :value="(destination.address && destination.address.publicKey) ? destination.address.publicKey : '' "
+                                            :class="`${ (destination.address && destination.address.publicKey) ? '' : 'text-danger'}`">
+                                        <template v-if="destination.address">
+                                            {{destination.addressEncoded}}
+                                        </template>
+                                    </option>
+                                </select>
+
+                            </div>
+                        </template>
+
                         <div v-if="validationPublicKeyToEncrypt" class="invalid-feedback d-block">{{validationPublicKeyToEncrypt}}</div>
 
                     </div>
@@ -85,7 +92,7 @@ export default {
 
         validationPublicKeyToEncrypt(){
             if (this.type === "public") return
-            if (!this.publicKeyToEncrypt) return "No selected address"
+            if (this.destinations.length > 1 && !this.publicKeyToEncrypt) return "No selected address"
         },
 
         validationError(){

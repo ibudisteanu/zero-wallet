@@ -6,8 +6,6 @@
                 <div class="col-12 col-auto text-center">
                     <span>Consensus</span>
                     <span v-if="$store.state.blockchain.status === 'sync'" class="text-success">{{blockchainStatus}}</span>
-                </div>
-                <div class="col-12 col-auto text-center">
                     <span>Block Height</span>
                     <span v-if="blockHeight" class="text-success">#{{blockHeight}}</span>
                 </div>
@@ -15,7 +13,10 @@
 
             <div class="row pb-0 mb-0">
                 <div class="col-12 col-auto text-center">
-                    <span>2019 - 2021 <a href="https://PandoraPay.org" target="_blank">{{entity}}</a> Wallet v {{version}} </span>
+                    <span>WEB: {{version}} WASM: {{buildVersion}} </span>
+                </div>
+                <div class="col-12 col-auto text-center">
+                    <span>2019 - 2021 <a href="https://PandoraPay.org" target="_blank">{{entity}}</a> </span>
                 </div>
             </div>
 
@@ -39,10 +40,6 @@ export default {
             return consts.entity;
         },
 
-        version(){
-            return consts.version;
-        },
-
         blockHeight(){
             return this.$store.state.blockchain.end;
         },
@@ -58,6 +55,15 @@ export default {
 
             return 'na';
         },
+
+        version(){
+            return COMMITHASH.slice(0, 10)
+        },
+
+        buildVersion(){
+            return PandoraPay.config.BUILD_VERSION
+        }
+
     },
 
     methods:{
