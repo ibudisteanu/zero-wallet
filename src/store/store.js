@@ -10,6 +10,7 @@ import BlocksStore from "./modules/blocks/blocks-store"
 import BlocksInfoStore from "./modules/blocks-info/blocks-info-store"
 import PageStore from "./modules/page/page-store"
 import TransactionsStore from "./modules/transactions/transactions-store"
+import TransactionsInfoStore from "./modules/transactions-info/transactions-info-store"
 import TokensStore from "./modules/tokens/tokens-store"
 import TokensInfoStore from "./modules/tokens-info/tokens-info-store"
 import NetworkStore from "./modules/network/network-store"
@@ -31,6 +32,7 @@ const store = new Vuex.Store({
         blocksInfo: BlocksInfoStore,
         page: PageStore,
         transactions: TransactionsStore,
+        transactionsInfo: TransactionsInfoStore,
         tokens: TokensStore,
         tokensInfo: TokensInfoStore,
         addresses: AddressesStore,

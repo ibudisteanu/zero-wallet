@@ -79,7 +79,8 @@ export default {
                             return this.$store.dispatch('accountTxUpdateNotification', { publicKey: key, txHash:data.substr(1,64), extraInfo: extraInfo ? JSON.parse(extraInfo) : null  } )
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTION)
-                            return this.$store.dispatch('txNotification', { txHash: key, extraInfo: extraInfo ? JSON.parse(extraInfo) : null } )
+                            this.$store.dispatch('txNotification', { txHash: key, extraInfo: extraInfo ? JSON.parse(extraInfo) : null } )
+
                     })
 
 
@@ -169,8 +170,10 @@ export default {
                           txsRemoved.push(tx)
                   }
 
-                if (txsRemoved.length)
-                  this.$store.commit('deleteTransactions', txsRemoved )
+                if (txsRemoved.length){
+                    this.$store.commit('deleteTransactions', txsRemoved )
+                    this.$store.commit('deleteTransactionsInfo', txsRemoved )
+                }
 
                 if (blocksRemoved.length)
                   this.$store.commit('deleteBlocks', blocksRemoved )

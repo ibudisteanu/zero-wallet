@@ -10,16 +10,20 @@ export default {
         const txs = [];
         for (const tx of blk.txs) {
 
-            tx.__height = ""
-            tx.__blkHeight = blk.height
-            tx.__timestamp = blk.timestamp
+            delete tx.__height
 
-            await dispatch('processTx', tx)
+            const txJSON = {
+                tx,
+                info: {
+                    blkHeight: blk.height,
+                    timestamp: blk.timestamp,
+                }
+            }
 
+            await dispatch('includeTx', txJSON )
             txs.push(tx)
         }
 
-        commit('setTransactions', { txs } )
         commit('setBlock', {block: blk} )
 
         return blk;

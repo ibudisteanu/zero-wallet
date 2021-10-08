@@ -11,31 +11,34 @@
             <span class="col-12 d-block d-sm-none text-dark">Hash</span>
             <span class="col-12 col-sm-2 col-md-2 text-truncate">
                 <router-link :to="`/explorer/tx/${txHash}`">
-<!--                    {{tx.nonce}}-->
                     {{tx.hash}}
                 </router-link>
            </span>
 
             <span class="col-12 d-block d-sm-none text-dark">Time</span>
             <div class="col-12 col-sm-2 col-md-1 text-truncate">
-                <span v-if="tx.__mempool">
-                    pending
-                </span>
-                <span v-else v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  tx.__timestamp ) }`"  >
-                    {{ timeAgo( $store.state.blockchain.genesisTimestamp +  tx.__timestamp) }}
-                </span>
+                <template v-if="txInfo">
+                    <span v-if="txInfo.mempool">
+                        pending
+                    </span>
+                    <span v-else v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  txInfo.timestamp ) }`"  >
+                        {{ timeAgo( $store.state.blockchain.genesisTimestamp +  txInfo.timestamp) }}
+                    </span>
+                </template>
             </div>
 
             <span class="col-12 d-block d-sm-none text-dark">Confirmations</span>
             <div class="col-12 col-sm-2 col-md-1 text-truncate">
-                <span v-if="tx.__mempool">
-                    pending
-                </span>
-                <span v-else v-tooltip.bottom="`${ tx.__blkHeight }`" >
-                    <router-link :to="`/explorer/block/${tx.__blkHeight}`">
-                        {{ $store.state.blockchain.end - tx.__blkHeight }}
-                    </router-link>
-                </span>
+                <template v-if="txInfo">
+                    <span v-if="txInfo.mempool">
+                        pending
+                    </span>
+                    <span v-else v-tooltip.bottom="`${ txInfo.blkHeight }`" >
+                        <router-link :to="`/explorer/block/${txInfo.blkHeight}`">
+                            {{ $store.state.blockchain.end - txInfo.blkHeight }}
+                        </router-link>
+                    </span>
+                </template>
             </div>
 
             <span class="col-12 d-block d-sm-none text-dark">Data</span>
@@ -65,7 +68,9 @@ export default {
         tx(){
             return this.$store.state.transactions.txsByHash[this.txHash]
         },
-
+        txInfo(){
+            return this.$store.state.transactionsInfo.list[this.txHash]
+        }
     },
 
     methods:{

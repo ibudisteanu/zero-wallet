@@ -22,8 +22,8 @@
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Height</span>
                         <div class="col-7 col-sm-9 text-truncate">
-                            <span v-if="tx.__height">
-                                {{tx.__height}}
+                            <span v-if="txInfo && txInfo.height">
+                                {{txInfo.height}}
                             </span>
                             <span v-else>
                                 -
@@ -33,8 +33,8 @@
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Block Height</span>
                         <div class="col-7 col-sm-9 text-truncate">
-                            <span v-if="tx.__blkHeight ">
-                                <router-link :to="`/explorer/block/${tx.__blkHeight}`">{{tx.__blkHeight}}</router-link>
+                            <span v-if="txInfo && txInfo.blkHeight ">
+                                <router-link :to="`/explorer/block/${txInfo.blkHeight}`">{{txInfo.blkHeight}}</router-link>
                             </span>
                             <span v-else>
                                 -
@@ -44,8 +44,8 @@
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Block Timestamp</span>
                         <div class="col-7 col-sm-9 text-truncate" >
-                            <span v-if="tx.__timestamp" v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  tx.__timestamp ) }`">
-                                {{timeAgo( $store.state.blockchain.genesisTimestamp + tx.__timestamp) }}
+                            <span v-if="txInfo && txInfo.timestamp" v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  txInfo.timestamp ) }`">
+                                {{timeAgo( $store.state.blockchain.genesisTimestamp + txInfo.timestamp) }}
                                 <i class="fa fa-clock"></i>
                             </span>
                             <span v-else>
@@ -56,9 +56,9 @@
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Confirmations</span>
                         <div class="col-7 col-sm-9 text-truncate">
-                            <span v-if="tx.__blkHeight" >
-                                {{ $store.state.blockchain.end - tx.__blkHeight -1 }}
-                                <i v-if="$store.state.blockchain.end - tx.__blkHeight -1 > 8" class="fa fa-check"></i>
+                            <span v-if="txInfo && txInfo.blkHeight">
+                                {{ $store.state.blockchain.end - txInfo.blkHeight -1 }}
+                                <i v-if="$store.state.blockchain.end - txInfo.blkHeight -1 > 8" class="fa fa-check"></i>
                             </span>
                             <span v-else>
                                 -
@@ -67,7 +67,7 @@
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Mem Pool</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{tx.__mempool ? 'YES': ' No' }}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{txInfo.mempool ? 'YES': ' No' }}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Size</span>
@@ -217,6 +217,9 @@ export default {
         tx(){
             if (this.height !== undefined) return this.$store.state.transactions.txsByHeight[this.height];
             if (this.hash) return this.$store.state.transactions.txsByHash[this.hash];
+        },
+        txInfo(){
+            if (this.tx) return this.$store.state.transactionsInfo.list[this.tx.hash]
         },
 
         PandoraPay(){
