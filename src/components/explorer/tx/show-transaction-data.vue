@@ -55,9 +55,8 @@ export default {
             let out = this.tx.fee
 
             if (this.tx.txScript === PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_CLAIM)
-                for (const it of this.tx.output){
+                for (const it of this.tx.output)
                     out += it.amount
-                }
 
             return out
         }

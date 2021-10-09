@@ -129,19 +129,19 @@
                         <div v-for="(payload, index) in tx.payloads"
                              :key="`tx_payload_${index}`" class="d-inline-block">
                             <div class="row pt-2 pb-2  bg-light">
-                                <span class="col-5 col-sm-3 text-truncate">Payload Data {{index}}</span>
+                                <span class="col-5 col-sm-3 text-truncate">Payload {{index}} Data</span>
                                 <span class="col-7 col-sm-9">
                                     <show-transaction-data :tx="tx" :id="index" />
                                 </span>
                             </div>
                             <div class="row pt-2 pb-2 ">
-                                <span class="col-5 col-sm-3 text-truncate">Payload Extra {{index}}</span>
+                                <span class="col-5 col-sm-3 text-truncate">Payload {{index}} Extra</span>
                                 <span class="col-7 col-sm-9 text-truncate">
                                     <show-transaction-data-extra :dataVersion="payload.dataVersion" :data="payload.data" />
                                 </span>
                             </div>
                             <div class="row pt-2 pb-2 bg-light">
-                                <span class="col-5 col-sm-3 text-truncate">Payload Extra HEX {{index}}</span>
+                                <span class="col-5 col-sm-3 text-truncate">Payload {{index}} Extra HEX</span>
                                 <span class="col-7 col-sm-9 text-truncate">
                                     {{payload.data}}
                                 </span>
