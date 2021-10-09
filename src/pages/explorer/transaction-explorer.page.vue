@@ -184,8 +184,8 @@ import StringHelper from "src/utils/string-helper"
 import Amount from "src/components/wallet/amount"
 import AlertBox from "src/components/utils/alert-box"
 import LoadingButton from "src/components/utils/loading-button";
-import ShowTransactionData from "src/components/explorer/show-transaction-data"
-import ShowTransactionDataExtra from "src/components/explorer/show-transaction-data-extra";
+import ShowTransactionData from "src/components/explorer/tx/show-transaction-data"
+import ShowTransactionDataExtra from "src/components/explorer/tx/show-transaction-data-extra";
 
 export default {
 

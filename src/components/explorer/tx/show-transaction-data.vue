@@ -32,8 +32,8 @@
 </template>
 
 <script>
-import AccountIdenticon from "../wallet/account/account-identicon";
-import Amount from "../wallet/amount";
+import AccountIdenticon from "../../wallet/account/account-identicon";
+import Amount from "../../wallet/amount";
 
 export default {
 

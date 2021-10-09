@@ -4,9 +4,10 @@
 
         <div class="row pd-top-10 pd-bottom-10  fs--1 text-dark">
             <span class="d-none d-sm-block col-sm-2 col-md-2 text-truncate">Hash</span>
+            <span class="d-none d-sm-block col-sm-2 col-md-1 text-truncate">Type</span>
             <span class="d-none d-sm-block col-sm-2 col-md-1 text-truncate">Time</span>
-            <span class="d-none d-sm-block col-sm-2 col-md-1 text-truncate">Confirmations</span>
-            <span class="d-none d-sm-block col-sm-6 col-md-8 text-truncate">Data</span>
+            <span class="d-none d-sm-block col-sm-1 col-md-1 text-truncate">Confirmations</span>
+            <span class="d-none d-sm-block col-sm-5 col-md-7 text-truncate">Data</span>
         </div>
 
         <div id="transactions" />

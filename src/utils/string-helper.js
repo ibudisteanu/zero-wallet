@@ -89,6 +89,19 @@ class StringHelper{
         return Math.random().toString()+Math.random().toString()
     }
 
+    badgeColors(number){
+        switch (number % 8){
+            case 0: return "primary"
+            case 1: return "secondary"
+            case 2: return "success"
+            case 3: return "info"
+            case 4: return "warning"
+            case 5: return "danger"
+            case 6: return "light"
+            case 7: return "dark"
+        }
+    }
+
 }
 
 export default new StringHelper()

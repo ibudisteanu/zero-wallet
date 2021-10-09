@@ -28,8 +28,7 @@
 <script>
 
 import LoadingSpinner from "../../utils/loading-spinner";
-import ShowTransactionsPreview from "src/components/explorer/show-transactions-preview"
-import consts from "../../../../consts/consts";
+import ShowTransactionsPreview from "src/components/explorer/tx-preview/show-transactions-preview"
 import Pagination from "src/components/utils/pagination"
 import AlertBox from "src/components/utils/alert-box"
 
