@@ -9,8 +9,10 @@
 
             <template v-if="tx.base.txScript === PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_CLAIM">
                 <template v-if="!displayAdvanced">
-                    <i class="fa fa-users pointer" @click="displayAdvanced=!displayAdvanced" v-tooltip.bottom="'Display tx output'" ></i>
-                    Outputs: {{tx.base.extra.output.length}}
+                    <span class="pointer" @click="displayAdvanced=!displayAdvanced" v-tooltip.bottom="'Display tx output'"  >
+                        <i class="fa fa-users" ></i>
+                        Outputs: {{tx.base.extra.output.length}}
+                    </span>
                 </template>
                 <template v-else>
                     <div class="output" v-for="(out, index) in tx.base.extra.output"
@@ -24,8 +26,10 @@
         </template>
         <template v-else-if="tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER">
             <template v-if="!displayAdvanced">
-                <i class="fa fa-users pointer" @click="displayAdvanced=!displayAdvanced" v-tooltip.bottom="'Display Private Tx Ring Members'" ></i>
-                Rings: {{tx.base.payloads.map(payload => payload.publicKeys.length).join(', ') }}
+                <span class="pointer" @click="displayAdvanced=!displayAdvanced" v-tooltip.bottom="'Display Private Tx Ring Members'" >
+                    <i class="fa fa-users"></i>
+                    Rings: {{tx.base.payloads.map(payload => payload.publicKeys.length).join(', ') }}
+                </span>
             </template>
             <template v-else>
                 <div v-for="(payload, payloadIndex) in tx.base.payloads"

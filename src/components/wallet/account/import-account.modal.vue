@@ -41,10 +41,13 @@
                                 <input class="form-control" id="selectFile" type="file" v-on:change="handleImportAccounts" size="1" accept=".pandora" ref="refImportedAddresses" />
                             </div>
                         </div>
-                        <div :class="`tab-pane ${tab===1?'active':''} `" v-if="address">
-                            <div class="mb-3">
-                                <label class="form-label">Name {{address.name}}</label>
-                                <label class="form-label">Address {{address.addressEncoded}}</label>
+                        <div :class="`tab-pane ${tab===1?'active':''} `">
+                            <span class="mb-3 d-block">Preview Imported Account</span>
+                            <div class="d-block" v-if="address">
+                                <div class="address align-items-center">
+                                    <account-identicon :address="address.addressEncoded" size="35" outer-size="13" />
+                                    <span class="text-break">{{ address.addressEncoded }}</span>
+                                </div>
                             </div>
                         </div>
                         <div :class="`tab-pane ${tab===2?'active':''} `">
@@ -80,10 +83,10 @@ import LoadingButton from "src/components/utils/loading-button"
 import UtilsHelper from "src/utils/utils-helper";
 import AlertBox from "src/components/utils/alert-box"
 import PasswordInput from "src/components/utils/password-input";
-
+import AccountIdenticon from "../../wallet/account/account-identicon";
 export default {
 
-    components: {PasswordInput, Modal, LoadingButton, AlertBox, PasswordInput },
+    components: {PasswordInput, Modal, LoadingButton, AlertBox, AccountIdenticon },
 
     data(){
         return {
@@ -222,13 +225,10 @@ export default {
         display: inline-block;
     }
 
-    .importAddresses {
-        position: fixed;
-        top: -1000px;
-    }
-
-    .importAccountText{
-        cursor: pointer;
+    .address{
+        display: grid;
+        grid-template-columns: 60px 1fr;
+        grid-column-gap: 10px;
     }
 
 </style>

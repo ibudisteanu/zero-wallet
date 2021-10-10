@@ -31,7 +31,7 @@
                         </template>
                         <template v-else>
                             <span class="d-block pt-4">Delegated: <strong>YES</strong> </span>
-                            <span class="d-block">Delegated public key {{account.delegatedStake.delegatedPublicKey}}</span>
+                            <span class="d-block">Delegated public key {{account.plainAccount.delegatedStake.delegatedPublicKey}}</span>
                             <span class="d-block">Delegated fee {{delegateFeePercentage}} %</span>
                         </template>
 
@@ -142,8 +142,8 @@ export default {
         },
 
         delegatedStake(){
-            if (!this.account) return null
-            return this.account.delegatedStake
+            if (!this.account || !this.account.plainAccount) return null
+            return this.account.plainAccount.delegatedStake
         },
 
         delegatedStakesPending(){
@@ -152,7 +152,7 @@ export default {
         },
 
         isDelegated(){
-            return (this.delegatedStake && this.account.delegatedStakeVersion === 1)
+            return (this.delegatedStake && this.account.plainAccount.delegatedStakeVersion === 1)
         },
 
         delegateFeePercentage(){

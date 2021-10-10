@@ -215,7 +215,7 @@ export default {
                         perByteAuto: this.fee.feeType === 'feeAuto',
                     },
                     propagateTx: true,
-                    awaitAnswer: true,
+                    awaitAnswer: false,
                 }), (status) => {
                     this.status = status
                 }, password);
