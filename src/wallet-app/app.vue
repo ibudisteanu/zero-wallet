@@ -91,7 +91,7 @@ export default {
                 if (data > 0) {
                     this.$store.commit('setConsensusStatus', "online")
                     this.$store.dispatch('initializeFaucetInfo')
-                    this.$store.dispatch('getTokenByHash', "")
+                    this.$store.dispatch('getAssetByHash', "")
                 }
                 else this.$store.commit('setConsensusStatus', "offline")
             }
@@ -140,7 +140,7 @@ export default {
             if (!loaded && route.indexOf('/login') === -1 ){
 
                 //TODO allow some functionalities even if the wallet was not
-                //if ( route.indexOf('/explorer') === -1 && route.indexOf('/tokens') === -1)
+                //if ( route.indexOf('/explorer') === -1 && route.indexOf('/assets') === -1)
 
                 this.$router.push('/login');
             }

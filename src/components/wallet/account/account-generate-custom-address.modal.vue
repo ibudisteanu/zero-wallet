@@ -40,7 +40,7 @@
                                 <input class="form-check-input" id="amount" type="checkbox"  name="checkbox" v-model="hasAmount"  >
                                 <label class="form-check-label" for="amount"> Amount </label>
                                 <i class="fa fa-question" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
-                                <tx-amount :allow-zero="true" :allow-empty-token="true" :balances="null" @changed="amountChanged" text="Amount to Receive" :token="''" :disabled="!hasAmount" />
+                                <tx-amount :allow-zero="true" :allow-empty-asset="true" :balances="null" @changed="amountChanged" text="Amount to Receive" :asset="''" :disabled="!hasAmount" />
                             </div>
                         </div>
                         <div :class="`tab-pane ${tab===1?'active':''} `">

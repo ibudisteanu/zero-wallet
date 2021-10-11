@@ -9,7 +9,7 @@
             <input class="form-check-input" id="feeManual" type="radio" value="feeManual" v-model="feeType" />
             <label class="form-check-label" for="feeManual">Manual fee</label>
         </div>
-        <tx-amount v-if="feeType === 'feeManual'" text="Fee Amount" :accounts="accounts" @changed="changedFeeManual" :allow-zero="allowZero" :token="token" />
+        <tx-amount v-if="feeType === 'feeManual'" text="Fee Amount" :accounts="accounts" @changed="changedFeeManual" :allow-zero="allowZero" :asset="asset" />
     </div>
 </template>
 
@@ -22,7 +22,7 @@ export default {
     props: {
         accounts: {default: null},
         allowZero: {default: false},
-        token: {default: ""},
+        asset: {default: ""},
     },
 
     data(){

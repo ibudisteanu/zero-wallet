@@ -4,8 +4,8 @@
         <h4 class="fw-medium pt-2">
             {{delegatedStakePending.pendingType ? '' : '-'}} {{ amount }}
             <small class="fs--1 text-700">/
-                <router-link v-if="getToken" :to="`/tokens/${getToken.hash}`" v-tooltip.bottom="getToken.hash" >
-                    {{getToken.name}}
+                <router-link v-if="getAsset" :to="`/assets/${getAsset.hash}`" v-tooltip.bottom="getAsset.hash" >
+                    {{getAsset.name}}
                 </router-link>
                 <span v-tooltip.bottom="'Activation Block'" >{{delegatedStakePending.activationHeight}}</span>
             </small>
@@ -25,8 +25,8 @@ export default {
     },
 
     computed: {
-        getToken(){
-            return  this.$store.getters.getToken( PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX );
+        getAsset(){
+            return  this.$store.getters.getAsset( PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX );
         },
     },
 

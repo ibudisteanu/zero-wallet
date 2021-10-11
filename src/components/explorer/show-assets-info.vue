@@ -11,20 +11,20 @@
             <span class="d-none d-sm-block col-sm-2 col-lg-2 text-truncate">Supply</span>
         </div>
 
-        <div v-for="(token, key) in tokens" :class="`row pb-2 pt-2 fs--1 align-items-center ${key % 2 === 1 ?'bg-light':''}`"
-             :key="`show-token-${key}`">
+        <div v-for="(asset, key) in assets" :class="`row pb-2 pt-2 fs--1 align-items-center ${key % 2 === 1 ?'bg-light':''}`"
+             :key="`show-asset-${key}`">
 
             <span class="col-5 d-block d-sm-none text-dark">Name</span>
             <span class="col-7 col-sm-4 col-lg-3 text-truncate">
                 <account-identicon v-if="key && key.length === 66" :public-key="key" size="21" outer-size="7"  />
-                <router-link :to="`/tokens/${key ? key : 'PBOX'}`">
-                    {{token.name}}
+                <router-link :to="`/assets/${key ? key : 'PBOX'}`">
+                    {{asset.name}}
                 </router-link>
             </span>
 
             <span class="col-5 d-block d-sm-none text-dark">Name</span>
             <span class="col-7 col-sm-2 col-lg-2 text-truncate">
-                ${{token.ticker}}
+                ${{asset.ticker}}
             </span>
 
             <span class="col-5 d-block d-sm-none text-dark">Hash</span>
@@ -34,18 +34,18 @@
 
             <span class="col-5 d-block d-sm-none text-dark">Description</span>
             <span class="col-7 d-sm-none d-lg-block col-lg-3 text-truncate">
-                {{token.description}}
+                {{asset.description}}
             </span>
 
             <span class="col-5 d-block d-sm-none text-dark">Max Supply</span>
             <span class="col-7 col-sm-2 col-lg-1 text-truncate">
-                {{token.maxSupply / Math.pow(10, token.decimalSeparator) }}
+                {{asset.maxSupply / Math.pow(10, asset.decimalSeparator) }}
 
             </span>
 
             <span class="col-5 d-block d-sm-none text-dark">Supply</span>
             <span class="col-7 col-sm-2 col-lg-1 text-truncate">
-                {{token.supply / Math.pow(10, token.decimalSeparator) }}
+                {{asset.supply / Math.pow(10, asset.decimalSeparator) }}
             </span>
 
         </div>
@@ -63,7 +63,7 @@ export default {
     components: {AccountIdenticon},
 
     props:{
-        tokens: {default: null},
+        assets: {default: null},
     },
 
     methods: {

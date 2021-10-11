@@ -25,7 +25,7 @@ export default {
             matrixInterval: null,
             publicKey: "",
             balance: "",
-            token: "",
+            asset: "",
             password: "",
             balanceDecoded: null,
             privateKey: null,
@@ -42,13 +42,13 @@ export default {
 
     methods: {
 
-        async showModal(publicKey, balance, token, returnPrivateKey, password ) {
+        async showModal(publicKey, balance, asset, returnPrivateKey, password ) {
 
             Object.assign(this.$data, this.$options.data());
 
             this.publicKey = publicKey
             this.balance = balance
-            this.token = token
+            this.asset = asset
             this.password = password
             this.returnPrivateKey = returnPrivateKey
 
@@ -82,7 +82,7 @@ export default {
 
             const data = await PandoraPay.wallet.getDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
                 publicKey: this.publicKey,
-                token: this.token
+                asset: this.asset
             })), this.password, )
 
             const params = JSON.parse( MyTextDecode( data ) )
@@ -96,7 +96,7 @@ export default {
                 privateKey: params.privateKey,
                 previousValue: params.previousValue,
                 balanceEncoded: this.balance,
-                token: this.token,
+                asset: this.asset,
             } )), (status)=>{
                 this.status = status
             })

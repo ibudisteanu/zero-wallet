@@ -12,9 +12,9 @@ import RemovePasswordPage from "src/pages/encryption/remove-password.page"
 import BlockchainExplorerPage from "src/pages/explorer/blockchain-explorer.page"
 import BlockExplorerPage from "src/pages/explorer/block-explorer.page"
 import TransactionExplorerPage from "src/pages/explorer/transaction-explorer.page"
-import TokenExplorerPage from "src/pages/explorer/token-explorer.page"
+import AssetExplorerPage from "src/pages/explorer/asset-explorer.page"
 import MemPoolExplorerPage from "src/pages/explorer/mem-pool-explorer.page"
-import TokensPage from "src/pages/tokens/tokens.page"
+import AssetsPage from "src/pages/assets/assets.page"
 import NotFoundPage from "src/pages/not-found/not-found.page"
 
 import KadPage from "src/pages/kad/kad.page"
@@ -56,9 +56,9 @@ const routes = [
     {path: '/explorer', component: BlockchainExplorerPage },
     {path: '/explorer/:page', component: BlockchainExplorerPage },
 
-    {path: '/tokens', component: TokensPage},
-    {path: '/tokens/pandora', component: TokenExplorerPage },
-    {path: '/tokens/:hash', component: TokenExplorerPage },
+    {path: '/assets', component: AssetsPage},
+    {path: '/assets/pandora', component: AssetExplorerPage },
+    {path: '/assets/:hash', component: AssetExplorerPage },
 
     {path: '/staking', component: StakingPage, beforeEnter: guardDecrypted },
 

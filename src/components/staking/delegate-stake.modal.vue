@@ -41,7 +41,7 @@
                     <div class="card-body py-3">
                         <div class="tab-content">
                             <div :class="`tab-pane ${tab===0?'active':''} `">
-                                <tx-amount :allow-zero="true" :accounts="accountsOnlyNative" @changed="amountChanged" text="Amount to stake" :token="''" />
+                                <tx-amount :allow-zero="true" :accounts="accountsOnlyNative" @changed="amountChanged" text="Amount to stake" :asset="''" />
                             </div>
                             <div :class="`tab-pane ${tab===1?'active':''} `">
 
@@ -82,7 +82,7 @@
                                 <extra-data @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===3?'active':''} `">
-                                <tx-fee :accounts="accountsOnlyNative" :allow-zero="true" @changed="changedFee" :token="''" />
+                                <tx-fee :accounts="accountsOnlyNative" :allow-zero="true" @changed="changedFee" :asset="''" />
                             </div>
 
                         </div>
@@ -180,7 +180,7 @@ export default {
             const accounts = []
             if (this.account && this.account.accounts){
                 for (let i=0; i < this.account.accounts.length; i++ )
-                    if (this.account.accounts[i].token === "" || this.account.accounts[i].token === PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX )
+                    if (this.account.accounts[i].asset === "" || this.account.accounts[i].asset === PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX )
                         accounts.push(this.account.accounts[i])
             }
 

@@ -59,10 +59,10 @@ export default {
         dispatch('storeTransactionInfo', { hash: tx.hash, txInfo:  info  })
 
         if (tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE)
-            await dispatch('getTokenByHash', PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX )
+            await dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX )
 
         if (tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER)
-            await Promise.all( tx.payloads.map( payload => dispatch('getTokenByHash', payload.token ) ) )
+            await Promise.all( tx.payloads.map( payload => dispatch('getAssetByHash', payload.asset ) ) )
 
         commit("setTransactions", { txs: [tx] } )
 

@@ -2,13 +2,13 @@
 
     <layout>
 
-        <layout-title icon="fa fa-file-invoice-dollar" title="Tokens">View the existing tokens.</layout-title>
+        <layout-title icon="fa fa-file-invoice-dollar" title="Assets">View the existing assets.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0">Tokens {{ count ? count : ''}}</h5>
+                        <h5 class="mb-0">Assets {{ count ? count : ''}}</h5>
                     </div>
                 </div>
             </div>
@@ -17,7 +17,7 @@
 
                     <alert-box v-if="error" type="error">{{error}}</alert-box>
 
-                    <show-tokens-info :tokens="tokens" />
+                    <show-assets-info :assets="assets" />
 
                 </div>
             </div>
@@ -31,13 +31,13 @@
 
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
-import ShowTokensInfo from "src/components/explorer/show-tokens-info"
+import ShowAssetsInfo from "src/components/explorer/show-assets-info"
 import LoadingButton from "src/components/utils/loading-button"
 import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: { Layout, ShowTokensInfo, LoadingButton, AlertBox, LayoutTitle},
+    components: { Layout, ShowAssetsInfo, LoadingButton, AlertBox, LayoutTitle},
 
     data(){
         return {
@@ -48,22 +48,22 @@ export default {
     computed:{
 
         count(){
-            return this.$store.state.tokens.count;
+            return this.$store.state.assets.count;
         },
 
         next(){
-            return this.$store.state.tokens.next;
+            return this.$store.state.assets.next;
         },
 
-        tokens(){
-            return this.$store.state.tokens.list;
+        assets(){
+            return this.$store.state.assets.list;
         },
 
     },
 
     methods: {
 
-        async startDownloadingTokens() {
+        async startDownloadingAssets() {
             await this.$store.state.blockchain.syncPromise;
         },
 
@@ -76,12 +76,12 @@ export default {
 
     watch: {
         '$route' (to, from) {
-            return this.startDownloadingTokens();
+            return this.startDownloadingAssets();
         }
     },
 
     mounted(){
-        return this.startDownloadingTokens();
+        return this.startDownloadingAssets();
     },
 
     beforeDestroy(){

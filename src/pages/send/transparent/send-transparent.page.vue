@@ -38,14 +38,14 @@
                         <div class="tab-content">
                             <div :class="`tab-pane ${tab===0?'active':''} `">
 
-                                <tx-token :accounts="accounts" @changed="changedToken" class="pb-5" />
+                                <tx-asset :accounts="accounts" @changed="changedAsset" class="pb-5" />
 
                                 <destination-address v-for="(destination, index) in destinations"
                                                      :key="`destinationAddress-${index}`"
                                                      :class="`${index > 0 ? 'pt-5' : '0'}`"
                                                      :index="index"
                                                      :accounts="accounts"
-                                                     :token="token.token"
+                                                     :asset="asset.asset"
                                                      @changed="e => changedDestination(index, e)"
                                                      @deleted="e => deletedDestination(index, e)">
                                 </destination-address>
@@ -65,7 +65,7 @@
                                             @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===2?'active':''} `">
-                                <tx-fee :accounts="accounts" :token="token" :allow-zero="true" @changed="changedFee" />
+                                <tx-fee :accounts="accounts" :asset="asset" :allow-zero="true" @changed="changedFee" />
                             </div>
                         </div>
                     </div>
@@ -103,7 +103,7 @@ import LoadingSpinner from "src/components/utils/loading-spinner";
 import LoadingButton from "src/components/utils/loading-button"
 import DestinationAddress from "src/components/send/destination-address"
 import TxAmount from "src/components/send/tx-amount"
-import TxToken from "src/components/send/tx-token"
+import TxAsset from "src/components/send/tx-asset"
 import TxFee from "src/components/send/tx-fee"
 import ExtraData from "src/components/send/extra-data"
 import Vue from 'vue'
@@ -113,7 +113,7 @@ import LayoutTitle from "src/components/layout/layout-title";
 export default {
 
     components: { LayoutTitle, Layout, Account, LoadingSpinner, LoadingButton, DestinationAddress, TxAmount,
-        ExtraData, AlertBox, TxFee, TxToken,
+        ExtraData, AlertBox, TxFee, TxAsset,
     },
 
     data(){
@@ -121,7 +121,7 @@ export default {
             tab: 0,
             maxTab: 3,
 
-            token: { }, //contains token.token and token.validation
+            asset: { }, //contains asset.asset and asset.validation
             destinations: [],
             fee: {  },
 
@@ -199,7 +199,7 @@ export default {
 
                 if (this.tab === 0 && value === 1){
 
-                    if (this.token.validationError) throw this.token.validationError
+                    if (this.asset.validationError) throw this.asset.validationError
 
                     if (this.checkDestinationError) throw this.checkDestinationError
 
@@ -236,7 +236,7 @@ export default {
                 address: null,
                 validationError: 'Address is empty',
                 amount: 0,
-                token: '',
+                asset: '',
             });
         },
 
@@ -251,8 +251,8 @@ export default {
             Vue.delete(this.destinations, index )
         },
 
-        changedToken(data){
-            this.token = { ...this.token,  ...data, }
+        changedAsset(data){
+            this.asset = { ...this.asset,  ...data, }
         },
         changedFee(data){
             this.fee = { ...this.fee,  ...data, }
@@ -280,7 +280,7 @@ export default {
                 const out = await PandoraPay.transactions.builder.createSimpleTx_Float( JSON.stringify({
                     from: [this.address.addressEncoded],
                     nonce: 0,
-                    token: this.token.token,
+                    asset: this.asset.asset,
                     amounts: Object.values(amounts),
                     dsts: this.destinations.map (it => it.addressEncoded),
                     dstsAmounts: this.destinations.map (it => it.amount),

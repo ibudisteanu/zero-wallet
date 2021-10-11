@@ -35,13 +35,13 @@
                     <div class="card-body py-3">
                         <div class="tab-content">
                             <div :class="`tab-pane ${tab===0?'active':''} `">
-                                <tx-amount :allow-zero="true" :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" :token="''" />
+                                <tx-amount :allow-zero="true" :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" :asset="''" />
                             </div>
                             <div :class="`tab-pane ${tab===1?'active':''} `">
                                 <extra-data @changed="changedExtraData" />
                             </div>
                             <div :class="`tab-pane ${tab===2?'active':''} `">
-                                <tx-fee :balances="balances" :allow-zero="true" @changed="changedFee" :token="''" />
+                                <tx-fee :balances="balances" :allow-zero="true" @changed="changedFee" :asset="''" />
                             </div>
                         </div>
                     </div>
@@ -123,7 +123,7 @@ export default {
             return this.account && this.account.accounts ? this.account.accounts : [];
         },
         balancesStakeAvailable(){
-            return (this.account && this.account.delegatedStake) ? [{ amount: this.account.delegatedStake.stakeAvailable, token: ""}] : [{ amount: 0, token: ""}]
+            return (this.account && this.account.delegatedStake) ? [{ amount: this.account.delegatedStake.stakeAvailable, asset: ""}] : [{ amount: 0, asset: ""}]
         },
     },
 

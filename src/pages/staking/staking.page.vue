@@ -39,7 +39,7 @@
 
                             <div class=" pt-4">
                                 <span class="fw-bold fs-0">Delegated Stake</span>
-                                <balance :key="`delegated-balance`"  :balance="delegatedStake.stakeAvailable" token=""></balance>
+                                <balance :key="`delegated-balance`"  :balance="delegatedStake.stakeAvailable" asset=""></balance>
                                 <span v-if="delegatedStake.stakeAvailable < minimumForStaking" class="text-danger d-block"> Minimum balance required for Staking {{minimumForStaking}}</span>
                             </div>
                             <div class="pt-4" >
@@ -182,7 +182,7 @@ export default {
 
             if (this.account)
                 for (const balance of this.account.accounts)
-                    balances[balance.token] = { amount: balance.amount }
+                    balances[balance.asset] = { amount: balance.amount }
 
             const amount = balances[""].amount || 0;
             return StringHelper.formatMoney( await PandoraPay.config.coins.convertToBase( amount.toString() ), PandoraPay.config.coins.DECIMAL_SEPARATOR)

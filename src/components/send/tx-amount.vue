@@ -19,19 +19,19 @@ export default {
 
     props:{
         text: {default: 'Amount'},
-        token: {default: ""},
+        asset: {default: ""},
         accounts: {default: null },
         allowZero: {default: false,},
         disabled: {default: false},
     },
 
     computed:{
-        tokenInfo(){
-            return this.$store.getters.getToken( this.token );
+        assetInfo(){
+            return this.$store.getters.getAsset( this.asset );
         },
         getSteps(){
-            if (!this.tokenInfo) return ""
-            return (1 / Math.pow(10, this.tokenInfo.decimalSeparator)).toFixed(this.tokenInfo.decimalSeparator)
+            if (!this.assetInfo) return ""
+            return (1 / Math.pow(10, this.assetInfo.decimalSeparator)).toFixed(this.assetInfo.decimalSeparator)
         },
     },
 
@@ -53,13 +53,13 @@ export default {
         amount: {
             immediate: true,
             handler: function (to, from) {
-                if (!this.tokenInfo){
+                if (!this.assetInfo){
                     this.amount = 0
                     return 0
                 }
 
                 // to = Number.parseFloat(to)
-                // const target = to.toFixed(this.tokenInfo.decimalSeparator)
+                // const target = to.toFixed(this.assetInfo.decimalSeparator)
                 // if (to.toString() !== target ){
                 //     this.amount = target
                 //     return

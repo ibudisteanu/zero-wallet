@@ -1,7 +1,7 @@
 <template>
 
     <div class="row">
-        <h4 class="fw-medium pt-2" v-if="getToken" >
+        <h4 class="fw-medium pt-2" v-if="getAsset" >
             <template v-if="version === 'zether' && balanceDecoded === null ">
                 <i class="fa fa-question " v-tooltip.bottom="`Homomorphic Encrypted Amount: ${homomorphicBalanceText}`" />
                 <i class="fa fa-eye fw-light pointer" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecoded" @click="decodeBalance"></i>
@@ -10,8 +10,8 @@
                 {{ amount }}
             </template>
             <small class="fs--1 text-700">/
-                <router-link :to="`/tokens/${getToken.hash}`" class="currency" v-tooltip.bottom="getToken.hash" >
-                    {{getToken.name}}
+                <router-link :to="`/assets/${getAsset.hash}`" class="currency" v-tooltip.bottom="getAsset.hash" >
+                    {{getAsset.name}}
                 </router-link>
             </small>
         </h4>
@@ -29,7 +29,7 @@ export default {
 
     props: {
         version: {default: "transparent"},
-        token: {default: ''},
+        asset: {default: ''},
         balance: {default: 0},
         publicKey: {default: null},     //required for version zether
         canBeDecoded: {default: false}  //required for version zether
@@ -52,7 +52,7 @@ export default {
                 else
                     amount = this.balanceDecoded
             }
-            return StringHelper.formatMoney( await PandoraPay.config.tokens.tokensConvertToBase( amount.toString(), this.getToken.decimalSeparator ), this.getToken.decimalSeparator)
+            return StringHelper.formatMoney( await PandoraPay.config.assets.assetsConvertToBase( amount.toString(), this.getAsset.decimalSeparator ), this.getAsset.decimalSeparator)
         }
     },
 
@@ -61,8 +61,8 @@ export default {
             if (this.version === "zether")
                 return this.balance.match(/.{1,20}/g).join("\n");
         },
-        getToken(){
-            return this.$store.getters.getToken(this.token );
+        getAsset(){
+            return this.$store.getters.getAsset(this.asset );
         },
     },
 
@@ -81,7 +81,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const {balanceDecoded} = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.publicKey, this.balance, this.token, true, password )
+            const {balanceDecoded} = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.publicKey, this.balance, this.asset, true, password )
             this.balanceDecoded = balanceDecoded
         }
     },

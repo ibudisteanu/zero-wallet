@@ -4,9 +4,9 @@ export default {
 
     setAccount(state, {publicKey, account  }){
 
-        if (account && account.tokens)
-            for (let i=0; i < account.tokens.length; i++)
-                account.accounts[i].token = account.tokens[i]
+        if (account && account.assets)
+            for (let i=0; i < account.assets.length; i++)
+                account.accounts[i].asset = account.assets[i]
 
         Vue.set(state.list, publicKey, account );
     },

@@ -37,10 +37,10 @@
                         <div class="tab-content">
                             <div :class="`tab-pane ${tab===0?'active':''} `">
 
-                                <tx-token :tokens="availableTokens" @changed="changedToken" class="pb-4" />
+                                <tx-asset :assets="availableAssets" @changed="changedAsset" class="pb-4" />
 
                                 <destination-address :accounts="availableAccounts"
-                                                     :token="token.token"
+                                                     :asset="asset.asset"
                                                      @changed="changedDestination">
                                 </destination-address>
 
@@ -95,7 +95,7 @@
 
                             </div>
                             <div :class="`tab-pane ${tab===2?'active':''} `">
-                                <tx-fee :accounts="availableAccounts" :token="token" :allow-zero="true" @changed="changedFee" />
+                                <tx-fee :accounts="availableAccounts" :asset="asset" :allow-zero="true" @changed="changedFee" />
                             </div>
                         </div>
                     </div>
@@ -136,7 +136,7 @@ import LoadingSpinner from "src/components/utils/loading-spinner";
 import LoadingButton from "src/components/utils/loading-button"
 import DestinationAddress from "src/components/send/destination-address"
 import TxAmount from "src/components/send/tx-amount"
-import TxToken from "src/components/send/tx-token"
+import TxAsset from "src/components/send/tx-asset"
 import TxFee from "src/components/send/tx-fee"
 import ExtraData from "src/components/send/extra-data"
 import Vue from 'vue'
@@ -147,7 +147,7 @@ import AccountIdenticon from "src/components/wallet/account/account-identicon";
 export default {
 
     components: { LayoutTitle, Layout, Account, LoadingSpinner, LoadingButton, DestinationAddress, TxAmount,
-        ExtraData, AlertBox, TxFee, TxToken, AccountIdenticon,
+        ExtraData, AlertBox, TxFee, TxAsset, AccountIdenticon,
     },
 
     data(){
@@ -155,7 +155,7 @@ export default {
             tab: 0,
             maxTab: 3,
 
-            token: { }, //contains token.token and token.validation
+            asset: { }, //contains asset.asset and asset.validation
             destination: {},
             fee: {  },
 
@@ -184,8 +184,8 @@ export default {
         account(){
             return this.$store.state.accounts.list[this.$store.state.wallet.mainPublicKey]
         },
-        availableTokens(){
-            if (this.account && this.account.tokens ) return this.account.tokens;
+        availableAssets(){
+            if (this.account && this.account.assets ) return this.account.assets;
             return null
         },
         availableAccounts(){
@@ -219,8 +219,8 @@ export default {
             }
         },
 
-        getToken(){
-            return this.$store.getters.getToken( this.token ? this.token.token : null );
+        getAsset(){
+            return this.$store.getters.getAsset( this.asset ? this.asset.asset : null );
         },
 
     },
@@ -250,7 +250,7 @@ export default {
                 value = Math.min( value, this.maxTab + 1)
 
                 if (this.tab === 0 && value === 1){
-                    if (this.token.validationError) throw this.token.validationError
+                    if (this.asset.validationError) throw this.asset.validationError
                     if (this.checkDestinationError) throw this.checkDestinationError
                     if (this.destination.validationError) throw this.destination.validationError;
 
@@ -296,8 +296,8 @@ export default {
             }
         },
 
-        changedToken(data){
-            this.token = { ...this.token,  ...data, }
+        changedAsset(data){
+            this.asset = { ...this.asset,  ...data, }
         },
         changedFee(data){
             this.fee = { ...this.fee,  ...data, }
@@ -311,7 +311,7 @@ export default {
             try{
                 this.error = ""
 
-                const holders = await PandoraPay.network.getNetworkAccountsCount(this.token.token)
+                const holders = await PandoraPay.network.getNetworkAccountsCount(this.asset.asset)
 
                 const ringSize = this.ringSize
                 let newAccounts = this.ringNewAddresses
@@ -326,7 +326,7 @@ export default {
 
                 let foundSender = false
                 for (let i=0; i < this.availableAccounts.length; i++)
-                    if (this.availableAccounts[i].token === this.token.token){
+                    if (this.availableAccounts[i].asset === this.asset.asset){
                         alreadyUsedIndexes[this.availableAccounts[i].index] = true
                         foundSender = true
                         break
@@ -337,7 +337,7 @@ export default {
                 if (this.$store.state.accounts.list[ this.destination.address.publicKey]){
                     let availableAccounts = this.$store.state.accounts.list[ this.destination.address.publicKey]
                     for (let i=0; i < availableAccounts.length; i++)
-                        if (availableAccounts.token === this.token.token)
+                        if (availableAccounts.asset === this.asset.asset)
                             alreadyUsedIndexes[availableAccounts.index] = true
                 }
 
@@ -356,7 +356,7 @@ export default {
 
                 const out = await PandoraPay.network.getNetworkAccountsKeysByIndex( MyTextEncode( JSON.stringify({
                     indexes: alreadyUsedIndexesArray,
-                    token: this.token.token,
+                    asset: this.asset.asset,
                     encodeAddresses: false,
                 })));
 
@@ -414,19 +414,19 @@ export default {
 
             let balance
             for (const availableAccount of this.availableAccounts)
-                if (availableAccount.token === this.token.token){
+                if (availableAccount.asset === this.asset.asset){
                     balance = availableAccount.balance
                     break
                 }
 
-            const {privateKey, balanceDecoded} = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.$store.state.wallet.mainPublicKey, balance, this.token.token, true, password )
+            const {privateKey, balanceDecoded} = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.$store.state.wallet.mainPublicKey, balance, this.asset.asset, true, password )
             if (balanceDecoded === null) throw "Decoding was canceled"
 
-            let token = this.token.token
-            if (token === PandoraPay.config.coins.NATIVE_TOKEN_FULL_STRING_HEX) token = ""
+            let asset = this.asset.asset
+            if (asset === PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX) asset = ""
 
             const accs = {}
-            accs[token] = {}
+            accs[asset] = {}
             const regs = {}
 
             const shuffle =  JSON.parse( MyTextDecode( await PandoraPay.helpers.shuffleArray_for_Zether( this.ringMembers.length.toString()  )) )
@@ -436,14 +436,14 @@ export default {
 
             const outData = await PandoraPay.network.getNetworkAccountsByKeys(MyTextEncode(JSON.stringify({
                 keys: ringShufflePublicKeys.map(it => ({publicKey: it }) ),
-                token: token,
+                asset,
                 includeMempool: true,
             })))
 
             let out = JSON.parse( MyTextDecode( outData ) )
 
             for (let i=0; i < out.accSerialized.length; i++){
-                accs[token][ringShufflePublicKeys[i]] = out.accSerialized[i]
+                accs[asset][ringShufflePublicKeys[i]] = out.accSerialized[i]
                 regs[ringShufflePublicKeys[i]] = out.registrationSerialized[i]
             }
 
@@ -451,13 +451,13 @@ export default {
             out = await PandoraPayHelper.transactions.builder.createZetherTx( MyTextEncode( JSON.stringify({
                 fromPrivateKeys: [privateKey],
                 fromBalancesDecoded: [balanceDecoded],
-                tokens: [token],
-                amounts: [ Number.parseInt( await PandoraPay.config.tokens.tokensConvertToUnits( this.destination.amount.toString(), this.getToken.decimalSeparator ) ) ],
+                assets: [asset],
+                amounts: [ Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.destination.amount.toString(), this.getAsset.decimalSeparator ) ) ],
                 dsts: [this.destination.addressEncoded],
                 burns: [0],
                 ringMembers: [this.ringMembers],
                 fees: [{
-                    fixed: (this.fee.feeType === 'feeAuto') ? 0 : Number.parseInt( await PandoraPay.config.tokens.tokensConvertToUnits( this.fee.feeManual.amount.toString(), this.getToken.decimalSeparator ) ),
+                    fixed: (this.fee.feeType === 'feeAuto') ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) ),
                     perByte: 0,
                     perByteAuto: this.fee.feeType === 'feeAuto',
                 }],

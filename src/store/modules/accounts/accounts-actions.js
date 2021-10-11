@@ -33,10 +33,10 @@ export default {
                 if (account){
 
                     if (account.accounts)
-                        await Promise.all( account.tokens.map( token => dispatch('getTokenByHash', token) ) )
+                        await Promise.all( account.assets.map( asset => dispatch('getAssetByHash', asset) ) )
 
                     if (account.plainAccount)
-                        await dispatch('getTokenByHash', "")
+                        await dispatch('getAssetByHash', "")
                 }
 
                 await PandoraPay.store.storeAccount( publicKey,  result[0] )
@@ -119,40 +119,40 @@ export default {
 
         if (type === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT){
 
-            const {token} = extraInfo
+            const {asset} = extraInfo
             if (data === null ){
 
-                if (account.tokens ) {
-                    for (let index = 0; index < account.tokens.length; index++)
-                        if (account.tokens[index] === token) {
-                            account.tokens.slice(index, 1)
+                if (account.assets ) {
+                    for (let index = 0; index < account.assets.length; index++)
+                        if (account.assets[index] === asset) {
+                            account.assets.slice(index, 1)
                             account.accounts.slice(index, 1)
                             break
                         }
-                    if (!account.tokens.length){
-                        delete account.tokens
+                    if (!account.assets.length){
+                        delete account.assets
                         delete account.accounts
                     }
                 }
 
             } else {
 
-                if (!account.tokens){
-                    account.tokens = []
+                if (!account.assets){
+                    account.assets = []
                     account.accounts = []
                 }
 
                 let found = false
-                for (let index = 0; index < account.tokens.length; index++)
-                    if (account.tokens[index] === token) {
+                for (let index = 0; index < account.assets.length; index++)
+                    if (account.assets[index] === asset) {
                         account.accounts[index] = data
-                        account.accounts[index].token = token
+                        account.accounts[index].asset = asset
                         found = true
                         break
                     }
 
                 if (!found){
-                    account.tokens.push(token)
+                    account.assets.push(asset)
                     account.accounts.push(data)
                 }
 

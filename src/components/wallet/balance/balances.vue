@@ -19,9 +19,9 @@
                 <h5 class="fw-bold fs-0 pt-4">All private holdings</h5>
                 <h4 v-if="!account.accounts || !account.accounts.length" class="fs-0 pt-1">Empty!</h4>
                 <balance v-else v-for="(accountBalance, index) in account.accounts"
-                         :key="`balance-token-${index}`"
+                         :key="`balance-asset-${index}`"
                          :balance="accountBalance.balance"
-                         :token="account.tokens[index]"
+                         :asset="account.assets[index]"
                          :can-be-decoded="$store.getters.walletContains(publicKey)"
                          :public-key="publicKey"
                          version="zether">
@@ -32,7 +32,7 @@
                     <h5 class="fw-bold fs-0 pt-4">Claimable Unstake</h5>
                     <balance :key="`delegated-balance`"
                              :balance="account.plainAccount.claimable"
-                             token=""
+                             asset=""
                              version="transparent">
                     </balance>
 
@@ -40,7 +40,7 @@
                         <h5 class="fw-bold fs-0 pt-4">Delegated Stake</h5>
                         <balance :key="`delegated-balance`"
                                  :balance="delegatedStake.stakeAvailable"
-                                 token=""
+                                 asset=""
                                  version="transparent">
                         </balance>
 

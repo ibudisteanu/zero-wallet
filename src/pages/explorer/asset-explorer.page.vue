@@ -2,13 +2,13 @@
 
     <layout>
 
-        <layout-title icon="fa fa-file-invoice-dollar" title="Explorer Token">View a specific token.</layout-title>
+        <layout-title icon="fa fa-file-invoice-dollar" title="Explorer Asset">View a specific asset.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0 text-truncate">Token Explorer {{hash}}  </h5>
+                        <h5 class="mb-0 text-truncate">Asset Explorer {{hash}}  </h5>
                     </div>
                 </div>
             </div>
@@ -17,43 +17,43 @@
                 <alert-box v-if="error" type="error">{{error}}</alert-box>
 
                 <loading-spinner v-if="!loaded"/>
-                <template v-else-if="token">
+                <template v-else-if="asset">
 
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Name</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{token.name}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{asset.name}}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Ticker</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{token.ticker}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{asset.ticker}}</span>
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Hash</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{token.hash}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{asset.hash}}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Description</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{token.description}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{asset.description}}</span>
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Decimal Separator</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{token.decimalSeparator}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{asset.decimalSeparator}}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Max Supply</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{token.maxSupply / Math.pow(10, token.decimalSeparator)}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{asset.maxSupply / Math.pow(10, asset.decimalSeparator)}}</span>
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Supply</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{token.supply / Math.pow(10, token.decimalSeparator) }}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{asset.supply / Math.pow(10, asset.decimalSeparator) }}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Key</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{token.key}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{asset.key}}</span>
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Supply Key</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{token.supplyKey}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{asset.supplyKey}}</span>
                     </div>
 
                 </template>
@@ -61,11 +61,11 @@
             </div>
         </div>
 
-        <div class="card mb-3" v-if="token">
+        <div class="card mb-3" v-if="asset">
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0">JSON Token</h5>
+                        <h5 class="mb-0">JSON Asset</h5>
                     </div>
                 </div>
             </div>
@@ -75,7 +75,7 @@
                     <div class="col-8 col-sm-10 col-md-11">
                         <div class="card mb-3" >
                             <div class="card-body ">
-                                <p class="mb-0  div-scrollable" style="text-align: left">{{token}}</p>
+                                <p class="mb-0  div-scrollable" style="text-align: left">{{asset}}</p>
                             </div>
                         </div>
                     </div>
@@ -110,23 +110,23 @@ export default {
         hash(){
             return this.$route.params.hash||'';
         },
-        token(){
-            return this.$store.state.tokens.list[this.hash];
+        asset(){
+            return this.$store.state.assets.list[this.hash];
         },
     },
 
     methods: {
 
-        async loadToken() {
+        async loadAsset() {
 
             try{
                 this.loaded = false
 
-                if (!this.hash) throw 'Token hash was not specified';
+                if (!this.hash) throw 'Asset hash was not specified';
 
                 await this.$store.state.blockchain.syncPromise;
 
-                await this.$store.dispatch('getTokenByHash', this.hash);
+                await this.$store.dispatch('getAssetByHash', this.hash);
 
             }catch(err){
                 this.error = err.toString()
@@ -141,12 +141,12 @@ export default {
 
     watch: {
         '$route' (to, from) {
-            return this.loadToken();
+            return this.loadAsset();
         }
     },
 
     mounted(){
-        return this.loadToken();
+        return this.loadAsset();
     }
 
 
