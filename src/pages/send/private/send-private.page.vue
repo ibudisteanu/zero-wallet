@@ -10,110 +10,82 @@
                 Address doesn't exist (is empty)!
             </alert-box>
             <template v-else>
-                <div class="card theme-wizard my-5">
-                    <div class="card-header bg-light py-3">
-                        <ul class="nav justify-content-between nav-wizard">
-                            <li class="nav-item">
-                                <span :class="`nav-link ${tab===0?'active':''} fw-semi-bold`" >
-                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-users"></i></span></span>
-                                    <span class="d-none d-md-block mt-1 fs--1">Receiver</span>
-                                </span>
-                            </li>
-                            <li class="nav-item">
-                                <span :class="`nav-link ${tab===1?'active':''} fw-semi-bold`">
-                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-eye-slash"></i></span></span>
-                                    <span class="d-none d-md-block mt-1 fs--1">Privacy</span>
-                                </span>
-                            </li>
-                            <li class="nav-item">
-                                <span :class="`nav-link ${tab===2?'active':''}  fw-semi-bold`" >
-                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-dollar-sign"></i></span></span>
-                                    <span class="d-none d-md-block mt-1 fs--1">Fee</span>
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-body py-3">
-                        <div class="tab-content">
-                            <div :class="`tab-pane ${tab===0?'active':''} `">
 
-                                <tx-asset :assets="availableAssets" @changed="changedAsset" class="pb-4" />
+                <wizzard :titles="[
+                    {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
+                    {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' },
+                    {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' }]"
+                         @setTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card" >
 
-                                <destination-address :accounts="availableAccounts"
-                                                     :asset="asset.asset"
-                                                     @changed="changedDestination">
-                                </destination-address>
+                    <template slot="tab_0">
+                        <tx-asset :assets="availableAssets" @changed="changedAsset" class="pb-4" />
 
-                                <alert-box v-if="checkDestinationError" class="w-100" type="error">{{checkDestinationError}}</alert-box>
+                        <destination-address :accounts="availableAccounts"
+                                             :asset="asset.asset"
+                                             @changed="changedDestination">
+                        </destination-address>
 
-                                <extra-data :destinations="[destination]" class="pt-4"
-                                            :paymentId="identifiedPaymentID"
-                                            @changed="changedExtraData" />
+                        <alert-box v-if="checkDestinationError" class="w-100" type="error">{{checkDestinationError}}</alert-box>
 
+                        <extra-data :destinations="[destination]" class="pt-4"
+                                    :paymentId="identifiedPaymentID"
+                                    @changed="changedExtraData" />
+                    </template>
+
+                    <template slot="tab_1">
+                        <div class="row">
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Size</label>
+                                <i class="fa fa-question " v-tooltip.bottom="`Bigger the ring, more private is your transaction.`" />
+                                <select class="form-select" v-model="ringSize">
+                                    <option :value="2">2</option>
+                                    <option :value="4">4</option>
+                                    <option :value="8">8</option>
+                                    <option :value="16">16</option>
+                                    <option :value="32">32</option>
+                                    <option :value="64">64</option>
+                                    <option :value="128">128</option>
+                                    <option :value="256">256</option>
+                                </select>
                             </div>
-                            <div :class="`tab-pane ${tab===1?'active':''} `">
 
-                                <div class="row">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring New Addresses</label>
+                                <i class="fa fa-question " v-tooltip.bottom="`Number of new addresses in the ring. Makes new destinations more private.`" />
+                                <input class="form-control"  type="number" v-model="ringNewAddresses" />
+                            </div>
 
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Size</label>
-                                        <i class="fa fa-question " v-tooltip.bottom="`Bigger the ring, more private is your transaction.`" />
-                                        <select class="form-select" v-model="ringSize">
-                                            <option :value="2">2</option>
-                                            <option :value="4">4</option>
-                                            <option :value="8">8</option>
-                                            <option :value="16">16</option>
-                                            <option :value="32">32</option>
-                                            <option :value="64">64</option>
-                                            <option :value="128">128</option>
-                                            <option :value="256">256</option>
-                                        </select>
+                            <div class="col-12 pt-4">
+                                <loading-button text="Generate Ring" @submit="handleGenerateRing" icon="fa fa-cogs" />
+                            </div>
+
+                            <div class="col-12 pt-4">
+                                <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Members</label>
+                                <i class="fa fa-question " v-tooltip.bottom="`Preview of the Ring Members used for your private transaction.`" />
+                                <div class="pt-2">
+                                    <div v-for="(ringMember, index) in ringMembers" class="d-inline-block"
+                                         :key="`ring_member_${index}`">
+                                        <account-identicon :address="ringMember" size="21" outer-size="7" :disable-route="true" />
                                     </div>
-
-                                    <div class="col-12 col-md-6">
-                                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring New Addresses</label>
-                                        <i class="fa fa-question " v-tooltip.bottom="`Number of new addresses in the ring. Makes new destinations more private.`" />
-                                        <input class="form-control"  type="number" v-model="ringNewAddresses" />
-                                    </div>
-
-                                    <div class="col-12 pt-4">
-                                        <loading-button text="Generate Ring" @submit="handleGenerateRing" icon="fa fa-cogs" />
-                                    </div>
-
-                                    <div class="col-12 pt-4">
-                                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Members</label>
-                                        <i class="fa fa-question " v-tooltip.bottom="`Preview of the Ring Members used for your private transaction.`" />
-                                        <div class="pt-2">
-                                            <div v-for="(ringMember, index) in ringMembers" class="d-inline-block"
-                                                 :key="`ring_member_${index}`">
-                                                <account-identicon :address="ringMember" size="21" outer-size="7" :disable-route="true" />
-                                            </div>
-                                        </div>
-                                    </div>
-
                                 </div>
+                            </div>
 
-                            </div>
-                            <div :class="`tab-pane ${tab===2?'active':''} `">
-                                <tx-fee :accounts="availableAccounts" :asset="asset" :allow-zero="true" @changed="changedFee" />
-                            </div>
                         </div>
-                    </div>
-                    <div class="card-footer bg-light">
+                    </template>
 
-                        <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
+                    <template slot="tab_2">
+                        <tx-fee :accounts="availableAccounts" :asset="asset" :allow-zero="true" @changed="changedFee" />
+                    </template>
 
+                    <template slot="wizzard-footer">
                         <template v-if="status">
                             <span class="d-block">Transaction is being created. It will take 1-2 minutes.</span>
                             <label class="d-block">Status: {{status}}</label>
                         </template>
+                    </template>
 
-                        <div class="float-end">
-                            <loading-button v-if="tab > 0" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
-                            <loading-button :text="`${tab === maxTab ? 'Transfer Privately' : 'Next'}`" @submit="handleNext" :icon="`${ tab === maxTab ? 'fa fa-credit-card' : 'fas fa-chevron-right ms-2' }`"  />
-                        </div>
-                    </div>
-                </div>
+                </wizzard>
 
             </template>
 
@@ -122,13 +94,10 @@
             <loading-spinner class="fs-3" />
         </div>
 
-
     </layout>
 </template>
 
 <script>
-
-const {version} = PandoraPay.enums.wallet.address;
 
 import Layout from "src/components/layout/layout"
 import Account from "src/components/wallet/account/account"
@@ -139,22 +108,19 @@ import TxAmount from "src/components/send/tx-amount"
 import TxAsset from "src/components/send/tx-asset"
 import TxFee from "src/components/send/tx-fee"
 import ExtraData from "src/components/send/extra-data"
-import Vue from 'vue'
 import AlertBox from "src/components/utils/alert-box"
 import LayoutTitle from "src/components/layout/layout-title";
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
+import Wizzard from "src/components/utils/wizzard"
 
 export default {
 
     components: { LayoutTitle, Layout, Account, LoadingSpinner, LoadingButton, DestinationAddress, TxAmount,
-        ExtraData, AlertBox, TxFee, TxAsset, AccountIdenticon,
+        ExtraData, AlertBox, TxFee, TxAsset, AccountIdenticon, Wizzard,
     },
 
     data(){
         return {
-            tab: 0,
-            maxTab: 3,
-
             asset: { }, //contains asset.asset and asset.validation
             destination: {},
             fee: {  },
@@ -170,14 +136,12 @@ export default {
             ringNewAddresses: 2,
             ringMembers: [],
 
-            error: '',
             status: '',
         }
     },
 
     computed:{
 
-        version: () => version,
         address(){
             return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey] ;
         },
@@ -223,6 +187,9 @@ export default {
             return this.$store.getters.getAsset( this.asset ? this.asset.asset : null );
         },
 
+        buttons(){
+            return { 2: { icon: 'fa fa-credit-card', text: 'Transfer Privately' }}
+        }
     },
 
     watch: {
@@ -241,15 +208,11 @@ export default {
 
     methods:{
 
-        async setTab(resolver, value){
+        async setTab({resolve, reject, oldTab, value}){
+
             try{
 
-                this.error = ""
-
-                value = Math.max( value, 0)
-                value = Math.min( value, this.maxTab + 1)
-
-                if (this.tab === 0 && value === 1){
+                if (oldTab === 0 && value === 1){
                     if (this.asset.validationError) throw this.asset.validationError
                     if (this.checkDestinationError) throw this.checkDestinationError
                     if (this.destination.validationError) throw this.destination.validationError;
@@ -261,39 +224,26 @@ export default {
                         throw "Destination Address doesn't have the registration. \n You have the shorter version of the address. First time when an address is used it requires the longer version."
 
                 }
-                if (this.tab === 1 && value === 2){
+                if (oldTab === 1 && value === 2){
                     if (this.extraData.validationError) throw this.extraData.validationError
                     if (this.ringSize !== this.ringMembers.length) throw `Ring members are not generated well ${this.ringSize} vs ${this.ringMembers.length} `
                 }
-                if (this.tab === 2 && value === 3){
+                if (oldTab === 2 && value === 3){
                     if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
                     if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
 
                     await this.handleSendFunds()
                 }
 
-                this.tab = value
-
             }catch(err) {
-                this.error = err
-                console.error(err)
+                reject(err)
             }finally{
-                resolver()
+                resolve(true)
             }
-        },
-
-        handleBack(resolver){
-            return this.setTab(resolver, this.tab - 1)
-        },
-        handleNext(resolver){
-            return this.setTab(resolver, this.tab + 1)
         },
 
         changedDestination(data){
-            this.destination = {
-                ...this.destination,
-                ...data,
-            }
+            this.destination = { ...this.destination,  ...data, }
         },
 
         changedAsset(data){
@@ -401,7 +351,6 @@ export default {
             }finally{
                 resolver()
             }
-
 
         },
 

@@ -26,8 +26,11 @@
         </div>
         <div :class="controlsClassName">
             <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
-            <loading-button v-if="tab > 0" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
-            <loading-button v-if="tab < maxTab" :text="`${ buttons[tab] ? buttons[tab].text : 'Next'}`" @submit="handleNext" :icon="`${ buttons[tab] ? buttons[tab].icon : 'fas fa-chevron-right ms-2' }`"  />
+            <slot name="wizzard-footer" />
+            <div class="float-end">
+                <loading-button v-if="tab > 0" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
+                <loading-button v-if="tab < maxTab" :text="`${ buttons[tab] ? buttons[tab].text : 'Next'}`" @submit="handleNext" :icon="`${ buttons[tab] ? buttons[tab].icon : 'fas fa-chevron-right ms-2' }`"  />
+            </div>
         </div>
     </div>
 </template>

@@ -98,7 +98,7 @@ export default {
                 balanceEncoded: this.balance,
                 asset: this.asset,
             } )), (status)=>{
-                this.status = status
+                this.status = "Step2  "+status
             })
 
             this.cancelCallback = decodedData[1]
