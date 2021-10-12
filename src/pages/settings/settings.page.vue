@@ -26,7 +26,7 @@
                             <div class="col-12 col-sm-6">
                                 <label>Precomputed Table size: {{balanceDecoderTableSize}} <i class="fa fa-question" v-tooltip.bottom="'Balance Decoder Precomputed Init Table'" /> </label> <br/>
                                 <label>Scanner Performance: {{balanceDecoderPerformance[balanceDecoderTableSize]}}/s <i class="fa fa-question" v-tooltip.bottom="'Balance Decoder performance using this precomputed table'" /> </label>
-                                <input class="form-range" type="range" min="16" max="21" v-model="balanceDecoderTableSize" />
+                                <input class="form-range" type="range" min="16" max="22" v-model="balanceDecoderTableSize" />
                                 <small :class="`fw-semi-bold rounded-pill badge-soft-${balanceDecoderTableSize >= 20 ? 'danger' : 'warning'} p-1`">
                                     <i class="fa fa-exclamation-triangle" /> High will require {{formatMilliseconds( balanceDecoderTime[balanceDecoderTableSize] *1000 )}} initialize (bootstrap) time.
                                 </small>
@@ -67,19 +67,20 @@ export default {
             error: "",
             status: "",
             restart: false,
-            balanceDecoderTableSize: 20,
+            balanceDecoderTableSize: 18,
         }
     },
 
     computed:{
         balanceDecoderTime(){
             return {
-                16: 20,
-                17: 30,
-                18: 60,
-                19: 90,
-                20: 170,
-                21: 360,
+                16: 8,
+                17: 12,
+                18: 30,
+                19: 50,
+                20: 120,
+                21: 200,
+                22: 600,
             }
         },
         balanceDecoderPerformance(){
@@ -90,6 +91,7 @@ export default {
                 19: 1000,
                 20: 2000,
                 21: 4000,
+                22: 8500,
             }
         }
     },

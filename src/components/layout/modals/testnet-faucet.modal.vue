@@ -14,7 +14,7 @@
                     <loading-spinner />
                 </template>
                 <template v-else>
-                    <vue-hcaptcha :sitekey="hCaptchaSiteKey" @verify="handleCaptchaToken" :theme="`${$store.state.page.dark ? 'dark' : 'light'}`" />
+                    <vue-hcaptcha :sitekey="hCaptchaSiteKey" @verify="handleCaptchaToken" :theme="`${$store.state.settings.dark ? 'dark' : 'light'}`" />
                 </template>
             </div>
         </template>

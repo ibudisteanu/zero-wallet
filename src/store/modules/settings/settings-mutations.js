@@ -20,7 +20,7 @@ export default {
 
     readLocalStorage(state){
         state.dark = ( localStorage.getItem('dark') || 'false' ) === 'true'
-        state.balanceDecoderTableSize = Number.parseInt( localStorage.getItem('balanceDecoderTableSize') || '16' )
+        state.balanceDecoderTableSize = Number.parseInt( localStorage.getItem('balanceDecoderTableSize') || '18' )
     },
 
 }

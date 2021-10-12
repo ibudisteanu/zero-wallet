@@ -4,7 +4,7 @@ export default {
 
     state: {
         dark: true,
-        balanceDecoderTableSize: 16,
+        balanceDecoderTableSize: 18,
     },
 
     mutations,

@@ -17,7 +17,7 @@
       <ul class="navbar-nav navbar-nav-icons flex-row align-items-center">
 
          <li class="nav-item" v-tooltip.bottom="`Switch theme`">
-            <i :class="`fa fa-${$store.state.page.dark ?'sun':'moon'} nav-item-icon pointer`" @click="handleToggleDark"></i>
+            <i :class="`fa fa-${$store.state.settings.dark ?'sun':'moon'} nav-item-icon pointer`" @click="handleToggleDark"></i>
          </li>
 
          <li class="nav-item pointer unselectable" v-tooltip.bottom="`${showNetworksMenu ? '' :'Select network'}`" @click="handleToggleNetworksMenu" v-on-clickaway="closeNetworksMenu">
@@ -72,7 +72,7 @@ export default {
    methods: {
 
       handleToggleDark(){
-         this.$store.commit('setDark', !this.$store.state.page.dark)
+         this.$store.commit('setDark', !this.$store.state.settings.dark)
       },
       handleToggleLeftSidebar(e){
          this.$store.commit('setLeftSidebarShow', !this.$store.state.page.leftSidebarShow)
