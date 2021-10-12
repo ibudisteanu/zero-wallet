@@ -9,7 +9,7 @@
                 {icon: 'fas fa-wallet', name: 'Account', tooltip: 'Preview account' },
                 {icon: 'fas fa-lock', name: 'Decrypt', tooltip: 'Decrypt file' },
                 {icon: 'fas fa-check', name: 'Done', tooltip: 'Finish importing account' }]"
-                     @setTab="setTab" controls-class-name="modal-footer bg-light" >
+                     @setTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
                 <template slot="tab_0">
                     <div>
@@ -67,6 +67,12 @@ export default {
         isAddressEncrypted(){
             return false;
         },
+
+        buttons(){
+            return { 1: {
+                icon: 'fa fa-file-upload', text: 'Import Account'
+            }}
+        }
 
     },
 

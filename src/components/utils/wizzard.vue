@@ -27,7 +27,7 @@
         <div :class="controlsClassName">
             <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
             <loading-button v-if="tab > 0" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
-            <loading-button v-if="tab < maxTab" :text="`${tab === maxTab-1 ? 'Generate address' : 'Next'}`" @submit="handleNext" :icon="`${ tab === maxTab-1 ? 'fa fa-cogs' : 'fas fa-chevron-right ms-2' }`"  />
+            <loading-button v-if="tab < maxTab" :text="`${ buttons[tab] ? buttons[tab].text : 'Next'}`" @submit="handleNext" :icon="`${ buttons[tab] ? buttons[tab].icon : 'fas fa-chevron-right ms-2' }`"  />
         </div>
     </div>
 </template>
@@ -52,6 +52,7 @@ export default {
     props:{
         titles: {default: () => []}, //{icon, name}
         controlsClassName: {default: ""},
+        buttons: {default: () => ({}) }, //{icon, text}
     },
 
     methods: {

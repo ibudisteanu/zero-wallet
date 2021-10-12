@@ -9,7 +9,7 @@
                 {icon: 'fas fa-hand-holding-usd', name: 'Payment ID', tooltip: 'Include a Payment ID' },
                 {icon: 'fas fa-signature', name: 'Registration', tooltip: 'Include Registration Signature' },
                 {icon: 'fas fa-check', name: 'Done', tooltip: 'Generated Address' }]"
-                @setTab="setTab" controls-class-name="modal-footer bg-light" >
+                @setTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
                 <template slot="tab_0">
                     <div class="form-check">
@@ -119,7 +119,13 @@ export default {
             }catch(err){
                 return err.toString()
             }
-        }
+        },
+
+        buttons(){
+            return { 2: {
+                icon: 'fa fa-cogs', text: 'Generate Address'
+            }}
+        },
 
     },
 
