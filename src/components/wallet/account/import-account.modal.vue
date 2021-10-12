@@ -220,11 +220,6 @@ export default {
 
 <style scoped>
 
-
-    .btn{
-        display: inline-block;
-    }
-
     .address{
         display: grid;
         grid-template-columns: 60px 1fr;
