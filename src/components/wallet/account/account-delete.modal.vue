@@ -10,7 +10,7 @@
         </template>
 
         <template slot="footer">
-            <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
+            <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="6000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
             <button class="btn btn-falcon-danger" type="button" @click="handleDelete">
                 <i class="fa fa-times"></i> Yes, Delete account

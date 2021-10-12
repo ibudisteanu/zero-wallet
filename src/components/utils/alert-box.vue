@@ -12,6 +12,8 @@ export default {
 
     props: {
         type: {default: "error"},
+        dismissibleTimeout: {default: 0},
+        dismissibleText: {default: false}
     },
 
     computed:{
@@ -31,6 +33,16 @@ export default {
             return ""
         }
     },
+
+    watch:{
+        dismissibleText: {
+            immediate: true,
+            handler: function (to, from) {
+                if (to === from) return
+                setTimeout(()=> this.$emit('onDismissible'), this.dismissibleTimeout )
+            }
+        }
+    }
 
 }
 </script>
