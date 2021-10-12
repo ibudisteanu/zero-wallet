@@ -12,15 +12,32 @@
 
                 <template slot="tab_0">
                     <div class="form pb-2">
-                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Public Key:</label>
-                        <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
-                        <input class="form-control" type="text" v-model="newDelegatedStakePublicKey" >
+                        <tx-amount :validate-amount="true" :allow-zero="true" :accounts="accountsOnlyClaimable" @changed="updateStakingAmountChanged" text="Update Staking Amount" asset="" tooltip="Convert claimable amount to staking amount." />
                     </div>
-                    <div class="form pb-2">
-                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Fee:</label>
-                        <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
-                        <input class="form-control" type="number" v-model="newDelegatedStakeFee" min="0" max="65535" >
-                        <label>in Percentage: {{newDelegatedStakeFee/65535*100}}%</label>
+                    <div class="form-group pt-4">
+                        <input class="form-check-input" id="set-new-delegated-info" type="checkbox"  name="checkbox" v-model="hasNewDelegatedInfo"  >
+                        <label class="form-check-label" for="set-new-delegated-info" >Set new Delegated Info</label>
+                    </div>
+
+                    <div v-if="hasNewDelegatedInfo" class="pt-2 ms-2">
+
+                        <div class="form-group pt-2">
+                            <input class="form-check-input" id="auto-generate-public-key-hash" type="checkbox" v-model="delegateNewPublicKeyGenerate"  :disabled="disableChanges" >
+                            <label class="form-check-label" for="auto-generate-public-key-hash" > Auto Generate Public Key Hash </label>
+                        </div>
+
+                        <div class="form pb-2" v-if="!delegateNewPublicKeyGenerate">
+                            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Public Key:</label>
+                            <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
+                            <input :class="`form-control ${validationNewDelegatedStakePublicKey ? 'is-invalid' : ''}`" type="text" v-model="newDelegatedStakePublicKey"  :disabled="disableChanges" >
+                            <div v-if="validationNewDelegatedStakePublicKey" class="invalid-feedback d-block">{{validationNewDelegatedStakePublicKey}}</div>
+                        </div>
+                        <div class="form pb-2">
+                            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Fee:</label>
+                            <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
+                            <input class="form-control" type="number" v-model="newDelegatedStakeFee" min="0" max="65535" :disabled="disableChanges" >
+                            <label>in Percentage: {{newDelegatedStakeFee/65535*100}}%</label>
+                        </div>
                     </div>
                 </template>
 
@@ -29,7 +46,7 @@
                 </template>
 
                 <template slot="tab_2">
-                    <tx-fee :balances="balances" :allow-zero="true" @changed="changedFee" :asset="''" />
+                    <tx-fee :balances="balancesStakeAvailable" :allow-zero="true" @changed="changedFee" :asset="''" />
                 </template>
 
             </wizzard>
@@ -46,9 +63,11 @@ import Modal from "src/components/utils/modal"
 import AlertBox from "src/components/utils/alert-box"
 import ExtraData from "src/components/send/extra-data"
 import Wizzard from "src/components/utils/wizzard"
+import TxAmount from "src/components/send/tx-amount"
+
 export default {
 
-    components: {TxFee, Modal, AlertBox, ExtraData, Wizzard},
+    components: {TxFee, Modal, AlertBox, ExtraData, Wizzard, TxAmount},
 
     data(){
         return {
@@ -57,7 +76,13 @@ export default {
             fee: {},
             extraData: { },
 
-            newDelegatedStakePublicKey: 0,
+            updateStakingAmount: {},
+
+            hasNewDelegatedInfo: false,
+            delegateNewPublicKeyGenerate: false,
+            disableChanges: false,
+
+            newDelegatedStakePublicKey: "",
             newDelegatedStakeFee: 0,
 
             status: '',
@@ -77,15 +102,26 @@ export default {
         isFound(){
             return this.account !== null
         },
-        balances(){
-            return this.account && this.account.accounts ? this.account.accounts : [];
-        },
         balancesStakeAvailable(){
-            return (this.account && this.account.delegatedStake) ? [{ amount: this.account.delegatedStake.stakeAvailable, asset: ""}] : [{ amount: 0, asset: ""}]
+            return (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ? [{ amount: this.account.plainAccount.delegatedStake.stakeAvailable, asset: ""}] : [{ amount: 0, asset: ""}]
+        },
+        accountsOnlyClaimable(){
+            return (this.account && this.account.plainAccount ) ? [{amount: this.account.plainAccount.claimable, asset: "" }] : [{ amount: 0, asset: ""}]
         },
         buttons(){
-            return { 2: { icon: 'fa fa-unlink', text: 'Unstake now' }}
-        }
+            return { 2: { icon: 'fa fa-unlink', text: 'Update delegate' }}
+        },
+        validationNewDelegatedStakePublicKey(){
+
+            if (this.delegateNewPublicKeyGenerate || !this.hasNewDelegatedInfo) return
+
+            try{
+                const buffer = Buffer.from(this.newDelegatedStakePublicKey, "hex")
+                if (buffer.length !== 33) return "It must be 66 hex"
+            }catch(err){
+                return "Invalid Hex input"
+            }
+        },
     },
 
     methods:{
@@ -94,7 +130,8 @@ export default {
             try{
 
                 if (oldTab === 0 && value === 1){
-
+                    if (this.updateStakingAmount.validationError) throw this.updateStakingAmount.validationError
+                    if (this.validationNewDelegatedStakePublicKey) throw this.validationNewDelegatedStakePublicKey
                 }
 
                 if (oldTab === 1 && value === 2)
@@ -104,7 +141,7 @@ export default {
                     if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
                     if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
 
-                    await this.handleUnstake()
+                    await this.handleUpdateDelegate()
                 }
 
             }catch(err) {
@@ -113,7 +150,9 @@ export default {
                 resolve(true)
             }
         },
-
+        updateStakingAmountChanged(data){
+            this.updateStakingAmount = {...this.updateStakingAmount, ...data}
+        },
         changedExtraData(data){
             this.extraData = { ...this.extraData,  ...data, }
         },
@@ -121,9 +160,16 @@ export default {
             this.fee = { ...this.fee, ...data }
         },
 
-        showModal( publicKey ) {
+        showModal( publicKey, data ) {
             Object.assign(this.$data, this.$options.data());
             this.publicKey = publicKey;
+            if (data && data.delegatePublicKey){
+                this.hasNewDelegatedInfo = true
+                this.delegateNewPublicKeyGenerate = false
+                this.newDelegatedStakePublicKey = data.delegatePublicKey
+                this.newDelegatedStakeFee = data.delegatesFee
+                this.disableChanges = true
+            }
             return this.$refs.modal.showModal();
         },
 
@@ -131,16 +177,20 @@ export default {
             return this.$refs.modal.closeModal();
         },
 
-        async handleUnstake(){
+        async handleUpdateDelegate(){
 
             this.status = '';
 
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const out = await PandoraPay.transactions.builder.createUnstakeTx_Float( JSON.stringify({
+            const out = await PandoraPay.transactions.builder.createUpdateDelegateTx_Float( JSON.stringify({
                 from: this.address.addressEncoded,
                 nonce: 0,
+                delegateNewPublicKeyGenerate: this.hasNewDelegatedInfo ? this.delegateNewPublicKeyGenerate : false,
+                delegateNewPubKey: this.hasNewDelegatedInfo ? (this.newDelegatedStakePublicKey ? this.newDelegatedStakePublicKey : "") : "",
+                delegateNewFee: this.hasNewDelegatedInfo ? this.newDelegatedStakeFee : "",
+                updateStakingAmount: this.updateStakingAmount.amount,
                 data: {
                     data: Buffer.from(this.extraData.data).toString("hex"),
                     encrypt: this.extraData.type === "encrypted",

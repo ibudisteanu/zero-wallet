@@ -23,21 +23,23 @@
                     </div>
                     <div class="card-body border-bottom border-200">
 
-                        <span class="d-block">Your balance: <strong>{{balance}}</strong></span>
-                        <span v-if="balance < minimumForStaking" class="text-danger d-block"> Minimum balance required for Staking {{minimumForStaking}}</span>
-
                         <template v-if="!isDelegated" >
-                            <span class="d-block pt-4">Delegated: <strong>NO</strong> </span>
+                            <span class="d-block">Delegated: <strong>NO</strong> </span>
                         </template>
                         <template v-else>
-                            <span class="d-block pt-4">Delegated: <strong>YES</strong> </span>
-                            <span class="d-block">Delegated public key {{account.plainAccount.delegatedStake.delegatedStakePublicKey}}</span>
-                            <span class="d-block">Delegated fee {{delegateFeePercentage}} %</span>
+                            <span class="d-block">Delegated: <strong>YES</strong> </span>
+                            <span class="d-block">Delegated Stake Public Key {{account.plainAccount.delegatedStake.delegatedStakePublicKey}}</span>
+                            <span class="d-block">Delegated Stake Fee {{delegateFeePercentage}} %</span>
                         </template>
+
+                        <div class="pt-4">
+                            <span class="fw-bold fs-0">Claimable</span>
+                            <balance :key="`delegated-balance`"  :balance="account.plainAccount.claimable" asset=""></balance>
+                        </div>
 
                         <template v-if="delegatedStake">
 
-                            <div class=" pt-4">
+                            <div class="pt-4">
                                 <span class="fw-bold fs-0">Delegated Stake</span>
                                 <balance :key="`delegated-balance`"  :balance="delegatedStake.stakeAvailable" asset=""></balance>
                                 <span v-if="delegatedStake.stakeAvailable < minimumForStaking" class="text-danger d-block"> Minimum balance required for Staking {{minimumForStaking}}</span>
@@ -62,20 +64,20 @@
                         </div>
                         <div v-else >
 
-                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowDelegateStakeNode" v-tooltip.bottom="'Delegate your Stake to a Node'" >
-                                <i class="fa fa-laptop-code " />
+<!--                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowDelegateStake" v-tooltip.bottom="'Manual Delegating your stake'" >-->
+<!--                                <i class="fa fa-link " />-->
+<!--                            </button>-->
+
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowUpdateDelegate" v-tooltip.bottom="'Update Delegated Stake'" :disabled="!isDelegated" >
+                                <i class="fa fa-marker " />
                             </button>
 
-                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowDelegateStake" v-tooltip.bottom="'Manual Delegating your stake'" >
-                                <i class="fa fa-link " />
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowUpdateDelegateStakeNode" v-tooltip.bottom="'Update Delegated Stake to a Node'" :disabled="!isDelegated" >
+                                <i class="fa fa-laptop-code " />
                             </button>
 
                             <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowUnstake" v-tooltip.bottom="'Unstaking'" :disabled="!isDelegated" >
                                 <i class="fa fa-unlink text-danger " />
-                            </button>
-
-                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowUpdateDelegate" v-tooltip.bottom="'Update Delegated Stake'" :disabled="!isDelegated" >
-                                <i class="fa fa-marker " />
                             </button>
 
                         </div>
@@ -84,10 +86,10 @@
                 </div>
 
                 <delegate-stake-modal ref="refDelegateStakeModal" />
-                <delegate-stake-node-modal ref="refDelegateStakeNodeModal" @onDelegateStake="onDelegateStake" />
 
                 <unstake-modal ref="refUnstakeModal" />
                 <update-delegate-modal ref="refUpdateDelegateModal" />
+                <update-delegate-stake-node-modal ref="refUpdateDelegateStakeNodeModal" @onDelegateStake="onDelegateStake" />
 
             </div>
 
@@ -108,10 +110,9 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
 import Account from "src/components/wallet/account/account"
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import DelegateStakeModal from "src/components/staking/delegate-stake.modal"
 import UnstakeModal from "src/components/staking/unstake.modal"
 import UpdateDelegateModal from "src/components/staking/update-delegate.modal"
-import DelegateStakeNodeModal from "src/components/staking/delegate-stake-node.modal"
+import UpdateDelegateStakeNodeModal from "src/components/staking/update-delegate-stake-node.modal"
 import StringHelper from "../../utils/string-helper";
 import Balance from "src/components/wallet/balance/balance"
 import DelegatedStakePending from "src/components/wallet/balance/delegated-stake-pending"
@@ -119,8 +120,8 @@ import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {AccountIdenticon, Layout, Account, LoadingSpinner, DelegateStakeModal, UnstakeModal,
-        DelegateStakeNodeModal, LayoutTitle, DelegatedStakePending, Balance, AlertBox, UpdateDelegateModal},
+    components: {AccountIdenticon, Layout, Account, LoadingSpinner, UnstakeModal,
+        UpdateDelegateStakeNodeModal, LayoutTitle, DelegatedStakePending, Balance, AlertBox, UpdateDelegateModal},
 
     data() {
         return {
@@ -181,52 +182,28 @@ export default {
     },
 
     asyncComputed:{
-
-        async balance(){
-
-            const balances = { "": { amount: 0 } }
-
-            if (this.account)
-                for (const balance of this.account.accounts)
-                    balances[balance.asset] = { amount: balance.amount }
-
-            const amount = balances[""].amount || 0;
-            return StringHelper.formatMoney( await PandoraPay.config.coins.convertToBase( amount.toString() ), PandoraPay.config.coins.DECIMAL_SEPARATOR)
-        },
-
         async minimumForStaking(){
             const minimum = await PandoraPay.config.stake.getRequiredStake( this.$store.state.blockchain.end.toString() )
             return StringHelper.formatMoney( await PandoraPay.config.coins.convertToBase( minimum ), PandoraPay.config.coins.DECIMAL_SEPARATOR )
         },
-
     },
 
     methods:{
-
-        handleShowDelegateStake(data){
-            if (!this.balance)
-                return this.$store.dispatch('addToast', {
-                    type: 'warning',
-                    title: `Can't delegate`,
-                    text: `You can't delegate as your wallet is empty`,
-                })
-            return this.$refs.refDelegateStakeModal.showModal( this.publicKey, data );
-        },
 
         handleShowUnstake(){
             return this.$refs.refUnstakeModal.showModal( this.publicKey );
         },
 
-        handleShowDelegateStakeNode(){
-            return this.$refs.refDelegateStakeNodeModal.showModal( this.publicKey );
+        handleShowUpdateDelegateStakeNode(){
+            return this.$refs.refUpdateDelegateStakeNodeModal.showModal( this.publicKey );
         },
 
-        handleShowUpdateDelegate(){
-            return this.$refs.refUpdateDelegateModal.showModal(this.publicKey)
+        handleShowUpdateDelegate(data){
+            return this.$refs.refUpdateDelegateModal.showModal(this.publicKey, data)
         },
 
         onDelegateStake(data){
-            return this.handleShowDelegateStake(data)
+            return this.handleShowUpdateDelegate(data)
         },
 
     },

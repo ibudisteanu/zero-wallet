@@ -2,6 +2,7 @@
     <div class="row">
         <div class="col-12">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{text}}</label>
+            <i v-if="tooltip" class="fa fa-question" v-tooltip.bottom="tooltip" />
             <input :class="`form-control ${validationAmountError ? 'is-invalid' :''}`" type="number" v-model.number="amount" min="0" :step="getSteps" :disabled="disabled">
             <div v-if="validationAmountError" class="invalid-feedback d-block">{{validationAmountError}}</div>
         </div>
@@ -19,9 +20,11 @@ export default {
 
     props:{
         text: {default: 'Amount'},
+        tooltip: {default: ''},
         asset: {default: ""},
         accounts: {default: null },
         allowZero: {default: false,},
+        validateAmount: {default: false },
         disabled: {default: false},
     },
 
@@ -39,6 +42,11 @@ export default {
         async validationAmountError(){
             if ( !this.allowZero && Number.parseFloat(this.amount) === 0) return "Amount needs to be greater than 0"
             if (this.amount === Number.NaN || this.amount < 0) return "Amount can not be negative"
+            if (this.validateAmount){
+                for (const value of this.accounts)
+                    if ( value.asset === this.asset && this.amount * Math.pow(10, this.assetInfo.decimalSeparator) >  value.amount)
+                         return "Amount is higher than available funds"
+            }
         },
         async validationError(){
             if (await this.validationAmountError) return await this.validationAmountError
