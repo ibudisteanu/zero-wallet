@@ -84,7 +84,6 @@
 <script>
 import consts from "consts/consts"
 import Modal from "src/components/utils/modal"
-import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button"
 import StepsBar from "src/components/utils/steps-bar"
 import HttpHelper from "src/utils/http-helper"
@@ -92,7 +91,7 @@ import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {Modal, PasswordInput, LoadingButton, StepsBar, AlertBox},
+    components: {Modal, LoadingButton, StepsBar, AlertBox},
 
     data() {
         return {

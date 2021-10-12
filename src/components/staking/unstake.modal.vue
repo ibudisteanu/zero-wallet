@@ -9,59 +9,27 @@
             </alert-box>
             <template v-else>
 
-                <div class="card theme-wizard">
-                    <div class="card-header bg-light py-3">
-                        <ul class="nav justify-content-between nav-wizard">
-                            <li class="nav-item">
-                                <span :class="`nav-link ${tab===0?'active':''} fw-semi-bold`">
-                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-users"></i></span></span>
-                                    <span class="d-none d-md-block mt-1 fs--1">Amount</span>
-                                </span>
-                            </li>
-                            <li class="nav-item">
-                                <span :class="`nav-link ${tab===1?'active':''} fw-semi-bold`">
-                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-pen"></i></span></span>
-                                    <span class="d-none d-md-block mt-1 fs--1">Extra Info</span>
-                                </span>
-                            </li>
-                            <li class="nav-item">
-                                <span :class="`nav-link ${tab===2?'active':''} fw-semi-bold`">
-                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-dollar-sign"></i></span></span>
-                                    <span class="d-none d-md-block mt-1 fs--1">Fee</span>
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-body py-3">
-                        <div class="tab-content">
-                            <div :class="`tab-pane ${tab===0?'active':''} `">
-                                <tx-amount :allow-zero="true" :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" :asset="''" />
-                            </div>
-                            <div :class="`tab-pane ${tab===1?'active':''} `">
-                                <extra-data @changed="changedExtraData" />
-                            </div>
-                            <div :class="`tab-pane ${tab===2?'active':''} `">
-                                <tx-fee :balances="balances" :allow-zero="true" @changed="changedFee" :asset="''" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <wizzard :titles="[
+                    {icon: 'fas fa-edit', name: 'Amount', tooltip: 'Unstaking amount' },
+                    {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
+                    {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' }]"
+                         @setTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
+
+                    <template slot="tab_0">
+                        <tx-amount :allow-zero="true" :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" :asset="''" />
+                    </template>
+
+                    <template slot="tab_1">
+                        <extra-data @changed="changedExtraData" />
+                    </template>
+
+                    <template slot="tab_2">
+                        <tx-fee :balances="balances" :allow-zero="true" @changed="changedFee" :asset="''" />
+                    </template>
+
+                </wizzard>
 
             </template>
-
-        </template>
-        <template slot="footer">
-
-            <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
-
-            <div v-if="status" class="py-2">
-                <label>{{status}}</label>
-            </div>
-
-            <div class="float-end">
-                <loading-button v-if="tab > 0" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
-                <loading-button :text="`${tab === maxTab ? 'Unstake' : 'Next'}`" @submit="handleNext" :icon="`${ tab === maxTab ? 'fa fa-unlink' : 'fas fa-chevron-right ms-2' }`"  />
-            </div>
 
         </template>
 
@@ -71,42 +39,28 @@
 
 <script>
 import TxFee from "../send/tx-fee";
-const {version} = PandoraPay.enums.wallet.address;
 import Modal from "src/components/utils/modal"
-import PasswordInput from "src/components/utils/password-input";
-import LoadingButton from "src/components/utils/loading-button"
 import AlertBox from "src/components/utils/alert-box"
 import TxAmount from "src/components/send/tx-amount"
 import ExtraData from "src/components/send/extra-data"
-
+import Wizzard from "src/components/utils/wizzard"
 export default {
 
-    components: {TxFee, Modal, PasswordInput, LoadingButton, AlertBox, ExtraData, TxAmount},
-
+    components: {TxFee, Modal, AlertBox, ExtraData, TxAmount, Wizzard},
 
     data(){
         return {
-
             publicKey: "",
-
-            tab: 0,
-            maxTab: 2,
-
             unstakeAmount: {},
 
             fee: {},
             extraData: { },
 
-            error: '',
             status: '',
         }
     },
 
-    props:{
-    },
-
     computed:{
-        version: () => version,
         address(){
             return this.$store.state.wallet.addresses[this.publicKey];
         },
@@ -125,53 +79,38 @@ export default {
         balancesStakeAvailable(){
             return (this.account && this.account.delegatedStake) ? [{ amount: this.account.delegatedStake.stakeAvailable, asset: ""}] : [{ amount: 0, asset: ""}]
         },
+        buttons(){
+            return { 2: { icon: 'fa fa-unlink', text: 'Unstake now' }}
+        }
     },
 
     methods:{
 
-        async setTab(resolver, value){
+        async setTab({resolve, reject, oldTab, value}){
             try{
 
-                value = Math.max( value, 0)
-                value = Math.min( value, this.maxTab + 1)
-
-                if (this.tab === 0 && value === 1){
+                if (oldTab === 0 && value === 1)
                     if (this.unstakeAmount.validationError) throw this.unstakeAmount.validationError
-                }
-                if (this.tab === 1 && value === 2){
+
+                if (oldTab === 1 && value === 2)
                     if (this.extraData.validationError) throw this.extraData.validationError
-                }
-                if (this.tab === 2 && value === 3){
+
+                if (oldTab === 2 && value === 3){
                     if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
                     if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
 
                     await this.handleUnstake()
                 }
 
-                this.tab = value
             }catch(err) {
-                console.error(err)
+                reject(err)
             }finally{
-                resolver()
+                resolve(true)
             }
-        },
-
-        handleBack(resolver){
-            return this.setTab(resolver, this.tab - 1)
-        },
-        handleNext(resolver){
-            return this.setTab(resolver, this.tab + 1)
         },
 
         amountChanged(data){
             this.unstakeAmount = {...this.unstakeAmount, ...data}
-        },
-
-        changedFeeManual(data){
-            this.feeManual = { ...this.feeManual,  ...data, }
-        },
-        changedFeeAuto(data){
-            this.feeAuto = { ...this.feeAuto,  ...data, }
         },
         changedExtraData(data){
             this.extraData = { ...this.extraData,  ...data, }
@@ -192,54 +131,48 @@ export default {
 
         async handleUnstake(){
 
-            try {
+            this.status = '';
 
-                this.error = '';
-                this.status = '';
+            const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+            if (password === null ) return
 
-                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
-                if (password === null ) return
+            const out = await PandoraPay.transactions.builder.createUnstakeTx_Float( JSON.stringify({
+                from: this.address.addressEncoded,
+                nonce: 0,
+                unstakeAmount: this.unstakeAmount.amount,
+                data: {
+                    data: Buffer.from(this.extraData.data).toString("hex"),
+                    encrypt: this.extraData.type === "encrypted",
+                    publicKeyToEncrypt: this.extraData.publicKeyToEncrypt,
+                },
+                fee: {
+                    fixed: (this.fee.feeType === 'feeAuto') ? 0 : this.fee.feeManual.amount,
+                    perByte: 0,
+                    perByteAuto: this.fee.feeType === 'feeAuto',
+                },
+                propagateTx: true,
+                awaitAnswer: false,
+            }), (status) => {
+                this.status = status
+            }, password);
 
-                const out = await PandoraPay.transactions.builder.createUnstakeTx_Float( JSON.stringify({
-                    from: this.address.addressEncoded,
-                    nonce: 0,
-                    unstakeAmount: this.unstakeAmount.amount,
-                    data: {
-                        data: Buffer.from(this.extraData.data).toString("hex"),
-                        encrypt: this.extraData.type === "encrypted",
-                        publicKeyToEncrypt: this.extraData.publicKeyToEncrypt,
-                    },
-                    fee: {
-                        fixed: (this.fee.feeType === 'feeAuto') ? 0 : this.fee.feeManual.amount,
-                        perByte: 0,
-                        perByteAuto: this.fee.feeType === 'feeAuto',
-                    },
-                    propagateTx: true,
-                    awaitAnswer: false,
-                }), (status) => {
-                    this.status = status
-                }, password);
+            if (!out) throw "Transaction couldn't be made";
+            this.status = ''
 
-                if (!out) throw "Transaction couldn't be made";
-                this.status = ''
+            const tx = JSON.parse( MyTextDecode(out) )
 
-                const tx = JSON.parse( MyTextDecode(out) )
+            await this.$store.dispatch('includeTx', {tx } )
 
-                await this.$store.dispatch('includeTx', {tx } )
+            await this.$store.dispatch('addToast', {
+                type: 'success',
+                title: `Unstake Transaction created`,
+                text: `Unstake Transaction has been made. \n TxId ${tx.hash}`,
+            });
 
-                await this.$store.dispatch('addToast', {
-                    type: 'success',
-                    title: `Unstake Transaction created`,
-                    text: `Unstake Transaction has been made. \n TxId ${tx.hash}`,
-                });
+            this.$router.push(`/explorer/tx/${tx.hash}`);
 
-                this.$router.push(`/explorer/tx/${tx.hash}`);
+            this.closeModal();
 
-                this.closeModal();
-
-            }catch(err){
-                this.error = err.message;
-            }
         }
 
     },

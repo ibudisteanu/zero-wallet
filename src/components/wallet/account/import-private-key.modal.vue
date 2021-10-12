@@ -31,13 +31,12 @@
 <script>
 
 import Modal from "src/components/utils/modal"
-import PasswordInput from "src/components/utils/password-input";
 import UtilsHelper from "src/utils/utils-helper";
 import Wizzard from "src/components/utils/wizzard"
 
 export default {
 
-    components: {PasswordInput, Modal, Wizzard },
+    components: { Modal, Wizzard },
 
     data(){
         return {
@@ -48,9 +47,7 @@ export default {
 
     computed:{
         buttons(){
-            return { 1: {
-                icon: 'fa fa-file-upload', text: 'Import Account'
-            }}
+            return { 1: { icon: 'fa fa-file-upload', text: 'Import Account' }}
         }
     },
 

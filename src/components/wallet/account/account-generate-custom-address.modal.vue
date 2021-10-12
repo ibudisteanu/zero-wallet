@@ -122,9 +122,7 @@ export default {
         },
 
         buttons(){
-            return { 2: {
-                icon: 'fa fa-cogs', text: 'Generate Address'
-            }}
+            return { 2: { icon: 'fa fa-cogs', text: 'Generate Address' }}
         },
 
     },

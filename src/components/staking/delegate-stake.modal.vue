@@ -114,7 +114,6 @@ import TxFee from "../send/tx-fee";
 const {version} = PandoraPay.enums.wallet.address;
 
 import Modal from "src/components/utils/modal"
-import PasswordInput from "src/components/utils/password-input";
 import LoadingButton from "src/components/utils/loading-button"
 import AlertBox from "src/components/utils/alert-box"
 import TxAmount from "src/components/send/tx-amount"
@@ -122,7 +121,7 @@ import ExtraData from "src/components/send/extra-data"
 
 export default {
 
-    components: {TxFee, Modal, PasswordInput, LoadingButton, AlertBox, TxAmount, ExtraData},
+    components: {TxFee, Modal, LoadingButton, AlertBox, TxAmount, ExtraData},
 
 
     data(){
