@@ -103,6 +103,14 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
+                        <router-link :class="`nav-link ${route.indexOf('/settings') === 0 ? 'active' : ''} nav-link`" to="/settings" @click.native="disableNavbarMenu">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-wrench"></i>
+                                <span class="nav-link-text ps-1">Settings</span>
+                            </div>
+                        </router-link>
+                    </li>
+                    <li class="nav-item">
                         <div class="d-flex align-items-center">
                             <router-link to="#" class="nav-link" @click.native="e => toggleNavElement(e,'kad')">
                                 <i class="fa fa-globe-americas"></i>

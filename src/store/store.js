@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import WalletStore from "./modules/wallet/wallet-store"
+import PageSettings from "./modules/settings/settings-store"
 import AddressesStore from "./modules/addresses/addresses-store"
 import AccountsStore from "./modules/accounts/accounts-store"
 import AccountsTxsStore from "./modules/accounts-txs/accounts-txs-store"
@@ -26,12 +27,14 @@ const store = new Vuex.Store({
 
     modules: {
 
+        page: PageStore,
+        settings: PageSettings,
+
         wallet: WalletStore,
 
         blockchain: BlockchainStore,
         blocks: BlocksStore,
         blocksInfo: BlocksInfoStore,
-        page: PageStore,
         transactions: TransactionsStore,
         transactionsInfo: TransactionsInfoStore,
         transactionsPreview: TransactionsPreviewStore,

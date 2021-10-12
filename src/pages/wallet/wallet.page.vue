@@ -54,7 +54,7 @@
                         <i class="fa fa-eye"></i>
                     </button>
 
-                    <router-link to="/staking" v-if="address.version === version.VERSION_TRANSPARENT">
+                    <router-link to="/staking">
                         <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" v-tooltip.bottom="'Delegate stake'">
                             <i class="fa fa-piggy-bank"></i>
                         </button>
@@ -82,7 +82,6 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title";
 import Account from "src/components/wallet/account/account"
 import AccountDeleteModal from "src/components/wallet/account/account-delete.modal"
-const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 
@@ -97,13 +96,9 @@ export default {
 
 
     computed:{
-
-        version: () => version,
-
         address(){
             return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey];
         }
-
     },
 
 

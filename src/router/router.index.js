@@ -15,6 +15,7 @@ import TransactionExplorerPage from "src/pages/explorer/transaction-explorer.pag
 import AssetExplorerPage from "src/pages/explorer/asset-explorer.page"
 import MemPoolExplorerPage from "src/pages/explorer/mem-pool-explorer.page"
 import AssetsPage from "src/pages/assets/assets.page"
+import SettingsPage from "src/pages/settings/settings.page"
 import NotFoundPage from "src/pages/not-found/not-found.page"
 
 import KadPage from "src/pages/kad/kad.page"
@@ -63,6 +64,8 @@ const routes = [
     {path: '/staking', component: StakingPage, beforeEnter: guardDecrypted },
 
     {path: '/kad', component: KadPage },
+
+    {path: '/settings', component: SettingsPage },
 
     {path: '/login', component: LoginPage, beforeEnter: guardLogin },
 

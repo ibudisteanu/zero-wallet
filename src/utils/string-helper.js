@@ -5,7 +5,7 @@ class StringHelper{
         return string.slice(0, size1)+'...'+string.slice(string.length-size2)
     }
 
-    formatMiliseconds(millisec){
+    formatMilliseconds(millisec){
 
         const seconds = (millisec / 1000).toFixed(1);
         const minutes = (millisec / (1000 * 60)).toFixed(1);

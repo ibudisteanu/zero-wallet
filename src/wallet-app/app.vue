@@ -42,8 +42,7 @@ export default {
 
         if (typeof window === "undefined") return;
 
-        if (typeof localStorage !== "undefined" && localStorage.getItem('dark') === 'true')
-            this.$store.commit('setDark', true)
+        this.$store.commit('readLocalStorage')
 
         setTimeout( ()=> this.clearUnusedDataStoreWorker(), 1000)
 

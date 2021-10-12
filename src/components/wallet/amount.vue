@@ -35,6 +35,7 @@ export default {
             return this.$store.getters.getAsset( this.asset );
         },
     },
+
     asyncComputed:{
         async amount(){
             return StringHelper.formatMoney( await PandoraPay.config.assets.assetsConvertToBase( this.value.toString(), this.getAsset.decimalSeparator ), this.getAsset.decimalSeparator )

@@ -1,6 +1,6 @@
 <template>
 
-    <modal ref="modal" title="Decoding" contentClass="" @opened="start" :closing-function="stop" >
+    <modal ref="modal" :title="`Decoding ${status}`" contentClass="" @opened="start" :closing-function="stop" >
 
         <template slot="body">
 
@@ -15,6 +15,7 @@
 <script>
 import Modal from "src/components/utils/modal"
 import LoadingSpinner from "../../utils/loading-spinner";
+import StringHelper from "../../../utils/string-helper";
 
 export default {
 
@@ -37,7 +38,9 @@ export default {
     },
 
     computed:{
-
+        getAsset(){
+            return this.$store.getters.getAsset( this.asset );
+        },
     },
 
     methods: {
@@ -72,7 +75,7 @@ export default {
             this.status = ""
 
             PandoraPayHelper.balanceDecoderCallback = (status)=>{
-                this.status = "Step1  "+status
+                this.status = "Init  "+status
             }
 
             await PandoraPayHelper.promiseDecoder
@@ -97,8 +100,9 @@ export default {
                 previousValue: params.previousValue,
                 balanceEncoded: this.balance,
                 asset: this.asset,
-            } )), (status)=>{
-                this.status = "Step2  "+status
+            } )), async (status)=>{
+                const final = StringHelper.formatMoney( await PandoraPay.config.assets.assetsConvertToBase( status, this.getAsset.decimalSeparator ), this.getAsset.decimalSeparator )
+                this.status = "Scan  "+final
             })
 
             this.cancelCallback = decodedData[1]
