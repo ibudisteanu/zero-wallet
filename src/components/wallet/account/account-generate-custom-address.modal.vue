@@ -1,106 +1,74 @@
 <template>
 
-    <modal ref="modal" :title="`Custom Address ${title ? ': ' + title : ''}`" content-class="">
+    <modal ref="modal" :title="`Custom Address${title ? ': ' + title : ''}`" content-class="">
 
         <template slot="body" v-if="account">
 
-            <div class="theme-wizard">
-                <div class="card-header bg-light pt-0 pb-2">
-                    <ul class="nav justify-content-between nav-wizard">
-                        <li class="nav-item">
-                            <span :class="`nav-link ${tab===0?'active':''} fw-semi-bold`" >
-                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-dollar-sign"></i></span></span>
-                                <span class="d-none d-md-block mt-1 fs--1">Amount</span>
-                            </span>
-                        </li>
-                        <li class="nav-item">
-                            <span :class="`nav-link ${tab===1?'active':''} fw-semi-bold`" >
-                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-hand-holding-usd"></i></span></span>
-                                <span class="d-none d-md-block mt-1 fs--1">Payment ID</span>
-                            </span>
-                        </li>
-                        <li class="nav-item">
-                            <span :class="`nav-link ${tab===2?'active':''} fw-semi-bold`" >
-                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-signature"></i></span></span>
-                                <span class="d-none d-md-block mt-1 fs--1">Registration</span>
-                            </span>
-                        </li>
-                        <li class="nav-item">
-                            <span :class="`nav-link ${tab===3?'active':''} fw-semi-bold`" >
-                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-check"></i></span></span>
-                                <span class="d-none d-md-block mt-1 fs--1">Done</span>
-                            </span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="card-body py-3">
-                    <div class="tab-content">
-                        <div :class="`tab-pane ${tab===0?'active':''}`">
-                            <div class="form-check">
-                                <input class="form-check-input" id="amount" type="checkbox"  name="checkbox" v-model="hasAmount"  >
-                                <label class="form-check-label" for="amount"> Amount </label>
-                                <i class="fa fa-question" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
-                                <tx-amount :allow-zero="true" :allow-empty-asset="true" :balances="null" @changed="amountChanged" text="Amount to Receive" :asset="''" :disabled="!hasAmount" />
-                            </div>
-                        </div>
-                        <div :class="`tab-pane ${tab===1?'active':''} `">
-                            <div class="form-check">
-                                <input class="form-check-input" id="paymentId" type="checkbox"  name="checkbox" v-model="hasPaymentId"  >
-                                <label class="form-check-label" for="paymentId"> PaymentId</label>
-                                <i class="fa fa-question" v-tooltip.bottom="'Specify a default message(paymentId)'" ></i>  <br>
-                                <input :class="`form-control ${validationPaymentId ? 'is-invalid' : ''}`" v-if="hasPaymentId" type="text" v-model="paymentId" >
-                                <div v-if="validationPaymentId" class="invalid-feedback d-block">{{validationPaymentId}}</div>
-                            </div>
-                        </div>
-                        <div :class="`tab-pane ${tab===2?'active':''}`">
-                            <div class="form-check" v-if="account.registration">
-                                <input class="form-check-input" id="registration" type="checkbox"  name="checkbox" v-model="hasRegistration"  >
-                                <label class="form-check-label" for="registration"> Registration </label>
-                                <i class="fa fa-question" v-tooltip.bottom="'Specify registration. Required only first time when used'" ></i>  <br>
-                            </div>
-                        </div>
-                        <div :class="`tab-pane ${tab===3?'active':''} `">
+            <wizzard :titles="[
+                {icon: 'fas fa-dollar-sign', name: 'Amount', tooltip: 'Include an amount' },
+                {icon: 'fas fa-hand-holding-usd', name: 'Payment ID', tooltip: 'Include a Payment ID' },
+                {icon: 'fas fa-signature', name: 'Registration', tooltip: 'Include Registration Signature' },
+                {icon: 'fas fa-check', name: 'Done', tooltip: 'Generated Address' }]"
+                @setTab="setTab" controls-class-name="modal-footer bg-light" >
 
-                            <template v-if="this.addressGenerated">
-
-                                <div class="form-outline">
-                                    <label class="form-label" for="address">Generated Address</label>
-                                    <div id="address" class="address align-items-center">
-                                        <account-identicon :address="this.addressGenerated" size="30" outer-size="10" />
-                                        <span class="text-break">
-                                            {{this.addressGenerated}}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <hr/>
-
-                                <div class="g-0 d-block-inline ">
-                                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="copyAddress" v-tooltip.bottom="'Copy Address'" >
-                                        <i class="fa fa-copy" />
-                                    </button>
-
-                                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
-                                        <i class="fa fa-qrcode" />
-                                    </button>
-                                </div>
-                            </template>
-
-                        </div>
+                <template slot="tab_0">
+                    <div class="form-check">
+                        <input class="form-check-input" id="amount" type="checkbox"  name="checkbox" v-model="hasAmount"  >
+                        <label class="form-check-label" for="amount"> Amount </label>
+                        <i class="fa fa-question" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
+                        <tx-amount :allow-zero="true" :allow-empty-asset="true" :balances="null" @changed="amountChanged" text="Amount to Receive" :asset="''" :disabled="!hasAmount" />
                     </div>
-                </div>
-            </div>
+                </template>
+
+                <template slot="tab_1">
+                    <div class="form-check">
+                        <input class="form-check-input" id="paymentId" type="checkbox"  name="checkbox" v-model="hasPaymentId"  >
+                        <label class="form-check-label" for="paymentId"> PaymentId</label>
+                        <i class="fa fa-question" v-tooltip.bottom="'Specify a default message(paymentId)'" ></i>  <br>
+                        <input :class="`form-control ${validationPaymentId ? 'is-invalid' : ''}`" v-if="hasPaymentId" type="text" v-model="paymentId" >
+                        <div v-if="validationPaymentId" class="invalid-feedback d-block">{{validationPaymentId}}</div>
+                    </div>
+                </template>
+
+                <template slot="tab_2">
+                    <div class="form-check" v-if="account.registration">
+                        <input class="form-check-input" id="registration" type="checkbox"  name="checkbox" v-model="hasRegistration"  >
+                        <label class="form-check-label" for="registration"> Registration </label>
+                        <i class="fa fa-question" v-tooltip.bottom="'Specify registration. Required only first time when used'" ></i>  <br>
+                    </div>
+                </template>
+
+                <template slot="tab_3">
+                    <template v-if="addressGenerated">
+
+                        <div class="form-outline">
+                            <label class="form-label" for="address">Generated Address</label>
+                            <div id="address" class="address align-items-center">
+                                <account-identicon :address="this.addressGenerated" size="30" outer-size="10" />
+                                <span class="text-break">
+                                    {{this.addressGenerated}}
+                                </span>
+                            </div>
+                        </div>
+
+                        <hr/>
+
+                        <div class="g-0 d-block-inline ">
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="copyAddress" v-tooltip.bottom="'Copy Address'" >
+                                <i class="fa fa-copy" />
+                            </button>
+
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
+                                <i class="fa fa-qrcode" />
+                            </button>
+                        </div>
+
+                    </template>
+                </template>
+
+            </wizzard>
 
         </template>
-
-        <template slot="footer">
-            <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
-
-            <loading-button v-if="tab > 0" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
-            <loading-button v-if="tab < maxTab" :text="`${tab === maxTab-1 ? 'Generate address' : 'Next'}`" @submit="handleNext" :icon="`${ tab === maxTab-1 ? 'fa fa-cogs' : 'fas fa-chevron-right ms-2' }`"  />
-
-        </template>
-
 
     </modal>
 
@@ -109,21 +77,17 @@
 <script>
 
 import Modal from "src/components/utils/modal"
-import AlertBox from "src/components/utils/alert-box"
+
 import AccountIdenticon from "./account-identicon";
-import LoadingButton from "src/components/utils/loading-button"
 import TxAmount from "src/components/send/tx-amount"
+import Wizzard from "src/components/utils/wizzard"
 
 export default {
 
-    components: {AccountIdenticon, Modal, AlertBox, LoadingButton, TxAmount},
+    components: {AccountIdenticon, Modal, TxAmount, Wizzard},
 
     data(){
         return {
-            tab: 0,
-            maxTab: 3,
-
-            error: '',
             account: null,
             title: "",
 
@@ -142,16 +106,16 @@ export default {
 
         validationPaymentId(){
             try{
+
                 if (!this.hasPaymentId) return ""
                 if (this.paymentId.length !== 16) throw "PaymentId should be an 8 byte hexadecimal number"
                 let buf
                 try{
                     buf = Buffer.from(this.paymentId, "hex")
                 }catch(err){
-                    throw "PaymentId must be a hexadeciaml number"
+                    throw "PaymentId must be a hexadecimal number"
                 }
                 if (buf.length !== 8) throw "PaymentId should be an 8 byte hexadecimal number"
-
 
             }catch(err){
                 return err.toString()
@@ -162,24 +126,22 @@ export default {
 
     methods: {
 
-        async setTab(resolver, value){
+        async setTab({resolve, reject, oldTab, value}){
             try{
 
-                value = Math.max( value, 0)
-                value = Math.min( value, this.maxTab + 1)
-
-                if (this.tab === 0 && value === 1){
+                if (oldTab === 0 && value === 1)
                     if (this.amount.validationError) throw this.amount.validationError
-                }
-                if (this.tab === 2 && value === 3){
-                    await this.handleGenerateAddress()
-                }
 
-                this.tab = value
+                if (oldTab === 1 && value === 2)
+                    if (this.validationPaymentId) throw this.validationPaymentId
+
+                if (oldTab === 2 && value === 3)
+                    await this.handleGenerateAddress()
+
             }catch(err) {
-                console.error(err)
+                reject(err)
             }finally{
-                resolver()
+                resolve(true)
             }
         },
 
@@ -198,7 +160,6 @@ export default {
             this.title = account.name;
 
             return this.$refs.modal.showModal();
-
         },
 
         closeModal() {
@@ -230,27 +191,20 @@ export default {
 
         async handleGenerateAddress(){
 
-            this.error = ""
             this.addressGenerated = ""
 
-            try{
-
-                let args = {
-                    publicKey: this.account.publicKey,
-                    registration: this.hasRegistration ? this.account.registration : "",
-                    amount: this.hasAmount ? Number.parseInt(this.amount.amount) : 0,
-                    paymentId: this.hasPaymentId ? this.paymentId : "",
-                }
-
-                console.log(args)
-
-                const out = await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( args )  ))
-                const json = JSON.parse( MyTextDecode(out) )
-                this.addressGenerated = json[1]
-
-            }catch(err){
-                this.error = err.toString()
+            let args = {
+                publicKey: this.account.publicKey,
+                registration: this.hasRegistration ? this.account.registration : "",
+                amount: this.hasAmount ? Number.parseInt(this.amount.amount) : 0,
+                paymentId: this.hasPaymentId ? this.paymentId : "",
             }
+
+            console.log(args)
+
+            const out = await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( args )  ))
+            const json = JSON.parse( MyTextDecode(out) )
+            this.addressGenerated = json[1]
 
         },
 
