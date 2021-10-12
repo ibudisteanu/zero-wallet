@@ -1,17 +1,27 @@
 <template>
 
-    <modal ref="modal" title="Unstake" content-class="">
+    <modal ref="modal" title="Update Delegate" content-class="">
 
-        <template slot="body" v-if="!isLoading && isFound">
+        <template slot="body" v-if="!isLoading && isFound" >
 
             <wizzard :titles="[
-                {icon: 'fas fa-edit', name: 'Amount', tooltip: 'Unstaking amount' },
+                {icon: 'fas fa-edit', name: 'Edit', tooltip: 'Update' },
                 {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
                 {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' }]"
                      @setTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
                 <template slot="tab_0">
-                    <tx-amount :allow-zero="true" :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" :asset="''" />
+                    <div class="form pb-2">
+                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Public Key:</label>
+                        <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
+                        <input class="form-control" type="text" v-model="newDelegatedStakePublicKey" >
+                    </div>
+                    <div class="form pb-2">
+                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Fee:</label>
+                        <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
+                        <input class="form-control" type="number" v-model="newDelegatedStakeFee" min="0" max="65535" >
+                        <label>in Percentage: {{newDelegatedStakeFee/65535*100}}%</label>
+                    </div>
                 </template>
 
                 <template slot="tab_1">
@@ -19,7 +29,7 @@
                 </template>
 
                 <template slot="tab_2">
-                    <tx-fee :balances="balancesStakeAvailable" :allow-zero="true" @changed="changedFee" :asset="''" />
+                    <tx-fee :balances="balances" :allow-zero="true" @changed="changedFee" :asset="''" />
                 </template>
 
             </wizzard>
@@ -34,20 +44,21 @@
 import TxFee from "../send/tx-fee";
 import Modal from "src/components/utils/modal"
 import AlertBox from "src/components/utils/alert-box"
-import TxAmount from "src/components/send/tx-amount"
 import ExtraData from "src/components/send/extra-data"
 import Wizzard from "src/components/utils/wizzard"
 export default {
 
-    components: {TxFee, Modal, AlertBox, ExtraData, TxAmount, Wizzard},
+    components: {TxFee, Modal, AlertBox, ExtraData, Wizzard},
 
     data(){
         return {
             publicKey: "",
-            unstakeAmount: {},
 
             fee: {},
             extraData: { },
+
+            newDelegatedStakePublicKey: 0,
+            newDelegatedStakeFee: 0,
 
             status: '',
         }
@@ -66,6 +77,9 @@ export default {
         isFound(){
             return this.account !== null
         },
+        balances(){
+            return this.account && this.account.accounts ? this.account.accounts : [];
+        },
         balancesStakeAvailable(){
             return (this.account && this.account.delegatedStake) ? [{ amount: this.account.delegatedStake.stakeAvailable, asset: ""}] : [{ amount: 0, asset: ""}]
         },
@@ -79,8 +93,9 @@ export default {
         async setTab({resolve, reject, oldTab, value}){
             try{
 
-                if (oldTab === 0 && value === 1)
-                    if (this.unstakeAmount.validationError) throw this.unstakeAmount.validationError
+                if (oldTab === 0 && value === 1){
+
+                }
 
                 if (oldTab === 1 && value === 2)
                     if (this.extraData.validationError) throw this.extraData.validationError
@@ -99,9 +114,6 @@ export default {
             }
         },
 
-        amountChanged(data){
-            this.unstakeAmount = {...this.unstakeAmount, ...data}
-        },
         changedExtraData(data){
             this.extraData = { ...this.extraData,  ...data, }
         },
@@ -129,7 +141,6 @@ export default {
             const out = await PandoraPay.transactions.builder.createUnstakeTx_Float( JSON.stringify({
                 from: this.address.addressEncoded,
                 nonce: 0,
-                unstakeAmount: this.unstakeAmount.amount,
                 data: {
                     data: Buffer.from(this.extraData.data).toString("hex"),
                     encrypt: this.extraData.type === "encrypted",

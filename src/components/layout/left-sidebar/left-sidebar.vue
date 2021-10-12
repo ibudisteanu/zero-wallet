@@ -154,44 +154,6 @@
         </div>
     </nav>
 
-<!--    <div>-->
-<!--        <div class="mobile-menu" @click="showMenu" :style="{display: show ? 'none' : 'inherit' }" >-->
-<!--            <i class="fa fa-bars"></i>-->
-<!--        </div>-->
-
-<!--        <div v-if="show" class="sidebar" :style="{display: show ? 'inherit' : 'none' }" v-on-clickaway="closeMenu" >-->
-
-<!--            <router-link :disabled="!isWalletLogged" to="/account" :class="`${ route === '/account' ? 'selected' : ''}`">-->
-<!--                <i class="fa fa-wallet" ></i>-->
-<!--                <span>Account</span>-->
-<!--            </router-link>-->
-
-<!--            <router-link :disabled="!isWalletLogged" to="/staking" :class="`${route === '/staking' ? 'selected' : ''}`" >-->
-<!--                <i class="fa fa-piggy-bank"></i>-->
-<!--                <span>Staking</span>-->
-<!--            </router-link>-->
-
-<!--            <router-link :disabled="!isWalletLogged" to="/send" :class="`${route === '/send' ? 'selected' : ''}`" >-->
-<!--                <i class="fa fa-money-check-alt"></i>-->
-<!--                <span>Send</span>-->
-<!--            </router-link>-->
-
-<!--            <router-link :disabled="!isWalletLogged" to="/receive" :class="`${route === '/receive' ? 'selected' : ''}`" >-->
-<!--                <i class="fa fa-hand-holding-usd"></i>-->
-<!--                <span>Receive</span>-->
-<!--            </router-link>-->
-
-<!--            <router-link :disabled="!isWalletLogged" to="/set-password" v-if="!encrypted" :class="`${route === '/set-password' ? 'selected' : ''}`"  >-->
-<!--                <i class="fa fa-unlock-alt"></i>-->
-<!--                <span>Encrypt</span>-->
-<!--            </router-link>-->
-
-<!--            <router-link :disabled="!isWalletLogged" to="/remove-password" v-if="encrypted" :class="`${route === '/remove-password' ? 'selected' : ''}`"  >-->
-<!--                <i class="fa fa-lock"></i>-->
-<!--                <span>Decrypt</span>-->
-<!--            </router-link>-->
-<!--        </div>-->
-<!--    </div>-->
 </template>
 
 <script>

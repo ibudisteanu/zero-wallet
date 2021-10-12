@@ -2,108 +2,103 @@
 
     <modal ref="modal" title="Delegate Stake" content-class="">
 
-        <template slot="body">
+        <template slot="body" v-if="!isLoading && isFound" >
 
-            <alert-box v-if="!isLoading && !isFound" type="warning" >
-                Address doesn't exist (is empty)!
-            </alert-box>
-            <template v-else>
+            <div class="card theme-wizard">
+                <div class="card-header bg-light py-3">
+                    <ul class="nav justify-content-between nav-wizard">
+                        <li class="nav-item">
+                            <span :class="`nav-link ${tab===0?'active':''} fw-semi-bold`">
+                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-users"></i></span></span>
+                                <span class="d-none d-md-block mt-1 fs--1">Amount</span>
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <span :class="`nav-link ${tab===1?'active':''} fw-semi-bold`">
+                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-pen"></i></span></span>
+                                <span class="d-none d-md-block mt-1 fs--1">Options</span>
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <span :class="`nav-link ${tab===2?'active':''} fw-semi-bold`">
+                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-pen"></i></span></span>
+                                <span class="d-none d-md-block mt-1 fs--1">Extra Info</span>
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <span :class="`nav-link ${tab===3?'active':''} fw-semi-bold`">
+                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-dollar-sign"></i></span></span>
+                                <span class="d-none d-md-block mt-1 fs--1">Fee</span>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body py-3">
+                    <div class="tab-content">
+                        <div :class="`tab-pane ${tab===0?'active':''} `">
+                            <tx-amount :allow-zero="true" :accounts="accountsOnlyNative" @changed="amountChanged" text="Amount to stake" :asset="''" />
+                        </div>
+                        <div :class="`tab-pane ${tab===1?'active':''} `">
 
-                <div class="card theme-wizard">
-                    <div class="card-header bg-light py-3">
-                        <ul class="nav justify-content-between nav-wizard">
-                            <li class="nav-item">
-                                <span :class="`nav-link ${tab===0?'active':''} fw-semi-bold`">
-                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-users"></i></span></span>
-                                    <span class="d-none d-md-block mt-1 fs--1">Amount</span>
-                                </span>
-                            </li>
-                            <li class="nav-item">
-                                <span :class="`nav-link ${tab===1?'active':''} fw-semi-bold`">
-                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-pen"></i></span></span>
-                                    <span class="d-none d-md-block mt-1 fs--1">Options</span>
-                                </span>
-                            </li>
-                            <li class="nav-item">
-                                <span :class="`nav-link ${tab===2?'active':''} fw-semi-bold`">
-                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-pen"></i></span></span>
-                                    <span class="d-none d-md-block mt-1 fs--1">Extra Info</span>
-                                </span>
-                            </li>
-                            <li class="nav-item">
-                                <span :class="`nav-link ${tab===3?'active':''} fw-semi-bold`">
-                                    <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-dollar-sign"></i></span></span>
-                                    <span class="d-none d-md-block mt-1 fs--1">Fee</span>
-                                </span>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-body py-3">
-                        <div class="tab-content">
-                            <div :class="`tab-pane ${tab===0?'active':''} `">
-                                <tx-amount :allow-zero="true" :accounts="accountsOnlyNative" @changed="amountChanged" text="Amount to stake" :asset="''" />
+                            <div class="form-group">
+                                <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Nonce</label>
+                                <input class="form-control" type="number" v-model="nonce" min="0"  >
                             </div>
-                            <div :class="`tab-pane ${tab===1?'active':''} `">
 
-                                <div class="form-group">
-                                    <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Nonce</label>
-                                    <input class="form-control" type="number" v-model="nonce" min="0"  >
+                            <div class="form-group pt-4">
+                                <input class="form-check-input" id="hasNewDelegatedStakePublicKey" type="checkbox"  name="checkbox" v-model="hasNewDelegatedStakePublicKey"  >
+                                <label class="form-check-label" for="hasNewDelegatedStakePublicKey"> Set a new Delegated Public Key Hash </label>
+                            </div>
+
+                            <div v-if="hasNewDelegatedStakePublicKey" class="pt-2 ms-2">
+
+                                <div class="form-group pt-2">
+                                    <input class="form-check-input" id="delegateNewPublicKeyGenerate" type="checkbox"  name="checkbox" v-model="delegateNewPublicKeyGenerate"  :disabled="disableNewDelegatedStakePublicKey" >
+                                    <label class="form-check-label" for="delegateNewPublicKeyGenerate"> Auto Generate Public Key Hash </label>
                                 </div>
 
-                                <div class="form-group pt-4">
-                                    <input class="form-check-input" id="hasNewDelegatedStakePublicKey" type="checkbox"  name="checkbox" v-model="hasNewDelegatedStakePublicKey"  >
-                                    <label class="form-check-label" for="hasNewDelegatedStakePublicKey"> Set a new Delegated Public Key Hash </label>
-                                </div>
-
-                                <div v-if="hasNewDelegatedStakePublicKey" class="pt-2 ms-2">
-
+                                <template v-if="!delegateNewPublicKeyGenerate">
                                     <div class="form-group pt-2">
-                                        <input class="form-check-input" id="delegateNewPublicKeyGenerate" type="checkbox"  name="checkbox" v-model="delegateNewPublicKeyGenerate"  :disabled="disableNewDelegatedStakePublicKey" >
-                                        <label class="form-check-label" for="delegateNewPublicKeyGenerate"> Auto Generate Public Key Hash </label>
+                                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Delegate PublicKey</label>
+                                        <input :class="`form-control ${validationDelegateStakePublicKey ? 'is-invalid' : ''}`" type="text" v-model="delegateStakePublicKey"  :disabled="disableNewDelegatedStakePublicKey" >
+                                        <div v-if="validationDelegateStakePublicKey" class="invalid-feedback d-block">{{validationDelegateStakePublicKey}}</div>
                                     </div>
+                                </template>
 
-                                    <template v-if="!delegateNewPublicKeyGenerate">
-                                        <div class="form-group pt-2">
-                                            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Delegate PublicKey</label>
-                                            <input :class="`form-control ${validationDelegateStakePublicKey ? 'is-invalid' : ''}`" type="text" v-model="delegateStakePublicKey"  :disabled="disableNewDelegatedStakePublicKey" >
-                                            <div v-if="validationDelegateStakePublicKey" class="invalid-feedback d-block">{{validationDelegateStakePublicKey}}</div>
-                                        </div>
-                                    </template>
-
-                                    <div class="form-group pt-2">
-                                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Delegate Fee in Percentage: {{delegateStakeFee/65535*100}}%</label>
-                                        <input class="form-control" type="number" v-model="delegateStakeFee" min="0" max="65535" step="1"  :disabled="disableNewDelegatedStakePublicKey" >
-                                    </div>
-
+                                <div class="form-group pt-2">
+                                    <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Delegate Fee in Percentage: {{delegateStakeFee/65535*100}}%</label>
+                                    <input class="form-control" type="number" v-model="delegateStakeFee" min="0" max="65535" step="1"  :disabled="disableNewDelegatedStakePublicKey" >
                                 </div>
 
-                            </div>
-                            <div :class="`tab-pane ${tab===2?'active':''} `">
-                                <extra-data @changed="changedExtraData" />
-                            </div>
-                            <div :class="`tab-pane ${tab===3?'active':''} `">
-                                <tx-fee :accounts="accountsOnlyNative" :allow-zero="true" @changed="changedFee" :asset="''" />
                             </div>
 
                         </div>
+                        <div :class="`tab-pane ${tab===2?'active':''} `">
+                            <extra-data @changed="changedExtraData" />
+                        </div>
+                        <div :class="`tab-pane ${tab===3?'active':''} `">
+                            <tx-fee :accounts="accountsOnlyNative" :allow-zero="true" @changed="changedFee" :asset="''" />
+                        </div>
+
                     </div>
+                </div>
+            </div>
+
+            <template slot="footer">
+
+                <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
+
+                <label v-if="status">{{status}}</label>
+
+                <div class="float-end">
+                    <loading-button v-if="tab > 0" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
+                    <loading-button :text="`${tab === maxTab ? 'Delegate' : 'Next'}`" @submit="handleNext" :icon="`${ tab === maxTab ? 'fa fa-link' : 'fas fa-chevron-right ms-2' }`"  />
                 </div>
 
             </template>
 
         </template>
-        <template slot="footer">
 
-            <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
-
-            <label v-if="status">{{status}}</label>
-
-            <div class="float-end">
-                <loading-button v-if="tab > 0" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
-                <loading-button :text="`${tab === maxTab ? 'Delegate' : 'Next'}`" @submit="handleNext" :icon="`${ tab === maxTab ? 'fa fa-link' : 'fas fa-chevron-right ms-2' }`"  />
-            </div>
-
-        </template>
 
     </modal>
 

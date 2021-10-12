@@ -31,7 +31,7 @@
                         </template>
                         <template v-else>
                             <span class="d-block pt-4">Delegated: <strong>YES</strong> </span>
-                            <span class="d-block">Delegated public key {{account.plainAccount.delegatedStake.delegatedPublicKey}}</span>
+                            <span class="d-block">Delegated public key {{account.plainAccount.delegatedStake.delegatedStakePublicKey}}</span>
                             <span class="d-block">Delegated fee {{delegateFeePercentage}} %</span>
                         </template>
 
@@ -74,14 +74,20 @@
                                 <i class="fa fa-unlink text-danger " />
                             </button>
 
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowUpdateDelegate" v-tooltip.bottom="'Update Delegated Stake'" :disabled="!isDelegated" >
+                                <i class="fa fa-marker " />
+                            </button>
+
                         </div>
 
                     </div>
                 </div>
 
                 <delegate-stake-modal ref="refDelegateStakeModal" />
-                <unstake-modal ref="refUnstakeModal" />
                 <delegate-stake-node-modal ref="refDelegateStakeNodeModal" @onDelegateStake="onDelegateStake" />
+
+                <unstake-modal ref="refUnstakeModal" />
+                <update-delegate-modal ref="refUpdateDelegateModal" />
 
             </div>
 
@@ -98,14 +104,13 @@
 
 <script>
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
-import consts from 'consts/consts';
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
 import Account from "src/components/wallet/account/account"
 import LoadingSpinner from "src/components/utils/loading-spinner";
-
 import DelegateStakeModal from "src/components/staking/delegate-stake.modal"
 import UnstakeModal from "src/components/staking/unstake.modal"
+import UpdateDelegateModal from "src/components/staking/update-delegate.modal"
 import DelegateStakeNodeModal from "src/components/staking/delegate-stake-node.modal"
 import StringHelper from "../../utils/string-helper";
 import Balance from "src/components/wallet/balance/balance"
@@ -114,7 +119,8 @@ import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {AccountIdenticon, Layout, Account, LoadingSpinner, DelegateStakeModal, UnstakeModal, DelegateStakeNodeModal, LayoutTitle, DelegatedStakePending, Balance, AlertBox},
+    components: {AccountIdenticon, Layout, Account, LoadingSpinner, DelegateStakeModal, UnstakeModal,
+        DelegateStakeNodeModal, LayoutTitle, DelegatedStakePending, Balance, AlertBox, UpdateDelegateModal},
 
     data() {
         return {
@@ -215,9 +221,13 @@ export default {
             return this.$refs.refDelegateStakeNodeModal.showModal( this.publicKey );
         },
 
+        handleShowUpdateDelegate(){
+            return this.$refs.refUpdateDelegateModal.showModal(this.publicKey)
+        },
+
         onDelegateStake(data){
             return this.handleShowDelegateStake(data)
-        }
+        },
 
     },
 

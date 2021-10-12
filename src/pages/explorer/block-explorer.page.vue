@@ -82,8 +82,8 @@
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Forger</span>
                         <div class="col-7 col-sm-9 text-truncate">
-                            <account-identicon class="vertical-center" :public-key="blk.delegatedPublicKey" size="21" outer-size="7"  />
-                            <span class="forger-address">{{blk.delegatedPublicKey}}</span>
+                            <account-identicon class="vertical-center" :public-key="blk.delegatedStakePublicKey" size="21" outer-size="7"  />
+                            <span class="forger-address">{{blk.delegatedStakePublicKey}}</span>
                         </div>
                     </div>
                 </template>
