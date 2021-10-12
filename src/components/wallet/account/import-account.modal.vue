@@ -4,73 +4,39 @@
 
         <template slot="body">
 
-            <div class="theme-wizard">
-                <div class="card-header bg-light pt-0 pb-2">
-                    <ul class="nav justify-content-between nav-wizard">
-                        <li class="nav-item">
-                            <router-link :class="`nav-link ${tab===0?'active':''} fw-semi-bold`" to="#" @click.native="()=>setTab(0)">
-                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-file"></i></span></span>
-                                <span class="d-none d-md-block mt-1 fs--1">File</span>
-                            </router-link>
-                        </li>
-                        <li class="nav-item">
-                            <router-link :class="`nav-link ${tab===1?'active':''} ${address ? '' : 'disabled'} fw-semi-bold`" to="#" @click.native="()=>address ? setTab(1) : false">
-                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-wallet"></i></span></span>
-                                <span class="d-none d-md-block mt-1 fs--1">Account</span>
-                            </router-link>
-                        </li>
-                        <li class="nav-item">
-                            <router-link :class="`nav-link ${tab===2?'active':''} ${ (address && isAddressEncrypted) ? '' : 'disabled' } fw-semi-bold`" to="#" @click.native="()=>(address && isAddressEncrypted) ? setTab(2) : false">
-                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-lock"></i></span></span>
-                                <span class="d-none d-md-block mt-1 fs--1">Encryption</span>
-                            </router-link>
-                        </li>
-                        <li class="nav-item">
-                            <router-link :class="`nav-link ${tab===3?'active':''} disabled fw-semi-bold`" to="#">
-                                <span class="nav-item-circle-parent"><span class="nav-item-circle"><i class="fas fa-check"></i></span></span>
-                                <span class="d-none d-md-block mt-1 fs--1">Finish</span>
-                            </router-link>
-                        </li>
-                    </ul>
-                </div>
-                <div class="card-body py-3">
-                    <div class="tab-content">
-                        <div :class="`tab-pane ${tab===0?'active':''} `">
-                            <div class="mb-3">
-                                <label class="form-label" for="selectFile">Select .pandora file</label>
-                                <input class="form-control" id="selectFile" type="file" v-on:change="handleImportAccounts" size="1" accept=".pandora" ref="refImportedAddresses" />
-                            </div>
-                        </div>
-                        <div :class="`tab-pane ${tab===1?'active':''} `">
-                            <span class="mb-3 d-block">Preview Imported Account</span>
-                            <div class="d-block" v-if="address">
-                                <div class="address align-items-center">
-                                    <account-identicon :address="address.addressEncoded" size="35" outer-size="13" />
-                                    <span class="text-break">{{ address.addressEncoded }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div :class="`tab-pane ${tab===2?'active':''} `">
-                            <div class="mb-3">
-                                <label class="form-label">Password</label>
-                                <password-input v-model="addressPassword" />
-                            </div>
+            <wizzard :titles="[
+                {icon: 'fas fa-file', name: 'File', tooltip: 'Select file to import account' },
+                {icon: 'fas fa-wallet', name: 'Account', tooltip: 'Preview account' },
+                {icon: 'fas fa-lock', name: 'Decrypt', tooltip: 'Decrypt file' },
+                {icon: 'fas fa-check', name: 'Done', tooltip: 'Finish importing account' }]"
+                     @setTab="setTab" controls-class-name="modal-footer bg-light" >
+
+                <template slot="tab_0">
+                    <div>
+                        <label class="form-label" for="selectFile">Select .pandora file</label>
+                        <input class="form-control" id="selectFile" type="file" v-on:change="handleImportAccounts" size="1" accept=".pandora" ref="refImportedAddresses" />
+                    </div>
+                </template>
+
+                <template slot="tab_1">
+                    <span class="mb-3 d-block">Preview Imported Account</span>
+                    <div class="d-block" v-if="address">
+                        <div class="address align-items-center">
+                            <account-identicon :address="address.addressEncoded" size="35" outer-size="13" />
+                            <span class="text-break">{{ address.addressEncoded }}</span>
                         </div>
                     </div>
-                </div>
-            </div>
+                </template>
 
-        </template>
+                <template slot="tab_2">
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <password-input v-model="addressPassword" />
+                    </div>
+                </template>
 
-        <template slot="footer">
-            <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
+            </wizzard>
 
-            <button class="btn btn-link" type="button" v-if="tab > 0" @click="handleBack">
-                Back <i class="fas fa-chevron-left me-2" ></i>
-            </button>
-            <button class="btn btn-falcon-primary" type="button" v-if="tab < 2" @click="handleNext">
-                <i class="fas fa-chevron-right ms-2" > </i> Next
-            </button>
         </template>
 
     </modal>
@@ -79,22 +45,20 @@
 
 <script>
 import Modal from "src/components/utils/modal"
-import LoadingButton from "src/components/utils/loading-button"
 import UtilsHelper from "src/utils/utils-helper";
-import AlertBox from "src/components/utils/alert-box"
 import PasswordInput from "src/components/utils/password-input";
 import AccountIdenticon from "../../wallet/account/account-identicon";
+import Wizzard from "src/components/utils/wizzard"
+
 export default {
 
-    components: {PasswordInput, Modal, LoadingButton, AlertBox, AccountIdenticon },
+    components: {PasswordInput, Modal, AccountIdenticon, Wizzard },
 
     data(){
         return {
             address: null,
             addressData: '',
             addressPassword: '',
-            error: '',
-            tab: 0,
         }
     },
 
@@ -108,6 +72,22 @@ export default {
 
     methods:{
 
+        async setTab({resolve, reject, oldTab, value}){
+            try{
+
+                if (oldTab === 0 && value === 1)
+                    await this.handleImportAccounts()
+
+                if (oldTab === 1 && value === 2)
+                    await this.handleProcess()
+
+            }catch(err) {
+                reject(err)
+            }finally{
+                resolve(true)
+            }
+        },
+
         showModal() {
             Object.assign(this.$data, this.$options.data());
             return this.$refs.modal.showModal();
@@ -117,73 +97,41 @@ export default {
             return this.$refs.modal.closeModal();
         },
 
-        increaseTab(value){
-            this.tab = this.tab + value
-        },
-        setTab(value){
-            this.tab = value
-        },
+       handleImportAccounts(){
 
-        handleBack(){
-            if (this.tab === 3) return this.setTab(1)
-            return this.increaseTab(-1)
-        },
+            this.address = null
+            this.addressData = ""
 
-        async handleNext(){
-            if (this.tab === 0){
-                await this.handleImportAccounts()
-                return this.setTab(1)
+            if ((window.File && window.FileReader && window.FileList && window.Blob) === false)
+                throw `Your browser/device doesn't support file import.`
+
+
+            const file = this.$refs.refImportedAddresses.files[0];
+
+            if (!file) throw `No file selected.`
+
+            let extension = file.name.split('.').pop();
+
+            if (extension !== "pandora") throw `File not supported. Maybe wrong file? `
+
+            const reader = new FileReader();
+
+            reader.onload = async (e) => {
+
+                const data = JSON.parse(reader.result);
+
+                this.address = data;
+                this.addressData = reader.result;
+
             }
-            if (this.tab === 1){
-                await this.handleProcess()
-                return this.setTab(3)
-            }
-            return this.increaseTab(1)
+
+            reader.readAsText(file);
+
         },
 
-        handleImportAccounts(){
+        async handleProcess(){
 
             try{
-                this.error = ""
-                this.address = null
-                this.addressData = ""
-
-                if ((window.File && window.FileReader && window.FileList && window.Blob) === false)
-                    throw `Your browser/device doesn't support file import.`
-
-
-                const file = this.$refs.refImportedAddresses.files[0];
-
-                if (!file) throw `No file selected.`
-
-                let extension = file.name.split('.').pop();
-
-                if (extension !== "pandora") throw `File not supported. Maybe wrong file? `
-
-                const reader = new FileReader();
-
-                reader.onload = async (e) => {
-
-                    const data = JSON.parse(reader.result);
-
-                    this.address = data;
-                    this.addressData = reader.result;
-
-                }
-
-                reader.readAsText(file);
-
-            }catch(err){
-                this.error = err.toString()
-            }
-
-        },
-
-        async handleProcess(resolve){
-
-            try{
-
-                this.error = ""
 
                 const password = await this.$store.state.page.refWalletPasswordModal.showModal()
                 if (password === null ) return
@@ -204,11 +152,9 @@ export default {
                 this.closeModal();
 
             }catch(err){
-                this.error = err.toString()
+                throw err
             }finally{
                 this.$store.state.page.refLoadingModal.closeModal();
-                if (resolve)
-                    resolve(true);
             }
 
         }

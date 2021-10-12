@@ -77,7 +77,6 @@
 <script>
 
 import Modal from "src/components/utils/modal"
-
 import AccountIdenticon from "./account-identicon";
 import TxAmount from "src/components/send/tx-amount"
 import Wizzard from "src/components/utils/wizzard"
