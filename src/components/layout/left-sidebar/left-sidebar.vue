@@ -39,7 +39,7 @@
                         <div class="d-flex align-items-center">
                             <router-link :disabled="!isWalletLogged" to="/send/private" :class="`${ route === '/send/private' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
                                 <i class="fa fa-money-check-alt"></i>
-                                <span class="nav-link-text ps-1">Transfer Privately</span>
+                                <span class="nav-link-text ps-1">Private Transfer</span>
                             </router-link>
                         </div>
                     </li>
@@ -47,7 +47,7 @@
                         <div class="d-flex align-items-center">
                             <router-link :disabled="!isWalletLogged" to="/receive" :class="`${ route === '/receive' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
                                 <i class="fa fa-hand-holding-usd"></i>
-                                <span class="nav-link-text ps-1">Receive Privately</span>
+                                <span class="nav-link-text ps-1">Private Receive</span>
                             </router-link>
                         </div>
                     </li>

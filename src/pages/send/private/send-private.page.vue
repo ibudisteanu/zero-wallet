@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa-money-check-alt" title="Send Privately Funds">Transfer privately funds from your account.</layout-title>
+        <layout-title icon="fa-money-check-alt" title="Private Send Funds">Transfer privately funds from your account.</layout-title>
 
         <template v-if="address">
 

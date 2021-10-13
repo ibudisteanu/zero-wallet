@@ -1,7 +1,7 @@
 <template>
 
     <simple-tx-modal ref="refModal" :tabs-offset="1" title="Unstake tx"
-                     :titlesOffset="[ {icon: 'fas fa-edit', name: 'Amount', tooltip: 'Unstaking amount' }]"
+                     :titles-offset="[ {icon: 'fas fa-edit', name: 'Amount', tooltip: 'Unstaking amount' }]"
                      :tx-data="txData" @onSetTab="setTab" :buttonsOffset="buttons"
                      tx-name="createUnstakeTx_Float">
 
