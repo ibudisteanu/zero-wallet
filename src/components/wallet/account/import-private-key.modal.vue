@@ -8,7 +8,7 @@
                 {icon: 'fas fa-pencil-alt', name: 'Information', tooltip: 'Information of the account' },
                 {icon: 'fas fa-file-code', name: 'Private Key', tooltip: 'Private Key' },
                 {icon: 'fas fa-check', name: 'Done', tooltip: 'Finish importing account' }]"
-                     @setTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
+                     @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
                 <template slot="tab_0">
                     <label>Account Name</label>

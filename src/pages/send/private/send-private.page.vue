@@ -15,7 +15,7 @@
                     {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
                     {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' },
                     {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' }]"
-                         @setTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card" >
+                         @onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card" >
 
                     <template slot="tab_0">
                         <tx-asset :assets="availableAssets" @changed="changedAsset" class="pb-4" />

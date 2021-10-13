@@ -8,7 +8,7 @@
                 {icon: 'fas fa-globe-americas', name: 'Select Node', tooltip: 'Select Node you are delegating to' },
                 {icon: 'fas fa-robot', name: 'Node Info', tooltip: 'Node information' },
                 {icon: 'fas fa fa-piggy-bank', name: 'Delegate', tooltip: 'Finalizing the delegate' }]"
-                     @setTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
+                     @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
                 <template slot="tab_0">
                     <div class="form">

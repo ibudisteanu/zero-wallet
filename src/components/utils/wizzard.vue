@@ -72,7 +72,7 @@ export default {
                 value = Math.min(value, this.maxTab + 1)
 
                 const promise = new Promise((resolve, reject)=>{
-                    this.$emit('setTab', {resolve, reject, oldTab: this.tab, value} )
+                    this.$emit('onSetTab', {resolve, reject, oldTab: this.tab, value} )
                 })
 
                 await promise

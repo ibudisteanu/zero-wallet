@@ -9,7 +9,7 @@
                 {icon: 'fas fa-wallet', name: 'Account', tooltip: 'Preview account' },
                 {icon: 'fas fa-lock', name: 'Decrypt', tooltip: 'Decrypt file' },
                 {icon: 'fas fa-check', name: 'Done', tooltip: 'Finish importing account' }]"
-                     @setTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
+                     @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
                 <template slot="tab_0">
                     <div>

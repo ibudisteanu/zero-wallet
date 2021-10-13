@@ -8,6 +8,7 @@ export default {
         txsByHeight: {},
 
         subscribed: {},
+        viewTxsHashes: {},
     },
 
     actions,

@@ -8,7 +8,7 @@
                 {icon: 'fas fa-edit', name: 'Edit', tooltip: 'Update' },
                 {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
                 {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' }]"
-                     @setTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
+                     @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
                 <template slot="tab_0">
                     <div class="form pb-2">

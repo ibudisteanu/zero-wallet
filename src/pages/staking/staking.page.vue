@@ -11,7 +11,7 @@
             <alert-box v-if="!isLoading && !isFound" type="warning" >
                 Address doesn't exist (is empty)!
             </alert-box>
-            <div v-else class="pt-4">
+            <div v-else-if="account" class="pt-4">
 
                 <div class="card mb-3">
                     <div class="card-header bg-light">
@@ -32,7 +32,7 @@
                             <span class="d-block">Delegated Stake Fee {{delegateFeePercentage}} %</span>
                         </template>
 
-                        <div class="pt-4">
+                        <div class="pt-4" v-if="account.plainAccount">
                             <span class="fw-bold fs-0">Claimable</span>
                             <balance :key="`delegated-balance`"  :balance="account.plainAccount.claimable" asset=""></balance>
                         </div>

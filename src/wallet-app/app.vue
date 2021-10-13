@@ -153,7 +153,7 @@ export default {
             const maxDiff = 5*60*1000
 
             try{
-                const blocksRemoved = [], txsRemoved = []
+                const blocksRemoved = [], txsRemoved = [], txsPreviewRemoved = []
 
                for (const map of [ this.$store.state.blocks.blocksByHash, this.$store.state.blocks.blocksByHeight ])
                    for (const hash in map){
@@ -169,13 +169,34 @@ export default {
                           txsRemoved.push(tx)
                   }
 
-                if (txsRemoved.length){
-                    this.$store.commit('deleteTransactions', txsRemoved )
-                    this.$store.commit('deleteTransactionsInfo', txsRemoved )
-                }
+                for (const map of [ this.$store.state.transactionsPreview.txsByHash, this.$store.state.transactionsPreview.txsByHeight ])
+                    for (const hash in map){
+                        const tx = map[hash]
+                        if (!this.$store.state.transactionsPreview.viewTxsHashes[tx.hash] && timestamp - tx.__timestampUsed > maxDiff)
+                            txsPreviewRemoved.push(tx)
+                    }
 
-                if (blocksRemoved.length)
-                  this.$store.commit('deleteBlocks', blocksRemoved )
+                const txsRemovedMap = {}
+                const txsPreviewRemovedMap = {}
+
+                txsRemoved.map( it => txsRemovedMap[it.hash] = true )
+                txsPreviewRemoved.map( it => txsPreviewRemovedMap[it.hash] = true )
+
+                const txsInfoRemoved = []
+
+                for (  const tx of txsRemoved)
+                    if (txsPreviewRemovedMap[tx.hash] || !this.$store.state.transactionsPreview.txsByHash[tx.hash] )
+                        txsInfoRemoved.push(tx)
+
+                for (  const tx of txsPreviewRemoved)
+                    if (txsRemovedMap[tx.hash] || !this.$store.state.transactions.txsByHash[tx.hash] )
+                        txsInfoRemoved.push(tx)
+
+                if (txsRemoved.length) this.$store.commit('deleteTransactions', txsRemoved )
+                if (txsPreviewRemoved.length) this.$store.commit('deleteTransactionsPreview', txsRemoved )
+                if (txsInfoRemoved.length) this.$store.commit('deleteTransactionsInfo', txsInfoRemoved )
+
+                if (blocksRemoved.length) this.$store.commit('deleteBlocks', blocksRemoved )
 
             }catch(err){
                 console.error("clearUnusedDataStoreWorker raised an error", err)
