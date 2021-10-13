@@ -3,31 +3,21 @@
 
         <layout-title icon="fa-money-bill-alt" title="Account" >See the balance and transactions of an address.</layout-title>
 
-        <template v-if="address">
+        <wait-address :address="address">
 
             <account :address="address" />
 
-            <template v-if="!isLoading">
+            <wait-account :address="address" :account="account">
+                <balances :publicKey="publicKey" />
+                <pending-transactions-preview :publicKey="publicKey" />
+                <transactions-preview :publicKey="publicKey" :page="page" />
+            </wait-account>
 
-                <template v-if="!isFound">
-                    <alert-box type="warning" >
-                        Address doesn't exist (is empty)!
-                    </alert-box>
-                    <pending-transactions-preview :publicKey="publicKey" />
-                </template>
-                <template v-else>
-                    <balances :publicKey="publicKey" />
-                    <pending-transactions-preview :publicKey="publicKey" />
-                    <transactions-preview :publicKey="publicKey" :page="page" />
-                </template>
-
+            <template v-if="!isFound">
+                <pending-transactions-preview :publicKey="publicKey" />
             </template>
 
-        </template>
-
-        <div class="py-3 text-center" v-if="!address || isLoading">
-            <loading-spinner class="fs-3" />
-        </div>
+        </wait-address>
 
         <alert-box v-if="error" type="error">{{error}}</alert-box>
 
@@ -44,11 +34,13 @@ import Account from "src/components/wallet/account/account"
 import AlertBox from "src/components/utils/alert-box"
 import TransactionsPreview from "../../components/wallet/transactions/transactions-preview";
 import PendingTransactionsPreview from "../../components/wallet/transactions/pending-transactions-preview";
+import WaitAddress from "../../components/wallet/account/wait-address";
+import WaitAccount from "../../components/wallet/account/wait-account";
 
 export default {
 
     components: {
-        PendingTransactionsPreview, TransactionsPreview,
+        WaitAccount, WaitAddress, PendingTransactionsPreview, TransactionsPreview,
         Layout,  Balances, AccountIdenticon, LoadingSpinner, AlertBox, Account, LayoutTitle},
 
     data(){

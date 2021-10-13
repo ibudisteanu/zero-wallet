@@ -117,6 +117,8 @@ export default {
 
             this.nodeInfo = null;
 
+            if (!this.selectedDelegateNode ) throw "You need to select a node"
+
             const out = await HttpHelper.get(this.delegateNodeAddress( this.selectedDelegateNode ) +'/delegates/info', {} );
             if (!out) throw "Node is offline";
 

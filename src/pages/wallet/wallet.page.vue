@@ -2,9 +2,9 @@
 
     <layout>
 
-        <layout-title icon="fa-wallet" title="Wallet" >Access the private key of the selected address.</layout-title>
+        <layout-title icon="fa-wallet" title="Wallet">Access the private key of the selected address.</layout-title>
 
-        <template v-if="address">
+        <wait-address :address="address">
 
             <account :address="address" />
 
@@ -66,7 +66,7 @@
             <account-private-key-modal ref="refAccountPrivateKeyModal" :address="address"/>
             <account-delete-modal ref="refAccountDeleteModal" :address="address"/>
 
-        </template>
+        </wait-address>
 
     </layout>
 
@@ -82,10 +82,11 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title";
 import Account from "src/components/wallet/account/account"
 import AccountDeleteModal from "src/components/wallet/account/account-delete.modal"
+import WaitAddress from "../../components/wallet/account/wait-address";
 
 export default {
 
-    components: {AccountIdenticon, AccountPrivateKeyModal, Layout, Account, LayoutTitle, AccountDeleteModal},
+    components: {WaitAddress, AccountIdenticon, AccountPrivateKeyModal, Layout, Account, LayoutTitle, AccountDeleteModal},
 
     data(){
         return {
@@ -100,7 +101,6 @@ export default {
             return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey];
         }
     },
-
 
     methods:{
 

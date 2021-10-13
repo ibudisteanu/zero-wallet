@@ -8,11 +8,7 @@
 
             <account :address="address" />
 
-            <alert-box v-if="!isLoading && !isFound" type="warning" >
-                Address doesn't exist (is empty)!
-            </alert-box>
-            <div v-else-if="account" class="pt-4">
-
+            <wait-account :address="address" :account="account">
                 <div class="card mb-3">
                     <div class="card-header bg-light">
                         <div class="row align-items-center">
@@ -64,9 +60,9 @@
                         </div>
                         <div v-else >
 
-<!--                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowDelegateStake" v-tooltip.bottom="'Manual Delegating your stake'" >-->
-<!--                                <i class="fa fa-link " />-->
-<!--                            </button>-->
+                            <!--                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowDelegateStake" v-tooltip.bottom="'Manual Delegating your stake'" >-->
+                            <!--                                <i class="fa fa-link " />-->
+                            <!--                            </button>-->
 
                             <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowUpdateDelegate" v-tooltip.bottom="'Update Delegated Stake'" :disabled="!isDelegated" >
                                 <i class="fa fa-marker " />
@@ -85,18 +81,13 @@
                     </div>
                 </div>
 
-                <unstake-modal ref="refUnstakeModal" />
-                <update-delegate-modal ref="refUpdateDelegateModal" />
-                <update-delegate-stake-node-modal ref="refUpdateDelegateStakeNodeModal" @onDelegateStake="onDelegateStake" />
+<!--                <unstake-modal ref="refUnstakeModal" />-->
+<!--                <update-delegate-modal ref="refUpdateDelegateModal" />-->
+<!--                <update-delegate-stake-node-modal ref="refUpdateDelegateStakeNodeModal" @onDelegateStake="onDelegateStake" />-->
 
-            </div>
+            </wait-account>
 
         </div>
-
-        <div class="py-3 text-center" v-if="!address || isLoading">
-            <loading-spinner class="fs-3" />
-        </div>
-        <alert-box v-if="error" type="error">{{error}}</alert-box>
 
     </layout>
 
@@ -108,18 +99,21 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
 import Account from "src/components/wallet/account/account"
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import UnstakeModal from "src/components/staking/unstake.modal"
-import UpdateDelegateModal from "src/components/staking/update-delegate.modal"
-import UpdateDelegateStakeNodeModal from "src/components/staking/update-delegate-stake-node.modal"
 import StringHelper from "../../utils/string-helper";
 import Balance from "src/components/wallet/balance/balance"
 import DelegatedStakePending from "src/components/wallet/balance/delegated-stake-pending"
 import AlertBox from "src/components/utils/alert-box"
+import WaitAccount from "../../components/wallet/account/wait-account";
+
+// import UnstakeModal from "src/components/staking/unstake.modal"
+// import UpdateDelegateModal from "src/components/staking/update-delegate.modal"
+// import UpdateDelegateStakeNodeModal from "src/components/staking/update-delegate-stake-node.modal"
 
 export default {
 
-    components: {AccountIdenticon, Layout, Account, LoadingSpinner, UnstakeModal,
-        UpdateDelegateStakeNodeModal, LayoutTitle, DelegatedStakePending, Balance, AlertBox, UpdateDelegateModal},
+    components: {
+        WaitAccount, AccountIdenticon, Layout, Account, LoadingSpinner, LayoutTitle, DelegatedStakePending,
+        Balance, AlertBox },
 
     data() {
         return {
@@ -139,13 +133,6 @@ export default {
         account(){
             return this.$store.state.accounts.list[this.publicKey]
         },
-        isLoading(){
-            return this.account === undefined
-        },
-        isFound(){
-            return this.account !== null
-        },
-
         delegatedStake(){
             if (!this.account || !this.account.plainAccount) return null
             return this.account.plainAccount.delegatedStake

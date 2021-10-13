@@ -4,13 +4,8 @@
 
         <layout-title icon="fa-money-check-alt" title="Private Send Funds">Transfer privately funds from your account.</layout-title>
 
-        <template v-if="address">
-
-            <alert-box v-if="!isLoading && !isFound" type="warning" >
-                Address doesn't exist (is empty)!
-            </alert-box>
-            <template v-else-if="account">
-
+        <wait-address :address="address">
+            <wait-account :address="address" :account="account">
                 <wizzard :titles="[
                     {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
                     {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
@@ -88,16 +83,8 @@
                     </template>
 
                 </wizzard>
-
-            </template>
-            <div class="py-3 text-center" v-else>
-                <loading-spinner class="fs-3" />
-            </div>
-
-        </template>
-        <div class="py-3 text-center" v-else>
-            <loading-spinner class="fs-3" />
-        </div>
+            </wait-account>
+        </wait-address>
 
     </layout>
 </template>
@@ -117,10 +104,14 @@ import AlertBox from "src/components/utils/alert-box"
 import LayoutTitle from "src/components/layout/layout-title";
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import Wizzard from "src/components/utils/wizzard"
+import WaitAddress from "../../../components/wallet/account/wait-address";
+import WaitAccount from "../../../components/wallet/account/wait-account";
 
 export default {
 
-    components: { LayoutTitle, Layout, Account, LoadingSpinner, LoadingButton, DestinationAddress, TxAmount,
+    components: {
+        WaitAccount,
+        WaitAddress, LayoutTitle, Layout, Account, LoadingSpinner, LoadingButton, DestinationAddress, TxAmount,
         ExtraData, AlertBox, TxFee, TxAsset, AccountIdenticon, Wizzard,
     },
 
@@ -160,12 +151,6 @@ export default {
         availableAccounts(){
             if (this.account && this.account.accounts ) return this.account.accounts;
             return null
-        },
-        isLoading(){
-            return this.account === undefined
-        },
-        isFound(){
-            return this.account !== null
         },
 
         checkDestinationError(){

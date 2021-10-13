@@ -44,7 +44,7 @@
 
 import Modal from "src/components/utils/modal"
 import TxAmount from "src/components/send/tx-amount"
-import SimpleTxModal from "src/components/send/txs/simple-tx.modal"
+import SimpleTxModal from "pages/send/staking/simple-tx.page"
 
 export default {
 
