@@ -48,33 +48,30 @@ export default {
 
     computed:{
         validationError(){
-            if (!this.destination) return`Destination Address not specified`;
-            if (!this.finalAddress) return `Address is invalid`;
+            if (!this.destination) return`Destination Address was not specified`;
+            if (!this.finalAddress) return `Destination Address is invalid`;
         },
     },
 
     watch: {
-        async destination (to, ) {
-            try{
-                const addressData = await PandoraPay.addresses.decodeAddress(to)
-                const address = JSON.parse( MyTextDecode(addressData) )
-                this.finalAddress = address
-                return
-            }catch(err){
-            }
-
-            this.finalAddress = null
-        },
-
-        finalAddress: {
+        destination: {
             immediate: true,
-            handler: function (to, from) {
-                return this.$emit('changed', {
+            handler: async function  (to, ) {
+                try{
+                    const addressData = await PandoraPay.addresses.decodeAddress(to)
+                    const address = JSON.parse( MyTextDecode(addressData) )
+                    this.finalAddress = address
+                }catch(err){
+                    this.finalAddress = null
+                }
+
+                this.$emit('changed', {
                     address: this.finalAddress,
                     addressEncoded: this.destination,
                     validationError: this.validationError,
                 });
-            }
+
+            },
         },
 
     },
@@ -88,9 +85,7 @@ export default {
         },
 
         changedTxAmount(data){
-            return this.$emit('changed', {
-                ...data,
-            });
+            return this.$emit('changed', { ...data, });
         },
 
         deleteDestinationAddress(){

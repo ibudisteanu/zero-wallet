@@ -34,9 +34,9 @@ export default {
         subtitle: {default: "Simple Transaction"},
         icon: {default: "fa-money-check-alt"},
 
-        tabsOffset: 0,
+        tabsOffset: {default: 0},
         titlesOffset: {default: () => []}, //{icon, name}
-        txData: {default: ({}) },
+        txData: {default: () => ({}) },
         buttonsOffset: {default: () => ({}) },
         txName: {default: ""},
     },

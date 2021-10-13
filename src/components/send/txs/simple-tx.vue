@@ -1,7 +1,6 @@
 <template>
-    <div v-if="!isLoading && isFound" >
-        <wizzard :titles="[
-                ...titlesOffset,
+    <wait-account :address="address" :account="account">
+        <wizzard :titles="[ ...titlesOffset,
                 {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
                 {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' }]"
                  @onSetTab="setTab" :buttons="buttons" controls-class-name="card-footer bg-light" class="card" >
@@ -28,7 +27,7 @@
             </template>
 
         </wizzard>
-    </div>
+    </wait-account>
 </template>
 
 <script>
@@ -36,8 +35,10 @@ import AlertBox from "../../utils/alert-box";
 import ExtraData from "../extra-data";
 import Wizzard from "../../utils/wizzard";
 import TxFee from "../tx-fee";
+import WaitAccount from "src/components/wallet/account/wait-account";
+
 export default {
-    components: {AlertBox, ExtraData, Wizzard, TxFee},
+    components: {AlertBox, ExtraData, Wizzard, TxFee, WaitAccount},
 
     data(){
         return {
@@ -50,9 +51,9 @@ export default {
 
     props: {
         publicKey: {default: ""},
-        tabsOffset: 0,
+        tabsOffset: {default: 0},
         titlesOffset: {default: () => []}, //{icon, name}
-        txData: {default: ({}) },
+        txData: {default: () => ({}) },
         buttonsOffset: {default: () => ({}) },
         txName: {default: ""},
     },
@@ -63,12 +64,6 @@ export default {
         },
         account(){
             return this.$store.state.accounts.list[this.publicKey]
-        },
-        isLoading(){
-            return this.account === undefined
-        },
-        isFound(){
-            return this.account !== null
         },
         balancesStakeAvailable(){
             return (this.account && this.account.delegatedStake) ? [{ amount: this.account.delegatedStake.stakeAvailable, asset: ""}] : [{ amount: 0, asset: ""}]

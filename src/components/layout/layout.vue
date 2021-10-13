@@ -58,7 +58,7 @@ export default {
         TestnetFaucetModal, WalletPasswordModal, Toasts, QrCodeScannerModal, DecodeHomomorphicBalanceModal},
 
     props: {
-        disableLayout: false,
+        disableLayout: {default: false},
     },
 
     data(){
