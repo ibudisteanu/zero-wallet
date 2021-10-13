@@ -2,38 +2,37 @@
 
     <modal ref="modal" title="Delegate Stake to Node" content-class="">
 
-        <template slot="body" v-if="!isLoading && isFound">
+        <template slot="body">
+            <wait-account :address="address" :account="account">
+                <wizzard :titles="[
+                         {icon: 'fas fa-globe-americas', name: 'Select Node', tooltip: 'Select Node you are delegating to' },
+                         {icon: 'fas fa-robot', name: 'Node Info', tooltip: 'Node information' },
+                         {icon: 'fas fa fa-piggy-bank', name: 'Delegate', tooltip: 'Finalizing the delegate' }]"
+                         @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
-            <wizzard :titles="[
-                {icon: 'fas fa-globe-americas', name: 'Select Node', tooltip: 'Select Node you are delegating to' },
-                {icon: 'fas fa-robot', name: 'Node Info', tooltip: 'Node information' },
-                {icon: 'fas fa fa-piggy-bank', name: 'Delegate', tooltip: 'Finalizing the delegate' }]"
-                     @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
+                    <template slot="tab_0">
+                        <div class="form">
+                            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Selecting Node to delegate:</label>
+                            <select class="form-select" v-model="selectedDelegateNode">
+                                <option v-for="(node, id) in delegatesNodes"
+                                        :key="`send-money-${id}`"
+                                        :value="node">
+                                    {{node.name}} || {{delegateNodeAddress(node)}}
+                                </option>
+                            </select>
+                        </div>
+                    </template>
 
-                <template slot="tab_0">
-                    <div class="form">
-                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Selecting Node to delegate:</label>
-                        <select class="form-select" v-model="selectedDelegateNode">
-                            <option v-for="(node, id) in delegatesNodes"
-                                    :key="`send-money-${id}`"
-                                    :value="node">
-                                {{node.name}} || {{delegateNodeAddress(node)}}
-                            </option>
-                        </select>
-                    </div>
-                </template>
+                    <template slot="tab_1" v-if="nodeInfo">
+                        <label class="form-label">Delegates MAXIMUM slots: <strong>{{nodeInfo.maximumAllowed}}</strong></label> <br/>
+                        <label class="form-label">Delegates Already: <strong>{{nodeInfo.delegatesCount}}</strong></label> <br/>
+                        <label class="form-label">Delegates SLOTS: <strong>{{nodeInfo.maximumAllowed - nodeInfo.delegatesCount}}</strong></label> <br/>
+                        <label class="form-label">Delegates Fee: <strong>{{nodeInfo.delegatesFee / 65535 * 100}}%</strong></label> <br/>
+                    </template>
 
-                <template slot="tab_1" v-if="nodeInfo">
-                    <label class="form-label">Delegates MAXIMUM slots: <strong>{{nodeInfo.maximumAllowed}}</strong></label> <br/>
-                    <label class="form-label">Delegates Already: <strong>{{nodeInfo.delegatesCount}}</strong></label> <br/>
-                    <label class="form-label">Delegates SLOTS: <strong>{{nodeInfo.maximumAllowed - nodeInfo.delegatesCount}}</strong></label> <br/>
-                    <label class="form-label">Delegates Fee: <strong>{{nodeInfo.delegatesFee / 65535 * 100}}%</strong></label> <br/>
-                </template>
-
-            </wizzard>
-
+                </wizzard>
+            </wait-account>
         </template>
-
 
     </modal>
 
@@ -43,37 +42,31 @@
 import Modal from "src/components/utils/modal"
 import HttpHelper from "src/utils/http-helper"
 import Wizzard from "src/components/utils/wizzard"
+import WaitAccount from "src/components/wallet/account/wait-account";
+
 export default {
 
-    components: {Modal, Wizzard},
+    components: {Modal, Wizzard, WaitAccount},
 
     data() {
         return {
-
             publicKey: "",
-
-            status: "",
 
             delegatesNodes: null,
             selectedDelegateNode: null,
 
             nodeInfo: null,
+
+            output: null,
         }
     },
 
     computed:{
-
         address(){
             return this.$store.state.wallet.addresses[this.publicKey];
         },
         account(){
             return this.$store.state.accounts.list[this.publicKey]
-        },
-        isLoading(){
-            return this.account === undefined
-        },
-        isFound(){
-            return this.account !== null
         },
         buttons(){
             return { 1: { icon: 'fa fa-laptop-code', text: 'Stake to Node' }}
@@ -102,7 +95,9 @@ export default {
             Object.assign(this.$data, this.$options.data());
             this.publicKey = publicKey
             this.delegatesNodes = JSON.parse( MyTextDecode( await PandoraPay.config.helpers.getNetworkSelectedDelegatesNodes() ) )
-            return this.$refs.modal.showModal();
+            await this.$refs.modal.showModal();
+
+            return this.output
         },
 
         closeModal() {
@@ -154,17 +149,12 @@ export default {
 
             if (typeof out.delegateStakingPublicKey !== "string") throw "delegateStakingPublicKey is missing"
 
-            const promise = new Promise((resolver, reject )=>{
-                this.$emit('onDelegateStake', {
-                    delegateStakingPublicKey: out.delegateStakingPublicKey,
-                    delegatesFee: this.nodeInfo.delegatesFee,
-                    resolver,
-                    reject,
-                } )
-            })
+            this.output = {
+                delegateStakingPublicKey: out.delegateStakingPublicKey,
+                delegatesStakingFee: this.nodeInfo.delegatesFee
+            }
 
-            await promise
-
+            this.closeModal()
         },
 
     },

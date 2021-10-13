@@ -18,23 +18,33 @@
             <div v-if="hasNewDelegatedInfo" class="pt-2 ms-2">
 
                 <div class="form-group pt-2">
-                    <input class="form-check-input" id="auto-generate-public-key-hash" type="checkbox" v-model="delegateNewPublicKeyGenerate"  :disabled="disableChanges" >
+                    <input class="form-check-input" id="auto-generate-public-key-hash" type="checkbox" v-model="delegateNewPublicKeyGenerate"  >
                     <label class="form-check-label" for="auto-generate-public-key-hash" > Auto Generate Public Key Hash </label>
                 </div>
 
-                <div class="form pb-2" v-if="!delegateNewPublicKeyGenerate">
-                    <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Public Key:</label>
-                    <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
-                    <input :class="`form-control ${validationNewDelegatedStakePublicKey ? 'is-invalid' : ''}`" type="text" v-model="newDelegatedStakePublicKey"  :disabled="disableChanges" >
-                    <div v-if="validationNewDelegatedStakePublicKey" class="invalid-feedback d-block">{{validationNewDelegatedStakePublicKey}}</div>
-                </div>
-                <div class="form pb-2">
+                <template v-if="!delegateNewPublicKeyGenerate">
+                    <div class="form-group pt-2">
+                        <label class="form-label"> Delegate to Stake Node:</label>
+                        <loading-button text="Select Node" icon="fa fa-laptop-code" @submit="showDelegateStakeNode"  ></loading-button>
+                    </div>
+                    <div class="form pt-2">
+                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Public Key:</label>
+                        <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
+                        <input :class="`form-control ${validationNewDelegatedStakePublicKey ? 'is-invalid' : ''}`" type="text" v-model="newDelegatedStakePublicKey"  >
+                        <div v-if="validationNewDelegatedStakePublicKey" class="invalid-feedback d-block">{{validationNewDelegatedStakePublicKey}}</div>
+                    </div>
+                </template>
+
+                <div class="form pt-2">
                     <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Fee:</label>
                     <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
-                    <input class="form-control" type="number" v-model="newDelegatedStakeFee" min="0" max="65535" :disabled="disableChanges" >
+                    <input class="form-control" type="number" v-model="newDelegatedStakeFee" min="0" max="65535" >
                     <label>in Percentage: {{newDelegatedStakeFee/65535*100}}%</label>
                 </div>
             </div>
+
+            <delegate-stake-node-modal ref="refDelegateStakeNodeModal" />
+
         </template>
 
     </simple-tx-page>
@@ -44,10 +54,12 @@
 <script>
 import TxAmount from "src/components/send/tx-amount"
 import SimpleTxPage from "src/pages/send/simple/simple-tx.page"
+import LoadingButton from "src/components/utils/loading-button";
+import DelegateStakeNodeModal from "src/components/staking/delegate-stake-node.modal"
 
 export default {
 
-    components: {SimpleTxPage, TxAmount },
+    components: {LoadingButton, SimpleTxPage, TxAmount, DelegateStakeNodeModal },
 
     data(){
         return {
@@ -55,7 +67,6 @@ export default {
 
             hasNewDelegatedInfo: false,
             delegateNewPublicKeyGenerate: false,
-            disableChanges: false,
 
             newDelegatedStakePublicKey: "",
             newDelegatedStakeFee: 0,
@@ -123,6 +134,20 @@ export default {
         updateStakingAmountChanged(data){
             this.updateStakingAmount = {...this.updateStakingAmount, ...data}
         },
+
+        async showDelegateStakeNode(resolver){
+            try{
+                const output = await this.$refs.refDelegateStakeNodeModal.showModal(this.publicKey)
+                if (output){
+                    this.delegateNewPublicKeyGenerate = false
+                    this.hasNewDelegatedInfo = true
+                    this.newDelegatedStakePublicKey = output.delegateStakingPublicKey
+                    this.newDelegatedStakeFee = output.delegatesFee
+                }
+            }finally{
+                resolver(true)
+            }
+        }
 
     },
 
