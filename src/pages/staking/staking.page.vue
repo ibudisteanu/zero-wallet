@@ -85,8 +85,6 @@
                     </div>
                 </div>
 
-                <delegate-stake-modal ref="refDelegateStakeModal" />
-
                 <unstake-modal ref="refUnstakeModal" />
                 <update-delegate-modal ref="refUpdateDelegateModal" />
                 <update-delegate-stake-node-modal ref="refUpdateDelegateStakeNodeModal" @onDelegateStake="onDelegateStake" />

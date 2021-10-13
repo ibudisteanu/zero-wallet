@@ -189,7 +189,7 @@ export default {
                 nonce: 0,
                 delegateNewPublicKeyGenerate: this.hasNewDelegatedInfo ? this.delegateNewPublicKeyGenerate : false,
                 delegateNewPubKey: this.hasNewDelegatedInfo ? (this.newDelegatedStakePublicKey ? this.newDelegatedStakePublicKey : "") : "",
-                delegateNewFee: this.hasNewDelegatedInfo ? this.newDelegatedStakeFee : "",
+                delegateNewFee: this.hasNewDelegatedInfo ? this.newDelegatedStakeFee : 0,
                 updateStakingAmount: this.updateStakingAmount.amount,
                 data: {
                     data: Buffer.from(this.extraData.data).toString("hex"),
