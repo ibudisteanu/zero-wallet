@@ -27,21 +27,18 @@ import ZetherTx from "src/components/send/txs/zether-tx";
 
 export default {
 
-    components: {
-        ZetherTx,
-        LayoutTitle, Layout,
-    },
+    components: { ZetherTx,  LayoutTitle, Layout, },
 
     props: {
         title: {default: "Private Send Funds"},
-        subtitle: {default: "Send Privately funds"},
+        subtitle: {default: "Send Funds Privately to another address"},
         icon: {default: "fa-money-check-alt"},
 
         tabsOffset: {default: 0},
         titlesOffset: {default: () => []}, //{icon, name}
         txData: {default: () => ({}) },
         buttonsOffset: {default: () => ({}) },
-        txName: {default: ""},
+        txName: {default: "createZetherTx"},
     },
 
     computed: {

@@ -398,7 +398,7 @@ export default {
             }
 
             //compute extra
-            out = await PandoraPayHelper.transactions.builder.createZetherTx( MyTextEncode( JSON.stringify({
+            out = await PandoraPayHelper.transactions.builder[txName]( MyTextEncode( JSON.stringify({
                 ...this.txData,
                 fromPrivateKeys: [privateKey],
                 fromBalancesDecoded: [balanceDecoded],

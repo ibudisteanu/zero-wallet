@@ -18,22 +18,19 @@
             <div v-if="hasNewDelegatedInfo" class="pt-2 ms-2">
 
                 <div class="form-group pt-2">
-                    <input class="form-check-input" id="auto-generate-public-key-hash" type="checkbox" v-model="delegatedStakingNewPublicKeyGenerate"  >
-                    <label class="form-check-label" for="auto-generate-public-key-hash" > Auto Generate Public Key Hash </label>
+                    <loading-button text="Auto Generate Public Key Hash" icon="fa fa-cogs" @submit="handleDeriveDelegatedStake"></loading-button>
                 </div>
 
-                <template v-if="!delegatedStakingNewPublicKeyGenerate">
-                    <div class="form-group pt-2">
-                        <label class="form-label"> Delegate to Stake Node:</label>
-                        <loading-button text="Select Node" icon="fa fa-laptop-code" @submit="showDelegateStakeNode"  ></loading-button>
-                    </div>
-                    <div class="form pt-2">
-                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Public Key:</label>
-                        <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
-                        <input :class="`form-control ${validationDelegatedStakingNewPublicKey ? 'is-invalid' : ''}`" type="text" v-model="delegatedStakingNewPublicKey"  >
-                        <div v-if="validationDelegatedStakingNewPublicKey" class="invalid-feedback d-block">{{validationDelegatedStakingNewPublicKey}}</div>
-                    </div>
-                </template>
+                <div class="form-group pt-2">
+                    <loading-button text="Select Node" icon="fa fa-laptop-code" @submit="handleShowDelegateStakeNode"  ></loading-button>
+                </div>
+
+                <div class="form pt-2">
+                    <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Public Key:</label>
+                    <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
+                    <input :class="`form-control ${validationDelegatedStakingNewPublicKey ? 'is-invalid' : ''}`" type="text" v-model="delegatedStakingNewPublicKey"  >
+                    <div v-if="validationDelegatedStakingNewPublicKey" class="invalid-feedback d-block">{{validationDelegatedStakingNewPublicKey}}</div>
+                </div>
 
                 <div class="form pt-2">
                     <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Fee:</label>
@@ -66,7 +63,6 @@ export default {
             delegatedStakingUpdateAmount: {},
 
             hasNewDelegatedInfo: false,
-            delegatedStakingNewPublicKeyGenerate: false,
 
             delegatedStakingNewPublicKey: "",
             delegatedStakingNewFee: 0,
@@ -77,14 +73,11 @@ export default {
         publicKey(){
             return this.$store.state.wallet.mainPublicKey
         },
+        address(){
+            return this.$store.state.wallet.addresses[this.publicKey]
+        },
         account(){
             return this.$store.state.accounts.list[this.publicKey]
-        },
-        isLoading(){
-            return this.account === undefined
-        },
-        isFound(){
-            return this.account !== null
         },
         balancesOnlyClaimable(){
             return (this.account && this.account.plainAccount ) ? { "": { amount: this.account.plainAccount.claimable, asset: "" } } : { "": { amount: 0, asset: ""} }
@@ -94,7 +87,7 @@ export default {
         },
         validationDelegatedStakingNewPublicKey(){
 
-            if (this.delegatedStakingNewPublicKeyGenerate || !this.hasNewDelegatedInfo) return
+            if (!this.hasNewDelegatedInfo) return
 
             try{
                 const buffer = Buffer.from(this.delegatedStakingNewPublicKey, "hex")
@@ -105,7 +98,6 @@ export default {
         },
         txData(){
             return {
-                delegatedStakingNewPublicKeyGenerate: this.hasNewDelegatedInfo ? this.delegatedStakingNewPublicKeyGenerate : false,
                 delegatedStakingNewPublicKey: this.hasNewDelegatedInfo ? (this.delegatedStakingNewPublicKey ? this.delegatedStakingNewPublicKey : "") : "",
                 delegatedStakingNewFee: this.hasNewDelegatedInfo ? this.delegatedStakingNewFee : 0,
                 delegatedStakingUpdateAmount: this.delegatedStakingUpdateAmount.amount,
@@ -135,15 +127,35 @@ export default {
             this.delegatedStakingUpdateAmount = {...this.delegatedStakingUpdateAmount, ...data}
         },
 
-        async showDelegateStakeNode(resolver){
+        async handleShowDelegateStakeNode(resolver){
             try{
                 const output = await this.$refs.refDelegateStakeNodeModal.showModal(this.publicKey)
                 if (output){
-                    this.delegatedStakingNewPublicKeyGenerate = false
                     this.hasNewDelegatedInfo = true
                     this.delegatedStakingNewPublicKey = output.delegateStakingPublicKey
                     this.delegatedStakingNewFee = output.delegatesFee
                 }
+            }finally{
+                resolver(true)
+            }
+        },
+
+        async handleDeriveDelegatedStake(resolver){
+            try{
+
+                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+                if (password === null ) return
+
+                const nonce = this.account && this.account.plainAccount ? this.account.plainAccount.nonce : 0
+
+                const out = await PandoraPay.wallet.deriveDelegatedStakeWalletAddress( nonce.toString(), this.address.addressEncoded, password )
+                const json = JSON.parse(MyTextDecode(out))
+
+                this.hasNewDelegatedInfo = true
+                this.delegatedStakingNewPublicKey = json.publicKey
+
+                console.log(json)
+
             }finally{
                 resolver(true)
             }
