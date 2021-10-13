@@ -66,9 +66,6 @@ export default {
     },
 
     computed:{
-        address(){
-            return this.$store.state.wallet.addresses[this.publicKey];
-        },
         account(){
             return this.$store.state.accounts.list[this.publicKey]
         },
@@ -77,9 +74,6 @@ export default {
         },
         isFound(){
             return this.account !== null
-        },
-        balancesStakeAvailable(){
-            return (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ? [{ amount: this.account.plainAccount.delegatedStake.stakeAvailable, asset: ""}] : [{ amount: 0, asset: ""}]
         },
         accountsOnlyClaimable(){
             return (this.account && this.account.plainAccount ) ? [{amount: this.account.plainAccount.claimable, asset: "" }] : [{ amount: 0, asset: ""}]
@@ -116,6 +110,8 @@ export default {
                 if (oldTab === 0 && value === 1){
                     if (this.updateStakingAmount.validationError) throw this.updateStakingAmount.validationError
                     if (this.validationNewDelegatedStakePublicKey) throw this.validationNewDelegatedStakePublicKey
+
+                    if (this.updateStakingAmount.amount === 0 && !this.hasNewDelegatedInfo) throw "You should update something."
                 }
 
             }catch(err) {

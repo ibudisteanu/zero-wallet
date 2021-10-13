@@ -24,6 +24,13 @@
                     <tx-fee :balances="balancesStakeAvailable" :allow-zero="true" @changed="changedFee" :asset="''" />
                 </template>
 
+                <template slot="wizzard-footer">
+                    <template v-if="status">
+                        <span class="d-block">Transaction is being created. It will take 1-2 minutes.</span>
+                        <label class="d-block">Status: {{status}}</label>
+                    </template>
+                </template>
+
             </wizzard>
 
         </template>

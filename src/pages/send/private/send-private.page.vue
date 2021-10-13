@@ -9,10 +9,11 @@
             <alert-box v-if="!isLoading && !isFound" type="warning" >
                 Address doesn't exist (is empty)!
             </alert-box>
-            <template v-else>
+            <template v-else-if="account">
 
                 <wizzard :titles="[
                     {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
+                    {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
                     {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' },
                     {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' }]"
                          @onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card" >
@@ -27,54 +28,55 @@
 
                         <alert-box v-if="checkDestinationError" class="w-100" type="error">{{checkDestinationError}}</alert-box>
 
+                    </template>
+
+                    <template slot="tab_1">
                         <extra-data :destinations="[destination]" class="pt-4"
                                     :paymentId="identifiedPaymentID"
                                     @changed="changedExtraData" />
                     </template>
 
-                    <template slot="tab_1">
-                        <div class="row">
+                    <template slot="tab_2">
 
-                            <div class="col-12 col-md-6">
-                                <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Size</label>
-                                <i class="fa fa-question " v-tooltip.bottom="`Bigger the ring, more private is your transaction.`" />
-                                <select class="form-select" v-model="ringSize">
-                                    <option :value="2">2</option>
-                                    <option :value="4">4</option>
-                                    <option :value="8">8</option>
-                                    <option :value="16">16</option>
-                                    <option :value="32">32</option>
-                                    <option :value="64">64</option>
-                                    <option :value="128">128</option>
-                                    <option :value="256">256</option>
-                                </select>
-                            </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Size</label>
+                            <i class="fa fa-question " v-tooltip.bottom="`Bigger the ring, more private is your transaction.`" />
+                            <select class="form-select" v-model="ringSize">
+                                <option :value="2">2</option>
+                                <option :value="4">4</option>
+                                <option :value="8">8</option>
+                                <option :value="16">16</option>
+                                <option :value="32">32</option>
+                                <option :value="64">64</option>
+                                <option :value="128">128</option>
+                                <option :value="256">256</option>
+                            </select>
+                        </div>
 
-                            <div class="col-12 col-md-6">
-                                <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring New Addresses</label>
-                                <i class="fa fa-question " v-tooltip.bottom="`Number of new addresses in the ring. Makes new destinations more private.`" />
-                                <input class="form-control"  type="number" v-model="ringNewAddresses" />
-                            </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring New Addresses</label>
+                            <i class="fa fa-question " v-tooltip.bottom="`Number of new addresses in the ring. Makes new destinations more private.`" />
+                            <input class="form-control"  type="number" v-model="ringNewAddresses" />
+                        </div>
 
-                            <div class="col-12 pt-4">
-                                <loading-button text="Generate Ring" @submit="handleGenerateRing" icon="fa fa-cogs" />
-                            </div>
+                        <div class="col-12 pt-4">
+                            <loading-button text="Generate Ring" @submit="handleGenerateRing" icon="fa fa-cogs" />
+                        </div>
 
-                            <div class="col-12 pt-4">
-                                <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Members</label>
-                                <i class="fa fa-question " v-tooltip.bottom="`Preview of the Ring Members used for your private transaction.`" />
-                                <div class="pt-2">
-                                    <div v-for="(ringMember, index) in ringMembers" class="d-inline-block"
-                                         :key="`ring_member_${index}`">
-                                        <account-identicon :address="ringMember" size="21" outer-size="7" :disable-route="true" />
-                                    </div>
+                        <div class="col-12 pt-4">
+                            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Members</label>
+                            <i class="fa fa-question " v-tooltip.bottom="`Preview of the Ring Members used for your private transaction.`" />
+                            <div class="pt-2">
+                                <div v-for="(ringMember, index) in ringMembers" class="d-inline-block"
+                                     :key="`ring_member_${index}`">
+                                    <account-identicon :address="ringMember" size="21" outer-size="7" :disable-route="true" />
                                 </div>
                             </div>
-
                         </div>
+
                     </template>
 
-                    <template slot="tab_2">
+                    <template slot="tab_3">
                         <tx-fee :accounts="availableAccounts" :asset="asset" :allow-zero="true" @changed="changedFee" />
                     </template>
 
@@ -88,6 +90,9 @@
                 </wizzard>
 
             </template>
+            <div class="py-3 text-center" v-else>
+                <loading-spinner class="fs-3" />
+            </div>
 
         </template>
         <div class="py-3 text-center" v-else>
@@ -224,11 +229,13 @@ export default {
                         throw "Destination Address doesn't have the registration. \n You have the shorter version of the address. First time when an address is used it requires the longer version."
 
                 }
-                if (oldTab === 1 && value === 2){
+                if (oldTab === 1 && value === 2)
                     if (this.extraData.validationError) throw this.extraData.validationError
+
+                if (oldTab === 2 && value === 3)
                     if (this.ringSize !== this.ringMembers.length) throw `Ring members are not generated well ${this.ringSize} vs ${this.ringMembers.length} `
-                }
-                if (oldTab === 2 && value === 3){
+
+                if (oldTab === 3 && value === 4){
                     if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
                     if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
 
