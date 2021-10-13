@@ -1,7 +1,7 @@
 <template>
     <layout>
 
-        <layout-title icon="fa-wrench" title="Settings">Configure your web wallet for a better experience.</layout-title>
+        <layout-title icon="fa fa-wrench" title="Settings">Configure your web wallet for a better experience.</layout-title>
 
         <div class="card overflow-hidden">
             <div class="card-header card-header audience-chart-header p-0 bg-light scrollbar-overlay ">

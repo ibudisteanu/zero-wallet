@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa-unlock" title="Remove password">Remove the password of your wallet.</layout-title>
+        <layout-title icon="fa fa-unlock" title="Remove password">Remove the password of your wallet.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">

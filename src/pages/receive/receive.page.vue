@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa-file-invoice-dollar" title="Receive funds publicly">Generate your address to receive funds publicly.</layout-title>
+        <layout-title icon="fa fa-file-invoice-dollar" title="Receive funds publicly">Generate your address to receive funds publicly.</layout-title>
 
         <account :address="address" title="Receive Funds" />
 

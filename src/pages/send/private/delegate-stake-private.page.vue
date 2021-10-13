@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa-money-check-alt" title="Private Delegate Funds">Delegate Funds Privately to Delegating Address</layout-title>
+        <layout-title icon="fa fa-piggy-bank" title="Private Delegate Funds">Delegate Funds Privately to Delegating Address</layout-title>
 
         <zether-tx ref="refZetherTx"
                    :init-available-assets="[PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]"

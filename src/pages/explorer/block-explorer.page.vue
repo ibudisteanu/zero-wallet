@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa-cube" title="Explore Block">View a specific block.</layout-title>
+        <layout-title icon="fa fa-cube" title="Explore Block">View a specific block.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">

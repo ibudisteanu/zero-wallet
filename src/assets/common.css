@@ -197,6 +197,10 @@ a .disabled{
     position: relative;
 }
 
+.input-toggle-group input {
+    padding-left: 32px;
+}
+
 .input-toggle{
     background: none;
     border: none;

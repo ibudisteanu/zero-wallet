@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa-wallet" title="Wallet">Access the private key of the selected address.</layout-title>
+        <layout-title icon="fa fa-wallet" title="Wallet">Access the private key of the selected address.</layout-title>
 
         <wait-address :address="address">
 

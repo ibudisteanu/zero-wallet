@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa-list-ol" title="Mem pool">View the latest transactions that are in pending for the next blocks.</layout-title>
+        <layout-title icon="fa fa-list-ol" title="Mem pool">View the latest transactions that are in pending for the next blocks.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light" id="mempool">

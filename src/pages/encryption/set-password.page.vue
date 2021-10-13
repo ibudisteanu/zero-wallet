@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa-lock" title="Encrypt wallet" >Set a password for your wallet. The password will be necessary on your machine to open and use the wallet.</layout-title>
+        <layout-title icon="fa fa-lock" title="Encrypt wallet" >Set a password for your wallet. The password will be necessary on your machine to open and use the wallet.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">
