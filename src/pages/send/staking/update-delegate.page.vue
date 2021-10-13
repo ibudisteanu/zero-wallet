@@ -1,62 +1,68 @@
 <template>
 
-    <simple-tx-page title="Update Delegate Info" subtitle="Change Delegation Information" icon="fa fa-marker"
-                    :tabs-offset="1"
-                    :titles-offset="[ {icon: 'fa fa-edit', name: 'Update Delegation', tooltip: 'Change delegation info' }]"
-                    :tx-data="txData" @onSetTab="setTab" :buttonsOffset="buttons"
-                    tx-name="createUpdateDelegateTx_Float">
+    <layout>
+        <layout-title icon="fa fa-marker" title="Update Delegate Info">Change Delegation Information</layout-title>
 
-        <template slot="tab_0">
-            <div class="form pb-2">
-                <tx-amount :validate-amount="true" :allow-zero="true" :balances="balancesOnlyClaimable" @changed="delegatedStakingUpdateAmountChanged" text="Update Staking Amount" asset="" tooltip="Convert claimable amount to staking amount." />
-            </div>
-            <div class="form-group pt-4">
-                <input class="form-check-input" id="set-new-delegated-info" type="checkbox"  name="checkbox" v-model="hasNewDelegatedInfo"  >
-                <label class="form-check-label" for="set-new-delegated-info" >Set new Delegated Info</label>
-            </div>
+        <simple-tx :tabs-offset="1"
+                   :titles-offset="[ {icon: 'fa fa-edit', name: 'Update Delegation', tooltip: 'Change delegation info' }]"
+                   :tx-data="txData" @onSetTab="setTab" :buttonsOffset="buttons"
+                   tx-name="createUpdateDelegateTx_Float">
 
-            <div v-if="hasNewDelegatedInfo" class="pt-2 ms-2">
-
-                <div class="form-group pt-2">
-                    <loading-button text="Auto Generate Public Key Hash" icon="fa fa-cogs" @submit="handleDeriveDelegatedStake"></loading-button>
+            <template slot="tab_0">
+                <div class="form pb-2">
+                    <tx-amount :validate-amount="true" :allow-zero="true" :balances="balancesOnlyClaimable" @changed="delegatedStakingUpdateAmountChanged" text="Update Staking Amount" asset="" tooltip="Convert claimable amount to staking amount." />
+                </div>
+                <div class="form-group pt-4">
+                    <input class="form-check-input" id="set-new-delegated-info" type="checkbox"  name="checkbox" v-model="hasNewDelegatedInfo"  >
+                    <label class="form-check-label" for="set-new-delegated-info" >Set new Delegated Info</label>
                 </div>
 
-                <div class="form-group pt-2">
-                    <loading-button text="Select Node" icon="fa fa-laptop-code" @submit="handleShowDelegateStakeNode"  ></loading-button>
+                <div v-if="hasNewDelegatedInfo" class="pt-2 ms-2">
+
+                    <div class="form-group pt-2">
+                        <loading-button text="Auto Generate Public Key Hash" icon="fa fa-cogs" @submit="handleDeriveDelegatedStake"></loading-button>
+                    </div>
+
+                    <div class="form-group pt-2">
+                        <loading-button text="Select Node" icon="fa fa-laptop-code" @submit="handleShowDelegateStakeNode"  ></loading-button>
+                    </div>
+
+                    <div class="form pt-2">
+                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Public Key:</label>
+                        <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
+                        <input :class="`form-control ${validationDelegatedStakingNewPublicKey ? 'is-invalid' : ''}`" type="text" v-model="delegatedStakingNewPublicKey"  >
+                        <div v-if="validationDelegatedStakingNewPublicKey" class="invalid-feedback d-block">{{validationDelegatedStakingNewPublicKey}}</div>
+                    </div>
+
+                    <div class="form pt-2">
+                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Fee:</label>
+                        <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
+                        <input class="form-control" type="number" v-model="delegatedStakingNewFee" min="0" max="65535" >
+                        <label>in Percentage: {{delegatedStakingNewFee/65535*100}}%</label>
+                    </div>
                 </div>
 
-                <div class="form pt-2">
-                    <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Public Key:</label>
-                    <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
-                    <input :class="`form-control ${validationDelegatedStakingNewPublicKey ? 'is-invalid' : ''}`" type="text" v-model="delegatedStakingNewPublicKey"  >
-                    <div v-if="validationDelegatedStakingNewPublicKey" class="invalid-feedback d-block">{{validationDelegatedStakingNewPublicKey}}</div>
-                </div>
+                <delegate-stake-node-modal ref="refDelegateStakeNodeModal" />
 
-                <div class="form pt-2">
-                    <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Fee:</label>
-                    <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
-                    <input class="form-control" type="number" v-model="delegatedStakingNewFee" min="0" max="65535" >
-                    <label>in Percentage: {{delegatedStakingNewFee/65535*100}}%</label>
-                </div>
-            </div>
+            </template>
 
-            <delegate-stake-node-modal ref="refDelegateStakeNodeModal" />
+        </simple-tx>
 
-        </template>
-
-    </simple-tx-page>
+    </layout>
 
 </template>
 
 <script>
 import TxAmount from "src/components/send/tx-amount"
-import SimpleTxPage from "src/pages/send/simple/simple-tx.page"
+import SimpleTx from "src/components/send/txs/simple-tx"
 import LoadingButton from "src/components/utils/loading-button";
 import DelegateStakeNodeModal from "src/components/staking/delegate-stake-node.modal"
+import Layout from "src/components/layout/layout";
+import LayoutTitle from "src/components/layout/layout-title";
 
 export default {
 
-    components: {LoadingButton, SimpleTxPage, TxAmount, DelegateStakeNodeModal },
+    components: {LayoutTitle, Layout, LoadingButton, SimpleTx, TxAmount, DelegateStakeNodeModal },
 
     data(){
         return {

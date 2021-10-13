@@ -1,26 +1,31 @@
 <template>
 
-    <simple-tx-page title="Unstake coins" subtitle="Retrieve coins from the staking balance" icon="fa fa-unlink"
-                    :tabs-offset="1"
-                    :titles-offset="[ {icon: 'fas fa-edit', name: 'Amount', tooltip: 'Unstaking amount' }]"
-                    :tx-data="txData" @onSetTab="setTab" :buttonsOffset="buttons"
-                    tx-name="createUnstakeTx_Float">
+    <layout>
 
-        <template slot="tab_0">
-            <tx-amount :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" :asset="''" :validate-amount="true" />
-        </template>
+        <layout-title icon="fa fa-unlink" title="Unstake coins">Retrieve coins from the staking balance</layout-title>
 
-    </simple-tx-page>
+        <simple-tx :tabs-offset="1" :titles-offset="[ {icon: 'fas fa-edit', name: 'Amount', tooltip: 'Unstaking amount' }]"
+                :tx-data="txData" @onSetTab="setTab" :buttonsOffset="buttons"
+                tx-name="createUnstakeTx_Float">
+
+            <template slot="tab_0">
+                <tx-amount :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" :asset="''" :validate-amount="true" />
+            </template>
+
+        </simple-tx>
+
+    </layout>
 
 </template>
 
 <script>
 import TxAmount from "src/components/send/tx-amount"
-import SimpleTxPage from "src/pages/send/simple/simple-tx.page"
-
+import SimpleTx from "src/components/send/txs/simple-tx"
+import Layout from "src/components/layout/layout"
+import LayoutTitle from "src/components/layout/layout-title"
 export default {
 
-    components: {SimpleTxPage, TxAmount},
+    components: {SimpleTx, TxAmount, Layout, LayoutTitle},
 
     data(){
         return {

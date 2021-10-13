@@ -3,6 +3,7 @@ import Vue from "vue";
 
 import LoginPage from "src/pages/login/login.page"
 import SendPrivatePage from "src/pages/send/private/send-private.page"
+import DelegateStakePrivatePage from "src/pages/send/private/delegate-stake-private.page"
 import UnstakePage from "src/pages/send/staking/unstake.page"
 import UpdateDelegatePage from "src/pages/send/staking/update-delegate.page"
 import ReceivePage from "src/pages/receive/receive.page"
@@ -42,7 +43,9 @@ const guardLogin = (to, from, next) =>{
 
 const routes = [
 
-    {path: '/txs/send/private', component: SendPrivatePage, beforeEnter: guardDecrypted },
+    {path: '/txs/private/send', component: SendPrivatePage, beforeEnter: guardDecrypted },
+    {path: '/txs/private/delegate', component: DelegateStakePrivatePage, beforeEnter: guardDecrypted },
+
     {path: '/txs/unstake', component: UnstakePage, beforeEnter: guardDecrypted },
     {path: '/txs/update-delegate', component: UpdateDelegatePage, beforeEnter: guardDecrypted },
 

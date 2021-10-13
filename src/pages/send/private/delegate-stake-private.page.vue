@@ -2,9 +2,14 @@
 
     <layout>
 
-        <layout-title icon="fa-money-check-alt" title="Private Send Funds">Send Funds Privately to another address</layout-title>
+        <layout-title icon="fa-money-check-alt" title="Private Delegate Funds">Delegate Funds Privately to Delegating Address</layout-title>
 
-        <zether-tx :public-key="publicKey" @onSetTab="setTab" >
+        <zether-tx :tabs-offset="1" :titles-offset="[ {icon: 'fas fa-edit', name: 'Amount', tooltip: 'Unstaking amount' }]"
+                   tx-name="createZetherDelegateStakingTx" :public-key="publicKey" @onSetTab="setTab" >
+
+            <template slot="tab_0">
+
+            </template>
 
         </zether-tx>
 

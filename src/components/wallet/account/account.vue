@@ -101,7 +101,7 @@ export default {
         },
 
         sendFunds(){
-            this.$router.push('/txs/send/private')
+            this.$router.push('/txs/private/send')
         },
 
     },

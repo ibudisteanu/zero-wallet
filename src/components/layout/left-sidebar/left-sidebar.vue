@@ -57,11 +57,18 @@
                                     </div>
                                 </router-link>
                             </li>
+                            <li class="nav-item">
+                                <router-link :class="`nav-link ${route.indexOf('/txs/private-delegate') === 0 ? 'active' : ''} nav-link`" to="/txs/private/delegate" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <span class="nav-link-text ps-1">Private Delegate</span>
+                                    </div>
+                                </router-link>
+                            </li>
                         </ul>
                     </li>
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <router-link :disabled="!isWalletLogged" to="/txs/send/private" :class="`${ route === '/txs/send/private' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
+                            <router-link :disabled="!isWalletLogged" to="/txs/private/send" :class="`${ route === '/txs/private/send' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
                                 <i class="fa fa-money-check-alt"></i>
                                 <span class="nav-link-text ps-1">Private Transfer</span>
                             </router-link>
@@ -182,7 +189,6 @@
 
 <script>
 import { mixin as clickaway } from 'vue-clickaway'
-const {version} = PandoraPay.enums.wallet.address;
 import Vue from 'vue';
 
 export default {
@@ -200,8 +206,6 @@ export default {
 
         sendUrl(){
             if (!this.address) return '';
-
-            if (this.address.version === version.VERSION_TRANSPARENT) return '/send/transparent/transfer';
         },
 
         encrypted(){
