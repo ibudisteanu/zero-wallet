@@ -8,7 +8,7 @@
 
         <template slot="tab_0">
             <div class="form pb-2">
-                <tx-amount :validate-amount="true" :allow-zero="true" :balances="balancesOnlyClaimable" @changed="updateStakingAmountChanged" text="Update Staking Amount" asset="" tooltip="Convert claimable amount to staking amount." />
+                <tx-amount :validate-amount="true" :allow-zero="true" :balances="balancesOnlyClaimable" @changed="delegatedStakingUpdateAmountChanged" text="Update Staking Amount" asset="" tooltip="Convert claimable amount to staking amount." />
             </div>
             <div class="form-group pt-4">
                 <input class="form-check-input" id="set-new-delegated-info" type="checkbox"  name="checkbox" v-model="hasNewDelegatedInfo"  >
@@ -18,11 +18,11 @@
             <div v-if="hasNewDelegatedInfo" class="pt-2 ms-2">
 
                 <div class="form-group pt-2">
-                    <input class="form-check-input" id="auto-generate-public-key-hash" type="checkbox" v-model="delegateNewPublicKeyGenerate"  >
+                    <input class="form-check-input" id="auto-generate-public-key-hash" type="checkbox" v-model="delegatedStakingNewPublicKeyGenerate"  >
                     <label class="form-check-label" for="auto-generate-public-key-hash" > Auto Generate Public Key Hash </label>
                 </div>
 
-                <template v-if="!delegateNewPublicKeyGenerate">
+                <template v-if="!delegatedStakingNewPublicKeyGenerate">
                     <div class="form-group pt-2">
                         <label class="form-label"> Delegate to Stake Node:</label>
                         <loading-button text="Select Node" icon="fa fa-laptop-code" @submit="showDelegateStakeNode"  ></loading-button>
@@ -30,16 +30,16 @@
                     <div class="form pt-2">
                         <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Public Key:</label>
                         <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
-                        <input :class="`form-control ${validationNewDelegatedStakePublicKey ? 'is-invalid' : ''}`" type="text" v-model="newDelegatedStakePublicKey"  >
-                        <div v-if="validationNewDelegatedStakePublicKey" class="invalid-feedback d-block">{{validationNewDelegatedStakePublicKey}}</div>
+                        <input :class="`form-control ${validationDelegatedStakingNewPublicKey ? 'is-invalid' : ''}`" type="text" v-model="delegatedStakingNewPublicKey"  >
+                        <div v-if="validationDelegatedStakingNewPublicKey" class="invalid-feedback d-block">{{validationDelegatedStakingNewPublicKey}}</div>
                     </div>
                 </template>
 
                 <div class="form pt-2">
                     <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Fee:</label>
                     <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
-                    <input class="form-control" type="number" v-model="newDelegatedStakeFee" min="0" max="65535" >
-                    <label>in Percentage: {{newDelegatedStakeFee/65535*100}}%</label>
+                    <input class="form-control" type="number" v-model="delegatedStakingNewFee" min="0" max="65535" >
+                    <label>in Percentage: {{delegatedStakingNewFee/65535*100}}%</label>
                 </div>
             </div>
 
@@ -63,13 +63,13 @@ export default {
 
     data(){
         return {
-            updateStakingAmount: {},
+            delegatedStakingUpdateAmount: {},
 
             hasNewDelegatedInfo: false,
-            delegateNewPublicKeyGenerate: false,
+            delegatedStakingNewPublicKeyGenerate: false,
 
-            newDelegatedStakePublicKey: "",
-            newDelegatedStakeFee: 0,
+            delegatedStakingNewPublicKey: "",
+            delegatedStakingNewFee: 0,
         }
     },
 
@@ -92,12 +92,12 @@ export default {
         buttons(){
             return { 2: { icon: 'fa fa-marker', text: 'Update delegate' }}
         },
-        validationNewDelegatedStakePublicKey(){
+        validationDelegatedStakingNewPublicKey(){
 
-            if (this.delegateNewPublicKeyGenerate || !this.hasNewDelegatedInfo) return
+            if (this.delegatedStakingNewPublicKeyGenerate || !this.hasNewDelegatedInfo) return
 
             try{
-                const buffer = Buffer.from(this.newDelegatedStakePublicKey, "hex")
+                const buffer = Buffer.from(this.delegatedStakingNewPublicKey, "hex")
                 if (buffer.length !== 33) return "It must be 66 hex"
             }catch(err){
                 return "Invalid Hex input"
@@ -105,10 +105,10 @@ export default {
         },
         txData(){
             return {
-                delegateNewPublicKeyGenerate: this.hasNewDelegatedInfo ? this.delegateNewPublicKeyGenerate : false,
-                delegateNewPubKey: this.hasNewDelegatedInfo ? (this.newDelegatedStakePublicKey ? this.newDelegatedStakePublicKey : "") : "",
-                delegateNewFee: this.hasNewDelegatedInfo ? this.newDelegatedStakeFee : 0,
-                updateStakingAmount: this.updateStakingAmount.amount,
+                delegatedStakingNewPublicKeyGenerate: this.hasNewDelegatedInfo ? this.delegatedStakingNewPublicKeyGenerate : false,
+                delegatedStakingNewPublicKey: this.hasNewDelegatedInfo ? (this.delegatedStakingNewPublicKey ? this.delegatedStakingNewPublicKey : "") : "",
+                delegatedStakingNewFee: this.hasNewDelegatedInfo ? this.delegatedStakingNewFee : 0,
+                delegatedStakingUpdateAmount: this.delegatedStakingUpdateAmount.amount,
             }
         }
     },
@@ -119,10 +119,10 @@ export default {
             try{
 
                 if (oldTab === 0 && value === 1){
-                    if (this.updateStakingAmount.validationError) throw this.updateStakingAmount.validationError
-                    if (this.validationNewDelegatedStakePublicKey) throw this.validationNewDelegatedStakePublicKey
+                    if (this.delegatedStakingUpdateAmount.validationError) throw this.delegatedStakingUpdateAmount.validationError
+                    if (this.validationDelegatedStakingNewPublicKey) throw this.validationDelegatedStakingNewPublicKey
 
-                    if (this.updateStakingAmount.amount === 0 && !this.hasNewDelegatedInfo) throw "You should update something."
+                    if (this.delegatedStakingUpdateAmount.amount === 0 && !this.hasNewDelegatedInfo) throw "You should update something."
                 }
 
             }catch(err) {
@@ -131,18 +131,18 @@ export default {
                 resolve(true)
             }
         },
-        updateStakingAmountChanged(data){
-            this.updateStakingAmount = {...this.updateStakingAmount, ...data}
+        delegatedStakingUpdateAmountChanged(data){
+            this.delegatedStakingUpdateAmount = {...this.delegatedStakingUpdateAmount, ...data}
         },
 
         async showDelegateStakeNode(resolver){
             try{
                 const output = await this.$refs.refDelegateStakeNodeModal.showModal(this.publicKey)
                 if (output){
-                    this.delegateNewPublicKeyGenerate = false
+                    this.delegatedStakingNewPublicKeyGenerate = false
                     this.hasNewDelegatedInfo = true
-                    this.newDelegatedStakePublicKey = output.delegateStakingPublicKey
-                    this.newDelegatedStakeFee = output.delegatesFee
+                    this.delegatedStakingNewPublicKey = output.delegateStakingPublicKey
+                    this.delegatedStakingNewFee = output.delegatesFee
                 }
             }finally{
                 resolver(true)
