@@ -16,7 +16,7 @@
 
 <script>
 import TxAmount from "src/components/send/tx-amount"
-import SimpleTxPage from "src/pages/send/staking/simple-tx.page"
+import SimpleTxPage from "src/pages/send/simple/simple-tx.page"
 
 export default {
 

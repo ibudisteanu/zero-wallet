@@ -1,9 +1,10 @@
 <template>
 
-    <simple-tx-modal ref="refModal" :tabs-offset="1" title="Update Delegate"
-                     :titlesOffset="[ {icon: 'fas fa-edit', name: 'Update', tooltip: 'Update Delegated Stake' }]"
-                     :tx-data="txData" @onSetTab="setTab" :buttonsOffset="buttons"
-                     tx-name="createUpdateDelegateTx_Float">
+    <simple-tx-page title="Update Delegate Info" subtitle="Change Delegation Information" icon="fa fa-marker"
+                    :tabs-offset="1"
+                    :titles-offset="[ {icon: 'fa fa-edit', name: 'Update Delegation', tooltip: 'Change delegation info' }]"
+                    :tx-data="txData" @onSetTab="setTab" :buttonsOffset="buttons"
+                    tx-name="createUpdateDelegateTx_Float">
 
         <template slot="tab_0">
             <div class="form pb-2">
@@ -36,24 +37,20 @@
             </div>
         </template>
 
-    </simple-tx-modal>
+    </simple-tx-page>
 
 </template>
 
 <script>
-
-import Modal from "src/components/utils/modal"
 import TxAmount from "src/components/send/tx-amount"
-import SimpleTxModal from "pages/send/staking/simple-tx.page"
+import SimpleTxPage from "src/pages/send/simple/simple-tx.page"
 
 export default {
 
-    components: { Modal, TxAmount, SimpleTxModal},
+    components: {SimpleTxPage, TxAmount },
 
     data(){
         return {
-            publicKey: "",
-
             updateStakingAmount: {},
 
             hasNewDelegatedInfo: false,
@@ -66,6 +63,9 @@ export default {
     },
 
     computed:{
+        publicKey(){
+            return this.$store.state.wallet.mainPublicKey
+        },
         account(){
             return this.$store.state.accounts.list[this.publicKey]
         },
@@ -79,7 +79,7 @@ export default {
             return (this.account && this.account.plainAccount ) ? { "": { amount: this.account.plainAccount.claimable, asset: "" } } : { "": { amount: 0, asset: ""} }
         },
         buttons(){
-            return { 2: { icon: 'fa fa-unlink', text: 'Update delegate' }}
+            return { 2: { icon: 'fa fa-marker', text: 'Update delegate' }}
         },
         validationNewDelegatedStakePublicKey(){
 
@@ -124,28 +124,7 @@ export default {
             this.updateStakingAmount = {...this.updateStakingAmount, ...data}
         },
 
-        showModal( publicKey, data ) {
-            Object.assign(this.$data, this.$options.data());
-            this.publicKey = publicKey;
-            if (data && data.delegatePublicKey){
-                this.hasNewDelegatedInfo = true
-                this.delegateNewPublicKeyGenerate = false
-                this.newDelegatedStakePublicKey = data.delegatePublicKey
-                this.newDelegatedStakeFee = data.delegatesFee
-                this.disableChanges = true
-            }
-            return this.$refs.refModal.showModal(publicKey);
-        },
-
-        closeModal() {
-            return this.$refs.refModal.closeModal();
-        },
-
     },
 
 }
 </script>
-
-<style scoped>
-
-</style>

@@ -1,6 +1,6 @@
 <template>
     <div class="theme-wizard">
-        <div class="card-header bg-light pt-0 pb-2">
+        <div class="card-header bg-light pt-2 pb-2">
             <ul class="nav justify-content-between nav-wizard">
                 <li v-for="(title, index) in titles"  class="nav-item"
                     :key="`tab_title_${index}`">
