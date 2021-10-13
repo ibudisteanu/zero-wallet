@@ -1,8 +1,9 @@
 <template>
 
     <simple-tx-modal ref="refModal" :tabs-offset="1" title="Unstake tx"
-                :titlesOffset="[ {icon: 'fas fa-edit', name: 'Amount', tooltip: 'Unstaking amount' }]"
-                :tx-data="txData" @onSetTab="setTab" >
+                     :titlesOffset="[ {icon: 'fas fa-edit', name: 'Amount', tooltip: 'Unstaking amount' }]"
+                     :tx-data="txData" @onSetTab="setTab" :buttonsOffset="buttons"
+                     tx-name="createUnstakeTx_Float">
 
         <template slot="tab_0">
             <tx-amount :allow-zero="true" :accounts="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" :asset="''" :validate-amount="true" />
@@ -28,9 +29,6 @@ export default {
     },
 
     computed:{
-        address(){
-            return this.$store.state.wallet.addresses[this.publicKey];
-        },
         account(){
             return this.$store.state.accounts.list[this.publicKey]
         },
@@ -80,7 +78,3 @@ export default {
 
 }
 </script>
-
-<style scoped>
-
-</style>

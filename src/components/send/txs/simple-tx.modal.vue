@@ -58,6 +58,8 @@ export default {
         tabsOffset: 0,
         titlesOffset: {default: () => []}, //{icon, name}
         txData: {default: ({}) },
+        buttonsOffset: {default: () => ({}) },
+        txName: {default: ""},
     },
 
     computed:{
@@ -77,7 +79,13 @@ export default {
             return (this.account && this.account.delegatedStake) ? [{ amount: this.account.delegatedStake.stakeAvailable, asset: ""}] : [{ amount: 0, asset: ""}]
         },
         buttons(){
-            return { 2: { icon: 'fa fa-credit-card', text: 'Sign Transaction' }}
+            const obj = {
+                ...this.buttonsOffset,
+            }
+            if (!obj[2+this.tabsOffset])
+                obj[2+this.tabsOffset] = { icon: 'fa fa-credit-card', text: 'Sign Transaction' }
+
+            return obj
         }
     },
 
@@ -130,7 +138,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const out = await PandoraPay.transactions.builder.createUnstakeTx_Float( JSON.stringify({
+            const out = await PandoraPay.transactions.builder[this.txName]( JSON.stringify({
                 from: this.address.addressEncoded,
                 ...this.txData,
                 nonce: 0,
