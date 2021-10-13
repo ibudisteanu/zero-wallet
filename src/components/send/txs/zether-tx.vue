@@ -1,5 +1,6 @@
 <template>
     <wait-account :address="address" :account="account">
+
         <wizzard :titles="{...titlesOffset,
                 0: {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
                 1: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
@@ -7,11 +8,6 @@
                 3: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' } }"
                  @onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card" >
 
-            <template v-for="(_, index) in titlesOffset">
-                <template :slot="`tab_${index}`">
-                    <slot :name="`tab_${index}`"></slot>
-                </template>
-            </template>
 
             <template :slot="`tab_0`">
                 <tx-asset :assets="availableAssets" @changed="changedAsset" class="pb-4" />

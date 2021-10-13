@@ -3,7 +3,7 @@
         <div class="card-header bg-light pt-2 pb-2">
             <ul class="nav justify-content-between nav-wizard">
                 <li v-for="(titleIndex, index ) in titlesSorted"  class="nav-item"
-                    :key="`tab_title_${titleIndex}`">
+                    :key="`tab_title_${index}`">
                     <span :class="`nav-link ${tab===titleIndex?'active':''} fw-semi-bold`" v-tooltip.bottom="`${titles[titleIndex].tooltip}`">
                         <span class="nav-item-circle-parent">
                             <span class="nav-item-circle">
@@ -61,7 +61,7 @@ export default {
 
     computed:{
         titlesSorted(){
-            return Object.keys(this.titles).map(it => Number.parseInt(it)).sort((a,b)=>a-b)
+            return Object.keys(this.titles).map(it => Number.parseFloat(it)).sort((a,b)=>a-b)
         },
         end(){
             return this.titlesSorted[this.titlesSorted.length-1]
