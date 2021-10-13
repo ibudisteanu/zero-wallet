@@ -5,8 +5,13 @@
         <layout-title icon="fa fa-piggy-bank" title="Private Delegate Funds">Delegate Funds Privately to Delegating Address</layout-title>
 
         <zether-tx ref="refZetherTx"
+                   :titles-offset="[{icon: 'fas fa-edit', name: 'Delegation', tooltip: 'Delegation update' }]"
                    :init-available-assets="[PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]"
                    tx-name="createZetherDelegateStakingTx" :public-key="publicKey" @onSetTab="setTab" >
+
+            <template slot="tab_0">
+
+            </template>
 
         </zether-tx>
 

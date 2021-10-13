@@ -4,11 +4,11 @@
 
         <layout-title icon="fa fa-unlink" title="Unstake coins">Retrieve coins from the staking balance</layout-title>
 
-        <simple-tx :tabs-offset="1" :titles-offset="[ {icon: 'fas fa-edit', name: 'Amount', tooltip: 'Unstaking amount' }]"
-                :tx-data="txData" @onSetTab="setTab" :buttonsOffset="buttons"
+        <simple-tx :titles-offset="{ '-1': {icon: 'fas fa-edit', name: 'Amount', tooltip: 'Unstaking amount' } }"
+                :tx-data="txData" @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey"
                 tx-name="createUnstakeTx_Float">
 
-            <template slot="tab_0">
+            <template slot="tab_-1">
                 <tx-amount :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" :asset="''" :validate-amount="true" />
             </template>
 
@@ -44,7 +44,7 @@ export default {
             return (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ?  { "": { amount: this.account.plainAccount.delegatedStake.stakeAvailable, asset: ""} } : { amount: 0, asset: ""}
         },
         buttons(){
-            return { 2: { icon: 'fa fa-unlink', text: 'Unstake now' }}
+            return { 1: { icon: 'fa fa-unlink', text: 'Unstake now' }}
         },
         txData(){
             return {
@@ -58,7 +58,7 @@ export default {
         async setTab({resolve, reject, oldTab, value}){
             try{
 
-                if (oldTab === 0 && value === 1)
+                if (oldTab === -1 && value === 0 )
                     if (this.unstakeAmount.validationError) throw this.unstakeAmount.validationError
 
             }catch(err) {

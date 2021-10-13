@@ -4,11 +4,11 @@
 
         <template slot="body">
 
-            <wizzard :titles="[
-                {icon: 'fas fa-file', name: 'File', tooltip: 'Select file to import account' },
-                {icon: 'fas fa-wallet', name: 'Account', tooltip: 'Preview account' },
-                {icon: 'fas fa-lock', name: 'Decrypt', tooltip: 'Decrypt file' },
-                {icon: 'fas fa-check', name: 'Done', tooltip: 'Finish importing account' }]"
+            <wizzard :titles="{
+                0: {icon: 'fas fa-file', name: 'File', tooltip: 'Select file to import account' },
+                1: {icon: 'fas fa-wallet', name: 'Account', tooltip: 'Preview account' },
+                2: {icon: 'fas fa-lock', name: 'Decrypt', tooltip: 'Decrypt file' },
+                3: {icon: 'fas fa-check', name: 'Done', tooltip: 'Finish importing account' } }"
                      @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
                 <template slot="tab_0">

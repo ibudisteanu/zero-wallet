@@ -2,25 +2,24 @@
     <div class="theme-wizard">
         <div class="card-header bg-light pt-2 pb-2">
             <ul class="nav justify-content-between nav-wizard">
-                <li v-for="(title, index) in titles"  class="nav-item"
-                    :key="`tab_title_${index}`">
-                    <span :class="`nav-link ${tab===index?'active':''} fw-semi-bold`"
-                          v-tooltip.bottom="`${title.tooltip}`">
+                <li v-for="(titleIndex, index ) in titlesSorted"  class="nav-item"
+                    :key="`tab_title_${titleIndex}`">
+                    <span :class="`nav-link ${tab===titleIndex?'active':''} fw-semi-bold`" v-tooltip.bottom="`${titles[titleIndex].tooltip}`">
                         <span class="nav-item-circle-parent">
                             <span class="nav-item-circle">
-                                <i :class="`${title.icon}`"></i>
+                                <i :class="`${titles[titleIndex].icon}`"></i>
                             </span>
                         </span>
-                        <span class="d-none d-md-block mt-1 fs--1">{{title.name}}</span>
+                        <span class="d-none d-md-block mt-1 fs--1">{{titles[titleIndex].name}}</span>
                     </span>
                 </li>
             </ul>
         </div>
         <div class="card-body py-3">
             <div class="tab-content">
-                <div v-for="(title, index) in titles" :class="`tab-pane ${tab===index?'active':''}`"
+                <div v-for="(titleIndex, index) in titlesSorted" :class="`tab-pane ${tab===titleIndex?'active':''}`"
                      :key="`tab_option_${index}`">
-                    <slot :name="`tab_${index}`"/>
+                    <slot :name="`tab_${titleIndex}`"/>
                 </div>
             </div>
         </div>
@@ -31,9 +30,10 @@
             <slot name="wizzard-footer" />
 
             <div class="float-end">
-                <loading-button v-if="tab > 0" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
-                <loading-button v-if="tab < maxTab" :text="`${ buttons[tab] ? buttons[tab].text : 'Next'}`" @submit="handleNext" :icon="`${ buttons[tab] ? buttons[tab].icon : 'fas fa-chevron-right ms-2' }`"  />
+                <loading-button v-if="tab > start" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
+                <loading-button v-if="tab <= end" :text="`${ buttons[tab] ? buttons[tab].text : 'Next'}`" @submit="handleNext" :icon="`${ buttons[tab] ? buttons[tab].icon : 'fas fa-chevron-right ms-2' }`"  />
             </div>
+
         </div>
     </div>
 </template>
@@ -48,9 +48,7 @@ export default {
 
     data() {
         return {
-            tab: 0,
-            maxTab: 3,
-
+            tab: null,
             error: '',
         }
     },
@@ -61,6 +59,18 @@ export default {
         buttons: {default: () => ({}) }, //{icon, text}
     },
 
+    computed:{
+        titlesSorted(){
+            return Object.keys(this.titles).map(it => Number.parseInt(it)).sort((a,b)=>a-b)
+        },
+        end(){
+            return this.titlesSorted[this.titlesSorted.length-1]
+        },
+        start(){
+            return this.titlesSorted[0]
+        }
+    },
+
     methods: {
 
         async setTab(resolver, value) {
@@ -68,8 +78,8 @@ export default {
 
                 this.error = ""
 
-                value = Math.max(value, 0)
-                value = Math.min(value, this.maxTab + 1)
+                value = Math.max(value, this.start)
+                value = Math.min(value, this.end+1)
 
                 const promise = new Promise((resolve, reject)=>{
                     this.$emit('onSetTab', {resolve, reject, oldTab: this.tab, value} )
@@ -86,12 +96,30 @@ export default {
         },
 
         handleBack(resolver) {
-            return this.setTab(resolver, this.tab - 1)
+            for (let i=0; i < this.titlesSorted.length; i++)
+                if (this.titlesSorted[i] === this.tab)
+                    return this.setTab(resolver, this.titlesSorted[i-1] )
         },
         handleNext(resolver) {
-            return this.setTab(resolver, this.tab + 1)
+            for (let i=0; i < this.titlesSorted.length; i++)
+                if (this.titlesSorted[i] === this.tab)
+                    return this.setTab(resolver, (i < this.titlesSorted.length-1) ? this.titlesSorted[i+1] : this.titlesSorted[i] +1 )
         },
-    }
+    },
+
+    watch:{
+        tab:{
+            immediate: true,
+            handler: function (to, from) {
+                if (this.tab === null)
+                    this.tab = this.titlesSorted[0]
+            }
+        },
+    },
+
+    mounted(){
+    },
+
 }
 </script>
 

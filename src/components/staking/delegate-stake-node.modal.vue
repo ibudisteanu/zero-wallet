@@ -4,10 +4,10 @@
 
         <template slot="body">
             <wait-account :address="address" :account="account">
-                <wizzard :titles="[
-                         {icon: 'fas fa-globe-americas', name: 'Select Node', tooltip: 'Select Node you are delegating to' },
-                         {icon: 'fas fa-robot', name: 'Node Info', tooltip: 'Node information' },
-                         {icon: 'fas fa fa-piggy-bank', name: 'Delegate', tooltip: 'Finalizing the delegate' }]"
+                <wizzard :titles="{
+                         0: {icon: 'fas fa-globe-americas', name: 'Select Node', tooltip: 'Select Node you are delegating to' },
+                         1: {icon: 'fas fa-robot', name: 'Node Info', tooltip: 'Node information' },
+                         2: {icon: 'fas fa fa-piggy-bank', name: 'Delegate', tooltip: 'Finalizing the delegate' }}"
                          @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
                     <template slot="tab_0">

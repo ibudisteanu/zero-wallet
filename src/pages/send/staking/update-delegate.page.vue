@@ -3,12 +3,12 @@
     <layout>
         <layout-title icon="fa fa-marker" title="Update Delegate Info">Change Delegation Information</layout-title>
 
-        <simple-tx :tabs-offset="1"
-                   :titles-offset="[ {icon: 'fa fa-edit', name: 'Update Delegation', tooltip: 'Change delegation info' }]"
-                   :tx-data="txData" @onSetTab="setTab" :buttonsOffset="buttons"
+        <simple-tx :titles-offset="{ '-1': {icon: 'fa fa-edit', name: 'Update Delegation', tooltip: 'Change delegation info' } }"
+                   :tx-data="txData" @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey"
                    tx-name="createUpdateDelegateTx_Float">
 
-            <template slot="tab_0">
+            <template slot="tab_-1">
+
                 <div class="form pb-2">
                     <tx-amount :validate-amount="true" :allow-zero="true" :balances="balancesOnlyClaimable" @changed="delegatedStakingUpdateAmountChanged" text="Update Staking Amount" asset="" tooltip="Convert claimable amount to staking amount." />
                 </div>
@@ -89,7 +89,7 @@ export default {
             return (this.account && this.account.plainAccount ) ? { "": { amount: this.account.plainAccount.claimable, asset: "" } } : { "": { amount: 0, asset: ""} }
         },
         buttons(){
-            return { 2: { icon: 'fa fa-marker', text: 'Update delegate' }}
+            return { 1: { icon: 'fa fa-marker', text: 'Update delegate' }}
         },
         validationDelegatedStakingNewPublicKey(){
 

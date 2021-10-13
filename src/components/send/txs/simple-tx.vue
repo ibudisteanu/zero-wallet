@@ -1,21 +1,21 @@
 <template>
     <wait-account :address="address" :account="account">
-        <wizzard :titles="[ ...titlesOffset,
-                {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
-                {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' }]"
+        <wizzard :titles="{ ...titlesOffset,
+                0: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
+                1: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' }}"
                  @onSetTab="setTab" :buttons="buttons" controls-class-name="card-footer bg-light" class="card" >
 
-            <template v-for="(_, index) in new Array(tabsOffset+1)">
+            <template v-for="(_, index) in titlesOffset">
                 <template :slot="`tab_${index}`">
                     <slot :name="`tab_${index}`"></slot>
                 </template>
             </template>
 
-            <template :slot="`tab_${tabsOffset}`">
+            <template :slot="`tab_0`">
                 <extra-data @changed="changedExtraData" />
             </template>
 
-            <template :slot="`tab_${tabsOffset+1}`">
+            <template :slot="`tab_1`">
                 <tx-fee :balances="balancesStakeAvailable" :allow-zero="true" @changed="changedFee" :asset="''" />
             </template>
 
@@ -51,8 +51,7 @@ export default {
 
     props: {
         publicKey: {default: ""},
-        tabsOffset: {default: 0},
-        titlesOffset: {default: () => []}, //{icon, name}
+        titlesOffset: {default: () => ({}) }, //{icon, name}
         txData: {default: () => ({}) },
         buttonsOffset: {default: () => ({}) },
         txName: {default: ""},
@@ -69,13 +68,10 @@ export default {
             return (this.account && this.account.delegatedStake) ? [{ amount: this.account.delegatedStake.stakeAvailable, asset: ""}] : [{ amount: 0, asset: ""}]
         },
         buttons(){
-            const obj = {
+            return {
+                1: { icon: 'fa fa-credit-card', text: 'Sign Transaction' },
                 ...this.buttonsOffset,
             }
-            if (!obj[2+this.tabsOffset])
-                obj[2+this.tabsOffset] = { icon: 'fa fa-credit-card', text: 'Sign Transaction' }
-
-            return obj
         }
     },
 
@@ -84,18 +80,15 @@ export default {
         async setTab({resolve, reject, oldTab, value}){
             try{
 
-                if (value <= this.tabsOffset)
-                    return this.$emit('onSetTab', {resolve, reject, oldTab, value} )
-
-                if (oldTab === this.tabsOffset && value === this.tabsOffset+1)
+                if (oldTab === 0 && value > oldTab) {
                     if (this.extraData.validationError) throw this.extraData.validationError
-
-                if (oldTab === this.tabsOffset+1 && value === this.tabsOffset+2){
+                }else if (oldTab === 1 && value > oldTab){
                     if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
                     if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
 
                     await this.handeTxProcess()
-                }
+                }else
+                    return this.$emit('onSetTab', {resolve, reject, oldTab, value} )
 
             }catch(err) {
                 reject(err)

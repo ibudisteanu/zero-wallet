@@ -4,10 +4,10 @@
 
         <template slot="body">
 
-            <wizzard :titles="[
-                {icon: 'fas fa-pencil-alt', name: 'Information', tooltip: 'Information of the account' },
-                {icon: 'fas fa-file-code', name: 'Private Key', tooltip: 'Private Key' },
-                {icon: 'fas fa-check', name: 'Done', tooltip: 'Finish importing account' }]"
+            <wizzard :titles="{
+                0: {icon: 'fas fa-pencil-alt', name: 'Information', tooltip: 'Information of the account' },
+                1: {icon: 'fas fa-file-code', name: 'Private Key', tooltip: 'Private Key' },
+                2: {icon: 'fas fa-check', name: 'Done', tooltip: 'Finish importing account' }}"
                      @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
                 <template slot="tab_0">

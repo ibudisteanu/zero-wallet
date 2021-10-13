@@ -198,7 +198,11 @@ a .disabled{
 }
 
 .input-toggle-group input {
-    padding-left: 32px;
+    padding-right: 32px;
+}
+
+.input-toggle-group .is-invalid {
+    padding-right: 62px;
 }
 
 .input-toggle{

@@ -1,20 +1,19 @@
 <template>
     <wait-account :address="address" :account="account">
-
-        <wizzard :titles="[ ...titlesOffset,
-                {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
-                {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
-                {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' },
-                {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' }]"
+        <wizzard :titles="{...titlesOffset,
+                0: {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
+                1: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
+                2: {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' },
+                3: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' } }"
                  @onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card" >
 
-            <template v-for="(_, index) in new Array(tabsOffset+1)">
+            <template v-for="(_, index) in titlesOffset">
                 <template :slot="`tab_${index}`">
                     <slot :name="`tab_${index}`"></slot>
                 </template>
             </template>
 
-            <template :slot="`tab_${tabsOffset}`">
+            <template :slot="`tab_0`">
                 <tx-asset :assets="availableAssets" @changed="changedAsset" class="pb-4" />
 
                 <destination-address :asset="asset.asset"
@@ -25,13 +24,13 @@
 
             </template>
 
-            <template :slot="`tab_${tabsOffset+1}`">
+            <template :slot="`tab_1`">
                 <extra-data :destinations="[destination]" class="pt-4"
                             :paymentId="identifiedPaymentID"
                             @changed="changedExtraData" />
             </template>
 
-            <template :slot="`tab_${tabsOffset+2}`">
+            <template :slot="`tab_2`">
 
                 <div class="col-12 col-md-6">
                     <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Size</label>
@@ -71,7 +70,7 @@
 
             </template>
 
-            <template :slot="`tab_${tabsOffset+3}`">
+            <template :slot="`tab_3`">
                 <tx-fee :balances="balancesAvailables" :asset="asset" :allow-zero="true" @changed="changedFee" />
             </template>
 
@@ -129,8 +128,7 @@ export default {
 
     props: {
         publicKey: {default: ""},
-        tabsOffset: {default: 0},
-        titlesOffset: {default: () => []}, //{icon, name}
+        titlesOffset: {default: () => ({}) }, //{icon, name}
         txData: {default: () => ({}) },
         buttonsOffset: {default: () => ({}) },
         txName: {default: ""},
@@ -180,13 +178,10 @@ export default {
         },
 
         buttons(){
-            const obj = {
+            return {
+                3: { icon: 'fa fa-credit-card', text: 'Sign Transaction' },
                 ...this.buttonsOffset,
             }
-            if (!obj[3+this.tabsOffset])
-                obj[3+this.tabsOffset] = { icon: 'fa fa-credit-card', text: 'Sign Transaction' }
-
-            return obj
         }
     },
 
@@ -210,10 +205,7 @@ export default {
 
             try{
 
-                if (value <= this.tabsOffset)
-                    return this.$emit('onSetTab', {resolve, reject, oldTab, value} )
-
-                if (oldTab === this.tabsOffset && value === this.tabsOffset+1){
+                if (oldTab === 0 && value > oldTab){
                     if (this.asset.validationError) throw this.asset.validationError
                     if (this.checkDestinationError) throw this.checkDestinationError
                     if (this.destination.validationError) throw this.destination.validationError;
@@ -224,19 +216,17 @@ export default {
                     if (!this.$store.state.accounts.list[this.destination.address.publicKey] && !this.destination.address.registration )
                         throw "Destination Address doesn't have the registration. \n You have the shorter version of the address. First time when an address is used it requires the longer version."
 
-                }
-                if (oldTab === this.tabsOffset+1 && value === this.tabsOffset+2)
+                }else if (oldTab === 1 && value > oldTab) {
                     if (this.extraData.validationError) throw this.extraData.validationError
-
-                if (oldTab === this.tabsOffset+2 && value === this.tabsOffset+3)
+                }else if (oldTab === 2 && value > oldTab) {
                     if (this.ringSize !== this.ringMembers.length) throw `Ring members are not generated well ${this.ringSize} vs ${this.ringMembers.length} `
-
-                if (oldTab === this.tabsOffset+3 && value === this.tabsOffset+4){
+                }else if (oldTab === 3 && value > oldTab){
                     if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
                     if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
 
                     await this.handleSendFunds()
-                }
+                }else
+                    return this.$emit('onSetTab', {resolve, reject, oldTab, value} )
 
             }catch(err) {
                 reject(err)
@@ -402,26 +392,28 @@ export default {
             //compute extra
             out = await PandoraPayHelper.transactions.builder[txName]( MyTextEncode( JSON.stringify({
                 ...this.txData,
-                fromPrivateKeys: [privateKey],
-                fromBalancesDecoded: [balanceDecoded],
-                assets: [asset],
-                amounts: [ Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.destination.amount.toString(), this.getAsset.decimalSeparator ) ) ],
-                dsts: [this.destination.addressEncoded],
-                burns: [0],
-                ringMembers: [this.ringMembers],
-                fees: [{
-                    fixed: (this.fee.feeType === 'feeAuto') ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) ),
-                    perByte: 0,
-                    perByteAuto: this.fee.feeType === 'feeAuto',
-                }],
-                data: [{
-                    data: Buffer.from(this.extraData.data).toString("hex"),
-                    encrypt: this.extraData.type === "encrypted",
-                }],
-                height: this.$store.state.blockchain.end,
-                hash: this.$store.state.blockchain.hash,
-                accs,
-                regs,
+                data: {
+                    fromPrivateKeys: [privateKey],
+                    fromBalancesDecoded: [balanceDecoded],
+                    assets: [asset],
+                    amounts: [ Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.destination.amount.toString(), this.getAsset.decimalSeparator ) ) ],
+                    dsts: [this.destination.addressEncoded],
+                    burns: [0],
+                    ringMembers: [this.ringMembers],
+                    fees: [{
+                        fixed: (this.fee.feeType === 'feeAuto') ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) ),
+                        perByte: 0,
+                        perByteAuto: this.fee.feeType === 'feeAuto',
+                    }],
+                    data: [{
+                        data: Buffer.from(this.extraData.data).toString("hex"),
+                        encrypt: this.extraData.type === "encrypted",
+                    }],
+                    height: this.$store.state.blockchain.end,
+                    hash: this.$store.state.blockchain.hash,
+                    accs,
+                    regs,
+                }
             } ) ), (status) => {
                 this.status = status
             } );

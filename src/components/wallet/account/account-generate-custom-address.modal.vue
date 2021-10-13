@@ -4,11 +4,11 @@
 
         <template slot="body" v-if="account">
 
-            <wizzard :titles="[
-                {icon: 'fas fa-dollar-sign', name: 'Amount', tooltip: 'Include an amount' },
-                {icon: 'fas fa-hand-holding-usd', name: 'Payment ID', tooltip: 'Include a Payment ID' },
-                {icon: 'fas fa-signature', name: 'Registration', tooltip: 'Include Registration Signature' },
-                {icon: 'fas fa-check', name: 'Done', tooltip: 'Generated Address' }]"
+            <wizzard :titles="{
+                0: {icon: 'fas fa-dollar-sign', name: 'Amount', tooltip: 'Include an amount' },
+                1: {icon: 'fas fa-hand-holding-usd', name: 'Payment ID', tooltip: 'Include a Payment ID' },
+                2: {icon: 'fas fa-signature', name: 'Registration', tooltip: 'Include Registration Signature' },
+                3: {icon: 'fas fa-check', name: 'Done', tooltip: 'Generated Address' }}"
                 @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
                 <template slot="tab_0">
