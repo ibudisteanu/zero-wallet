@@ -134,6 +134,7 @@ export default {
         txData: {default: () => ({}) },
         buttonsOffset: {default: () => ({}) },
         txName: {default: ""},
+        initAvailableAssets: {default: null}
     },
 
     computed:{
@@ -144,9 +145,10 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
         availableAssets(){
-            if (this.account && this.account.assets ) return this.account.assets;
-            return null
+            if (this.initAvailableAssets) return this.initAvailableAssets
+            return this.account && this.account.assets ? this.account.assets : null
         },
+
         availableAccounts(){
             return this.account && this.account.accounts ? this.account.accounts : null
         },

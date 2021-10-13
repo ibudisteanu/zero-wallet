@@ -57,6 +57,16 @@ export default {
 
     watch: {
 
+        assets: {
+            immediate: true,
+            handler: function(to, from){
+                if (!to)
+                    return this.selectedAsset = null
+
+                this.selectedAsset = to[0]
+            }
+        },
+
         selectedAsset: {
             immediate: true,
             handler: function (to, from) {

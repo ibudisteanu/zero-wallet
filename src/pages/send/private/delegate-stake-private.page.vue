@@ -4,12 +4,9 @@
 
         <layout-title icon="fa-money-check-alt" title="Private Delegate Funds">Delegate Funds Privately to Delegating Address</layout-title>
 
-        <zether-tx :tabs-offset="1" :titles-offset="[ {icon: 'fas fa-edit', name: 'Amount', tooltip: 'Unstaking amount' }]"
+        <zether-tx ref="refZetherTx"
+                   :init-available-assets="[PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]"
                    tx-name="createZetherDelegateStakingTx" :public-key="publicKey" @onSetTab="setTab" >
-
-            <template slot="tab_0">
-
-            </template>
 
         </zether-tx>
 
@@ -30,6 +27,9 @@ export default {
     },
 
     computed: {
+        PandoraPay() {
+            return PandoraPay
+        },
         publicKey(){
             return this.$store.state.wallet.mainPublicKey
         },
@@ -45,7 +45,11 @@ export default {
                 resolve(true)
             }
         },
-    }
+    },
+
+    mounted(){
+        this.$refs.refZetherTx.asset = {asset: ""}
+    },
 
 }
 

@@ -160,8 +160,6 @@ export default {
                 this.hasNewDelegatedInfo = true
                 this.delegatedStakingNewPublicKey = json.publicKey
 
-                console.log(json)
-
             }finally{
                 resolver(true)
             }
