@@ -7,7 +7,7 @@
 
         <template slot="tab_0">
             <div class="form pb-2">
-                <tx-amount :validate-amount="true" :allow-zero="true" :accounts="accountsOnlyClaimable" @changed="updateStakingAmountChanged" text="Update Staking Amount" asset="" tooltip="Convert claimable amount to staking amount." />
+                <tx-amount :validate-amount="true" :allow-zero="true" :balances="balancesOnlyClaimable" @changed="updateStakingAmountChanged" text="Update Staking Amount" asset="" tooltip="Convert claimable amount to staking amount." />
             </div>
             <div class="form-group pt-4">
                 <input class="form-check-input" id="set-new-delegated-info" type="checkbox"  name="checkbox" v-model="hasNewDelegatedInfo"  >
@@ -75,8 +75,8 @@ export default {
         isFound(){
             return this.account !== null
         },
-        accountsOnlyClaimable(){
-            return (this.account && this.account.plainAccount ) ? [{amount: this.account.plainAccount.claimable, asset: "" }] : [{ amount: 0, asset: ""}]
+        balancesOnlyClaimable(){
+            return (this.account && this.account.plainAccount ) ? { "": { amount: this.account.plainAccount.claimable, asset: "" } } : { "": { amount: 0, asset: ""} }
         },
         buttons(){
             return { 2: { icon: 'fa fa-unlink', text: 'Update delegate' }}

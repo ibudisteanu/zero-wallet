@@ -4,7 +4,7 @@
                 ...titlesOffset,
                 {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
                 {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' }]"
-                 @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
+                 @onSetTab="setTab" :buttons="buttons" controls-class-name="card-footer bg-light" class="card" >
 
             <template v-for="(_, index) in new Array(tabsOffset+1)">
                 <template :slot="`tab_${index}`">

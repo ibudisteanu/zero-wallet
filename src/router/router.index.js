@@ -3,6 +3,7 @@ import Vue from "vue";
 
 import LoginPage from "src/pages/login/login.page"
 import SendPrivatePage from "src/pages/send/private/send-private.page"
+import UnstakePage from "src/pages/send/staking/unstake.page"
 import ReceivePage from "src/pages/receive/receive.page"
 import WalletPage from "src/pages/wallet/wallet.page"
 import AddressPage from "src/pages/address/address.page"
@@ -40,7 +41,8 @@ const guardLogin = (to, from, next) =>{
 
 const routes = [
 
-    {path: '/send/private', component: SendPrivatePage, beforeEnter: guardDecrypted },
+    {path: '/txs/send/private', component: SendPrivatePage, beforeEnter: guardDecrypted },
+    {path: '/txs/unstake', component: UnstakePage, beforeEnter: guardDecrypted },
 
     {path: '/receive', component: ReceivePage, beforeEnter: guardDecrypted },
     {path: '/wallet', component: WalletPage, beforeEnter: guardDecrypted },

@@ -18,7 +18,7 @@
             <div v-if="validationError" class="invalid-feedback d-block">{{validationError}}</div>
 
         </div>
-        <tx-amount class="pt-2" @changed="changedTxAmount" :accounts="accounts" :asset="asset" />
+        <tx-amount class="pt-2" @changed="changedTxAmount" :balances="balances" :asset="asset" />
     </div>
 
 </template>
@@ -43,7 +43,7 @@ export default {
     props:{
         index: {default: null},
         asset: {default: ""},
-        accounts: {default: null },
+        balances: {default: null },
     },
 
     computed:{

@@ -28,16 +28,33 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link :disabled="!isWalletLogged" to="/staking" :class="`${ route === '/staking' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
-                            <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center">
+                            <router-link to="#" class="nav-link" @click.native="e => toggleNavElement( e,'staking')">
                                 <i class="fa fa-piggy-bank"></i>
                                 <span class="nav-link-text ps-1">Staking</span>
-                            </div>
-                        </router-link>
+                                <i :class="`nav-chevron fa fa-chevron-${navElementsShown['staking'] ? 'up' : 'down' }`"></i>
+                            </router-link>
+                        </div>
+                        <ul :class="`nav collapse ${navElementsShown['staking'] ? 'show':''}`">
+                            <li class="nav-item">
+                                <router-link :class="`nav-link ${route.indexOf('/staking') === 0 ? 'active' : ''} nav-link`" to="/staking" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <span class="nav-link-text ps-1">Stakes</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link :class="`nav-link ${route.indexOf('/txs/unstake') === 0 ? 'active' : ''} nav-link`" to="/txs/unstake" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <span class="nav-link-text ps-1">Unstake</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <router-link :disabled="!isWalletLogged" to="/send/private" :class="`${ route === '/send/private' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
+                            <router-link :disabled="!isWalletLogged" to="/txs/send/private" :class="`${ route === '/txs/send/private' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
                                 <i class="fa fa-money-check-alt"></i>
                                 <span class="nav-link-text ps-1">Private Transfer</span>
                             </router-link>

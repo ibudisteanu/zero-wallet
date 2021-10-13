@@ -15,7 +15,7 @@
 <script>
 import Modal from "src/components/utils/modal"
 import LoadingSpinner from "../../utils/loading-spinner";
-import StringHelper from "../../../utils/string-helper";
+import StringHelper from "src/utils/string-helper";
 
 export default {
 

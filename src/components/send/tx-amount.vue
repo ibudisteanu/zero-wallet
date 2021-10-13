@@ -10,6 +10,8 @@
 </template>
 
 <script>
+import StringHelper from "../../utils/string-helper";
+
 export default {
 
     data(){
@@ -22,7 +24,7 @@ export default {
         text: {default: 'Amount'},
         tooltip: {default: ''},
         asset: {default: ""},
-        accounts: {default: null },
+        balances: {default: () => ({}) },
         allowZero: {default: false,},
         validateAmount: {default: false },
         disabled: {default: false},
@@ -43,9 +45,11 @@ export default {
             if ( !this.allowZero && Number.parseFloat(this.amount) === 0) return "Amount needs to be greater than 0"
             if (this.amount === Number.NaN || this.amount < 0) return "Amount can not be negative"
             if (this.validateAmount){
-                for (const value of this.accounts)
-                    if ( value.asset === this.asset && this.amount * Math.pow(10, this.assetInfo.decimalSeparator) >  value.amount)
-                         return "Amount is higher than available funds"
+                if (!this.balances[this.asset])
+                    return 'Available funds: none'
+
+                if ( this.amount * Math.pow(10, this.assetInfo.decimalSeparator) > this.balances[this.asset].amount )
+                    return `Amount is higher than available funds ${ StringHelper.formatMoney( await PandoraPay.config.assets.assetsConvertToBase( this.balances[this.asset].amount.toString(), this.assetInfo.decimalSeparator ), this.assetInfo.decimalSeparator ) }`
             }
         },
         async validationError(){

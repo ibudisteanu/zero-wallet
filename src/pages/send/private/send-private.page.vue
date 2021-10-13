@@ -16,8 +16,7 @@
                     <template slot="tab_0">
                         <tx-asset :assets="availableAssets" @changed="changedAsset" class="pb-4" />
 
-                        <destination-address :accounts="availableAccounts"
-                                             :asset="asset.asset"
+                        <destination-address :asset="asset.asset"
                                              @changed="changedDestination">
                         </destination-address>
 
@@ -72,7 +71,7 @@
                     </template>
 
                     <template slot="tab_3">
-                        <tx-fee :accounts="availableAccounts" :asset="asset" :allow-zero="true" @changed="changedFee" />
+                        <tx-fee :balances="balancesAvailables" :asset="asset" :allow-zero="true" @changed="changedFee" />
                     </template>
 
                     <template slot="wizzard-footer">
@@ -104,8 +103,8 @@ import AlertBox from "src/components/utils/alert-box"
 import LayoutTitle from "src/components/layout/layout-title";
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import Wizzard from "src/components/utils/wizzard"
-import WaitAddress from "../../../components/wallet/account/wait-address";
-import WaitAccount from "../../../components/wallet/account/wait-account";
+import WaitAddress from "src/components/wallet/account/wait-address";
+import WaitAccount from "src/components/wallet/account/wait-account";
 
 export default {
 
@@ -137,20 +136,23 @@ export default {
     },
 
     computed:{
-
+        publicKey(){
+            return this.$store.state.wallet.mainPublicKey
+        },
         address(){
-            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey] ;
+            return this.$store.state.wallet.addresses[this.publicKey] ;
         },
         account(){
-            return this.$store.state.accounts.list[this.$store.state.wallet.mainPublicKey]
+            return this.$store.state.accounts.list[this.publicKey]
         },
         availableAssets(){
             if (this.account && this.account.assets ) return this.account.assets;
             return null
         },
         availableAccounts(){
-            if (this.account && this.account.accounts ) return this.account.accounts;
-            return null
+            return this.account && this.account.accounts ? this.account.accounts : null
+        },
+        balancesAvailables(){
         },
 
         checkDestinationError(){

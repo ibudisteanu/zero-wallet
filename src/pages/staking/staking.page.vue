@@ -52,38 +52,7 @@
 
                     </div>
 
-                    <div class="card-footer bg-light g-0 d-block-inline p-3">
-
-                        <div v-if="isDelegateStakeInPending">
-                            <span>You have a transaction in mempool...</span>
-                            <loading-spinner />
-                        </div>
-                        <div v-else >
-
-                            <!--                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowDelegateStake" v-tooltip.bottom="'Manual Delegating your stake'" >-->
-                            <!--                                <i class="fa fa-link " />-->
-                            <!--                            </button>-->
-
-                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowUpdateDelegate" v-tooltip.bottom="'Update Delegated Stake'" :disabled="!isDelegated" >
-                                <i class="fa fa-marker " />
-                            </button>
-
-                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowUpdateDelegateStakeNode" v-tooltip.bottom="'Update Delegated Stake to a Node'" :disabled="!isDelegated" >
-                                <i class="fa fa-laptop-code " />
-                            </button>
-
-                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowUnstake" v-tooltip.bottom="'Unstaking'" :disabled="!isDelegated" >
-                                <i class="fa fa-unlink text-danger " />
-                            </button>
-
-                        </div>
-
-                    </div>
                 </div>
-
-<!--                <unstake-modal ref="refUnstakeModal" />-->
-<!--                <update-delegate-modal ref="refUpdateDelegateModal" />-->
-<!--                <update-delegate-stake-node-modal ref="refUpdateDelegateStakeNodeModal" @onDelegateStake="onDelegateStake" />-->
 
             </wait-account>
 
@@ -104,10 +73,6 @@ import Balance from "src/components/wallet/balance/balance"
 import DelegatedStakePending from "src/components/wallet/balance/delegated-stake-pending"
 import AlertBox from "src/components/utils/alert-box"
 import WaitAccount from "../../components/wallet/account/wait-account";
-
-// import UnstakeModal from "src/components/staking/unstake.modal"
-// import UpdateDelegateModal from "src/components/staking/update-delegate.modal"
-// import UpdateDelegateStakeNodeModal from "src/components/staking/update-delegate-stake-node.modal"
 
 export default {
 
@@ -174,22 +139,6 @@ export default {
     },
 
     methods:{
-
-        handleShowUnstake(){
-            return this.$refs.refUnstakeModal.showModal( this.publicKey );
-        },
-
-        handleShowUpdateDelegateStakeNode(){
-            return this.$refs.refUpdateDelegateStakeNodeModal.showModal( this.publicKey );
-        },
-
-        handleShowUpdateDelegate(data){
-            return this.$refs.refUpdateDelegateModal.showModal(this.publicKey, data)
-        },
-
-        onDelegateStake(data){
-            return this.handleShowUpdateDelegate(data)
-        },
 
     },
 

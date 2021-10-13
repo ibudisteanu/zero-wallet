@@ -15,7 +15,6 @@
 import Account from "src/components/wallet/account/account"
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
-const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 

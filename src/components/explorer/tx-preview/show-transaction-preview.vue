@@ -57,8 +57,8 @@
 </template>
 
 <script>
-import StringHelper from "../../../utils/string-helper";
-import LoadingSpinner from "../../utils/loading-spinner";
+import StringHelper from "src/utils/string-helper";
+import LoadingSpinner from "src/components/utils/loading-spinner";
 import ShowTransactionPreviewData from "./show-transaction-preview-data"
 
 export default {
