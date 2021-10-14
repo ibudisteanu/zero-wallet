@@ -84,7 +84,7 @@ export default {
                 const obj = { hasNewDelegatedInfo: to }
                 if (!to){
                     obj.delegatedStakingNewPublicKey = ""
-                    obj.delegatedStakingNewFee = ""
+                    obj.delegatedStakingNewFee = 0
                     obj.validationDelegatedStakingNewPublicKey = ""
                 }
                 this.$emit('onChanges', obj )

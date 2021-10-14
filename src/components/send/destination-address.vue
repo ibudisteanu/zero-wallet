@@ -18,7 +18,7 @@
             <div v-if="validationError" class="invalid-feedback d-block">{{validationError}}</div>
 
         </div>
-        <tx-amount class="pt-2" @changed="changedTxAmount" :balances="balances" :asset="asset" />
+        <tx-amount :allow-zero="allowZero"  class="pt-2" @changed="changedTxAmount" :balances="balances" :asset="asset" />
     </div>
 
 </template>
@@ -44,7 +44,8 @@ export default {
         index: {default: null},
         asset: {default: ""},
         balances: {default: null },
-        text: {default: "Destination Address"}
+        text: {default: "Destination Address"},
+        allowZero: {default: false},
     },
 
     computed:{
