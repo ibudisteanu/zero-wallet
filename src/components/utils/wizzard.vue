@@ -61,7 +61,8 @@ export default {
 
     computed:{
         titlesSorted(){
-            return Object.keys(this.titles).map(it => Number.parseFloat(it)).sort((a,b)=>a-b)
+            const titles = Object.keys(this.titles).filter(it => this.titles[it] !== null )
+            return titles.map(it => Number.parseFloat(it)).sort((a,b) => a-b )
         },
         end(){
             return this.titlesSorted[this.titlesSorted.length-1]

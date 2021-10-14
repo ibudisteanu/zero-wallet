@@ -3,7 +3,7 @@
     <modal ref="modal" title="Delegate Stake to Node" content-class="">
 
         <template slot="body">
-            <wait-account :address="address" :account="account">
+            <wait-address :address="address">
                 <wizzard :titles="{
                          0: {icon: 'fas fa-globe-americas', name: 'Select Node', tooltip: 'Select Node you are delegating to' },
                          1: {icon: 'fas fa-robot', name: 'Node Info', tooltip: 'Node information' },
@@ -31,7 +31,7 @@
                     </template>
 
                 </wizzard>
-            </wait-account>
+            </wait-address>
         </template>
 
     </modal>
@@ -42,11 +42,11 @@
 import Modal from "src/components/utils/modal"
 import HttpHelper from "src/utils/http-helper"
 import Wizzard from "src/components/utils/wizzard"
-import WaitAccount from "src/components/wallet/account/wait-account";
+import WaitAddress from "src/components/wallet/account/wait-address";
 
 export default {
 
-    components: {Modal, Wizzard, WaitAccount},
+    components: {Modal, Wizzard, WaitAddress},
 
     data() {
         return {

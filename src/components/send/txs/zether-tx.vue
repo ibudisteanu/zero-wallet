@@ -2,28 +2,26 @@
     <wait-account :address="address" :account="account">
 
         <wizzard :titles="{...titlesOffset,
-                0: {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
+                0: skipReceiverTab ? null : {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
                 1: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
                 2: {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' },
                 3: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' } }"
                  @onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card" >
 
+            <template v-for="(_, index) in titlesOffset">
+                <template :slot="`tab_${index}`">
+                    <slot :name="`tab_${index}`"></slot>
+                </template>
+            </template>
 
-            <template :slot="`tab_0`">
+            <template :slot="`tab_${skipReceiverTab ? '0': undefined }`">
                 <tx-asset :assets="availableAssets" @changed="changedAsset" class="pb-4" />
-
-                <destination-address :asset="asset.asset"
-                                     @changed="changedDestination">
-                </destination-address>
-
-                <alert-box v-if="checkDestinationError" class="w-100" type="error">{{checkDestinationError}}</alert-box>
-
+                <destination-address :asset="asset.asset" @changed="changedDestination"></destination-address>
             </template>
 
             <template :slot="`tab_1`">
-                <extra-data :destinations="[destination]" class="pt-4"
-                            :paymentId="identifiedPaymentID"
-                            @changed="changedExtraData" />
+                <extra-data :destinations="[destination]" :paymentId="identifiedPaymentID"
+                            @changed="changedExtraData" class="pt-4" />
             </template>
 
             <template :slot="`tab_2`">
@@ -128,7 +126,9 @@ export default {
         txData: {default: () => ({}) },
         buttonsOffset: {default: () => ({}) },
         txName: {default: ""},
-        initAvailableAssets: {default: null}
+        initAvailableAssets: {default: null},
+        useBurn: false,
+        skipReceiverTab: false,
     },
 
     computed:{
@@ -185,13 +185,16 @@ export default {
         async destination (to, from){
             if (to === from) return
 
+            this.$emit('onDestinationChanged', to )
+
             await this.$store.state.blockchain.syncPromise;
 
-            if (to && to.address )
+            if (to && to.address && from.address.publicKey)
                 await this.$store.dispatch('subscribeAccount', to.address.publicKey )
 
             if (from && from.address && from.address.publicKey && !this.$store.getters.walletContains(from) )
                 await this.$store.dispatch('unsubscribeAccount', from.address.publicKey )
+
         }
     },
 
@@ -201,7 +204,7 @@ export default {
 
             try{
 
-                if (oldTab === 0 && value > oldTab){
+                if (oldTab === 0 && value > oldTab && this.skipReceiverTab){
                     if (this.asset.validationError) throw this.asset.validationError
                     if (this.checkDestinationError) throw this.checkDestinationError
                     if (this.destination.validationError) throw this.destination.validationError;
@@ -385,6 +388,8 @@ export default {
                 regs[ringShufflePublicKeys[i]] = out.registrationSerialized[i]
             }
 
+            const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.destination.amount.toString(), this.getAsset.decimalSeparator ) )
+
             //compute extra
             out = await PandoraPayHelper.transactions.builder[txName]( MyTextEncode( JSON.stringify({
                 ...this.txData,
@@ -392,9 +397,9 @@ export default {
                     fromPrivateKeys: [privateKey],
                     fromBalancesDecoded: [balanceDecoded],
                     assets: [asset],
-                    amounts: [ Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.destination.amount.toString(), this.getAsset.decimalSeparator ) ) ],
+                    amounts: [ this.useBurn ? 0 : amount  ],
                     dsts: [this.destination.addressEncoded],
-                    burns: [0],
+                    burns: [ this.useBurn ? amount : 0 ],
                     ringMembers: [this.ringMembers],
                     fees: [{
                         fixed: (this.fee.feeType === 'feeAuto') ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) ),
@@ -442,8 +447,7 @@ export default {
     },
 
     async beforeDestroy() {
-        if (this.destination && this.destination.address && this.destination.address.publicKey && !this.$store.getters.walletContains(this.destination.address.publicKey))
-            await this.$store.dispatch('unsubscribeAccount', this.destination.address.publicKey )
+        this.destination = {  }
     }
 
 }

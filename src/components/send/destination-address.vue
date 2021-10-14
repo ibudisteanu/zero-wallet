@@ -2,7 +2,7 @@
 
     <div>
         <div class="col">
-            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Destination Address {{index !== null ? index+1 : ''}}</label>
+            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{text}} {{index !== null ? index+1 : ''}}</label>
             <i v-if="index !== null" class="fa fa-times float-end pointer" @click="deleteDestinationAddress"></i>
 
             <div :class="`${finalAddress ? 'destination-row': ''} `" >
@@ -44,12 +44,13 @@ export default {
         index: {default: null},
         asset: {default: ""},
         balances: {default: null },
+        text: {default: "Destination Address"}
     },
 
     computed:{
         validationError(){
-            if (!this.destination) return`Destination Address was not specified`;
-            if (!this.finalAddress) return `Destination Address is invalid`;
+            if (!this.destination) return `${this.text} was not specified`;
+            if (!this.finalAddress) return `${this.text} is invalid`;
         },
     },
 
