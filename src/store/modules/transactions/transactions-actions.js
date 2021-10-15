@@ -49,12 +49,12 @@ export default {
         })
     },
 
-    async includeTx( {state, dispatch, commit, getters}, {tx, info} ){
+    async includeTx( {state, dispatch, commit, getters}, {tx, info, mempool} ){
 
         if (info) tx.__height = info.height
         else {
             delete tx.__height
-            info = {mempool: true}
+            info = {mempool: mempool}
         }
         dispatch('storeTransactionInfo', { hash: tx.hash, txInfo:  info  })
 

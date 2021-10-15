@@ -440,13 +440,7 @@ export default {
             const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( txSerialized )
             if (!finalAnswer) throw "Transaction couldn't be broadcasted"
 
-            await this.$store.dispatch('includeTx', { tx } )
-
-            await this.$store.dispatch('addToast', {
-                type: 'success',
-                title: `Transaction created`,
-                text: `A transaction has been made. \n TxId ${tx.hash}`,
-            });
+            await this.$store.dispatch('includeTx', { tx, mempool: false } )
 
             this.$router.push(`/explorer/tx/${tx.hash}`);
 

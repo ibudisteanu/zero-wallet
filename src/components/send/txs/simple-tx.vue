@@ -136,13 +136,7 @@ export default {
 
             const tx = JSON.parse( MyTextDecode(out) )
 
-            await this.$store.dispatch('includeTx', {tx } )
-
-            await this.$store.dispatch('addToast', {
-                type: 'success',
-                title: `A Transaction created`,
-                text: `A Transaction has been made. \n TxId ${tx.hash}`,
-            });
+            await this.$store.dispatch('includeTx', {tx, mempool: false } )
 
             this.$router.push(`/explorer/tx/${tx.hash}`);
 

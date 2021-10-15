@@ -50,7 +50,9 @@ export default {
         publicKey(){
             return this.$store.state.wallet.mainPublicKey
         },
-
+        getAsset() {
+            return this.$store.getters.getAsset(PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX);
+        }
     },
 
     methods: {
@@ -60,11 +62,10 @@ export default {
 
                 if (oldTab === 0.5 && value > oldTab){
                     if (this.delegateDestination.validationError) throw this.delegateDestination.validationError;
-                    if ( this.delegatedStakingNewInfo.delegatedStakingNewPublicKey !== "" || this.delegatedStakingNewInfo.delegatedStakingNewFee > 0)
-                        if ( !this.$store.getters('walletContains', this.delegatePublicKey ) ) throw "You need the Delegated Address in your wallet in case you update the public key"
-
                     if (this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey) throw this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey
 
+                    if ( this.delegatedStakingNewInfo.hasNewDelegatedInfo )
+                        if ( !this.$store.getters('walletContains', this.delegatePublicKey ) ) throw "You need the Delegated Address in your wallet in case you update the public key"
                 }
 
             }catch(err) {
@@ -90,7 +91,7 @@ export default {
 
             try{
 
-                if (this.delegatedStakingNewInfo.delegatedStakingNewPublicKey !== "" || this.delegatedStakingNewInfo.delegatedStakingNewFee > 0){
+                if (this.delegatedStakingNewInfo.hasNewDelegatedInfo){
                     const out = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
                         publicKey: this.delegatePublicKey,
                         asset: ""
@@ -107,7 +108,10 @@ export default {
                 data.delegatedStakingNewPublicKey = this.delegatedStakingNewInfo.delegatedStakingNewPublicKey
                 data.delegatedStakingNewFee = this.delegatedStakingNewInfo.delegatedStakingNewFee
                 data.delegateDestination = this.delegateDestination.addressEncoded
-                data.data.burns = [this.delegateDestination.amount]
+
+                const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.delegateDestination.amount.toString(), this.getAsset.decimalSeparator ) )
+
+                data.data.burns = [amount]
 
                 resolve( true )
             }catch(err){
