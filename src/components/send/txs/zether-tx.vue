@@ -15,36 +15,43 @@
             </template>
 
             <template :slot="`tab_0`">
-                <tx-asset :assets="availableAssets" @changed="changedAsset" class="pb-4" />
-                <destination-address :allow-zero="true" :asset="asset.asset" @changed="changedDestination"></destination-address>
+                <div class="form pb-2" v-if="allowRandomDestination">
+                    <input class="form-check-input" id="random-destination" type="checkbox"  name="checkbox" v-model="randomDestination"  >
+                    <label class="form-check-label" for="random-destination">Random Destination with Zero amount</label>
+                </div>
+                <template v-if="!randomDestination">
+                    <tx-asset :assets="availableAssets" @changed="changedAsset" class="pb-2"/>
+                    <destination-address :allow-zero="true" :asset="asset.asset" @changed="changedDestination" />
+                </template>
             </template>
 
             <template :slot="`tab_1`">
-                <extra-data :destinations="[destination]" :paymentId="identifiedPaymentID"
-                            @changed="changedExtraData" class="pt-4" />
+                <extra-data :destinations="[destination]" :paymentId="identifiedPaymentID" @changed="changedExtraData" />
             </template>
 
             <template :slot="`tab_2`">
 
-                <div class="col-12 col-md-6">
-                    <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Size</label>
-                    <i class="fa fa-question " v-tooltip.bottom="`Bigger the ring, more private is your transaction.`" />
-                    <select class="form-select" v-model="ringSize">
-                        <option :value="2">2</option>
-                        <option :value="4">4</option>
-                        <option :value="8">8</option>
-                        <option :value="16">16</option>
-                        <option :value="32">32</option>
-                        <option :value="64">64</option>
-                        <option :value="128">128</option>
-                        <option :value="256">256</option>
-                    </select>
-                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Size</label>
+                        <i class="fa fa-question " v-tooltip.bottom="`Bigger the ring, more private is your transaction.`" />
+                        <select class="form-select" v-model="ringSize">
+                            <option :value="2">2</option>
+                            <option :value="4">4</option>
+                            <option :value="8">8</option>
+                            <option :value="16">16</option>
+                            <option :value="32">32</option>
+                            <option :value="64">64</option>
+                            <option :value="128">128</option>
+                            <option :value="256">256</option>
+                        </select>
+                    </div>
 
-                <div class="col-12 col-md-6">
-                    <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring New Addresses</label>
-                    <i class="fa fa-question " v-tooltip.bottom="`Number of new addresses in the ring. Makes new destinations more private.`" />
-                    <input class="form-control"  type="number" v-model="ringNewAddresses" />
+                    <div class="col-12 col-md-6">
+                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring New Addresses</label>
+                        <i class="fa fa-question " v-tooltip.bottom="`Number of new addresses in the ring. Makes new destinations more private.`" />
+                        <input class="form-control"  type="number" v-model="ringNewAddresses" />
+                    </div>
                 </div>
 
                 <div class="col-12 pt-4">
@@ -99,9 +106,21 @@ export default {
         ExtraData, AlertBox, TxFee, TxAsset, AccountIdenticon, Wizzard,
     },
 
+    props: {
+        publicKey: {default: ""},
+        titlesOffset: {default: () => ({}) }, //{icon, name}
+        buttonsOffset: {default: () => ({}) },
+        txName: {default: ""},
+        initAvailableAssets: {default: null},
+        allowRandomDestination: {default: false}
+    },
+
+
     data(){
         return {
-            asset: { }, //contains asset.asset and asset.validation
+            asset: this.initAvailableAssets ? { asset: this.initAvailableAssets[0]   } : { }, //contains asset.asset and asset.validation
+
+            randomDestination: this.allowRandomDestination,
             destination: {},
             fee: {  },
 
@@ -118,15 +137,6 @@ export default {
 
             status: '',
         }
-    },
-
-    props: {
-        publicKey: {default: ""},
-        titlesOffset: {default: () => ({}) }, //{icon, name}
-        buttonsOffset: {default: () => ({}) },
-        txName: {default: ""},
-        initAvailableAssets: {default: null},
-        useBurn: false,
     },
 
     computed:{
@@ -183,8 +193,6 @@ export default {
         async destination (to, from){
             if (to === from) return
 
-            this.$emit('onDestinationChanged', to )
-
             await this.$store.state.blockchain.syncPromise;
 
             if (to && to.address && to.address.publicKey)
@@ -193,6 +201,10 @@ export default {
             if (from && from.address && from.address.publicKey && !this.$store.getters.walletContains(from) )
                 await this.$store.dispatch('unsubscribeAccount', from.address.publicKey )
 
+        },
+
+        randomDestination(to, from){
+            this.destination = {address: null, amount: 0}
         },
 
     },
@@ -205,14 +217,18 @@ export default {
 
                 if (oldTab === 0 && value > oldTab){
                     if (this.asset.validationError) throw this.asset.validationError
-                    if (this.checkDestinationError) throw this.checkDestinationError
-                    if (this.destination.validationError) throw this.destination.validationError;
 
-                    await this.$store.state.blockchain.syncPromise;
-                    await this.$store.dispatch('subscribeAccount', this.destination.address.publicKey )
+                    if (!this.randomDestination){
 
-                    if (!this.$store.state.accounts.list[this.destination.address.publicKey] && !this.destination.address.registration )
-                        throw "Destination Address doesn't have the registration. \n You have the shorter version of the address. First time when an address is used it requires the longer version."
+                        if (this.checkDestinationError) throw this.checkDestinationError
+                        if (this.destination.validationError) throw this.destination.validationError;
+
+                        await this.$store.state.blockchain.syncPromise;
+                        await this.$store.dispatch('subscribeAccount', this.destination.address.publicKey )
+
+                        if (!this.$store.state.accounts.list[this.destination.address.publicKey] && !this.destination.address.registration )
+                            throw "Destination Address doesn't have the registration. \n You have the shorter version of the address. First time when an address is used it requires the longer version."
+                    }
 
                 }else if (oldTab === 1 && value > oldTab) {
                     if (this.extraData.validationError) throw this.extraData.validationError
@@ -275,14 +291,15 @@ export default {
 
                 if (!foundSender) throw "Account not found for sender"
 
-                if (this.$store.state.accounts.list[ this.destination.address.publicKey]){
-                    let availableAccounts = this.$store.state.accounts.list[ this.destination.address.publicKey]
-                    for (let i=0; i < availableAccounts.length; i++)
-                        if (availableAccounts.asset === asset)
-                            alreadyUsedIndexes[availableAccounts.index] = true
-                }
+                if (!this.randomDestination)
+                    if (this.$store.state.accounts.list[ this.destination.address.publicKey]){
+                        let availableAccounts = this.$store.state.accounts.list[ this.destination.address.publicKey]
+                        for (let i=0; i < availableAccounts.length; i++)
+                            if (availableAccounts.asset === asset)
+                                alreadyUsedIndexes[availableAccounts.index] = true
+                    }
 
-                const count = Math.min( holders, ringSize - 2 )
+                const count = Math.min( holders, ringSize - Object.keys(alreadyUsedIndexes).length )
                 for (let i=0; i < count; i++){
 
                     let index = await PandoraPay.helpers.randomUint64N( holders.toString() )
@@ -301,39 +318,44 @@ export default {
                     encodeAddresses: false,
                 })));
 
-                let publicKeys = JSON.parse( MyTextDecode(out) ).publicKeys
+                let publicKeys = JSON.parse( MyTextDecode( out ) ).publicKeys
 
                 const publicKeysMap = {}
-                for (let i=0; i < publicKeys.length; i++)
-                    publicKeysMap[ publicKeys[i] ] = true
+                publicKeys.map( it => publicKeysMap[it] = true )
 
-                const alreadyUsedPublicKeys = {}
+                function getRandomPublicKey(){
+                    const keys = Object.keys(publicKeysMap)
+                    let index = Math.floor(Math.random() * keys.length )
+                    const publicKeySelected = keys[index]
+                    delete publicKeysMap[publicKeySelected]
+                    return publicKeySelected
+                }
+
                 let ringMembers = []
 
-                alreadyUsedPublicKeys[this.address.publicKey] = true
                 ringMembers.push(this.address.addressEncoded)
+                delete publicKeysMap[this.address.publicKey]
 
-                alreadyUsedPublicKeys[this.destination.address.publicKey] = true
+                if (this.randomDestination){
+
+                    const destinationPublicKey = getRandomPublicKey()
+
+                    const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( {publicKey: destinationPublicKey, registration: "", amount: 0, paymentId: ""} ) ) ) ) )
+                    this.destination = {amount: 0, addressEncoded: json[1], address: { publicKey: destinationPublicKey }}
+                }
+
                 ringMembers.push(this.destination.addressEncoded)
-
-                delete publicKeysMap[this.$store.state.wallet.mainPublicKey]
                 delete publicKeysMap[this.destination.address.publicKey]
 
-                publicKeys = Object.keys(publicKeysMap)
-
                 for ( let i =0; ringMembers.length < ringSize - newAccounts; i++){
-                    if (alreadyUsedPublicKeys[ publicKeys[i] ]) throw `Ring contains duplicate member`
-                    alreadyUsedPublicKeys[ publicKeys[i] ] = true
-
-                    const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( {publicKey: publicKeys[i], registration: "", amount: 0, paymentId: ""} ) ) ) ) )
+                    const publicKeySelected = getRandomPublicKey()
+                    const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( {publicKey: publicKeySelected, registration: "", amount: 0, paymentId: ""} ) ) ) ) )
                     ringMembers.push( json[1] )
                 }
 
                 for (let i=0; ringMembers.length < ringSize; i++){
-                    const data = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
-                    if (alreadyUsedPublicKeys[ data[2] ]) throw `Ring contains duplicate member`
-                    alreadyUsedPublicKeys[ data[2] ] = true
-                    ringMembers.push( data[1] )
+                    const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
+                    ringMembers.push( json[1] )
                 }
 
                 this.ringMembers = ringMembers
@@ -388,10 +410,7 @@ export default {
                 regs[ringShufflePublicKeys[i]] = out.registrationSerialized[i]
             }
 
-            const destination = this.destination
-
-            const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( destination.amount.toString(), this.getAsset.decimalSeparator ) )
-
+            const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.destination.amount.toString(), this.getAsset.decimalSeparator ) )
             const fees = (this.fee.feeType === 'feeAuto') ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) )
 
             const data = {
@@ -400,7 +419,7 @@ export default {
                     fromBalancesDecoded: [balanceDecoded],
                     assets: [asset],
                     amounts: [ amount  ],
-                    dsts: [destination.addressEncoded],
+                    dsts: [this.destination.addressEncoded],
                     burns: [ 0 ],
                     ringMembers: [this.ringMembers],
                     fees: [{

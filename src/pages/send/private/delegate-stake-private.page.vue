@@ -6,12 +6,13 @@
 
         <zether-tx ref="refZetherTx"
                    :titles-offset="{ '-1': {icon: 'fas fa-edit', name: 'Delegation', tooltip: 'Delegation update' }}"
+                   :allow-random-destination="true"
                    :init-available-assets="[PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]"
                    tx-name="createZetherDelegateStakingTx" :public-key="publicKey" @onSetTab="setTab" @onBeforeProcess="handleBeforeProcess">
 
             <template :slot="`tab_${-1}`">
                 <destination-address text="Delegate Address" asset="" @changed="changedDelegateDestination"/>
-                <delegated-staking-new-info :public-key="delegatePublicKey" @onChanges="delegatedStakingNewInfoChanges" />
+                <delegated-staking-new-info class="pt-3" :public-key="delegatePublicKey" @onChanges="delegatedStakingNewInfoChanges" />
             </template>
 
         </zether-tx>
@@ -104,7 +105,6 @@ export default {
                 }else
                     data.delegatePrivateKey = ""
 
-
                 data.delegatedStakingNewPublicKey = this.delegatedStakingNewInfo.delegatedStakingNewPublicKey
                 data.delegatedStakingNewFee = this.delegatedStakingNewInfo.delegatedStakingNewFee
                 data.delegateDestination = this.delegateDestination.addressEncoded
@@ -114,6 +114,7 @@ export default {
                 data.data.burns = [amount]
 
                 resolve( true )
+
             }catch(err){
                 reject(err)
             }

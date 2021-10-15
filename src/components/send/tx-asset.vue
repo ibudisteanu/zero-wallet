@@ -17,15 +17,15 @@
 <script>
 export default {
 
+    props:{
+        text: {default: 'Amount'},
+        assets: {default: null },
+    },
+
     data(){
         return {
             selectedAsset: null,
         }
-    },
-
-    props:{
-        text: {default: 'Amount'},
-        assets: {default: null },
     },
 
     computed:{
@@ -60,9 +60,7 @@ export default {
         assets: {
             immediate: true,
             handler: function(to, from){
-                if (!to)
-                    return this.selectedAsset = null
-
+                if (!to) return this.selectedAsset = null
                 this.selectedAsset = to[0]
             }
         },
