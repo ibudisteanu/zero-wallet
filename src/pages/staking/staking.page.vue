@@ -8,7 +8,7 @@
 
             <account :address="address" />
 
-            <wait-account :address="address" :account="account">
+            <wait-account :account="account">
                 <div class="card mb-3">
                     <div class="card-header bg-light">
                         <div class="row align-items-center">

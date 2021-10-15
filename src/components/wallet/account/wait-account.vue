@@ -23,8 +23,7 @@ export default {
     components: {AlertBox, LoadingSpinner},
 
     props: {
-        address: {default: null},
-        account: {default: null},
+        account: {default: undefined},
     },
 
     computed:{

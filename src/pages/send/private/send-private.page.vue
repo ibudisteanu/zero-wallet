@@ -4,7 +4,7 @@
 
         <layout-title icon="fa fa-money-check-alt" title="Private Send Funds">Send Funds Privately to another address</layout-title>
 
-        <zether-tx :public-key="publicKey" @onSetTab="setTab" >
+        <zether-tx :public-key="publicKey" @onSetTab="setTab" @onBeforeProcess="handleBeforeProcess" >
 
         </zether-tx>
 
@@ -40,6 +40,11 @@ export default {
                 resolve(true)
             }
         },
+
+        async handleBeforeProcess({resolve, reject, password, data}){
+            resolve(true)
+        }
+
     }
 
 }

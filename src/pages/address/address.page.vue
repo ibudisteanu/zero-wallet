@@ -7,7 +7,7 @@
 
             <account :address="address" />
 
-            <wait-account :address="address" :account="account">
+            <wait-account :account="account">
                 <balances :publicKey="publicKey" />
                 <pending-transactions-preview :publicKey="publicKey" />
                 <transactions-preview :publicKey="publicKey" :page="page" />

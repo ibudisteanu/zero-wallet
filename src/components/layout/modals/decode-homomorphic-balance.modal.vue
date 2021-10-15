@@ -83,7 +83,7 @@ export default {
 
             if (this.closed) return
 
-            const data = await PandoraPay.wallet.getDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
+            const data = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
                 publicKey: this.publicKey,
                 asset: this.asset
             })), this.password, )

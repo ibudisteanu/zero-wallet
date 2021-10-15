@@ -7,12 +7,10 @@
         <zether-tx ref="refZetherTx"
                    :titles-offset="{ '-1': {icon: 'fas fa-edit', name: 'Delegation', tooltip: 'Delegation update' }}"
                    :init-available-assets="[PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]"
-                   :tx-data="txData" tx-name="createZetherDelegateStakingTx"
-                   :public-key="publicKey" @onSetTab="setTab"
-                   :use-burn="true">
+                   tx-name="createZetherDelegateStakingTx" :public-key="publicKey" @onSetTab="setTab" @onBeforeProcess="handleBeforeProcess">
 
             <template :slot="`tab_${-1}`">
-                <destination-address text="Delegate Address" asset="" @changed="changedDelegateDestination"></destination-address>
+                <destination-address text="Delegate Address" asset="" @changed="changedDelegateDestination"/>
                 <delegated-staking-new-info :public-key="delegatePublicKey" @onChanges="delegatedStakingNewInfoChanges" />
             </template>
 
@@ -52,15 +50,7 @@ export default {
         publicKey(){
             return this.$store.state.wallet.mainPublicKey
         },
-        txData(){
-            return {
-                ...this.delegatedStakingNewInfo,
-                delegateDestination: this.delegateDestination.addressEncoded,
-                data: {
-                    burns: [this.delegateDestination.amount],
-                },
-            }
-        }
+
     },
 
     methods: {
@@ -70,7 +60,11 @@ export default {
 
                 if (oldTab === 0.5 && value > oldTab){
                     if (this.delegateDestination.validationError) throw this.delegateDestination.validationError;
+                    if ( this.delegatedStakingNewInfo.delegatedStakingNewPublicKey !== "" || this.delegatedStakingNewInfo.delegatedStakingNewFee > 0)
+                        if ( !this.$store.getters('walletContains', this.delegatePublicKey ) ) throw "You need the Delegated Address in your wallet in case you update the public key"
+
                     if (this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey) throw this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey
+
                 }
 
             }catch(err) {
@@ -92,6 +86,35 @@ export default {
             }
         },
 
+        async handleBeforeProcess({resolve, reject, password, data }){
+
+            try{
+
+                if (this.delegatedStakingNewInfo.delegatedStakingNewPublicKey !== "" || this.delegatedStakingNewInfo.delegatedStakingNewFee > 0){
+                    const out = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
+                        publicKey: this.delegatePublicKey,
+                        asset: ""
+                    })), password, )
+
+                    const params = JSON.parse( MyTextDecode( out ) )
+                    if (!params.privateKey) throw "DelegatePublicKey is missing"
+
+                    data.delegatePrivateKey = params.privateKey
+                }else
+                    data.delegatePrivateKey = ""
+
+
+                data.delegatedStakingNewPublicKey = this.delegatedStakingNewInfo.delegatedStakingNewPublicKey
+                data.delegatedStakingNewFee = this.delegatedStakingNewInfo.delegatedStakingNewFee
+                data.delegateDestination = this.delegateDestination.addressEncoded
+                data.data.burns = [this.delegateDestination.amount]
+
+                resolve( true )
+            }catch(err){
+                reject(err)
+            }
+
+        }
 
     },
 

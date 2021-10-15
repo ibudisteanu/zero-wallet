@@ -1,5 +1,5 @@
 <template>
-    <wait-account :address="address" :account="account">
+    <wait-account :account="account">
 
         <wizzard :titles="{...titlesOffset,
                 0: {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
@@ -123,7 +123,6 @@ export default {
     props: {
         publicKey: {default: ""},
         titlesOffset: {default: () => ({}) }, //{icon, name}
-        txData: {default: () => ({}) },
         buttonsOffset: {default: () => ({}) },
         txName: {default: ""},
         initAvailableAssets: {default: null},
@@ -395,9 +394,7 @@ export default {
 
             const fees = (this.fee.feeType === 'feeAuto') ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) )
 
-            //compute extra
-            out = await PandoraPayHelper.transactions.builder[this.txName]( MyTextEncode( JSON.stringify({
-                ...this.txData,
+            const data = {
                 data: {
                     fromPrivateKeys: [privateKey],
                     fromBalancesDecoded: [balanceDecoded],
@@ -419,9 +416,18 @@ export default {
                     hash: this.$store.state.blockchain.hash,
                     accs,
                     regs,
-                    ...(this.txData.data ? this.txData.data : {} ),
                 },
-            } ) ), (status) => {
+            }
+
+            const promise = new Promise((resolve, reject)=>{
+                this.$emit('onBeforeProcess', {resolve, reject, password, data })
+            })
+
+            await promise
+
+            //compute extra
+            out = await PandoraPayHelper.transactions.builder[this.txName]( MyTextEncode( JSON.stringify( data ) ),
+                (status) => {
                 this.status = status
             } );
 
