@@ -29,9 +29,9 @@
 
                 <template v-if="account.plainAccount">
 
-                    <h5 class="fw-bold fs-0 pt-4">Claimable Unstake</h5>
+                    <h5 class="fw-bold fs-0 pt-4">Unclaimed</h5>
                     <balance :key="`delegated-balance`"
-                             :balance="account.plainAccount.claimable"
+                             :balance="account.plainAccount.unclaimed"
                              asset=""
                              version="transparent">
                     </balance>

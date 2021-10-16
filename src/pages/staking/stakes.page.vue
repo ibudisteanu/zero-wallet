@@ -29,8 +29,8 @@
                         </template>
 
                         <div class="pt-4" v-if="account && account.plainAccount">
-                            <span class="fw-bold fs-0">Claimable</span>
-                            <balance :key="`delegated-balance`"  :balance="account.plainAccount.claimable" asset=""></balance>
+                            <span class="fw-bold fs-0">Unclaimed</span>
+                            <balance :key="`delegated-balance`"  :balance="account.plainAccount.unclaimed" asset=""></balance>
                         </div>
 
                         <template v-if="delegatedStake">

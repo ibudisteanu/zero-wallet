@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa fa-search-dollar" title="Private Claim Stake">Claim funds from Claimable Stakes</layout-title>
+        <layout-title icon="fa fa-search-dollar" title="Private Claim Stake">Claim funds from Unclaimed Stakes</layout-title>
 
         <zether-tx ref="refZetherTx"
                    :titles-offset="{ '-1': {icon: 'fas fa-coins', name: 'Claim', tooltip: 'Claim stakes' }}"
@@ -10,7 +10,7 @@
                    tx-name="createZetherDelegateStakeTx" :public-key="publicKey" @onSetTab="setTab" @onBeforeProcess="handleBeforeProcess">
 
             <template :slot="`tab_${-1}`">
-                <tx-amount :validate-amount="true" @changed="changedClaimAmount" :balances="balancesOnlyClaimable" :asset="''" />
+                <tx-amount :validate-amount="true" @changed="changedClaimAmount" :balances="balancesOnlyUnclaimed" :asset="''" />
             </template>
 
         </zether-tx>
@@ -53,8 +53,8 @@ export default {
         account(){
             return this.$store.state.accounts.list[this.publicKey]
         },
-        balancesOnlyClaimable(){
-            return (this.account && this.account.plainAccount ) ? { "": { amount: this.account.plainAccount.claimable, asset: "" } } : { "": { amount: 0, asset: ""} }
+        balancesOnlyUnclaimed(){
+            return (this.account && this.account.plainAccount ) ? { "": { amount: this.account.plainAccount.unclaimed, asset: "" } } : { "": { amount: 0, asset: ""} }
         },
         getAsset() {
             return this.$store.getters.getAsset(PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX);

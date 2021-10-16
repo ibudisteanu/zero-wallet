@@ -10,7 +10,7 @@
             <template slot="tab_-1">
 
                 <div class="form pb-2">
-                    <tx-amount :validate-amount="true" :allow-zero="true" :balances="balancesOnlyClaimable" @changed="delegatedStakingUpdateAmountChanged" text="Update Staking Amount" asset="" tooltip="Convert claimable amount to staking amount." />
+                    <tx-amount :validate-amount="true" :allow-zero="true" :balances="balancesOnlyUnclaimed" @changed="delegatedStakingClaimAmountChanged" text="Update Staking Amount" asset="" tooltip="Claim unclaimed funds to staking amount." />
                 </div>
 
                 <delegated-staking-new-info :public-key="publicKey" @onChanges="delegatedStakingNewInfoChanges" />
@@ -37,7 +37,7 @@ export default {
 
     data(){
         return {
-            delegatedStakingUpdateAmount: {},
+            delegatedStakingClaimAmount: {},
             delegatedStakingNewInfo: {},
         }
     },
@@ -52,8 +52,8 @@ export default {
         account(){
             return this.$store.state.accounts.list[this.publicKey]
         },
-        balancesOnlyClaimable(){
-            return (this.account && this.account.plainAccount ) ? { "": { amount: this.account.plainAccount.claimable, asset: "" } } : { "": { amount: 0, asset: ""} }
+        balancesOnlyUnclaimed(){
+            return (this.account && this.account.plainAccount ) ? { "": { amount: this.account.plainAccount.unclaimed, asset: "" } } : { "": { amount: 0, asset: ""} }
         },
         buttons(){
             return { 1: { icon: 'fa fa-marker', text: 'Update delegate' }}
@@ -61,7 +61,7 @@ export default {
         txData(){
             return {
                 ...this.delegatedStakingNewInfo,
-                delegatedStakingUpdateAmount: this.delegatedStakingUpdateAmount.amount,
+                delegatedStakingClaimAmount: this.delegatedStakingClaimAmount.amount,
             }
         }
     },
@@ -72,10 +72,10 @@ export default {
             try{
 
                 if (oldTab === -1 && value > oldTab){
-                    if (this.delegatedStakingUpdateAmount.validationError) throw this.delegatedStakingUpdateAmount.validationError
+                    if (this.delegatedStakingClaimAmount.validationError) throw this.delegatedStakingClaimAmount.validationError
                     if (this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey) throw this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey
 
-                    if (this.delegatedStakingUpdateAmount.amount === 0 && !this.hasNewDelegatedInfo) throw "You should update something."
+                    if (this.delegatedStakingClaimAmount.amount === 0 && !this.hasNewDelegatedInfo) throw "You should update something."
                 }
 
             }catch(err) {
@@ -85,8 +85,8 @@ export default {
             }
         },
 
-        delegatedStakingUpdateAmountChanged(data){
-            this.delegatedStakingUpdateAmount = {...this.delegatedStakingUpdateAmount, ...data}
+        delegatedStakingClaimAmountChanged(data){
+            this.delegatedStakingClaimAmount = {...this.delegatedStakingClaimAmount, ...data}
         },
 
         delegatedStakingNewInfoChanges(data){
