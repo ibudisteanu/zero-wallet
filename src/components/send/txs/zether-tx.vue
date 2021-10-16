@@ -20,7 +20,7 @@
                     <label class="form-check-label" for="random-destination">Random Destination with Zero amount</label>
                 </div>
                 <template v-if="!randomDestination">
-                    <tx-asset :assets="availableAssets" @changed="changedAsset" class="pb-2"/>
+                    <tx-asset v-if="!initAvailableAsset" :assets="availableAssets" @changed="changedAsset" class="pb-2"/>
                     <destination-address :allow-zero="true" :asset="asset.asset" @changed="changedDestination" />
                 </template>
             </template>
@@ -111,14 +111,14 @@ export default {
         titlesOffset: {default: () => ({}) }, //{icon, name}
         buttonsOffset: {default: () => ({}) },
         txName: {default: ""},
-        initAvailableAssets: {default: null},
+        initAvailableAsset: {default: null},
         allowRandomDestination: {default: false}
     },
 
 
     data(){
         return {
-            asset: this.initAvailableAssets ? { asset: this.initAvailableAssets[0]   } : { }, //contains asset.asset and asset.validation
+            asset: this.initAvailableAsset ? { asset: this.initAvailableAsset   } : { }, //contains asset.asset and asset.validation
 
             randomDestination: this.allowRandomDestination,
             destination: {},
@@ -147,13 +147,13 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
         availableAssets(){
-            if (this.initAvailableAssets) return this.initAvailableAssets
             return this.account && this.account.assets ? this.account.assets : null
         },
 
         availableAccounts(){
             return this.account && this.account.accounts ? this.account.accounts : null
         },
+
         balancesAvailables(){
         },
 

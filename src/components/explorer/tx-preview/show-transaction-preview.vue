@@ -90,7 +90,7 @@ export default {
                 return "simple"
             }else if (this.tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER ){
                 if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionZether.ScriptType.SCRIPT_TRANSFER) return "transfer"
-                if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionZether.ScriptType.SCRIPT_DELEGATE) return "delegate"
+                if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionZether.ScriptType.SCRIPT_DELEGATE_STAKE) return "delegate"
                 return "zether"
             }
         },
@@ -102,7 +102,7 @@ export default {
                 return "simple"
             }else if (this.tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER ){
                 if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionZether.ScriptType.SCRIPT_TRANSFER) return "private transfer"
-                if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionZether.ScriptType.SCRIPT_DELEGATE) return "private delegate"
+                if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionZether.ScriptType.SCRIPT_DELEGATE_STAKE) return "private delegate"
                 return "zether"
             }
         },

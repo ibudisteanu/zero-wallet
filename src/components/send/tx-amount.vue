@@ -52,9 +52,6 @@ export default {
                     return `Amount is higher than available funds ${ StringHelper.formatMoney( await PandoraPay.config.assets.assetsConvertToBase( this.balances[this.asset].amount.toString(), this.assetInfo.decimalSeparator ), this.assetInfo.decimalSeparator ) }`
             }
         },
-        async validationError(){
-            if (await this.validationAmountError) return await this.validationAmountError
-        }
     },
 
     methods:{
@@ -83,7 +80,7 @@ export default {
             }
         },
 
-        validationError: {
+        validationAmountError: {
             immediate: true,
             handler: function (to, from) {
                 return this.$emit('changed', {validationError: to,})

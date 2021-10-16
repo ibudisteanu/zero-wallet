@@ -2,13 +2,13 @@
 
     <layout>
 
-        <layout-title icon="fa fa-piggy-bank" title="Private Delegate Funds">Delegate Funds Privately to Delegating Address</layout-title>
+        <layout-title icon="fa fa-money-bill-alt" title="Private Delegate Funds">Delegate Funds Privately to Delegating Address</layout-title>
 
         <zether-tx ref="refZetherTx"
                    :titles-offset="{ '-1': {icon: 'fas fa-edit', name: 'Delegation', tooltip: 'Delegation update' }}"
                    :allow-random-destination="true"
-                   :init-available-assets="[PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]"
-                   tx-name="createZetherDelegateStakingTx" :public-key="publicKey" @onSetTab="setTab" @onBeforeProcess="handleBeforeProcess">
+                   :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX"
+                   tx-name="createZetherDelegateStakeTx" :public-key="publicKey" @onSetTab="setTab" @onBeforeProcess="handleBeforeProcess">
 
             <template :slot="`tab_${-1}`">
                 <destination-address text="Delegate Address" asset="" @changed="changedDelegateDestination"/>
@@ -61,7 +61,7 @@ export default {
         async setTab({resolve, reject, oldTab, value}){
             try{
 
-                if (oldTab === 0.5 && value > oldTab){
+                if (oldTab === -1 && value > oldTab){
                     if (this.delegateDestination.validationError) throw this.delegateDestination.validationError;
                     if (this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey) throw this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey
 

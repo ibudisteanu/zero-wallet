@@ -2,14 +2,15 @@ import VueRouter from "vue-router"
 import Vue from "vue";
 
 import LoginPage from "src/pages/login/login.page"
-import SendPrivatePage from "src/pages/send/private/send-private.page"
-import DelegateStakePrivatePage from "src/pages/send/private/delegate-stake-private.page"
+import PrivateSendPage from "src/pages/send/private/private-send.page"
+import PrivateDelegateStakePage from "src/pages/send/private/private-delegate-stake.page"
+import PrivateClaimStake from "src/pages/send/private/private-claim-stake.page"
 import UnstakePage from "src/pages/send/staking/unstake.page"
 import UpdateDelegatePage from "src/pages/send/staking/update-delegate.page"
 import ReceivePage from "src/pages/receive/receive.page"
 import WalletPage from "src/pages/wallet/wallet.page"
 import AddressPage from "src/pages/address/address.page"
-import StakingPage from "src/pages/staking/staking.page"
+import StakesPage from "src/pages/staking/stakes.page"
 import SetPasswordPage from "src/pages/encryption/set-password.page"
 import RemovePasswordPage from "src/pages/encryption/remove-password.page"
 import BlockchainExplorerPage from "src/pages/explorer/blockchain-explorer.page"
@@ -43,8 +44,9 @@ const guardLogin = (to, from, next) =>{
 
 const routes = [
 
-    {path: '/txs/private/send', component: SendPrivatePage, beforeEnter: guardDecrypted },
-    {path: '/txs/private/delegate', component: DelegateStakePrivatePage, beforeEnter: guardDecrypted },
+    {path: '/txs/private/send', component: PrivateSendPage, beforeEnter: guardDecrypted },
+    {path: '/txs/private/delegate', component: PrivateDelegateStakePage, beforeEnter: guardDecrypted },
+    {path: '/txs/private/claim', component: PrivateClaimStake, beforeEnter: guardDecrypted },
 
     {path: '/txs/unstake', component: UnstakePage, beforeEnter: guardDecrypted },
     {path: '/txs/update-delegate', component: UpdateDelegatePage, beforeEnter: guardDecrypted },
@@ -68,7 +70,7 @@ const routes = [
     {path: '/assets/pandora', component: AssetExplorerPage },
     {path: '/assets/:hash', component: AssetExplorerPage },
 
-    {path: '/staking', component: StakingPage, beforeEnter: guardDecrypted },
+    {path: '/stakes', component: StakesPage, beforeEnter: guardDecrypted },
 
     {path: '/kad', component: KadPage },
 

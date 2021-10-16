@@ -37,8 +37,9 @@
                         </div>
                         <ul :class="`nav collapse ${navElementsShown['staking'] ? 'show':''}`">
                             <li class="nav-item">
-                                <router-link :class="`nav-link ${route.indexOf('/staking') === 0 ? 'active' : ''} nav-link`" to="/staking" @click.native="disableNavbarMenu">
+                                <router-link :class="`nav-link ${route.indexOf('/stakes') === 0 ? 'active' : ''} nav-link`" to="/stakes" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
+                                        <i class="fa fa-shopping-basket" />
                                         <span class="nav-link-text ps-1">Stakes</span>
                                     </div>
                                 </router-link>
@@ -46,6 +47,7 @@
                             <li class="nav-item">
                                 <router-link :class="`nav-link ${route.indexOf('/txs/unstake') === 0 ? 'active' : ''} nav-link`" to="/txs/unstake" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
+                                        <i class="fa fa-unlink" />
                                         <span class="nav-link-text ps-1">Unstake</span>
                                     </div>
                                 </router-link>
@@ -53,14 +55,24 @@
                             <li class="nav-item">
                                 <router-link :class="`nav-link ${route.indexOf('/txs/update-delegate') === 0 ? 'active' : ''} nav-link`" to="/txs/update-delegate" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
+                                        <i class="fa fa-marker" />
                                         <span class="nav-link-text ps-1">Update delegate</span>
                                     </div>
                                 </router-link>
                             </li>
                             <li class="nav-item">
-                                <router-link :class="`nav-link ${route.indexOf('/txs/private-delegate') === 0 ? 'active' : ''} nav-link`" to="/txs/private/delegate" @click.native="disableNavbarMenu">
+                                <router-link :class="`nav-link ${route.indexOf('/txs/private/delegate') === 0 ? 'active' : ''} nav-link`" to="/txs/private/delegate" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
+                                        <i class="fa fa-money-bill-alt" />
                                         <span class="nav-link-text ps-1">Private Delegate</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link :class="`nav-link ${route.indexOf('/txs/private/claim') === 0 ? 'active' : ''} nav-link`" to="/txs/private/claim" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-search-dollar" />
+                                        <span class="nav-link-text ps-1">Private Claim</span>
                                     </div>
                                 </router-link>
                             </li>
@@ -112,6 +124,7 @@
                             <li class="nav-item">
                                 <router-link :class="`nav-link ${route.indexOf('/explorer') === 0 ? 'active' : ''} nav-link`" to="/explorer" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
+                                        <i class="fa fa-cube" />
                                         <span class="nav-link-text ps-1">Blocks</span>
                                     </div>
                                 </router-link>
@@ -119,6 +132,7 @@
                             <li class="nav-item">
                                 <router-link :class="`nav-link ${route.indexOf('/explorer/mem-pool') === 0 ? 'active' : ''}  nav-link`" to="/explorer/mem-pool" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
+                                        <i class="fa fa-list-ol" />
                                         <span class="nav-link-text ps-1">Mem pool</span>
                                     </div>
                                 </router-link>

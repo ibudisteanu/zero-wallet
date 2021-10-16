@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa fa-piggy-bank" title="Staking">Delegate your stakes to a staking node.</layout-title>
+        <layout-title icon="fa fa-shopping-basket" title="Staking">Delegate your stakes to a staking node.</layout-title>
 
         <div class="account-info" v-if="address">
 
