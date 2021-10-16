@@ -32,7 +32,6 @@
                     <h5 class="fw-bold fs-0 pt-4">Unclaimed</h5>
                     <balance :key="`delegated-balance`"
                              :balance="account.plainAccount.unclaimed"
-                             asset=""
                              version="transparent">
                     </balance>
 
@@ -40,7 +39,6 @@
                         <h5 class="fw-bold fs-0 pt-4">Delegated Stake</h5>
                         <balance :key="`delegated-balance`"
                                  :balance="delegatedStake.stakeAvailable"
-                                 asset=""
                                  version="transparent">
                         </balance>
 

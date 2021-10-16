@@ -10,7 +10,7 @@
             <template slot="tab_-1">
 
                 <div class="form pb-2">
-                    <tx-amount :validate-amount="true" :allow-zero="true" :balances="balancesOnlyUnclaimed" @changed="delegatedStakingClaimAmountChanged" text="Update Staking Amount" asset="" tooltip="Claim unclaimed funds to staking amount." />
+                    <tx-amount :validate-amount="true" :allow-zero="true" :balances="balancesOnlyUnclaimed" @changed="delegatedStakingClaimAmountChanged" text="Update Staking Amount" tooltip="Claim unclaimed funds to staking amount." />
                 </div>
 
                 <delegated-staking-new-info :public-key="publicKey" @onChanges="delegatedStakingNewInfoChanges" />
@@ -53,7 +53,8 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
         balancesOnlyUnclaimed(){
-            return (this.account && this.account.plainAccount ) ? { "": { amount: this.account.plainAccount.unclaimed, asset: "" } } : { "": { amount: 0, asset: ""} }
+            const amount = (this.account && this.account.plainAccount) ? this.account.plainAccount.unclaimed : 0
+            return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
         },
         buttons(){
             return { 1: { icon: 'fa fa-marker', text: 'Update delegate' }}

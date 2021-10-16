@@ -30,14 +30,14 @@
 
                         <div class="pt-4" v-if="account && account.plainAccount">
                             <span class="fw-bold fs-0">Unclaimed</span>
-                            <balance :key="`delegated-balance`"  :balance="account.plainAccount.unclaimed" asset=""></balance>
+                            <balance :key="`delegated-balance`"  :balance="account.plainAccount.unclaimed" />
                         </div>
 
                         <template v-if="delegatedStake">
 
                             <div class="pt-4">
                                 <span class="fw-bold fs-0">Delegated Stake</span>
-                                <balance :key="`delegated-balance`"  :balance="delegatedStake.stakeAvailable" asset=""></balance>
+                                <balance :key="`delegated-balance`"  :balance="delegatedStake.stakeAvailable" />
                                 <span v-if="delegatedStake.stakeAvailable < minimumForStaking" class="text-danger d-block"> Minimum balance required for Staking {{minimumForStaking}}</span>
                             </div>
                             <div class="pt-4" >

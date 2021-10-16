@@ -29,7 +29,7 @@ export default {
 
     props: {
         version: {default: "transparent"},
-        asset: {default: ''},
+        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX},
         balance: {default: 0},
         publicKey: {default: null},     //required for version zether
         canBeDecoded: {default: false}  //required for version zether

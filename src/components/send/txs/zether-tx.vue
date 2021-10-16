@@ -15,13 +15,13 @@
             </template>
 
             <template :slot="`tab_0`">
-                <div class="form pb-2" v-if="allowRandomDestination">
+                <div class="form pb-2" v-if="allowDestinationRandom">
                     <input class="form-check-input" id="random-destination" type="checkbox"  name="checkbox" v-model="randomDestination"  >
                     <label class="form-check-label" for="random-destination">Random Destination with Zero amount</label>
                 </div>
                 <template v-if="!randomDestination">
                     <tx-asset v-if="!initAvailableAsset" :assets="availableAssets" @changed="changedAsset" class="pb-2"/>
-                    <destination-address :allow-zero="true" :asset="asset.asset" @changed="changedDestination" />
+                    <destination-address :text="text" :validateAmount="validateDestinationAmount" :balances="availableBalances" :allow-zero="allowDestinationZeroAmount" :asset="asset.asset" @changed="changedDestination" />
                 </template>
             </template>
 
@@ -72,7 +72,7 @@
             </template>
 
             <template :slot="`tab_3`">
-                <tx-fee :balances="balancesAvailables" :asset="asset" :allow-zero="true" @changed="changedFee" />
+                <tx-fee :balances="availableBalances" :asset="asset" :allow-zero="true" @changed="changedFee" />
             </template>
 
             <template slot="wizzard-footer">
@@ -111,16 +111,21 @@ export default {
         titlesOffset: {default: () => ({}) }, //{icon, name}
         buttonsOffset: {default: () => ({}) },
         txName: {default: ""},
-        initAvailableAsset: {default: null},
-        allowRandomDestination: {default: false}
+        text: {default: "Destination"},
+        initAvailableAsset: {default: null },
+        initAvailableBalance: {default: null },
+        initAvailableBalanceUsed: {default: false },
+        allowDestinationRandom: {default: false},
+        allowDestinationZeroAmount: {default: true},
+        validateDestinationAmount: {default: true},
     },
 
 
     data(){
         return {
-            asset: this.initAvailableAsset ? { asset: this.initAvailableAsset   } : { }, //contains asset.asset and asset.validation
+            asset: (this.initAvailableAsset !== null) ? { asset: this.initAvailableAsset   } : { }, //contains asset.asset and asset.validation
 
-            randomDestination: this.allowRandomDestination,
+            randomDestination: this.allowDestinationRandom,
             destination: {},
             fee: {  },
 
@@ -146,6 +151,7 @@ export default {
         account(){
             return this.$store.state.accounts.list[this.publicKey]
         },
+
         availableAssets(){
             return this.account && this.account.assets ? this.account.assets : null
         },
@@ -154,7 +160,15 @@ export default {
             return this.account && this.account.accounts ? this.account.accounts : null
         },
 
-        balancesAvailables(){
+        availableBalances(){
+
+            if (this.initAvailableBalanceUsed ) return this.initAvailableBalance
+
+            const accounts = this.availableAccounts || []
+            for (const acc of accounts)
+                if (acc.asset === this.asset.asset )
+                    return acc
+            return null
         },
 
         checkDestinationError(){
@@ -386,7 +400,6 @@ export default {
             if (balanceDecoded === null) throw "Decoding was canceled"
 
             let asset = this.asset.asset
-            if (asset === PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX) asset = ""
 
             const accs = {}
             accs[asset] = {}

@@ -4,7 +4,7 @@ import Vue from "vue";
 import LoginPage from "src/pages/login/login.page"
 import PrivateSendPage from "src/pages/send/private/private-send.page"
 import PrivateDelegateStakePage from "src/pages/send/private/private-delegate-stake.page"
-import PrivateClaimStake from "pages/send/private/private-claim-stake.page"
+import PrivateClaimStake from "src/pages/send/private/private-claim-stake.page"
 import UnstakePage from "src/pages/send/staking/unstake.page"
 import UpdateDelegatePage from "src/pages/send/staking/update-delegate.page"
 import ReceivePage from "src/pages/receive/receive.page"

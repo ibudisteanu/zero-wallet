@@ -9,7 +9,7 @@
                 tx-name="createUnstakeTx_Float">
 
             <template slot="tab_-1">
-                <tx-amount :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" :asset="''" :validate-amount="true" />
+                <tx-amount :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" :validate-amount="true" />
             </template>
 
         </simple-tx>
@@ -41,7 +41,8 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
         balancesStakeAvailable(){
-            return (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ?  { "": { amount: this.account.plainAccount.delegatedStake.stakeAvailable, asset: ""} } : { amount: 0, asset: ""}
+            const amount = (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ? this.account.plainAccount.delegatedStake.stakeAvailable : 0
+            return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
         },
         buttons(){
             return { 1: { icon: 'fa fa-unlink', text: 'Unstake now' }}

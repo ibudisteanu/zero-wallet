@@ -90,7 +90,7 @@ export default {
                 if (data > 0) {
                     this.$store.commit('setConsensusStatus', "online")
                     this.$store.dispatch('initializeFaucetInfo')
-                    this.$store.dispatch('getAssetByHash', "")
+                    this.$store.dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX )
                 }
                 else this.$store.commit('setConsensusStatus', "offline")
             }

@@ -16,7 +16,7 @@
             </template>
 
             <template :slot="`tab_1`">
-                <tx-fee :balances="balancesStakeAvailable" :allow-zero="true" @changed="changedFee" :asset="''" />
+                <tx-fee :balances="balancesStakeAvailable" :allow-zero="true" @changed="changedFee" />
             </template>
 
             <template slot="wizzard-footer">
@@ -65,8 +65,10 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
         balancesStakeAvailable(){
-            return (this.account && this.account.delegatedStake) ? [{ amount: this.account.delegatedStake.stakeAvailable, asset: ""}] : [{ amount: 0, asset: ""}]
+            const amount = (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ? this.account.plainAccount.delegatedStake.stakeAvailable : 0
+            return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
         },
+
         buttons(){
             return {
                 1: { icon: 'fa fa-credit-card', text: 'Sign Transaction' },

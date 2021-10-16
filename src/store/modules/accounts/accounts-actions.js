@@ -36,7 +36,7 @@ export default {
                         await Promise.all( account.assets.map( asset => dispatch('getAssetByHash', asset) ) )
 
                     if (account.plainAccount)
-                        await dispatch('getAssetByHash', "")
+                        await dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX )
                 }
 
                 await PandoraPay.store.storeAccount( publicKey,  result[0] )

@@ -4,8 +4,6 @@ export default {
 
     async getAssetByHash( {state, dispatch, commit}, hash){
 
-        if (!hash.length) hash = PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX
-
         if (state.list[hash]) return state.list[hash]
         if (promises[hash]) return promises[hash];
         return promises[hash] = new Promise( async (resolve, reject) => {

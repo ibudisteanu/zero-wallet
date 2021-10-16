@@ -22,7 +22,7 @@ export default {
     props: {
         balances: {default: null},
         allowZero: {default: false},
-        asset: {default: ""},
+        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX },
     },
 
     data(){

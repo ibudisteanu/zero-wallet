@@ -23,7 +23,7 @@ export default {
     components: {LoadingSpinner},
 
     props: {
-        asset: {default: ''},
+        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX},
         value: {default: 0},
         sign: {default: false},
         valueClass: {default: ""},

@@ -2,7 +2,7 @@
 
     <div>
         <div class="col">
-            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{text}} {{index !== null ? index+1 : ''}}</label>
+            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{text}} Address {{index !== null ? index+1 : ''}}</label>
             <i v-if="index !== null" class="fa fa-times float-end pointer" @click="deleteDestinationAddress"></i>
 
             <div :class="`${finalAddress ? 'destination-row': ''} `" >
@@ -18,7 +18,7 @@
             <div v-if="validationError" class="invalid-feedback d-block">{{validationError}}</div>
 
         </div>
-        <tx-amount :allow-zero="allowZero"  class="pt-2" @changed="changedTxAmount" :balances="balances" :asset="asset" />
+        <tx-amount :text="text" :validate-amount="validateAmount" :allow-zero="allowZero"  class="pt-2" :balances="balances" :asset="asset" @changed="changedTxAmount" />
     </div>
 
 </template>
@@ -42,10 +42,11 @@ export default {
 
     props:{
         index: {default: null},
-        asset: {default: ""},
+        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX},
         balances: {default: null },
-        text: {default: "Destination Address"},
+        text: {default: "Destination"},
         allowZero: {default: false},
+        validateAmount: {default: false},
     },
 
     computed:{

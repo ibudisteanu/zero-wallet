@@ -6,12 +6,13 @@
 
         <zether-tx ref="refZetherTx"
                    :titles-offset="{ '-1': {icon: 'fas fa-edit', name: 'Delegation', tooltip: 'Delegation update' }}"
-                   :allow-random-destination="true"
+                   :allow-destination-random="true"
+                   :validate-destination-amount="true"
                    :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX"
                    tx-name="createZetherDelegateStakeTx" :public-key="publicKey" @onSetTab="setTab" @onBeforeProcess="handleBeforeProcess">
 
             <template :slot="`tab_${-1}`">
-                <destination-address text="Delegate Address" asset="" @changed="changedDelegateDestination"/>
+                <destination-address text="Delegate Address" @changed="changedDelegateDestination"/>
                 <delegated-staking-new-info class="pt-3" :public-key="delegatePublicKey" @onChanges="delegatedStakingNewInfoChanges" />
             </template>
 
@@ -66,7 +67,7 @@ export default {
                     if (this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey) throw this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey
 
                     if ( this.delegatedStakingNewInfo.hasNewDelegatedInfo )
-                        if ( !this.$store.getters('walletContains', this.delegatePublicKey ) ) throw "You need the Delegated Address in your wallet in case you update the public key"
+                        if ( !this.$store.getters.walletContains( this.delegatePublicKey ) ) throw "You need the Delegated Address in your wallet in case you update the public key"
                 }
 
             }catch(err) {
@@ -95,7 +96,7 @@ export default {
                 if (this.delegatedStakingNewInfo.hasNewDelegatedInfo){
                     const out = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
                         publicKey: this.delegatePublicKey,
-                        asset: ""
+                        asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX,
                     })), password, )
 
                     const params = JSON.parse( MyTextDecode( out ) )

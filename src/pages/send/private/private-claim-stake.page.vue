@@ -5,14 +5,13 @@
         <layout-title icon="fa fa-search-dollar" title="Private Claim Stake">Claim funds from Unclaimed Stakes</layout-title>
 
         <zether-tx ref="refZetherTx"
-                   :titles-offset="{ '-1': {icon: 'fas fa-coins', name: 'Claim', tooltip: 'Claim stakes' }}"
                    :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX"
-                   tx-name="createZetherDelegateStakeTx" :public-key="publicKey" @onSetTab="setTab" @onBeforeProcess="handleBeforeProcess">
-
-            <template :slot="`tab_${-1}`">
-                <tx-amount :validate-amount="true" @changed="changedClaimAmount" :balances="balancesOnlyUnclaimed" :asset="''" />
-            </template>
-
+                   :init-available-balance="balancesOnlyUnclaimed"
+                   :init-available-balance-used="true"
+                   :allow-destination-zero-amount="false"
+                   :validate-destination-amount="true"
+                   text="Claim"
+                   tx-name="createZetherClaimStakeTx" :public-key="publicKey" @onSetTab="setTab" @onBeforeProcess="handleBeforeProcess">
         </zether-tx>
 
     </layout>
@@ -25,15 +24,13 @@ import LayoutTitle from "src/components/layout/layout-title";
 import ZetherTx from "src/components/send/txs/zether-tx";
 import DelegatedStakingNewInfo from "src/components/staking/delegated-staking-new-info"
 import DestinationAddress from "src/components/send/destination-address";
-import TxAmount from "src/components/send/tx-amount"
 
 export default {
 
-    components: { ZetherTx,  LayoutTitle, Layout, DelegatedStakingNewInfo, DestinationAddress, TxAmount },
+    components: { ZetherTx,  LayoutTitle, Layout, DelegatedStakingNewInfo, DestinationAddress },
 
     data(){
         return {
-            claimAmount: {}
         }
     },
 
@@ -54,8 +51,10 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
         balancesOnlyUnclaimed(){
-            return (this.account && this.account.plainAccount ) ? { "": { amount: this.account.plainAccount.unclaimed, asset: "" } } : { "": { amount: 0, asset: ""} }
+            const amount = (this.account && this.account.plainAccount ) ? this.account.plainAccount.unclaimed : 0
+            return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: { amount: amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
         },
+
         getAsset() {
             return this.$store.getters.getAsset(PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX);
         },
@@ -66,19 +65,11 @@ export default {
         async setTab({resolve, reject, oldTab, value}){
             try{
 
-                if (oldTab === -1 && value > oldTab){
-                    if (this.claimAmount.validationError) throw this.claimAmount.validationError;
-                }
-
             }catch(err) {
                 reject(err)
             }finally{
                 resolve(true)
             }
-        },
-
-        changedClaimAmount(data){
-            this.claimAmount = {...this.claimAmount, ...data}
         },
 
         async handleBeforeProcess({resolve, reject, password, data }){
