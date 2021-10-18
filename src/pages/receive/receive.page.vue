@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa-file-invoice-dollar" title="Receive funds publicly">Generate your address to receive funds publicly.</layout-title>
+        <layout-title icon="fa fa-file-invoice-dollar" title="Receive funds publicly">Generate your address to receive funds publicly.</layout-title>
 
         <account :address="address" title="Receive Funds" />
 
@@ -15,7 +15,6 @@
 import Account from "src/components/wallet/account/account"
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
-const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 

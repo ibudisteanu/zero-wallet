@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa-globe-americas" title="Kademlia">Decentralized Peer to Peer Network.</layout-title>
+        <layout-title icon="fa fa-globe-americas" title="Kademlia">Decentralized Peer to Peer Network.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">

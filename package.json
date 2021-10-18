@@ -10,7 +10,7 @@
     "build-wallet-analyzer": "webpack --config build/webpack-wallet.config.js --mode production --production --analyzer",
     "build-pandorapay-webworker": "webpack --config build/webpack-pandorapay-websocket.config.js --mode production --production",
     "build-pandorapay-helper-webworker": "webpack --config build/webpack-pandorapay-helper-websocket.config.js --mode production --production",
-    "build": "npm run build-wallet",
+    "build": "npm run build-wallet && npm run build-pandorapay-webworker && npm run build-pandorapay-helper-webworker",
     "test": "npm run build-wallet",
     "dev": "webpack-dev-server --config=./build/webpack-hot-loader.config.js --content-base dist/dev --hot --inline --host 0.0.0.0"
   },

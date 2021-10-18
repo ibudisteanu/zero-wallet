@@ -5,7 +5,7 @@ export default {
     entity: 'PandoraPay',
 
     blocksInfoPagination: 10,
-    addressTxsPagination: 5,
+    addressTxsPagination: 10,
     mempoolTxsPagination: 50,
 
     goArgv: [

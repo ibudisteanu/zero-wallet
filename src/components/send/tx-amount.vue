@@ -1,7 +1,8 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{text}}</label>
+            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{text}} Amount</label>
+            <i v-if="tooltip" class="fa fa-question" v-tooltip.bottom="tooltip" />
             <input :class="`form-control ${validationAmountError ? 'is-invalid' :''}`" type="number" v-model.number="amount" min="0" :step="getSteps" :disabled="disabled">
             <div v-if="validationAmountError" class="invalid-feedback d-block">{{validationAmountError}}</div>
         </div>
@@ -9,6 +10,8 @@
 </template>
 
 <script>
+import StringHelper from "../../utils/string-helper";
+
 export default {
 
     data(){
@@ -18,20 +21,22 @@ export default {
     },
 
     props:{
-        text: {default: 'Amount'},
-        token: {default: ""},
-        accounts: {default: null },
+        text: {default: ''},
+        tooltip: {default: ''},
+        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX },
+        balances: {default: () => ({}) },
         allowZero: {default: false,},
+        validateAmount: {default: false },
         disabled: {default: false},
     },
 
     computed:{
-        tokenInfo(){
-            return this.$store.getters.getToken( this.token );
+        assetInfo(){
+            return this.$store.getters.getAsset( this.asset );
         },
         getSteps(){
-            if (!this.tokenInfo) return ""
-            return (1 / Math.pow(10, this.tokenInfo.decimalSeparator)).toFixed(this.tokenInfo.decimalSeparator)
+            if (!this.assetInfo) return ""
+            return (1 / Math.pow(10, this.assetInfo.decimalSeparator)).toFixed(this.assetInfo.decimalSeparator)
         },
     },
 
@@ -39,10 +44,14 @@ export default {
         async validationAmountError(){
             if ( !this.allowZero && Number.parseFloat(this.amount) === 0) return "Amount needs to be greater than 0"
             if (this.amount === Number.NaN || this.amount < 0) return "Amount can not be negative"
+            if (this.validateAmount){
+                if (!this.balances[this.asset])
+                    return 'Available funds: none'
+
+                if ( this.amount * Math.pow(10, this.assetInfo.decimalSeparator) > this.balances[this.asset].amount )
+                    return `Amount is higher than available funds ${ StringHelper.formatMoney( await PandoraPay.config.assets.assetsConvertToBase( this.balances[this.asset].amount.toString(), this.assetInfo.decimalSeparator ), this.assetInfo.decimalSeparator ) }`
+            }
         },
-        async validationError(){
-            if (await this.validationAmountError) return await this.validationAmountError
-        }
     },
 
     methods:{
@@ -53,13 +62,13 @@ export default {
         amount: {
             immediate: true,
             handler: function (to, from) {
-                if (!this.tokenInfo){
+                if (!this.assetInfo){
                     this.amount = 0
                     return 0
                 }
 
                 // to = Number.parseFloat(to)
-                // const target = to.toFixed(this.tokenInfo.decimalSeparator)
+                // const target = to.toFixed(this.assetInfo.decimalSeparator)
                 // if (to.toString() !== target ){
                 //     this.amount = target
                 //     return
@@ -71,7 +80,7 @@ export default {
             }
         },
 
-        validationError: {
+        validationAmountError: {
             immediate: true,
             handler: function (to, from) {
                 return this.$emit('changed', {validationError: to,})

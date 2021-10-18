@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa-unlock" title="Remove password">Remove the password of your wallet.</layout-title>
+        <layout-title icon="fa fa-unlock" title="Remove password">Remove the password of your wallet.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">
@@ -21,10 +21,12 @@
 
             <div class="card-body bg-light">
 
-                <alert-box v-if="error" type="error">{{error}}</alert-box>
+                <alert-box v-if="error" type="error" :dismissible-timeout="6000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
+
                 <div class="text-center">
                     <loading-button text="Remove password" @submit="handleRemovePassword" icon="fa fa-unlock-alt"  :disabled="password.length === 0" />
                 </div>
+
             </div>
         </div>
 

@@ -1,17 +1,5 @@
 export default {
 
-    setDark(state, value ){
-
-        state.dark = value;
-        if (value) {
-            document.getElementsByTagName("html")[0].classList.add('dark');
-            if (typeof localStorage !== "undefined") localStorage.setItem('dark', 'true' )
-        } else {
-            document.getElementsByTagName("html")[0].classList.remove('dark');
-            if (typeof localStorage !== "undefined") localStorage.setItem('dark', 'false')
-        }
-    },
-
     setModals(state, modals ){
         state.refLoadingModal = modals.refLoadingModal;
         state.refAccountTypeModal = modals.refAccountTypeModal;

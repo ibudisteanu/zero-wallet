@@ -2,9 +2,9 @@
 
     <layout>
 
-        <layout-title icon="fa-wallet" title="Wallet" >Access the private key of the selected address.</layout-title>
+        <layout-title icon="fa fa-wallet" title="Wallet">Access the private key of the selected address.</layout-title>
 
-        <template v-if="address">
+        <wait-address :address="address">
 
             <account :address="address" />
 
@@ -54,7 +54,7 @@
                         <i class="fa fa-eye"></i>
                     </button>
 
-                    <router-link to="/staking" v-if="address.version === version.VERSION_TRANSPARENT">
+                    <router-link to="/staking">
                         <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" v-tooltip.bottom="'Delegate stake'">
                             <i class="fa fa-piggy-bank"></i>
                         </button>
@@ -66,7 +66,7 @@
             <account-private-key-modal ref="refAccountPrivateKeyModal" :address="address"/>
             <account-delete-modal ref="refAccountDeleteModal" :address="address"/>
 
-        </template>
+        </wait-address>
 
     </layout>
 
@@ -82,11 +82,11 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title";
 import Account from "src/components/wallet/account/account"
 import AccountDeleteModal from "src/components/wallet/account/account-delete.modal"
-const {version} = PandoraPay.enums.wallet.address;
+import WaitAddress from "../../components/wallet/account/wait-address";
 
 export default {
 
-    components: {AccountIdenticon, AccountPrivateKeyModal, Layout, Account, LayoutTitle, AccountDeleteModal},
+    components: {WaitAddress, AccountIdenticon, AccountPrivateKeyModal, Layout, Account, LayoutTitle, AccountDeleteModal},
 
     data(){
         return {
@@ -97,15 +97,10 @@ export default {
 
 
     computed:{
-
-        version: () => version,
-
         address(){
             return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey];
         }
-
     },
-
 
     methods:{
 

@@ -28,18 +28,61 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link :disabled="!isWalletLogged" to="/staking" :class="`${ route === '/staking' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
-                            <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center">
+                            <router-link to="#" class="nav-link" @click.native="e => toggleNavElement( e,'staking')">
                                 <i class="fa fa-piggy-bank"></i>
                                 <span class="nav-link-text ps-1">Staking</span>
-                            </div>
-                        </router-link>
+                                <i :class="`nav-chevron fa fa-chevron-${navElementsShown['staking'] ? 'up' : 'down' }`"></i>
+                            </router-link>
+                        </div>
+                        <ul :class="`nav collapse ${navElementsShown['staking'] ? 'show':''}`">
+                            <li class="nav-item">
+                                <router-link :class="`nav-link ${route.indexOf('/stakes') === 0 ? 'active' : ''} nav-link`" to="/stakes" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-shopping-basket" />
+                                        <span class="nav-link-text ps-1">Stakes</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link :class="`nav-link ${route.indexOf('/txs/unstake') === 0 ? 'active' : ''} nav-link`" to="/txs/unstake" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-unlink" />
+                                        <span class="nav-link-text ps-1">Unstake</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link :class="`nav-link ${route.indexOf('/txs/update-delegate') === 0 ? 'active' : ''} nav-link`" to="/txs/update-delegate" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-marker" />
+                                        <span class="nav-link-text ps-1">Update delegate</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link :class="`nav-link ${route.indexOf('/txs/private/delegate') === 0 ? 'active' : ''} nav-link`" to="/txs/private/delegate" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-money-bill-alt" />
+                                        <span class="nav-link-text ps-1">Private Delegate</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link :class="`nav-link ${route.indexOf('/txs/private/claim') === 0 ? 'active' : ''} nav-link`" to="/txs/private/claim" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-search-dollar" />
+                                        <span class="nav-link-text ps-1">Private Claim</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                        </ul>
                     </li>
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <router-link :disabled="!isWalletLogged" to="/send/private" :class="`${ route === '/send/private' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
+                            <router-link :disabled="!isWalletLogged" to="/txs/private/send" :class="`${ route === '/txs/private/send' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
                                 <i class="fa fa-money-check-alt"></i>
-                                <span class="nav-link-text ps-1">Transfer Privately</span>
+                                <span class="nav-link-text ps-1">Private Transfer</span>
                             </router-link>
                         </div>
                     </li>
@@ -47,7 +90,7 @@
                         <div class="d-flex align-items-center">
                             <router-link :disabled="!isWalletLogged" to="/receive" :class="`${ route === '/receive' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
                                 <i class="fa fa-hand-holding-usd"></i>
-                                <span class="nav-link-text ps-1">Receive Privately</span>
+                                <span class="nav-link-text ps-1">Private Receive</span>
                             </router-link>
                         </div>
                     </li>
@@ -81,6 +124,7 @@
                             <li class="nav-item">
                                 <router-link :class="`nav-link ${route.indexOf('/explorer') === 0 ? 'active' : ''} nav-link`" to="/explorer" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
+                                        <i class="fa fa-cube" />
                                         <span class="nav-link-text ps-1">Blocks</span>
                                     </div>
                                 </router-link>
@@ -88,6 +132,7 @@
                             <li class="nav-item">
                                 <router-link :class="`nav-link ${route.indexOf('/explorer/mem-pool') === 0 ? 'active' : ''}  nav-link`" to="/explorer/mem-pool" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
+                                        <i class="fa fa-list-ol" />
                                         <span class="nav-link-text ps-1">Mem pool</span>
                                     </div>
                                 </router-link>
@@ -95,10 +140,18 @@
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <router-link :class="`nav-link ${route.indexOf('/tokens') === 0 ? 'active' : ''} nav-link`" to="/tokens" @click.native="disableNavbarMenu">
+                        <router-link :class="`nav-link ${route.indexOf('/assets') === 0 ? 'active' : ''} nav-link`" to="/assets" @click.native="disableNavbarMenu">
                             <div class="d-flex align-items-center">
                                 <i class="fa fa-file-invoice-dollar"></i>
-                                <span class="nav-link-text ps-1">Tokens</span>
+                                <span class="nav-link-text ps-1">Assets</span>
+                            </div>
+                        </router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link :class="`nav-link ${route.indexOf('/settings') === 0 ? 'active' : ''} nav-link`" to="/settings" @click.native="disableNavbarMenu">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-wrench"></i>
+                                <span class="nav-link-text ps-1">Settings</span>
                             </div>
                         </router-link>
                     </li>
@@ -146,49 +199,10 @@
         </div>
     </nav>
 
-<!--    <div>-->
-<!--        <div class="mobile-menu" @click="showMenu" :style="{display: show ? 'none' : 'inherit' }" >-->
-<!--            <i class="fa fa-bars"></i>-->
-<!--        </div>-->
-
-<!--        <div v-if="show" class="sidebar" :style="{display: show ? 'inherit' : 'none' }" v-on-clickaway="closeMenu" >-->
-
-<!--            <router-link :disabled="!isWalletLogged" to="/account" :class="`${ route === '/account' ? 'selected' : ''}`">-->
-<!--                <i class="fa fa-wallet" ></i>-->
-<!--                <span>Account</span>-->
-<!--            </router-link>-->
-
-<!--            <router-link :disabled="!isWalletLogged" to="/staking" :class="`${route === '/staking' ? 'selected' : ''}`" >-->
-<!--                <i class="fa fa-piggy-bank"></i>-->
-<!--                <span>Staking</span>-->
-<!--            </router-link>-->
-
-<!--            <router-link :disabled="!isWalletLogged" to="/send" :class="`${route === '/send' ? 'selected' : ''}`" >-->
-<!--                <i class="fa fa-money-check-alt"></i>-->
-<!--                <span>Send</span>-->
-<!--            </router-link>-->
-
-<!--            <router-link :disabled="!isWalletLogged" to="/receive" :class="`${route === '/receive' ? 'selected' : ''}`" >-->
-<!--                <i class="fa fa-hand-holding-usd"></i>-->
-<!--                <span>Receive</span>-->
-<!--            </router-link>-->
-
-<!--            <router-link :disabled="!isWalletLogged" to="/set-password" v-if="!encrypted" :class="`${route === '/set-password' ? 'selected' : ''}`"  >-->
-<!--                <i class="fa fa-unlock-alt"></i>-->
-<!--                <span>Encrypt</span>-->
-<!--            </router-link>-->
-
-<!--            <router-link :disabled="!isWalletLogged" to="/remove-password" v-if="encrypted" :class="`${route === '/remove-password' ? 'selected' : ''}`"  >-->
-<!--                <i class="fa fa-lock"></i>-->
-<!--                <span>Decrypt</span>-->
-<!--            </router-link>-->
-<!--        </div>-->
-<!--    </div>-->
 </template>
 
 <script>
 import { mixin as clickaway } from 'vue-clickaway'
-const {version} = PandoraPay.enums.wallet.address;
 import Vue from 'vue';
 
 export default {
@@ -206,8 +220,6 @@ export default {
 
         sendUrl(){
             if (!this.address) return '';
-
-            if (this.address.version === version.VERSION_TRANSPARENT) return '/send/transparent/transfer';
         },
 
         encrypted(){

@@ -1,5 +1,5 @@
 import Vue from "vue";
-import consts from "../../../../consts/consts";
+import consts from "consts/consts";
 
 export default {
 

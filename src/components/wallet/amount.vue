@@ -1,11 +1,11 @@
 <template>
     <span>
-        <template v-if="getToken">
+        <template v-if="getAsset">
             <span :class="valueClass">
                 {{sign?'':'-'}} {{amount}}
             </span>
-            <router-link :to="`/tokens/${getToken.hash}`" :class="tokenClass">
-                {{getToken.name}}
+            <router-link :to="`/assets/${getAsset.hash}`" :class="assetClass">
+                {{getAsset.name}}
             </router-link>
         </template>
         <template v-else>
@@ -23,21 +23,22 @@ export default {
     components: {LoadingSpinner},
 
     props: {
-        token: {default: ''},
+        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX},
         value: {default: 0},
         sign: {default: false},
         valueClass: {default: ""},
-        tokenClass: {default: ""}
+        assetClass: {default: ""}
     },
 
     computed: {
-        getToken(){
-            return this.$store.getters.getToken( this.token );
+        getAsset(){
+            return this.$store.getters.getAsset( this.asset );
         },
     },
+
     asyncComputed:{
         async amount(){
-            return StringHelper.formatMoney( await PandoraPay.config.tokens.tokensConvertToBase( this.value.toString(), this.getToken.decimalSeparator ), this.getToken.decimalSeparator )
+            return StringHelper.formatMoney( await PandoraPay.config.assets.assetsConvertToBase( this.value.toString(), this.getAsset.decimalSeparator ), this.getAsset.decimalSeparator )
         }
     }
 }

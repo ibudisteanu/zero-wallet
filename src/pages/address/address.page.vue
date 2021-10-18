@@ -1,33 +1,23 @@
 <template>
     <layout>
 
-        <layout-title icon="fa-money-bill-alt" title="Account" >See the balance and transactions of an address.</layout-title>
+        <layout-title icon="fa fa-money-bill-alt" title="Account" >See the balance and transactions of an address.</layout-title>
 
-        <template v-if="address">
+        <wait-address :address="address">
 
             <account :address="address" />
 
-            <template v-if="!isLoading">
+            <wait-account :account="account">
+                <balances :publicKey="publicKey" />
+                <pending-transactions-preview :publicKey="publicKey" />
+                <transactions-preview :publicKey="publicKey" :page="page" />
+            </wait-account>
 
-                <template v-if="!isFound">
-                    <alert-box type="warning" >
-                        Address doesn't exist (is empty)!
-                    </alert-box>
-                    <pending-transactions :publicKey="publicKey" />
-                </template>
-                <template v-else>
-                    <balances :publicKey="publicKey" />
-                    <pending-transactions :publicKey="publicKey" />
-                    <transactions :publicKey="publicKey" :page="page" />
-                </template>
-
+            <template v-if="!isFound">
+                <pending-transactions-preview :publicKey="publicKey" />
             </template>
 
-        </template>
-
-        <div class="py-3 text-center" v-if="!address || isLoading">
-            <loading-spinner class="fs-3" />
-        </div>
+        </wait-address>
 
         <alert-box v-if="error" type="error">{{error}}</alert-box>
 
@@ -38,18 +28,20 @@
 import Layout from "src/components/layout/layout";
 import LayoutTitle from "src/components/layout/layout-title";
 import Balances from "../../components/wallet/balance/balances";
-import Transactions from "../../components/wallet/transactions/transactions";
 import AccountIdenticon from "../../components/wallet/account/account-identicon";
 import LoadingSpinner from "../../components/utils/loading-spinner";
 import Account from "src/components/wallet/account/account"
 import AlertBox from "src/components/utils/alert-box"
-import PendingTransactions from "../../components/wallet/transactions/pending-transactions";
+import TransactionsPreview from "../../components/wallet/transactions/transactions-preview";
+import PendingTransactionsPreview from "../../components/wallet/transactions/pending-transactions-preview";
+import WaitAddress from "../../components/wallet/account/wait-address";
+import WaitAccount from "../../components/wallet/account/wait-account";
 
 export default {
 
     components: {
-        PendingTransactions,
-        Layout,  Balances, Transactions, AccountIdenticon, LoadingSpinner, AlertBox, Account, LayoutTitle},
+        WaitAccount, WaitAddress, PendingTransactionsPreview, TransactionsPreview,
+        Layout,  Balances, AccountIdenticon, LoadingSpinner, AlertBox, Account, LayoutTitle},
 
     data(){
         return {

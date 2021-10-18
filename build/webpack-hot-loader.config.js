@@ -33,9 +33,8 @@ module.exports = merge(base, {
     plugins: [
 
         new webpack.DefinePlugin({
-            "process.env": {
-                DEV_SERVER: 'true',
-            }
+            "BROWSER": 'true',
+            "DEV_SERVER": 'true'
         }),
 
     ]

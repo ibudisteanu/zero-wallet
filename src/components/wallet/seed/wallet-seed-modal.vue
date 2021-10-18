@@ -13,14 +13,12 @@
 <script>
 
 import Modal from "src/components/utils/modal"
-import PasswordInput from "../../utils/password-input";
-import LoadingButton from "src/components/utils/loading-button"
 import SecretText from "src/components/utils/secret-text"
 import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {PasswordInput, Modal, SecretText, AlertBox},
+    components: { Modal, SecretText, AlertBox},
 
     data(){
         return {

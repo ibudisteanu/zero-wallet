@@ -2,7 +2,7 @@
 
     <div>
         <div class="col">
-            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Destination Address {{index !== null ? index+1 : ''}}</label>
+            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{text}} Address {{index !== null ? index+1 : ''}}</label>
             <i v-if="index !== null" class="fa fa-times float-end pointer" @click="deleteDestinationAddress"></i>
 
             <div :class="`${finalAddress ? 'destination-row': ''} `" >
@@ -18,7 +18,7 @@
             <div v-if="validationError" class="invalid-feedback d-block">{{validationError}}</div>
 
         </div>
-        <tx-amount class="pt-2" @changed="changedTxAmount" :accounts="accounts" :token="token" />
+        <tx-amount :text="text" :validate-amount="validateAmount" :allow-zero="allowZero"  class="pt-2" :balances="balances" :asset="asset" @changed="changedTxAmount" />
     </div>
 
 </template>
@@ -42,39 +42,39 @@ export default {
 
     props:{
         index: {default: null},
-        token: {default: ""},
-        accounts: {default: null },
+        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX},
+        balances: {default: null },
+        text: {default: "Destination"},
+        allowZero: {default: false},
+        validateAmount: {default: false},
     },
 
     computed:{
         validationError(){
-            if (!this.destination) return`Destination Address not specified`;
-            if (!this.finalAddress) return `Address is invalid`;
+            if (!this.destination) return `${this.text} was not specified`;
+            if (!this.finalAddress) return `${this.text} is invalid`;
         },
     },
 
     watch: {
-        async destination (to, ) {
-            try{
-                const addressData = await PandoraPay.addresses.decodeAddress(to)
-                const address = JSON.parse( MyTextDecode(addressData) )
-                this.finalAddress = address
-                return
-            }catch(err){
-            }
-
-            this.finalAddress = null
-        },
-
-        finalAddress: {
+        destination: {
             immediate: true,
-            handler: function (to, from) {
-                return this.$emit('changed', {
+            handler: async function  (to, ) {
+                try{
+                    const addressData = await PandoraPay.addresses.decodeAddress(to)
+                    const address = JSON.parse( MyTextDecode(addressData) )
+                    this.finalAddress = address
+                }catch(err){
+                    this.finalAddress = null
+                }
+
+                this.$emit('changed', {
                     address: this.finalAddress,
                     addressEncoded: this.destination,
                     validationError: this.validationError,
                 });
-            }
+
+            },
         },
 
     },
@@ -88,9 +88,7 @@ export default {
         },
 
         changedTxAmount(data){
-            return this.$emit('changed', {
-                ...data,
-            });
+            return this.$emit('changed', { ...data, });
         },
 
         deleteDestinationAddress(){

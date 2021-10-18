@@ -14,13 +14,13 @@
                     <loading-spinner />
                 </template>
                 <template v-else>
-                    <vue-hcaptcha :sitekey="hCaptchaSiteKey" @verify="handleCaptchaToken" :theme="`${$store.state.page.dark ? 'dark' : 'light'}`" />
+                    <vue-hcaptcha :sitekey="hCaptchaSiteKey" @verify="handleCaptchaToken" :theme="`${$store.state.settings.dark ? 'dark' : 'light'}`" />
                 </template>
             </div>
         </template>
 
         <template slot="footer">
-            <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
+            <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="6000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
 
             <loading-button :text="`Receive ${$store.state.faucet.faucetTestnetCoins}`" @submit="handleSubmit" icon="fa fa-coins" :disabled="!captchaToken" />
 

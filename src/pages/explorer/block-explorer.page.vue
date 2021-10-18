@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa-cube" title="Explore Block">View a specific block.</layout-title>
+        <layout-title icon="fa fa-cube" title="Explore Block">View a specific block.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">
@@ -78,19 +78,12 @@
                         <span class="col-5 col-sm-3 text-truncate">Version</span>
                         <span class="col-7 col-sm-9 text-truncate">{{blk.version}}</span>
                     </div>
+
                     <div class="row pt-2 pb-2">
-                        <span class="col-5 col-sm-3 text-truncate">Size</span>
-                        <div class="col-7 col-sm-9 text-truncate" >
-                            <span v-tooltip.bottom="`${ formatBytes(blk.bloomBlkComplete.size) }`">
-                                {{formatSize( blk.bloomBlkComplete.size) }}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Forger</span>
                         <div class="col-7 col-sm-9 text-truncate">
-                            <account-identicon class="vertical-center" :public-key="blk.delegatedPublicKey" size="21" outer-size="7"  />
-                            <span class="forger-address">{{blk.delegatedPublicKey}}</span>
+                            <account-identicon class="vertical-center" :public-key="blk.delegatedStakePublicKey" size="21" outer-size="7"  />
+                            <span class="forger-address">{{blk.delegatedStakePublicKey}}</span>
                         </div>
                     </div>
                 </template>
@@ -121,7 +114,7 @@
                 </div>
             </div>
             <div class="card-body p-3 fs--1">
-                <show-transactions :transactions="txs"/>
+                <show-transactions-preview :transactions="txs"/>
             </div>
         </div>
 
@@ -135,7 +128,7 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
 import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import ShowTransactions from "src/components/explorer/show-transactions"
+import ShowTransactionsPreview from "src/components/explorer/tx-preview/show-transactions-preview"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import AlertBox from "src/components/utils/alert-box"
 import Amount from "src/components/wallet/amount"
@@ -143,7 +136,7 @@ import StringHelper from "src/utils/string-helper"
 
 export default {
 
-    components: {LoadingSpinner, Layout, ShowBlocksInfo, ShowTransactions, AccountIdenticon, AlertBox, LayoutTitle, Amount },
+    components: {LoadingSpinner, Layout, ShowBlocksInfo, ShowTransactionsPreview, AccountIdenticon, AlertBox, LayoutTitle, Amount },
 
     data(){
         return {
@@ -178,7 +171,7 @@ export default {
         },
         txs(){
             if (!this.blk) return null;
-            return this.blk.txs.map(it => it.hash)
+            return this.blk.txs
         }
 
     },
@@ -187,8 +180,6 @@ export default {
 
         timeAgo: (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
         formatTime : (timestamp) => StringHelper.formatTime( timestamp*1000 ),
-        formatSize: (bytes) => StringHelper.formatSize(bytes, 1),
-        formatBytes: (bytes) => StringHelper.formatBytes(bytes),
         formatMoney: (amount) => StringHelper.formatMoney(amount, PandoraPay.config.coins.DECIMAL_SEPARATOR  ),
 
         async loadBlock(){

@@ -2,11 +2,15 @@
     <modal ref="modal" :title="`Delete Address ${title ? ': ' + title : ''}`">
 
         <template slot="body" v-if="account">
-            <p>Are you sure you want to <b>delete</b> address {{this.account.name}} - {{this.account.addressEncoded}} ? </p>
+            <span class="text-break mb-2 d-block">Are you sure you want to <b>delete</b> address {{this.account.name}}</span>
+            <div class="address align-items-center">
+                <account-identicon :address="this.account.addressEncoded" size="35" outer-size="13" />
+                <span class="text-break">{{ this.account.addressEncoded }}</span>
+            </div>
         </template>
 
         <template slot="footer">
-            <alert-box v-if="error" class="w-100" type="error">{{error}}</alert-box>
+            <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="6000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
             <button class="btn btn-falcon-danger" type="button" @click="handleDelete">
                 <i class="fa fa-times"></i> Yes, Delete account
@@ -23,9 +27,11 @@
 import Modal from "src/components/utils/modal"
 import AlertBox from "../../utils/alert-box";
 import UtilsHelper from "src/utils/utils-helper";
+import AccountIdenticon from "../../wallet/account/account-identicon";
+
 export default {
 
-    components: { Modal, AlertBox},
+    components: { Modal, AlertBox, AccountIdenticon},
 
     data() {
         return {
@@ -95,4 +101,9 @@ export default {
 </script>
 
 <style scoped>
+.address{
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    grid-column-gap: 10px;
+}
 </style>

@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import WalletStore from "./modules/wallet/wallet-store"
+import PageSettings from "./modules/settings/settings-store"
 import AddressesStore from "./modules/addresses/addresses-store"
 import AccountsStore from "./modules/accounts/accounts-store"
 import AccountsTxsStore from "./modules/accounts-txs/accounts-txs-store"
@@ -10,8 +11,10 @@ import BlocksStore from "./modules/blocks/blocks-store"
 import BlocksInfoStore from "./modules/blocks-info/blocks-info-store"
 import PageStore from "./modules/page/page-store"
 import TransactionsStore from "./modules/transactions/transactions-store"
-import TokensStore from "./modules/tokens/tokens-store"
-import TokensInfoStore from "./modules/tokens-info/tokens-info-store"
+import TransactionsInfoStore from "./modules/transactions-info/transactions-info-store"
+import TransactionsPreviewStore from "./modules/transactions-preview/transactions-preview-store"
+import AssetsStore from "./modules/assets/assets-store"
+import AssetsInfoStore from "./modules/assets-info/assets-info-store"
 import NetworkStore from "./modules/network/network-store"
 import MemPoolStore from "./modules/mem-pool/mem-pool-store"
 import FaucetStore from "./modules/faucet/faucet-store"
@@ -24,15 +27,19 @@ const store = new Vuex.Store({
 
     modules: {
 
+        page: PageStore,
+        settings: PageSettings,
+
         wallet: WalletStore,
 
         blockchain: BlockchainStore,
         blocks: BlocksStore,
         blocksInfo: BlocksInfoStore,
-        page: PageStore,
         transactions: TransactionsStore,
-        tokens: TokensStore,
-        tokensInfo: TokensInfoStore,
+        transactionsInfo: TransactionsInfoStore,
+        transactionsPreview: TransactionsPreviewStore,
+        assets: AssetsStore,
+        assetsInfo: AssetsInfoStore,
         addresses: AddressesStore,
         accounts: AccountsStore,
         accountsTxs: AccountsTxsStore,

@@ -5,7 +5,7 @@ class StringHelper{
         return string.slice(0, size1)+'...'+string.slice(string.length-size2)
     }
 
-    formatMiliseconds(millisec){
+    formatMilliseconds(millisec){
 
         const seconds = (millisec / 1000).toFixed(1);
         const minutes = (millisec / (1000 * 60)).toFixed(1);
@@ -87,6 +87,19 @@ class StringHelper{
 
     generateRandomId( ){
         return Math.random().toString()+Math.random().toString()
+    }
+
+    badgeColors(number){
+        switch (number % 8){
+            case 0: return "primary"
+            case 1: return "secondary"
+            case 2: return "success"
+            case 3: return "info"
+            case 4: return "warning"
+            case 5: return "danger"
+            case 6: return "light"
+            case 7: return "dark"
+        }
     }
 
 }

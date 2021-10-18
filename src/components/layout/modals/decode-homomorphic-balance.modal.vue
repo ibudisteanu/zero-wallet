@@ -1,6 +1,6 @@
 <template>
 
-    <modal ref="modal" title="Decoding" contentClass="" @opened="start" :closing-function="stop" >
+    <modal ref="modal" :title="`Decoding ${status}`" contentClass="" @opened="start" :closing-function="stop" >
 
         <template slot="body">
 
@@ -15,6 +15,7 @@
 <script>
 import Modal from "src/components/utils/modal"
 import LoadingSpinner from "../../utils/loading-spinner";
+import StringHelper from "src/utils/string-helper";
 
 export default {
 
@@ -25,7 +26,7 @@ export default {
             matrixInterval: null,
             publicKey: "",
             balance: "",
-            token: "",
+            asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX,
             password: "",
             balanceDecoded: null,
             privateKey: null,
@@ -37,18 +38,20 @@ export default {
     },
 
     computed:{
-
+        getAsset(){
+            return this.$store.getters.getAsset( this.asset );
+        },
     },
 
     methods: {
 
-        async showModal(publicKey, balance, token, returnPrivateKey, password ) {
+        async showModal(publicKey, balance, asset, returnPrivateKey, password ) {
 
             Object.assign(this.$data, this.$options.data());
 
             this.publicKey = publicKey
             this.balance = balance
-            this.token = token
+            this.asset = asset
             this.password = password
             this.returnPrivateKey = returnPrivateKey
 
@@ -72,7 +75,7 @@ export default {
             this.status = ""
 
             PandoraPayHelper.balanceDecoderCallback = (status)=>{
-                this.status = "Step1  "+status
+                this.status = "Init  "+status
             }
 
             await PandoraPayHelper.promiseDecoder
@@ -80,9 +83,9 @@ export default {
 
             if (this.closed) return
 
-            const data = await PandoraPay.wallet.getDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
+            const data = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
                 publicKey: this.publicKey,
-                token: this.token
+                asset: this.asset
             })), this.password, )
 
             const params = JSON.parse( MyTextDecode( data ) )
@@ -96,9 +99,10 @@ export default {
                 privateKey: params.privateKey,
                 previousValue: params.previousValue,
                 balanceEncoded: this.balance,
-                token: this.token,
-            } )), (status)=>{
-                this.status = status
+                asset: this.asset,
+            } )), async (status)=>{
+                const final = StringHelper.formatMoney( await PandoraPay.config.assets.assetsConvertToBase( status, this.getAsset.decimalSeparator ), this.getAsset.decimalSeparator )
+                this.status = "Scan  "+final
             })
 
             this.cancelCallback = decodedData[1]
