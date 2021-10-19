@@ -73,7 +73,7 @@ export default {
                     if (this.delegatedStakingClaimAmount.validationError) throw this.delegatedStakingClaimAmount.validationError
                     if (this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey) throw this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey
 
-                    if (this.delegatedStakingClaimAmount.amount === 0 && !this.hasNewDelegatedInfo) throw "You should update something."
+                    if (this.delegatedStakingClaimAmount.amount === 0 && !this.delegatedStakingNewInfo.hasNewDelegatedInfo) throw "You should update something."
                 }
 
             }catch(err) {
@@ -98,7 +98,8 @@ export default {
 
             const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.delegatedStakingClaimAmount.amount.toString(), this.getAsset.decimalSeparator ) )
 
-            data.delegatedStakingNewInfo = this.delegatedStakingNewInfo
+            data.delegatedStakingNewPublicKey = this.delegatedStakingNewInfo.delegatedStakingNewPublicKey
+            data.delegatedStakingNewFee = this.delegatedStakingNewInfo.delegatedStakingNewFee
             data.delegatedStakingClaimAmount = amount
         }
 

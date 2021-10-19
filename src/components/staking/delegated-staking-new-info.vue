@@ -99,7 +99,7 @@ export default {
         delegatedStakingNewFee:{
             immediate: true,
             handler: function (to, from) {
-                this.$emit('onChanges', { delegatedStakingNewFee: to })
+                this.$emit('onChanges', { delegatedStakingNewFee: Number.parseInt(to) })
             }
         },
         validationDelegatedStakingNewPublicKey:{
