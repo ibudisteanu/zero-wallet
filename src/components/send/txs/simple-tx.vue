@@ -52,9 +52,9 @@ export default {
     props: {
         publicKey: {default: ""},
         titlesOffset: {default: () => ({}) }, //{icon, name}
-        txData: {default: () => ({}) },
         buttonsOffset: {default: () => ({}) },
         txName: {default: ""},
+        beforeProcess: {default: null}, //function
     },
 
     computed:{
@@ -68,7 +68,9 @@ export default {
             const amount = (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ? this.account.plainAccount.delegatedStake.stakeAvailable : 0
             return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
         },
-
+        getAsset(){
+            return this.$store.getters.getAsset( this.asset ? this.asset.asset : null );
+        },
         buttons(){
             return {
                 1: { icon: 'fa fa-credit-card', text: 'Sign Transaction' },
@@ -113,9 +115,10 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const out = await PandoraPay.transactions.builder[this.txName]( JSON.stringify({
+            const fees = (this.fee.feeType === 'feeAuto') ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) )
+
+            const data = {
                 from: this.address.addressEncoded,
-                ...this.txData,
                 nonce: 0,
                 data: {
                     data: Buffer.from(this.extraData.data).toString("hex"),
@@ -123,13 +126,18 @@ export default {
                     publicKeyToEncrypt: this.extraData.publicKeyToEncrypt,
                 },
                 fee: {
-                    fixed: (this.fee.feeType === 'feeAuto') ? 0 : this.fee.feeManual.amount,
+                    fixed:  fees,
                     perByte: 0,
                     perByteAuto: this.fee.feeType === 'feeAuto',
                 },
                 propagateTx: true,
                 awaitAnswer: false,
-            }), (status) => {
+            }
+
+            if (this.beforeProcess)
+                await this.beforeProcess(password, data)
+
+            const out = await PandoraPay.transactions.builder[this.txName]( MyTextEncode( JSON.stringify(data) ), (status) => {
                 this.status = status
             }, password);
 

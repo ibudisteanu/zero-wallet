@@ -54,7 +54,6 @@ export default {
             const amount = (this.account && this.account.plainAccount ) ? this.account.plainAccount.unclaimed : 0
             return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: { amount: amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
         },
-
         getAsset() {
             return this.$store.getters.getAsset(PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX);
         },

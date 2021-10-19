@@ -4,8 +4,8 @@
         <layout-title icon="fa fa-marker" title="Update Delegate Info">Change Delegation Information</layout-title>
 
         <simple-tx :titles-offset="{ '-1': {icon: 'fa fa-edit', name: 'Update Delegation', tooltip: 'Change delegation info' } }"
-                   :tx-data="txData" @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey"
-                   tx-name="createUpdateDelegateTx_Float">
+                   @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey" :before-process="handleBeforeProcess"
+                   tx-name="createUpdateDelegateTx">
 
             <template slot="tab_-1">
 
@@ -59,12 +59,9 @@ export default {
         buttons(){
             return { 1: { icon: 'fa fa-marker', text: 'Update delegate' }}
         },
-        txData(){
-            return {
-                ...this.delegatedStakingNewInfo,
-                delegatedStakingClaimAmount: this.delegatedStakingClaimAmount.amount,
-            }
-        }
+        getAsset() {
+            return this.$store.getters.getAsset(PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX);
+        },
     },
 
     methods:{
@@ -97,6 +94,13 @@ export default {
             }
         },
 
+        async handleBeforeProcess(password, data){
+
+            const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.delegatedStakingClaimAmount.amount.toString(), this.getAsset.decimalSeparator ) )
+
+            data.delegatedStakingNewInfo = this.delegatedStakingNewInfo
+            data.delegatedStakingClaimAmount = amount
+        }
 
     },
 

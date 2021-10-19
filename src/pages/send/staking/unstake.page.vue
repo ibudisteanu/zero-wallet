@@ -5,8 +5,8 @@
         <layout-title icon="fa fa-unlink" title="Unstake coins">Retrieve coins from the staking balance</layout-title>
 
         <simple-tx :titles-offset="{ '-1': {icon: 'fas fa-edit', name: 'Amount', tooltip: 'Unstaking amount' } }"
-                :tx-data="txData" @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey"
-                tx-name="createUnstakeTx_Float">
+                @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey" :before-process="handleBeforeProcess"
+                tx-name="createUnstakeTx">
 
             <template slot="tab_-1">
                 <tx-amount :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" :validate-amount="true" />
@@ -47,11 +47,9 @@ export default {
         buttons(){
             return { 1: { icon: 'fa fa-unlink', text: 'Unstake now' }}
         },
-        txData(){
-            return {
-                unstakeAmount: this.unstakeAmount.amount,
-            }
-        }
+        getAsset() {
+            return this.$store.getters.getAsset(PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX);
+        },
     },
 
     methods:{
@@ -72,6 +70,14 @@ export default {
         amountChanged(data){
             this.unstakeAmount = {...this.unstakeAmount, ...data}
         },
+
+
+        async handleBeforeProcess(password, data){
+
+            const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.unstakeAmount.amount.toString(), this.getAsset.decimalSeparator ) )
+            data.unstakeAmount = amount
+
+        }
 
     },
 
