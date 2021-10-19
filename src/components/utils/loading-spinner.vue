@@ -1,9 +1,12 @@
 <template>
-    <i class="fa fa-spinner fa-spin"></i>
+    <i class="fa fa-spinner fa-spin" v-tooltip.bottom="title" ></i>
 </template>
 
 <script>
 export default{
+    props: {
+        title: {default: ""}
+    },
 }
 </script>
 

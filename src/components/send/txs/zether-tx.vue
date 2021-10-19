@@ -76,6 +76,7 @@
             </template>
 
             <template slot="wizzard-footer">
+                <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="6000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
                 <template v-if="status">
                     <span class="d-block">Transaction is being created. It will take 1-2 minutes.</span>
                     <label class="d-block">Status: {{status}}</label>
@@ -114,10 +115,11 @@ export default {
         text: {default: "Destination"},
         initAvailableAsset: {default: null },
         initAvailableBalance: {default: null },
-        initAvailableBalanceUsed: {default: false },
         allowDestinationRandom: {default: false},
         allowDestinationZeroAmount: {default: true},
         validateDestinationAmount: {default: true},
+        beforeProcess: {default: null}, //function
+        createNewSender: {default: false}, //function
     },
 
 
@@ -126,6 +128,8 @@ export default {
             asset: (this.initAvailableAsset !== null) ? { asset: this.initAvailableAsset   } : { }, //contains asset.asset and asset.validation
 
             randomDestination: this.allowDestinationRandom,
+            newSender: null,
+
             destination: {},
             fee: {  },
 
@@ -141,6 +145,7 @@ export default {
             ringMembers: [],
 
             status: '',
+            error: '',
         }
     },
 
@@ -162,12 +167,13 @@ export default {
 
         availableBalances(){
 
-            if (this.initAvailableBalanceUsed ) return this.initAvailableBalance
+            if (this.initAvailableBalance) return this.initAvailableBalance
 
             const accounts = this.availableAccounts || []
             for (const acc of accounts)
                 if (acc.asset === this.asset.asset )
-                    return acc
+                    return {  [this.asset.asset]: acc }
+
             return null
         },
 
@@ -295,15 +301,16 @@ export default {
 
                 const alreadyUsedIndexes = {}
 
-                let foundSender = false
-                for (let i=0; i < this.availableAccounts.length; i++)
-                    if (this.availableAccounts[i].asset === asset){
-                        alreadyUsedIndexes[this.availableAccounts[i].index] = true
-                        foundSender = true
-                        break
-                    }
-
-                if (!foundSender) throw "Account not found for sender"
+                if (!this.createNewSender){
+                    let foundSender = false
+                    for (let i=0; i < this.availableAccounts.length; i++)
+                        if (this.availableAccounts[i].asset === asset){
+                            alreadyUsedIndexes[this.availableAccounts[i].index] = true
+                            foundSender = true
+                            break
+                        }
+                    if (!foundSender) throw "Account not found for sender"
+                }
 
                 if (!this.randomDestination)
                     if (this.$store.state.accounts.list[ this.destination.address.publicKey]){
@@ -347,11 +354,16 @@ export default {
 
                 let ringMembers = []
 
-                ringMembers.push(this.address.addressEncoded)
-                delete publicKeysMap[this.address.publicKey]
+                if (!this.createNewSender){
+                    ringMembers.push(this.address.addressEncoded)
+                    delete publicKeysMap[this.address.publicKey]
+                }else {
+                    const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
+                    ringMembers.push( json[1] )
+                    this.newSender = {privateKey: json[0], addressEncoded: json[1], publicKey: json[2] }
+                }
 
                 if (this.randomDestination){
-
                     const destinationPublicKey = getRandomPublicKey()
 
                     const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( {publicKey: destinationPublicKey, registration: "", amount: 0, paymentId: ""} ) ) ) ) )
@@ -389,20 +401,29 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            let balance
-            for (const availableAccount of this.availableAccounts)
-                if (availableAccount.asset === this.asset.asset){
-                    balance = availableAccount.balance
-                    break
-                }
+            let senderPrivateKey, senderBalanceDecoded
+            if (!this.createNewSender){
 
-            const {privateKey, balanceDecoded} = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.$store.state.wallet.mainPublicKey, balance, this.asset.asset, true, password )
-            if (balanceDecoded === null) throw "Decoding was canceled"
+                let balance
+                for (const availableAccount of this.availableAccounts)
+                    if (availableAccount.asset === this.asset.asset){
+                        balance = availableAccount.balance
+                        break
+                    }
+
+                const out = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.$store.state.wallet.mainPublicKey, balance, this.asset.asset, true, password )
+                if (out.balanceDecoded === null) throw "Decoding was canceled"
+
+                senderPrivateKey = out.privateKey
+                senderBalanceDecoded = out.balanceDecoded
+            }else {
+                senderPrivateKey = this.newSender.privateKey
+                senderBalanceDecoded = this.availableBalances[ this.asset.asset ].amount
+            }
 
             let asset = this.asset.asset
 
-            const accs = {}
-            accs[asset] = {}
+            const accs = { [asset]: {} }
             const regs = {}
 
             const shuffle =  JSON.parse( MyTextDecode( await PandoraPay.helpers.shuffleArray_for_Zether( this.ringMembers.length.toString()  )) )
@@ -428,13 +449,15 @@ export default {
 
             const data = {
                 data: {
-                    fromPrivateKeys: [privateKey],
-                    fromBalancesDecoded: [balanceDecoded],
-                    assets: [asset],
+                    from: [{
+                        privateKey: senderPrivateKey,
+                        balanceDecoded: senderBalanceDecoded,
+                    }],
+                    assets: [ asset ],
                     amounts: [ amount  ],
-                    dsts: [this.destination.addressEncoded],
+                    dsts: [ this.destination.addressEncoded ],
                     burns: [ 0 ],
-                    ringMembers: [this.ringMembers],
+                    ringMembers: [ this.ringMembers ],
                     fees: [{
                         fixed:  fees,
                         perByte: 0,
@@ -451,11 +474,8 @@ export default {
                 },
             }
 
-            const promise = new Promise((resolve, reject)=>{
-                this.$emit('onBeforeProcess', {resolve, reject, password, data })
-            })
-
-            await promise
+            if (this.beforeProcess)
+                await this.beforeProcess(password, data)
 
             //compute extra
             out = await PandoraPayHelper.transactions.builder[this.txName]( MyTextEncode( JSON.stringify( data ) ),

@@ -2,14 +2,14 @@
 
     <layout>
 
-        <layout-title icon="fa fa-money-bill-alt" title="Private Delegate Funds">Delegate Funds Privately to Delegating Address</layout-title>
+        <layout-title icon="fa fa-seedling" title="Private Delegate Funds">Delegate Funds Privately to Delegating Address</layout-title>
 
         <zether-tx ref="refZetherTx"
                    :titles-offset="{ '-1': {icon: 'fas fa-edit', name: 'Delegation', tooltip: 'Delegation update' }}"
                    :allow-destination-random="true"
                    :validate-destination-amount="true"
                    :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX"
-                   tx-name="createZetherDelegateStakeTx" :public-key="publicKey" @onSetTab="setTab" @onBeforeProcess="handleBeforeProcess">
+                   tx-name="createZetherDelegateStakeTx" :public-key="publicKey" @onSetTab="setTab" :beforeProcess="handleBeforeProcess">
 
             <template :slot="`tab_${-1}`">
                 <destination-address text="Delegate Address" @changed="changedDelegateDestination"/>
@@ -89,36 +89,28 @@ export default {
             }
         },
 
-        async handleBeforeProcess({resolve, reject, password, data }){
+        async handleBeforeProcess( password, data ){
 
-            try{
+            if (this.delegatedStakingNewInfo.hasNewDelegatedInfo){
+                const out = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
+                    publicKey: this.delegatePublicKey,
+                    asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX,
+                })), password, )
 
-                if (this.delegatedStakingNewInfo.hasNewDelegatedInfo){
-                    const out = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
-                        publicKey: this.delegatePublicKey,
-                        asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX,
-                    })), password, )
+                const params = JSON.parse( MyTextDecode( out ) )
+                if (!params.privateKey) throw "DelegatePrivateKey is missing"
 
-                    const params = JSON.parse( MyTextDecode( out ) )
-                    if (!params.privateKey) throw "DelegatePublicKey is missing"
+                data.delegatePrivateKey = params.privateKey
+            }else
+                data.delegatePrivateKey = ""
 
-                    data.delegatePrivateKey = params.privateKey
-                }else
-                    data.delegatePrivateKey = ""
+            data.delegatedStakingNewPublicKey = this.delegatedStakingNewInfo.delegatedStakingNewPublicKey
+            data.delegatedStakingNewFee = this.delegatedStakingNewInfo.delegatedStakingNewFee
+            data.delegateDestination = this.delegateDestination.addressEncoded
 
-                data.delegatedStakingNewPublicKey = this.delegatedStakingNewInfo.delegatedStakingNewPublicKey
-                data.delegatedStakingNewFee = this.delegatedStakingNewInfo.delegatedStakingNewFee
-                data.delegateDestination = this.delegateDestination.addressEncoded
+            const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.delegateDestination.amount.toString(), this.getAsset.decimalSeparator ) )
 
-                const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.delegateDestination.amount.toString(), this.getAsset.decimalSeparator ) )
-
-                data.data.burns = [amount]
-
-                resolve( true )
-
-            }catch(err){
-                reject(err)
-            }
+            data.data.burns = [amount]
 
         }
 

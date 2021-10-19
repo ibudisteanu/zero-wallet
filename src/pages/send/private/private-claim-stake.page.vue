@@ -7,11 +7,11 @@
         <zether-tx ref="refZetherTx"
                    :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX"
                    :init-available-balance="balancesOnlyUnclaimed"
-                   :init-available-balance-used="true"
                    :allow-destination-zero-amount="false"
                    :validate-destination-amount="true"
+                   :create-new-sender="true"
                    text="Claim"
-                   tx-name="createZetherClaimStakeTx" :public-key="publicKey" @onSetTab="setTab" @onBeforeProcess="handleBeforeProcess">
+                   tx-name="createZetherClaimStakeTx" :public-key="publicKey" @onSetTab="setTab" :beforeProcess="handleBeforeProcess">
         </zether-tx>
 
     </layout>
@@ -72,16 +72,17 @@ export default {
             }
         },
 
-        async handleBeforeProcess({resolve, reject, password, data }){
+        async handleBeforeProcess(password, data){
 
-            try{
+            const out = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
+                publicKey: this.publicKey,
+                asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX,
+            })), password, )
 
+            const params = JSON.parse( MyTextDecode( out ) )
+            if (!params.privateKey) throw "DelegatePrivateKey is missing"
 
-                resolve( true )
-
-            }catch(err){
-                reject(err)
-            }
+            data.delegatePrivateKey = params.privateKey
 
         }
 

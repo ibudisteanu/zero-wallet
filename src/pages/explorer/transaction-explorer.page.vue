@@ -85,12 +85,15 @@
                         <span class="col-5 col-sm-3 text-truncate">Version</span>
                         <span class="col-7 col-sm-9 text-truncate">{{tx.version}}</span>
                     </div>
-                    <div class="row pt-2 pb-2">
-                        <span class="col-5 col-sm-3 text-truncate">Script Version</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{tx.txScript}}</span>
-                    </div>
 
                     <template v-if="tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE" >
+
+                        <div class="row pt-2 pb-2">
+                            <span class="col-5 col-sm-3 text-truncate">Script Version</span>
+                            <span class="col-7 col-sm-9 text-truncate">
+                                {{tx.txScript}} <span :class="`badge badge-soft-${$store.getters.getTxScriptBadgeColor(tx.version, tx.txScript)}`" v-tooltip.bottom="$store.getters.getTxScriptText(tx.version, tx.txScript)">{{$store.getters.getTxScriptText(tx.version, tx.txScript)}}</span>
+                            </span>
+                        </div>
 
                         <div class="row pt-2 pb-2 bg-light">
                             <span class="col-5 col-sm-3 text-truncate">Nonce</span>
@@ -127,13 +130,22 @@
                     <template v-if="tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER">
 
                         <div v-for="(payload, index) in tx.payloads"
-                             :key="`tx_payload_${index}`" class="d-inline-block">
+                             :key="`tx_payload_${index}`" >
+
+                            <div class="row pt-2 pb-2">
+                                <span class="col-5 col-sm-3 text-truncate">Payload Script Version</span>
+                                <span class="col-7 col-sm-9 text-truncate">
+                                {{payload.payloadScript}} <span :class="`badge badge-soft-${$store.getters.getTxScriptBadgeColor(tx.version, payload.payloadScript)}`" v-tooltip.bottom="$store.getters.getTxScriptText(tx.version, payload.payloadScript)">{{$store.getters.getTxScriptText(tx.version, payload.payloadScript)}}</span>
+                            </span>
+                            </div>
+
                             <div class="row pt-2 pb-2  bg-light">
                                 <span class="col-5 col-sm-3 text-truncate">Payload {{index}} Data</span>
                                 <span class="col-7 col-sm-9">
                                     <show-transaction-data :tx="tx" :id="index" />
                                 </span>
                             </div>
+
                             <div class="row pt-2 pb-2 ">
                                 <span class="col-5 col-sm-3 text-truncate">Payload {{index}} Extra</span>
                                 <span class="col-7 col-sm-9 text-truncate">

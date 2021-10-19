@@ -63,7 +63,7 @@
                             <li class="nav-item">
                                 <router-link :class="`nav-link ${route.indexOf('/txs/private/delegate') === 0 ? 'active' : ''} nav-link`" to="/txs/private/delegate" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
-                                        <i class="fa fa-money-bill-alt" />
+                                        <i class="fa fa-seedling"></i>
                                         <span class="nav-link-text ps-1">Private Delegate</span>
                                     </div>
                                 </router-link>

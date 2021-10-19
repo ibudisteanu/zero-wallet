@@ -72,7 +72,7 @@ export default {
 
     computed:{
         finalAddressShort(){
-            return StringHelper.truncateText(this.finalAddress, 4, 8)
+            return StringHelper.truncateText(this.finalAddress, 4, 10)
         }
     }
 
