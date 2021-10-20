@@ -91,6 +91,8 @@ export default {
 
         async handleBeforeProcess( password, data ){
 
+            data.delegatePrivateKey = ""
+
             if (this.delegatedStakingNewInfo.hasNewDelegatedInfo){
                 const out = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
                     publicKey: this.delegatePublicKey,
@@ -101,15 +103,16 @@ export default {
                 if (!params.privateKey) throw "DelegatePrivateKey is missing"
 
                 data.delegatePrivateKey = params.privateKey
-            }else
-                data.delegatePrivateKey = ""
+            }
 
-            data.delegatedStakingNewPublicKey = this.delegatedStakingNewInfo.delegatedStakingNewPublicKey
-            data.delegatedStakingNewFee = this.delegatedStakingNewInfo.delegatedStakingNewFee
+            data.delegatedStakingUpdate = {
+                delegatedStakingHasNewInfo: this.delegatedStakingNewInfo.hasNewDelegatedInfo,
+                delegatedStakingNewPublicKey: this.delegatedStakingNewInfo.delegatedStakingNewPublicKey,
+                delegatedStakingNewFee: this.delegatedStakingNewInfo.delegatedStakingNewFee,
+            }
             data.delegateDestination = this.delegateDestination.addressEncoded
 
             const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.delegateDestination.amount.toString(), this.getAsset.decimalSeparator ) )
-
             data.data.burns = [amount]
 
         }

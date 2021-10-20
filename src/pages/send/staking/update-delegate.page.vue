@@ -98,8 +98,11 @@ export default {
 
             const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.delegatedStakingClaimAmount.amount.toString(), this.getAsset.decimalSeparator ) )
 
-            data.delegatedStakingNewPublicKey = this.delegatedStakingNewInfo.delegatedStakingNewPublicKey
-            data.delegatedStakingNewFee = this.delegatedStakingNewInfo.delegatedStakingNewFee
+            data.delegatedStakingUpdate = {
+                delegatedStakingHasNewInfo: this.delegatedStakingNewInfo.hasNewDelegatedInfo,
+                delegatedStakingNewPublicKey: this.delegatedStakingNewInfo.delegatedStakingNewPublicKey,
+                delegatedStakingNewFee: this.delegatedStakingNewInfo.delegatedStakingNewFee,
+            }
             data.delegatedStakingClaimAmount = amount
         }
 
