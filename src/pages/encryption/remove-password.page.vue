@@ -32,7 +32,7 @@
 
         <alert-box type="warning">
             <strong>Warning:</strong> <br/> <br/>
-            It will remove the password for your entire wallet. But, you can set it again later.
+            It will remove the password for your entire wallet. But, you can encrypt it later again.
         </alert-box>
 
     </layout>
