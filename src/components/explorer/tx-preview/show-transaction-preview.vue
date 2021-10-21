@@ -19,7 +19,7 @@
             <div class="col-8 col-sm-2 col-md-1 text-truncate">
                 <template v-if="txInfo">
                     <span v-if="txInfo.mempool">
-                        <loading-spinner title="Pending" />
+                        <i class="fa fa-clock" />
                     </span>
                     <span v-else v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  txInfo.timestamp ) }`"  >
                         {{ timeAgo( $store.state.blockchain.genesisTimestamp +  txInfo.timestamp) }}
@@ -31,7 +31,7 @@
             <div class="col-8 col-sm-1 col-md-1 text-truncate">
                 <template v-if="txInfo">
                     <span v-if="txInfo.mempool">
-                        <loading-spinner title="Pending" />
+                        <i class="fa fa-clock" />
                     </span>
                     <span v-else v-tooltip.bottom="`${ txInfo.blkHeight }`" >
                         <router-link :to="`/explorer/block/${txInfo.blkHeight}`">

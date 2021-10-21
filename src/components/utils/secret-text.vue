@@ -3,9 +3,9 @@
         <div :class="`fs-0 fw-bold alert alert-primary`" >
             <div :class="`${visible ? '' : 'noselect blurry-text' }  text-break`">
                 {{text}}
-                <i v-if="visible" class="fa fa-copy pointer " v-tooltip.bottom="visible ? `Copy ${title}` : ''"  @click="copySecret"/>
+                <i class="fa fa-copy pointer " v-tooltip.bottom="visible ? `Copy ${title}` : ''"  @click="copySecret"/>
             </div>
-            <div v-show="!visible" class="position-absolute top-50 start-50 translate-middle pointer " @click="visible = true"  v-tooltip.bottom="'Show the secret!'">
+            <div v-show="!visible" class="position-absolute top-50 start-50 translate-middle pointer" @click="visible = true"  v-tooltip.bottom="'Show the secret!'">
                 <i class="fa fa-eye fs-3"></i> Show
             </div>
         </div>
