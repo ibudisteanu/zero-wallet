@@ -11,7 +11,7 @@
             <div class="pt-2 d-inline-block">
 
                 <div class="card-group">
-                    <div class="card overflow-hidden pointer" @click="()=>select(0)">
+                    <div class="card overflow-hidden pointer " @click="()=>select(0)">
                         <div class="card-img-top">
                             <img class="img-fluid" src="https://iln.ieee.org/CServer/Image/A2086DFA901C41A9B9C7AB4EBFF56BFF/EDP550.jpg" alt="Transparent addresses">
                         </div>

@@ -225,6 +225,10 @@ a .disabled{
     cursor: pointer;
 }
 
+.pointer:hover{
+    color: #27bcfd !important;
+}
+
 a, a:hover,a:visited, a:focus {
     text-decoration:none;
 }

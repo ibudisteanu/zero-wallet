@@ -17,28 +17,28 @@
                          :key="`address-${index}`">
                             <div class="notification-body address">
                                 <account-identicon :address="address.addressEncoded" size="21" outer-size="7"  :disable-route="true" />
-                                <div class="account-title pointer" @click="setMainPublicKey(address.publicKey)">
+                                <div class="account-title pointer " @click="setMainPublicKey(address.publicKey)">
                                     <span class="fw-semi-bold text-truncate">{{address.name}}</span>
                                     <span class="fw-normal text-truncate">{{$store.getters.addressDisplay(address)}} </span>
                                 </div>
                                 <div class="account-tools">
                                     <span class="fw-light" >{{ (address.seedIndex !== undefined) ? '#'+address.seedIndex : '&nbsp;'}}</span>
-                                    <i class="fa fa-copy pointer" v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( address)" />
+                                    <i class="fa fa-copy pointer " v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( address)" />
                                 </div>
                             </div>
                     </div>
                 </div>
                 <div class="list-group-item">
                     <div class="list-group-title border-bottom">Operations:</div>
-                    <span @click="viewAccount" v-tooltip.left="'View account'" class="pointer dropdown-item"> <i class="fa fa-hand-pointer"></i> View account </span>
-                    <span @click="createAccount" v-tooltip.left="'Create a new Address'" class="pointer dropdown-item fw-normal"> <i class="fa fa-plus"></i> Create Account </span>
-                    <span @click="importAccount" v-tooltip.left="'Import an address from json file'" class="pointer dropdown-item fw-normal"><i class="fa fa-upload"></i> Import Account (json)</span>
-                    <span @click="importPrivateKey" v-tooltip.left="'Import an address from Private Key'" class="pointer dropdown-item fw-normal"><i class="fa fa-upload"></i> Import Private Key</span>
+                    <span @click="viewAccount" v-tooltip.left="'View account'" class="pointer dropdown-item "> <i class="fa fa-hand-pointer "></i> View account </span>
+                    <span @click="createAccount" v-tooltip.left="'Create a new Address'" class="pointer dropdown-item fw-normal "> <i class="fa fa-plus"></i> Create Account </span>
+                    <span @click="importAccount" v-tooltip.left="'Import an address from json file'" class="pointer dropdown-item fw-normal "><i class="fa fa-upload"></i> Import Account (json)</span>
+                    <span @click="importPrivateKey" v-tooltip.left="'Import an address from Private Key'" class="pointer dropdown-item fw-normal "><i class="fa fa-upload"></i> Import Private Key</span>
                     <div class="dropdown-divider"></div>
-                    <span @click="viewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" class="pointer dropdown-item fw-normal"><i class="fa fa-key"></i>  View Seed Words</span>
+                    <span @click="viewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" class="pointer dropdown-item fw-normal "><i class="fa fa-key"></i>  View Seed Words</span>
                     <template v-if="encrypted">
                         <div class="dropdown-divider"></div>
-                        <span @click="handleLogout" v-tooltip.left="'Return to the password screen'" class="pointer dropdown-item fw-normal"><i class="fa fa-sign-out-alt"></i>  Logout</span>
+                        <span @click="handleLogout" v-tooltip.left="'Return to the password screen'" class="pointer dropdown-item fw-normal "><i class="fa fa-sign-out-alt"></i>  Logout</span>
                     </template>
                 </div>
             </div>
@@ -207,10 +207,6 @@ export default {
 
     .dropdown-item i{
         margin-right: 5px;
-    }
-
-    i:hover{
-        color: #313131;
     }
 
     .account-title span,
