@@ -9,7 +9,7 @@
                    :allow-destination-random="true"
                    :validate-destination-amount="true"
                    :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX"
-                   tx-name="createZetherDelegateStakeTx" :public-key="publicKey" @onSetTab="setTab" :beforeProcess="handleBeforeProcess">
+                   :public-key="publicKey" @onSetTab="setTab" :beforeProcess="handleBeforeProcess">
 
             <template :slot="`tab_${-1}`">
                 <destination-address text="Delegate Address" @changed="changedDelegateDestination"/>
@@ -91,7 +91,9 @@ export default {
 
         async handleBeforeProcess( password, data ){
 
-            data.delegatePrivateKey = ""
+            const payloadExtra = {
+                delegatePrivateKey: ""
+            }
 
             if (this.delegatedStakingNewInfo.hasNewDelegatedInfo){
                 const out = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
@@ -102,18 +104,20 @@ export default {
                 const params = JSON.parse( MyTextDecode( out ) )
                 if (!params.privateKey) throw "DelegatePrivateKey is missing"
 
-                data.delegatePrivateKey = params.privateKey
+                payloadExtra.delegatePrivateKey = params.privateKey
             }
 
-            data.delegatedStakingUpdate = {
+            payloadExtra.delegatedStakingUpdate = {
                 delegatedStakingHasNewInfo: this.delegatedStakingNewInfo.hasNewDelegatedInfo,
                 delegatedStakingNewPublicKey: this.delegatedStakingNewInfo.delegatedStakingNewPublicKey,
                 delegatedStakingNewFee: this.delegatedStakingNewInfo.delegatedStakingNewFee,
             }
-            data.delegateDestination = this.delegateDestination.addressEncoded
+            payloadExtra.delegatePublicKey = this.delegatePublicKey
 
             const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.delegateDestination.amount.toString(), this.getAsset.decimalSeparator ) )
-            data.data.burns = [amount]
+            data.burns = [amount]
+            data.payloadExtra[0] = payloadExtra
+            data.payloadScriptType[0] = PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_DELEGATE_STAKE
 
         }
 

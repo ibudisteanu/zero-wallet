@@ -9,7 +9,7 @@ export default {
             return "simple"
         }else if (txVersion === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER ){
             if (txScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_TRANSFER) return "transfer"
-            if (txScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_DELEGATE_STAKE) return "claim"
+            if (txScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_DELEGATE_STAKE) return "delegate"
             if (txScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CLAIM_STAKE) return "claim"
             return "zether"
         }

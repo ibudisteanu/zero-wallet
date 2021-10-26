@@ -10,8 +10,7 @@
                    :allow-destination-zero-amount="false"
                    :validate-destination-amount="true"
                    :create-new-sender="true"
-                   text="Claim"
-                   tx-name="createZetherClaimStakeTx" :public-key="publicKey" @onSetTab="setTab" :beforeProcess="handleBeforeProcess">
+                   text="Claim" :public-key="publicKey" @onSetTab="setTab" :beforeProcess="handleBeforeProcess">
         </zether-tx>
 
     </layout>
@@ -81,7 +80,10 @@ export default {
             const params = JSON.parse( MyTextDecode( out ) )
             if (!params.privateKey) throw "DelegatePrivateKey is missing"
 
-            data.delegatePrivateKey = params.privateKey
+            data.payloadExtra[0] = {
+                delegatePrivateKey: params.privateKey
+            }
+            data.payloadScriptType[0] = PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CLAIM_STAKE
 
         }
 

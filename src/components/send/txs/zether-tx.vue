@@ -111,7 +111,6 @@ export default {
         publicKey: {default: ""},
         titlesOffset: {default: () => ({}) }, //{icon, name}
         buttonsOffset: {default: () => ({}) },
-        txName: {default: ""},
         text: {default: "Destination"},
         initAvailableAsset: {default: null },
         initAvailableBalance: {default: null },
@@ -302,6 +301,8 @@ export default {
                 const alreadyUsedIndexes = {}
 
                 if (!this.createNewSender){
+                    if (!this.availableAccounts || !this.availableAccounts.length ) throw "You don't have any available private funds"
+
                     let foundSender = false
                     for (let i=0; i < this.availableAccounts.length; i++)
                         if (this.availableAccounts[i].asset === asset){
@@ -448,37 +449,37 @@ export default {
             const fees = (this.fee.feeType === 'feeAuto') ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) )
 
             const data = {
-                data: {
-                    from: [{
-                        privateKey: senderPrivateKey,
-                        balanceDecoded: senderBalanceDecoded,
-                    }],
-                    assets: [ asset ],
-                    amounts: [ amount  ],
-                    dsts: [ this.destination.addressEncoded ],
-                    burns: [ 0 ],
-                    ringMembers: [ this.ringMembers ],
-                    fees: [{
-                        fixed:  fees,
-                        perByte: 0,
-                        perByteAuto: this.fee.feeType === 'feeAuto',
-                    }],
-                    data: [{
-                        data: Buffer.from(this.extraData.data).toString("hex"),
-                        encrypt: this.extraData.type === "encrypted",
-                    }],
-                    height: this.$store.state.blockchain.end,
-                    hash: this.$store.state.blockchain.hash,
-                    accs,
-                    regs,
-                },
+                from: [{
+                    privateKey: senderPrivateKey,
+                    balanceDecoded: senderBalanceDecoded,
+                }],
+                assets: [ asset ],
+                amounts: [ amount  ],
+                dsts: [ this.destination.addressEncoded ],
+                burns: [ 0 ],
+                ringMembers: [ this.ringMembers ],
+                fees: [{
+                    fixed:  fees,
+                    perByte: 0,
+                    perByteAuto: this.fee.feeType === 'feeAuto',
+                }],
+                data: [{
+                    data: Buffer.from(this.extraData.data).toString("hex"),
+                    encrypt: this.extraData.type === "encrypted",
+                }],
+                payloadExtra: [ null ],
+                payloadScriptType: [  PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_TRANSFER ],
+                height: this.$store.state.blockchain.end,
+                hash: this.$store.state.blockchain.hash,
+                accs,
+                regs,
             }
 
             if (this.beforeProcess)
                 await this.beforeProcess(password, data)
 
             //compute extra
-            out = await PandoraPayHelper.transactions.builder[this.txName]( MyTextEncode( JSON.stringify( data ) ),
+            out = await PandoraPayHelper.transactions.builder.createZetherTx( MyTextEncode( JSON.stringify( data ) ),
                 (status) => {
                 this.status = status
             } );
