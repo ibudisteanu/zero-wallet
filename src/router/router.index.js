@@ -60,15 +60,15 @@ const routes = [
     {path: '/explorer/block/:query', component: BlockExplorerPage },
     {path: '/explorer/tx/:query', component: TransactionExplorerPage},
 
+    {path: '/explorer/assets', component: AssetsPage},
+    {path: '/explorer/assets/:page', component: AssetsPage},
+    {path: '/explorer/asset/:hash', component: AssetExplorerPage },
+
     {path: '/explorer/mem-pool', component: MemPoolExplorerPage },
     {path: '/explorer/mem-pool/:page', component: MemPoolExplorerPage },
 
     {path: '/explorer', component: BlockchainExplorerPage },
     {path: '/explorer/:page', component: BlockchainExplorerPage },
-
-    {path: '/assets', component: AssetsPage},
-    {path: '/assets/pandora', component: AssetExplorerPage },
-    {path: '/assets/:hash', component: AssetExplorerPage },
 
     {path: '/stakes', component: StakesPage, beforeEnter: guardDecrypted },
 

@@ -2,10 +2,15 @@ import Vue from 'vue';
 
 export default {
 
-    setBlockchainInfo(store, data){
+    setBlockchainNotification(store, data){
         store.end = data.end;
         store.hash = data.hash;
         store.prevHash = data.prevHash;
+    },
+
+    setBlockchainInfo(store, data){
+        store.assets = data.assets;
+        store.transactions = data.transactions;
     },
 
     setBlockchainInfoGenesis(store, data){

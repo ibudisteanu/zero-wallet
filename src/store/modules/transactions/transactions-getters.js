@@ -11,6 +11,8 @@ export default {
             if (txScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_TRANSFER) return "transfer"
             if (txScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_DELEGATE_STAKE) return "delegate"
             if (txScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CLAIM_STAKE) return "claim"
+            if (txScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_ASSET_CREATE) return "asset"
+            if (txScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_ASSET_SUPPLY_INCREASE) return "asset"
             return "zether"
         }
     },
@@ -24,6 +26,8 @@ export default {
             if (txScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_TRANSFER) return "private transfer"
             if (txScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_DELEGATE_STAKE) return "private delegate"
             if (txScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CLAIM_STAKE) return "private claim"
+            if (txScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_ASSET_CREATE) return "private asset create"
+            if (txScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_ASSET_SUPPLY_INCREASE) return "private asset supply increase"
             return "zether"
         }
     },

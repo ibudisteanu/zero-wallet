@@ -10,7 +10,7 @@
                 {{ amount }}
             </template>
             <small class="fs--1 text-700">/
-                <router-link :to="`/assets/${getAsset.hash}`" class="currency" v-tooltip.bottom="getAsset.hash" >
+                <router-link :to="`/explorer/asset/${getAsset.hash}`" class="currency" v-tooltip.bottom="getAsset.hash" >
                     {{getAsset.name}}
                 </router-link>
             </small>

@@ -119,8 +119,13 @@ export default {
             if (this.$store.state.blockchain.status === 'online')
                 this.$store.commit('setConsensusStatus', "sync")
 
-            this.$store.commit('setBlockchainInfo', data)
+            this.$store.commit('setBlockchainNotification', data)
+
+            const out = await PandoraPay.network.getNetworkBlockchain()
+
             await this.$store.dispatch('getBlocksInfo',  {starting: this.$store.state.blockchain.end - consts.blocksInfoPagination, blockchainEnd: this.$store.state.blockchain.end } )
+
+            this.$store.commit('setBlockchainInfo', JSON.parse( MyTextDecode(out) ) )
 
             for (const key in this.$store.state.wallet.addresses)
                 await this.$store.dispatch('subscribeAccount', this.$store.state.wallet.addresses[key].publicKey)

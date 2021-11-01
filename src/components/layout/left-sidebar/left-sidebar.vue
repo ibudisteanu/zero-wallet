@@ -140,7 +140,7 @@
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <router-link :class="`nav-link ${route.indexOf('/assets') === 0 ? 'active' : ''} nav-link`" to="/assets" @click.native="disableNavbarMenu">
+                        <router-link :class="`nav-link ${route.indexOf('/explorer/assets') === 0 ? 'active' : ''} nav-link`" to="/explorer/assets" @click.native="disableNavbarMenu">
                             <div class="d-flex align-items-center">
                                 <i class="fa fa-file-invoice-dollar"></i>
                                 <span class="nav-link-text ps-1">Assets</span>
