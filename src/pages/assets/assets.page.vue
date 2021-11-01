@@ -19,13 +19,13 @@
 
                     <loading-spinner v-if="!loaded" />
                     <template v-else>
-                        <show-assets-info :assetsInfo="assetsInfo" />
+                        <show-assets-info id="assets" :assetsInfo="assetsInfo" />
                     </template>
 
                 </div>
                 <div class="card-footer" v-if="loaded">
                     <pagination class="py-0" :inverted="true" :count-per-page="countPerPage" :current="finalPage"
-                                :total="pages" prefix="/explorer/" suffix="#chain" ></pagination>
+                                :total="pages" prefix="/explorer/assets/" suffix="#assets" ></pagination>
                 </div>
             </div>
         </div>
@@ -64,7 +64,7 @@ export default {
 
         finalPage() {
             if (this.page !== null) return this.page
-            return Math.floor((this.ending - 1) / this.countPerPage)
+            return 0
         },
 
         ending(){
@@ -78,14 +78,15 @@ export default {
         page() {
             let page = this.$route.params.page || null
             if (typeof page == "string") {
-                page = Number.parseInt(page)
-                return page;
+                try{
+                    page = Number.parseInt(page)
+                    if (isNaN(page)) throw "error"
+                }catch(err){
+                    this.error = "Invalid page number"
+                    return null
+                }
             }
             return page
-        },
-
-        next(){
-            return this.$store.state.assets.next;
         },
 
         assetsInfo(){
@@ -104,9 +105,9 @@ export default {
                 await this.$store.state.blockchain.syncPromise;
 
                 await this.$store.dispatch('getAssetsInfo', {
-                    starting: this.last - this.countPerPage,
-                    blockchainEnd: this.count,
-                    view: this.page !== null
+                    start: this.finalPage * this.countPerPage,
+                    end: this.finalPage * (this.countPerPage+1),
+                    count: this.ending
                 })
 
             } catch (err) {

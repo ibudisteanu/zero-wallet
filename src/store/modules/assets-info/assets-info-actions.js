@@ -12,12 +12,10 @@ export default {
 
             try{
                 const assetInfoData = await PandoraPay.network.getNetworkAssetInfo( height, "" );
-                if (!assetInfoData) throw "Error getting blockData"
+                if (!assetInfoData) throw "Error getting assetInfo"
 
                 const assetInfo = JSON.parse( MyTextDecode( assetInfoData ) )
-
-                if (!assetInfo || !assetInfo.hash)
-                    throw "Error getting block info"
+                if (!assetInfo ) throw "Error getting asset info"
 
                 assetInfo.height = height
                 resolve(assetInfo)
@@ -40,7 +38,7 @@ export default {
             try{
 
                 const assetInfoData = await PandoraPay.network.getNetworkAssetInfo(0, hash);
-                if (!assetInfoData ) throw "Error getting block info"
+                if (!assetInfoData ) throw "Error getting asset info"
 
                 const assetInfo = JSON.parse(MyTextDecode(assetInfoData))
 
@@ -60,32 +58,15 @@ export default {
 
     },
 
-    async getAssetsInfo( {state, dispatch, commit}, { starting, assetsCount} ){
+    async getAssetsInfo( {state, dispatch, commit}, { start, end, count } ){
 
-        starting = Math.max(0, starting )
-        const ending = Math.min( starting + consts.assetsInfoPagination -1, assetsCount-1 )
+        start = Math.min(start, count-1 )
+        end = Math.min( start + consts.assetsInfoPagination, count-1 )
 
-        const listByHeight = {
-            ...state.listByHeight,
-        }
+        const listByHeight = { }
 
-        let found = false
-        for (let i = ending; i >= starting ; i-- ){
-
-            let beforeHash
-            if (listByHeight[i] && listByHeight[i].hash )
-                beforeHash = listByHeight[i].hash
-
-            if (!found || !listByHeight[i]) {
-
-                let assetInfo = await this.dispatch('getAssetInfoByHeight', i)
-                listByHeight[i] = assetInfo
-
-                if (!found && beforeHash === assetInfo.hash )
-                    found = true
-            }
-
-        }
+        for (let i = end; i >= start ; i-- )
+            listByHeight[i] = await this.dispatch('getAssetInfoByHeight', i)
 
         commit('setAssetsInfo', listByHeight )
     },

@@ -88,6 +88,10 @@ export default {
 
             if (name === "sockets/totalSocketsChanged"){
                 if (data > 0) {
+
+                    const out = await PandoraPay.network.getNetworkBlockchain()
+                    this.$store.commit('setBlockchainInfo', JSON.parse( MyTextDecode(out) ) )
+
                     this.$store.commit('setConsensusStatus', "online")
                     this.$store.dispatch('initializeFaucetInfo')
                     this.$store.dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX )
@@ -122,10 +126,9 @@ export default {
             this.$store.commit('setBlockchainNotification', data)
 
             const out = await PandoraPay.network.getNetworkBlockchain()
+            this.$store.commit('setBlockchainInfo', JSON.parse( MyTextDecode(out) ) )
 
             await this.$store.dispatch('getBlocksInfo',  {starting: this.$store.state.blockchain.end - consts.blocksInfoPagination, blockchainEnd: this.$store.state.blockchain.end } )
-
-            this.$store.commit('setBlockchainInfo', JSON.parse( MyTextDecode(out) ) )
 
             for (const key in this.$store.state.wallet.addresses)
                 await this.$store.dispatch('subscribeAccount', this.$store.state.wallet.addresses[key].publicKey)

@@ -75,8 +75,13 @@ export default {
         page() {
             let page = this.$route.params.page || null
             if (typeof page == "string") {
-                page = Number.parseInt(page)
-                return page;
+                try{
+                    page = Number.parseInt(page)
+                    if (isNaN(page)) throw "error"
+                }catch(err){
+                    this.error = "Invalid page number"
+                    return null
+                }
             }
             return page
         },
