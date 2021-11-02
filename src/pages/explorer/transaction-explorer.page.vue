@@ -16,7 +16,9 @@
 
                 <alert-box v-if="error" type="error">{{error}}</alert-box>
 
-                <loading-spinner v-if="!loaded"/>
+                <template v-if="!loaded">
+                    <loading-spinner/>
+                </template>
                 <div v-else-if="tx">
 
                     <div class="row pt-2 pb-2">

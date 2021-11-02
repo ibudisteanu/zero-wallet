@@ -16,7 +16,9 @@
 
                 <alert-box v-if="error" type="error">{{error}}</alert-box>
 
-                <loading-spinner v-if="!loaded"/>
+                <template v-if="!loaded">
+                    <loading-spinner/>
+                </template>
                 <template v-else-if="asset">
 
                     <div class="row pt-2 pb-2">
@@ -48,12 +50,12 @@
                         <span class="col-7 col-sm-9 text-truncate">{{asset.supply / Math.pow(10, asset.decimalSeparator) }}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
-                        <span class="col-5 col-sm-3 text-truncate">Key</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{asset.key}}</span>
+                        <span class="col-5 col-sm-3 text-truncate">Update Key</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{asset.updatePublicKey}}</span>
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Supply Key</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{asset.supplyKey}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{asset.supplyPublicKey}}</span>
                     </div>
 
                 </template>

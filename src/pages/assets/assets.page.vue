@@ -17,7 +17,9 @@
 
                     <alert-box v-if="error" type="error">{{error}}</alert-box>
 
-                    <loading-spinner v-if="!loaded" />
+                    <template v-if="!loaded">
+                        <loading-spinner  />
+                    </template>
                     <template v-else>
                         <show-assets-info id="assets" :assetsInfo="assetsInfo" />
                     </template>
