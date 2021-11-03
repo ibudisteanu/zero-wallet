@@ -1,7 +1,7 @@
 <template>
     <wait-account :account="account">
 
-        <wizzard :titles="{...titlesOffset,
+        <wizard :titles="{...titlesOffset,
                 0: {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
                 1: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
                 2: {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' },
@@ -75,15 +75,15 @@
                 <tx-fee :balances="availableBalances" :asset="asset" :allow-zero="true" @changed="changedFee" />
             </template>
 
-            <template slot="wizzard-footer">
-                <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="6000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
+            <template slot="wizard-footer">
+                <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
                 <template v-if="status">
                     <span class="d-block">Transaction is being created. It will take 1-2 minutes.</span>
                     <label class="d-block">Status: {{status}}</label>
                 </template>
             </template>
 
-        </wizzard>
+        </wizard>
     </wait-account>
 </template>
 
@@ -99,12 +99,12 @@ import AlertBox from "../../utils/alert-box";
 import TxFee from "../tx-fee";
 import TxAsset from "../tx-asset";
 import AccountIdenticon from "../../wallet/account/account-identicon";
-import Wizzard from "../../utils/wizzard";
+import Wizard from "../../utils/wizard";
 
 export default {
     components: {
         WaitAccount,  Account, LoadingSpinner, LoadingButton, DestinationAddress, TxAmount,
-        ExtraData, AlertBox, TxFee, TxAsset, AccountIdenticon, Wizzard,
+        ExtraData, AlertBox, TxFee, TxAsset, AccountIdenticon, Wizard,
     },
 
     props: {

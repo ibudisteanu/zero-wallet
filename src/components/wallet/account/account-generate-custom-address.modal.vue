@@ -4,7 +4,7 @@
 
         <template slot="body" v-if="account">
 
-            <wizzard :titles="{
+            <wizard :titles="{
                 0: {icon: 'fas fa-dollar-sign', name: 'Amount', tooltip: 'Include an amount' },
                 1: {icon: 'fas fa-hand-holding-usd', name: 'Payment ID', tooltip: 'Include a Payment ID' },
                 2: {icon: 'fas fa-signature', name: 'Registration', tooltip: 'Include Registration Signature' },
@@ -66,7 +66,7 @@
                     </template>
                 </template>
 
-            </wizzard>
+            </wizard>
 
         </template>
 
@@ -79,11 +79,11 @@
 import Modal from "src/components/utils/modal"
 import AccountIdenticon from "./account-identicon";
 import TxAmount from "src/components/send/tx-amount"
-import Wizzard from "src/components/utils/wizzard"
+import Wizard from "components/utils/wizard"
 
 export default {
 
-    components: {AccountIdenticon, Modal, TxAmount, Wizzard},
+    components: {AccountIdenticon, Modal, TxAmount, Wizard},
 
     data(){
         return {

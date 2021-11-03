@@ -4,7 +4,7 @@
 
         <template slot="body">
             <wait-address :address="address">
-                <wizzard :titles="{
+                <wizard :titles="{
                          0: {icon: 'fas fa-globe-americas', name: 'Select Node', tooltip: 'Select Node you are delegating to' },
                          1: {icon: 'fas fa-robot', name: 'Node Info', tooltip: 'Node information' },
                          2: {icon: 'fas fa fa-piggy-bank', name: 'Delegate', tooltip: 'Finalizing the delegate' }}"
@@ -30,7 +30,7 @@
                         <label class="form-label">Delegates Fee: <strong>{{nodeInfo.delegatesFee / 65535 * 100}}%</strong></label> <br/>
                     </template>
 
-                </wizzard>
+                </wizard>
             </wait-address>
         </template>
 
@@ -41,12 +41,12 @@
 <script>
 import Modal from "src/components/utils/modal"
 import HttpHelper from "src/utils/http-helper"
-import Wizzard from "src/components/utils/wizzard"
+import Wizard from "components/utils/wizard"
 import WaitAddress from "src/components/wallet/account/wait-address";
 
 export default {
 
-    components: {Modal, Wizzard, WaitAddress},
+    components: {Modal, Wizard, WaitAddress},
 
     data() {
         return {

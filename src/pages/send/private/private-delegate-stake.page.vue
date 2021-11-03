@@ -13,6 +13,10 @@
 
             <template :slot="`tab_${-1}`">
                 <destination-address text="Delegate Address" @changed="changedDelegateDestination"/>
+                <div class="form-group pt-3">
+                    <input class="form-check-input" id="convert-to-unclaimed" type="checkbox"  name="checkbox" v-model="convertToUnclaimed"  >
+                    <label class="form-check-label" for="convert-to-unclaimed">Convert to Unclaimed instead of Staking</label> <i class="fa fa-question " v-tooltip.bottom="`Instead of staking, you deposit to the unclaimed amount`" />
+                </div>
                 <delegated-staking-new-info class="pt-3" :public-key="delegatePublicKey" @onChanges="delegatedStakingNewInfoChanges" />
             </template>
 
@@ -36,6 +40,7 @@ export default {
     data(){
         return {
             hasNewDelegatedInfo: false,
+            convertToUnclaimed: false,
             delegatedStakingNewInfo: {},
             delegateDestination: {},
             delegatePublicKey: null,
@@ -107,12 +112,13 @@ export default {
                 payloadExtra.delegatePrivateKey = params.privateKey
             }
 
+            payloadExtra.delegatePublicKey = this.delegatePublicKey
+            payloadExtra.convertToUnclaimed = this.convertToUnclaimed;
             payloadExtra.delegatedStakingUpdate = {
                 delegatedStakingHasNewInfo: this.delegatedStakingNewInfo.hasNewDelegatedInfo,
                 delegatedStakingNewPublicKey: this.delegatedStakingNewInfo.delegatedStakingNewPublicKey,
                 delegatedStakingNewFee: this.delegatedStakingNewInfo.delegatedStakingNewFee,
             }
-            payloadExtra.delegatePublicKey = this.delegatePublicKey
 
             const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.delegateDestination.amount.toString(), this.getAsset.decimalSeparator ) )
             data.burns = [amount]

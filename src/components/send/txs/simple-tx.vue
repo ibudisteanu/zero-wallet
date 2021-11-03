@@ -1,6 +1,6 @@
 <template>
     <wait-account :account="account">
-        <wizzard :titles="{ ...titlesOffset,
+        <wizard :titles="{ ...titlesOffset,
                 0: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
                 1: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' }}"
                  @onSetTab="setTab" :buttons="buttons" controls-class-name="card-footer bg-light" class="card" >
@@ -19,26 +19,26 @@
                 <tx-fee :balances="balancesStakeAvailable" :allow-zero="true" @changed="changedFee" />
             </template>
 
-            <template slot="wizzard-footer">
+            <template slot="wizard-footer">
                 <template v-if="status">
                     <span class="d-block">Transaction is being created. It will take 1-2 minutes.</span>
                     <label class="d-block">Status: {{status}}</label>
                 </template>
             </template>
 
-        </wizzard>
+        </wizard>
     </wait-account>
 </template>
 
 <script>
 import AlertBox from "../../utils/alert-box";
 import ExtraData from "../extra-data";
-import Wizzard from "../../utils/wizzard";
+import Wizard from "../../utils/wizard";
 import TxFee from "../tx-fee";
 import WaitAccount from "src/components/wallet/account/wait-account";
 
 export default {
-    components: {AlertBox, ExtraData, Wizzard, TxFee, WaitAccount},
+    components: {AlertBox, ExtraData, Wizard, TxFee, WaitAccount},
 
     data(){
         return {

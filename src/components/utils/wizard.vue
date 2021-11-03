@@ -25,9 +25,9 @@
         </div>
         <div :class="controlsClassName">
 
-            <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="6000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
+            <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
-            <slot name="wizzard-footer" />
+            <slot name="wizard-footer" />
 
             <ul class="pager wizard list-inline mb-0">
                 <li class="previous">

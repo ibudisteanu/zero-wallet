@@ -99,7 +99,7 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
         delegatedStake(){
-            if (!this.account || !this.account.plainAccount) return null
+            if (!this.account || !this.account.plainAccount || this.account.plainAccount.version === 0) return null
             return this.account.plainAccount.delegatedStake
         },
 
@@ -109,7 +109,7 @@ export default {
         },
 
         isDelegated(){
-            return (this.delegatedStake && this.account.plainAccount.delegatedStakeVersion === 1)
+            return (!!this.delegatedStake)
         },
 
         delegateFeePercentage(){

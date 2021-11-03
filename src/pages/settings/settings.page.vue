@@ -37,9 +37,9 @@
             </div>
             <div class="card-footer bg-light py-2">
 
-                <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="6000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
-                <alert-box v-if="status" class="w-100" type="success" :dismissible-timeout="6000" :dismissible-text="status" @onDismissible="status=''">{{status}}</alert-box>
-                <alert-box v-if="info" class="w-100" type="info" :dismissible-timeout="6000" :dismissible-text="info" @onDismissible="status=''" ></alert-box>
+                <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
+                <alert-box v-if="status" class="w-100" type="success" :dismissible-timeout="10000" :dismissible-text="status" @onDismissible="status=''">{{status}}</alert-box>
+                <alert-box v-if="info" class="w-100" type="info" :dismissible-timeout="10000" :dismissible-text="info" @onDismissible="status=''" ></alert-box>
 
                 <div class="float-end">
                     <loading-button text="Save settings" @submit="handleSave" icon="fa fa-save"  />
