@@ -75,7 +75,10 @@ export default {
         async handleBeforeProcess(password, data){
 
             const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.unstakeAmount.amount.toString(), this.getAsset.decimalSeparator ) )
-            data.unstakeAmount = amount
+            data.extra = {
+                amount: amount
+            }
+            data.txScript = PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE
 
         }
 

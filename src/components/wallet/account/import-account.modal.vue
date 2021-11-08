@@ -48,7 +48,7 @@ import Modal from "src/components/utils/modal"
 import UtilsHelper from "src/utils/utils-helper";
 import PasswordInput from "src/components/utils/password-input";
 import AccountIdenticon from "../../wallet/account/account-identicon";
-import Wizard from "components/utils/wizard"
+import Wizard from "src/components/utils/wizard"
 
 export default {
 

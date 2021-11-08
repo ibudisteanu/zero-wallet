@@ -79,7 +79,7 @@
 import Modal from "src/components/utils/modal"
 import AccountIdenticon from "./account-identicon";
 import TxAmount from "src/components/send/tx-amount"
-import Wizard from "components/utils/wizard"
+import Wizard from "src/components/utils/wizard"
 
 export default {
 

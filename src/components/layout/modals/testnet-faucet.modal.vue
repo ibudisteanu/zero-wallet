@@ -67,8 +67,6 @@ export default {
         async showModal() {
             Object.assign(this.$data, this.$options.data());
 
-            await this.$store.state.blockchain.syncPromise;
-
             return this.$refs.modal.showModal();
         },
 
@@ -84,6 +82,8 @@ export default {
             try{
                 this.error = ""
                 this.loaded = false
+
+                await this.$store.state.blockchain.syncPromise;
 
                 const hash = await PandoraPay.network.getNetworkFaucetCoins( this.$store.getters.addressDisplay(this.address), this.captchaToken )
                 if (!hash || hash.length !== 64) throw "hash was not received"

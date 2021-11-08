@@ -5,10 +5,10 @@ export default {
         state.dark = value;
         if (value) {
             document.getElementsByTagName("html")[0].classList.add('dark');
-            if (typeof localStorage !== "undefined") localStorage.setItem('dark', 'true' )
+            localStorage.setItem('dark', 'true' )
         } else {
             document.getElementsByTagName("html")[0].classList.remove('dark');
-            if (typeof localStorage !== "undefined") localStorage.setItem('dark', 'false')
+            localStorage.setItem('dark', 'false')
         }
 
     },

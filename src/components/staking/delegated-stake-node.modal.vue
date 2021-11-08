@@ -41,7 +41,7 @@
 <script>
 import Modal from "src/components/utils/modal"
 import HttpHelper from "src/utils/http-helper"
-import Wizard from "components/utils/wizard"
+import Wizard from "src/components/utils/wizard"
 import WaitAddress from "src/components/wallet/account/wait-address";
 
 export default {
