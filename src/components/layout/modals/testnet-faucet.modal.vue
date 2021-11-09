@@ -6,7 +6,7 @@
                 <label class="pb-2">Receive your coins to this address:</label>
                 <div class="address align-items-center">
                     <account-identicon :address="address.addressEncoded" size="35" outer-size="13" />
-                    <span class="text-break">{{ $store.getters.addressDisplay(this.address) }}</span>
+                    <span class="text-break fw-bold">{{ $store.getters.addressDisplay(this.address) }}</span>
                 </div>
             </div>
             <div class="text-center">

@@ -5,8 +5,7 @@
         <layout-title icon="fa fa-unlink" title="Unstake coins">Retrieve coins from the staking balance</layout-title>
 
         <simple-tx :titles-offset="{ '-1': {icon: 'fas fa-edit', name: 'Amount', tooltip: 'Unstaking amount' } }"
-                @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey" :before-process="handleBeforeProcess"
-                tx-name="createUnstakeTx">
+                @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey" :before-process="handleBeforeProcess">
 
             <template slot="tab_-1">
                 <tx-amount :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" :validate-amount="true" />

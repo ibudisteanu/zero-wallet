@@ -79,10 +79,16 @@
                             </span>
                         </div>
                     </div>
+
                     <div class="row pt-2 pb-2">
-                        <span class="col-5 col-sm-3 text-truncate">Unlock Time</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{tx.unlockTime}}</span>
+                        <span class="col-5 col-sm-3 text-truncate">Space Extra Size</span>
+                        <div class="col-7 col-sm-9 text-truncate">
+                            <span v-tooltip.bottom="`${ formatBytes(tx.spaceExtra) }`">
+                                {{formatSize(tx.spaceExtra)}}
+                            </span>
+                        </div>
                     </div>
+
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Version</span>
                         <span class="col-7 col-sm-9 text-truncate">{{tx.version}}</span>
@@ -268,6 +274,8 @@ export default {
 
             }catch(err){
                 this.error = err.toString()
+                console.log(err)
+
             }finally{
                 this.loaded = true
             }

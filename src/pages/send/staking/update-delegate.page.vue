@@ -4,8 +4,7 @@
         <layout-title icon="fa fa-marker" title="Update Delegate Info">Change Delegation Information</layout-title>
 
         <simple-tx :titles-offset="{ '-1': {icon: 'fa fa-edit', name: 'Update Delegation', tooltip: 'Change delegation info' } }"
-                   @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey" :before-process="handleBeforeProcess"
-                   tx-name="createUpdateDelegateTx">
+                   @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey" :before-process="handleBeforeProcess">
 
             <template slot="tab_-1">
 

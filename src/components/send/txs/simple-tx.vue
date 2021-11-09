@@ -53,7 +53,6 @@ export default {
         publicKey: {default: ""},
         titlesOffset: {default: () => ({}) }, //{icon, name}
         buttonsOffset: {default: () => ({}) },
-        txName: {default: ""},
         beforeProcess: {default: null}, //function
     },
 
@@ -137,7 +136,7 @@ export default {
             if (this.beforeProcess)
                 await this.beforeProcess(password, data)
 
-            const out = await PandoraPay.transactions.builder[this.txName]( MyTextEncode( JSON.stringify(data) ), (status) => {
+            const out = await PandoraPay.transactions.builder.createSimpleTx( MyTextEncode( JSON.stringify(data) ), (status) => {
                 this.status = status
             }, password);
 
