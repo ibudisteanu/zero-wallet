@@ -446,7 +446,7 @@ export default {
             }
 
             const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.destination.amount.toString(), this.getAsset.decimalSeparator ) )
-            const fees = (this.fee.feeType === 'feeAuto') ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) )
+            const fee = (this.fee.feeType === 'feeAuto') ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) )
 
             const data = {
                 from: [{
@@ -459,7 +459,7 @@ export default {
                 burns: [ 0 ],
                 ringMembers: [ this.ringMembers ],
                 fees: [{
-                    fixed:  fees,
+                    fixed:  fee,
                     perByte: 0,
                     perByteAuto: this.fee.feeType === 'feeAuto',
                 }],
@@ -480,9 +480,9 @@ export default {
 
             //compute extra
             out = await PandoraPayHelper.transactions.builder.createZetherTx( MyTextEncode( JSON.stringify( data ) ),
-                (status) => {
-                this.status = status
-            } );
+                status => {
+                    this.status = status
+                } );
 
             if (!out) throw "Transaction couldn't be made";
             this.status = 'Propagating transaction...'

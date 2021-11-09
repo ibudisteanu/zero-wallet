@@ -16,6 +16,13 @@
             </template>
 
             <template :slot="`tab_1`">
+
+                <div class="form pb-2">
+                    <input class="form-check-input" id="fee-version" type="checkbox"  name="checkbox" v-model="feeVersion">
+                    <label class="form-check-label" for="fee-version">Pay fee Unclaimed balance</label>
+                    <i class="fa fa-question " v-tooltip.bottom="`Subtract the fee from the unclaimed balance or from the delegated stake.`" />
+                </div>
+
                 <tx-fee :balances="balancesStakeAvailable" :allow-zero="true" @changed="changedFee" />
             </template>
 
@@ -43,6 +50,8 @@ export default {
     data(){
         return {
             fee: {},
+            feeVersion: false,
+
             extraData: { },
 
             status: '',
@@ -114,7 +123,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const fees = (this.fee.feeType === 'feeAuto') ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) )
+            const fee = (this.fee.feeType === 'feeAuto') ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) )
 
             const data = {
                 from: this.address.addressEncoded,
@@ -125,10 +134,11 @@ export default {
                     publicKeyToEncrypt: this.extraData.publicKeyToEncrypt,
                 },
                 fee: {
-                    fixed:  fees,
+                    fixed:  fee,
                     perByte: 0,
                     perByteAuto: this.fee.feeType === 'feeAuto',
                 },
+                feeVersion: this.feeVersion,
                 propagateTx: true,
                 awaitAnswer: false,
             }
@@ -136,9 +146,10 @@ export default {
             if (this.beforeProcess)
                 await this.beforeProcess(password, data)
 
-            const out = await PandoraPay.transactions.builder.createSimpleTx( MyTextEncode( JSON.stringify(data) ), (status) => {
-                this.status = status
-            }, password);
+            const out = await PandoraPay.transactions.builder.createSimpleTx( MyTextEncode( JSON.stringify(data) ),
+                status => {
+                    this.status = status
+                }, password);
 
             if (!out) throw "Transaction couldn't be made";
             this.status = ''

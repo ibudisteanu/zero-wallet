@@ -84,8 +84,7 @@ export default {
         },
 
         delegatedStakesPending(){
-            if (!this.delegatedStake) return []
-            return this.delegatedStake.stakesPending
+            return this.delegatedStake.stakesPending ? this.delegatedStake.stakesPending : []
         },
 
         isLoading(){

@@ -67,7 +67,7 @@
                         <span class="col-7 col-sm-9 text-truncate">{{blk.prevKernelHash}}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
-                        <span class="col-5 col-sm-3 text-truncate">Fees</span>
+                        <span class="col-5 col-sm-3 text-truncate">Fee</span>
                         <span class="col-7 col-sm-9 text-truncate">TODO</span>
                     </div>
                     <div class="row pt-2 pb-2">
@@ -143,7 +143,7 @@ export default {
     data(){
         return {
 
-            fees: null, //async data
+            fee: null, //async data
             loaded: false,
 
             reward: '',

@@ -71,7 +71,7 @@ export default {
         vinSimpleAmount(){
 
             if (this.tx.version !== PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) return
-            let out = this.tx.base.fees
+            let out = this.tx.base.fee
 
             if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_CLAIM)
                 for (const it of this.tx.base.extra.output)
