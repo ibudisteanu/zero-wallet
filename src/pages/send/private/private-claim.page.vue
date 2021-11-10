@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa fa-search-dollar" title="Private Claim Stake">Claim funds from Unclaimed Stakes</layout-title>
+        <layout-title icon="fa fa-search-dollar" title="Private Claim">Claim funds from Unclaimed funds</layout-title>
 
         <zether-tx ref="refZetherTx"
                    :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX"
@@ -83,7 +83,7 @@ export default {
             data.payloadExtra[0] = {
                 delegatePrivateKey: params.privateKey
             }
-            data.payloadScriptType[0] = PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CLAIM_STAKE
+            data.payloadScriptType[0] = PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CLAIM
 
         }
 

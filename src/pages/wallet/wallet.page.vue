@@ -42,7 +42,7 @@
 
                 <div class="card-body bg-light">
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="handleDownloadAddress" v-tooltip.bottom="'Download Account'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="handleExportAddress" v-tooltip.bottom="'Export Account'" >
                         <i class="fa fa-download"></i>
                     </button>
 
@@ -104,7 +104,7 @@ export default {
 
     methods:{
 
-        async handleDownloadAddress(){
+        async handleExportAddress(){
 
             if ( typeof Blob === "undefined")
                 return this.$store.dispatch('addToast', {
@@ -116,7 +116,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const jsonData = await PandoraPay.wallet.manager.getWalletAddress(  this.address.addressEncoded, password );
+            const jsonData = await PandoraPay.wallet.manager.getWalletAddress(  this.address.publicKey, password );
             if (!jsonData) return false;
 
             const json = MyTextDecode(jsonData)
@@ -128,7 +128,7 @@ export default {
 
             return this.$store.dispatch('addToast', {
                 type: 'success',
-                title: `Address ${this.address.name} has been saved in your machine`,
+                title: `Address ${this.address.name} has been saved on your machine`,
                 text: `The address ${this.address.addressEncoded} has been saved in the downloads folder.`,
             });
         },

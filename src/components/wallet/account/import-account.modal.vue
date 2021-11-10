@@ -144,7 +144,7 @@ export default {
 
                 await UtilsHelper.sleep(50 )
 
-                const out = await PandoraPay.wallet.manager.importWalletAddressJSON( password, this.addressData, this.addressPassword );
+                const out = await PandoraPay.wallet.manager.importWalletAddressJSON( this.addressData, this.addressPassword, password, );
                 if (!out) throw `Your address already exists`
 
                 this.$store.dispatch('addToast',{

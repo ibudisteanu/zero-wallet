@@ -30,12 +30,14 @@
                 </div>
                 <div class="list-group-item">
                     <div class="list-group-title border-bottom">Operations:</div>
-                    <span @click="viewAccount" v-tooltip.left="'View account'" class="pointer dropdown-item "> <i class="fa fa-hand-pointer "></i> View account </span>
-                    <span @click="createAccount" v-tooltip.left="'Create a new Address'" class="pointer dropdown-item fw-normal "> <i class="fa fa-plus"></i> Create Account </span>
-                    <span @click="importAccount" v-tooltip.left="'Import an address from json file'" class="pointer dropdown-item fw-normal "><i class="fa fa-upload"></i> Import Account (json)</span>
-                    <span @click="importPrivateKey" v-tooltip.left="'Import an address from Private Key'" class="pointer dropdown-item fw-normal "><i class="fa fa-upload"></i> Import Private Key</span>
+                    <span @click="handleViewAccount" v-tooltip.left="'View account'" class="pointer dropdown-item "> <i class="fa fa-hand-pointer "></i> View account </span>
+                    <span @click="handleCreateAccount" v-tooltip.left="'Create a new Address'" class="pointer dropdown-item fw-normal "> <i class="fa fa-plus"></i> Create Account </span>
+                    <span @click="handleImportAccount" v-tooltip.left="'Import an address from json file'" class="pointer dropdown-item fw-normal "><i class="fa fa-upload"></i> Import Account (json)</span>
+                    <span @click="handleImportPrivateKey" v-tooltip.left="'Import an address from Private Key'" class="pointer dropdown-item fw-normal "><i class="fa fa-upload"></i> Import Private Key</span>
                     <div class="dropdown-divider"></div>
-                    <span @click="viewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" class="pointer dropdown-item fw-normal "><i class="fa fa-key"></i>  View Seed Words</span>
+                    <span @click="handleViewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" class="pointer dropdown-item fw-normal "><i class="fa fa-key"></i>View Secret Phrase</span>
+                    <span @click="handleExportWallet" v-tooltip.left="'Export your wallet to your computer'" class="pointer dropdown-item fw-normal "><i class="fa fa-download"></i>Export Wallet</span>
+                    <span @click="handleImportWallet" v-tooltip.left="'Import a pandora wallet from your computer'" class="pointer dropdown-item fw-normal "><i class="fa fa-upload"></i>Import Wallet</span>
                     <template v-if="encrypted">
                         <div class="dropdown-divider"></div>
                         <span @click="handleLogout" v-tooltip.left="'Return to the password screen'" class="pointer dropdown-item fw-normal "><i class="fa fa-sign-out-alt"></i>  Logout</span>
@@ -52,6 +54,8 @@
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
 import UtilsHelper from "src/utils/utils-helper";
+import FileSaver from 'file-saver'
+import consts from "consts/consts";
 
 const {version} = PandoraPay.enums.wallet.address;
 
@@ -87,14 +91,11 @@ export default {
 
     methods:{
 
-        viewAccount(){
+        handleViewAccount(){
             this.$router.push('/address/'+this.address.addressEncoded)
         },
 
-        async createAccount(){
-
-            const account = await this.$store.state.page.refAccountTypeModal.showModal();
-            if (account.selectedType === -1) return;
+        async handleCreateAccount(){
 
             try{
 
@@ -105,7 +106,7 @@ export default {
 
                 await UtilsHelper.sleep(50 )
 
-                const out = await PandoraPay.wallet.manager.addNewWalletAddress(password, account.selectedType);
+                const out = await PandoraPay.wallet.manager.addNewWalletAddress(password);
                 if (!out) throw "Result is false"
 
                 this.$store.dispatch('addToast',{
@@ -131,7 +132,7 @@ export default {
             return this.$store.commit('setMainPublicKey', publicKey );
         },
 
-        viewMnemonic(){
+        handleViewMnemonic(){
             return this.$emit('viewMnemonic')
         },
 
@@ -153,12 +154,44 @@ export default {
 
         },
 
-        importAccount(){
+        handleImportAccount(){
             return this.$emit('showImportAccount');
         },
 
-        importPrivateKey(){
+        handleImportPrivateKey(){
             return this.$emit('showImportPrivateKey');
+        },
+
+        async handleExportWallet(){
+            if ( typeof Blob === "undefined")
+                return this.$store.dispatch('addToast', {
+                    type: 'error',
+                    title: `Blob is not supported by your Browser`,
+                    text: `Update your browser`,
+                })
+
+            const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+            if (password === null ) return
+
+            const jsonData = await PandoraPay.wallet.exportWalletJSON(  password );
+            if (!jsonData) return false;
+
+            const json = MyTextDecode(jsonData)
+
+            const fileName = consts.name+"_"+this.address.addressEncoded + ".pandorawallet";
+
+            const file = new Blob([json], {type: "application/json;charset=utf-8"});
+            FileSaver.saveAs(file, fileName);
+
+            return this.$store.dispatch('addToast', {
+                type: 'success',
+                title: `Wallet has been saved on your machine`,
+                text: `The wallet has been saved in the downloads folder.`,
+            });
+        },
+
+        handleImportWallet(){
+
         },
 
         copyAddress( address ){
