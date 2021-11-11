@@ -10,7 +10,7 @@
             <span class="d-none d-sm-block col-sm-1 col-md-1 text-truncate">TX</span>
             <span class="d-none d-sm-block col-sm-2 col-md-1 text-truncate">Forged</span>
         </div>
-        <div v-for="(blockInfo, key) in blocksInfo" :class="`row pb-2 pt-2 fs--1 align-items-center ${key % 2 === 1 ?'bg-light':''}`"
+        <div v-for="(blockInfo, key) in blocksInfo" :class="`row pb-2 pt-2 fs--1 align-items-center ${key % 2 === 0 ?'bg-light':''}`"
              :key="`show-block-${key}`">
 
             <span class="col-5 d-block d-sm-none text-dark">Hash</span>

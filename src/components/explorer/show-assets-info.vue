@@ -9,12 +9,12 @@
             <span class="d-none d-lg-block col-lg-5 text-truncate">Description</span>
         </div>
 
-        <div v-for="(assetInfo, key) in assetsInfo" :class="`row pb-2 pt-2 fs--1 align-items-center ${key % 2 === 1 ?'bg-light':''}`"
+        <div v-for="(assetInfo, key) in assetsInfo" :class="`row pb-2 pt-2 fs--1 align-items-center ${key % 2 === 0 ?'bg-light':''}`"
              :key="`show-asset-${key}`">
 
             <span class="col-5 d-block d-sm-none text-dark">Name</span>
             <span class="col-7 col-sm-4 col-lg-3 text-truncate">
-                <account-identicon v-if="assetInfo.hash" :public-key="assetInfo.hash" size="21" outer-size="7"  />
+                <account-identicon v-if="assetInfo.hash" :hash="assetInfo.hash" size="21" outer-size="7"  />
                 <router-link :to="`/explorer/asset/${assetInfo.hash}`">
                     {{assetInfo.name}}
                 </router-link>

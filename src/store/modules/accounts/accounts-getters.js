@@ -9,7 +9,7 @@ export default {
 
         if (isLoading) return address.addressRegistrationEncoded || address.addressEncoded
 
-        return  ( (!isLoading && !isFound) || (account && !account.plainAccount && !account.registration) ) ? address.addressRegistrationEncoded || address.addressEncoded : address.addressEncoded
+        return  ( (!isLoading && !isFound) || (account && !account.registration) ) ? address.addressRegistrationEncoded || address.addressEncoded : address.addressEncoded
     }
 
 }

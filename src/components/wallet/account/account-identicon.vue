@@ -19,8 +19,9 @@ export default {
         size: {default: 40},
         outerSize: {default: 34},
 
-        address: {default: ""},
+        address: {default: null},
         publicKey: {default: null},
+        hash: {default: null},
 
         disableRoute: { default: false },
         showTooltip: {default: true },
@@ -35,11 +36,23 @@ export default {
 
     watch:{
 
+        hash: {
+            immediate: true,
+            handler: async function(newVal, oldVal){
+                if (!newVal) return
+                try{
+                    this.identiconSrc = await Identicons.getIdenticon( newVal, this.size )
+                }catch(err){
+                    this.finalAddress = ""
+                    this.identiconSrc = ""
+                }
+            }
+        },
+
         publicKey: {
             immediate: true,
             handler: async function(newVal, oldVal){
-                if (!newVal)
-                    return
+                if (!newVal) return
                 try{
                     const out = await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( { publicKey: newVal, registration: "", amount: 0, paymentId: "" })) )
                     const json = JSON.parse( MyTextDecode(out) )
@@ -54,8 +67,8 @@ export default {
         address: {
             immediate: true,
             handler: async function(newVal, oldVal){
-                if (!newVal)
-                    return
+
+                if (!newVal) return
 
                 try{
                     const addressData = await PandoraPay.addresses.decodeAddress(newVal)
