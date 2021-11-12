@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa fa-file-invoice-dollar" title="Assets">View the existing assets.</layout-title>
+        <layout-title icon="fa fa-file-invoice-dollar" title="Assets">View the existing assets on the network.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">
@@ -12,7 +12,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body p-3">
+            <div class="card-body p-3 pt-0 ">
                 <div class="card-body p-0">
 
                     <alert-box v-if="error" type="error">{{error}}</alert-box>

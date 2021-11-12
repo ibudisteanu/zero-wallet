@@ -81,11 +81,7 @@
                 <div class="row">
                     <span class="col-4 col-sm-2 col-md-1 text-truncate">JSON</span>
                     <div class="col-8 col-sm-10 col-md-11">
-                        <div class="card mb-3" >
-                            <div class="card-body ">
-                                <p class="mb-0  div-scrollable" style="text-align: left">{{asset}}</p>
-                            </div>
-                        </div>
+                        <p class="div-scrollable" style="text-align: left">{{asset}}</p>
                     </div>
                 </div>
             </div>

@@ -23,7 +23,7 @@
                 </template>
                 <template v-else-if="blk">
 
-                    <div class="row pt-2 pb-2">
+                    <div class="row pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Hash</span>
                         <span class="col-7 col-sm-9 text-truncate">{{blk.bloom.hash}}</span>
                     </div>
@@ -98,12 +98,12 @@
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0">JSON Block {{blk.height}}  </h5>
+                        <h5 class="mb-0">Block Transactions {{txs.length}}  </h5>
                     </div>
                 </div>
             </div>
             <div class="card-body p-3 fs--1">
-                <p class="div-scrollable" style="text-align: left">{{blk}}</p>
+                <show-transactions-preview :transactions="txs"/>
             </div>
         </div>
 
@@ -111,12 +111,12 @@
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0">Block Transactions {{txs.length}}  </h5>
+                        <h5 class="mb-0">JSON Block {{blk.height}}  </h5>
                     </div>
                 </div>
             </div>
             <div class="card-body p-3 fs--1">
-                <show-transactions-preview :transactions="txs"/>
+                <p class="div-scrollable" style="text-align: left">{{blk}}</p>
             </div>
         </div>
 

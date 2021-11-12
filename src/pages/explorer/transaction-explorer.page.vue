@@ -21,7 +21,7 @@
                 </template>
                 <div v-else-if="tx">
 
-                    <div class="row pt-2 pb-2">
+                    <div class="row pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Height</span>
                         <div class="col-7 col-sm-9 text-truncate">
                             <span v-if="txInfo && txInfo.height">

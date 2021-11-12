@@ -12,7 +12,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body p-3">
+            <div class="card-body p-3 pt-0">
                 <div class="card-body p-0">
 
                     <alert-box v-if="error" type="error">{{error}}</alert-box>
