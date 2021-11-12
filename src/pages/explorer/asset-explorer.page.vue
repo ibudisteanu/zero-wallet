@@ -77,13 +77,8 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body p-3 fs--1">
-                <div class="row">
-                    <span class="col-4 col-sm-2 col-md-1 text-truncate">JSON</span>
-                    <div class="col-8 col-sm-10 col-md-11">
-                        <p class="div-scrollable" style="text-align: left">{{asset}}</p>
-                    </div>
-                </div>
+            <div class="card-body p-3">
+                <textarea class="form-control form-control-sm fs--2" rows="10">{{asset}}</textarea>
             </div>
         </div>
 

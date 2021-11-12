@@ -115,8 +115,8 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body p-3 fs--1">
-                <p class="div-scrollable" style="text-align: left">{{blk}}</p>
+            <div class="card-body p-3">
+                <textarea class="form-control form-control-sm fs--2" rows="10">{{blk}}</textarea>
             </div>
         </div>
 
