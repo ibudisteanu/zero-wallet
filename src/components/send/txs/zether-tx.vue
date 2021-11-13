@@ -503,19 +503,19 @@ export default {
 
         },
 
+        async handlePropagateTx(){
 
-    },
+            this.status = 'Propagating transaction...'
 
-    async handlePropagateTx(){
+            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
+            if (!finalAnswer) throw "Transaction couldn't be broadcast"
 
-        this.status = 'Propagating transaction...'
+            await this.$store.dispatch('includeTx', { tx: this.tx, mempool: false } )
 
-        const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
-        if (!finalAnswer) throw "Transaction couldn't be broadcasted"
+            this.$router.push(`/explorer/tx/${this.tx.hash}`);
 
-        await this.$store.dispatch('includeTx', { tx: this.tx, mempool: false } )
-
-        this.$router.push(`/explorer/tx/${this.tx.hash}`);
+            this.$emit('onFinished', true )
+        },
 
     },
 

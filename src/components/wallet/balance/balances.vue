@@ -99,7 +99,6 @@ export default {
             return !this.account.accounts.length
         }
 
-
     },
 
 

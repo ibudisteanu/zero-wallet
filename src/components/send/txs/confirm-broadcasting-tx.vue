@@ -23,14 +23,15 @@
             <div class="row justify-content-end">
                 <div class="col-auto">
                     <table class="table table-sm table-borderless fs--1 text-end">
-                        <tbody><tr>
-                            <th class="text-900">Fee:</th>
-                            <td class="fw-semi-bold">$18,230.00 </td>
-                        </tr>
-                        <tr>
-                            <th class="text-900">Fee Asset:</th>
-                            <td class="fw-semi-bold">$1458.40</td>
-                        </tr>
+                        <tbody>
+                            <tr v-for="(fee,index) in fees"
+                                      :key="`fee_${index}`">
+                                <th class="fw-semi-bold">Fee{{ (fees.length > 1) ? index : ''}}:</th>
+                                    <td>
+                                        <amount :asset="fee.asset" :value="fee.amount" value-class="text-900" :sign="true" />
+                                    </td>
+                                </tr>
+
                         </tbody>
                     </table>
                 </div>
@@ -42,13 +43,34 @@
 
 <script>
 import ShowTransaction from "src/components/explorer/tx/show-transaction";
+import Amount from "src/components/wallet/amount"
+
 export default {
 
-    components: {ShowTransaction},
+    components: {ShowTransaction, Amount},
 
     props: {
         tx: {default: null},
-    }
+    },
+
+    computed:{
+        fees(){
+            if (!this.tx) return []
+
+            if (this.tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE){
+                return [ {amount: this.tx.fee, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX, feeRateMax: 1 } ]
+            }else if (this.tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER) {
+
+                const out = []
+                for (const payload of this.tx.payloads)
+                    out.push({amount: payload.statement.fee, asset: payload.asset, feeRateMax: payload.feeRateMax })
+
+                return out
+            }
+
+        }
+    },
+
 
 }
 </script>

@@ -2,7 +2,8 @@
     <wait-account :account="account">
         <wizard :titles="{ ...titlesOffset,
                 0: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
-                1: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' }}"
+                1: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' },
+                2: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' } }"
                  @onSetTab="setTab" :buttons="buttons" controls-class-name="card-footer bg-light" class="card" >
 
             <template v-for="(_, index) in titlesOffset">
@@ -26,6 +27,10 @@
                 <tx-fee :balances="balancesStakeAvailable" :allow-zero="true" @changed="changedFee" />
             </template>
 
+            <template :slot="`tab_2`">
+                <confirm-broadcasting-tx v-if="tx" class="my-3 fs--1" :tx="tx" />
+            </template>
+
             <template slot="wizard-footer">
                 <template v-if="status">
                     <span class="d-block">Transaction is being created. It will take 1-2 minutes.</span>
@@ -43,9 +48,10 @@ import ExtraData from "../extra-data";
 import Wizard from "../../utils/wizard";
 import TxFee from "../tx-fee";
 import WaitAccount from "src/components/wallet/account/wait-account";
+import ConfirmBroadcastingTx from "./confirm-broadcasting-tx"
 
 export default {
-    components: {AlertBox, ExtraData, Wizard, TxFee, WaitAccount},
+    components: {AlertBox, ExtraData, Wizard, TxFee, WaitAccount, ConfirmBroadcastingTx},
 
     data(){
         return {
@@ -53,6 +59,9 @@ export default {
             feeVersion: false,
 
             extraData: { },
+
+            tx: null,
+            txSerialized: null,
 
             status: '',
         }
@@ -81,7 +90,8 @@ export default {
         },
         buttons(){
             return {
-                1: { icon: 'fa fa-credit-card', text: 'Sign Transaction' },
+                1: { icon: 'fa fa-file-signature', text: 'Sign Transaction' },
+                2: { icon: 'fa fa-globe-americas', text: 'Propagate Transaction' },
                 ...this.buttonsOffset,
             }
         }
@@ -99,8 +109,9 @@ export default {
                     if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
 
                     await this.handeTxProcess()
-                }else
-                    return this.$emit('onSetTab', {resolve, reject, oldTab, value} )
+                }else if (oldTab === 2 && value > oldTab) {
+                    await this.handlePropagateTx()
+                }else return this.$emit('onSetTab', {resolve, reject, oldTab, value} )
 
             }catch(err) {
                 reject(err)
@@ -154,11 +165,20 @@ export default {
             if (!out) throw "Transaction couldn't be made";
             this.status = ''
 
-            const tx = JSON.parse( MyTextDecode(out) )
+            this.tx = JSON.parse( MyTextDecode( out[0] ) )
+            this.txSerialized = out[1]
 
-            await this.$store.dispatch('includeTx', {tx, mempool: false } )
+        },
 
-            this.$router.push(`/explorer/tx/${tx.hash}`);
+        async handlePropagateTx(){
+            this.status = 'Propagating transaction...'
+
+            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
+            if (!finalAnswer) throw "Transaction couldn't be broadcast"
+
+            await this.$store.dispatch('includeTx', {tx: this.tx, mempool: false } )
+
+            this.$router.push(`/explorer/tx/${this.tx.hash}`);
 
             this.$emit('onFinished', true )
         }
