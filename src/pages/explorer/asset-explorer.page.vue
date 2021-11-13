@@ -77,7 +77,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body p-3">
+            <div class="card-body p-0 fs--1">
                 <textarea class="form-control form-control-sm fs--2" rows="10">{{asset}}</textarea>
             </div>
         </div>

@@ -17,7 +17,7 @@
 
                 <template slot="tab_1">
                     <label>Private Key</label>
-                    <textarea class="form-control" rows="3" v-model="privateKey"></textarea>
+                    <textarea class="form-control" rows="4" v-model="privateKey"></textarea>
                 </template>
 
             </wizard>

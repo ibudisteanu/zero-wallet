@@ -5,7 +5,8 @@
                 0: {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
                 1: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
                 2: {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' },
-                3: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' } }"
+                3: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' },
+                4: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' } }"
                  @onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card" >
 
             <template v-for="(_, index) in titlesOffset">
@@ -75,6 +76,10 @@
                 <tx-fee :balances="availableBalances" :asset="asset" :allow-zero="true" @changed="changedFee" />
             </template>
 
+            <template :slot="`tab_4`">
+                <confirm-broadcasting-tx v-if="tx" class="my-3 fs--1" :tx="tx" />
+            </template>
+
             <template slot="wizard-footer">
                 <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
                 <template v-if="status">
@@ -100,11 +105,12 @@ import TxFee from "../tx-fee";
 import TxAsset from "../tx-asset";
 import AccountIdenticon from "../../wallet/account/account-identicon";
 import Wizard from "../../utils/wizard";
+import ConfirmBroadcastingTx from "./confirm-broadcasting-tx"
 
 export default {
     components: {
         WaitAccount,  Account, LoadingSpinner, LoadingButton, DestinationAddress, TxAmount,
-        ExtraData, AlertBox, TxFee, TxAsset, AccountIdenticon, Wizard,
+        ExtraData, AlertBox, TxFee, TxAsset, AccountIdenticon, Wizard, ConfirmBroadcastingTx,
     },
 
     props: {
@@ -142,6 +148,9 @@ export default {
             ringSize: 32,
             ringNewAddresses: 2,
             ringMembers: [],
+
+            tx: null,
+            txSerialized: null,
 
             status: '',
             error: '',
@@ -202,7 +211,8 @@ export default {
 
         buttons(){
             return {
-                3: { icon: 'fa fa-credit-card', text: 'Sign Transaction' },
+                3: { icon: 'fa fa-file-signature', text: 'Sign Transaction' },
+                4: { icon: 'fa fa-globe-americas', text: 'Propagate Transaction' },
                 ...this.buttonsOffset,
             }
         }
@@ -253,13 +263,14 @@ export default {
                     if (this.extraData.validationError) throw this.extraData.validationError
                 }else if (oldTab === 2 && value > oldTab) {
                     if (this.ringSize !== this.ringMembers.length) throw `Ring members are not generated well ${this.ringSize} vs ${this.ringMembers.length} `
-                }else if (oldTab === 3 && value > oldTab){
+                }else if (oldTab === 3 && value > oldTab) {
                     if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
                     if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
 
                     await this.handleSendFunds()
-                }else
-                    return this.$emit('onSetTab', {resolve, reject, oldTab, value} )
+                }else if (oldTab === 4 && value > oldTab) {
+                    await this.handlePropagateTx()
+                } else return this.$emit('onSetTab', {resolve, reject, oldTab, value} )
 
             }catch(err) {
                 reject(err)
@@ -485,20 +496,26 @@ export default {
                 } );
 
             if (!out) throw "Transaction couldn't be made";
-            this.status = 'Propagating transaction...'
+            this.status = ""
 
-            const tx = JSON.parse( MyTextDecode( out[0] ) )
-            const txSerialized = out[1]
-
-            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( txSerialized )
-            if (!finalAnswer) throw "Transaction couldn't be broadcasted"
-
-            await this.$store.dispatch('includeTx', { tx, mempool: false } )
-
-            this.$router.push(`/explorer/tx/${tx.hash}`);
+            this.tx = JSON.parse( MyTextDecode( out[0] ) )
+            this.txSerialized = out[1]
 
         },
 
+
+    },
+
+    async handlePropagateTx(){
+
+        this.status = 'Propagating transaction...'
+
+        const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
+        if (!finalAnswer) throw "Transaction couldn't be broadcasted"
+
+        await this.$store.dispatch('includeTx', { tx: this.tx, mempool: false } )
+
+        this.$router.push(`/explorer/tx/${this.tx.hash}`);
 
     },
 

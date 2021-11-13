@@ -9,9 +9,9 @@
                 </div>
             </div>
             <div class="card-body p-0">
-                <div class="row g-0 align-items-center py-2 position-relative border-bottom border-200">
+                <div class="row g-0 align-items-center py-2 position-relative">
                     <div class="col px-1 py-1 position-static">
-                        <div class="d-flex align-items-center d-block">
+                        <div class="d-flex align-items-center d-block p-2">
                             <div class="avatar avatar-xxl me-3">
                                 <account-identicon :public-key="address.publicKey" size="56" outer-size="20" />
                             </div>
@@ -35,10 +35,6 @@
 
                     <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="createCustomAddress"  v-tooltip.bottom="'Create custom address'">
                         <i class="fa fa-tools" />
-                    </button>
-
-                    <button v-if="$store.getters.walletContains(this.address.publicKey)" class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="sendFunds"  v-tooltip.bottom="'Send Privately Funds'">
-                        <i class="fa fa-money-check-alt" />
                     </button>
 
                 </div>

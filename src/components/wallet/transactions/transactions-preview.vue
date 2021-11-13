@@ -16,7 +16,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-body p-3" v-if="txs && transactions.length ">
+        <div class="card-body px-3 py-0" v-if="txs && transactions.length ">
             <show-transactions-preview :transactions="transactions"/>
         </div>
         <div class="card-footer bg-light g-0 d-block-inline p-3" v-if="pages">

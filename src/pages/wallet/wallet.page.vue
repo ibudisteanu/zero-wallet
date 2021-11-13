@@ -16,7 +16,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body border-bottom border-200">
+                <div class="card-body">
 
                     <div class="row py-2">
                         <div v-if="!showPublicKey" class="pointer  w-auto" @click="showPublicKey = true">
