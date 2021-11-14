@@ -78,9 +78,7 @@ export default {
     },
 
     computed:{
-        PandoraPay(){
-            return PandoraPay
-        },
+        PandoraPay: () => PandoraPay,
         tx(){
             return this.$store.state.transactionsPreview.txsByHash[this.txHash]
         },

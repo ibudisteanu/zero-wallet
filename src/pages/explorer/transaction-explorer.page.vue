@@ -90,9 +90,7 @@ export default {
             if (this.tx) return this.$store.state.transactionsInfo.list[this.tx.hash]
         },
 
-        PandoraPay(){
-            return PandoraPay
-        },
+        PandoraPay: () => PandoraPay,
 
     },
 

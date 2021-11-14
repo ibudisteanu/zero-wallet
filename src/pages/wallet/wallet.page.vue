@@ -54,12 +54,6 @@
                         <i class="fa fa-eye"></i>
                     </button>
 
-                    <router-link to="/staking">
-                        <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" v-tooltip.bottom="'Delegate stake'">
-                            <i class="fa fa-piggy-bank"></i>
-                        </button>
-                    </router-link>
-
                 </div>
             </div>
 

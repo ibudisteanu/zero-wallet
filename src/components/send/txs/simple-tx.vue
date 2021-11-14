@@ -134,7 +134,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const fee = (this.fee.feeType === 'feeAuto') ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) )
+            const fee = this.fee.feeType ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) )
 
             const data = {
                 from: this.address.addressEncoded,
@@ -147,11 +147,10 @@ export default {
                 fee: {
                     fixed:  fee,
                     perByte: 0,
-                    perByteAuto: this.fee.feeType === 'feeAuto',
+                    perByteAuto: this.fee.feeType,
                 },
                 feeVersion: this.feeVersion,
-                propagateTx: true,
-                awaitAnswer: false,
+                propagateTx: false,
             }
 
             if (this.beforeProcess)

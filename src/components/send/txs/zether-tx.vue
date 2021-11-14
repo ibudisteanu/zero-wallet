@@ -74,6 +74,14 @@
 
             <template :slot="`tab_3`">
                 <tx-fee :balances="availableBalances" :asset="asset" :allow-zero="true" @changed="changedFee" />
+
+                <template v-if="asset.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX">
+                    <div class="form-check pt-2">
+                        <input class="form-check-input" id="feeAssetFeeLiquidityAsset" type="checkbox" v-model="feeAssetFeeLiquidityAsset" />
+                        <label class="form-check-label" for="feeAssetFeeLiquidityAsset">Automatically Determine Asset Fee Liquidity Asset</label>
+                    </div>
+                </template>
+
             </template>
 
             <template :slot="`tab_4`">
@@ -137,6 +145,7 @@ export default {
 
             destination: {},
             fee: {  },
+            feeAssetFeeLiquidityAsset: true,
 
             extraData: {
                 data: "",
@@ -158,6 +167,8 @@ export default {
     },
 
     computed:{
+        PandoraPay: () => PandoraPay,
+
         address(){
             return this.$store.state.wallet.addresses[this.publicKey] ;
         },
@@ -457,7 +468,7 @@ export default {
             }
 
             const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.destination.amount.toString(), this.getAsset.decimalSeparator ) )
-            const fee = (this.fee.feeType === 'feeAuto') ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) )
+            const fee = this.fee.feeType ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) )
 
             const data = {
                 from: [{
@@ -472,7 +483,7 @@ export default {
                 fees: [{
                     fixed:  fee,
                     perByte: 0,
-                    perByteAuto: this.fee.feeType === 'feeAuto',
+                    perByteAuto: this.fee.feeType,
                 }],
                 data: [{
                     data: Buffer.from(this.extraData.data).toString("hex"),

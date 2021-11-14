@@ -8,7 +8,9 @@
                     <h5 class="mb-0">
                         Pending Transactions {{txs ? txs.length : ''}}
                         <template v-if="!txs">
-                            <loading-spinner />
+                            <div class="py-3 text-center">
+                                <loading-spinner />
+                            </div>
                         </template>
                     </h5>
                 </div>

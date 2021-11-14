@@ -1,15 +1,11 @@
 <template>
     <div>
         <div class="form-check">
-            <input class="form-check-input" id="feeAuto" type="radio" value="feeAuto" v-model="feeType" />
-            <label class="form-check-label" for="feeAuto">Auto fee</label>
+            <input class="form-check-input" id="feeAuto" type="checkbox" v-model="feeType" />
+            <label class="form-check-label" for="feeAuto">Automatically Calculate Tx Fee</label>
         </div>
 
-        <div class="form-check">
-            <input class="form-check-input" id="feeManual" type="radio" value="feeManual" v-model="feeType" />
-            <label class="form-check-label" for="feeManual">Manual fee</label>
-        </div>
-        <tx-amount v-if="feeType === 'feeManual'" text="Fee Amount" :balances="balances" @changed="changedFeeManual" :allow-zero="allowZero" :asset="asset" />
+        <tx-amount v-if="!feeType" text="Fee Amount" :balances="balances" @changed="changedFeeManual" :allow-zero="allowZero" :asset="asset" />
     </div>
 </template>
 
@@ -27,7 +23,8 @@ export default {
 
     data(){
         return {
-            feeType: "feeAuto",
+            feeType: true,
+
             feeAuto: {
                 amount: 0,
                 validationError: "",

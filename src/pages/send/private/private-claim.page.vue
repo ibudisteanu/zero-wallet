@@ -37,9 +37,7 @@ export default {
     },
 
     computed: {
-        PandoraPay() {
-            return PandoraPay
-        },
+        PandoraPay: () => PandoraPay,
         publicKey(){
             return this.$store.state.wallet.mainPublicKey
         },

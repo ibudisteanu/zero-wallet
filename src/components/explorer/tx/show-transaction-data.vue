@@ -45,9 +45,7 @@ export default {
     },
 
     computed:{
-        PandoraPay(){
-            return PandoraPay
-        },
+        PandoraPay: () => PandoraPay,
 
         vinAmount(){
 

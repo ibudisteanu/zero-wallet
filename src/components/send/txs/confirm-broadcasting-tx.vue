@@ -58,12 +58,12 @@ export default {
             if (!this.tx) return []
 
             if (this.tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE){
-                return [ {amount: this.tx.fee, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX, feeRateMax: 1 } ]
+                return [ {amount: this.tx.fee, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX, feeRate: 1 } ]
             }else if (this.tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER) {
 
                 const out = []
                 for (const payload of this.tx.payloads)
-                    out.push({amount: payload.statement.fee, asset: payload.asset, feeRateMax: payload.feeRateMax })
+                    out.push({amount: payload.statement.fee, asset: payload.asset, feeRate: payload.feeRate })
 
                 return out
             }

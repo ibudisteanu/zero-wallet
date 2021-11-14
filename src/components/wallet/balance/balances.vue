@@ -7,7 +7,9 @@
                     <h5 class="mb-0">
                         Balances
                         <template v-if="isLoading">
-                            <loading-spinner />
+                            <div class="py-3 text-center">
+                                <loading-spinner />
+                            </div>
                         </template>
                     </h5>
                 </div>
