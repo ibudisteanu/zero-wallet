@@ -77,8 +77,15 @@
 
                 <template v-if="asset.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX">
                     <div class="form-check pt-2">
-                        <input class="form-check-input" id="feeAssetFeeLiquidityAsset" type="checkbox" v-model="feeAssetFeeLiquidityAsset" />
-                        <label class="form-check-label" for="feeAssetFeeLiquidityAsset">Automatically Determine Asset Fee Liquidity Asset</label>
+                        <input class="form-check-input" id="assetFeeLiquidityAsset" type="checkbox" v-model="assetFeeLiquidityAsset" />
+                        <label class="form-check-label" for="assetFeeLiquidityAsset">Automatically Determine Asset Fee Liquidity</label>
+                    </div>
+                    <div class="row" v-if="!assetFeeLiquidityAsset">
+                        <div class="col-sm-12 col-6">
+                            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Conversion Rate</label>
+                            <i class="fa fa-question" v-tooltip.bottom="`Conversion rate of the asset fee`" />
+                            <input :class="`form-control ${validationAssetFeeConversionRate ? 'is-invalid' :''}`" type="number" v-model.number="assetFeeConversionRate" min="0" :step="0.0000000001">
+                        </div>
                     </div>
                 </template>
 
@@ -145,7 +152,8 @@ export default {
 
             destination: {},
             fee: {  },
-            feeAssetFeeLiquidityAsset: true,
+            assetFeeLiquidityAsset: true,
+            assetFeeConversionRate: 1,
 
             extraData: {
                 data: "",
@@ -207,6 +215,14 @@ export default {
                 return err.toString()
             }
 
+        },
+
+        validationAssetFeeConversionRate(){
+            try{
+
+            }catch(err){
+                return err.toString()
+            }
         },
 
         identifiedPaymentID(){
@@ -338,19 +354,22 @@ export default {
                 if (!this.randomDestination)
                     if (this.$store.state.accounts.list[ this.destination.address.publicKey]){
                         let availableAccounts = this.$store.state.accounts.list[ this.destination.address.publicKey]
-                        for (let i=0; i < availableAccounts.length; i++)
-                            if (availableAccounts.asset === asset)
-                                alreadyUsedIndexes[availableAccounts.index] = true
+                        if (availableAccounts)
+                            for (let i=0; i < availableAccounts.length; i++)
+                                if (availableAccounts.asset === asset)
+                                    alreadyUsedIndexes[availableAccounts[i].index] = true
                     }
 
-                const count = Math.min( holders, ringSize - Object.keys(alreadyUsedIndexes).length )
-                for (let i=0; i < count; i++){
+                if (holders > 1) {
+                    const count = Math.min( holders, ringSize - Object.keys(alreadyUsedIndexes).length )
+                    for (let i=0; i < count; i++){
 
-                    let index = await PandoraPay.helpers.randomUint64N( holders.toString() )
-                    while (alreadyUsedIndexes[index])
-                        index = await PandoraPay.helpers.randomUint64N( holders.toString() )
+                        let index = await PandoraPay.helpers.randomUint64N( holders.toString() )
+                        while (alreadyUsedIndexes[index])
+                            index = await PandoraPay.helpers.randomUint64N( holders.toString() )
 
-                    alreadyUsedIndexes[index] = true
+                        alreadyUsedIndexes[index] = true
+                    }
                 }
 
                 const alreadyUsedIndexesArray = Object.keys(alreadyUsedIndexes).map(it => Number.parseInt(it) )
