@@ -136,9 +136,13 @@ export default {
 
             const fee = this.fee.feeType ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) )
 
+            const nonceOut = await PandoraPay.network.getNetworkAccountMempoolNonce(MyTextEncode(JSON.stringify({ publicKey: this.address.publicKey })))
+
+            const nonce = JSON.parse( MyTextDecode(nonceOut) )
+
             const data = {
                 from: this.address.addressEncoded,
-                nonce: 0,
+                nonce,
                 data: {
                     data: Buffer.from(this.extraData.data).toString("hex"),
                     encrypt: this.extraData.type === "encrypted",
@@ -150,7 +154,7 @@ export default {
                     perByteAuto: this.fee.feeType,
                 },
                 feeVersion: this.feeVersion,
-                propagateTx: false,
+                height: this.$store.state.blockchain.end,
             }
 
             if (this.beforeProcess)

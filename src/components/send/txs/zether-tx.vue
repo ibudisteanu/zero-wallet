@@ -184,12 +184,12 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
 
-        availableAssets(){
-            return this.account && this.account.assets ? this.account.assets : null
-        },
-
         availableAccounts(){
             return this.account && this.account.accounts ? this.account.accounts : null
+        },
+
+        availableAssets(){
+            return this.availableAccounts ? this.availableAccounts.map(it => it.asset) : null
         },
 
         availableBalances(){
@@ -209,7 +209,7 @@ export default {
             try{
 
                 if (this.destination.address)
-                    if (this.destination.publicKey === this.address.publicKey) throw "Destination can not be the same with from";
+                    if (this.destination.address.publicKey === this.address.publicKey) throw "Destination can not be the same with from";
 
             }catch (err){
                 return err.toString()
@@ -276,8 +276,8 @@ export default {
 
                     if (!this.randomDestination){
 
-                        if (this.checkDestinationError) throw this.checkDestinationError
                         if (this.destination.validationError) throw this.destination.validationError;
+                        if (this.checkDestinationError) throw this.checkDestinationError
 
                         await this.$store.state.blockchain.syncPromise;
                         await this.$store.dispatch('subscribeAccount', this.destination.address.publicKey )
@@ -383,15 +383,24 @@ export default {
 
                 let publicKeys = JSON.parse( MyTextDecode( out ) ).publicKeys
 
+                console.log("publicKeys", publicKeys)
+
                 const publicKeysMap = {}
                 publicKeys.map( it => publicKeysMap[it] = true )
 
-                function getRandomPublicKey(){
+                async function getRandomPublicKey(){
                     const keys = Object.keys(publicKeysMap)
+                    if (!keys.length) {
+                        const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
+                        return {addressEncoded: json[1], publicKey: json[2] }
+                    }
+
                     let index = Math.floor(Math.random() * keys.length )
                     const publicKeySelected = keys[index]
                     delete publicKeysMap[publicKeySelected]
-                    return publicKeySelected
+
+                    const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( {publicKey: publicKeySelected, registration: "", amount: 0, paymentId: ""} ) ) ) ) )
+                    return {addressEncoded: json[1], publicKey: publicKeySelected}
                 }
 
                 let ringMembers = []
@@ -406,19 +415,16 @@ export default {
                 }
 
                 if (this.randomDestination){
-                    const destinationPublicKey = getRandomPublicKey()
-
-                    const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( {publicKey: destinationPublicKey, registration: "", amount: 0, paymentId: ""} ) ) ) ) )
-                    this.destination = {amount: 0, addressEncoded: json[1], address: { publicKey: destinationPublicKey }}
+                    const out = await getRandomPublicKey()
+                    this.destination = {amount: 0, addressEncoded: out.addressEncoded, address: { publicKey: out.publicKey }}
                 }
 
                 ringMembers.push(this.destination.addressEncoded)
                 delete publicKeysMap[this.destination.address.publicKey]
 
                 for ( let i =0; ringMembers.length < ringSize - newAccounts; i++){
-                    const publicKeySelected = getRandomPublicKey()
-                    const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( {publicKey: publicKeySelected, registration: "", amount: 0, paymentId: ""} ) ) ) ) )
-                    ringMembers.push( json[1] )
+                    const out = await getRandomPublicKey()
+                    ringMembers.push( out.addressEncoded )
                 }
 
                 for (let i=0; ringMembers.length < ringSize; i++){

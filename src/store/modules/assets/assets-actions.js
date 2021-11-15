@@ -15,8 +15,6 @@ export default {
 
                 asset.hash = hash
 
-                await PandoraPay.store.storeAsset( hash, assetData  )
-
                 if (asset.name === "PANDORA") asset.name = "0x00"
 
                 commit('setAsset',asset)

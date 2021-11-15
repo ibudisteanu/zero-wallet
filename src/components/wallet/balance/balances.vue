@@ -23,7 +23,7 @@
                 <balance v-else v-for="(accountBalance, index) in account.accounts"
                          :key="`balance-asset-${index}`"
                          :balance="accountBalance.balance"
-                         :asset="account.assets[index]"
+                         :asset="account.accounts[index].asset"
                          :can-be-decoded="$store.getters.walletContains(publicKey)"
                          :public-key="publicKey"
                          version="zether">
