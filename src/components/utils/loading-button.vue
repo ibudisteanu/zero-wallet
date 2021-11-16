@@ -27,7 +27,7 @@ export default{
         classCustom: {default: "btn btn-falcon-primary me-1 mb-1"},
         canDisable: {default: true},
         text: {default: 'Submit'},
-        icon : {default: 'fa fa-share'},
+        icon : {default: 'fas fa-share'},
         iconLeft: {default: true}
     },
     methods: {

@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa fa-file-invoice-dollar" title="Transaction" >View a transaction.</layout-title>
+        <layout-title icon="fas fa-file-invoice-dollar" title="Transaction" >View a transaction.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">

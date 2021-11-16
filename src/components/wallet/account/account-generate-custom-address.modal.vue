@@ -15,7 +15,7 @@
                     <div class="form-check">
                         <input class="form-check-input" id="amount" type="checkbox"  name="checkbox" v-model="hasAmount"  >
                         <label class="form-check-label" for="amount"> Amount </label>
-                        <i class="fa fa-question" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
+                        <i class="fas fa-question" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
                         <tx-amount :allow-zero="true" :allow-empty-asset="true" :balances="null" @changed="amountChanged" text="Amount to Receive" :asset="''" :disabled="!hasAmount" />
                     </div>
                 </template>
@@ -24,7 +24,7 @@
                     <div class="form-check">
                         <input class="form-check-input" id="paymentId" type="checkbox"  name="checkbox" v-model="hasPaymentId"  >
                         <label class="form-check-label" for="paymentId"> PaymentId</label>
-                        <i class="fa fa-question" v-tooltip.bottom="'Specify a default message(paymentId)'" ></i>  <br>
+                        <i class="fas fa-question" v-tooltip.bottom="'Specify a default message(paymentId)'" ></i>  <br>
                         <input :class="`form-control ${validationPaymentId ? 'is-invalid' : ''}`" v-if="hasPaymentId" type="text" v-model="paymentId" >
                         <div v-if="validationPaymentId" class="invalid-feedback d-block">{{validationPaymentId}}</div>
                     </div>
@@ -34,7 +34,7 @@
                     <div class="form-check" v-if="account.registration">
                         <input class="form-check-input" id="registration" type="checkbox"  name="checkbox" v-model="hasRegistration"  >
                         <label class="form-check-label" for="registration"> Registration </label>
-                        <i class="fa fa-question" v-tooltip.bottom="'Specify registration. Required only first time when used'" ></i>  <br>
+                        <i class="fas fa-question" v-tooltip.bottom="'Specify registration. Required only first time when used'" ></i>  <br>
                     </div>
                 </template>
 
@@ -55,11 +55,11 @@
 
                         <div class="g-0 d-block-inline ">
                             <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="copyAddress" v-tooltip.bottom="'Copy Address'" >
-                                <i class="fa fa-copy" />
+                                <i class="fas fa-copy" />
                             </button>
 
                             <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
-                                <i class="fa fa-qrcode" />
+                                <i class="fas fa-qrcode" />
                             </button>
                         </div>
 
@@ -122,7 +122,7 @@ export default {
         },
 
         buttons(){
-            return { 2: { icon: 'fa fa-cogs', text: 'Generate Address' }}
+            return { 2: { icon: 'fas fa-cogs', text: 'Generate Address' }}
         },
 
     },

@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-12">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{text}} Amount</label>
-            <i v-if="tooltip" class="fa fa-question" v-tooltip.bottom="tooltip" />
+            <i v-if="tooltip" class="fas fa-question" v-tooltip.bottom="tooltip" />
             <input :class="`form-control ${validationAmountError ? 'is-invalid' :''}`" type="number" v-model.number="amount" min="0" :step="getSteps" :disabled="disabled">
             <div v-if="validationAmountError" class="invalid-feedback d-block">{{validationAmountError}}</div>
         </div>

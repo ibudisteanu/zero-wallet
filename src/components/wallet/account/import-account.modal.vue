@@ -69,7 +69,7 @@ export default {
         },
 
         buttons(){
-            return { 1: { icon: 'fa fa-file-upload', text: 'Import Account' }}
+            return { 1: { icon: 'fas fa-file-upload', text: 'Import Account' }}
         }
 
     },

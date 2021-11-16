@@ -2,7 +2,7 @@
     <div>
         <div class="warning" v-if="shown">
             You are connecting to the <strong>{{$store.state.network.networkPrefix}}</strong>. Don't use your Mainnet accounts in the Testnet!
-            <i class="fa fa-times" @click="hide"></i>
+            <i class="fas fa-times" @click="hide"></i>
         </div>
     </div>
 </template>

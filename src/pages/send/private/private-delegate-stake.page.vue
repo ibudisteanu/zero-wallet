@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa fa-seedling" title="Private Delegate Funds">Delegate Funds Privately to Delegating Address</layout-title>
+        <layout-title icon="fas fa-seedling" title="Private Delegate Funds">Delegate Funds Privately to Delegating Address</layout-title>
 
         <zether-tx ref="refZetherTx"
                    :titles-offset="{ '-1': {icon: 'fas fa-edit', name: 'Delegation', tooltip: 'Delegation update' }}"
@@ -15,7 +15,7 @@
                 <destination-address text="Delegate Address" @changed="changedDelegateDestination"/>
                 <div class="form-group pt-3">
                     <input class="form-check-input" id="convert-to-unclaimed" type="checkbox"  name="checkbox" v-model="convertToUnclaimed"  >
-                    <label class="form-check-label" for="convert-to-unclaimed">Convert to Unclaimed instead of Staking</label> <i class="fa fa-question " v-tooltip.bottom="`Instead of staking, you deposit to the unclaimed amount`" />
+                    <label class="form-check-label" for="convert-to-unclaimed">Convert to Unclaimed instead of Staking</label> <i class="fas fa-question " v-tooltip.bottom="`Instead of staking, you deposit to the unclaimed amount`" />
                 </div>
                 <delegated-staking-new-info class="pt-3" :public-key="delegatePublicKey" @onChanges="delegatedStakingNewInfoChanges" />
             </template>

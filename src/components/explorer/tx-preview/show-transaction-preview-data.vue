@@ -10,7 +10,7 @@
             <template v-if="tx.base.txScript === PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_CLAIM">
                 <template v-if="!displayAdvanced">
                     <span class="pointer " @click="displayAdvanced=!displayAdvanced" v-tooltip.bottom="'Display tx output'"  >
-                        <i class="fa fa-users" ></i>
+                        <i class="fas fa-users" ></i>
                         Outputs: {{tx.base.extra.output.length}}
                     </span>
                 </template>
@@ -27,7 +27,7 @@
         <template v-else-if="tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER">
             <template v-if="!displayAdvanced">
                 <span class="pointer " @click="displayAdvanced=!displayAdvanced" v-tooltip.bottom="'Display Private Tx Ring Members'" >
-                    <i class="fa fa-users"></i>
+                    <i class="fas fa-users"></i>
                     Rings: {{tx.base.payloads.map(payload => payload.publicKeys.length).join(', ') }}
                 </span>
             </template>

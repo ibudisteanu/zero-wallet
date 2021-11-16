@@ -1,5 +1,5 @@
 <template>
-    <i class="fa fa-spinner fa-spin" v-tooltip.bottom="title" ></i>
+    <i class="fas fa-spinner fa-spin" v-tooltip.bottom="title" ></i>
 </template>
 
 <script>

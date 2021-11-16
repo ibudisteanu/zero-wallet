@@ -3,7 +3,7 @@
     <div>
         <div class="col">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{text}} Address {{index !== null ? index+1 : ''}}</label>
-            <i v-if="index !== null" class="fa fa-times float-end pointer " @click="deleteDestinationAddress"></i>
+            <i v-if="index !== null" class="fas fa-times float-end pointer " @click="deleteDestinationAddress"></i>
 
             <div :class="`${finalAddress ? 'destination-row': ''} `" >
 
@@ -11,7 +11,7 @@
 
                 <div class="input-toggle-group">
                     <input :class="`form-control ${validationError ? 'is-invalid' : ''}`" type="text" v-model="destination">
-                    <i class="fa fa-qrcode input-toggle" @click="showQrCodeScanner" :style="`${ validationError ?'right: 35px' : ''}`"></i>
+                    <i class="fas fa-qrcode input-toggle" @click="showQrCodeScanner" :style="`${ validationError ?'right: 35px' : ''}`"></i>
                 </div>
 
             </div>

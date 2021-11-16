@@ -14,7 +14,7 @@
                     <li class="nav-item">
                         <router-link to="/" :class="`${route === '/'  || route === '/login' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
                             <div class="d-flex align-items-center">
-                                <i class="fa fa-money-bill-alt"></i>
+                                <i class="fas fa-money-bill-alt"></i>
                                 <span class="nav-link-text ps-1">Account</span>
                             </div>
                         </router-link>
@@ -22,7 +22,7 @@
                     <li class="nav-item">
                         <router-link :disabled="!isWalletLogged" to="/wallet" :class="`${ route === '/wallet' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
                             <div class="d-flex align-items-center">
-                                <i class="fa fa-wallet"></i>
+                                <i class="fas fa-wallet"></i>
                                 <span class="nav-link-text ps-1">Wallet</span>
                             </div>
                         </router-link>
@@ -30,16 +30,16 @@
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
                             <router-link to="#" class="nav-link" @click.native="e => toggleNavElement( e,'staking')">
-                                <i class="fa fa-piggy-bank"></i>
+                                <i class="fas fa-piggy-bank"></i>
                                 <span class="nav-link-text ps-1">Staking</span>
-                                <i :class="`nav-chevron fa fa-chevron-${navElementsShown['staking'] ? 'up' : 'down' }`"></i>
+                                <i :class="`nav-chevron fas fa-chevron-${navElementsShown['staking'] ? 'up' : 'down' }`"></i>
                             </router-link>
                         </div>
                         <ul :class="`nav collapse ${navElementsShown['staking'] ? 'show':''}`">
                             <li class="nav-item">
                                 <router-link :class="`nav-link ${route.indexOf('/stakes') === 0 ? 'active' : ''} nav-link`" to="/stakes" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
-                                        <i class="fa fa-shopping-basket" />
+                                        <i class="fas fa-shopping-basket" />
                                         <span class="nav-link-text ps-1">Stakes</span>
                                     </div>
                                 </router-link>
@@ -47,7 +47,7 @@
                             <li class="nav-item">
                                 <router-link :class="`nav-link ${route.indexOf('/txs/unstake') === 0 ? 'active' : ''} nav-link`" to="/txs/unstake" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
-                                        <i class="fa fa-unlink" />
+                                        <i class="fas fa-unlink" />
                                         <span class="nav-link-text ps-1">Unstake</span>
                                     </div>
                                 </router-link>
@@ -55,7 +55,7 @@
                             <li class="nav-item">
                                 <router-link :class="`nav-link ${route.indexOf('/txs/update-delegate') === 0 ? 'active' : ''} nav-link`" to="/txs/update-delegate" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
-                                        <i class="fa fa-marker" />
+                                        <i class="fas fa-marker" />
                                         <span class="nav-link-text ps-1">Update delegate</span>
                                     </div>
                                 </router-link>
@@ -63,7 +63,7 @@
                             <li class="nav-item">
                                 <router-link :class="`nav-link ${route.indexOf('/txs/private/delegate') === 0 ? 'active' : ''} nav-link`" to="/txs/private/delegate" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
-                                        <i class="fa fa-seedling"></i>
+                                        <i class="fas fa-seedling"></i>
                                         <span class="nav-link-text ps-1">Private Delegate</span>
                                     </div>
                                 </router-link>
@@ -71,7 +71,7 @@
                             <li class="nav-item">
                                 <router-link :class="`nav-link ${route.indexOf('/txs/private/claim') === 0 ? 'active' : ''} nav-link`" to="/txs/private/claim" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
-                                        <i class="fa fa-search-dollar" />
+                                        <i class="fas fa-search-dollar" />
                                         <span class="nav-link-text ps-1">Private Claim</span>
                                     </div>
                                 </router-link>
@@ -81,7 +81,7 @@
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
                             <router-link :disabled="!isWalletLogged" to="/txs/private/send" :class="`${ route === '/txs/private/send' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
-                                <i class="fa fa-money-check-alt"></i>
+                                <i class="fas fa-money-check-alt"></i>
                                 <span class="nav-link-text ps-1">Private Transfer</span>
                             </router-link>
                         </div>
@@ -89,7 +89,7 @@
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
                             <router-link :disabled="!isWalletLogged" to="/receive" :class="`${ route === '/receive' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
-                                <i class="fa fa-hand-holding-usd"></i>
+                                <i class="fas fa-hand-holding-usd"></i>
                                 <span class="nav-link-text ps-1">Private Receive</span>
                             </router-link>
                         </div>
@@ -99,13 +99,13 @@
                         <div class="d-flex align-items-center">
                             <template v-if="!encrypted">
                                 <router-link to="/set-password" class="nav-link" @click.native="disableNavbarMenu">
-                                    <i class="fa fa-lock"></i>
+                                    <i class="fas fa-lock"></i>
                                     <span class="nav-link-text ps-1">Set Password</span>
                                 </router-link>
                             </template>
                             <template v-else>
                                 <router-link to="/remove-password" class="nav-link" @click.native="disableNavbarMenu">
-                                    <i class="fa fa-unlock-alt"></i>
+                                    <i class="fas fa-unlock-alt"></i>
                                     <span class="nav-link-text ps-1">Remove Password</span>
                                 </router-link>
                             </template>
@@ -115,16 +115,16 @@
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
                             <router-link to="#" class="nav-link" @click.native="e => toggleNavElement( e,'explorer')">
-                                <i class="fa fa-cubes"></i>
+                                <i class="fas fa-cubes"></i>
                                 <span class="nav-link-text ps-1">Explorer</span>
-                                <i :class="`nav-chevron fa fa-chevron-${navElementsShown['explorer'] ? 'up' : 'down' }`"></i>
+                                <i :class="`nav-chevron fas fa-chevron-${navElementsShown['explorer'] ? 'up' : 'down' }`"></i>
                             </router-link>
                         </div>
                         <ul :class="`nav collapse ${navElementsShown['explorer'] ? 'show':''}`">
                             <li class="nav-item">
                                 <router-link :class="`nav-link ${route.indexOf('/explorer') === 0 ? 'active' : ''} nav-link`" to="/explorer" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
-                                        <i class="fa fa-cube" />
+                                        <i class="fas fa-cube" />
                                         <span class="nav-link-text ps-1">Blocks</span>
                                     </div>
                                 </router-link>
@@ -132,7 +132,7 @@
                             <li class="nav-item">
                                 <router-link :class="`nav-link ${route.indexOf('/explorer/mem-pool') === 0 ? 'active' : ''}  nav-link`" to="/explorer/mem-pool" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
-                                        <i class="fa fa-list-ol" />
+                                        <i class="fas fa-list-ol" />
                                         <span class="nav-link-text ps-1">Mem pool</span>
                                     </div>
                                 </router-link>
@@ -142,7 +142,7 @@
                     <li class="nav-item">
                         <router-link :class="`nav-link ${route.indexOf('/explorer/assets') === 0 ? 'active' : ''} nav-link`" to="/explorer/assets" @click.native="disableNavbarMenu">
                             <div class="d-flex align-items-center">
-                                <i class="fa fa-file-invoice-dollar"></i>
+                                <i class="fas fa-file-invoice-dollar"></i>
                                 <span class="nav-link-text ps-1">Assets</span>
                             </div>
                         </router-link>
@@ -150,7 +150,7 @@
                     <li class="nav-item">
                         <router-link :class="`nav-link ${route.indexOf('/settings') === 0 ? 'active' : ''} nav-link`" to="/settings" @click.native="disableNavbarMenu">
                             <div class="d-flex align-items-center">
-                                <i class="fa fa-wrench"></i>
+                                <i class="fas fa-wrench"></i>
                                 <span class="nav-link-text ps-1">Settings</span>
                             </div>
                         </router-link>
@@ -158,9 +158,9 @@
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
                             <router-link to="#" class="nav-link" @click.native="e => toggleNavElement(e,'kad')">
-                                <i class="fa fa-globe-americas"></i>
+                                <i class="fas fa-globe-americas"></i>
                                 <span class="nav-link-text ps-1">KAD</span>
-                                <i :class="`nav-chevron fa fa-chevron-${navElementsShown['kad'] ? 'up' : 'down' }`"></i>
+                                <i :class="`nav-chevron fas fa-chevron-${navElementsShown['kad'] ? 'up' : 'down' }`"></i>
                             </router-link>
                         </div>
                         <ul :class="`nav collapse ${navElementsShown['kad'] ? 'show':''}`">

@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa fa-search-dollar" title="Private Claim">Claim funds from Unclaimed funds</layout-title>
+        <layout-title icon="fas fa-search-dollar" title="Private Claim">Claim funds from Unclaimed funds</layout-title>
 
         <zether-tx ref="refZetherTx"
                    :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX"

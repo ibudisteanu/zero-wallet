@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa fa-file-invoice-dollar" title="Explorer Asset">View a specific asset.</layout-title>
+        <layout-title icon="fas fa-file-invoice-dollar" title="Explorer Asset">View a specific asset.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">

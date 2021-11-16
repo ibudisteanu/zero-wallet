@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa fa-cubes" title="Blockchain">View the latest blocks.</layout-title>
+        <layout-title icon="fas fa-cubes" title="Blockchain">View the latest blocks.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">

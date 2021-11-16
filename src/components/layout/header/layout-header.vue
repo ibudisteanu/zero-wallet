@@ -17,13 +17,13 @@
       <ul class="navbar-nav navbar-nav-icons flex-row align-items-center">
 
          <li class="nav-item" v-tooltip.bottom="`Switch theme`">
-            <i :class="`fa fa-${$store.state.settings.dark ?'sun':'moon'} nav-item-icon pointer`" @click="handleToggleDark"></i>
+            <i :class="`fas fa-${$store.state.settings.dark ?'sun':'moon'} nav-item-icon pointer`" @click="handleToggleDark"></i>
          </li>
 
          <li class="nav-item pointer unselectable" v-tooltip.bottom="`${showNetworksMenu ? '' :'Select network'}`" @click="handleToggleNetworksMenu" v-on-clickaway="closeNetworksMenu">
-            <i class="fa fa-globe-americas nav-item-icon"></i>
+            <i class="fas fa-globe-americas nav-item-icon"></i>
             <span class="badge badge-soft-success">{{$store.state.network.networkName}}</span>
-            <i class="fa fa-chevron-down"></i>
+            <i class="fas fa-chevron-down"></i>
 
             <div :class="`dropdown-menu dropdown-menu-end py-0 ${showNetworksMenu ? 'show': ''}`">
                <div class="bg-white rounded-2 py-2">

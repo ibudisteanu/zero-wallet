@@ -21,7 +21,7 @@
                 <div class="form pb-2">
                     <input class="form-check-input" id="fee-version" type="checkbox"  name="checkbox" v-model="feeVersion">
                     <label class="form-check-label" for="fee-version">Pay fee Unclaimed balance</label>
-                    <i class="fa fa-question " v-tooltip.bottom="`Subtract the fee from the unclaimed balance or from the delegated stake.`" />
+                    <i class="fas fa-question " v-tooltip.bottom="`Subtract the fee from the unclaimed balance or from the delegated stake.`" />
                 </div>
 
                 <tx-fee :balances="balancesStakeAvailable" :allow-zero="true" @changed="changedFee" />
@@ -90,8 +90,8 @@ export default {
         },
         buttons(){
             return {
-                1: { icon: 'fa fa-file-signature', text: 'Sign Transaction' },
-                2: { icon: 'fa fa-globe-americas', text: 'Propagate Transaction' },
+                1: { icon: 'fas fa-file-signature', text: 'Sign Transaction' },
+                2: { icon: 'fas fa-globe-americas', text: 'Propagate Transaction' },
                 ...this.buttonsOffset,
             }
         }

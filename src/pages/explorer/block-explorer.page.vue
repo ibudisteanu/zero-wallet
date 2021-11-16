@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa fa-cube" title="Explore Block">View a specific block.</layout-title>
+        <layout-title icon="fas fa-cube" title="Explore Block">View a specific block.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">
@@ -42,7 +42,7 @@
                         <span class="col-7 col-sm-9 text-truncate">
                             <span  v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  blk.timestamp) }`">
                                 {{  timeAgo( $store.state.blockchain.genesisTimestamp + blk.timestamp ) }} ago
-                                <i class="fa fa-clock"></i>
+                                <i class="fas fa-clock"></i>
                             </span>
                         </span>
                     </div>

@@ -7,7 +7,7 @@
                 <wizard :titles="{
                          0: {icon: 'fas fa-globe-americas', name: 'Select Node', tooltip: 'Select Node you are delegating to' },
                          1: {icon: 'fas fa-robot', name: 'Node Info', tooltip: 'Node information' },
-                         2: {icon: 'fas fa fa-piggy-bank', name: 'Delegate', tooltip: 'Finalizing the delegate' }}"
+                         2: {icon: 'fas fa-piggy-bank', name: 'Delegate', tooltip: 'Finalizing the delegate' }}"
                          @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
                     <template slot="tab_0">
@@ -69,7 +69,7 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
         buttons(){
-            return { 1: { icon: 'fa fa-laptop-code', text: 'Stake to Node' }}
+            return { 1: { icon: 'fas fa-laptop-code', text: 'Stake to Node' }}
         }
     },
 

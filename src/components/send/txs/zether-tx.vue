@@ -35,7 +35,7 @@
                 <div class="row">
                     <div class="col-12 col-md-6">
                         <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Size</label>
-                        <i class="fa fa-question " v-tooltip.bottom="`Bigger the ring, more private is your transaction.`" />
+                        <i class="fas fa-question " v-tooltip.bottom="`Bigger the ring, more private is your transaction.`" />
                         <select class="form-select" v-model="ringSize">
                             <option :value="2">2</option>
                             <option :value="4">4</option>
@@ -50,18 +50,18 @@
 
                     <div class="col-12 col-md-6">
                         <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring New Addresses</label>
-                        <i class="fa fa-question " v-tooltip.bottom="`Number of new addresses in the ring. Makes new destinations more private.`" />
+                        <i class="fas fa-question " v-tooltip.bottom="`Number of new addresses in the ring. Makes new destinations more private.`" />
                         <input class="form-control"  type="number" v-model="ringNewAddresses" />
                     </div>
                 </div>
 
                 <div class="col-12 pt-4">
-                    <loading-button text="Generate Ring" @submit="handleGenerateRing" icon="fa fa-cogs" />
+                    <loading-button text="Generate Ring" @submit="handleGenerateRing" icon="fas fa-cogs" />
                 </div>
 
                 <div class="col-12 pt-4">
                     <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Members</label>
-                    <i class="fa fa-question " v-tooltip.bottom="`Preview of the Ring Members used for your private transaction.`" />
+                    <i class="fas fa-question " v-tooltip.bottom="`Preview of the Ring Members used for your private transaction.`" />
                     <div class="pt-2">
                         <div v-for="(ringMember, index) in ringMembers" class="d-inline-block"
                              :key="`ring_member_${index}`">
@@ -83,7 +83,7 @@
                     <div class="row" v-if="!assetFeeLiquidityAsset">
                         <div class="col-12 col-sm-6">
                             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Conversion Rate</label>
-                            <i class="fa fa-question" v-tooltip.bottom="`Conversion rate of the asset fee`" />
+                            <i class="fas fa-question" v-tooltip.bottom="`Conversion rate of the asset fee`" />
                             <input :class="`form-control ${validationAssetFeeConversionRate ? 'is-invalid' :''}`" type="number" v-model.number="assetFeeConversionRate" min="0" :step="0.0000000001">
                         </div>
                     </div>
@@ -238,8 +238,8 @@ export default {
 
         buttons(){
             return {
-                3: { icon: 'fa fa-file-signature', text: 'Sign Transaction' },
-                4: { icon: 'fa fa-globe-americas', text: 'Propagate Transaction' },
+                3: { icon: 'fas fa-file-signature', text: 'Sign Transaction' },
+                4: { icon: 'fas fa-globe-americas', text: 'Propagate Transaction' },
                 ...this.buttonsOffset,
             }
         }

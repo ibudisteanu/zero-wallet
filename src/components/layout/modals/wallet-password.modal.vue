@@ -17,10 +17,10 @@
             <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
             <button class="btn btn-falcon-danger" type="button" @click="handleSubmit">
-                <i class="fa fa-key"></i> Submit
+                <i class="fas fa-key"></i> Submit
             </button>
             <button class="btn btn-falcon-secondary" type="button" @click="closeModal">
-                <i class="fa fa-ban"></i> Close
+                <i class="fas fa-ban"></i> Close
             </button>
         </template>
 

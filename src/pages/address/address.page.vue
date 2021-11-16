@@ -1,7 +1,7 @@
 <template>
     <layout>
 
-        <layout-title icon="fa fa-money-bill-alt" title="Account" >See the balance and transactions of an address.</layout-title>
+        <layout-title icon="fas fa-money-bill-alt" title="Account" >See the balance and transactions of an address.</layout-title>
 
         <wait-address :address="address">
 
