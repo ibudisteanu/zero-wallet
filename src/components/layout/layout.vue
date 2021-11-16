@@ -95,8 +95,10 @@ export default {
 
 <style scoped>
 
-    .layout {
+    @media (min-width: 576px){
+        .content {
+            padding-bottom: 5.5875rem;
+        }
     }
-
 
 </style>

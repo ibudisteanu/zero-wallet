@@ -17,7 +17,7 @@
 
             <template :slot="`tab_0`">
                 <div class="form pb-2" v-if="allowDestinationRandom">
-                    <input class="form-check-input" id="random-destination" type="checkbox"  name="checkbox" v-model="randomDestination"  >
+                    <input class="form-check-input" id="random-destination" type="checkbox"  name="checkbox" v-model="randomDestination">
                     <label class="form-check-label" for="random-destination">Random Destination with Zero amount</label>
                 </div>
                 <template v-if="!randomDestination">
@@ -81,7 +81,7 @@
                         <label class="form-check-label" for="assetFeeLiquidityAsset">Automatically Determine Asset Fee Liquidity</label>
                     </div>
                     <div class="row" v-if="!assetFeeLiquidityAsset">
-                        <div class="col-sm-12 col-6">
+                        <div class="col-12 col-sm-6">
                             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Conversion Rate</label>
                             <i class="fa fa-question" v-tooltip.bottom="`Conversion rate of the asset fee`" />
                             <input :class="`form-control ${validationAssetFeeConversionRate ? 'is-invalid' :''}`" type="number" v-model.number="assetFeeConversionRate" min="0" :step="0.0000000001">
@@ -383,8 +383,6 @@ export default {
 
                 let publicKeys = JSON.parse( MyTextDecode( out ) ).publicKeys
 
-                console.log("publicKeys", publicKeys)
-
                 const publicKeysMap = {}
                 publicKeys.map( it => publicKeysMap[it] = true )
 
@@ -479,7 +477,7 @@ export default {
 
             const ringShufflePublicKeys = await Promise.all( ringShuffle.map( async it => JSON.parse( MyTextDecode( await PandoraPay.addresses.decodeAddress(it) )).publicKey ) )
 
-            const outData = await PandoraPay.network.getNetworkAccountsByKeys(MyTextEncode(JSON.stringify({
+            let outData = await PandoraPay.network.getNetworkAccountsByKeys(MyTextEncode(JSON.stringify({
                 keys: ringShufflePublicKeys.map(it => ({publicKey: it }) ),
                 asset,
                 includeMempool: true,
@@ -495,6 +493,26 @@ export default {
             const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.destination.amount.toString(), this.getAsset.decimalSeparator ) )
             const fee = this.fee.feeType ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) )
 
+            let feeRate = 0, feeLeadingZeros = 0
+
+            if (this.asset.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX)
+                if (this.assetFeeLiquidityAsset){
+                    outData = await PandoraPay.network.getNetworkFeeLiquidity(0, this.asset.asset)
+                    if (!outData) throw "No Asset Fee Liqiduity for this asset"
+                    out = JSON.parse( MyTextDecode(outData))
+
+                    feeRate = out.rate
+                    feeLeadingZeros = out.leadingZeros
+                }else {
+
+                    const parts = this.assetFeeConversionRate.toString().split(".")
+                    if (parts.length > 1)
+                        feeLeadingZeros = parts[1].length
+
+                    feeRate = Math.floor( this.assetFeeConversionRate * Math.pow(10, feeLeadingZeros) )
+                }
+
+
             const data = {
                 from: [{
                     privateKey: senderPrivateKey,
@@ -509,6 +527,8 @@ export default {
                     fixed:  fee,
                     perByte: 0,
                     perByteAuto: this.fee.feeType,
+                    rate: feeRate,
+                    leadingZeros: feeLeadingZeros,
                 }],
                 data: [{
                     data: Buffer.from(this.extraData.data).toString("hex"),

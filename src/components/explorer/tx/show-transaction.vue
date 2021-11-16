@@ -103,8 +103,8 @@
             <div class="row pt-2 pb-2">
                 <span class="col-5 col-sm-3 text-truncate">Extra Data</span>
                 <span class="col-7 col-sm-9 text-truncate">
-                                <show-transaction-data-extra :dataVersion="tx.dataVersion" :data="tx.data" />
-                            </span>
+                    <show-transaction-data-extra :dataVersion="tx.dataVersion" :data="tx.data" />
+                </span>
             </div>
 
             <div class="row pt-2 pb-2  bg-light">
@@ -119,27 +119,55 @@
                  :key="`tx_payload_${index}`" >
 
                 <div class="row pt-2 pb-2">
-                    <span class="col-5 col-sm-3 text-truncate">Payload Script Version</span>
+                    <span class="col-5 col-sm-3 text-truncate">Payload {{index}}</span>
+                    <span class="col-7 col-sm-9 text-truncate"></span>
+                </div>
+
+                <template v-if="payload.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX">
+                    <div class="row pt-2 pb-2 bg-light">
+                        <span class="col-5 col-sm-3 text-truncate">Fee Rate</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{payload.feeRate}}</span>
+                    </div>
+
+                    <div class="row pt-2 pb-2">
+                        <span class="col-5 col-sm-3 text-truncate">Fee Leading Zeros</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{payload.feeLeadingZeros}}</span>
+                    </div>
+
+                    <div class="row pt-2 pb-2 bg-light">
+                        <span class="col-5 col-sm-3 text-truncate">Fee Conversion Rate</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{payload.feeRate / Math.pow(10,  payload.feeLeadingZeros)}}</span>
+                    </div>
+
+                </template>
+
+                <div class="row pt-2 pb-2 ">
+                    <span class="col-5 col-sm-3 text-truncate">Asset</span>
+                    <span class="col-7 col-sm-9 text-truncate">{{payload.asset}}</span>
+                </div>
+
+                <div class="row pt-2 pb-2 bg-light">
+                    <span class="col-5 col-sm-3 text-truncate">Script Version</span>
                     <span class="col-7 col-sm-9 text-truncate">
                         {{payload.payloadScript}} <span :class="`badge badge-soft-${$store.getters.getTxScriptBadgeColor(tx.version, payload.payloadScript)}`" v-tooltip.bottom="$store.getters.getTxScriptText(tx.version, payload.payloadScript)">{{$store.getters.getTxScriptText(tx.version, payload.payloadScript)}}</span>
                     </span>
                 </div>
 
-                <div class="row pt-2 pb-2  bg-light">
-                    <span class="col-5 col-sm-3 text-truncate">Payload {{index}} Data</span>
+                <div class="row pt-2 pb-2 ">
+                    <span class="col-5 col-sm-3 text-truncate">Data</span>
                     <span class="col-7 col-sm-9">
                         <show-transaction-data :tx="tx" :id="index" />
                     </span>
                 </div>
 
-                <div class="row pt-2 pb-2 ">
-                    <span class="col-5 col-sm-3 text-truncate">Payload {{index}} Extra</span>
+                <div class="row pt-2 pb-2 bg-light">
+                    <span class="col-5 col-sm-3 text-truncate">Extra</span>
                     <span class="col-7 col-sm-9 text-truncate">
                         <show-transaction-data-extra :dataVersion="payload.dataVersion" :data="payload.data" />
                     </span>
                 </div>
-                <div class="row pt-2 pb-2 bg-light">
-                    <span class="col-5 col-sm-3 text-truncate">Payload {{index}} Extra HEX</span>
+                <div class="row pt-2 pb-2">
+                    <span class="col-5 col-sm-3 text-truncate">Extra HEX</span>
                     <span class="col-7 col-sm-9 text-truncate">{{payload.data}}</span>
                 </div>
             </div>
