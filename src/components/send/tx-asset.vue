@@ -61,6 +61,11 @@ export default {
             immediate: true,
             handler: function(to, from){
                 if (!to) return this.selectedAsset = null
+
+                for (const asset of to)
+                    if (asset === this.selectedAsset)
+                        return
+
                 this.selectedAsset = to[0]
             }
         },

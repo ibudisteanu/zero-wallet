@@ -34,7 +34,7 @@
             </div>
 
          </li>
-         <li class="nav-item" style="padding-right: 0">
+         <li class="nav-item pr-0">
             <header-account />
          </li>
       </ul>

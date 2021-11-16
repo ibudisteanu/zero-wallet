@@ -15,8 +15,8 @@ export default {
             try{
 
                 const result = await Promise.all([
-                    PandoraPay.network.getNetworkAccount(publicKey),
-                    PandoraPay.network.getNetworkAccountMempool(publicKey),
+                    PandoraPay.network.getNetworkAccount(MyTextEncode( JSON.stringify( {publicKey} )) ),
+                    PandoraPay.network.getNetworkAccountMempool( MyTextEncode( JSON.stringify( {publicKey} ) ) ),
                 ])
 
                 if ( !result[0] ) throw "Account was not received"
@@ -33,13 +33,11 @@ export default {
                 if (account){
 
                     if (account.accounts)
-                        await Promise.all( account.assets.map( asset => dispatch('getAssetByHash', asset) ) )
+                        await Promise.all( account.accountsExtra.map( accExtra => dispatch('getAssetByHash', accExtra.asset ) ) )
 
                     if (account.plainAccount)
                         await dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX )
                 }
-
-                await PandoraPay.store.storeAccount( publicKey,  result[0] )
 
                 await dispatch('processAccountPendingTransactions', {publicKey, list: pendingTxsList })
 
@@ -97,8 +95,6 @@ export default {
                     PandoraPay.network.unsubscribeNetwork( publicKey, PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS)
                 ]);
 
-                await PandoraPay.store.storeAccount( publicKey, null )
-
                 commit('removeAccount', { publicKey })
 
                 commit('setSubscribedAccountStatus', {publicKey, status: false})
@@ -119,41 +115,35 @@ export default {
 
         if (type === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT){
 
-            const {asset} = extraInfo
+            const {asset, index} = extraInfo
+
             if (data === null ){
 
-                if (account.assets ) {
-                    for (let index = 0; index < account.assets.length; index++)
-                        if (account.assets[index] === asset) {
-                            account.assets.slice(index, 1)
-                            account.accounts.slice(index, 1)
+                if (account.accounts ) {
+                    for (let i = 0; i < account.accounts.length; i++)
+                        if (account.accounts[i].asset === asset) {
+                            account.accounts.slice(i, 1)
                             break
                         }
-                    if (!account.assets.length){
-                        delete account.assets
+                    if (!account.accounts.length)
                         delete account.accounts
-                    }
                 }
 
             } else {
 
-                if (!account.assets){
-                    account.assets = []
+                if (!account.accounts)
                     account.accounts = []
-                }
 
                 let found = false
-                for (let index = 0; index < account.assets.length; index++)
-                    if (account.assets[index] === asset) {
-                        account.accounts[index] = data
-                        account.accounts[index].asset = asset
+                for (let i = 0; i < account.accounts.length; i++)
+                    if (account.accounts[i].asset === asset) {
+                        account.accounts[i] = {...data, asset, index }
                         found = true
                         break
                     }
 
                 if (!found){
-                    account.assets.push(asset)
-                    account.accounts.push(data)
+                    account.accounts.push({...data, asset, index })
                 }
 
             }
@@ -163,20 +153,18 @@ export default {
             if (data === null )
                 delete account.plainAccount
             else
-                account.plainAccount = data
+                account.plainAccount = {...data, index: extraInfo.index }
 
         }else if (type === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_REGISTRATION){
-            if (data === null ){
-                account.registration = data
-            } else {
+            if (data === null ) {
                 delete account.registration
-            }
+            }else
+                account.registration = {...data, index: extraInfo.index }
         }
 
         if (!Object.keys(account).length)
             account = null
 
-        await PandoraPay.store.storeAccount( publicKey, MyTextEncode(JSON.stringify(account)) )
         commit('setAccount', {publicKey, account})
 
     },

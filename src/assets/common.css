@@ -69,7 +69,7 @@ Scrollbar
 .tooltip .tooltip-inner {
     background: black;
     color: white;
-    border-radius: 16px;
+    border-radius: 8px;
     padding: 5px 10px 4px;
 }
 
@@ -223,6 +223,10 @@ a .disabled{
 
 .pointer{
     cursor: pointer;
+}
+
+.pointer:hover{
+    color: #27bcfd !important;
 }
 
 a, a:hover,a:visited, a:focus {

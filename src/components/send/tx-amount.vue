@@ -45,6 +45,12 @@ export default {
             if ( !this.allowZero && Number.parseFloat(this.amount) === 0) return "Amount needs to be greater than 0"
             if (this.amount === Number.NaN || this.amount < 0) return "Amount can not be negative"
             if (this.validateAmount){
+
+                if (!this.asset)
+                    return "Asset is invalid"
+                if (!this.balances)
+                    return "Balances are invalid"
+
                 if (!this.balances[this.asset])
                     return 'Available funds: none'
 

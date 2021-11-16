@@ -1,5 +1,6 @@
 import mutations from "./transactions-mutations"
 import actions from "./transactions-actions"
+import getters from "./transactions-getters"
 
 export default {
 
@@ -12,5 +13,6 @@ export default {
     },
 
     actions,
+    getters,
     mutations,
 }

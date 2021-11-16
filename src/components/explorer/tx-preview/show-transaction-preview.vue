@@ -15,16 +15,11 @@
                 </router-link>
            </span>
 
-            <span class="col-4 d-block d-sm-none text-dark text-truncate">Type</span>
-            <div class="col-8 col-sm-2 col-md-1 text-truncate">
-                <span :class="`badge badge-soft-${badgeColor}`" v-tooltip.bottom="getTxScriptText">{{getTxScriptTextShort}}</span>
-            </div>
-
             <span class="col-4 d-block d-sm-none text-dark text-truncate">Time</span>
             <div class="col-8 col-sm-2 col-md-1 text-truncate">
                 <template v-if="txInfo">
                     <span v-if="txInfo.mempool">
-                        pending
+                        <i class="fa fa-clock" />
                     </span>
                     <span v-else v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  txInfo.timestamp ) }`"  >
                         {{ timeAgo( $store.state.blockchain.genesisTimestamp +  txInfo.timestamp) }}
@@ -36,12 +31,25 @@
             <div class="col-8 col-sm-1 col-md-1 text-truncate">
                 <template v-if="txInfo">
                     <span v-if="txInfo.mempool">
-                        pending
+                        <i class="fa fa-clock" />
                     </span>
                     <span v-else v-tooltip.bottom="`${ txInfo.blkHeight }`" >
                         <router-link :to="`/explorer/block/${txInfo.blkHeight}`">
                             {{ $store.state.blockchain.end - txInfo.blkHeight }}
                         </router-link>
+                    </span>
+                </template>
+            </div>
+
+            <span class="col-4 d-block d-sm-none text-dark text-truncate">Type</span>
+            <div class="col-8 col-sm-2 col-md-1 text-truncate">
+                <template v-if="tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE">
+                    <span :class="`badge badge-soft-${$store.getters.getTxScriptBadgeColor(tx.version, tx.base.txScript)}`" v-tooltip.bottom="$store.getters.getTxScriptText(tx.version, tx.base.txScript)">{{$store.getters.getTxScriptTextShort(tx.version, tx.base.txScript)}}</span>
+                </template>
+                <template v-else-if="tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER">
+                    <span v-for="(payload, index) in tx.base.payloads"
+                          :key="`tx_type_${index}`">
+                        <span :class="`badge badge-soft-${$store.getters.getTxScriptBadgeColor(tx.version, payload.payloadScript)}`" v-tooltip.bottom="$store.getters.getTxScriptText(tx.version, payload.payloadScript)">{{$store.getters.getTxScriptTextShort(tx.version, payload.payloadScript)}}</span>
                     </span>
                 </template>
             </div>
@@ -70,42 +78,14 @@ export default {
     },
 
     computed:{
-        PandoraPay(){
-            return PandoraPay
-        },
+        PandoraPay: () => PandoraPay,
         tx(){
             return this.$store.state.transactionsPreview.txsByHash[this.txHash]
         },
         txInfo(){
             return this.$store.state.transactionsInfo.list[this.txHash]
         },
-        badgeColor(){
-            return StringHelper.badgeColors(this.tx.version*10 + this.tx.base.txScript)
-        },
-        getTxScriptTextShort(){
-            if (this.tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE){
-                if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE ) return "unstake"
-                if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE ) return "redelegate"
-                if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_CLAIM ) return "claim"
-                return "simple"
-            }else if (this.tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER ){
-                if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionZether.ScriptType.SCRIPT_TRANSFER) return "transfer"
-                if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionZether.ScriptType.SCRIPT_DELEGATE_STAKE) return "delegate"
-                return "zether"
-            }
-        },
-        getTxScriptText(){
-            if (this.tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE){
-                if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE ) return "unstake"
-                if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE ) return "update delegate"
-                if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_CLAIM ) return "claim"
-                return "simple"
-            }else if (this.tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER ){
-                if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionZether.ScriptType.SCRIPT_TRANSFER) return "private transfer"
-                if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionZether.ScriptType.SCRIPT_DELEGATE_STAKE) return "private delegate"
-                return "zether"
-            }
-        },
+
     },
 
     methods:{

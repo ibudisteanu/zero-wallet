@@ -12,6 +12,8 @@ export default {
         hash: '',
         prevHash: '',
         prevKernelHash: '',
+        assets: 0,
+        transactions: 0,
 
         status: '',
 

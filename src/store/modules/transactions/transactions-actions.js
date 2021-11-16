@@ -74,7 +74,7 @@ export default {
         if (promises.txsByHash[hash]) return promises.txsByHash[hash];
         return promises.txsByHash[hash] = new Promise( async (resolve, reject ) => {
             try{
-                const data = await PandoraPay.network.getNetworkTx( "0", hash );
+                const data = await PandoraPay.network.getNetworkTx( 0, hash );
                 if (!data) throw "tx fetch failed"; //disconnected
                 resolve( await dispatch('includeTx', JSON.parse(MyTextDecode(data)) ) );
             }catch(err){
@@ -92,7 +92,7 @@ export default {
         if (promises.txsByHeight[height]) return promises.txsByHeight[height];
         return promises.txsByHeight[height] = new Promise( async (resolve, reject ) => {
             try{
-                const data = await PandoraPay.network.getNetworkTx( height.toString(), "" );
+                const data = await PandoraPay.network.getNetworkTx( height, "" );
                 if (!data) throw "tx fetch failed"; //disconnected
                 resolve( await dispatch('includeTx', JSON.parse(MyTextDecode(data)) ) );
             }catch(err){

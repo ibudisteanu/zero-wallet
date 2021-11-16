@@ -3,7 +3,8 @@
 
         <div class="form-group pt-2">
             <input class="form-check-input" id="set-new-delegated-info" type="checkbox"  name="checkbox" v-model="hasNewDelegatedInfo"  >
-            <label class="form-check-label" for="set-new-delegated-info" >Set new Delegated Info</label>
+            <label class="form-check-label" for="set-new-delegated-info">Set new Delegated Info</label>
+            <i class="fa fa-question " v-tooltip.bottom="`Set new required keys to enable Delegated Staking`" />
         </div>
 
         <div v-if="hasNewDelegatedInfo" class="pt-2 ms-2">
@@ -99,7 +100,7 @@ export default {
         delegatedStakingNewFee:{
             immediate: true,
             handler: function (to, from) {
-                this.$emit('onChanges', { delegatedStakingNewFee: to })
+                this.$emit('onChanges', { delegatedStakingNewFee: Number.parseInt(to) })
             }
         },
         validationDelegatedStakingNewPublicKey:{

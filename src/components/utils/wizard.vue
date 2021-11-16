@@ -4,7 +4,7 @@
             <ul class="nav justify-content-between nav-wizard">
                 <li v-for="(titleIndex, index ) in titlesSorted"  class="nav-item"
                     :key="`tab_title_${index}`">
-                    <span :class="`nav-link ${tab===titleIndex?'active':''} fw-semi-bold`" v-tooltip.bottom="`${titles[titleIndex].tooltip}`">
+                    <span :class="`nav-link fw-semi-bold ${getIconClass(titleIndex)} ${titleIndex < tab ? 'pointer': ''}`" v-tooltip.bottom="`${titles[titleIndex].tooltip}`" @click="titleIndex < tab ? tab = titleIndex : null ">
                         <span class="nav-item-circle-parent">
                             <span class="nav-item-circle">
                                 <i :class="`${titles[titleIndex].icon}`"></i>
@@ -25,14 +25,18 @@
         </div>
         <div :class="controlsClassName">
 
-            <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="6000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
+            <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
-            <slot name="wizzard-footer" />
+            <slot name="wizard-footer" />
 
-            <div class="float-end">
-                <loading-button v-if="tab > start" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
-                <loading-button v-if="tab <= end" :text="`${ buttons[tab] ? buttons[tab].text : 'Next'}`" @submit="handleNext" :icon="`${ buttons[tab] ? buttons[tab].icon : 'fas fa-chevron-right ms-2' }`"  />
-            </div>
+            <ul class="pager wizard list-inline mb-0">
+                <li class="previous">
+                    <loading-button v-if="tab > start" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
+                </li>
+                <li class="next">
+                    <loading-button v-if="tab <= end" :text="`${ buttons[tab] ? buttons[tab].text : 'Next'}`" @submit="handleNext" :icon="`${ buttons[tab] ? buttons[tab].icon : 'fas fa-chevron-right ms-2' }`"  />
+                </li>
+            </ul>
 
         </div>
     </div>
@@ -73,6 +77,12 @@ export default {
     },
 
     methods: {
+
+        getIconClass( titleIndex){
+            if (titleIndex < this.tab ) return "done"
+            if (this.tab === titleIndex) return "active"
+            return ''
+        },
 
         async setTab(resolver, value) {
             try {

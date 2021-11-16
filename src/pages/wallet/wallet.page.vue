@@ -16,25 +16,25 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body border-bottom border-200">
+                <div class="card-body">
 
                     <div class="row py-2">
-                        <div v-if="!showPublicKey" class="pointer w-auto" @click="showPublicKey = true">
+                        <div v-if="!showPublicKey" class="pointer  w-auto" @click="showPublicKey = true">
                             View Public Key
                         </div>
                         <div v-else>
                             Public Key: {{address.publicKey}}
-                            <i class="fa fa-copy pointer d-inline-block" v-tooltip.bottom="'Copy Public Key'"  @click="handleCopyAddress(address.publicKey)" />
+                            <i class="fa fa-copy pointer  d-inline-block" v-tooltip.bottom="'Copy Public Key'"  @click="handleCopyAddress(address.publicKey)" />
                         </div>
                     </div>
 
                     <div class="row py-2">
-                        <div v-if="!showRegistration" class="pointer w-auto" @click="showRegistration = true">
+                        <div v-if="!showRegistration" class="pointer  w-auto" @click="showRegistration = true">
                             View Registration Key
                         </div>
                         <div v-else>
                             Registration Key: {{address.registration}}
-                            <i class="fa fa-copy pointer d-inline-block" v-tooltip.bottom="'Copy Registration'"  @click="handleCopyAddress(address.registration)" />
+                            <i class="fa fa-copy pointer  d-inline-block" v-tooltip.bottom="'Copy Registration'"  @click="handleCopyAddress(address.registration)" />
                         </div>
                     </div>
 
@@ -42,23 +42,17 @@
 
                 <div class="card-body bg-light">
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleDownloadAddress" v-tooltip.bottom="'Download Account'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="handleExportAddress" v-tooltip.bottom="'Export Account'" >
                         <i class="fa fa-download"></i>
                     </button>
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleDeleteAddress" v-tooltip.bottom="'Delete Account'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="handleDeleteAddress" v-tooltip.bottom="'Delete Account'" >
                         <i class="danger fa fa-times"></i>
                     </button>
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowPrivateKey" v-tooltip.bottom="'View Private Key'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="handleShowPrivateKey" v-tooltip.bottom="'View Private Key'" >
                         <i class="fa fa-eye"></i>
                     </button>
-
-                    <router-link to="/staking">
-                        <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" v-tooltip.bottom="'Delegate stake'">
-                            <i class="fa fa-piggy-bank"></i>
-                        </button>
-                    </router-link>
 
                 </div>
             </div>
@@ -104,7 +98,7 @@ export default {
 
     methods:{
 
-        async handleDownloadAddress(){
+        async handleExportAddress(){
 
             if ( typeof Blob === "undefined")
                 return this.$store.dispatch('addToast', {
@@ -116,7 +110,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const jsonData = await PandoraPay.wallet.manager.getWalletAddress(  this.address.addressEncoded, password );
+            const jsonData = await PandoraPay.wallet.manager.getWalletAddress(  this.address.publicKey, password );
             if (!jsonData) return false;
 
             const json = MyTextDecode(jsonData)
@@ -128,7 +122,7 @@ export default {
 
             return this.$store.dispatch('addToast', {
                 type: 'success',
-                title: `Address ${this.address.name} has been saved in your machine`,
+                title: `Address ${this.address.name} has been saved on your machine`,
                 text: `The address ${this.address.addressEncoded} has been saved in the downloads folder.`,
             });
         },

@@ -11,9 +11,4 @@ export default {
         Vue.set(context.list, asset.hash, asset )
     },
 
-    setAssetsCount(context, { count }) {
-        context.count = count;
-    },
-
-
 }

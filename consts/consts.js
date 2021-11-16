@@ -4,6 +4,7 @@ export default {
     title: 'PandoraPay',
     entity: 'PandoraPay',
 
+    assetsInfoPagination: 10,
     blocksInfoPagination: 10,
     addressTxsPagination: 10,
     mempoolTxsPagination: 50,

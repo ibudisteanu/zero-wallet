@@ -18,7 +18,7 @@ export default {
         return promises.blocksByHash[hash] = new Promise( async (resolve, reject) => {
             try{
 
-                const data = await PandoraPay.network.getNetworkBlockWithTxs( "0", hash );
+                const data = await PandoraPay.network.getNetworkBlockWithTxs( 0, hash );
                 if (!data) throw "Block was not received"
 
                 const {block, txs} = JSON.parse(MyTextDecode(data))
@@ -47,7 +47,7 @@ export default {
 
             try{
 
-                const data = await PandoraPay.network.getNetworkBlockWithTxs( height.toString(), "" );
+                const data = await PandoraPay.network.getNetworkBlockWithTxs( Number.parseInt(height), "" );
                 if (!data) throw "Block was not received"
 
                 const {block, txs} = JSON.parse(MyTextDecode(data))

@@ -1,8 +1,9 @@
 <template>
     <wait-account :account="account">
-        <wizzard :titles="{ ...titlesOffset,
+        <wizard :titles="{ ...titlesOffset,
                 0: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
-                1: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' }}"
+                1: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' },
+                2: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' } }"
                  @onSetTab="setTab" :buttons="buttons" controls-class-name="card-footer bg-light" class="card" >
 
             <template v-for="(_, index) in titlesOffset">
@@ -16,34 +17,51 @@
             </template>
 
             <template :slot="`tab_1`">
+
+                <div class="form pb-2">
+                    <input class="form-check-input" id="fee-version" type="checkbox"  name="checkbox" v-model="feeVersion">
+                    <label class="form-check-label" for="fee-version">Pay fee Unclaimed balance</label>
+                    <i class="fa fa-question " v-tooltip.bottom="`Subtract the fee from the unclaimed balance or from the delegated stake.`" />
+                </div>
+
                 <tx-fee :balances="balancesStakeAvailable" :allow-zero="true" @changed="changedFee" />
             </template>
 
-            <template slot="wizzard-footer">
+            <template :slot="`tab_2`">
+                <confirm-broadcasting-tx v-if="tx" class="my-3 fs--1" :tx="tx" />
+            </template>
+
+            <template slot="wizard-footer">
                 <template v-if="status">
                     <span class="d-block">Transaction is being created. It will take 1-2 minutes.</span>
                     <label class="d-block">Status: {{status}}</label>
                 </template>
             </template>
 
-        </wizzard>
+        </wizard>
     </wait-account>
 </template>
 
 <script>
 import AlertBox from "../../utils/alert-box";
 import ExtraData from "../extra-data";
-import Wizzard from "../../utils/wizzard";
+import Wizard from "../../utils/wizard";
 import TxFee from "../tx-fee";
 import WaitAccount from "src/components/wallet/account/wait-account";
+import ConfirmBroadcastingTx from "./confirm-broadcasting-tx"
 
 export default {
-    components: {AlertBox, ExtraData, Wizzard, TxFee, WaitAccount},
+    components: {AlertBox, ExtraData, Wizard, TxFee, WaitAccount, ConfirmBroadcastingTx},
 
     data(){
         return {
             fee: {},
+            feeVersion: false,
+
             extraData: { },
+
+            tx: null,
+            txSerialized: null,
 
             status: '',
         }
@@ -52,9 +70,8 @@ export default {
     props: {
         publicKey: {default: ""},
         titlesOffset: {default: () => ({}) }, //{icon, name}
-        txData: {default: () => ({}) },
         buttonsOffset: {default: () => ({}) },
-        txName: {default: ""},
+        beforeProcess: {default: null}, //function
     },
 
     computed:{
@@ -68,10 +85,13 @@ export default {
             const amount = (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ? this.account.plainAccount.delegatedStake.stakeAvailable : 0
             return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
         },
-
+        getAsset(){
+            return this.$store.getters.getAsset( this.asset ? this.asset.asset : null );
+        },
         buttons(){
             return {
-                1: { icon: 'fa fa-credit-card', text: 'Sign Transaction' },
+                1: { icon: 'fa fa-file-signature', text: 'Sign Transaction' },
+                2: { icon: 'fa fa-globe-americas', text: 'Propagate Transaction' },
                 ...this.buttonsOffset,
             }
         }
@@ -89,8 +109,9 @@ export default {
                     if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
 
                     await this.handeTxProcess()
-                }else
-                    return this.$emit('onSetTab', {resolve, reject, oldTab, value} )
+                }else if (oldTab === 2 && value > oldTab) {
+                    await this.handlePropagateTx()
+                }else return this.$emit('onSetTab', {resolve, reject, oldTab, value} )
 
             }catch(err) {
                 reject(err)
@@ -113,34 +134,54 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const out = await PandoraPay.transactions.builder[this.txName]( JSON.stringify({
+            const fee = this.fee.feeType ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) )
+
+            const nonceOut = await PandoraPay.network.getNetworkAccountMempoolNonce(MyTextEncode(JSON.stringify({ publicKey: this.address.publicKey })))
+
+            const nonce = JSON.parse( MyTextDecode(nonceOut))
+
+            const data = {
                 from: this.address.addressEncoded,
-                ...this.txData,
-                nonce: 0,
+                nonce,
                 data: {
                     data: Buffer.from(this.extraData.data).toString("hex"),
                     encrypt: this.extraData.type === "encrypted",
                     publicKeyToEncrypt: this.extraData.publicKeyToEncrypt,
                 },
                 fee: {
-                    fixed: (this.fee.feeType === 'feeAuto') ? 0 : this.fee.feeManual.amount,
+                    fixed:  fee,
                     perByte: 0,
-                    perByteAuto: this.fee.feeType === 'feeAuto',
+                    perByteAuto: this.fee.feeType,
                 },
-                propagateTx: true,
-                awaitAnswer: false,
-            }), (status) => {
-                this.status = status
-            }, password);
+                feeVersion: this.feeVersion,
+                height: this.$store.state.blockchain.end,
+            }
+
+            if (this.beforeProcess)
+                await this.beforeProcess(password, data)
+
+            const out = await PandoraPay.transactions.builder.createSimpleTx( MyTextEncode( JSON.stringify(data) ),
+                status => {
+                    this.status = status
+                }, password);
 
             if (!out) throw "Transaction couldn't be made";
             this.status = ''
 
-            const tx = JSON.parse( MyTextDecode(out) )
+            this.tx = JSON.parse( MyTextDecode( out[0] ) )
+            this.txSerialized = out[1]
 
-            await this.$store.dispatch('includeTx', {tx, mempool: false } )
+        },
 
-            this.$router.push(`/explorer/tx/${tx.hash}`);
+        async handlePropagateTx(){
+            this.status = 'Propagating transaction...'
+
+            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
+            if (!finalAnswer) throw "Transaction couldn't be broadcast"
+
+            await this.$store.dispatch('includeTx', {tx: this.tx, mempool: false } )
+
+            this.$router.push(`/explorer/tx/${this.tx.hash}`);
 
             this.$emit('onFinished', true )
         }

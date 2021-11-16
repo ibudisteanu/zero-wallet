@@ -4,13 +4,12 @@
         <layout-title icon="fa fa-marker" title="Update Delegate Info">Change Delegation Information</layout-title>
 
         <simple-tx :titles-offset="{ '-1': {icon: 'fa fa-edit', name: 'Update Delegation', tooltip: 'Change delegation info' } }"
-                   :tx-data="txData" @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey"
-                   tx-name="createUpdateDelegateTx_Float">
+                   @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey" :before-process="handleBeforeProcess">
 
             <template slot="tab_-1">
 
                 <div class="form pb-2">
-                    <tx-amount :validate-amount="true" :allow-zero="true" :balances="balancesOnlyUnclaimed" @changed="delegatedStakingClaimAmountChanged" text="Update Staking Amount" tooltip="Claim unclaimed funds to staking amount." />
+                    <tx-amount :validate-amount="true" :allow-zero="true" :balances="balancesOnlyUnclaimed" @changed="delegatedStakingClaimAmountChanged" text="Update Staking" tooltip="Claim unclaimed funds to staking amount." />
                 </div>
 
                 <delegated-staking-new-info :public-key="publicKey" @onChanges="delegatedStakingNewInfoChanges" />
@@ -59,12 +58,9 @@ export default {
         buttons(){
             return { 1: { icon: 'fa fa-marker', text: 'Update delegate' }}
         },
-        txData(){
-            return {
-                ...this.delegatedStakingNewInfo,
-                delegatedStakingClaimAmount: this.delegatedStakingClaimAmount.amount,
-            }
-        }
+        getAsset() {
+            return this.$store.getters.getAsset(PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX);
+        },
     },
 
     methods:{
@@ -76,7 +72,7 @@ export default {
                     if (this.delegatedStakingClaimAmount.validationError) throw this.delegatedStakingClaimAmount.validationError
                     if (this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey) throw this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey
 
-                    if (this.delegatedStakingClaimAmount.amount === 0 && !this.hasNewDelegatedInfo) throw "You should update something."
+                    if (this.delegatedStakingClaimAmount.amount === 0 && !this.delegatedStakingNewInfo.hasNewDelegatedInfo) throw "You should update something."
                 }
 
             }catch(err) {
@@ -97,6 +93,20 @@ export default {
             }
         },
 
+        async handleBeforeProcess(password, data){
+
+            const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.delegatedStakingClaimAmount.amount.toString(), this.getAsset.decimalSeparator ) )
+
+            data.extra = {
+                delegatedStakingClaimAmount: amount,
+                delegatedStakingUpdate: {
+                    delegatedStakingHasNewInfo: this.delegatedStakingNewInfo.hasNewDelegatedInfo,
+                    delegatedStakingNewPublicKey: this.delegatedStakingNewInfo.delegatedStakingNewPublicKey,
+                    delegatedStakingNewFee: this.delegatedStakingNewInfo.delegatedStakingNewFee,
+                }
+            }
+            data.txScript = PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE
+        }
 
     },
 

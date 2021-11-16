@@ -6,7 +6,7 @@
                 <label class="pb-2">Receive your coins to this address:</label>
                 <div class="address align-items-center">
                     <account-identicon :address="address.addressEncoded" size="35" outer-size="13" />
-                    <span class="text-break">{{ $store.getters.addressDisplay(this.address) }}</span>
+                    <span class="text-break fw-bold">{{ $store.getters.addressDisplay(this.address) }}</span>
                 </div>
             </div>
             <div class="text-center">
@@ -20,7 +20,7 @@
         </template>
 
         <template slot="footer">
-            <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="6000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
+            <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
 
             <loading-button :text="`Receive ${$store.state.faucet.faucetTestnetCoins}`" @submit="handleSubmit" icon="fa fa-coins" :disabled="!captchaToken" />
 
@@ -67,8 +67,6 @@ export default {
         async showModal() {
             Object.assign(this.$data, this.$options.data());
 
-            await this.$store.state.blockchain.syncPromise;
-
             return this.$refs.modal.showModal();
         },
 
@@ -84,6 +82,8 @@ export default {
             try{
                 this.error = ""
                 this.loaded = false
+
+                await this.$store.state.blockchain.syncPromise;
 
                 const hash = await PandoraPay.network.getNetworkFaucetCoins( this.$store.getters.addressDisplay(this.address), this.captchaToken )
                 if (!hash || hash.length !== 64) throw "hash was not received"

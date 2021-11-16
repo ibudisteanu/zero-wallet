@@ -28,14 +28,14 @@
                 <div class="row pt-4">
                     <div class="col-12 col-sm-6">
                         <label>Encryption difficulty: {{encryptionDifficulty}} <i class="fa fa-question" v-tooltip.bottom="'The harder the encryption is, the harder for brute force is to crack it'" /> </label>
-                        <input class="form-range" type="range" min="1" max="10" v-model="encryptionDifficulty" />
+                        <input class="form-range" type="range" min="1" max="5" v-model="encryptionDifficulty" />
                         <small v-if="encryptionDifficulty > 2" :class="`fw-semi-bold rounded-pill badge-soft-${encryptionDifficulty > 7 ? 'danger' : 'warning'} p-1`">
                             <i class="fa fa-exclamation-triangle" /> High Difficulty requires {{formatMilliseconds( encryptionTime[encryptionDifficulty] *1000) }} seconds to login.
                         </small>
                     </div>
                     <div class="col-12 col-sm-6">
                         <label>Password Strength <i class="fa fa-question" v-tooltip.bottom="'Avoid using guessable passwords as dictionary attacks can crack it.'" /> </label>
-                        <progress-bar :value="strengthPassword*20" :text="strengthPasswordMessage" />
+                        <progress-bar :value="strengthPassword/3*encryptionDifficulty" :text="strengthPasswordMessage" />
                     </div>
                 </div>
 
@@ -65,11 +65,11 @@ import PasswordInput from "src/components/utils/password-input";
 import Layout from "src/components/layout/layout"
 import LoadingButton from "src/components/utils/loading-button"
 import ProgressBar from "src/components/utils/progress-bar"
-import strength from 'strength'
 import AlertBox from "src/components/utils/alert-box"
 import LayoutTitle from "src/components/layout/layout-title";
 import UtilsHelper from "src/utils/utils-helper"
 import StringHelper from "src/utils/string-helper";
+const getPasswordStrength = require('password-strength-calc');
 
 export default {
 
@@ -86,27 +86,21 @@ export default {
 
     computed: {
         strengthPassword(){
-            return strength(this.password)
+            return getPasswordStrength(this.password)
         },
         strengthPasswordMessage(){
             const strength = this.strengthPassword;
-            if (strength <= 1) return 'guessable';
-            if (strength <= 2) return 'weak';
-            if (strength <= 3) return 'breakable';
-            if (strength <= 4) return 'okish';
-            if (strength <= 5) return 'strong';
-            if (strength === 5) return 'great!';
+            if (strength <= 20) return 'guessable';
+            if (strength <= 40) return 'weak';
+            if (strength <= 60) return 'medium';
+            if (strength <= 80) return 'strong';
+            if (strength <= 100) return 'awesome';
         },
         encryptionTime(){
             return {
-                3: 1,
-                4: 10,
-                5: 20,
-                6: 25,
-                7: 30,
-                8: 45,
-                9: 50,
-                10: 60,
+                3: 10,
+                4: 20,
+                5: 30,
             }
         },
     },
@@ -127,7 +121,7 @@ export default {
                 //if (this.password.length < 6) throw "password is too weak";
                 if (this.password !== this.retypePassword) throw "passwords are not matching";
 
-                const out = await PandoraPay.wallet.manager.encryption.encryptWallet( this.password, this.encryptionDifficulty );
+                const out = await PandoraPay.wallet.manager.encryption.encryptWallet( this.password, Number.parseInt(this.encryptionDifficulty) );
 
                 if (!out) throw "Result is not true";
 

@@ -1,8 +1,9 @@
 <template>
     <button :class="`${classCustom}`" type="button" @click="handleClick">
 
-        <loading-spinner v-if="!loaded" />
-
+        <template v-if="!loaded">
+            <loading-spinner v-if="!loaded" />
+        </template>
         <template v-else>
             <i v-if="icon && iconLeft" :class="icon" />
             <span class="hidden-xs">{{text}}</span>

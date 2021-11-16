@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <div class="row pd-top-10 pd-bottom-10  fs--1 text-dark">
+        <div class="row bg-200 text-900 py-2 fs--1 fw-semi-bold">
             <span class="d-none d-sm-block col-sm-3 col-md-3 text-truncate">Hash</span>
             <span class="d-none d-md-block col-md-3 text-truncate">Kernel Hash</span>
             <span class="d-none d-sm-block col-sm-2 col-md-2 text-truncate">Height</span>
@@ -10,7 +10,7 @@
             <span class="d-none d-sm-block col-sm-1 col-md-1 text-truncate">TX</span>
             <span class="d-none d-sm-block col-sm-2 col-md-1 text-truncate">Forged</span>
         </div>
-        <div v-for="(blockInfo, key) in blocksInfo" :class="`row pb-2 pt-2 fs--1 align-items-center ${key % 2 === 1 ?'bg-light':''}`"
+        <div v-for="(blockInfo, key) in blocksInfo" :class="`row pb-2 pt-2 fs--1 align-items-center ${key % 2 === 0 ?'bg-light':''}`"
              :key="`show-block-${key}`">
 
             <span class="col-5 d-block d-sm-none text-dark">Hash</span>

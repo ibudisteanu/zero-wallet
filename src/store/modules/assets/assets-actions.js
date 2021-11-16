@@ -8,16 +8,14 @@ export default {
         if (promises[hash]) return promises[hash];
         return promises[hash] = new Promise( async (resolve, reject) => {
             try{
-                const assetData = await PandoraPay.network.getNetworkAsset(hash);
+                const assetData = await PandoraPay.network.getNetworkAsset(0, hash);
                 if (!assetData ) throw "Error getting block info"
 
                 const asset = JSON.parse(MyTextDecode(assetData) )
 
                 asset.hash = hash
 
-                await PandoraPay.store.storeAsset( hash, assetData  )
-
-                asset.name = "$0x00"
+                if (asset.name === "PANDORA") asset.name = "0x00"
 
                 commit('setAsset',asset)
 

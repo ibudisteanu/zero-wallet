@@ -12,11 +12,15 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body p-3">
+            <div class="card-body p-3 pt-0">
                 <div class="card-body p-0">
 
-                    <template v-if="!loaded">
-                        <loading-spinner/>
+                    <alert-box v-if="error" type="error">{{error}}</alert-box>
+
+                    <template v-if="!loaded" >
+                        <div class="py-3 text-center">
+                            <loading-spinner />
+                        </div>
                     </template>
                     <template v-else>
                         <show-blocks-info :blocksInfo="lastBlocksInfo"/>
@@ -44,10 +48,11 @@ import ShowBlocksInfo from "src/components/explorer/show-blocks-info"
 import Pagination from "src/components/utils/pagination"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import consts from "consts/consts"
+import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {Layout, Pagination, ShowBlocksInfo, LoadingSpinner, LayoutTitle},
+    components: {Layout, Pagination, ShowBlocksInfo, LoadingSpinner, LayoutTitle, AlertBox},
 
     data() {
         return {
@@ -74,8 +79,13 @@ export default {
         page() {
             let page = this.$route.params.page || null
             if (typeof page == "string") {
-                page = Number.parseInt(page)
-                return page;
+                try{
+                    page = Number.parseInt(page)
+                    if (isNaN(page)) throw "error"
+                }catch(err){
+                    this.error = "Invalid page number"
+                    return null
+                }
             }
             return page
         },
@@ -113,7 +123,7 @@ export default {
 
                 await this.$store.dispatch('getBlocksInfo', {
                     starting: this.last - this.countPerPage,
-                    blockchainEnd: this.$store.state.blockchain.end,
+                    blockchainEnd: this.ending,
                     view: this.page !== null
                 })
 

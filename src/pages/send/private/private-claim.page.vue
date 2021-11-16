@@ -2,16 +2,15 @@
 
     <layout>
 
-        <layout-title icon="fa fa-search-dollar" title="Private Claim Stake">Claim funds from Unclaimed Stakes</layout-title>
+        <layout-title icon="fa fa-search-dollar" title="Private Claim">Claim funds from Unclaimed funds</layout-title>
 
         <zether-tx ref="refZetherTx"
                    :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX"
                    :init-available-balance="balancesOnlyUnclaimed"
-                   :init-available-balance-used="true"
                    :allow-destination-zero-amount="false"
                    :validate-destination-amount="true"
-                   text="Claim"
-                   tx-name="createZetherClaimStakeTx" :public-key="publicKey" @onSetTab="setTab" @onBeforeProcess="handleBeforeProcess">
+                   :create-new-sender="true"
+                   text="Claim" :public-key="publicKey" @onSetTab="setTab" :beforeProcess="handleBeforeProcess">
         </zether-tx>
 
     </layout>
@@ -38,9 +37,7 @@ export default {
     },
 
     computed: {
-        PandoraPay() {
-            return PandoraPay
-        },
+        PandoraPay: () => PandoraPay,
         publicKey(){
             return this.$store.state.wallet.mainPublicKey
         },
@@ -54,7 +51,6 @@ export default {
             const amount = (this.account && this.account.plainAccount ) ? this.account.plainAccount.unclaimed : 0
             return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: { amount: amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
         },
-
         getAsset() {
             return this.$store.getters.getAsset(PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX);
         },
@@ -72,16 +68,20 @@ export default {
             }
         },
 
-        async handleBeforeProcess({resolve, reject, password, data }){
+        async handleBeforeProcess(password, data){
 
-            try{
+            const out = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
+                publicKey: this.publicKey,
+                asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX,
+            })), password, )
 
+            const params = JSON.parse( MyTextDecode( out ) )
+            if (!params.privateKey) throw "DelegatePrivateKey is missing"
 
-                resolve( true )
-
-            }catch(err){
-                reject(err)
+            data.payloadExtra[0] = {
+                delegatePrivateKey: params.privateKey
             }
+            data.payloadScriptType[0] = PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CLAIM
 
         }
 

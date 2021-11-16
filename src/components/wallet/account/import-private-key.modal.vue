@@ -4,7 +4,7 @@
 
         <template slot="body">
 
-            <wizzard :titles="{
+            <wizard :titles="{
                 0: {icon: 'fas fa-pencil-alt', name: 'Information', tooltip: 'Information of the account' },
                 1: {icon: 'fas fa-file-code', name: 'Private Key', tooltip: 'Private Key' },
                 2: {icon: 'fas fa-check', name: 'Done', tooltip: 'Finish importing account' }}"
@@ -17,10 +17,10 @@
 
                 <template slot="tab_1">
                     <label>Private Key</label>
-                    <textarea class="form-control" rows="3" v-model="privateKey"></textarea>
+                    <textarea class="form-control" rows="4" v-model="privateKey"></textarea>
                 </template>
 
-            </wizzard>
+            </wizard>
 
         </template>
 
@@ -32,11 +32,11 @@
 
 import Modal from "src/components/utils/modal"
 import UtilsHelper from "src/utils/utils-helper";
-import Wizzard from "src/components/utils/wizzard"
+import Wizard from "src/components/utils/wizard"
 
 export default {
 
-    components: { Modal, Wizzard },
+    components: { Modal, Wizard },
 
     data(){
         return {

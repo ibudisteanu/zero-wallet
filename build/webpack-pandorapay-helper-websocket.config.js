@@ -18,9 +18,11 @@ module.exports = merge(base, {
     },
 
     plugins: [
+
         new webpack.DefinePlugin({
-            "process.env.BROWSER": 'true'
+            "BROWSER": 'true',
         }),
+
     ]
 
 });

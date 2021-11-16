@@ -6,7 +6,7 @@
                 <div :class="`toast-header ${getTitleBackground(toast)}`">
                     <strong class="me-auto">{{toast.title}}</strong>
                     <small v-if="toast.time" class="text-muted">{{toast.time}}</small>
-                    <button class="ms-2 btn-close pointer" type="button" @click="() => closeToast(toast)"></button>
+                    <button class="ms-2 btn-close pointer " type="button" @click="() => closeToast(toast)"></button>
                 </div>
                 <div class="toast-body">
                     <i v-if="getIcon(toast)" :class="`fa ${getIcon(toast)} fs-2 p-2 pt-0`"></i>

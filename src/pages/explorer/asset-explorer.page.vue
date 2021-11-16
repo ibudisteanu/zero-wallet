@@ -16,44 +16,54 @@
 
                 <alert-box v-if="error" type="error">{{error}}</alert-box>
 
-                <loading-spinner v-if="!loaded"/>
+                <template v-if="!loaded">
+                    <div class="py-3 text-center">
+                        <loading-spinner/>
+                    </div>
+                </template>
                 <template v-else-if="asset">
 
-                    <div class="row pt-2 pb-2">
+                    <div class="row pb-2">
+                        <span class="col-5 col-sm-3 text-truncate">Identicon</span>
+                        <span class="col-7 col-sm-9 text-truncate">
+                            <account-identicon v-if="asset.hash" :hash="asset.hash" size="21" outer-size="7"  />
+                        </span>
+                    </div>
+                    <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Name</span>
                         <span class="col-7 col-sm-9 text-truncate">{{asset.name}}</span>
                     </div>
-                    <div class="row pt-2 pb-2 bg-light">
+                    <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Ticker</span>
                         <span class="col-7 col-sm-9 text-truncate">{{asset.ticker}}</span>
                     </div>
-                    <div class="row pt-2 pb-2">
+                    <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Hash</span>
                         <span class="col-7 col-sm-9 text-truncate">{{asset.hash}}</span>
                     </div>
-                    <div class="row pt-2 pb-2 bg-light">
+                    <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Description</span>
                         <span class="col-7 col-sm-9 text-truncate">{{asset.description}}</span>
                     </div>
-                    <div class="row pt-2 pb-2">
+                    <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Decimal Separator</span>
                         <span class="col-7 col-sm-9 text-truncate">{{asset.decimalSeparator}}</span>
                     </div>
-                    <div class="row pt-2 pb-2 bg-light">
+                    <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Max Supply</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{asset.maxSupply / Math.pow(10, asset.decimalSeparator)}}</span>
-                    </div>
-                    <div class="row pt-2 pb-2">
-                        <span class="col-5 col-sm-3 text-truncate">Supply</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{asset.supply / Math.pow(10, asset.decimalSeparator) }}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{(asset.maxSupply || 0) / Math.pow(10, asset.decimalSeparator)}}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
-                        <span class="col-5 col-sm-3 text-truncate">Key</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{asset.key}}</span>
+                        <span class="col-5 col-sm-3 text-truncate">Supply</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{(asset.supply || 0) / Math.pow(10, asset.decimalSeparator) }}</span>
                     </div>
                     <div class="row pt-2 pb-2">
+                        <span class="col-5 col-sm-3 text-truncate">Update Key</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{asset.updatePublicKey}}</span>
+                    </div>
+                    <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Supply Key</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{asset.supplyKey}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{asset.supplyPublicKey}}</span>
                     </div>
 
                 </template>
@@ -69,17 +79,8 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body p-3 fs--1">
-                <div class="row">
-                    <span class="col-4 col-sm-2 col-md-1 text-truncate">JSON</span>
-                    <div class="col-8 col-sm-10 col-md-11">
-                        <div class="card mb-3" >
-                            <div class="card-body ">
-                                <p class="mb-0  div-scrollable" style="text-align: left">{{asset}}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="card-body p-0 fs--1">
+                <textarea class="form-control form-control-sm fs--2" rows="10">{{asset}}</textarea>
             </div>
         </div>
 

@@ -21,7 +21,7 @@
 
             <div class="card-body bg-light">
 
-                <alert-box v-if="error" type="error" :dismissible-timeout="6000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
+                <alert-box v-if="error" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
                 <div class="text-center">
                     <loading-button text="Remove password" @submit="handleRemovePassword" icon="fa fa-unlock-alt"  :disabled="password.length === 0" />
@@ -32,7 +32,7 @@
 
         <alert-box type="warning">
             <strong>Warning:</strong> <br/> <br/>
-            It will remove the password for your entire wallet. But, you can set it again later.
+            It will remove the password for your entire wallet. But, you can encrypt it later again.
         </alert-box>
 
     </layout>

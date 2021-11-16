@@ -6,6 +6,9 @@ export default{
 
     state: {
         list: {},
+
+        listByHeight: {},
+        next: null,
     },
 
     actions,

@@ -8,14 +8,16 @@
                     <h5 class="mb-0">
                         Pending Transactions {{txs ? txs.length : ''}}
                         <template v-if="!txs">
-                            <loading-spinner />
+                            <div class="py-3 text-center">
+                                <loading-spinner />
+                            </div>
                         </template>
                     </h5>
                 </div>
             </div>
         </div>
 
-        <div class="card-body p-3" v-if="txs && txs.length">
+        <div class="card-body px-3 py-0" v-if="txs && txs.length">
             <show-transactions-preview :transactions="txs"/>
         </div>
 

@@ -57,7 +57,7 @@ class StringHelper{
 
             const str = negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousands) + (decimalCount ? decimal + Math.abs(amount - i ).toFixed(decimalCount).slice(2) : "");
             let str2 = str.replace(/0+$/,"")
-            if (str2.length > 0 && str2[str2.length-1] === '.') str2 = str2.substr(0, str2.length-1)
+            if (str2.length && str2[str2.length-1] === '.') str2 = str2.substr(0, str2.length-1)
 
             return str2
         } catch (e) {

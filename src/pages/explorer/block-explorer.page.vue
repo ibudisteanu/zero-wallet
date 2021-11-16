@@ -18,10 +18,14 @@
 
                 <alert-box v-if="error" type="error">{{error}}</alert-box>
 
-                <loading-spinner v-if="!loaded"/>
+                <template v-if="!loaded">
+                    <div class="py-3 text-center">
+                        <loading-spinner/>
+                    </div>
+                </template>
                 <template v-else-if="blk">
 
-                    <div class="row pt-2 pb-2">
+                    <div class="row pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Hash</span>
                         <span class="col-7 col-sm-9 text-truncate">{{blk.bloom.hash}}</span>
                     </div>
@@ -65,7 +69,7 @@
                         <span class="col-7 col-sm-9 text-truncate">{{blk.prevKernelHash}}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
-                        <span class="col-5 col-sm-3 text-truncate">Fees</span>
+                        <span class="col-5 col-sm-3 text-truncate">Fee</span>
                         <span class="col-7 col-sm-9 text-truncate">TODO</span>
                     </div>
                     <div class="row pt-2 pb-2">
@@ -96,12 +100,12 @@
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0">JSON Block {{blk.height}}  </h5>
+                        <h5 class="mb-0">Block Transactions {{txs.length}}  </h5>
                     </div>
                 </div>
             </div>
             <div class="card-body p-3 fs--1">
-                <p class="div-scrollable" style="text-align: left">{{blk}}</p>
+                <show-transactions-preview :transactions="txs"/>
             </div>
         </div>
 
@@ -109,12 +113,12 @@
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0">Block Transactions {{txs.length}}  </h5>
+                        <h5 class="mb-0">JSON Block {{blk.height}}  </h5>
                     </div>
                 </div>
             </div>
-            <div class="card-body p-3 fs--1">
-                <show-transactions-preview :transactions="txs"/>
+            <div class="card-body p-0 fs--1">
+                <textarea class="form-control form-control-sm fs--2" rows="10">{{blk}}</textarea>
             </div>
         </div>
 
@@ -141,7 +145,7 @@ export default {
     data(){
         return {
 
-            fees: null, //async data
+            fee: null, //async data
             loaded: false,
 
             reward: '',
@@ -180,7 +184,6 @@ export default {
 
         timeAgo: (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
         formatTime : (timestamp) => StringHelper.formatTime( timestamp*1000 ),
-        formatMoney: (amount) => StringHelper.formatMoney(amount, PandoraPay.config.coins.DECIMAL_SEPARATOR  ),
 
         async loadBlock(){
 

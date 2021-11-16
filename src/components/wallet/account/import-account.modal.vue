@@ -4,7 +4,7 @@
 
         <template slot="body">
 
-            <wizzard :titles="{
+            <wizard :titles="{
                 0: {icon: 'fas fa-file', name: 'File', tooltip: 'Select file to import account' },
                 1: {icon: 'fas fa-wallet', name: 'Account', tooltip: 'Preview account' },
                 2: {icon: 'fas fa-lock', name: 'Decrypt', tooltip: 'Decrypt file' },
@@ -35,7 +35,7 @@
                     </div>
                 </template>
 
-            </wizzard>
+            </wizard>
 
         </template>
 
@@ -48,11 +48,11 @@ import Modal from "src/components/utils/modal"
 import UtilsHelper from "src/utils/utils-helper";
 import PasswordInput from "src/components/utils/password-input";
 import AccountIdenticon from "../../wallet/account/account-identicon";
-import Wizzard from "src/components/utils/wizzard"
+import Wizard from "src/components/utils/wizard"
 
 export default {
 
-    components: {PasswordInput, Modal, AccountIdenticon, Wizzard },
+    components: {PasswordInput, Modal, AccountIdenticon, Wizard },
 
     data(){
         return {
@@ -144,7 +144,7 @@ export default {
 
                 await UtilsHelper.sleep(50 )
 
-                const out = await PandoraPay.wallet.manager.importWalletAddressJSON( password, this.addressData, this.addressPassword );
+                const out = await PandoraPay.wallet.manager.importWalletAddressJSON( this.addressData, this.addressPassword, password, );
                 if (!out) throw `Your address already exists`
 
                 this.$store.dispatch('addToast',{

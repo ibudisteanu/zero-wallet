@@ -16,7 +16,6 @@
                 <slot/>
 
                 <loading-modal ref="refLoadingModal" />
-                <account-type-modal ref="refAccountTypeModal" />
                 <qr-code-modal ref="refQRCodeModal" />
                 <qr-code-scanner-modal ref="refQRCodeScannerModal" />
                 <testnet-faucet-modal ref="refTestnetFaucetModal" />
@@ -42,7 +41,6 @@ require('src/assets/common.css');
 import LayoutHeader from "./header/layout-header";
 import LayoutFooter from "./footer/layout-footer";
 import LoadingModal from "./modals/loading.modal"
-import AccountTypeModal from "./modals/account-type.modal"
 import TestnetFaucetModal from "./modals/testnet-faucet.modal"
 import WalletPasswordModal from "./modals/wallet-password.modal"
 import DecodeHomomorphicBalanceModal from "./modals/decode-homomorphic-balance.modal"
@@ -54,7 +52,7 @@ import QrCodeScannerModal from "../utils/qr-code-scanner/qr-code-scanner.modal";
 
 export default {
 
-    components: {AccountTypeModal, LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar, QrCodeModal,
+    components: { LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar, QrCodeModal,
         TestnetFaucetModal, WalletPasswordModal, Toasts, QrCodeScannerModal, DecodeHomomorphicBalanceModal},
 
     props: {
@@ -77,7 +75,6 @@ export default {
 
             this.$store.commit('setModals', {
                 refLoadingModal: this.$refs.refLoadingModal,
-                refAccountTypeModal: this.$refs.refAccountTypeModal,
                 refQRCodeModal: this.$refs.refQRCodeModal,
                 refQRCodeScannerModal: this.$refs.refQRCodeScannerModal,
                 refTestnetFaucetModal: this.$refs.refTestnetFaucetModal,
@@ -98,8 +95,10 @@ export default {
 
 <style scoped>
 
-    .layout {
+    @media (min-width: 576px){
+        .content {
+            padding-bottom: 5.5875rem;
+        }
     }
-
 
 </style>

@@ -47,7 +47,10 @@ export default {
 
         if (typeof window === "undefined") return;
 
-        if (typeof localStorage !== "undefined" && ( localStorage.getItem('dark') === 'true' || !localStorage.getItem('dark') ))
+        if (typeof localStorage !== "undefined" && !localStorage.getItem('dark') )
+            localStorage.setItem('dark', 'true')
+
+        if (typeof localStorage !== "undefined" && localStorage.getItem('dark') === 'true')
             document.getElementsByTagName("html")[0].classList.add('dark');
 
         try{

@@ -2,23 +2,34 @@
 
     <layout>
 
-        <layout-title icon="fa fa-file-invoice-dollar" title="Assets">View the existing assets.</layout-title>
+        <layout-title icon="fa fa-file-invoice-dollar" title="Assets">View the existing assets on the network.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0">Assets {{ count ? count : ''}}</h5>
+                        <h5 class="mb-0">Assets Explorer {{ ending ? ending : ''}}</h5>
                     </div>
                 </div>
             </div>
-            <div class="card-body p-3">
+            <div class="card-body p-3 pt-0 ">
                 <div class="card-body p-0">
 
                     <alert-box v-if="error" type="error">{{error}}</alert-box>
 
-                    <show-assets-info :assets="assets" />
+                    <template v-if="!loaded">
+                        <div class="py-3 text-center">
+                            <loading-spinner  />
+                        </div>
+                    </template>
+                    <template v-else>
+                        <show-assets-info id="assets" :assetsInfo="assetsInfo" />
+                    </template>
 
+                </div>
+                <div class="card-footer" v-if="loaded">
+                    <pagination class="py-0" :inverted="true" :count-per-page="countPerPage" :current="finalPage"
+                                :total="pages" prefix="/explorer/assets/" suffix="#assets" ></pagination>
                 </div>
             </div>
         </div>
@@ -34,37 +45,80 @@ import LayoutTitle from "src/components/layout/layout-title"
 import ShowAssetsInfo from "src/components/explorer/show-assets-info"
 import LoadingButton from "src/components/utils/loading-button"
 import AlertBox from "src/components/utils/alert-box"
+import consts from "consts/consts";
+import Pagination from "src/components/utils/pagination";
+import LoadingSpinner from "src/components/utils/loading-spinner";
 
 export default {
 
-    components: { Layout, ShowAssetsInfo, LoadingButton, AlertBox, LayoutTitle},
+    components: {Pagination, Layout, ShowAssetsInfo, LoadingButton, AlertBox, LayoutTitle, LoadingSpinner},
 
     data(){
         return {
             error: '',
+            loaded: false,
         }
     },
 
     computed:{
 
-        count(){
-            return this.$store.state.assets.count;
+        countPerPage() {
+            return consts.assetsInfoPagination
         },
 
-        next(){
-            return this.$store.state.assets.next;
+        finalPage() {
+            if (this.page !== null) return this.page
+            return 0
         },
 
-        assets(){
-            return this.$store.state.assets.list;
+        ending(){
+            return this.$store.state.blockchain.assets;
+        },
+
+        pages() {
+            return Math.floor((this.ending - 1) / this.countPerPage)
+        },
+
+        page() {
+            let page = this.$route.params.page || null
+            if (typeof page == "string") {
+                try{
+                    page = Number.parseInt(page)
+                    if (isNaN(page)) throw "error"
+                }catch(err){
+                    this.error = "Invalid page number"
+                    return null
+                }
+            }
+            return page
+        },
+
+        assetsInfo(){
+            return this.$store.state.assetsInfo.listByHeight;
         },
 
     },
 
     methods: {
 
-        async startDownloadingAssets() {
-            await this.$store.state.blockchain.syncPromise;
+        async loadAssetsInfo() {
+            try {
+                this.loaded = false
+                this.error = ''
+
+                await this.$store.state.blockchain.syncPromise;
+
+                await this.$store.dispatch('getAssetsInfo', {
+                    start: this.finalPage * this.countPerPage,
+                    end: this.finalPage * (this.countPerPage+1),
+                    count: this.ending
+                })
+
+            } catch (err) {
+                this.error = err.toString()
+            } finally {
+                this.loaded = true
+            }
         },
 
         async handleViewMore(resolve){
@@ -76,12 +130,12 @@ export default {
 
     watch: {
         '$route' (to, from) {
-            return this.startDownloadingAssets();
+            return this.loadAssetsInfo();
         }
     },
 
     mounted(){
-        return this.startDownloadingAssets();
+        return this.loadAssetsInfo();
     },
 
     beforeDestroy(){

@@ -14,7 +14,7 @@
         </template>
 
         <template slot="footer">
-            <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="6000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
+            <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
             <button class="btn btn-falcon-danger" type="button" @click="handleSubmit">
                 <i class="fa fa-key"></i> Submit

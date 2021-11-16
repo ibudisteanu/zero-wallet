@@ -7,7 +7,9 @@
                     <h5 class="mb-0">
                         Balances
                         <template v-if="isLoading">
-                            <loading-spinner />
+                            <div class="py-3 text-center">
+                                <loading-spinner />
+                            </div>
                         </template>
                     </h5>
                 </div>
@@ -16,12 +18,12 @@
         <div class="card-body p-0" v-if="!isLoading && isFound">
             <div class="row g-0 align-items-center py-2 position-relative border-bottom border-200 text-center">
 
-                <h5 class="fw-bold fs-0 pt-4">All private holdings</h5>
+                <h5 class="text-800 fs-0 pt-4">All private holdings</h5>
                 <h4 v-if="!account.accounts || !account.accounts.length" class="fs-0 pt-1">Empty!</h4>
                 <balance v-else v-for="(accountBalance, index) in account.accounts"
                          :key="`balance-asset-${index}`"
                          :balance="accountBalance.balance"
-                         :asset="account.assets[index]"
+                         :asset="account.accounts[index].asset"
                          :can-be-decoded="$store.getters.walletContains(publicKey)"
                          :public-key="publicKey"
                          version="zether">
@@ -29,21 +31,21 @@
 
                 <template v-if="account.plainAccount">
 
-                    <h5 class="fw-bold fs-0 pt-4">Unclaimed</h5>
+                    <h5 class="text-800 fs-0 pt-4">Unclaimed</h5>
                     <balance :key="`delegated-balance`"
                              :balance="account.plainAccount.unclaimed"
                              version="transparent">
                     </balance>
 
                     <div v-if="delegatedStake">
-                        <h5 class="fw-bold fs-0 pt-4">Delegated Stake</h5>
+                        <h5 class="text-800 fs-0 pt-4">Delegated Stake</h5>
                         <balance :key="`delegated-balance`"
                                  :balance="delegatedStake.stakeAvailable"
                                  version="transparent">
                         </balance>
 
                         <div v-if="delegatedStakesPending.length" >
-                            <h5 class="fw-bold fs-0 pt-4">Delegated Stakes in pending</h5>
+                            <h5 class="text-800 fs-0 pt-4">Delegated Stakes in pending</h5>
                             <delegated-stake-pending v-for="(delegatedStakePending, index) in delegatedStakesPending"
                                                      :key="`delegated-stake-pending-${index}`"
                                                      :delegatedStakePending="delegatedStakePending">
@@ -84,8 +86,7 @@ export default {
         },
 
         delegatedStakesPending(){
-            if (!this.delegatedStake) return []
-            return this.delegatedStake.stakesPending
+            return this.delegatedStake.stakesPending ? this.delegatedStake.stakesPending : []
         },
 
         isLoading(){
@@ -99,7 +100,6 @@ export default {
         isEmpty(){
             return !this.account.accounts.length
         }
-
 
     },
 

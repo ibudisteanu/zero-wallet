@@ -4,7 +4,7 @@
             <span :class="valueClass">
                 {{sign?'':'-'}} {{amount}}
             </span>
-            <router-link :to="`/assets/${getAsset.hash}`" :class="assetClass">
+            <router-link :to="`/explorer/asset/${getAsset.hash}`" :class="assetClass">
                 {{getAsset.name}}
             </router-link>
         </template>

@@ -11,7 +11,7 @@ export default {
         return promises[height] = new Promise( async (resolve, reject) => {
 
             try{
-                const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( height );
+                const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( Number.parseInt(height), "" );
                 if (!blockInfoData) throw "Error getting blockData"
 
                 const blockInfo = JSON.parse( MyTextDecode( blockInfoData ) )
@@ -35,7 +35,7 @@ export default {
     async getBlocksInfo( {state, dispatch, commit}, { starting, blockchainEnd, view = null} ){
 
         starting = Math.max(0, starting )
-        const ending = Math.min( starting + consts.blocksInfoPagination -1, blockchainEnd-2 )
+        const ending = Math.min( starting + consts.blocksInfoPagination -1, blockchainEnd-1 )
 
         if (view === true ) {
             const viewStart = (Math.ceil( ending / consts.blocksInfoPagination )-1) * consts.blocksInfoPagination

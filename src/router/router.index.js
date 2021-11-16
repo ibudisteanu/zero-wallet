@@ -4,7 +4,7 @@ import Vue from "vue";
 import LoginPage from "src/pages/login/login.page"
 import PrivateSendPage from "src/pages/send/private/private-send.page"
 import PrivateDelegateStakePage from "src/pages/send/private/private-delegate-stake.page"
-import PrivateClaimStake from "src/pages/send/private/private-claim-stake.page"
+import PrivateClaim from "src/pages/send/private/private-claim.page"
 import UnstakePage from "src/pages/send/staking/unstake.page"
 import UpdateDelegatePage from "src/pages/send/staking/update-delegate.page"
 import ReceivePage from "src/pages/receive/receive.page"
@@ -46,7 +46,7 @@ const routes = [
 
     {path: '/txs/private/send', component: PrivateSendPage, beforeEnter: guardDecrypted },
     {path: '/txs/private/delegate', component: PrivateDelegateStakePage, beforeEnter: guardDecrypted },
-    {path: '/txs/private/claim', component: PrivateClaimStake, beforeEnter: guardDecrypted },
+    {path: '/txs/private/claim', component: PrivateClaim, beforeEnter: guardDecrypted },
 
     {path: '/txs/unstake', component: UnstakePage, beforeEnter: guardDecrypted },
     {path: '/txs/update-delegate', component: UpdateDelegatePage, beforeEnter: guardDecrypted },
@@ -60,15 +60,15 @@ const routes = [
     {path: '/explorer/block/:query', component: BlockExplorerPage },
     {path: '/explorer/tx/:query', component: TransactionExplorerPage},
 
+    {path: '/explorer/assets', component: AssetsPage},
+    {path: '/explorer/assets/:page', component: AssetsPage},
+    {path: '/explorer/asset/:hash', component: AssetExplorerPage },
+
     {path: '/explorer/mem-pool', component: MemPoolExplorerPage },
     {path: '/explorer/mem-pool/:page', component: MemPoolExplorerPage },
 
     {path: '/explorer', component: BlockchainExplorerPage },
     {path: '/explorer/:page', component: BlockchainExplorerPage },
-
-    {path: '/assets', component: AssetsPage},
-    {path: '/assets/pandora', component: AssetExplorerPage },
-    {path: '/assets/:hash', component: AssetExplorerPage },
 
     {path: '/stakes', component: StakesPage, beforeEnter: guardDecrypted },
 
