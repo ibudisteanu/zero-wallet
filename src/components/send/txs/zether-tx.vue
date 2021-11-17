@@ -16,18 +16,18 @@
             </template>
 
             <template :slot="`tab_0`">
-                <div class="form pb-2" v-if="allowDestinationRandom">
+                <div class="form" v-if="allowDestinationRandom">
                     <input class="form-check-input" id="random-destination" type="checkbox"  name="checkbox" v-model="randomDestination">
                     <label class="form-check-label" for="random-destination">Random Destination with Zero amount</label>
                 </div>
                 <template v-if="!randomDestination">
-                    <tx-asset v-if="!initAvailableAsset" :assets="availableAssets" @changed="changedAsset" class="pb-2"/>
+                    <tx-asset v-if="!initAvailableAsset" :assets="availableAssets" @changed="changedAsset" class="pt-2 pb-2"/>
                     <destination-address :text="text" :validateAmount="validateDestinationAmount" :balances="availableBalances" :allow-zero="allowDestinationZeroAmount" :asset="asset.asset" @changed="changedDestination" />
                 </template>
             </template>
 
             <template :slot="`tab_1`">
-                <extra-data :destinations="[destination]" :paymentId="identifiedPaymentID" @changed="changedExtraData" />
+                <extra-data :destinations="destination ? [destination] : null" :paymentId="identifiedPaymentID" @changed="changedExtraData" />
             </template>
 
             <template :slot="`tab_2`">
@@ -321,9 +321,18 @@ export default {
 
         async handleGenerateRing(resolver){
 
-            try{
+            try {
 
                 const asset = this.asset.asset
+
+                let assetCollector
+
+                if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX){
+                    const outData = await PandoraPay.network.getNetworkFeeLiquidity(0, asset)
+                    if (!outData) throw "No Asset Fee Liqiduity for this asset"
+                    const out = JSON.parse(MyTextDecode(outData))
+                    assetCollector = out.collector
+                }
 
                 const holders = await PandoraPay.network.getNetworkAccountsCount( asset )
 
@@ -397,6 +406,11 @@ export default {
                     const publicKeySelected = keys[index]
                     delete publicKeysMap[publicKeySelected]
 
+                    if (assetCollector && publicKeySelected === assetCollector){
+                        const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
+                        return {addressEncoded: json[1], publicKey: json[2] }
+                    }
+
                     const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( {publicKey: publicKeySelected, registration: "", amount: 0, paymentId: ""} ) ) ) ) )
                     return {addressEncoded: json[1], publicKey: publicKeySelected}
                 }
@@ -444,6 +458,8 @@ export default {
 
             this.status = '';
 
+            const asset = this.asset.asset
+
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
@@ -452,22 +468,20 @@ export default {
 
                 let balance
                 for (const availableAccount of this.availableAccounts)
-                    if (availableAccount.asset === this.asset.asset){
+                    if (availableAccount.asset === asset){
                         balance = availableAccount.balance
                         break
                     }
 
-                const out = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.$store.state.wallet.mainPublicKey, balance, this.asset.asset, true, password )
+                const out = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.$store.state.wallet.mainPublicKey, balance, asset, true, password )
                 if (out.balanceDecoded === null) throw "Decoding was canceled"
 
                 senderPrivateKey = out.privateKey
                 senderBalanceDecoded = out.balanceDecoded
             }else {
                 senderPrivateKey = this.newSender.privateKey
-                senderBalanceDecoded = this.availableBalances[ this.asset.asset ].amount
+                senderBalanceDecoded = this.availableBalances[ asset ].amount
             }
-
-            let asset = this.asset.asset
 
             const accs = { [asset]: {} }
             const regs = {}
@@ -495,9 +509,9 @@ export default {
 
             let feeRate = 0, feeLeadingZeros = 0
 
-            if (this.asset.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX)
+            if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX)
                 if (this.assetFeeLiquidityAsset){
-                    outData = await PandoraPay.network.getNetworkFeeLiquidity(0, this.asset.asset)
+                    outData = await PandoraPay.network.getNetworkFeeLiquidity(0, asset)
                     if (!outData) throw "No Asset Fee Liqiduity for this asset"
                     out = JSON.parse( MyTextDecode(outData))
 
@@ -561,9 +575,14 @@ export default {
 
         async handlePropagateTx(){
 
+            this.status = 'Cloning transaction...'
+
+            const txSerialized = Buffer.alloc(this.txSerialized.length)
+            Buffer.from(this.txSerialized).copy(txSerialized, 0)
+
             this.status = 'Propagating transaction...'
 
-            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
+            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( txSerialized )
             if (!finalAnswer) throw "Transaction couldn't be broadcast"
 
             await this.$store.dispatch('includeTx', { tx: this.tx, mempool: false } )

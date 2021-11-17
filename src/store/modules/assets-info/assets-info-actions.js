@@ -42,8 +42,6 @@ export default {
 
                 const assetInfo = JSON.parse(MyTextDecode(assetInfoData))
 
-                if (assetInfo.name === "PANDORA") assetInfo.name = "0x00"
-
                 assetInfo.hash = hash
                 commit('setAssetInfo', assetInfo)
 

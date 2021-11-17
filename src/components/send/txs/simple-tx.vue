@@ -174,9 +174,14 @@ export default {
         },
 
         async handlePropagateTx(){
+            this.status = 'Cloning transaction...'
+
+            const txSerialized = Buffer.alloc(this.txSerialized.length)
+            Buffer.from(this.txSerialized).copy(txSerialized, 0)
+
             this.status = 'Propagating transaction...'
 
-            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
+            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( txSerialized )
             if (!finalAnswer) throw "Transaction couldn't be broadcast"
 
             await this.$store.dispatch('includeTx', {tx: this.tx, mempool: false } )

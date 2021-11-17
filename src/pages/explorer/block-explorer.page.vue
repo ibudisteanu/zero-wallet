@@ -104,7 +104,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body p-3 fs--1">
+            <div class="card-body p-3 py-0 fs--1">
                 <show-transactions-preview :transactions="txs"/>
             </div>
         </div>
