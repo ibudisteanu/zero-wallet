@@ -86,6 +86,17 @@ export default {
                     this.readWallet()
                 }
 
+            if (initialized) {
+                if (name === "wallet/added") this.readWallet()
+                else if (name === "wallet/removed") this.readWallet()
+                else if (name === "wallet/encrypted") this.readWallet()
+                else if (name === "wallet/removed-encryption") this.readWallet()
+                else if (name === "wallet/logged-out") this.readWallet()
+                else if (name === "consensus/update")
+                    this.processUpdate( JSON.parse( data ) )
+
+            }
+
             if (name === "sockets/totalSocketsChanged"){
                 if (data > 0) {
 
@@ -99,16 +110,6 @@ export default {
                 else this.$store.commit('setConsensusStatus', "offline")
             }
 
-            if (initialized) {
-                if (name === "wallet/added") this.readWallet()
-                else if (name === "wallet/removed") this.readWallet()
-                else if (name === "wallet/encrypted") this.readWallet()
-                else if (name === "wallet/removed-encryption") this.readWallet()
-                else if (name === "wallet/logged-out") this.readWallet()
-                else if (name === "consensus/update")
-                    this.processUpdate( JSON.parse( data ) )
-
-            }
         })
 
         PandoraPay.helpers.start().then(()=>{
@@ -120,6 +121,7 @@ export default {
     methods:{
 
         async processUpdate(data){
+
             if (this.$store.state.blockchain.status === 'online')
                 this.$store.commit('setConsensusStatus', "sync")
 

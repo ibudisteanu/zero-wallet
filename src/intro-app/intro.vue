@@ -65,6 +65,7 @@ export default {
                 this.progressStatus = "PandoraPay WASM is working!"
                 PandoraPayWallet.loadWallet()
 
+
                 global.PandoraPayHelperPromise = new Promise((resolver)=>{
 
                     //let download the
@@ -74,18 +75,27 @@ export default {
                             console.log("PandoraPayHelper status:", status)
                         }, async ()=>{
 
+                            let promiseDecoderResolve, promiseDecoderReject
+                            PandoraPayHelper.promiseDecoder = new Promise((resolve, reject)=>{
+                                promiseDecoderResolve = resolve
+                                promiseDecoderReject = reject
+                            })
+
                             await PandoraPayHelper.helloPandoraHelper()
                             console.log("PandoraPayHelper WASM is working")
 
                             resolver(true)
 
                             const balanceDecoderTableSize = Number.parseInt( localStorage.getItem('balanceDecoderTableSize') || '18');
-                            PandoraPayHelper.promiseDecoder = PandoraPayHelper.wallet.initializeBalanceDecoder( 2**balanceDecoderTableSize, status =>{
+
+                            const promise = PandoraPayHelper.wallet.initializeBalanceDecoder( 2**balanceDecoderTableSize, status =>{
                                 if (PandoraPayHelper.balanceDecoderCallback) PandoraPayHelper.balanceDecoderCallback(status)
                             })
 
-                            await PandoraPayHelper.promiseDecoder
+                            promise.then( answ => promiseDecoderResolve(answ) )
+                                .catch( err => promiseDecoderReject(err) )
 
+                            await promise
                         } )
 
                         const r = await integrationHelper.downloadWasm((loaded, total)=>{

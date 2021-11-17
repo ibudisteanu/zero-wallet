@@ -15,7 +15,7 @@
             <div class="card-body p-3 pt-0">
                 <div class="card-body p-0">
 
-                    <alert-box v-if="error" type="error">{{error}}</alert-box>
+                    <alert-box v-if="error" class="w-100 p-3" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
                     <template v-if="!loaded" >
                         <div class="py-3 text-center">
@@ -119,7 +119,9 @@ export default {
                 this.loaded = false
                 this.error = ''
 
+                console.log("loading!!!!!!!!!!!!!!")
                 await this.$store.state.blockchain.syncPromise;
+                console.log("loading!!!!!!!!!!!!!! DONE")
 
                 await this.$store.dispatch('getBlocksInfo', {
                     starting: this.last - this.countPerPage,

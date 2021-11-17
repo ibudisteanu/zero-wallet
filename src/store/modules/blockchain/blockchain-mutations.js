@@ -28,13 +28,17 @@ export default {
 
         if (status === "sync" && !store.syncPromiseResolved)
             store.syncPromiseResolve(true);
+
+
     },
 
     createSyncPromise(store){
-        if (!store.syncPromiseResolved)
-            store.syncPromise = new Promise( resolve => {
+        if (store.syncPromiseResolved)
+            store.syncPromise = new Promise(resolve => {
                 store.syncPromiseResolve = resolve;
+                store.syncPromiseResolved = false;
             });
+
     }
 
 }
