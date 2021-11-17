@@ -122,8 +122,7 @@ export default {
 
         async processUpdate(data){
 
-            if (this.$store.state.blockchain.status === 'online')
-                this.$store.commit('setConsensusStatus', "sync")
+            this.$store.commit('setConsensusStatus', "sync")
 
             this.$store.commit('setBlockchainNotification', data)
 
