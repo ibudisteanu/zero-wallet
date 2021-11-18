@@ -582,10 +582,13 @@ export default {
 
             this.status = 'Propagating transaction...'
 
-            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( txSerialized )
-            if (!finalAnswer) throw "Transaction couldn't be broadcast"
-
             await this.$store.dispatch('includeTx', { tx: this.tx, mempool: false } )
+
+            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( txSerialized )
+            if (!finalAnswer){
+                this.$store.commit('deleteTransactions', [this.tx] )
+                throw "Transaction couldn't be broadcast"
+            }
 
             this.$router.push(`/explorer/tx/${this.tx.hash}`);
 

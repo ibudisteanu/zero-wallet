@@ -53,6 +53,10 @@ export default {
         if (typeof localStorage !== "undefined" && localStorage.getItem('dark') === 'true')
             document.getElementsByTagName("html")[0].classList.add('dark');
 
+        const formatLoadedSize = function (loaded, total){
+            return `${(loaded / 1024 / 1024 /3).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
+        }
+
         try{
 
             this.isDownloading = true;
@@ -92,14 +96,15 @@ export default {
                                 if (PandoraPayHelper.balanceDecoderCallback) PandoraPayHelper.balanceDecoderCallback(status)
                             })
 
-                            promise.then( answ => promiseDecoderResolve(answ) )
+                            promise
+                                .then( answ => promiseDecoderResolve(answ) )
                                 .catch( err => promiseDecoderReject(err) )
 
                             await promise
                         } )
 
                         const r = await integrationHelper.downloadWasm((loaded, total)=>{
-                            console.log( `WASM:  ${(loaded / 1024 / 1024 /3).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb` )
+                            console.log( 'WASM: ' + formatLoadedSize(loaded, total) )
                         })
                         const data = await r.arrayBuffer()
                         integrationHelper.createWorker()
@@ -112,7 +117,7 @@ export default {
             })
 
             const r = await integration.downloadWasm((loaded, total)=>{
-                this.progressStatus = `WASM:  ${(loaded / 1024 / 1024 /3).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
+                this.progressStatus = 'WASM: ' +formatLoadedSize(loaded, total)
             })
 
             this.isDownloading = false;

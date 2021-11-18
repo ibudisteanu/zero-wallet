@@ -119,9 +119,7 @@ export default {
                 this.loaded = false
                 this.error = ''
 
-                console.log("loading!!!!!!!!!!!!!!")
                 await this.$store.state.blockchain.syncPromise;
-                console.log("loading!!!!!!!!!!!!!! DONE")
 
                 await this.$store.dispatch('getBlocksInfo', {
                     starting: this.last - this.countPerPage,
