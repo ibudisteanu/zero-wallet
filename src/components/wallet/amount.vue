@@ -4,7 +4,7 @@
             <span :class="valueClass">
                 {{sign?'':'-'}} {{amount}}
             </span>
-            <router-link :to="`/explorer/asset/${getAsset.hash}`" :class="assetClass">
+            <router-link :to="`/explorer/asset/${getAsset.hash}`" :class="assetClass" v-if="showAsset">
                 {{getAsset.name}}
             </router-link>
         </template>
@@ -26,6 +26,7 @@ export default {
         asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX},
         value: {default: 0},
         sign: {default: false},
+        showAsset: {default: true},
         valueClass: {default: ""},
         assetClass: {default: ""}
     },

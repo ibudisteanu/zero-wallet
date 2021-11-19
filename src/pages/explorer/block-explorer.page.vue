@@ -68,22 +68,18 @@
                         <span class="col-5 col-sm-3 text-truncate">Previous Kernel Hash</span>
                         <span class="col-7 col-sm-9 text-truncate">{{blk.prevKernelHash}}</span>
                     </div>
-                    <div class="row pt-2 pb-2 bg-light">
-                        <span class="col-5 col-sm-3 text-truncate">Fee</span>
-                        <span class="col-7 col-sm-9 text-truncate">TODO</span>
-                    </div>
-                    <div class="row pt-2 pb-2">
+                    <div class="row pt-2 pb-2  bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Reward</span>
                         <span class="col-7 col-sm-9 text-truncate">
                             <amount :value="this.reward" :sign="true" />
                         </span>
                     </div>
-                    <div class="row pt-2 pb-2 bg-light">
+                    <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Version</span>
                         <span class="col-7 col-sm-9 text-truncate">{{blk.version}}</span>
                     </div>
 
-                    <div class="row pt-2 pb-2">
+                    <div class="row pt-2 pb-2  bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Forger</span>
                         <div class="col-7 col-sm-9 text-truncate">
                             <account-identicon class="vertical-center" :public-key="blk.delegatedStakePublicKey" size="21" outer-size="7"  />
@@ -145,7 +141,6 @@ export default {
     data(){
         return {
 
-            fee: null, //async data
             loaded: false,
 
             reward: '',
