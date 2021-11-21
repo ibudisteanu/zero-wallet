@@ -54,7 +54,7 @@ export default {
             document.getElementsByTagName("html")[0].classList.add('dark');
 
         const formatLoadedSize = function (loaded, total){
-            return `${(loaded / 1024 / 1024 /3).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
+            return `${(loaded / 1024 / 1024 /3).toFixed(2)}mb / ${( total / 1024 / 1024 / 3).toFixed(2)}mb`
         }
 
         try{
@@ -103,8 +103,12 @@ export default {
                             await promise
                         } )
 
+                        let lastSize = 0
                         const r = await integrationHelper.downloadWasm((loaded, total)=>{
-                            console.log( 'WASM: ' + formatLoadedSize(loaded, total) )
+                            if (loaded - lastSize > 5*1024){
+                                lastSize = loaded
+                                console.log( 'WASM: ' + formatLoadedSize(loaded, total ) )
+                            }
                         })
                         const data = await r.arrayBuffer()
                         integrationHelper.createWorker()
@@ -116,8 +120,13 @@ export default {
 
             })
 
+            let lastSize = 0
             const r = await integration.downloadWasm((loaded, total)=>{
-                this.progressStatus = 'WASM: ' +formatLoadedSize(loaded, total)
+                if (loaded - lastSize > 5*1024) {
+                    lastSize = loaded
+                    this.progressStatus = 'WASM: ' + formatLoadedSize(loaded, total)
+                }
+
             })
 
             this.isDownloading = false;
