@@ -114,7 +114,7 @@ export default {
 
             if (!this.selectedDelegateNode ) throw "You need to select a node"
 
-            const out = await HttpHelper.get(this.delegateNodeAddress( this.selectedDelegateNode ) +'/delegates/info', {} );
+            const out = await HttpHelper.get(this.delegateNodeAddress( this.selectedDelegateNode ) +'/delegator-node/info', {} );
             if (!out) throw "Node is offline";
 
             if (typeof out.delegatesCount !== "number") throw "delegatesCount is missing"
@@ -138,7 +138,7 @@ export default {
 
             const signature = await PandoraPay.wallet.signMessageWalletAddress(this.nodeInfo.challenge, this.address.addressEncoded, password )
 
-            const out = await HttpHelper.get(this.delegateNodeAddress( this.selectedDelegateNode ) +'/delegates/ask', {
+            const out = await HttpHelper.get(this.delegateNodeAddress( this.selectedDelegateNode ) +'/delegator-node/ask', {
                 publicKey: this.address.publicKey,
                 challengeSignature: signature,
             } );

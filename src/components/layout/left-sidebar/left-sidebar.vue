@@ -130,7 +130,7 @@
                                 </router-link>
                             </li>
                             <li class="nav-item">
-                                <router-link :class="`nav-link ${route.indexOf('/explorer/mem-pool') === 0 ? 'active' : ''}  nav-link`" to="/explorer/mem-pool" @click.native="disableNavbarMenu">
+                                <router-link :class="`nav-link ${route.indexOf('/explorer/mempool') === 0 ? 'active' : ''}  nav-link`" to="/explorer/mempool" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
                                         <i class="fas fa-list-ol" />
                                         <span class="nav-link-text ps-1">Mem pool</span>

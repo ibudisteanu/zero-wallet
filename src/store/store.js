@@ -16,7 +16,7 @@ import TransactionsPreviewStore from "./modules/transactions-preview/transaction
 import AssetsStore from "./modules/assets/assets-store"
 import AssetsInfoStore from "./modules/assets-info/assets-info-store"
 import NetworkStore from "./modules/network/network-store"
-import MemPoolStore from "./modules/mem-pool/mem-pool-store"
+import MempoolStore from "./modules/mempool/mempool-store"
 import FaucetStore from "./modules/faucet/faucet-store"
 import ToastsStore from "./modules/toasts/toasts-store"
 
@@ -44,7 +44,7 @@ const store = new Vuex.Store({
         accounts: AccountsStore,
         accountsTxs: AccountsTxsStore,
         accountsPendingTxs: AccountsPendingTxsStore,
-        mempool: MemPoolStore,
+        mempool: MempoolStore,
         faucet: FaucetStore,
         toasts: ToastsStore,
 

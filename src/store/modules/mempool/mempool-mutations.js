@@ -2,7 +2,7 @@ import Vue from 'vue';
 
 export default {
 
-    setMemPool(state, { page, mempool }) {
+    setMempool(state, { page, mempool }) {
 
         let list
         if (page !== 0)
