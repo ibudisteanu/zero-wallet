@@ -54,7 +54,7 @@ export default {
             document.getElementsByTagName("html")[0].classList.add('dark');
 
         const formatLoadedSize = function (loaded, total){
-            return `${(loaded / 1024 / 1024 /3).toFixed(2)}mb / ${( total / 1024 / 1024 / 3).toFixed(2)}mb`
+            return `${(loaded / 1024 / 1024 ).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
         }
 
         try{
