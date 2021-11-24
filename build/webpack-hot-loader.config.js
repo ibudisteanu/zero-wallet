@@ -30,12 +30,9 @@ module.exports = merge(base, {
     },
 
     plugins: [
-
         new webpack.DefinePlugin({
-            "BROWSER": 'true',
-            "DEV_SERVER": 'true'
+            DEV_SERVER: 'true'
         }),
-
     ]
 
 });
