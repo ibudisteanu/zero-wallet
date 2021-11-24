@@ -13,7 +13,6 @@ module.exports = merge(base, {
 
     output: {
         path: path.resolve(__dirname, "./../dist/dev/workers"),
-        publicPath: "/",
         filename: "PandoraPay-helper-webworker.js"
     },
 

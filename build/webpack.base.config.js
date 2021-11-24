@@ -5,8 +5,9 @@ const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const TerserPlugin = require('terser-webpack-plugin');
-const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
 const CompressionWebpackPlugin = require("compression-webpack-plugin");
+
+const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
 const gitRevisionPlugin = new GitRevisionPlugin()
 
 const isProd = process.argv.includes('--production')
