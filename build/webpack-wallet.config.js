@@ -16,12 +16,4 @@ module.exports = merge(base, {
         filename: "Wallet-User-Interface.js"
     },
 
-    plugins: [
-
-        new webpack.DefinePlugin({
-            "BROWSER": 'true',
-        }),
-
-    ]
-
 });

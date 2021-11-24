@@ -5,6 +5,7 @@ const path = require('path')
 
 module.exports = merge(base, {
     target: 'web',
+    mode: 'production',
 
     //define entry point
     entry: {
@@ -15,13 +16,5 @@ module.exports = merge(base, {
         path: path.resolve(__dirname, "./../dist/dev/workers"),
         filename: "PandoraPay-helper-webworker.js"
     },
-
-    plugins: [
-
-        new webpack.DefinePlugin({
-            "BROWSER": 'true',
-        }),
-
-    ]
 
 });

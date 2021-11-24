@@ -12,19 +12,6 @@ const gitRevisionPlugin = new GitRevisionPlugin()
 const isProd = process.argv.includes('--production')
 const isAnalyze = process.argv.includes('--analyzer');
 
-const commonPlugins = [
-    new VueLoaderPlugin(),
-    new webpack.DefinePlugin({
-        VERSION: JSON.stringify(gitRevisionPlugin.version()),
-        COMMITHASH: JSON.stringify(gitRevisionPlugin.commithash()),
-        BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
-        LASTCOMMITDATETIME: JSON.stringify(gitRevisionPlugin.lastcommitdatetime()),
-    }),
-    new webpack.ProvidePlugin({
-        Buffer: ['buffer', 'Buffer'],
-    })
-]
-
 module.exports = webpackConfig = {
 
     //define entry point
@@ -64,15 +51,13 @@ module.exports = webpackConfig = {
     module: {
         rules: [{
                 test: /\.(png|jpe?g|gif|svg)$/,
-                use: [
-                    {
-                        loader: 'file-loader',
-                        options: {
-                            name: 'assets/[contenthash].[ext]',
-                            publicPath: '/',
-                        },
+                use: [ {
+                    loader: 'file-loader',
+                    options: {
+                        name: 'assets/[contenthash].[ext]',
+                        publicPath: '/',
                     },
-                ],
+                }],
             }, {
                 test: /\.vue$/,
                 loader: 'vue-loader',
@@ -90,11 +75,22 @@ module.exports = webpackConfig = {
         minimize: true,
         minimizer: [new TerserPlugin()],
     },
-    plugins: isProd
-        ? [
+    plugins: [
+        new VueLoaderPlugin(),
+        new webpack.DefinePlugin({
+            VERSION: JSON.stringify(gitRevisionPlugin.version()),
+            COMMITHASH: JSON.stringify(gitRevisionPlugin.commithash()),
+            BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
+            LASTCOMMITDATETIME: JSON.stringify(gitRevisionPlugin.lastcommitdatetime()),
+            BROWSER: 'true',
+        }),
+        new webpack.ProvidePlugin({
+            Buffer: ['buffer', 'Buffer'],
+        }),
+        ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
+        ... ( isProd ? [
             new TerserPlugin(),
             ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
-            ...commonPlugins,
             new CompressionWebpackPlugin({
                 filename: '[path][base].gz',
                 algorithm: 'gzip',
@@ -104,8 +100,7 @@ module.exports = webpackConfig = {
             })
         ]
         : [
-            ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
             new FriendlyErrorsPlugin(),
-            ...commonPlugins,
-        ]
+        ])
+    ]
 };
