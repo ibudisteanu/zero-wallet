@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const vueConfig = require('./vue-loader.config');
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
@@ -77,7 +76,10 @@ module.exports = webpackConfig = {
             }, {
                 test: /\.vue$/,
                 loader: 'vue-loader',
-                options: vueConfig
+                options: {
+                    extractCSS: process.argv.includes('--production'),
+                    preserveWhitespace: false,
+                }
             }, {
                 test: /\.css$/,
                 use: ['vue-style-loader', 'css-loader']
