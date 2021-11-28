@@ -2,12 +2,12 @@
     <wait-account :account="account">
 
         <wizard :titles="{...titlesOffset,
-                0: {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
-                1: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
-                2: {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' },
-                3: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' },
-                4: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' } }"
-                 @onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card" >
+            0: {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
+            1: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
+            2: {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' },
+            3: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' },
+            4: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' } }"
+                @onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card" >
 
             <template v-for="(_, index) in titlesOffset">
                 <template :slot="`tab_${index}`">
@@ -251,10 +251,10 @@ export default {
 
             await this.$store.state.blockchain.syncPromise;
 
-            if (to && to.address && to.address.publicKey)
+            if (to && to.address && to.address.publicKey && !this.$store.getters.walletContains(to.address.publicKey) )
                 await this.$store.dispatch('subscribeAccount', to.address.publicKey )
 
-            if (from && from.address && from.address.publicKey && !this.$store.getters.walletContains(from) )
+            if (from && from.address && from.address.publicKey && !this.$store.getters.walletContains(from.address.publicKey) )
                 await this.$store.dispatch('unsubscribeAccount', from.address.publicKey )
 
         },
