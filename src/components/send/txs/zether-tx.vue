@@ -27,7 +27,7 @@
             </template>
 
             <template :slot="`tab_1`">
-                <extra-data :destinations="destination ? [destination] : null" :paymentId="identifiedPaymentID" @changed="changedExtraData" />
+                <extra-data :destinations="destination ? [destination] : null" :paymentID="identifiedPaymentID" @changed="changedExtraData" />
             </template>
 
             <template :slot="`tab_2`">
@@ -227,8 +227,8 @@ export default {
 
         identifiedPaymentID(){
             if (this.destination.address) {
-                if (this.destination.address.paymentId)
-                    return this.destination.address.paymentId
+                if (this.destination.address.paymentID)
+                    return this.destination.address.paymentID
             }
         },
 
@@ -411,7 +411,7 @@ export default {
                         return {addressEncoded: json[1], publicKey: json[2] }
                     }
 
-                    const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( {publicKey: publicKeySelected, registration: "", amount: 0, paymentId: ""} ) ) ) ) )
+                    const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( {publicKey: publicKeySelected, registration: "", paymentID: "", paymentAmount: 0, paymentAsset: "" } ) ) ) ) )
                     return {addressEncoded: json[1], publicKey: publicKeySelected}
                 }
 

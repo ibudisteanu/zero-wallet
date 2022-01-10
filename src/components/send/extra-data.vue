@@ -11,7 +11,7 @@
             <div v-if="type === 'public'">
                 <div class="form-check">
                     <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Message:</label>
-                    <input class="form-control" type="text" v-model="data" :disabled="!!paymentId">
+                    <input class="form-control" type="text" v-model="data" :disabled="!!paymentID">
                 </div>
             </div>
 
@@ -25,7 +25,7 @@
                 <div v-if="type === 'encrypted'">
                     <div class="form-check">
                         <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Message:</label>
-                        <input class="form-control" type="text" v-model="data" :disabled="!!paymentId">
+                        <input class="form-control" type="text" v-model="data" :disabled="!!paymentID">
                     </div>
                     <div class="form-check">
 
@@ -72,7 +72,7 @@ export default {
 
     props: {
         destinations: {default: null},
-        paymentId: {default: null},
+        paymentID: {default: null},
     },
 
     data(){
@@ -104,7 +104,7 @@ export default {
 
     watch: {
 
-        paymentId: {
+        paymentID: {
             immediate: true,
             handler: function (to, from) {
 

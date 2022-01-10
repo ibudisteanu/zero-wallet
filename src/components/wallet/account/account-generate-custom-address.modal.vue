@@ -5,32 +5,43 @@
         <template slot="body" v-if="account">
 
             <wizard :titles="{
-                0: {icon: 'fas fa-dollar-sign', name: 'Amount', tooltip: 'Include an amount' },
-                1: {icon: 'fas fa-hand-holding-usd', name: 'Payment ID', tooltip: 'Include a Payment ID' },
-                2: {icon: 'fas fa-signature', name: 'Registration', tooltip: 'Include Registration Signature' },
-                3: {icon: 'fas fa-check', name: 'Done', tooltip: 'Generated Address' }}"
+                0: {icon: 'fas fa-dollar-sign', name: 'Amount', tooltip: 'Include a default Amount' },
+                1: {icon: 'fas fa-money-bill-wave', name: 'Asset', tooltip: 'Include a default Asset' },
+                2: {icon: 'fas fa-hand-holding-usd', name: 'Payment ID', tooltip: 'Include a Payment ID' },
+                3: {icon: 'fas fa-signature', name: 'Registration', tooltip: 'Include Registration Signature' },
+                4: {icon: 'fas fa-check', name: 'Done', tooltip: 'Generated Address' }}"
                 @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
                 <template slot="tab_0">
                     <div class="form-check">
-                        <input class="form-check-input" id="amount" type="checkbox"  name="checkbox" v-model="hasAmount"  >
-                        <label class="form-check-label" for="amount"> Amount </label>
+                        <input class="form-check-input" id="paymentAmount" type="checkbox"  name="checkbox" v-model="hasPaymentAmount"  >
+                        <label class="form-check-label" for="paymentAmount"> Amount </label>
                         <i class="fas fa-question" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
-                        <tx-amount :allow-zero="true" :allow-empty-asset="true" :balances="null" @changed="amountChanged" text="Amount to Receive" :asset="''" :disabled="!hasAmount" />
+                        <tx-amount :allow-zero="true" :allow-empty-asset="true" :balances="null" @changed="amountChanged" text="Amount to Receive" :asset="''" :disabled="!hasPaymentAmount" />
                     </div>
                 </template>
 
                 <template slot="tab_1">
                     <div class="form-check">
-                        <input class="form-check-input" id="paymentId" type="checkbox"  name="checkbox" v-model="hasPaymentId"  >
-                        <label class="form-check-label" for="paymentId"> PaymentId</label>
-                        <i class="fas fa-question" v-tooltip.bottom="'Specify a default message(paymentId)'" ></i>  <br>
-                        <input :class="`form-control ${validationPaymentId ? 'is-invalid' : ''}`" v-if="hasPaymentId" type="text" v-model="paymentId" >
-                        <div v-if="validationPaymentId" class="invalid-feedback d-block">{{validationPaymentId}}</div>
+                        <input class="form-check-input" id="paymentAsset" type="checkbox"  name="checkbox" v-model="hasPaymentAsset"  >
+                        <label class="form-check-label" for="paymentAsset"> Payment Asset </label>
+                        <i class="fas fa-question" v-tooltip.bottom="'Specify a default asset'" ></i>  <br>
+                        <input :class="`form-control ${validationPaymentAsset ? 'is-invalid' : ''}`" v-if="hasPaymentAsset" type="text" v-model="paymentAsset" >
+                        <div v-if="validationPaymentAsset" class="invalid-feedback d-block">{{validationPaymentAsset}}</div>
                     </div>
                 </template>
 
                 <template slot="tab_2">
+                    <div class="form-check">
+                        <input class="form-check-input" id="paymentID" type="checkbox"  name="checkbox" v-model="hasPaymentID"  >
+                        <label class="form-check-label" for="paymentID"> PaymentId</label>
+                        <i class="fas fa-question" v-tooltip.bottom="'Specify a default message (paymentID)'" ></i>  <br>
+                        <input :class="`form-control ${validationPaymentID ? 'is-invalid' : ''}`" v-if="hasPaymentID" type="text" v-model="paymentID" >
+                        <div v-if="validationPaymentID" class="invalid-feedback d-block">{{validationPaymentID}}</div>
+                    </div>
+                </template>
+
+                <template slot="tab_3">
                     <div class="form-check" v-if="account.registration">
                         <input class="form-check-input" id="registration" type="checkbox"  name="checkbox" v-model="hasRegistration"  >
                         <label class="form-check-label" for="registration"> Registration </label>
@@ -38,7 +49,7 @@
                     </div>
                 </template>
 
-                <template slot="tab_3">
+                <template slot="tab_4">
                     <template v-if="addressGenerated">
 
                         <div class="form-outline">
@@ -91,11 +102,13 @@ export default {
             title: "",
 
             hasRegistration: false,
-            hasAmount: false,
-            hasPaymentId: false,
+            hasPaymentAmount: false,
+            hasPaymentID: false,
+            hasPaymentAsset: false,
 
-            amount: {},
-            paymentId: "",
+            paymentAmount: {},
+            paymentID: "",
+            paymentAsset: "",
 
             addressGenerated: "",
         }
@@ -103,14 +116,14 @@ export default {
 
     computed:{
 
-        validationPaymentId(){
+        validationPaymentID(){
             try{
 
-                if (!this.hasPaymentId) return ""
-                if (this.paymentId.length !== 16) throw "PaymentId should be an 8 byte hexadecimal number"
+                if (!this.hasPaymentID) return ""
+                if (this.paymentID.length !== 16) throw "PaymentId should be an 8 byte hexadecimal number"
                 let buf
                 try{
-                    buf = Buffer.from(this.paymentId, "hex")
+                    buf = Buffer.from(this.paymentID, "hex")
                 }catch(err){
                     throw "PaymentId must be a hexadecimal number"
                 }
@@ -121,8 +134,24 @@ export default {
             }
         },
 
+        validationPaymentAsset(){
+            try{
+                if (!this.hasPaymentAsset) return ""
+                if (this.paymentAsset.length !== 40) throw "PaymentAsset should be a 20 byte hexadecimal number"
+                let buf
+                try{
+                    buf = Buffer.from(this.paymentAsset, "hex")
+                }catch(err){
+                    throw "PaymentAsset must be a hexadecimal number"
+                }
+                if (buf.length !== 20) throw "PaymentAsset should be an 8 byte hexadecimal number"
+            }catch(err){
+                return err.toString()
+            }
+        },
+
         buttons(){
-            return { 2: { icon: 'fas fa-cogs', text: 'Generate Address' }}
+            return { 3: { icon: 'fas fa-cogs', text: 'Generate Address' }}
         },
 
     },
@@ -133,12 +162,15 @@ export default {
             try{
 
                 if (oldTab === 0 && value === 1)
-                    if (this.amount.validationError) throw this.amount.validationError
+                    if (this.paymentAmount.validationError) throw this.paymentAmount.validationError
 
                 if (oldTab === 1 && value === 2)
-                    if (this.validationPaymentId) throw this.validationPaymentId
+                    if (this.validationPaymentAsset) throw this.validationPaymentAsset
 
                 if (oldTab === 2 && value === 3)
+                    if (this.validationPaymentID) throw this.validationPaymentID
+
+                if (oldTab === 3 && value === 4)
                     await this.handleGenerateAddress()
 
             }catch(err) {
@@ -146,13 +178,6 @@ export default {
             }finally{
                 resolve(true)
             }
-        },
-
-        handleBack(resolver){
-            return this.setTab(resolver, this.tab - 1)
-        },
-        handleNext(resolver){
-            return this.setTab(resolver, this.tab + 1)
         },
 
         showModal(account) {
@@ -185,7 +210,7 @@ export default {
         },
 
         amountChanged(data){
-            this.amount = {...this.amount, ...data}
+            this.paymentAmount = {...this.paymentAmount, ...data}
         },
 
         showAccountQRCode(){
@@ -199,11 +224,10 @@ export default {
             let args = {
                 publicKey: this.account.publicKey,
                 registration: this.hasRegistration ? this.account.registration : "",
-                amount: this.hasAmount ? Number.parseInt(this.amount.amount) : 0,
-                paymentId: this.hasPaymentId ? this.paymentId : "",
+                paymentID: this.hasPaymentID ? this.paymentID : "",
+                paymentAmount: this.hasPaymentAmount ? Number.parseInt(this.paymentAmount.amount) : 0,
+                paymentAsset: this.hasPaymentAsset ? this.paymentAsset : "",
             }
-
-            console.log(args)
 
             const out = await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( args )  ))
             const json = JSON.parse( MyTextDecode(out) )
