@@ -138,7 +138,7 @@ export default {
 
             const nonceOut = await PandoraPay.network.getNetworkAccountMempoolNonce(MyTextEncode(JSON.stringify({ publicKey: this.address.publicKey })))
 
-            const nonce = JSON.parse( MyTextDecode(nonceOut))
+            const nonce = JSON.parse( MyTextDecode(nonceOut)).nonce
 
             const data = {
                 from: this.address.addressEncoded,
