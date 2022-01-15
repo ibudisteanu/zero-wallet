@@ -20813,13 +20813,12 @@ samp {
     z-index: -1;
     width: 1rem;
     height: 1rem;
-    background: #000;
+    background: var(--falcon-card-bg);
     top: -0.375rem;
     left: 1.8rem;
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
-    background: inherit;
     border-radius: 0.125rem;
     border-width: 1px 0 0 1px;
     border-style: solid;
@@ -20912,6 +20911,33 @@ samp {
 .navbar-glass-shadow {
     -webkit-box-shadow: 0 0.5rem 0.5rem -0.5rem rgba(0, 0, 0, 0.2) !important;
     box-shadow: 0 0.5rem 0.5rem -0.5rem rgba(0, 0, 0, 0.2) !important;
+}
+
+/*                               Navbar Dropdown                               */
+/* --------------------------------------------------------------------------- */
+.nine-dots {
+    width: 1.25rem;
+    height: 1.875rem;
+    display: block;
+    position: relative;
+}
+
+.nine-dots::before {
+    content: ".........";
+    width: 1.375rem;
+    font-size: 1.75rem;
+    position: absolute;
+    word-break: break-word;
+    line-height: 0.4375rem;
+    top: -0.22rem;
+    -webkit-transform: scale(0.9);
+    -ms-transform: scale(0.9);
+    transform: scale(0.9);
+}
+
+.navbar-dropdown-dots {
+    width: 16.7rem;
+    height: 21rem;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -21865,7 +21891,7 @@ pre[class*=language-] {
 }
 
 .echart-line-total-sales-ecommerce {
-    height: 18.625rem;
+    height: 18.7rem;
 }
 
 .echart-radar-sales-by-pos-location {
@@ -23391,47 +23417,45 @@ html[dir=rtl] .googlemap .gm-style-iw.gm-style-iw-c button[title=Close] {
 .management-calendar .management-calendar-events {
     height: 20rem;
 }
+.management-calendar .calendar-outline .fc-event-title {
+    display: none;
+}
 .management-calendar .calendar-outline .fc-daygrid-day-events {
-    position: relative;
-    min-height: 0em !important;
+    display: none;
 }
-.management-calendar .calendar-outline tbody {
-    padding-top: 1rem;
-}
-.management-calendar .calendar-outline td, .management-calendar .calendar-outline th {
+.management-calendar .calendar-outline td,
+.management-calendar .calendar-outline th {
     border-color: transparent !important;
 }
 .management-calendar .calendar-outline .fc-day-today .fc-daygrid-day-frame {
     border-color: transparent !important;
 }
+.management-calendar .calendar-outline .fc-bg-event {
+    border-radius: 30px;
+}
 .management-calendar .calendar-outline .fc-scrollgrid {
     border: 0 !important;
+}
+.management-calendar .calendar-outline .fc-daygrid-bg-harness {
+    height: 38px;
+    top: -2px;
+}
+@media (min-width: 768px) {
+    .management-calendar .calendar-outline .fc-daygrid-bg-harness {
+        height: 40px;
+        top: 1px;
+    }
+    .firefox .management-calendar .calendar-outline .fc-daygrid-bg-harness {
+        top: 2px;
+    }
 }
 .management-calendar .calendar-outline .fc-col-header-cell-cushion {
     display: inline-block;
     padding: 10px 4px;
 }
-.management-calendar .calendar-outline .fc-bg-event {
-    border-radius: 30px;
-}
 .management-calendar .calendar-outline .fc-daygrid-day-number {
     background-color: transparent;
     font-weight: 600;
-}
-.management-calendar .calendar-outline .fc-daygrid-day-top {
-    margin-bottom: 0rem !important;
-}
-.management-calendar .calendar-outline .fc-daygrid-day-frame {
-    min-height: 0%;
-    padding: 4px !important;
-    border: none;
-    margin-top: 5px;
-}
-.management-calendar .calendar-outline .fc-daygrid-bg-harness {
-    height: 36px;
-}
-.management-calendar .calendar-outline .fc-daygrid-bg-harness {
-    top: 3px !important;
 }
 
 /*-----------------------------------------------
@@ -24421,7 +24445,7 @@ h5, .h5 {
     }
     .navbar-vertical.navbar-expand-xxl.navbar-card, .navbar-vertical.navbar-expand-xxl.navbar-vibrant, .navbar-vertical.navbar-expand-xxl.navbar-inverted {
         padding: 0;
-        max-width: 14.5rem !important;
+        max-width: 14.625rem !important;
     }
     .navbar-vertical.navbar-expand-xxl.navbar-card .navbar-vertical-content, .navbar-vertical.navbar-expand-xxl.navbar-vibrant .navbar-vertical-content, .navbar-vertical.navbar-expand-xxl.navbar-inverted .navbar-vertical-content {
         padding: 0.5rem 0.625rem 0 1rem !important;
@@ -24434,10 +24458,10 @@ h5, .h5 {
     .navbar-vertical.navbar-expand-xxl.navbar-card .navbar-vertical-content, .navbar-vertical.navbar-expand-xxl.navbar-vibrant .navbar-collapse,
     .navbar-vertical.navbar-expand-xxl.navbar-vibrant .navbar-vertical-content, .navbar-vertical.navbar-expand-xxl.navbar-inverted .navbar-collapse,
     .navbar-vertical.navbar-expand-xxl.navbar-inverted .navbar-vertical-content {
-        width: 14.5rem !important;
+        width: 14.625rem !important;
     }
     .navbar-vertical.navbar-expand-xxl.navbar-card + .content, .navbar-vertical.navbar-expand-xxl.navbar-vibrant + .content, .navbar-vertical.navbar-expand-xxl.navbar-inverted + .content {
-        margin-left: 15.5rem;
+        margin-left: 15.625rem;
     }
     .navbar-vertical.navbar-expand-xxl + .content {
         margin-left: 15.625rem;
@@ -24507,7 +24531,7 @@ h5, .h5 {
         margin-left: 4.125rem;
     }
     .navbar-vertical-collapsed .navbar-vertical.navbar-expand-xxl.navbar-card + .content .navbar-top, .navbar-vertical-collapsed .navbar-vertical.navbar-expand-xxl.navbar-vibrant + .content .navbar-top, .navbar-vertical-collapsed .navbar-vertical.navbar-expand-xxl.navbar-inverted + .content .navbar-top {
-        padding-left: 12.375rem;
+        padding-left: 12.5rem;
     }
     .navbar-vertical-collapsed:not(.navbar-vertical-collapsed-hover) .navbar-vertical.navbar-expand-xxl .navbar-collapse,
     .navbar-vertical-collapsed:not(.navbar-vertical-collapsed-hover) .navbar-vertical.navbar-expand-xxl .nav.collapse.show,
@@ -24541,13 +24565,13 @@ h5, .h5 {
         display: block;
     }
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xxl.navbar-card, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xxl.navbar-vibrant, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xxl.navbar-inverted {
-        width: 14.5rem;
+        width: 14.625rem;
     }
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xxl.navbar-card .navbar-collapse,
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xxl.navbar-card .navbar-vertical-content, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xxl.navbar-vibrant .navbar-collapse,
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xxl.navbar-vibrant .navbar-vertical-content, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xxl.navbar-inverted .navbar-collapse,
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xxl.navbar-inverted .navbar-vertical-content {
-        width: 14.5rem !important;
+        width: 14.625rem !important;
     }
 }
 @media (min-width: 1200px) {
@@ -24589,7 +24613,7 @@ h5, .h5 {
     }
     .navbar-vertical.navbar-expand-xl.navbar-card, .navbar-vertical.navbar-expand-xl.navbar-vibrant, .navbar-vertical.navbar-expand-xl.navbar-inverted {
         padding: 0;
-        max-width: 14.5rem !important;
+        max-width: 14.625rem !important;
     }
     .navbar-vertical.navbar-expand-xl.navbar-card .navbar-vertical-content, .navbar-vertical.navbar-expand-xl.navbar-vibrant .navbar-vertical-content, .navbar-vertical.navbar-expand-xl.navbar-inverted .navbar-vertical-content {
         padding: 0.5rem 0.625rem 0 1rem !important;
@@ -24602,10 +24626,10 @@ h5, .h5 {
     .navbar-vertical.navbar-expand-xl.navbar-card .navbar-vertical-content, .navbar-vertical.navbar-expand-xl.navbar-vibrant .navbar-collapse,
     .navbar-vertical.navbar-expand-xl.navbar-vibrant .navbar-vertical-content, .navbar-vertical.navbar-expand-xl.navbar-inverted .navbar-collapse,
     .navbar-vertical.navbar-expand-xl.navbar-inverted .navbar-vertical-content {
-        width: 14.5rem !important;
+        width: 14.625rem !important;
     }
     .navbar-vertical.navbar-expand-xl.navbar-card + .content, .navbar-vertical.navbar-expand-xl.navbar-vibrant + .content, .navbar-vertical.navbar-expand-xl.navbar-inverted + .content {
-        margin-left: 15.5rem;
+        margin-left: 15.625rem;
     }
     .navbar-vertical.navbar-expand-xl + .content {
         margin-left: 15.625rem;
@@ -24675,7 +24699,7 @@ h5, .h5 {
         margin-left: 4.125rem;
     }
     .navbar-vertical-collapsed .navbar-vertical.navbar-expand-xl.navbar-card + .content .navbar-top, .navbar-vertical-collapsed .navbar-vertical.navbar-expand-xl.navbar-vibrant + .content .navbar-top, .navbar-vertical-collapsed .navbar-vertical.navbar-expand-xl.navbar-inverted + .content .navbar-top {
-        padding-left: 12.375rem;
+        padding-left: 12.5rem;
     }
     .navbar-vertical-collapsed:not(.navbar-vertical-collapsed-hover) .navbar-vertical.navbar-expand-xl .navbar-collapse,
     .navbar-vertical-collapsed:not(.navbar-vertical-collapsed-hover) .navbar-vertical.navbar-expand-xl .nav.collapse.show,
@@ -24709,13 +24733,13 @@ h5, .h5 {
         display: block;
     }
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xl.navbar-card, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xl.navbar-vibrant, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xl.navbar-inverted {
-        width: 14.5rem;
+        width: 14.625rem;
     }
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xl.navbar-card .navbar-collapse,
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xl.navbar-card .navbar-vertical-content, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xl.navbar-vibrant .navbar-collapse,
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xl.navbar-vibrant .navbar-vertical-content, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xl.navbar-inverted .navbar-collapse,
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xl.navbar-inverted .navbar-vertical-content {
-        width: 14.5rem !important;
+        width: 14.625rem !important;
     }
 }
 @media (min-width: 992px) {
@@ -24757,7 +24781,7 @@ h5, .h5 {
     }
     .navbar-vertical.navbar-expand-lg.navbar-card, .navbar-vertical.navbar-expand-lg.navbar-vibrant, .navbar-vertical.navbar-expand-lg.navbar-inverted {
         padding: 0;
-        max-width: 14.5rem !important;
+        max-width: 14.625rem !important;
     }
     .navbar-vertical.navbar-expand-lg.navbar-card .navbar-vertical-content, .navbar-vertical.navbar-expand-lg.navbar-vibrant .navbar-vertical-content, .navbar-vertical.navbar-expand-lg.navbar-inverted .navbar-vertical-content {
         padding: 0.5rem 0.625rem 0 1rem !important;
@@ -24770,10 +24794,10 @@ h5, .h5 {
     .navbar-vertical.navbar-expand-lg.navbar-card .navbar-vertical-content, .navbar-vertical.navbar-expand-lg.navbar-vibrant .navbar-collapse,
     .navbar-vertical.navbar-expand-lg.navbar-vibrant .navbar-vertical-content, .navbar-vertical.navbar-expand-lg.navbar-inverted .navbar-collapse,
     .navbar-vertical.navbar-expand-lg.navbar-inverted .navbar-vertical-content {
-        width: 14.5rem !important;
+        width: 14.625rem !important;
     }
     .navbar-vertical.navbar-expand-lg.navbar-card + .content, .navbar-vertical.navbar-expand-lg.navbar-vibrant + .content, .navbar-vertical.navbar-expand-lg.navbar-inverted + .content {
-        margin-left: 15.5rem;
+        margin-left: 15.625rem;
     }
     .navbar-vertical.navbar-expand-lg + .content {
         margin-left: 15.625rem;
@@ -24843,7 +24867,7 @@ h5, .h5 {
         margin-left: 4.125rem;
     }
     .navbar-vertical-collapsed .navbar-vertical.navbar-expand-lg.navbar-card + .content .navbar-top, .navbar-vertical-collapsed .navbar-vertical.navbar-expand-lg.navbar-vibrant + .content .navbar-top, .navbar-vertical-collapsed .navbar-vertical.navbar-expand-lg.navbar-inverted + .content .navbar-top {
-        padding-left: 12.375rem;
+        padding-left: 12.5rem;
     }
     .navbar-vertical-collapsed:not(.navbar-vertical-collapsed-hover) .navbar-vertical.navbar-expand-lg .navbar-collapse,
     .navbar-vertical-collapsed:not(.navbar-vertical-collapsed-hover) .navbar-vertical.navbar-expand-lg .nav.collapse.show,
@@ -24877,13 +24901,13 @@ h5, .h5 {
         display: block;
     }
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-lg.navbar-card, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-lg.navbar-vibrant, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-lg.navbar-inverted {
-        width: 14.5rem;
+        width: 14.625rem;
     }
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-lg.navbar-card .navbar-collapse,
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-lg.navbar-card .navbar-vertical-content, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-lg.navbar-vibrant .navbar-collapse,
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-lg.navbar-vibrant .navbar-vertical-content, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-lg.navbar-inverted .navbar-collapse,
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-lg.navbar-inverted .navbar-vertical-content {
-        width: 14.5rem !important;
+        width: 14.625rem !important;
     }
 }
 @media (min-width: 768px) {
@@ -24925,7 +24949,7 @@ h5, .h5 {
     }
     .navbar-vertical.navbar-expand-md.navbar-card, .navbar-vertical.navbar-expand-md.navbar-vibrant, .navbar-vertical.navbar-expand-md.navbar-inverted {
         padding: 0;
-        max-width: 14.5rem !important;
+        max-width: 14.625rem !important;
     }
     .navbar-vertical.navbar-expand-md.navbar-card .navbar-vertical-content, .navbar-vertical.navbar-expand-md.navbar-vibrant .navbar-vertical-content, .navbar-vertical.navbar-expand-md.navbar-inverted .navbar-vertical-content {
         padding: 0.5rem 0.625rem 0 1rem !important;
@@ -24938,10 +24962,10 @@ h5, .h5 {
     .navbar-vertical.navbar-expand-md.navbar-card .navbar-vertical-content, .navbar-vertical.navbar-expand-md.navbar-vibrant .navbar-collapse,
     .navbar-vertical.navbar-expand-md.navbar-vibrant .navbar-vertical-content, .navbar-vertical.navbar-expand-md.navbar-inverted .navbar-collapse,
     .navbar-vertical.navbar-expand-md.navbar-inverted .navbar-vertical-content {
-        width: 14.5rem !important;
+        width: 14.625rem !important;
     }
     .navbar-vertical.navbar-expand-md.navbar-card + .content, .navbar-vertical.navbar-expand-md.navbar-vibrant + .content, .navbar-vertical.navbar-expand-md.navbar-inverted + .content {
-        margin-left: 15.5rem;
+        margin-left: 15.625rem;
     }
     .navbar-vertical.navbar-expand-md + .content {
         margin-left: 15.625rem;
@@ -25011,7 +25035,7 @@ h5, .h5 {
         margin-left: 4.125rem;
     }
     .navbar-vertical-collapsed .navbar-vertical.navbar-expand-md.navbar-card + .content .navbar-top, .navbar-vertical-collapsed .navbar-vertical.navbar-expand-md.navbar-vibrant + .content .navbar-top, .navbar-vertical-collapsed .navbar-vertical.navbar-expand-md.navbar-inverted + .content .navbar-top {
-        padding-left: 12.375rem;
+        padding-left: 12.5rem;
     }
     .navbar-vertical-collapsed:not(.navbar-vertical-collapsed-hover) .navbar-vertical.navbar-expand-md .navbar-collapse,
     .navbar-vertical-collapsed:not(.navbar-vertical-collapsed-hover) .navbar-vertical.navbar-expand-md .nav.collapse.show,
@@ -25045,13 +25069,13 @@ h5, .h5 {
         display: block;
     }
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-md.navbar-card, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-md.navbar-vibrant, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-md.navbar-inverted {
-        width: 14.5rem;
+        width: 14.625rem;
     }
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-md.navbar-card .navbar-collapse,
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-md.navbar-card .navbar-vertical-content, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-md.navbar-vibrant .navbar-collapse,
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-md.navbar-vibrant .navbar-vertical-content, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-md.navbar-inverted .navbar-collapse,
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-md.navbar-inverted .navbar-vertical-content {
-        width: 14.5rem !important;
+        width: 14.625rem !important;
     }
 }
 @media (min-width: 576px) {
@@ -25093,7 +25117,7 @@ h5, .h5 {
     }
     .navbar-vertical.navbar-expand-sm.navbar-card, .navbar-vertical.navbar-expand-sm.navbar-vibrant, .navbar-vertical.navbar-expand-sm.navbar-inverted {
         padding: 0;
-        max-width: 14.5rem !important;
+        max-width: 14.625rem !important;
     }
     .navbar-vertical.navbar-expand-sm.navbar-card .navbar-vertical-content, .navbar-vertical.navbar-expand-sm.navbar-vibrant .navbar-vertical-content, .navbar-vertical.navbar-expand-sm.navbar-inverted .navbar-vertical-content {
         padding: 0.5rem 0.625rem 0 1rem !important;
@@ -25106,10 +25130,10 @@ h5, .h5 {
     .navbar-vertical.navbar-expand-sm.navbar-card .navbar-vertical-content, .navbar-vertical.navbar-expand-sm.navbar-vibrant .navbar-collapse,
     .navbar-vertical.navbar-expand-sm.navbar-vibrant .navbar-vertical-content, .navbar-vertical.navbar-expand-sm.navbar-inverted .navbar-collapse,
     .navbar-vertical.navbar-expand-sm.navbar-inverted .navbar-vertical-content {
-        width: 14.5rem !important;
+        width: 14.625rem !important;
     }
     .navbar-vertical.navbar-expand-sm.navbar-card + .content, .navbar-vertical.navbar-expand-sm.navbar-vibrant + .content, .navbar-vertical.navbar-expand-sm.navbar-inverted + .content {
-        margin-left: 15.5rem;
+        margin-left: 15.625rem;
     }
     .navbar-vertical.navbar-expand-sm + .content {
         margin-left: 15.625rem;
@@ -25179,7 +25203,7 @@ h5, .h5 {
         margin-left: 4.125rem;
     }
     .navbar-vertical-collapsed .navbar-vertical.navbar-expand-sm.navbar-card + .content .navbar-top, .navbar-vertical-collapsed .navbar-vertical.navbar-expand-sm.navbar-vibrant + .content .navbar-top, .navbar-vertical-collapsed .navbar-vertical.navbar-expand-sm.navbar-inverted + .content .navbar-top {
-        padding-left: 12.375rem;
+        padding-left: 12.5rem;
     }
     .navbar-vertical-collapsed:not(.navbar-vertical-collapsed-hover) .navbar-vertical.navbar-expand-sm .navbar-collapse,
     .navbar-vertical-collapsed:not(.navbar-vertical-collapsed-hover) .navbar-vertical.navbar-expand-sm .nav.collapse.show,
@@ -25213,13 +25237,13 @@ h5, .h5 {
         display: block;
     }
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-sm.navbar-card, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-sm.navbar-vibrant, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-sm.navbar-inverted {
-        width: 14.5rem;
+        width: 14.625rem;
     }
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-sm.navbar-card .navbar-collapse,
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-sm.navbar-card .navbar-vertical-content, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-sm.navbar-vibrant .navbar-collapse,
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-sm.navbar-vibrant .navbar-vertical-content, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-sm.navbar-inverted .navbar-collapse,
     .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-sm.navbar-inverted .navbar-vertical-content {
-        width: 14.5rem !important;
+        width: 14.625rem !important;
     }
 }
 .navbar-vertical.navbar-expand-xs {
@@ -25260,7 +25284,7 @@ h5, .h5 {
 }
 .navbar-vertical.navbar-expand-xs.navbar-card, .navbar-vertical.navbar-expand-xs.navbar-vibrant, .navbar-vertical.navbar-expand-xs.navbar-inverted {
     padding: 0;
-    max-width: 14.5rem !important;
+    max-width: 14.625rem !important;
 }
 .navbar-vertical.navbar-expand-xs.navbar-card .navbar-vertical-content, .navbar-vertical.navbar-expand-xs.navbar-vibrant .navbar-vertical-content, .navbar-vertical.navbar-expand-xs.navbar-inverted .navbar-vertical-content {
     padding: 0.5rem 0.625rem 0 1rem !important;
@@ -25273,10 +25297,10 @@ h5, .h5 {
 .navbar-vertical.navbar-expand-xs.navbar-card .navbar-vertical-content, .navbar-vertical.navbar-expand-xs.navbar-vibrant .navbar-collapse,
 .navbar-vertical.navbar-expand-xs.navbar-vibrant .navbar-vertical-content, .navbar-vertical.navbar-expand-xs.navbar-inverted .navbar-collapse,
 .navbar-vertical.navbar-expand-xs.navbar-inverted .navbar-vertical-content {
-    width: 14.5rem !important;
+    width: 14.625rem !important;
 }
 .navbar-vertical.navbar-expand-xs.navbar-card + .content, .navbar-vertical.navbar-expand-xs.navbar-vibrant + .content, .navbar-vertical.navbar-expand-xs.navbar-inverted + .content {
-    margin-left: 15.5rem;
+    margin-left: 15.625rem;
 }
 .navbar-vertical.navbar-expand-xs + .content {
     margin-left: 15.625rem;
@@ -25346,7 +25370,7 @@ h5, .h5 {
     margin-left: 4.125rem;
 }
 .navbar-vertical-collapsed .navbar-vertical.navbar-expand-xs.navbar-card + .content .navbar-top, .navbar-vertical-collapsed .navbar-vertical.navbar-expand-xs.navbar-vibrant + .content .navbar-top, .navbar-vertical-collapsed .navbar-vertical.navbar-expand-xs.navbar-inverted + .content .navbar-top {
-    padding-left: 12.375rem;
+    padding-left: 12.5rem;
 }
 .navbar-vertical-collapsed:not(.navbar-vertical-collapsed-hover) .navbar-vertical.navbar-expand-xs .navbar-collapse,
 .navbar-vertical-collapsed:not(.navbar-vertical-collapsed-hover) .navbar-vertical.navbar-expand-xs .nav.collapse.show,
@@ -25380,13 +25404,13 @@ h5, .h5 {
     display: block;
 }
 .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xs.navbar-card, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xs.navbar-vibrant, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xs.navbar-inverted {
-    width: 14.5rem;
+    width: 14.625rem;
 }
 .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xs.navbar-card .navbar-collapse,
 .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xs.navbar-card .navbar-vertical-content, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xs.navbar-vibrant .navbar-collapse,
 .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xs.navbar-vibrant .navbar-vertical-content, .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xs.navbar-inverted .navbar-collapse,
 .navbar-vertical-collapsed-hover .navbar-vertical.navbar-expand-xs.navbar-inverted .navbar-vertical-content {
-    width: 14.5rem !important;
+    width: 14.625rem !important;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -29012,4 +29036,3 @@ div[data-collapse] + .kanban-item,
 .treeview.treeview-stripe {
     padding-left: 0.5rem !important;
 }
-/*# sourceMappingURL=theme.css.map */
