@@ -22,10 +22,11 @@
 <script>
 
 import StringHelper from "src/utils/string-helper"
-import Amount from "src/components/wallet/amount"
+import Decimal from 'decimal.js';
+
 export default {
 
-    components: {Amount},
+    components: {},
 
     props: {
         version: {default: "transparent"},
@@ -41,8 +42,15 @@ export default {
         }
     },
 
-    asyncComputed:{
-        async amount(){
+    computed: {
+        homomorphicBalanceText(){
+            if (this.version === "zether")
+                return this.balance.match(/.{1,20}/g).join("\n");
+        },
+        getAsset(){
+            return this.$store.getters.getAsset(this.asset );
+        },
+        amount(){
             let amount
             if (this.version === "transparent")
                 amount = this.balance
@@ -52,18 +60,8 @@ export default {
                 else
                     amount = this.balanceDecoded
             }
-            return StringHelper.formatMoney( await PandoraPay.config.assets.assetsConvertToBase( amount.toString(), this.getAsset.decimalSeparator ), this.getAsset.decimalSeparator)
+            return StringHelper.formatMoney( new Decimal(amount).div( new Decimal(10).pow(this.getAsset.decimalSeparator) ).toString(), this.getAsset.decimalSeparator)
         }
-    },
-
-    computed: {
-        homomorphicBalanceText(){
-            if (this.version === "zether")
-                return this.balance.match(/.{1,20}/g).join("\n");
-        },
-        getAsset(){
-            return this.$store.getters.getAsset(this.asset );
-        },
     },
 
     watch: {

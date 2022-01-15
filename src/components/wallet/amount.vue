@@ -17,6 +17,7 @@
 <script>
 import StringHelper from "src/utils/string-helper";
 import LoadingSpinner from "src/components/utils/loading-spinner";
+import Decimal from 'decimal.js';
 
 export default {
 
@@ -35,13 +36,11 @@ export default {
         getAsset(){
             return this.$store.getters.getAsset( this.asset );
         },
+        amount(){
+            return StringHelper.formatMoney( new Decimal(this.value).div( new Decimal(10).pow(this.getAsset.decimalSeparator) ).toString(), this.getAsset.decimalSeparator )
+        }
     },
 
-    asyncComputed:{
-        async amount(){
-            return StringHelper.formatMoney( await PandoraPay.config.assets.assetsConvertToBase( this.value.toString(), this.getAsset.decimalSeparator ), this.getAsset.decimalSeparator )
-        }
-    }
 }
 </script>
 

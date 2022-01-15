@@ -17,6 +17,7 @@
   "dependencies": {
     "@hcaptcha/vue-hcaptcha": "^0.3.0",
     "buffer": "^6.0.3",
+    "decimal.js": "^10.3.1",
     "file-saver": "^2.0.5",
     "localforage": "^1.9.0",
     "node-fetch": "^3.0.0",
