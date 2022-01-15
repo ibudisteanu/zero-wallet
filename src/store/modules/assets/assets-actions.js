@@ -15,8 +15,6 @@ export default {
 
                 asset.hash = hash
 
-                if (asset.name === "PANDORA") asset.name = "0x00"
-
                 commit('setAsset',asset)
 
                 resolve(asset)

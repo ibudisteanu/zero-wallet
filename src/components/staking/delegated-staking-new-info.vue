@@ -4,29 +4,29 @@
         <div class="form-group pt-2">
             <input class="form-check-input" id="set-new-delegated-info" type="checkbox"  name="checkbox" v-model="hasNewDelegatedInfo"  >
             <label class="form-check-label" for="set-new-delegated-info">Set new Delegated Info</label>
-            <i class="fa fa-question " v-tooltip.bottom="`Set new required keys to enable Delegated Staking`" />
+            <i class="fas fa-question " v-tooltip.bottom="`Set new required keys to enable Delegated Staking`" />
         </div>
 
         <div v-if="hasNewDelegatedInfo" class="pt-2 ms-2">
 
             <div class="form-group pt-2">
-                <loading-button text="Auto Generate Public Key Hash" icon="fa fa-cogs" @submit="handleDeriveDelegatedStake" :disabled="!publicKey" />
+                <loading-button text="Auto Generate Public Key Hash" icon="fas fa-cogs" @submit="handleDeriveDelegatedStake" :disabled="!publicKey" />
             </div>
 
             <div class="form-group pt-2">
-                <loading-button text="Select Node" icon="fa fa-laptop-code" @submit="handleShowDelegateStakeNode" :disabled="!publicKey" />
+                <loading-button text="Select Node" icon="fas fa-laptop-code" @submit="handleShowDelegateStakeNode" :disabled="!publicKey" />
             </div>
 
             <div class="form pt-2">
                 <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Public Key:</label>
-                <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
+                <i class="fas fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
                 <input :class="`form-control ${validationDelegatedStakingNewPublicKey ? 'is-invalid' : ''}`" type="text" v-model="delegatedStakingNewPublicKey"  >
                 <div v-if="validationDelegatedStakingNewPublicKey" class="invalid-feedback d-block">{{validationDelegatedStakingNewPublicKey}}</div>
             </div>
 
             <div class="form pt-2">
                 <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Fee:</label>
-                <i class="fa fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
+                <i class="fas fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
                 <input class="form-control" type="number" v-model="delegatedStakingNewFee" min="0" max="65535" >
                 <label>in Percentage: {{delegatedStakingNewFee/65535*100}}%</label>
             </div>

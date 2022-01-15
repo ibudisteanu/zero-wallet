@@ -17,7 +17,7 @@
                         </p>
 
                         <router-link class="btn btn-falcon-primary btn-sm mt-3" to="/">
-                            <i class="fa fa-home"></i>
+                            <i class="fas fa-home"></i>
                             Take me home
                         </router-link>
                     </div>

@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa fa-wallet" title="Wallet">Access the private key of the selected address.</layout-title>
+        <layout-title icon="fas fa-wallet" title="Wallet">Access the private key of the selected address.</layout-title>
 
         <wait-address :address="address">
 
@@ -24,7 +24,7 @@
                         </div>
                         <div v-else>
                             Public Key: {{address.publicKey}}
-                            <i class="fa fa-copy pointer  d-inline-block" v-tooltip.bottom="'Copy Public Key'"  @click="handleCopyAddress(address.publicKey)" />
+                            <i class="fas fa-copy pointer  d-inline-block" v-tooltip.bottom="'Copy Public Key'"  @click="handleCopyAddress(address.publicKey)" />
                         </div>
                     </div>
 
@@ -34,7 +34,7 @@
                         </div>
                         <div v-else>
                             Registration Key: {{address.registration}}
-                            <i class="fa fa-copy pointer  d-inline-block" v-tooltip.bottom="'Copy Registration'"  @click="handleCopyAddress(address.registration)" />
+                            <i class="fas fa-copy pointer  d-inline-block" v-tooltip.bottom="'Copy Registration'"  @click="handleCopyAddress(address.registration)" />
                         </div>
                     </div>
 
@@ -43,15 +43,15 @@
                 <div class="card-body bg-light">
 
                     <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="handleExportAddress" v-tooltip.bottom="'Export Account'" >
-                        <i class="fa fa-download"></i>
+                        <i class="fas fa-download"></i>
                     </button>
 
                     <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="handleDeleteAddress" v-tooltip.bottom="'Delete Account'" >
-                        <i class="danger fa fa-times"></i>
+                        <i class="danger fas fa-times"></i>
                     </button>
 
                     <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="handleShowPrivateKey" v-tooltip.bottom="'View Private Key'" >
-                        <i class="fa fa-eye"></i>
+                        <i class="fas fa-eye"></i>
                     </button>
 
                 </div>

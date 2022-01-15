@@ -22,10 +22,10 @@
         <template slot="footer">
             <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
 
-            <loading-button :text="`Receive ${$store.state.faucet.faucetTestnetCoins}`" @submit="handleSubmit" icon="fa fa-coins" :disabled="!captchaToken" />
+            <loading-button :text="`Receive ${$store.state.faucet.faucetTestnetCoins}`" @submit="handleSubmit" icon="fas fa-coins" :disabled="!captchaToken" />
 
             <button class="btn btn-falcon-secondary" type="button" @click="closeModal">
-                <i class="fa fa-ban"></i> Cancel
+                <i class="fas fa-ban"></i> Cancel
             </button>
 
         </template>

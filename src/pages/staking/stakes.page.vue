@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa fa-shopping-basket" title="Staking">Delegate your stakes to a staking node.</layout-title>
+        <layout-title icon="fas fa-shopping-basket" title="Staking">Delegate your stakes to a staking node.</layout-title>
 
         <div class="account-info" v-if="address">
 
@@ -68,11 +68,12 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
 import Account from "src/components/wallet/account/account"
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import StringHelper from "../../utils/string-helper";
+import StringHelper from "src/utils/string-helper";
 import Balance from "src/components/wallet/balance/balance"
 import DelegatedStakePending from "src/components/wallet/balance/delegated-stake-pending"
 import AlertBox from "src/components/utils/alert-box"
-import WaitAccount from "../../components/wallet/account/wait-account";
+import WaitAccount from "src/components/wallet/account/wait-account";
+import Decimal from 'decimal.js';
 
 export default {
 
@@ -133,7 +134,7 @@ export default {
     asyncComputed:{
         async minimumForStaking(){
             const minimum = await PandoraPay.config.stake.getRequiredStake( this.$store.state.blockchain.end.toString() )
-            return StringHelper.formatMoney( await PandoraPay.config.coins.convertToBase( minimum ), PandoraPay.config.coins.DECIMAL_SEPARATOR )
+            return StringHelper.formatMoney( new Decimal(minimum).div( new Decimal(10).pow( PandoraPay.config.coins.DECIMAL_SEPARATOR ) ), PandoraPay.config.coins.DECIMAL_SEPARATOR )
         },
     },
 

@@ -17,7 +17,7 @@ import BlockchainExplorerPage from "src/pages/explorer/blockchain-explorer.page"
 import BlockExplorerPage from "src/pages/explorer/block-explorer.page"
 import TransactionExplorerPage from "src/pages/explorer/transaction-explorer.page"
 import AssetExplorerPage from "src/pages/explorer/asset-explorer.page"
-import MemPoolExplorerPage from "src/pages/explorer/mem-pool-explorer.page"
+import MempoolExplorerPage from "src/pages/explorer/mempool-explorer.page"
 import AssetsPage from "src/pages/assets/assets.page"
 import SettingsPage from "src/pages/settings/settings.page"
 import NotFoundPage from "src/pages/not-found/not-found.page"
@@ -64,8 +64,8 @@ const routes = [
     {path: '/explorer/assets/:page', component: AssetsPage},
     {path: '/explorer/asset/:hash', component: AssetExplorerPage },
 
-    {path: '/explorer/mem-pool', component: MemPoolExplorerPage },
-    {path: '/explorer/mem-pool/:page', component: MemPoolExplorerPage },
+    {path: '/explorer/mempool', component: MempoolExplorerPage },
+    {path: '/explorer/mempool/:page', component: MempoolExplorerPage },
 
     {path: '/explorer', component: BlockchainExplorerPage },
     {path: '/explorer/:page', component: BlockchainExplorerPage },

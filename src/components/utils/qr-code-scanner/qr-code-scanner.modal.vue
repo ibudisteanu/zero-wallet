@@ -9,7 +9,7 @@
 
         <template slot="footer">
             <button class="btn btn-falcon-secondary" type="button" @click="closeModal">
-                <i class="fa fa-ban"></i> Cancel
+                <i class="fas fa-ban"></i> Cancel
             </button>
         </template>
 

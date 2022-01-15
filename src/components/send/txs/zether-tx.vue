@@ -2,12 +2,12 @@
     <wait-account :account="account">
 
         <wizard :titles="{...titlesOffset,
-                0: {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
-                1: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
-                2: {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' },
-                3: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' },
-                4: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' } }"
-                 @onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card" >
+            0: {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
+            1: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
+            2: {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' },
+            3: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' },
+            4: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' } }"
+                @onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card" >
 
             <template v-for="(_, index) in titlesOffset">
                 <template :slot="`tab_${index}`">
@@ -16,18 +16,18 @@
             </template>
 
             <template :slot="`tab_0`">
-                <div class="form pb-2" v-if="allowDestinationRandom">
+                <div class="form" v-if="allowDestinationRandom">
                     <input class="form-check-input" id="random-destination" type="checkbox"  name="checkbox" v-model="randomDestination">
                     <label class="form-check-label" for="random-destination">Random Destination with Zero amount</label>
                 </div>
                 <template v-if="!randomDestination">
-                    <tx-asset v-if="!initAvailableAsset" :assets="availableAssets" @changed="changedAsset" class="pb-2"/>
+                    <tx-asset v-if="!initAvailableAsset" :assets="availableAssets" @changed="changedAsset" class="pt-2 pb-2"/>
                     <destination-address :text="text" :validateAmount="validateDestinationAmount" :balances="availableBalances" :allow-zero="allowDestinationZeroAmount" :asset="asset.asset" @changed="changedDestination" />
                 </template>
             </template>
 
             <template :slot="`tab_1`">
-                <extra-data :destinations="[destination]" :paymentId="identifiedPaymentID" @changed="changedExtraData" />
+                <extra-data :destinations="destination ? [destination] : null" :paymentID="identifiedPaymentID" @changed="changedExtraData" />
             </template>
 
             <template :slot="`tab_2`">
@@ -35,7 +35,7 @@
                 <div class="row">
                     <div class="col-12 col-md-6">
                         <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Size</label>
-                        <i class="fa fa-question " v-tooltip.bottom="`Bigger the ring, more private is your transaction.`" />
+                        <i class="fas fa-question " v-tooltip.bottom="`Bigger the ring, more private is your transaction.`" />
                         <select class="form-select" v-model="ringSize">
                             <option :value="2">2</option>
                             <option :value="4">4</option>
@@ -50,18 +50,18 @@
 
                     <div class="col-12 col-md-6">
                         <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring New Addresses</label>
-                        <i class="fa fa-question " v-tooltip.bottom="`Number of new addresses in the ring. Makes new destinations more private.`" />
+                        <i class="fas fa-question " v-tooltip.bottom="`Number of new addresses in the ring. Makes new destinations more private.`" />
                         <input class="form-control"  type="number" v-model="ringNewAddresses" />
                     </div>
                 </div>
 
                 <div class="col-12 pt-4">
-                    <loading-button text="Generate Ring" @submit="handleGenerateRing" icon="fa fa-cogs" />
+                    <loading-button text="Generate Ring" @submit="handleGenerateRing" icon="fas fa-cogs" />
                 </div>
 
                 <div class="col-12 pt-4">
                     <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Members</label>
-                    <i class="fa fa-question " v-tooltip.bottom="`Preview of the Ring Members used for your private transaction.`" />
+                    <i class="fas fa-question " v-tooltip.bottom="`Preview of the Ring Members used for your private transaction.`" />
                     <div class="pt-2">
                         <div v-for="(ringMember, index) in ringMembers" class="d-inline-block"
                              :key="`ring_member_${index}`">
@@ -83,7 +83,7 @@
                     <div class="row" v-if="!assetFeeLiquidityAsset">
                         <div class="col-12 col-sm-6">
                             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Conversion Rate</label>
-                            <i class="fa fa-question" v-tooltip.bottom="`Conversion rate of the asset fee`" />
+                            <i class="fas fa-question" v-tooltip.bottom="`Conversion rate of the asset fee`" />
                             <input :class="`form-control ${validationAssetFeeConversionRate ? 'is-invalid' :''}`" type="number" v-model.number="assetFeeConversionRate" min="0" :step="0.0000000001">
                         </div>
                     </div>
@@ -227,8 +227,8 @@ export default {
 
         identifiedPaymentID(){
             if (this.destination.address) {
-                if (this.destination.address.paymentId)
-                    return this.destination.address.paymentId
+                if (this.destination.address.paymentID)
+                    return this.destination.address.paymentID
             }
         },
 
@@ -238,8 +238,8 @@ export default {
 
         buttons(){
             return {
-                3: { icon: 'fa fa-file-signature', text: 'Sign Transaction' },
-                4: { icon: 'fa fa-globe-americas', text: 'Propagate Transaction' },
+                3: { icon: 'fas fa-file-signature', text: 'Sign Transaction' },
+                4: { icon: 'fas fa-globe-americas', text: 'Propagate Transaction' },
                 ...this.buttonsOffset,
             }
         }
@@ -251,10 +251,10 @@ export default {
 
             await this.$store.state.blockchain.syncPromise;
 
-            if (to && to.address && to.address.publicKey)
+            if (to && to.address && to.address.publicKey && !this.$store.getters.walletContains(to.address.publicKey) )
                 await this.$store.dispatch('subscribeAccount', to.address.publicKey )
 
-            if (from && from.address && from.address.publicKey && !this.$store.getters.walletContains(from) )
+            if (from && from.address && from.address.publicKey && !this.$store.getters.walletContains(from.address.publicKey) )
                 await this.$store.dispatch('unsubscribeAccount', from.address.publicKey )
 
         },
@@ -321,9 +321,18 @@ export default {
 
         async handleGenerateRing(resolver){
 
-            try{
+            try {
 
                 const asset = this.asset.asset
+
+                let assetCollector
+
+                if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX){
+                    const outData = await PandoraPay.network.getNetworkFeeLiquidity(0, asset)
+                    if (!outData) throw "No Asset Fee Liqiduity for this asset"
+                    const out = JSON.parse(MyTextDecode(outData))
+                    assetCollector = out.collector
+                }
 
                 const holders = await PandoraPay.network.getNetworkAccountsCount( asset )
 
@@ -397,7 +406,12 @@ export default {
                     const publicKeySelected = keys[index]
                     delete publicKeysMap[publicKeySelected]
 
-                    const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( {publicKey: publicKeySelected, registration: "", amount: 0, paymentId: ""} ) ) ) ) )
+                    if (assetCollector && publicKeySelected === assetCollector){
+                        const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
+                        return {addressEncoded: json[1], publicKey: json[2] }
+                    }
+
+                    const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( {publicKey: publicKeySelected, registration: "", paymentID: "", paymentAmount: 0, paymentAsset: "" } ) ) ) ) )
                     return {addressEncoded: json[1], publicKey: publicKeySelected}
                 }
 
@@ -444,6 +458,8 @@ export default {
 
             this.status = '';
 
+            const asset = this.asset.asset
+
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
@@ -452,22 +468,20 @@ export default {
 
                 let balance
                 for (const availableAccount of this.availableAccounts)
-                    if (availableAccount.asset === this.asset.asset){
+                    if (availableAccount.asset === asset){
                         balance = availableAccount.balance
                         break
                     }
 
-                const out = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.$store.state.wallet.mainPublicKey, balance, this.asset.asset, true, password )
+                const out = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.$store.state.wallet.mainPublicKey, balance, asset, true, password )
                 if (out.balanceDecoded === null) throw "Decoding was canceled"
 
                 senderPrivateKey = out.privateKey
                 senderBalanceDecoded = out.balanceDecoded
             }else {
                 senderPrivateKey = this.newSender.privateKey
-                senderBalanceDecoded = this.availableBalances[ this.asset.asset ].amount
+                senderBalanceDecoded = this.availableBalances[ asset ].amount
             }
-
-            let asset = this.asset.asset
 
             const accs = { [asset]: {} }
             const regs = {}
@@ -495,9 +509,9 @@ export default {
 
             let feeRate = 0, feeLeadingZeros = 0
 
-            if (this.asset.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX)
+            if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX)
                 if (this.assetFeeLiquidityAsset){
-                    outData = await PandoraPay.network.getNetworkFeeLiquidity(0, this.asset.asset)
+                    outData = await PandoraPay.network.getNetworkFeeLiquidity(0, asset)
                     if (!outData) throw "No Asset Fee Liqiduity for this asset"
                     out = JSON.parse( MyTextDecode(outData))
 
@@ -561,12 +575,20 @@ export default {
 
         async handlePropagateTx(){
 
+            this.status = 'Cloning transaction...'
+
+            const txSerialized = Buffer.alloc(this.txSerialized.length)
+            Buffer.from(this.txSerialized).copy(txSerialized, 0)
+
             this.status = 'Propagating transaction...'
 
-            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
-            if (!finalAnswer) throw "Transaction couldn't be broadcast"
-
             await this.$store.dispatch('includeTx', { tx: this.tx, mempool: false } )
+
+            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( txSerialized )
+            if (!finalAnswer){
+                this.$store.commit('deleteTransactions', [this.tx] )
+                throw "Transaction couldn't be broadcast"
+            }
 
             this.$router.push(`/explorer/tx/${this.tx.hash}`);
 

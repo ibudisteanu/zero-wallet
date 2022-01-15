@@ -4,7 +4,7 @@
             <span :class="valueClass">
                 {{sign?'':'-'}} {{amount}}
             </span>
-            <router-link :to="`/explorer/asset/${getAsset.hash}`" :class="assetClass">
+            <router-link :to="`/explorer/asset/${getAsset.hash}`" :class="assetClass" v-if="showAsset">
                 {{getAsset.name}}
             </router-link>
         </template>
@@ -17,6 +17,7 @@
 <script>
 import StringHelper from "src/utils/string-helper";
 import LoadingSpinner from "src/components/utils/loading-spinner";
+import Decimal from 'decimal.js';
 
 export default {
 
@@ -26,6 +27,7 @@ export default {
         asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX},
         value: {default: 0},
         sign: {default: false},
+        showAsset: {default: true},
         valueClass: {default: ""},
         assetClass: {default: ""}
     },
@@ -34,13 +36,11 @@ export default {
         getAsset(){
             return this.$store.getters.getAsset( this.asset );
         },
+        amount(){
+            return StringHelper.formatMoney( new Decimal(this.value).div( new Decimal(10).pow(this.getAsset.decimalSeparator) ).toString(), this.getAsset.decimalSeparator )
+        }
     },
 
-    asyncComputed:{
-        async amount(){
-            return StringHelper.formatMoney( await PandoraPay.config.assets.assetsConvertToBase( this.value.toString(), this.getAsset.decimalSeparator ), this.getAsset.decimalSeparator )
-        }
-    }
 }
 </script>
 

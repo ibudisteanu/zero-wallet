@@ -13,7 +13,7 @@ export default {
                 const mempool = JSON.parse(MyTextDecode(data))
                 if (!mempool) throw "Mempool is invalid"
 
-                commit('setMemPool', {page, mempool })
+                commit('setMempool', {page, mempool })
 
                 resolve(true)
             }catch(err){

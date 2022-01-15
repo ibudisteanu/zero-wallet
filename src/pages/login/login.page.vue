@@ -22,7 +22,7 @@
                 <alert-box class="mt-3" v-if="error" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
                 <div class="pt-3 d-flex justify-content-center">
-                    <loading-button ref="refLoadingButton" text="Login" @submit="handleLogin" icon="fa fa-sign-in-alt"  :disabled="!password.length" />
+                    <loading-button ref="refLoadingButton" text="Login" @submit="handleLogin" icon="fas fa-sign-in-alt"  :disabled="!password.length" />
                 </div>
 
             </div>

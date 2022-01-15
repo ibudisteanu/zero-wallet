@@ -2,7 +2,7 @@
 
     <div>
         <alert-box v-if="!isLoading && !isFound" type="warning" >
-            Address doesn't exist (is empty)!
+            Address was not found on the blockchain or is empty!
         </alert-box>
         <template v-else-if="account">
             <slot></slot>

@@ -8,9 +8,10 @@ export default {
 
     async _downloadAccount({state, dispatch, commit, getters}, publicKey){
 
-        if (promises.accounts[publicKey]) return promises.accounts[publicKey]
+        if (state.subscribed[publicKey] && state.list[publicKey])
+            return state.list[publicKey]
 
-        if (promises.accounts[publicKey]) return promises.accounts[publicKey];
+        if (promises.accounts[publicKey]) return promises.accounts[publicKey]
         return promises.accounts[publicKey] = new Promise( async (resolve, reject) => {
             try{
 
@@ -39,7 +40,7 @@ export default {
                         await dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX )
                 }
 
-                await dispatch('processAccountPendingTransactions', {publicKey, list: pendingTxsList })
+                await dispatch('processAccountPendingTransactions', {publicKey, list: pendingTxsList.list })
 
                 commit('setAccount', { publicKey, account })
 
@@ -73,6 +74,7 @@ export default {
                 resolve( await dispatch('_downloadAccount', publicKey) )
 
             }catch(err){
+                console.error("subscribeAccount", err)
                 reject(err)
             }finally{
                 delete promises.subscribed[publicKey];

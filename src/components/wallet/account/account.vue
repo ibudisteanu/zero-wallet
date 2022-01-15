@@ -17,7 +17,7 @@
                             </div>
                             <span class="fw-bold d-block text-break">
                                 {{ getAddress }}
-                                <i class="fa fa-copy pointer " @click="copyAddress" v-tooltip.bottom="'Copy Address'"  ></i>
+                                <i class="fas fa-copy pointer " @click="copyAddress" v-tooltip.bottom="'Copy Address'"  ></i>
                             </span>
                         </div>
                     </div>
@@ -30,11 +30,11 @@
                 <div class="card-footer bg-light g-0 d-block-inline p-3">
 
                     <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
-                        <i class="fa fa-qrcode" />
+                        <i class="fas fa-qrcode" />
                     </button>
 
                     <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="createCustomAddress"  v-tooltip.bottom="'Create custom address'">
-                        <i class="fa fa-tools" />
+                        <i class="fas fa-tools" />
                     </button>
 
                 </div>

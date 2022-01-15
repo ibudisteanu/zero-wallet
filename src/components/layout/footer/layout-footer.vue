@@ -24,7 +24,7 @@
 
 
         <div class="fixed-button pointer " @click="handleShowTestnetFaucer" v-tooltip.top="`Testnet Faucet`">
-            <div class="rounded-fixed-btn btn-secondary"><i class="fa fa-coins"></i></div>
+            <div class="rounded-fixed-btn btn-secondary"><i class="fas fa-coins"></i></div>
         </div>
 
     </footer>

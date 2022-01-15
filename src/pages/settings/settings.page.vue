@@ -1,7 +1,7 @@
 <template>
     <layout>
 
-        <layout-title icon="fa fa-wrench" title="Settings">Configure your web wallet for a better experience.</layout-title>
+        <layout-title icon="fas fa-wrench" title="Settings">Configure your web wallet for a better experience.</layout-title>
 
         <div class="card overflow-hidden">
             <div class="card-header card-header audience-chart-header p-0 bg-light scrollbar-overlay ">
@@ -11,7 +11,7 @@
                             <div class="audience-tab-item p-2 pe-4">
                                 <h6 class="text-800 fs--2 text-nowrap">Balance decoder</h6>
                                 <h5 class="text-800 align-middle">
-                                    <i class="fa fa-laptop-code"></i>
+                                    <i class="fas fa-laptop-code"></i>
                                     Decoder
                                 </h5>
                             </div>
@@ -24,11 +24,11 @@
                     <div class="tab-pane active">
                         <div class="row pt-2">
                             <div class="col-12 col-sm-6">
-                                <label>Precomputed Table size: {{balanceDecoderTableSize}} <i class="fa fa-question" v-tooltip.bottom="'Balance Decoder Precomputed Init Table'" /> </label> <br/>
-                                <label>Scanner Performance: {{balanceDecoderPerformance[balanceDecoderTableSize]}}/s <i class="fa fa-question" v-tooltip.bottom="'Balance Decoder performance using this precomputed table'" /> </label>
+                                <label>Precomputed Table size: {{balanceDecoderTableSize}} <i class="fas fa-question" v-tooltip.bottom="'Balance Decoder Precomputed Init Table'" /> </label> <br/>
+                                <label>Scanner Performance: {{balanceDecoderPerformance[balanceDecoderTableSize]}}/s <i class="fas fa-question" v-tooltip.bottom="'Balance Decoder performance using this precomputed table'" /> </label>
                                 <input class="form-range" type="range" min="16" max="22" v-model="balanceDecoderTableSize" />
                                 <small :class="`fw-semi-bold rounded-pill badge-soft-${balanceDecoderTableSize >= 20 ? 'danger' : 'warning'} p-1`">
-                                    <i class="fa fa-exclamation-triangle" /> High will require {{formatMilliseconds( balanceDecoderTime[balanceDecoderTableSize] *1000 )}} initialize (bootstrap) time.
+                                    <i class="fas fa-exclamation-triangle" /> High will require {{formatMilliseconds( balanceDecoderTime[balanceDecoderTableSize] *1000 )}} initialize (bootstrap) time.
                                 </small>
                             </div>
                         </div>
@@ -42,7 +42,7 @@
                 <alert-box v-if="info" class="w-100" type="info" :dismissible-timeout="10000" :dismissible-text="info" @onDismissible="status=''" ></alert-box>
 
                 <div class="float-end">
-                    <loading-button text="Save settings" @submit="handleSave" icon="fa fa-save"  />
+                    <loading-button text="Save settings" @submit="handleSave" icon="fas fa-save"  />
                 </div>
 
             </div>

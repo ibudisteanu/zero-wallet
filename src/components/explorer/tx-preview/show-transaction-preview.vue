@@ -19,7 +19,7 @@
             <div class="col-8 col-sm-2 col-md-1 text-truncate">
                 <template v-if="txInfo">
                     <span v-if="txInfo.mempool">
-                        <i class="fa fa-clock" />
+                        <i class="fas fa-clock" />
                     </span>
                     <span v-else v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  txInfo.timestamp ) }`"  >
                         {{ timeAgo( $store.state.blockchain.genesisTimestamp +  txInfo.timestamp) }}
@@ -28,10 +28,10 @@
             </div>
 
             <span class="col-4 d-block d-sm-none text-dark text-truncate">Confirmations</span>
-            <div class="col-8 col-sm-1 col-md-1 text-truncate">
+            <div class="col-8 col-sm-2 col-md-1 text-truncate">
                 <template v-if="txInfo">
                     <span v-if="txInfo.mempool">
-                        <i class="fa fa-clock" />
+                        <i class="fas fa-clock" />
                     </span>
                     <span v-else v-tooltip.bottom="`${ txInfo.blkHeight }`" >
                         <router-link :to="`/explorer/block/${txInfo.blkHeight}`">
@@ -39,6 +39,11 @@
                         </router-link>
                     </span>
                 </template>
+            </div>
+
+            <span class="col-4 d-xs-none d-sm-none d-md-none text-dark text-truncate">Fees</span>
+            <div class="col-8 d-xs-none d-sm-none d-md-block  col-md-1 text-truncate">
+                <amount :value="tx.fee" :sign="true" :show-asset="false "/>
             </div>
 
             <span class="col-4 d-block d-sm-none text-dark text-truncate">Type</span>
@@ -55,7 +60,7 @@
             </div>
 
             <span class="col-4 d-block d-sm-none text-dark text-truncate">Data</span>
-            <span class="col-8 col-sm-5 col-md-7">
+            <span class="col-8 col-sm-4 col-md-6">
                 <show-transaction-preview-data :tx="tx" />
             </span>
 
@@ -68,10 +73,11 @@
 import StringHelper from "src/utils/string-helper";
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import ShowTransactionPreviewData from "./show-transaction-preview-data"
+import Amount from "src/components/wallet/amount"
 
 export default {
 
-    components: { LoadingSpinner, ShowTransactionPreviewData},
+    components: { LoadingSpinner, ShowTransactionPreviewData, Amount},
 
     props: {
         txHash: {default: null}

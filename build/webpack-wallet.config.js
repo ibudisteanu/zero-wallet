@@ -13,16 +13,7 @@ module.exports = merge(base, {
     },
     output: {
         path: path.resolve(__dirname, "./../dist/dev"),
-        publicPath: "/",
         filename: "Wallet-User-Interface.js"
     },
-
-    plugins: [
-
-        new webpack.DefinePlugin({
-            "BROWSER": 'true',
-        }),
-
-    ]
 
 });

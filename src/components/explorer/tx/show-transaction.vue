@@ -29,7 +29,7 @@
                 <div class="col-7 col-sm-9 text-truncate" >
                 <span v-if="txInfo && txInfo.timestamp" v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  txInfo.timestamp ) }`">
                     {{timeAgo( $store.state.blockchain.genesisTimestamp + txInfo.timestamp) }}
-                    <i class="fa fa-clock"></i>
+                    <i class="fas fa-clock"></i>
                 </span>
                     <span v-else>
                     -
@@ -41,7 +41,7 @@
                 <div class="col-7 col-sm-9 text-truncate">
                 <span v-if="txInfo && txInfo.blkHeight">
                     {{ $store.state.blockchain.end - txInfo.blkHeight -1 }}
-                    <i v-if="$store.state.blockchain.end - txInfo.blkHeight -1 > 8" class="fa fa-check"></i>
+                    <i v-if="$store.state.blockchain.end - txInfo.blkHeight -1 > 8" class="fas fa-check"></i>
                 </span>
                     <span v-else>
                     -

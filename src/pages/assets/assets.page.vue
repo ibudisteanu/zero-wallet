@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa fa-file-invoice-dollar" title="Assets">View the existing assets on the network.</layout-title>
+        <layout-title icon="fas fa-file-invoice-dollar" title="Assets">View the existing assets on the network.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">

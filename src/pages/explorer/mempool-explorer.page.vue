@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa fa-list-ol" title="Mem pool">View the latest transactions that are in pending for the next blocks.</layout-title>
+        <layout-title icon="fas fa-list-ol" title="Mem pool">View the latest transactions that are in pending for the next blocks.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light" id="mempool">
@@ -11,7 +11,7 @@
                         <h5 class="mb-0">Mem pool</h5>
                         <div class="subtitle">
                             <h6>Pending Transactions: {{mempoolCount}}</h6>
-                            <i class="fa fa-sync pointer " @click="downloadMempool" v-tooltip.bottom="`Download again the mempool`" ></i>
+                            <i class="fas fa-sync pointer " @click="downloadMempool" v-tooltip.bottom="`Download again the mempool`" ></i>
                         </div>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
                             <span class="d-block text-truncate fs--1"> {{hash}} </span>
                         </router-link>
                     </div>
-                    <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.trunc(mempoolCount/countPerPage)" prefix="/explorer/mem-pool/" suffix="#mempool" />
+                    <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.trunc(mempoolCount/countPerPage)" prefix="/explorer/mempool/" suffix="#mempool" />
                 </template>
 
             </div>

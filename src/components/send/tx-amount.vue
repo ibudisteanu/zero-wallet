@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-12">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{text}} Amount</label>
-            <i v-if="tooltip" class="fa fa-question" v-tooltip.bottom="tooltip" />
+            <i v-if="tooltip" class="fas fa-question" v-tooltip.bottom="tooltip" />
             <input :class="`form-control ${validationAmountError ? 'is-invalid' :''}`" type="number" v-model.number="amount" min="0" :step="getSteps" :disabled="disabled">
             <div v-if="validationAmountError" class="invalid-feedback d-block">{{validationAmountError}}</div>
         </div>
@@ -11,12 +11,13 @@
 
 <script>
 import StringHelper from "../../utils/string-helper";
+import Decimal from "decimal.js";
 
 export default {
 
     data(){
         return {
-            amount: 0,
+            amountBase: 0,
         }
     },
 
@@ -36,15 +37,13 @@ export default {
         },
         getSteps(){
             if (!this.assetInfo) return ""
-            return (1 / Math.pow(10, this.assetInfo.decimalSeparator)).toFixed(this.assetInfo.decimalSeparator)
+            return new Decimal(1).div( new Decimal(10).pow( this.assetInfo.decimalSeparator) ).toString()
         },
-    },
 
-    asyncComputed:{
-        async validationAmountError(){
-            if ( !this.allowZero && Number.parseFloat(this.amount) === 0) return "Amount needs to be greater than 0"
+        validationAmountError() {
+            if (!this.allowZero && Number.parseFloat(this.amount) === 0) return "Amount needs to be greater than 0"
             if (this.amount === Number.NaN || this.amount < 0) return "Amount can not be negative"
-            if (this.validateAmount){
+            if (this.validateAmount) {
 
                 if (!this.asset)
                     return "Asset is invalid"
@@ -54,9 +53,30 @@ export default {
                 if (!this.balances[this.asset])
                     return 'Available funds: none'
 
-                if ( this.amount * Math.pow(10, this.assetInfo.decimalSeparator) > this.balances[this.asset].amount )
-                    return `Amount is higher than available funds ${ StringHelper.formatMoney( await PandoraPay.config.assets.assetsConvertToBase( this.balances[this.asset].amount.toString(), this.assetInfo.decimalSeparator ), this.assetInfo.decimalSeparator ) }`
+                if (this.amountBase > this.balances[this.asset].amount )
+                    return `Amount is higher than available funds ${StringHelper.formatMoney( new Decimal(this.balances[this.asset].amount).div( new Decimal(10).pow(this.assetInfo.decimalSeparator) ).toString(), this.assetInfo.decimalSeparator)}`
+
             }
+        },
+        amount: {
+
+            get(){
+                return new Decimal(this.amountBase).div( new Decimal(10).pow(this.assetInfo.decimalSeparator) ).toString()
+            },
+            set(to, from ){
+
+                if (!this.assetInfo){
+                    this.amountBase = 0
+                    return
+                }
+
+                this.amountBase = new Decimal(to).mul( new Decimal(10).pow(this.assetInfo.decimalSeparator) ).round().toString()
+
+                return this.$emit('changed', {
+                    amount: this.amountBase,
+                });
+            },
+
         },
     },
 
@@ -64,27 +84,6 @@ export default {
     },
 
     watch: {
-
-        amount: {
-            immediate: true,
-            handler: function (to, from) {
-                if (!this.assetInfo){
-                    this.amount = 0
-                    return 0
-                }
-
-                // to = Number.parseFloat(to)
-                // const target = to.toFixed(this.assetInfo.decimalSeparator)
-                // if (to.toString() !== target ){
-                //     this.amount = target
-                //     return
-                // }
-
-                return this.$emit('changed', {
-                    amount: to,
-                });
-            }
-        },
 
         validationAmountError: {
             immediate: true,

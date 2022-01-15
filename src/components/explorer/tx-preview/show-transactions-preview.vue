@@ -5,9 +5,10 @@
         <div class="row bg-200 text-900 py-2 fs--1 fw-semi-bold">
             <span class="d-none d-sm-block col-sm-2 col-md-2 text-truncate">Hash</span>
             <span class="d-none d-sm-block col-sm-2 col-md-1 text-truncate">Time</span>
-            <span class="d-none d-sm-block col-sm-1 col-md-1 text-truncate">Confirmations</span>
+            <span class="d-none d-sm-block col-sm-2 col-md-1 text-truncate">Confirmations</span>
+            <span class="d-none d-md-block col-md-1 text-truncate">Fee</span>
             <span class="d-none d-sm-block col-sm-2 col-md-1 text-truncate">Type</span>
-            <span class="d-none d-sm-block col-sm-5 col-md-7 text-truncate">Data</span>
+            <span class="d-none d-sm-block col-sm-4 col-md-6 text-truncate">Data</span>
         </div>
 
         <div id="transactions" />

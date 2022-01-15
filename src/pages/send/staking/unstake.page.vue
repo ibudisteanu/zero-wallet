@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa fa-unlink" title="Unstake coins">Retrieve coins from the staking balance</layout-title>
+        <layout-title icon="fas fa-unlink" title="Unstake coins">Retrieve coins from the staking balance</layout-title>
 
         <simple-tx :titles-offset="{ '-1': {icon: 'fas fa-edit', name: 'Amount', tooltip: 'Unstaking amount' } }"
                 @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey" :before-process="handleBeforeProcess">
@@ -44,7 +44,7 @@ export default {
             return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
         },
         buttons(){
-            return { 1: { icon: 'fa fa-unlink', text: 'Unstake now' }}
+            return { 1: { icon: 'fas fa-unlink', text: 'Unstake now' }}
         },
         getAsset() {
             return this.$store.getters.getAsset(PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX);

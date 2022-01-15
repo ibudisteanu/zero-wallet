@@ -17,6 +17,7 @@
 <script>
 
 import StringHelper from "src/utils/string-helper"
+import Decimal from 'decimal.js';
 
 export default {
 
@@ -28,13 +29,10 @@ export default {
         getAsset(){
             return  this.$store.getters.getAsset( PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX );
         },
-    },
-
-    asyncComputed:{
-        async amount(){
-            return StringHelper.formatMoney( await PandoraPay.config.coins.convertToBase( this.delegatedStakePending.pendingAmount.toString() ), PandoraPay.config.coins.DECIMAL_SEPARATOR )
+        amount(){
+            return StringHelper.formatMoney( new Decimal(this.delegatedStakePending.pendingAmount).div( new Decimal(10).pow(this.getAsset.decimalSeparator) ).toString(), PandoraPay.config.coins.DECIMAL_SEPARATOR )
         }
-    }
+    },
 
 }
 </script>

@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa fa-cubes" title="Blockchain">View the latest blocks.</layout-title>
+        <layout-title icon="fas fa-cubes" title="Blockchain">View the latest blocks.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">
@@ -15,7 +15,7 @@
             <div class="card-body p-3 pt-0">
                 <div class="card-body p-0">
 
-                    <alert-box v-if="error" type="error">{{error}}</alert-box>
+                    <alert-box v-if="error" class="w-100 p-3" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
                     <template v-if="!loaded" >
                         <div class="py-3 text-center">

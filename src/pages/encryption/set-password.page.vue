@@ -2,7 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fa fa-lock" title="Encrypt wallet" >Set a password for your wallet. The password will be necessary on your machine to open and use the wallet.</layout-title>
+        <layout-title icon="fas fa-lock" title="Encrypt wallet" >Set a password for your wallet. The password will be necessary on your machine to open and use the wallet.</layout-title>
 
         <div class="card mb-3">
             <div class="card-header bg-light">
@@ -27,14 +27,14 @@
 
                 <div class="row pt-4">
                     <div class="col-12 col-sm-6">
-                        <label>Encryption difficulty: {{encryptionDifficulty}} <i class="fa fa-question" v-tooltip.bottom="'The harder the encryption is, the harder for brute force is to crack it'" /> </label>
+                        <label>Encryption difficulty: {{encryptionDifficulty}} <i class="fas fa-question" v-tooltip.bottom="'The harder the encryption is, the harder for brute force is to crack it'" /> </label>
                         <input class="form-range" type="range" min="1" max="5" v-model="encryptionDifficulty" />
                         <small v-if="encryptionDifficulty > 2" :class="`fw-semi-bold rounded-pill badge-soft-${encryptionDifficulty > 7 ? 'danger' : 'warning'} p-1`">
-                            <i class="fa fa-exclamation-triangle" /> High Difficulty requires {{formatMilliseconds( encryptionTime[encryptionDifficulty] *1000) }} seconds to login.
+                            <i class="fas fa-exclamation-triangle" /> High Difficulty requires {{formatMilliseconds( encryptionTime[encryptionDifficulty] *1000) }} seconds to login.
                         </small>
                     </div>
                     <div class="col-12 col-sm-6">
-                        <label>Password Strength <i class="fa fa-question" v-tooltip.bottom="'Avoid using guessable passwords as dictionary attacks can crack it.'" /> </label>
+                        <label>Password Strength <i class="fas fa-question" v-tooltip.bottom="'Avoid using guessable passwords as dictionary attacks can crack it.'" /> </label>
                         <progress-bar :value="strengthPassword/3*encryptionDifficulty" :text="strengthPasswordMessage" />
                     </div>
                 </div>
@@ -43,7 +43,7 @@
             <div class="card-body bg-light">
                 <alert-box v-if="error" type="error">{{error}}</alert-box>
                 <div class="text-center">
-                    <loading-button text="Set Password" @submit="handleSetPassword" icon="fa fa-lock"  :disabled="password.length === 0 || retypePassword.length === 0" />
+                    <loading-button text="Set Password" @submit="handleSetPassword" icon="fas fa-lock"  :disabled="password.length === 0 || retypePassword.length === 0" />
                 </div>
             </div>
         </div>

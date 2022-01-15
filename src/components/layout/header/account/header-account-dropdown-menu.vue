@@ -23,24 +23,24 @@
                                 </div>
                                 <div class="account-tools">
                                     <span class="fw-light" >{{ (address.seedIndex !== undefined) ? '#'+address.seedIndex : '&nbsp;'}}</span>
-                                    <i class="fa fa-copy pointer " v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( address)" />
+                                    <i class="fas fa-copy pointer " v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( address)" />
                                 </div>
                             </div>
                     </div>
                 </div>
                 <div class="list-group-item">
                     <div class="list-group-title border-bottom">Operations:</div>
-                    <span @click="handleViewAccount" v-tooltip.left="'View account'" class="pointer dropdown-item "> <i class="fa fa-hand-pointer "></i> View account </span>
-                    <span @click="handleCreateAccount" v-tooltip.left="'Create a new Address'" class="pointer dropdown-item fw-normal "> <i class="fa fa-plus"></i> Create Account </span>
-                    <span @click="handleImportAccount" v-tooltip.left="'Import an address from json file'" class="pointer dropdown-item fw-normal "><i class="fa fa-upload"></i> Import Account (json)</span>
-                    <span @click="handleImportPrivateKey" v-tooltip.left="'Import an address from Private Key'" class="pointer dropdown-item fw-normal "><i class="fa fa-upload"></i> Import Private Key</span>
+                    <span @click="handleViewAccount" v-tooltip.left="'View account'" class="pointer dropdown-item "> <i class="fas fa-hand-pointer "></i> View account </span>
+                    <span @click="handleCreateAccount" v-tooltip.left="'Create a new Address'" class="pointer dropdown-item fw-normal "> <i class="fas fa-plus"></i> Create Account </span>
+                    <span @click="handleImportAccount" v-tooltip.left="'Import an address from json file'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i> Import Account (json)</span>
+                    <span @click="handleImportPrivateKey" v-tooltip.left="'Import an address from Private Key'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i> Import Private Key</span>
                     <div class="dropdown-divider"></div>
-                    <span @click="handleViewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" class="pointer dropdown-item fw-normal "><i class="fa fa-key"></i>View Secret Phrase</span>
-                    <span @click="handleExportWallet" v-tooltip.left="'Export your wallet to your computer'" class="pointer dropdown-item fw-normal "><i class="fa fa-download"></i>Export Wallet</span>
-                    <span @click="handleImportWallet" v-tooltip.left="'Import a pandora wallet from your computer'" class="pointer dropdown-item fw-normal "><i class="fa fa-upload"></i>Import Wallet</span>
+                    <span @click="handleViewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" class="pointer dropdown-item fw-normal "><i class="fas fa-key"></i>View Secret Phrase</span>
+                    <span @click="handleExportWallet" v-tooltip.left="'Export your wallet to your computer'" class="pointer dropdown-item fw-normal "><i class="fas fa-download"></i>Export Wallet</span>
+                    <span @click="handleImportWallet" v-tooltip.left="'Import a pandora wallet from your computer'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i>Import Wallet</span>
                     <template v-if="encrypted">
                         <div class="dropdown-divider"></div>
-                        <span @click="handleLogout" v-tooltip.left="'Return to the password screen'" class="pointer dropdown-item fw-normal "><i class="fa fa-sign-out-alt"></i>  Logout</span>
+                        <span @click="handleLogout" v-tooltip.left="'Return to the password screen'" class="pointer dropdown-item fw-normal "><i class="fas fa-sign-out-alt"></i>  Logout</span>
                     </template>
                 </div>
             </div>
