@@ -33,7 +33,8 @@ export default class PandorapayWebworkerIntegration{
             contentLength = response.headers.get('content-length');
         }
 
-        if (contentLength === null) throw "Response size header unavailable"
+        if (contentLength === null)
+            contentLength = 5*1024*1024
 
         const total = parseInt(contentLength, 10);
         let loaded = 0;
