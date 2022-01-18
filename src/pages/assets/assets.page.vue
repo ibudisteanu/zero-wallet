@@ -15,7 +15,7 @@
             <div class="card-body p-3 pt-0 ">
                 <div class="card-body p-0">
 
-                    <alert-box v-if="error" type="error">{{error}}</alert-box>
+                    <alert-box class="w-100 mt-2" v-if="error" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
 
                     <template v-if="!loaded">
                         <div class="py-3 text-center">

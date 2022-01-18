@@ -123,7 +123,6 @@ export default {
         async processUpdate(data){
 
             this.$store.commit('setConsensusStatus', "sync")
-
             this.$store.commit('setBlockchainNotification', data)
 
             const out = await PandoraPay.network.getNetworkBlockchain()

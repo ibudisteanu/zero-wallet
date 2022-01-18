@@ -24,7 +24,7 @@ export default {
         if (store.status === "sync" && status === "offline")
             store.commit('createSyncPromise');
 
-        if ( status === "sync" && !store.syncPromiseResolved)
+        if ( status === "online" && !store.syncPromiseResolved)
             store.syncPromiseResolve(true);
 
         if (!(status === "online" && store.status === "sync"))
