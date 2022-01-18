@@ -18,7 +18,7 @@ export default {
                 account.registration.index = account.registrationExtra.index
         }
 
-        Vue.set(state.list, publicKey, account );
+        Vue.set(state.list, publicKey, account ? {...account} : null );
     },
 
     removeAccount(state, { publicKey }){
