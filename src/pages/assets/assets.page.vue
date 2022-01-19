@@ -48,6 +48,7 @@ import AlertBox from "src/components/utils/alert-box"
 import consts from "consts/consts";
 import Pagination from "src/components/utils/pagination";
 import LoadingSpinner from "src/components/utils/loading-spinner";
+import Decimal from "decimal.js"
 
 export default {
 
@@ -68,7 +69,7 @@ export default {
 
         finalPage() {
             if (this.page !== null) return this.page
-            return 0
+            return new Decimal(0)
         },
 
         ending(){
@@ -76,15 +77,14 @@ export default {
         },
 
         pages() {
-            return Math.floor((this.ending - 1) / this.countPerPage)
+            return Decimal.floor(this.ending.minus(1).div( this.countPerPage) )
         },
 
         page() {
             let page = this.$route.params.page || null
             if (typeof page == "string") {
                 try{
-                    page = Number.parseInt(page)
-                    if (isNaN(page)) throw "error"
+                    page = new Decimal(page)
                 }catch(err){
                     this.error = "Invalid page number"
                     return null
@@ -109,8 +109,8 @@ export default {
                 await this.$store.state.blockchain.syncPromise;
 
                 await this.$store.dispatch('getAssetsInfo', {
-                    start: this.finalPage * this.countPerPage,
-                    end: this.finalPage * (this.countPerPage+1),
+                    start: this.finalPage.mul( this.countPerPage ),
+                    end: this.finalPage.plus(1).mul(this.countPerPage),
                     count: this.ending
                 })
 

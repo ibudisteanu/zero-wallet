@@ -36,6 +36,7 @@ import TransactionsPreview from "../../components/wallet/transactions/transactio
 import PendingTransactionsPreview from "../../components/wallet/transactions/pending-transactions-preview";
 import WaitAddress from "../../components/wallet/account/wait-address";
 import WaitAccount from "../../components/wallet/account/wait-account";
+import Decimal from "decimal.js"
 
 export default {
 
@@ -55,8 +56,12 @@ export default {
         page(){
             let page = this.$route.params.page || null
             if (typeof page == "string"){
-                page = Number.parseInt(page)
-                return page;
+                try{
+                    return new Decimal(page)
+                }catch(err){
+                    this.error = "Invalid page number"
+                    return null
+                }
             }
             return page
         },

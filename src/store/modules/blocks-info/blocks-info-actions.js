@@ -1,4 +1,5 @@
 import consts from "consts/consts";
+import Decimal from 'decimal.js';
 
 const promises = {}
 
@@ -34,25 +35,26 @@ export default {
 
     async getBlocksInfo( {state, dispatch, commit}, { starting, blockchainEnd, view = null} ){
 
-        starting = Math.max(0, starting )
-        const ending = Math.min( starting + consts.blocksInfoPagination -1, blockchainEnd-1 )
+        starting = Decimal.max(0, starting )
+        const ending = Decimal.min( starting.plus( consts.blocksInfoPagination).minus(1), blockchainEnd.minus(1) )
 
         if (view === true ) {
-            const viewStart = (Math.ceil( ending / consts.blocksInfoPagination )-1) * consts.blocksInfoPagination
-            const viewEnd = viewStart + consts.blocksInfoPagination
+            const viewStart = Decimal.ceil( ending.div( consts.blocksInfoPagination )).minus(1).mul( consts.blocksInfoPagination )
+            const viewEnd = viewStart.plus( consts.blocksInfoPagination )
             commit('setBlocksInfoViewPosition', {starting: viewStart, ending: viewEnd})
         } else if (view === false ) {
             commit('setBlocksInfoViewPosition', null )
         }
 
-        console.log("starting, ending", starting, ending)
+        console.log("starting, ending", starting.toString(), ending.toString() )
 
-        const listByHeight = {
+        let listByHeight = {
             ...state.listByHeight,
         }
 
         let found = false
-        for (let i = ending; i >= starting ; i-- ){
+        let i = ending
+        while ( i.gte(starting) ) {
 
             let beforeHash
             if (listByHeight[i] && listByHeight[i].hash )
@@ -65,29 +67,36 @@ export default {
 
                 if (!found && beforeHash === blockInfo.hash )
                     found = true
+
             }
 
+            i = i.minus(1)
+        }
+
+        listByHeight = {
+            ...state.listByHeight,
+            ...listByHeight,
         }
 
         const viewPosition = state.viewPosition
         if (viewPosition){
             let c = 0
             for (const heightStr in listByHeight){
-                const height = Number.parseInt(heightStr)
-                if ( !( height > viewPosition.ending || height < viewPosition.starting ) )
+                const height = new Decimal(heightStr)
+                if ( !( height.gt( viewPosition.ending ) || height.lt( viewPosition.starting ) ) )
                     c++
             }
 
             if (c >= consts.blocksInfoPagination)
                 for (const heightStr in listByHeight){
-                    const height = Number.parseInt(heightStr)
-                    if ( height > viewPosition.ending || height < viewPosition.starting )
+                    const height = new Decimal(heightStr)
+                    if ( height.gt( viewPosition.ending ) || height.lt( viewPosition.starting ) )
                         delete(listByHeight[height])
                 }
         } else {
             for (const heightStr in listByHeight){
-                const height = Number.parseInt(heightStr)
-                if ( height > ending || height < starting )
+                const height = new Decimal(heightStr)
+                if ( height.gt( ending ) || height.lt( starting) )
                     delete(listByHeight[height])
             }
         }

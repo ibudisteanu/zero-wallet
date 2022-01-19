@@ -21,6 +21,5 @@ export default {
         address: {default: null},
     },
 
-
 }
 </script>

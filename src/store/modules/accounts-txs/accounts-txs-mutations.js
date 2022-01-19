@@ -1,5 +1,6 @@
 import Vue from "vue";
 import consts from "consts/consts";
+import Decimal from "decimal.js"
 
 export default {
 
@@ -11,7 +12,7 @@ export default {
 
         const obj = {
             hashes: {},
-            count: 0,
+            count: new Decimal(0),
         };
 
         if (accountTxs){
@@ -19,10 +20,12 @@ export default {
 
             accountTxs.txs = (accountTxs.txs||[]).reverse()
             for (let i=0; i < accountTxs.txs.length; i++)
-                obj.hashes[starting + i ] = accountTxs.txs[i]
+                obj.hashes[ starting.plus( i ) ] = accountTxs.txs[i]
+
+            console.log(obj.hashes)
         } else {
-            obj.count = 0
-            obj.next = 0
+            obj.count = new Decimal(0)
+            obj.next = new Decimal(0)
         }
 
         Vue.set(state.list, publicKey, obj );

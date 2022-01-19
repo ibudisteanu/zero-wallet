@@ -49,6 +49,7 @@ import Pagination from "src/components/utils/pagination"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import consts from "consts/consts"
 import AlertBox from "src/components/utils/alert-box"
+import Decimal from 'decimal.js';
 
 export default {
 
@@ -69,19 +70,18 @@ export default {
 
         finalPage() {
             if (this.page !== null) return this.page
-            return Math.floor((this.ending - 1) / this.countPerPage)
+            return this.pages
         },
 
         pages() {
-            return Math.floor((this.ending - 1) / this.countPerPage)
+            return this.ending.minus(1).div(this.countPerPage).floor()
         },
 
         page() {
             let page = this.$route.params.page || null
             if (typeof page == "string") {
                 try{
-                    page = Number.parseInt(page)
-                    if (isNaN(page)) throw "error"
+                    page = new Decimal(page)
                 }catch(err){
                     this.error = "Invalid page number"
                     return null
@@ -91,20 +91,20 @@ export default {
         },
 
         starting() {
-            return this.page * this.countPerPage
+            return this.page.mul( this.countPerPage )
         },
 
         last() {
 
-            const out = (this.finalPage + 1) * this.countPerPage
+            const out = this.finalPage.plus(1).mul(this.countPerPage)
             if (this.ending > 0)
-                return Math.min(this.ending, out);
+                return Decimal.min( this.ending, out );
 
             return out
         },
 
         lastBlocksInfo() {
-            return this.$store.getters.blocksInfoSorted.filter(a => (a.height >= this.last - this.countPerPage) && (a.height < this.last));
+            return this.$store.getters.blocksInfoSorted.filter(a => a.height.gte(this.last.minus( this.countPerPage) ) && a.height.lt( this.last ) );
         },
 
         ending() {
@@ -122,7 +122,7 @@ export default {
                 await this.$store.state.blockchain.syncPromise;
 
                 await this.$store.dispatch('getBlocksInfo', {
-                    starting: this.last - this.countPerPage,
+                    starting: this.last.minus(this.countPerPage),
                     blockchainEnd: this.ending,
                     view: this.page !== null
                 })

@@ -36,6 +36,7 @@ import ShowTransactionsPreview from "src/components/explorer/tx-preview/show-tra
 import consts from "consts/consts";
 import Pagination from "src/components/utils/pagination"
 import AlertBox from "src/components/utils/alert-box"
+import Decimal from "decimal.js"
 
 export default {
 
@@ -57,7 +58,7 @@ export default {
 
         finalPage(){
             if (this.page !== null) return this.page
-            return Math.floor((this.ending-1)/this.countPerPage)
+            return this.pages
         },
 
         address(){
@@ -73,7 +74,7 @@ export default {
         },
 
         pages(){
-            return Math.floor((this.ending-1)/this.countPerPage)
+            return Decimal.floor(this.ending.minus(1).div(this.countPerPage) )
         },
 
         starting(){
@@ -81,7 +82,7 @@ export default {
         },
 
         ending(){
-            if (!this.txs) return 0
+            if (!this.txs) return new Decimal(0)
             return this.txs.count;
         },
 
@@ -89,10 +90,10 @@ export default {
 
             if (this.page === null) return undefined
 
-            const out = ( this.page + 1 ) * this.countPerPage
+            const out = this.page.plus(1).mul( this.countPerPage )
 
             if (this.ending > 0)
-              return Math.min( this.ending, out );
+              return Decimal.min( this.ending, out );
 
             return out
         },
@@ -103,26 +104,18 @@ export default {
 
             const txs = this.txs.hashes;
 
-            let ending = Math.min( this.ending, (this.page === null) ? Number.MAX_SAFE_INTEGER : ( this.page + 1 ) * this.countPerPage)
-            let starting = ending - this.countPerPage
+            let ending = Decimal.min( this.ending, (this.page === null) ? new Decimal(2).pow(64).minus(1) : this.page.plus(1).mul( this.countPerPage) )
+            let starting = Decimal.max(0 ,ending.minus( this.countPerPage ) )
 
-            console.log("starting", starting, "ending", ending)
+            console.log("starting", starting.toString(), "ending", ending.toString() )
 
             const heights = []
             for ( const heightStr in txs)
-                heights.push( Number.parseInt(heightStr) )
+                heights.push( new Decimal(heightStr) )
 
-            heights.sort((a,b) => b-a)
+            heights.sort((a,b) => b.minus(a) )
 
-            const out = [];
-            for (const height of heights ) {
-              console.log("height",height, !!txs[height], ending)
-              if (height >= starting && height < ending) {
-                  out.push(txs[height]);
-                }
-            }
-
-            return out;
+            return heights.filter(  height => height.gte( starting ) && height.lt( ending) ).map( height => txs[height] );
         },
 
 

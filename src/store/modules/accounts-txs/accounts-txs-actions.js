@@ -1,4 +1,5 @@
 import consts from "consts/consts";
+import Decimal from "decimal.js"
 
 const promises = {
     accountsTxs: {},
@@ -14,23 +15,25 @@ export default {
         if (promises.accountsTxs[publicKey]) return promises.accountsTxs[publicKey];
         return promises.accountsTxs[publicKey] = new Promise( async (resolve, reject) => {
             try{
-                const out = await PandoraPay.network.getNetworkAccountTxs( MyTextEncode( JSONStringify( {publicKey, next: (next === undefined) ? Number.MAX_SAFE_INTEGER : next } ) ) );
+                const out = await PandoraPay.network.getNetworkAccountTxs( MyTextEncode( JSONStringify( {publicKey, next: (next === undefined) ? new Decimal(2).pow(64).minus(1) : next } ) ) );
                 const accountTxs = JSONParse(MyTextDecode( out) )
 
-                console.log("next", next, accountTxs)
+                console.log("next", next ? next.toString() : null, accountTxs )
 
                 if (accountTxs)
                     if (next === undefined){
-                        starting = Math.max(0, accountTxs.count - consts.addressTxsPagination )
+                        starting = Decimal.max(0, accountTxs.count.minus( consts.addressTxsPagination ) )
                         ending = accountTxs.count
                     }else {
-                        starting = next - consts.addressTxsPagination
+                        starting = next.minus( consts.addressTxsPagination )
                         ending = next
                     }
 
+                console.log("txs starting end", starting.toString(), ending.toString() )
+
                 if (view) {
-                    const viewStart = (Math.ceil( next / consts.addressTxsPagination )-1) * consts.addressTxsPagination
-                    const viewEnd = viewStart + consts.addressTxsPagination
+                    const viewStart = Decimal.ceil( next.div( consts.addressTxsPagination )).minus(1).mul( consts.addressTxsPagination )
+                    const viewEnd = viewStart.plus( consts.addressTxsPagination )
                     commit('setAccountTxsViewPosition', {publicKey, data: { starting: viewStart, ending: viewEnd}  })
                 } else {
                     commit('setAccountTxsViewPosition', {publicKey, data: null })
