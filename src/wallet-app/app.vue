@@ -72,13 +72,13 @@ export default {
                         console.log("listenNetworkNotifications", subscriptionType, key, data, extraInfo)
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT || subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_PLAIN_ACCOUNT || subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_REGISTRATION )
-                            return this.$store.dispatch('accountUpdateNotification', {publicKey: key, type: subscriptionType, data: JSON.parse(data), extraInfo: extraInfo ? JSON.parse(extraInfo) : null   })
+                            return this.$store.dispatch('accountUpdateNotification', {publicKey: key, type: subscriptionType, data: JSONParse(data), extraInfo: extraInfo ? JSONParse(extraInfo) : null   })
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS)
-                            return this.$store.dispatch('accountTxUpdateNotification', { publicKey: key, txHash:data.substr(1,64), extraInfo: extraInfo ? JSON.parse(extraInfo) : null  } )
+                            return this.$store.dispatch('accountTxUpdateNotification', { publicKey: key, txHash:data.substr(1,64), extraInfo: extraInfo ? JSONParse(extraInfo) : null  } )
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTION)
-                            this.$store.dispatch('txNotification', { txHash: key, extraInfo: extraInfo ? JSON.parse(extraInfo) : null } )
+                            this.$store.dispatch('txNotification', { txHash: key, extraInfo: extraInfo ? JSONParse(extraInfo) : null } )
 
                     })
 
@@ -93,7 +93,7 @@ export default {
                 else if (name === "wallet/removed-encryption") this.readWallet()
                 else if (name === "wallet/logged-out") this.readWallet()
                 else if (name === "consensus/update")
-                    this.processUpdate( JSON.parse( data ) )
+                    this.processUpdate( JSONParse( data ) )
 
             }
 
@@ -101,7 +101,7 @@ export default {
                 if (data > 0) {
 
                     const out = await PandoraPay.network.getNetworkBlockchain()
-                    this.$store.commit('setBlockchainInfo', JSON.parse( MyTextDecode(out) ) )
+                    this.$store.commit('setBlockchainInfo', JSONParse( MyTextDecode(out) ) )
 
                     this.$store.commit('setConsensusStatus', "online")
                     this.$store.dispatch('initializeFaucetInfo')
@@ -126,9 +126,9 @@ export default {
             this.$store.commit('setBlockchainNotification', data)
 
             const out = await PandoraPay.network.getNetworkBlockchain()
-            this.$store.commit('setBlockchainInfo', JSON.parse( MyTextDecode(out) ) )
+            this.$store.commit('setBlockchainInfo', JSONParse( MyTextDecode(out) ) )
 
-            await this.$store.dispatch('getBlocksInfo',  {starting: this.$store.state.blockchain.end - consts.blocksInfoPagination, blockchainEnd: this.$store.state.blockchain.end } )
+            await this.$store.dispatch('getBlocksInfo',  {starting: this.$store.state.blockchain.end.minus( consts.blocksInfoPagination ), blockchainEnd: this.$store.state.blockchain.end } )
 
             for (const key in this.$store.state.wallet.addresses)
                 await this.$store.dispatch('subscribeAccount', this.$store.state.wallet.addresses[key].publicKey)

@@ -1,3 +1,6 @@
+import JSONParse from 'src/utils/custom-json/json-parse'
+import  JSONStringify from 'src/utils/custom-json/json-stringify'
+
 class Main {
 
     constructor(){
@@ -7,6 +10,9 @@ class Main {
 
         global.MyTextDecode = (a)=> a ? decoder.decode(a) : null
         global.MyTextEncode = (a)=> a ? encoder.encode(a) : null
+
+        global.JSONStringify = JSONStringify
+        global.JSONParse = JSONParse
 
         window.addEventListener("load", () => {
             this.initialize()

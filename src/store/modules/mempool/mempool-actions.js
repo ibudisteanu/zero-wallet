@@ -10,7 +10,7 @@ export default {
                 const data = await PandoraPay.network.getNetworkMempool( (page === 0) ? "" : state.chainHash, page, 0)
                 if (!data) throw "Data was not received"
 
-                const mempool = JSON.parse(MyTextDecode(data))
+                const mempool = JSONParse(MyTextDecode(data))
                 if (!mempool) throw "Mempool is invalid"
 
                 commit('setMempool', {page, mempool })

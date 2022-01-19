@@ -21,7 +21,7 @@ export default {
                 const data = await PandoraPay.network.getNetworkBlockWithTxs( 0, hash );
                 if (!data) throw "Block was not received"
 
-                const {block, txs} = JSON.parse(MyTextDecode(data))
+                const {block, txs} = JSONParse(MyTextDecode(data))
                 block.txs = txs || []
                 if (block.bloom.hash !== hash) throw "Block hash was not matching"
 
@@ -47,10 +47,10 @@ export default {
 
             try{
 
-                const data = await PandoraPay.network.getNetworkBlockWithTxs( Number.parseInt(height), "" );
+                const data = await PandoraPay.network.getNetworkBlockWithTxs( height, "" );
                 if (!data) throw "Block was not received"
 
-                const {block, txs} = JSON.parse(MyTextDecode(data))
+                const {block, txs} = JSONParse(MyTextDecode(data))
                 block.txs = txs || []
                 if (block.height !== height) throw "Block height was not matching"
 

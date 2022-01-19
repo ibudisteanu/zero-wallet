@@ -14,7 +14,7 @@ export default {
                 const assetInfoData = await PandoraPay.network.getNetworkAssetInfo( height, "" );
                 if (!assetInfoData) throw "Error getting assetInfo"
 
-                const assetInfo = JSON.parse( MyTextDecode( assetInfoData ) )
+                const assetInfo = JSONParse( MyTextDecode( assetInfoData ) )
                 if (!assetInfo ) throw "Error getting asset info"
 
                 assetInfo.height = height
@@ -40,7 +40,7 @@ export default {
                 const assetInfoData = await PandoraPay.network.getNetworkAssetInfo(0, hash);
                 if (!assetInfoData ) throw "Error getting asset info"
 
-                const assetInfo = JSON.parse(MyTextDecode(assetInfoData))
+                const assetInfo = JSONParse(MyTextDecode(assetInfoData))
 
                 assetInfo.hash = hash
                 commit('setAssetInfo', assetInfo)

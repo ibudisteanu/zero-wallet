@@ -5,7 +5,7 @@ export default {
         const faucetInfo = await PandoraPay.network.getNetworkFaucetInfo()
         if (!faucetInfo) throw "Couldn't get faucet info"
 
-        commit('setFaucetInfo', JSON.parse( MyTextDecode(faucetInfo) ))
+        commit('setFaucetInfo', JSONParse( MyTextDecode(faucetInfo) ))
     }
 
 }

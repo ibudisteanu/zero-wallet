@@ -16,15 +16,15 @@ export default {
             try{
 
                 const result = await Promise.all([
-                    PandoraPay.network.getNetworkAccount(MyTextEncode( JSON.stringify( {publicKey} )) ),
-                    PandoraPay.network.getNetworkAccountMempool( MyTextEncode( JSON.stringify( {publicKey} ) ) ),
+                    PandoraPay.network.getNetworkAccount(MyTextEncode( JSONStringify( {publicKey} )) ),
+                    PandoraPay.network.getNetworkAccountMempool( MyTextEncode( JSONStringify( {publicKey} ) ) ),
                 ])
 
                 if ( !result[0] ) throw "Account was not received"
                 const accountData = result[0]
 
-                let account = JSON.parse(MyTextDecode(accountData))
-                const pendingTxsList = JSON.parse( MyTextDecode(result[1]) )
+                let account = JSONParse(MyTextDecode(accountData))
+                const pendingTxsList = JSONParse( MyTextDecode(result[1]) )
 
                 if ( !Object.keys(account).length ){
                     account = null

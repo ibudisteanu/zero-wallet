@@ -121,6 +121,7 @@ import TxAsset from "../tx-asset";
 import AccountIdenticon from "../../wallet/account/account-identicon";
 import Wizard from "../../utils/wizard";
 import ConfirmBroadcastingTx from "./confirm-broadcasting-tx"
+import Decimal from 'decimal.js';
 
 export default {
     components: {
@@ -260,7 +261,7 @@ export default {
         },
 
         randomDestination(to, from){
-            this.destination = {address: null, amount: 0}
+            this.destination = {address: null, amount: "0" }
         },
 
     },
@@ -330,7 +331,7 @@ export default {
                 if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX){
                     const outData = await PandoraPay.network.getNetworkFeeLiquidity(0, asset)
                     if (!outData) throw "No Asset Fee Liqiduity for this asset"
-                    const out = JSON.parse(MyTextDecode(outData))
+                    const out = JSONParse(MyTextDecode(outData))
                     assetCollector = out.collector
                 }
 
@@ -384,13 +385,13 @@ export default {
                 const alreadyUsedIndexesArray = Object.keys(alreadyUsedIndexes).map(it => Number.parseInt(it) )
                 alreadyUsedIndexesArray.sort((a,b) => a - b )
 
-                const out = await PandoraPay.network.getNetworkAccountsKeysByIndex( MyTextEncode( JSON.stringify({
+                const out = await PandoraPay.network.getNetworkAccountsKeysByIndex( MyTextEncode( JSONStringify({
                     indexes: alreadyUsedIndexesArray,
                     asset: asset,
                     encodeAddresses: false,
                 })));
 
-                let publicKeys = JSON.parse( MyTextDecode( out ) ).publicKeys
+                let publicKeys = JSONParse( MyTextDecode( out ) ).publicKeys
 
                 const publicKeysMap = {}
                 publicKeys.map( it => publicKeysMap[it] = true )
@@ -398,7 +399,7 @@ export default {
                 async function getRandomPublicKey(){
                     const keys = Object.keys(publicKeysMap)
                     if (!keys.length) {
-                        const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
+                        const json = JSONParse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
                         return {addressEncoded: json[1], publicKey: json[2] }
                     }
 
@@ -407,11 +408,11 @@ export default {
                     delete publicKeysMap[publicKeySelected]
 
                     if (assetCollector && publicKeySelected === assetCollector){
-                        const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
+                        const json = JSONParse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
                         return {addressEncoded: json[1], publicKey: json[2] }
                     }
 
-                    const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( {publicKey: publicKeySelected, registration: "", paymentID: "", paymentAmount: 0, paymentAsset: "" } ) ) ) ) )
+                    const json = JSONParse( MyTextDecode( await PandoraPay.addresses.generateAddress( MyTextEncode( JSONStringify( {publicKey: publicKeySelected, registration: "", paymentID: "", paymentAmount: 0, paymentAsset: "" } ) ) ) ) )
                     return {addressEncoded: json[1], publicKey: publicKeySelected}
                 }
 
@@ -421,7 +422,7 @@ export default {
                     ringMembers.push(this.address.addressEncoded)
                     delete publicKeysMap[this.address.publicKey]
                 }else {
-                    const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
+                    const json = JSONParse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
                     ringMembers.push( json[1] )
                     this.newSender = {privateKey: json[0], addressEncoded: json[1], publicKey: json[2] }
                 }
@@ -440,7 +441,7 @@ export default {
                 }
 
                 for (let i=0; ringMembers.length < ringSize; i++){
-                    const json = JSON.parse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
+                    const json = JSONParse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
                     ringMembers.push( json[1] )
                 }
 
@@ -486,26 +487,26 @@ export default {
             const accs = { [asset]: {} }
             const regs = {}
 
-            const shuffle =  JSON.parse( MyTextDecode( await PandoraPay.helpers.shuffleArray_for_Zether( this.ringMembers.length.toString()  )) )
+            const shuffle =  JSONParse( MyTextDecode( await PandoraPay.helpers.shuffleArray_for_Zether( this.ringMembers.length.toString()  )) )
             const ringShuffle = shuffle.map( it => this.ringMembers[it] )
 
-            const ringShufflePublicKeys = await Promise.all( ringShuffle.map( async it => JSON.parse( MyTextDecode( await PandoraPay.addresses.decodeAddress(it) )).publicKey ) )
+            const ringShufflePublicKeys = await Promise.all( ringShuffle.map( async it => JSONParse( MyTextDecode( await PandoraPay.addresses.decodeAddress(it) )).publicKey ) )
 
-            let outData = await PandoraPay.network.getNetworkAccountsByKeys(MyTextEncode(JSON.stringify({
+            let outData = await PandoraPay.network.getNetworkAccountsByKeys(MyTextEncode( JSONStringify({
                 keys: ringShufflePublicKeys.map(it => ({publicKey: it }) ),
                 asset,
                 includeMempool: true,
             })))
 
-            let out = JSON.parse( MyTextDecode( outData ) )
+            let out = JSONParse( MyTextDecode( outData ) )
 
             for (let i=0; i < out.accSerialized.length; i++){
                 accs[asset][ringShufflePublicKeys[i]] = out.accSerialized[i]
                 regs[ringShufflePublicKeys[i]] = out.registrationSerialized[i]
             }
 
-            const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.destination.amount.toString(), this.getAsset.decimalSeparator ) )
-            const fee = this.fee.feeType ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) )
+            const amount = this.destination.amount
+            const fee = this.fee.feeType ? 0 : this.fee.feeManual.amount
 
             let feeRate = 0, feeLeadingZeros = 0
 
@@ -513,7 +514,7 @@ export default {
                 if (this.assetFeeLiquidityAsset){
                     outData = await PandoraPay.network.getNetworkFeeLiquidity(0, asset)
                     if (!outData) throw "No Asset Fee Liqiduity for this asset"
-                    out = JSON.parse( MyTextDecode(outData))
+                    out = JSONParse( MyTextDecode(outData))
 
                     feeRate = out.rate
                     feeLeadingZeros = out.leadingZeros
@@ -523,7 +524,7 @@ export default {
                     if (parts.length > 1)
                         feeLeadingZeros = parts[1].length
 
-                    feeRate = Math.floor( this.assetFeeConversionRate * Math.pow(10, feeLeadingZeros) )
+                    feeRate = new Decimal( this.assetFeeConversionRate ).mul( new Decimal(10).pow( feeLeadingZeros) )
                 }
 
 
@@ -540,6 +541,7 @@ export default {
                 fees: [{
                     fixed:  fee,
                     perByte: 0,
+                    perByteExtraSpace: 0,
                     perByteAuto: this.fee.feeType,
                     rate: feeRate,
                     leadingZeros: feeLeadingZeros,
@@ -556,11 +558,13 @@ export default {
                 regs,
             }
 
+            console.log("data", data)
+
             if (this.beforeProcess)
                 await this.beforeProcess(password, data)
 
             //compute extra
-            out = await PandoraPayHelper.transactions.builder.createZetherTx( MyTextEncode( JSON.stringify( data ) ),
+            out = await PandoraPayHelper.transactions.builder.createZetherTx( MyTextEncode( JSONStringify( data ) ),
                 status => {
                     this.status = status
                 } );
@@ -568,7 +572,7 @@ export default {
             if (!out) throw "Transaction couldn't be made";
             this.status = ""
 
-            this.tx = JSON.parse( MyTextDecode( out[0] ) )
+            this.tx = JSONParse( MyTextDecode( out[0] ) )
             this.txSerialized = out[1]
 
         },

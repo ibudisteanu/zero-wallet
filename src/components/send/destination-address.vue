@@ -62,7 +62,7 @@ export default {
             handler: async function  (to, ) {
                 try{
                     const addressData = await PandoraPay.addresses.decodeAddress(to)
-                    const address = JSON.parse( MyTextDecode(addressData) )
+                    const address = JSONParse( MyTextDecode(addressData) )
                     this.finalAddress = address
                 }catch(err){
                     this.finalAddress = null

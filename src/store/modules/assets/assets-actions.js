@@ -11,7 +11,7 @@ export default {
                 const assetData = await PandoraPay.network.getNetworkAsset(0, hash);
                 if (!assetData ) throw "Error getting block info"
 
-                const asset = JSON.parse(MyTextDecode(assetData) )
+                const asset = JSONParse(MyTextDecode(assetData) )
 
                 asset.hash = hash
 

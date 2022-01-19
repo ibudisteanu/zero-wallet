@@ -1,9 +1,9 @@
 <template>
     <div>
-        <template v-if="dataVersion === PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT">
+        <template v-if="dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT)">
             {{data}}
         </template>
-        <template v-else-if="dataVersion === PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_ENCRYPTED">
+        <template v-else-if="dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_ENCRYPTED)">
 
             <span v-if="dataDecryptedError" class="text-danger">
                 {{dataDecryptedError}}

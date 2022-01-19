@@ -229,8 +229,8 @@ export default {
                 paymentAsset: this.hasPaymentAsset ? this.paymentAsset : "",
             }
 
-            const out = await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( args )  ))
-            const json = JSON.parse( MyTextDecode(out) )
+            const out = await PandoraPay.addresses.generateAddress( MyTextEncode( JSONStringify( args )  ))
+            const json = JSONParse( MyTextDecode(out) )
             this.addressGenerated = json[1]
 
         },

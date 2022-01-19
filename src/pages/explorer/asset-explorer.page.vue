@@ -51,11 +51,11 @@
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Max Supply</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{(asset.maxSupply || 0) / Math.pow(10, asset.decimalSeparator)}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{maxSupply}}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Supply</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{(asset.supply || 0) / Math.pow(10, asset.decimalSeparator) }}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{supply}}</span>
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Update Key</span>
@@ -80,7 +80,7 @@
                 </div>
             </div>
             <div class="card-body p-0 fs--1">
-                <textarea class="form-control form-control-sm fs--2" rows="10">{{asset}}</textarea>
+                <textarea class="form-control form-control-sm fs--2" rows="10">{{JSONStringify(asset, null, 2) }}</textarea>
             </div>
         </div>
 
@@ -94,6 +94,7 @@ import LayoutTitle from "src/components/layout/layout-title"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import AlertBox from "src/components/utils/alert-box"
+import Decimal from 'decimal.js';
 
 export default {
 
@@ -114,9 +115,18 @@ export default {
         asset(){
             return this.$store.state.assets.list[this.hash];
         },
+        maxSupply(){
+            return (this.asset.maxSupply || new Decimal(0)).div(  new Decimal(10).pow(this.asset.decimalSeparator) )
+        },
+        supply(){
+            return (this.asset.supply || new Decimal(0)).div(  new Decimal(10).pow(this.asset.decimalSeparator) )
+        },
+
     },
 
     methods: {
+
+        JSONStringify: (a, b, c) => JSONStringify(a, b, c),
 
         async loadAsset() {
 

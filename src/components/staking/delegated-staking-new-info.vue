@@ -121,7 +121,7 @@ export default {
                 const nonce = this.account && this.account.plainAccount ? this.account.plainAccount.nonce : 0
 
                 const out = await PandoraPay.wallet.deriveDelegatedStakeWalletAddress( nonce.toString(), this.address.addressEncoded, password )
-                const json = JSON.parse(MyTextDecode(out))
+                const json = JSONParse(MyTextDecode(out))
 
                 this.hasNewDelegatedInfo = true
                 this.delegatedStakingNewPublicKey = json.publicKey

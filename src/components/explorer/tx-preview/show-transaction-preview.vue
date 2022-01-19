@@ -21,8 +21,8 @@
                     <span v-if="txInfo.mempool">
                         <i class="fas fa-clock" />
                     </span>
-                    <span v-else v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  txInfo.timestamp ) }`"  >
-                        {{ timeAgo( $store.state.blockchain.genesisTimestamp +  txInfo.timestamp) }}
+                    <span v-else v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp.plus(  txInfo.timestamp ) ) }`"  >
+                        {{ timeAgo( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp ) ) }}
                     </span>
                 </template>
             </div>
@@ -35,7 +35,7 @@
                     </span>
                     <span v-else v-tooltip.bottom="`${ txInfo.blkHeight }`" >
                         <router-link :to="`/explorer/block/${txInfo.blkHeight}`">
-                            {{ $store.state.blockchain.end - txInfo.blkHeight }}
+                            {{ $store.state.blockchain.end.minus( txInfo.blkHeight ) }}
                         </router-link>
                     </span>
                 </template>
@@ -48,10 +48,10 @@
 
             <span class="col-4 d-block d-sm-none text-dark text-truncate">Type</span>
             <div class="col-8 col-sm-2 col-md-1 text-truncate">
-                <template v-if="tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE">
+                <template v-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE )">
                     <span :class="`badge badge-soft-${$store.getters.getTxScriptBadgeColor(tx.version, tx.base.txScript)}`" v-tooltip.bottom="$store.getters.getTxScriptText(tx.version, tx.base.txScript)">{{$store.getters.getTxScriptTextShort(tx.version, tx.base.txScript)}}</span>
                 </template>
-                <template v-else-if="tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER">
+                <template v-else-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER )">
                     <span v-for="(payload, index) in tx.base.payloads"
                           :key="`tx_type_${index}`">
                         <span :class="`badge badge-soft-${$store.getters.getTxScriptBadgeColor(tx.version, payload.payloadScript)}`" v-tooltip.bottom="$store.getters.getTxScriptText(tx.version, payload.payloadScript)">{{$store.getters.getTxScriptTextShort(tx.version, payload.payloadScript)}}</span>

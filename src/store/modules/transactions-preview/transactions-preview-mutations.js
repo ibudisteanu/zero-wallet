@@ -9,7 +9,7 @@ export default {
 
     deleteTransactionsPreview(state, transactions) {
 
-        const txsByHash = {...state.txsByHash}, txsByHeight = {...state.txsByHeight}
+        const txsByHash = state.txsByHash, txsByHeight = state.txsByHeight
 
         for (const tx of transactions) {
             delete txsByHash[tx.hash]
@@ -23,7 +23,7 @@ export default {
 
     setTransactionsPreview( state, {txs, overwrite = true } ) {
         const timestamp = new Date().getTime()
-        const txsByHash = {...state.txsByHash}, txsByHeight = {...state.txsByHeight}
+        const txsByHash = state.txsByHash, txsByHeight = state.txsByHeight
 
         for (const tx of txs){
             tx.__timestampUsed = timestamp
@@ -37,25 +37,26 @@ export default {
             }
         }
 
-        state.txsByHash = txsByHash
-        state.txsByHeight = txsByHeight
+        state.txsByHash = {...txsByHash}
+        state.txsByHeight = {...txsByHeight}
     },
 
     updateViewTransactionsPreviewHashes(state, {txsHashes, insert} ) {
         if (!txsHashes) return
-        const viewTxsHashes = {...state.viewTxsHashes}
+        const viewTxsHashes = state.viewTxsHashes
 
         for (const txHash of txsHashes ){
             if (insert) viewTxsHashes[txHash] = true
             else delete viewTxsHashes[txHash]
         }
-        state.viewTxsHashes = viewTxsHashes
+        state.viewTxsHashes = {...viewTxsHashes}
     },
 
     updateTxPreviewNotification(state, {txHash, extraInfo }) {
+
         if (!state.txsByHash[txHash]) return
 
-        const txsByHeight = {...state.txsByHeight}
+        const txsByHeight = state.txsByHeight
         const tx = {...state.txsByHash[txHash]};
 
         const removedHeight = tx.__height
@@ -71,7 +72,7 @@ export default {
         if (addedHeight !== undefined) txsByHeight[addedHeight] = tx;
         if (removedHeight !== undefined && addedHeight !== removedHeight) delete(txsByHeight[removedHeight]);
         Vue.set(state.txsByHash, txHash, tx );
-        this.txsByHeight = txsByHeight
+        this.txsByHeight = {...txsByHeight}
     },
 
 }

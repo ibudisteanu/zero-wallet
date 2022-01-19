@@ -8,12 +8,12 @@ export default {
 
     deleteTransactionsInfo(state, transactions ){
 
-        const list = {...state.list}
+        const list = state.list
 
         for (const tx of transactions)
             delete list[tx.hash]
 
-        state.list = list
+        state.list = {...list}
     },
 
     updateTxInfoNotification(state, {txHash, extraInfo }) {

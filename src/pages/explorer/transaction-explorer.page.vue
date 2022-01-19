@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div class="card-body p-0 fs--1">
-                <textarea class="form-control form-control-sm fs--2" rows="10">{{tx}}</textarea>
+                <textarea class="form-control form-control-sm fs--2" rows="10">{{JSONStringify(tx, null, 2)}}</textarea>
             </div>
         </div>
 
@@ -95,6 +95,8 @@ export default {
     },
 
     methods: {
+
+        JSONStringify: (a, b, c) => JSONStringify(a, b, c),
 
         async loadTransaction(){
 

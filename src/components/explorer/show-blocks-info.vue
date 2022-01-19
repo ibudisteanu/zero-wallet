@@ -35,8 +35,8 @@
             </span>
 
             <span class="col-5 d-block d-sm-none text-dark">Timestamp</span>
-            <span class="col-7 col-sm-2 col-md-1  text-truncate" v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  blockInfo.timestamp) }`" >
-                {{timeAgo( $store.state.blockchain.genesisTimestamp +  blockInfo.timestamp)  }}
+            <span class="col-7 col-sm-2 col-md-1  text-truncate" v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp.plus( blockInfo.timestamp) ) }`" >
+                {{timeAgo( $store.state.blockchain.genesisTimestamp.plus( blockInfo.timestamp) )  }}
             </span>
 
             <span class="col-5 d-block d-sm-none text-dark">Size</span>

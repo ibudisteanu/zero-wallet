@@ -14,7 +14,7 @@ export default {
                 const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( Number.parseInt(height), "" );
                 if (!blockInfoData) throw "Error getting blockData"
 
-                const blockInfo = JSON.parse( MyTextDecode( blockInfoData ) )
+                const blockInfo = JSONParse( MyTextDecode( blockInfoData ) )
 
                 if (!blockInfo || !blockInfo.hash)
                     throw "Error getting block info"

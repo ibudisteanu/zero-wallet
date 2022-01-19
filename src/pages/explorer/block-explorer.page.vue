@@ -35,13 +35,13 @@
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Confirmations</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{ $store.state.blockchain.end - blk.height -1 }}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{ $store.state.blockchain.end.minus( blk.height).minus(1) }}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Time</span>
                         <span class="col-7 col-sm-9 text-truncate">
-                            <span  v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  blk.timestamp) }`">
-                                {{  timeAgo( $store.state.blockchain.genesisTimestamp + blk.timestamp ) }} ago
+                            <span  v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp.plus( blk.timestamp) ) }`">
+                                {{  timeAgo( $store.state.blockchain.genesisTimestamp.plus( blk.timestamp ) ) }} ago
                                 <i class="fas fa-clock"></i>
                             </span>
                         </span>
@@ -114,7 +114,7 @@
                 </div>
             </div>
             <div class="card-body p-0 fs--1">
-                <textarea class="form-control form-control-sm fs--2" rows="10">{{blk}}</textarea>
+                <textarea class="form-control form-control-sm fs--2" rows="10">{{JSONStringify(blk, null, 2)}}</textarea>
             </div>
         </div>
 
@@ -179,6 +179,7 @@ export default {
 
         timeAgo: (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
         formatTime : (timestamp) => StringHelper.formatTime( timestamp*1000 ),
+        JSONStringify: (a, b, c) => JSONStringify(a, b, c),
 
         async loadBlock(){
 
@@ -197,8 +198,7 @@ export default {
 
                 if (this.blk){
                     this.$store.commit('setViewBlockHash', this.blk.bloom.hash )
-                    const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height)
-                    this.reward = reward.toString()
+                    this.reward = await PandoraPay.config.reward.getRewardAt( this.blk.height.toString() )
                 }
 
             }catch(err){

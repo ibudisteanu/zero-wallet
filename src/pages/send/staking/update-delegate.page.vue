@@ -95,10 +95,8 @@ export default {
 
         async handleBeforeProcess(password, data){
 
-            const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.delegatedStakingClaimAmount.amount.toString(), this.getAsset.decimalSeparator ) )
-
             data.extra = {
-                delegatedStakingClaimAmount: amount,
+                delegatedStakingClaimAmount: this.delegatedStakingClaimAmount.amount,
                 delegatedStakingUpdate: {
                     delegatedStakingHasNewInfo: this.delegatedStakingNewInfo.hasNewDelegatedInfo,
                     delegatedStakingNewPublicKey: this.delegatedStakingNewInfo.delegatedStakingNewPublicKey,

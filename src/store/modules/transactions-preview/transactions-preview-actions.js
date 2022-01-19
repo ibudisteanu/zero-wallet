@@ -33,7 +33,7 @@ export default {
             try{
                 const data = await PandoraPay.network.getNetworkTxPreview( 0, hash );
                 if (!data) throw "tx fetch failed"; //disconnected
-                resolve( await dispatch('includeTxPreview', JSON.parse(MyTextDecode(data)) ) );
+                resolve( await dispatch('includeTxPreview', JSONParse(MyTextDecode(data)) ) );
             }catch(err){
                 reject(err);
             } finally{
@@ -51,7 +51,7 @@ export default {
             try{
                 const data = await PandoraPay.network.getNetworkTxPreview( height, "" );
                 if (!data) throw "tx fetch failed"; //disconnected
-                resolve( await dispatch('includeTxPreview', JSON.parse(MyTextDecode(data)) ) );
+                resolve( await dispatch('includeTxPreview', JSONParse(MyTextDecode(data)) ) );
             }catch(err){
                 reject(err);
             } finally{

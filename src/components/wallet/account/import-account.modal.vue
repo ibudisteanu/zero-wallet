@@ -122,7 +122,7 @@ export default {
 
             reader.onload = async (e) => {
 
-                const data = JSON.parse(reader.result);
+                const data = JSONParse(reader.result);
 
                 this.address = data;
                 this.addressData = reader.result;

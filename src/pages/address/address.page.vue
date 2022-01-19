@@ -94,7 +94,7 @@ export default {
 
                 if (address){
                     const addressData = await PandoraPay.addresses.decodeAddress(address)
-                    const addressJSON = JSON.parse( MyTextDecode(addressData))
+                    const addressJSON = JSONParse( MyTextDecode(addressData))
                     publicKey = addressJSON.publicKey
                 } else {
                     publicKey = newAddress||this.mainPublicKey

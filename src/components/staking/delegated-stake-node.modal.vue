@@ -26,8 +26,8 @@
                     <template slot="tab_1" v-if="nodeInfo">
                         <label class="form-label">Delegates MAXIMUM slots: <strong>{{nodeInfo.maximumAllowed}}</strong></label> <br/>
                         <label class="form-label">Delegates Already: <strong>{{nodeInfo.delegatesCount}}</strong></label> <br/>
-                        <label class="form-label">Delegates SLOTS: <strong>{{nodeInfo.maximumAllowed - nodeInfo.delegatesCount}}</strong></label> <br/>
-                        <label class="form-label">Delegates Fee: <strong>{{nodeInfo.delegatesFee / 65535 * 100}}%</strong></label> <br/>
+                        <label class="form-label">Delegates SLOTS: <strong>{{nodeInfo.maximumAllowed.minus( nodeInfo.delegatesCount ) }}</strong></label> <br/>
+                        <label class="form-label">Delegates Fee: <strong>{{nodeInfo.delegatesFee.div( 65535 ).mul( 100 )}}%</strong></label> <br/>
                     </template>
 
                 </wizard>
@@ -94,7 +94,7 @@ export default {
         async showModal(publicKey) {
             Object.assign(this.$data, this.$options.data());
             this.publicKey = publicKey
-            this.delegatesNodes = JSON.parse( MyTextDecode( await PandoraPay.config.helpers.getNetworkSelectedDelegatesNodes() ) )
+            this.delegatesNodes = JSONParse( MyTextDecode( await PandoraPay.config.helpers.getNetworkSelectedDelegatesNodes() ) )
             await this.$refs.modal.showModal();
 
             return this.output

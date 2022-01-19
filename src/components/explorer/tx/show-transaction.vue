@@ -27,8 +27,8 @@
             <div class="row pt-2 pb-2">
                 <span class="col-5 col-sm-3 text-truncate">Block Timestamp</span>
                 <div class="col-7 col-sm-9 text-truncate" >
-                <span v-if="txInfo && txInfo.timestamp" v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp +  txInfo.timestamp ) }`">
-                    {{timeAgo( $store.state.blockchain.genesisTimestamp + txInfo.timestamp) }}
+                <span v-if="txInfo && txInfo.timestamp" v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp )  ) }`">
+                    {{timeAgo( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp) ) }}
                     <i class="fas fa-clock"></i>
                 </span>
                     <span v-else>
@@ -40,8 +40,8 @@
                 <span class="col-5 col-sm-3 text-truncate">Confirmations</span>
                 <div class="col-7 col-sm-9 text-truncate">
                 <span v-if="txInfo && txInfo.blkHeight">
-                    {{ $store.state.blockchain.end - txInfo.blkHeight -1 }}
-                    <i v-if="$store.state.blockchain.end - txInfo.blkHeight -1 > 8" class="fas fa-check"></i>
+                    {{ $store.state.blockchain.end.minus( txInfo.blkHeight).minus( 1) }}
+                    <i v-if="$store.state.blockchain.end.minus( txInfo.blkHeight ).minus(1).gt(8)" class="fas fa-check"></i>
                 </span>
                     <span v-else>
                     -
@@ -58,14 +58,14 @@
         <div class="row pt-2 pb-2 bg-light">
             <span class="col-5 col-sm-3 text-truncate">Size</span>
             <div class="col-7 col-sm-9 text-truncate">
-                <span v-tooltip.bottom="`${ formatBytes(tx.size) }`"> {{formatSize(tx.size)}} </span>
+                <span v-tooltip.bottom="`${ formatBytes(tx.size.toNumber()) }`"> {{formatSize(tx.size.toNumber())}} </span>
             </div>
         </div>
 
         <div class="row pt-2 pb-2">
             <span class="col-5 col-sm-3 text-truncate">Space Extra Size</span>
             <div class="col-7 col-sm-9 text-truncate">
-                <span v-tooltip.bottom="`${ formatBytes(tx.spaceExtra) }`"> {{formatSize(tx.spaceExtra)}} </span>
+                <span v-tooltip.bottom="`${ formatBytes(tx.spaceExtra.toNumber()) }`"> {{formatSize(tx.spaceExtra.toNumber())}} </span>
             </div>
         </div>
 
@@ -74,7 +74,7 @@
             <span class="col-7 col-sm-9 text-truncate">{{tx.version}}</span>
         </div>
 
-        <template v-if="tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE" >
+        <template v-if="tx.version.eq(PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE)" >
 
             <div class="row pt-2 pb-2">
                 <span class="col-5 col-sm-3 text-truncate">Script Version</span>
@@ -103,7 +103,7 @@
             <div class="row pt-2 pb-2">
                 <span class="col-5 col-sm-3 text-truncate">Extra Data</span>
                 <span class="col-7 col-sm-9 text-truncate">
-                    <show-transaction-data-extra :dataVersion="tx.dataVersion" :data="tx.data" />
+                    <show-transaction-data-extra :data-version="tx.dataVersion" :data="tx.data" />
                 </span>
             </div>
 
@@ -113,7 +113,7 @@
             </div>
 
         </template>
-        <template v-if="tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER">
+        <template v-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER)">
 
             <div v-for="(payload, index) in tx.payloads"
                  :key="`tx_payload_${index}`" >
@@ -136,7 +136,7 @@
 
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Fee Conversion Rate</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{payload.feeRate / Math.pow(10,  payload.feeLeadingZeros)}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{ computeFeeRate(payload) }}</span>
                     </div>
 
                 </template>
@@ -163,7 +163,7 @@
                 <div class="row pt-2 pb-2 bg-light">
                     <span class="col-5 col-sm-3 text-truncate">Extra</span>
                     <span class="col-7 col-sm-9 text-truncate">
-                        <show-transaction-data-extra :dataVersion="payload.dataVersion" :data="payload.data" />
+                        <show-transaction-data-extra :data-version="payload.dataVersion" :data="payload.data" />
                     </span>
                 </div>
                 <div class="row pt-2 pb-2">
@@ -180,6 +180,8 @@
 import ShowTransactionData from "./show-transaction-data"
 import ShowTransactionDataExtra from "./show-transaction-data-extra"
 import StringHelper from "src/utils/string-helper";
+import Decimal from "decimal.js"
+
 export default {
 
     components: {ShowTransactionData, ShowTransactionDataExtra},
@@ -201,6 +203,11 @@ export default {
         formatTime : (timestamp) => StringHelper.formatTime( timestamp*1000 ),
         formatSize: (bytes) => StringHelper.formatSize(bytes, 1),
         formatBytes: (bytes) => StringHelper.formatBytes(bytes),
+
+        computeFeeRate(payload){
+            return payload.feeRate.div( new Decimal(10).pow( payload.feeLeadingZeros ) )
+        }
+
     }
 
 }
