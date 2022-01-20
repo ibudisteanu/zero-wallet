@@ -84,7 +84,7 @@ export default {
         async showQrCodeScanner(){
             const out = await this.$store.state.page.refQRCodeScannerModal.showModal();
             if (out.decoded)
-                this.destination = out
+                this.destination = out.decoded
         },
 
         changedTxAmount(data){
