@@ -3,7 +3,7 @@
     <router-link :to="`/address/${finalAddress}`" v-tooltip.bottom="`${ showTooltip ? finalAddressShort : '' }`"
                  :is=" !finalAddress || disableRoute ? 'span' : 'router-link'" >
         <div class="identicon outer" :style="`padding: ${outerSize}px`" v-if="identiconSrc">
-            <img :src="identiconSrc" class="identicon" :style="`width: ${size}px`" :alt="showTooltip ? finalAddressShort : ''"  >
+            <img :src="identiconSrc" class="identicon" :style="`width: ${size}px`"  >
         </div>
     </router-link>
 
