@@ -1,33 +1,55 @@
 <template>
     <div>
-        <qrcode-vue class="qr"
-                    :size="size"
-                    :value="data"
-                    :logo="logo"
-                    :bgColor="bgColor"
-                    :fgColor="fgColor"
-        />
+        <qrcanvas v-if="loaded" class="qr" :width="512" :height="512" :options="options"/>
     </div>
 </template>
 
 <script>
 
-import qrcodeVue from "qrcode-vue";
+const { QRCanvas } = require('qrcanvas-vue');
 
 export default {
 
-    components: { qrcodeVue },
+    components: {
+        qrcanvas: QRCanvas,
+    },
 
     props: {
         data: {default: ''},
-        size: {default: 256}
     },
 
     data(){
         return {
-            bgColor: '#fff',
-            fgColor: '#000',
+            img: "",
             logo: require('src/assets/pandora-pay-logo-square.png').default,
+            loaded: false,
+            options: {
+                data: this.data,
+                padding: 15
+            }
+        }
+    },
+
+    computed:{
+        bgColor(){
+            return this.$store.state.settings.dark ? '#000' : '#fff'
+        },
+        fgColor(){
+            return this.$store.state.settings.dark ? '#fff' : '#000'
+        }
+    },
+
+    mounted(){
+        const img = new Image()
+        img.src = this.logo
+        img.onload = ()=> {
+            this.options = {
+                ...this.options,
+                logo: {
+                    image: img,
+                }
+            }
+            this.loaded = true
         }
     },
 
@@ -38,7 +60,7 @@ export default {
     .qr{
         width: 100%;
         /* set border styling */
-        border-color: #eeeeee;
+        border-color: white;
         border-style: solid;
         border-width: 10px;
 
