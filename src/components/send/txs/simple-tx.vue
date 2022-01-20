@@ -49,6 +49,7 @@ import Wizard from "../../utils/wizard";
 import TxFee from "../tx-fee";
 import WaitAccount from "src/components/wallet/account/wait-account";
 import ConfirmBroadcastingTx from "./confirm-broadcasting-tx"
+import Decimal from "decimal.js"
 
 export default {
     components: {AlertBox, ExtraData, Wizard, TxFee, WaitAccount, ConfirmBroadcastingTx},
@@ -82,7 +83,7 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
         balancesStakeAvailable(){
-            const amount = (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ? this.account.plainAccount.delegatedStake.stakeAvailable : 0
+            const amount = (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ? this.account.plainAccount.delegatedStake.stakeAvailable : new Decimal(0)
             return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
         },
         getAsset(){
@@ -134,7 +135,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const fee = this.fee.feeType ? 0 : this.fee.feeManual.amount
+            const fee = this.fee.feeType ? new Decimal(0) : this.fee.feeManual.amount
 
             const nonceOut = await PandoraPay.network.getNetworkAccountMempoolNonce(MyTextEncode(JSONStringify({ publicKey: this.address.publicKey })))
 
@@ -150,8 +151,8 @@ export default {
                 },
                 fee: {
                     fixed:  fee,
-                    perByte: 0,
-                    perByteExtraSpace: 0,
+                    perByte: new Decimal(0),
+                    perByteExtraSpace: new Decimal(0),
                     perByteAuto: this.fee.feeType,
                 },
                 feeVersion: this.feeVersion,

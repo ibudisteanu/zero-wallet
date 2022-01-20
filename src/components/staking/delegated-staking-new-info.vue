@@ -40,6 +40,7 @@
 <script>
 import DelegatedStakeNodeModal from "src/components/staking/delegated-stake-node.modal"
 import LoadingButton from "src/components/utils/loading-button";
+import Decimal from "decimal.js"
 
 export default {
     components: {DelegatedStakeNodeModal, LoadingButton},
@@ -48,7 +49,7 @@ export default {
         return {
             hasNewDelegatedInfo: false,
             delegatedStakingNewPublicKey: "",
-            delegatedStakingNewFee: 0,
+            delegatedStakingNewFee: new Decimal(0),
         }
     },
 
@@ -118,7 +119,7 @@ export default {
                 const password = await this.$store.state.page.refWalletPasswordModal.showModal()
                 if (password === null ) return
 
-                const nonce = this.account && this.account.plainAccount ? this.account.plainAccount.nonce : 0
+                const nonce = this.account && this.account.plainAccount ? this.account.plainAccount.nonce : new Decimal(0)
 
                 const out = await PandoraPay.wallet.deriveDelegatedStakeWalletAddress( nonce.toString(), this.address.addressEncoded, password )
                 const json = JSONParse(MyTextDecode(out))

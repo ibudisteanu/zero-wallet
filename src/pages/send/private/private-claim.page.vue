@@ -23,6 +23,7 @@ import LayoutTitle from "src/components/layout/layout-title";
 import ZetherTx from "src/components/send/txs/zether-tx";
 import DelegatedStakingNewInfo from "src/components/staking/delegated-staking-new-info"
 import DestinationAddress from "src/components/send/destination-address";
+import Decimal from "decimal.js"
 
 export default {
 
@@ -48,7 +49,7 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
         balancesOnlyUnclaimed(){
-            const amount = (this.account && this.account.plainAccount ) ? this.account.plainAccount.unclaimed : 0
+            const amount = (this.account && this.account.plainAccount ) ? this.account.plainAccount.unclaimed : new Decimal(0)
             return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: { amount: amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
         },
         getAsset() {

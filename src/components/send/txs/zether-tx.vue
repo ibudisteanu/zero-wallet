@@ -261,7 +261,7 @@ export default {
         },
 
         randomDestination(to, from){
-            this.destination = {address: null, amount: "0" }
+            this.destination = {address: null, amount: new Decimal(0) }
         },
 
     },
@@ -429,7 +429,7 @@ export default {
 
                 if (this.randomDestination){
                     const out = await getRandomPublicKey()
-                    this.destination = {amount: 0, addressEncoded: out.addressEncoded, address: { publicKey: out.publicKey }}
+                    this.destination = { amount: new Decimal(0), addressEncoded: out.addressEncoded, address: { publicKey: out.publicKey }}
                 }
 
                 ringMembers.push(this.destination.addressEncoded)
@@ -536,12 +536,12 @@ export default {
                 assets: [ asset ],
                 amounts: [ amount  ],
                 dsts: [ this.destination.addressEncoded ],
-                burns: [ 0 ],
+                burns: [ new Decimal(0) ],
                 ringMembers: [ this.ringMembers ],
                 fees: [{
                     fixed:  fee,
-                    perByte: 0,
-                    perByteExtraSpace: 0,
+                    perByte: new Decimal(0),
+                    perByteExtraSpace: new Decimal(0),
                     perByteAuto: this.fee.feeType,
                     rate: feeRate,
                     leadingZeros: feeLeadingZeros,

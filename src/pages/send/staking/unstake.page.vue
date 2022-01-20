@@ -22,6 +22,8 @@ import TxAmount from "src/components/send/tx-amount"
 import SimpleTx from "src/components/send/txs/simple-tx"
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
+import Decimal from "decimal.js"
+
 export default {
 
     components: {SimpleTx, TxAmount, Layout, LayoutTitle},
@@ -40,7 +42,7 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
         balancesStakeAvailable(){
-            const amount = (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ? this.account.plainAccount.delegatedStake.stakeAvailable : 0
+            const amount = (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ? this.account.plainAccount.delegatedStake.stakeAvailable : new Decimal(0)
             return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
         },
         buttons(){
