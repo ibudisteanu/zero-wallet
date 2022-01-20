@@ -8,6 +8,10 @@
 
 const { QRCanvas } = require('qrcanvas-vue');
 
+/**
+ * Documentation here https://gera2ld.github.io/qrcanvas-vue/v2/#simple
+ * https://gera2ld.github.io/qrcanvas/examples/#colorful
+ */
 export default {
 
     components: {
@@ -59,11 +63,6 @@ export default {
 <style >
     .qr{
         width: 100%;
-        /* set border styling */
-        border-color: white;
-        border-style: solid;
-        border-width: 10px;
-
         /* set border roundness */
         border-radius: 15px;
         -moz-border-radius: 15px;
