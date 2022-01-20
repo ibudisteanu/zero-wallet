@@ -48,9 +48,7 @@ export default {
             Object.assign(this.$data, this.$options.data());
             await this.$refs.modal.showModal();
 
-            return {
-                decoded: this.decoded,
-            };
+            return this.decoded;
         },
 
         closeModal(){
