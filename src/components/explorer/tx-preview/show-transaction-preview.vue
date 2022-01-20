@@ -21,7 +21,7 @@
                     <span v-if="txInfo.mempool">
                         <i class="fas fa-clock" />
                     </span>
-                    <span v-else v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp.plus(  txInfo.timestamp ) ) }`"  >
+                    <span v-else-if="txInfo.timestamp" v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp.plus(  txInfo.timestamp ) ) }`"  >
                         {{ timeAgo( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp ) ) }}
                     </span>
                 </template>
@@ -33,7 +33,7 @@
                     <span v-if="txInfo.mempool">
                         <i class="fas fa-clock" />
                     </span>
-                    <span v-else v-tooltip.bottom="`${ txInfo.blkHeight }`" >
+                    <span v-else-if="txInfo.blkHeight" v-tooltip.bottom="`${ txInfo.blkHeight }`" >
                         <router-link :to="`/explorer/block/${txInfo.blkHeight}`">
                             {{ $store.state.blockchain.end.minus( txInfo.blkHeight ) }}
                         </router-link>

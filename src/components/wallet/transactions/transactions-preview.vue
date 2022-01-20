@@ -74,7 +74,7 @@ export default {
         },
 
         pages(){
-            return Decimal.floor(this.ending.minus(1).div(this.countPerPage) )
+            return Decimal.max(0, this.ending.minus(1).div(this.countPerPage).floor() )
         },
 
         starting(){

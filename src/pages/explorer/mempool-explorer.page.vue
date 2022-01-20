@@ -30,7 +30,7 @@
                             <span class="d-block text-truncate fs--1"> {{hash}} </span>
                         </router-link>
                     </div>
-                    <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.trunc(mempoolCount/countPerPage)" prefix="/explorer/mempool/" suffix="#mempool" />
+                    <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="pages" prefix="/explorer/mempool/" suffix="#mempool" />
                 </template>
 
             </div>
@@ -47,6 +47,7 @@ import LayoutTitle from "src/components/layout/layout-title"
 import Pagination from "src/components/utils/pagination"
 import consts from "consts/consts"
 import LoadingSpinner from "src/components/utils/loading-spinner";
+import Decimal from "decimal.js";
 
 export default {
 
@@ -60,6 +61,11 @@ export default {
     },
 
     computed:{
+        finalPage(){
+            if (this.page !== null) return this.page
+            return this.pages
+        },
+
         countPerPage(){
             return consts.mempoolTxsPagination
         },
@@ -70,19 +76,26 @@ export default {
             return Object.keys(this.$store.state.mempool.list)
         },
         page(){
-            let page = this.$route.params.page || 0
+            let page = this.$route.params.page || null
             if (typeof page == "string"){
-                page = Number.parseInt(page)
-                return page;
+                try{
+                    return new Decimal(page)
+                }catch(err){
+                    this.error = "Invalid page number"
+                    return null
+                }
             }
             return page
         },
+        pages(){
+            return Decimal.max(0, this.mempoolCount.minus(1).div(this.countPerPage).floor() )
+        }
     },
 
     methods:{
 
         downloadMempool(){
-            return this.handleLoadMore( 0 )
+            return this.handleLoadMore(  )
         },
 
         async handleLoadMore(page = this.page){

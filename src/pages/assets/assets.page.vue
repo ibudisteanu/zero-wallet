@@ -69,7 +69,7 @@ export default {
 
         finalPage() {
             if (this.page !== null) return this.page
-            return new Decimal(0)
+            return this.pages
         },
 
         ending(){
@@ -77,7 +77,7 @@ export default {
         },
 
         pages() {
-            return Decimal.floor(this.ending.minus(1).div( this.countPerPage) )
+            return this.ending.minus(1).div( this.countPerPage).floor()
         },
 
         page() {
