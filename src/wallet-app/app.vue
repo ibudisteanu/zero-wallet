@@ -42,6 +42,7 @@ export default {
 
         if (typeof window === "undefined") return;
 
+        this.$store.commit('setScreenInformation')
         this.$store.commit('readLocalStorage')
 
         setTimeout( ()=> this.clearUnusedDataStoreWorker(), 1000)

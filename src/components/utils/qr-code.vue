@@ -1,12 +1,14 @@
 <template>
     <div>
-        <qrcanvas v-if="loaded" class="qr" :width="512" :height="512" :options="options"/>
+        <loading-spinner v-if="!loaded"/>
+        <qrcanvas v-else class="qr" :width="512" :height="512" :options="options"/>
     </div>
 </template>
 
 <script>
 
 const { QRCanvas } = require('qrcanvas-vue');
+import LoadingSpinner from "src/components/utils/loading-spinner";
 
 /**
  * Documentation here https://gera2ld.github.io/qrcanvas-vue/v2/#simple
@@ -16,6 +18,7 @@ export default {
 
     components: {
         qrcanvas: QRCanvas,
+        LoadingSpinner,
     },
 
     props: {
@@ -46,6 +49,12 @@ export default {
     mounted(){
         const img = new Image()
         img.src = this.logo
+
+        if (this.$store.state.settings.mobile){
+            img.width = '64'
+            img.height = '64'
+        }
+
         img.onload = ()=> {
             this.options = {
                 ...this.options,

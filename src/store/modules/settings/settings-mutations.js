@@ -1,5 +1,12 @@
 export default {
 
+    setScreenInformation(state ){
+        if (typeof screen !== "undefined" ){
+            state.mobile = screen.width < 760
+            state.tablet = screen.width < 1024
+        }
+    },
+
     setDark(state, value ){
 
         state.dark = value;
