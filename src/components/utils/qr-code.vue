@@ -1,6 +1,8 @@
 <template>
     <div>
-        <loading-spinner v-if="!loaded"/>
+        <template v-if="!loaded">
+            <div class="py-3 text-center"> <loading-spinner class="fs-2"/> </div>
+        </template>
         <qrcanvas v-else class="qr" :width="512" :height="512" :options="options"/>
     </div>
 </template>

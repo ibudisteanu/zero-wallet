@@ -18,9 +18,7 @@
                     <alert-box v-if="error" class="w-100 mt-2" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
                     <template v-if="!loaded" >
-                        <div class="py-3 text-center">
-                            <loading-spinner />
-                        </div>
+                        <div class="py-3 text-center"> <loading-spinner class="fs-2" /> </div>
                     </template>
                     <template v-else>
                         <show-blocks-info :blocksInfo="lastBlocksInfo"/>

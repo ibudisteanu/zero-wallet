@@ -19,7 +19,7 @@
             <div class="card-body p-3">
 
                 <template v-if="!loaded">
-                    <loading-spinner/>
+                    <div class="py-3 text-center"> <loading-spinner class="fs-2"/> </div>
                 </template>
                 <template v-else>
                     <div v-for="(  hash, key ) in pendingTxs"
@@ -86,11 +86,7 @@ export default {
 
     methods:{
 
-        downloadMempool(){
-            return this.handleLoadMore(  )
-        },
-
-        async handleLoadMore(page = this.page){
+        async downloadMempool(page = this.page){
             try{
 
                 this.loaded = false
@@ -104,7 +100,7 @@ export default {
             }finally{
                 this.loaded = true
             }
-        }
+        },
 
     },
 

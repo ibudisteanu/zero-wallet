@@ -17,7 +17,7 @@
                 <alert-box v-if="error" type="error">{{error}}</alert-box>
 
                 <template v-if="!loaded">
-                    <loading-spinner/>
+                    <div class="py-3 text-center"> <loading-spinner class="fs-2" /> </div>
                 </template>
                 <div v-else-if="tx">
                     <show-transaction :tx="tx" :tx-info="txInfo"/>
