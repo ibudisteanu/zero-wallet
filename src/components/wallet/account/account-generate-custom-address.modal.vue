@@ -226,7 +226,7 @@ export default {
                 publicKey: this.account.publicKey,
                 registration: this.hasRegistration ? this.account.registration : "",
                 paymentID: this.hasPaymentID ? this.paymentID : "",
-                paymentAmount: this.hasPaymentAmount ? Number.parseInt(this.paymentAmount.amount) : new Decimal(0),
+                paymentAmount: this.hasPaymentAmount ? this.paymentAmount.amount : new Decimal(0),
                 paymentAsset: this.hasPaymentAsset ? this.paymentAsset : "",
             }
 

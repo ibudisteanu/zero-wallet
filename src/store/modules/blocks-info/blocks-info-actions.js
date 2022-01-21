@@ -12,7 +12,7 @@ export default {
         return promises[height] = new Promise( async (resolve, reject) => {
 
             try{
-                const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( Number.parseInt(height), "" );
+                const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( MyTextEncode(JSONStringify({height, hash: ""}) ) );
                 if (!blockInfoData) throw "Error getting blockData"
 
                 const blockInfo = JSONParse( MyTextDecode( blockInfoData ) )

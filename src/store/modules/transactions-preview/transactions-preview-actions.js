@@ -31,7 +31,7 @@ export default {
         if (promises.txsByHash[hash]) return promises.txsByHash[hash];
         return promises.txsByHash[hash] = new Promise( async (resolve, reject ) => {
             try{
-                const data = await PandoraPay.network.getNetworkTxPreview( 0, hash );
+                const data = await PandoraPay.network.getNetworkTxPreview( MyTextEncode(JSONStringify({height:0, hash}) ) );
                 if (!data) throw "tx fetch failed"; //disconnected
                 resolve( await dispatch('includeTxPreview', JSONParse(MyTextDecode(data)) ) );
             }catch(err){
@@ -43,13 +43,12 @@ export default {
     },
 
     async getTransactionPreviewByHeight( {state, dispatch, commit}, height){
-        if (typeof height === "string") height = Number.parseInt(height)
 
         if (state.txsByHeight[height]) return state.txsByHeight[height];
         if (promises.txsByHeight[height]) return promises.txsByHeight[height];
         return promises.txsByHeight[height] = new Promise( async (resolve, reject ) => {
             try{
-                const data = await PandoraPay.network.getNetworkTxPreview( height, "" );
+                const data = await PandoraPay.network.getNetworkTxPreview( MyTextEncode(JSONStringify({height, hash: ""})) );
                 if (!data) throw "tx fetch failed"; //disconnected
                 resolve( await dispatch('includeTxPreview', JSONParse(MyTextDecode(data)) ) );
             }catch(err){

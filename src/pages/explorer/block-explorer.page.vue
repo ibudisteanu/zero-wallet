@@ -133,6 +133,7 @@ import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import AlertBox from "src/components/utils/alert-box"
 import Amount from "src/components/wallet/amount"
 import StringHelper from "src/utils/string-helper"
+import Decimal from "decimal.js"
 
 export default {
 
@@ -151,19 +152,20 @@ export default {
 
     computed:{
 
-      query(){
-        return (this.$route.params.query||'').toLowerCase();
-      },
+        query(){
+            return (this.$route.params.query||'').toLowerCase();
+        },
         height(){
-            if (this.query && this.query.length < 10)
-                return Number.parseInt(this.query)
+            try{
+                if (this.query && this.query.length < 10) return new Decimal(this.query)
+            }catch(err){
+            }
         },
         hash(){
-            if (this.query && this.query.length === 64)
-                return this.query
+            if (this.query && this.query.length === 64) return this.query
         },
         blk(){
-            if (this.height !== undefined )
+            if (this.height )
                 return this.$store.state.blocks.blocksByHeight[this.height]
 
             return this.$store.state.blocks.blocksByHash[this.hash]
@@ -189,11 +191,11 @@ export default {
                 this.error = '';
                 this.reward = ''
 
-                if (this.height === undefined && !this.hash) throw 'Block index was not specified';
+                if (!this.height && !this.hash) throw 'Block index was not specified';
 
                 await this.$store.state.blockchain.syncPromise;
 
-                if (this.height !== undefined) await this.$store.dispatch('getBlockByHeight', this.height);
+                if (this.height) await this.$store.dispatch('getBlockByHeight', this.height);
                 if (this.hash ) await this.$store.dispatch('getBlockByHash', this.hash);
 
                 if (this.blk){
@@ -214,14 +216,6 @@ export default {
     watch: {
         '$route' (to, from) {
             return this.loadBlock();
-        },
-
-        hash(to, from) {
-          if (from === to) return
-        },
-
-        height(to, from){
-          if (from === to) return
         },
     },
 

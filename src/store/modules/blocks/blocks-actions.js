@@ -5,7 +5,7 @@ const promises = {
 
 export default {
 
-    async _includeBlock({state, dispatch, commit}, blk){
+    _includeBlock({state, dispatch, commit}, blk){
         commit('setBlock', {block: blk} )
         return blk;
     },
@@ -18,15 +18,14 @@ export default {
         return promises.blocksByHash[hash] = new Promise( async (resolve, reject) => {
             try{
 
-                const data = await PandoraPay.network.getNetworkBlockWithTxs( 0, hash );
+                const data = await PandoraPay.network.getNetworkBlockWithTxs( MyTextEncode( JSONStringify({height: 0, hash} ) ) );
                 if (!data) throw "Block was not received"
 
                 const {block, txs} = JSONParse(MyTextDecode(data))
                 block.txs = txs || []
                 if (block.bloom.hash !== hash) throw "Block hash was not matching"
 
-                const out = await dispatch('_includeBlock', block )
-                resolve( out );
+                resolve( dispatch('_includeBlock', block ) );
 
             }catch(err){
                 reject(err);
@@ -38,8 +37,6 @@ export default {
 
     getBlockByHeight( {state, dispatch, commit}, height ){
 
-        if (typeof height === "string") height = Number.parseInt(height)
-
         if (state.blocksByHeight[height]) return state.blocksByHeight[height];
         if (promises.blocksByHeight[height]) return promises.blocksByHeight[height];
 
@@ -47,14 +44,14 @@ export default {
 
             try{
 
-                const data = await PandoraPay.network.getNetworkBlockWithTxs( height, "" );
+                const data = await PandoraPay.network.getNetworkBlockWithTxs( MyTextEncode( JSONStringify({height, hash: ""} ) ));
                 if (!data) throw "Block was not received"
 
                 const {block, txs} = JSONParse(MyTextDecode(data))
                 block.txs = txs || []
-                if (block.height !== height) throw "Block height was not matching"
+                if (!block.height.eq(height)) throw "Block height was not matching"
 
-                resolve( await dispatch('_includeBlock', block ) );
+                resolve( dispatch('_includeBlock', block ) );
 
             }catch(err){
                 reject(err);

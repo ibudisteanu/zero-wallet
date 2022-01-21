@@ -51,11 +51,11 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
-import StringHelper from "src/utils/string-helper"
 import Amount from "src/components/wallet/amount"
 import AlertBox from "src/components/utils/alert-box"
 import LoadingButton from "src/components/utils/loading-button";
 import ShowTransaction from "src/components/explorer/tx/show-transaction"
+import Decimal from "decimal.js"
 
 export default {
 
@@ -74,16 +74,16 @@ export default {
             return (this.$route.params.query||'').toLowerCase();
         },
         height(){
-            if (this.query && this.query.length < 10)
-                return Number.parseInt(this.query)
+            try{
+                if (this.query && this.query.length < 10) return new Decimal(this.query)
+            }catch(err){
+            }
         },
         hash(){
-            if (this.query && this.query.length === 64)
-                return this.query
+            if (this.query && this.query.length === 64) return this.query
         },
-
         tx(){
-            if (this.height !== undefined) return this.$store.state.transactions.txsByHeight[this.height];
+            if (this.height) return this.$store.state.transactions.txsByHeight[this.height];
             if (this.hash) return this.$store.state.transactions.txsByHash[this.hash];
         },
         txInfo(){
@@ -104,7 +104,7 @@ export default {
                 this.loaded = false;
                 this.error = ""
 
-                if (this.height === undefined && !this.hash)
+                if (!this.height && !this.hash)
                     throw 'Tx height/hash was not specified';
 
                 await this.$store.state.blockchain.syncPromise;
@@ -112,7 +112,7 @@ export default {
                 if (this.tx)
                     await this.removed()
 
-                if (this.height !== undefined) await this.$store.dispatch('getTransactionByHeight', this.height);
+                if (this.height) await this.$store.dispatch('getTransactionByHeight', this.height);
                 if (this.hash ) await this.$store.dispatch('getTransactionByHash', this.hash);
 
                 if (this.tx) {
@@ -122,8 +122,6 @@ export default {
 
             }catch(err){
                 this.error = err.toString()
-                console.log(err)
-
             }finally{
                 this.loaded = true
             }
@@ -161,8 +159,8 @@ export default {
         async hash(to, from) {
           if (from === to) return
 
-          this.$store.commit('updateViewTransactionsHashes', {txsHashes: [from], insert: false } )
-          await this.$store.dispatch('unsubscribeTransaction', from )
+            const tx = this.$store.state.transactions.txsByHash[from];
+            if (tx) return this.removed(tx)
         },
 
         async height(to, from){
