@@ -34,18 +34,15 @@ export default {
             loaded: false,
             options: {
                 data: this.data,
+                background: this.$store.state.settings.dark ? '#0b1727' : 'white',
+                foreground: this.$store.state.settings.dark ? '#FFD700' : '#3c4ecc',
                 padding: 15
             }
         }
     },
 
     computed:{
-        bgColor(){
-            return this.$store.state.settings.dark ? '#000' : '#fff'
-        },
-        fgColor(){
-            return this.$store.state.settings.dark ? '#fff' : '#000'
-        }
+
     },
 
     mounted(){
