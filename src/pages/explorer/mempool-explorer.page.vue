@@ -69,9 +69,8 @@ export default {
             return consts.mempoolTxsPagination
         },
 
-        finalPage(){
-            if (this.page !== null) return this.page
-            return this.pages
+        finalPage() {
+            return  (this.page !== null) ? this.page : this.pages
         },
 
         mempoolCount(){

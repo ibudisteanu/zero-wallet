@@ -33,26 +33,27 @@ export default {
 
     },
 
-    async getBlocksInfo( {state, dispatch, commit}, { starting, ending, view} ){
+    async getBlocksInfo( {state, dispatch, commit}, { start, end, view} ){
 
         if (!state.allowDownload) return
 
-        if (view === true ) {
-            const viewStart = Decimal.ceil( ending.div( consts.blocksInfoPagination )).minus(1).mul( consts.blocksInfoPagination )
-            const viewEnd = viewStart.plus( consts.blocksInfoPagination )
-            commit('setBlocksInfoViewPosition', {starting: viewStart, ending: viewEnd})
-        } else if (view === false ) {
-            commit('setBlocksInfoViewPosition', null )
-        }
+        start = Decimal.max(0, start)
 
-        console.log("starting, ending", starting.toString(), ending.toString() )
+        if (view === true ) {
+            const viewStart = Decimal.ceil( end.div( consts.blocksInfoPagination )).minus(1).mul( consts.blocksInfoPagination )
+            const viewEnd = viewStart.plus( consts.blocksInfoPagination )
+            commit('setBlocksInfoViewPosition', {starting: start, end: viewEnd})
+        } else if (view === false )
+            commit('setBlocksInfoViewPosition', null )
+
+        console.log("start, end", start.toString(), end.toString() )
 
         let listByHeight = {
             ...state.listByHeight,
         }
 
         let found = false
-        for (let i = ending.minus(1); i.gte(starting); i = i.minus(1)){
+        for (let i = end.minus(1); i.gte(start); i = i.minus(1)){
 
             let beforeHash
             if (listByHeight[i] && listByHeight[i].hash )
@@ -74,13 +75,13 @@ export default {
             ...listByHeight,
         }
 
-        let viewPosition = {starting, ending}
+        let viewPosition = {start, end}
         if (state.viewPosition)
             viewPosition = state.viewPosition
 
         for (const heightStr in listByHeight){
             const height = new Decimal(heightStr)
-            if ( height.gt( viewPosition.ending ) || height.lt( viewPosition.starting.minus(consts.blocksInfoPagination) ) )
+            if ( height.gt( viewPosition.end ) || height.lt( viewPosition.start.minus(consts.blocksInfoPagination) ) )
                 delete(listByHeight[height])
         }
 

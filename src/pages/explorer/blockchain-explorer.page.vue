@@ -76,8 +76,8 @@ export default {
             return  (this.page !== null) ? this.page : this.pages
         },
 
-        pages() {
-            return this.ending.minus(1).div(this.countPerPage).floor()
+        pages(){
+            return Decimal.max(0, this.ending.minus(1).div(this.countPerPage).floor() )
         },
 
         starting() {
@@ -109,8 +109,8 @@ export default {
                 this.$store.commit('setBlocksInfoAllowDownload', true )
 
                 await this.$store.dispatch('getBlocksInfo', {
-                    starting: this.starting,
-                    ending: this.last,
+                    start: this.starting,
+                    end: this.last,
                     view: this.page !== null,
                 })
 

@@ -73,16 +73,15 @@ export default {
         },
 
         finalPage() {
-            if (this.page !== null) return this.page
-            return this.pages
+            return  (this.page !== null) ? this.page : this.pages
         },
 
         ending(){
             return this.$store.state.blockchain.assets;
         },
 
-        pages() {
-            return this.ending.minus(1).div( this.countPerPage).floor()
+        pages(){
+            return Decimal.max(0, this.ending.minus(1).div(this.countPerPage).floor() )
         },
 
         starting() {
@@ -90,10 +89,7 @@ export default {
         },
 
         last() {
-            const out = this.finalPage.plus(1).mul(this.countPerPage)
-            if (this.ending.gt(0)) return Decimal.min( this.ending, out );
-
-            return out
+            return Decimal.min( this.ending, this.finalPage.plus(1).mul(this.countPerPage) );
         },
 
         assetsInfo(){
@@ -111,10 +107,12 @@ export default {
 
                 await this.$store.state.blockchain.syncPromise;
 
+                this.$store.commit('setAssetsInfoAllowDownload', true )
+
                 await this.$store.dispatch('getAssetsInfo', {
-                    start: this.finalPage.mul( this.countPerPage ),
-                    end: this.finalPage.plus(1).mul(this.countPerPage),
-                    count: this.ending
+                    start: this.starting,
+                    end: this.last,
+                    view: this.page !== null,
                 })
 
             } catch (err) {
@@ -137,6 +135,7 @@ export default {
     },
 
     beforeDestroy(){
+        this.$store.commit('setAssetsInfoAllowDownload', false)
     }
 }
 

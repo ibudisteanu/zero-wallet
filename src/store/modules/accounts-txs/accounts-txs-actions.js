@@ -15,13 +15,16 @@ export default {
         if (promises.accountsTxs[publicKey]) return promises.accountsTxs[publicKey];
         return promises.accountsTxs[publicKey] = new Promise( async (resolve, reject) => {
             try{
-                const out = await PandoraPay.network.getNetworkAccountTxs( MyTextEncode( JSONStringify( {publicKey, next: (next === undefined) ? new Decimal(2).pow(64).minus(1) : next } ) ) );
+                const out = await PandoraPay.network.getNetworkAccountTxs( MyTextEncode( JSONStringify( {
+                    publicKey,
+                    next: next.eq(0) ? new Decimal(2).pow(64).minus(1) : next
+                } ) ) );
                 const accountTxs = JSONParse(MyTextDecode( out) )
 
                 console.log("next", next ? next.toString() : null, accountTxs )
 
                 if (accountTxs)
-                    if (next === undefined){
+                    if (next.eq(0)){
                         starting = Decimal.max(0, accountTxs.count.minus( consts.addressTxsPagination ) )
                         ending = accountTxs.count
                     }else {
@@ -29,7 +32,7 @@ export default {
                         ending = next
                     }
 
-                console.log("txs starting end", starting.toString(), ending.toString() )
+                console.log("txs starting end", starting.toString(), ending.toString(), accountTxs )
 
                 if (view) {
                     const viewStart = Decimal.ceil( next.div( consts.addressTxsPagination )).minus(1).mul( consts.addressTxsPagination )
@@ -57,45 +60,34 @@ export default {
 
             if (extraInfo.blockchain){
 
-                if (extraInfo.blockchain.inserted){
-
+                if (extraInfo.blockchain.inserted)
                     dispatch('addToast', {
                         type: 'success',
                         title: `Received a new transaction`,
                         text: `Your address has received a transaction ${txHash}`,
                     } )
-
-                } else {
-
+                else
                     dispatch('addToast', {
                         type: 'warning',
                         title: `A transaction was removed from blockchain`,
                         text: `Your address got a transaction removed ${txHash}`,
                     } )
 
-                }
-
 
             } else if (extraInfo.mempool) {
 
-                if (extraInfo.mempool.inserted){
-
+                if (extraInfo.mempool.inserted)
                     dispatch('addToast', {
                         type: 'info',
                         title: `A pending transaction`,
                         text: `There is a pending transaction ${txHash}`,
                     } )
-
-
-                } else {
-
+                else
                     dispatch('addToast', {
                         type: 'warning',
                         title: `A transaction was removed from the mempool`,
                         text: `A pending transaction was removed from the mempool ${txHash}`,
                     } )
-
-                }
 
             } else throw "Invalid extraInfo"
 

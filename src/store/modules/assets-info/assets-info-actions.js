@@ -31,41 +31,43 @@ export default {
 
     },
 
-    async getAssetInfoByHash( {state, dispatch, commit}, hash){
+    async getAssetsInfo( {state, dispatch, commit}, { start, end, view } ){
 
-        if (state.list[hash]) return state.list[hash]
-        if (promises[hash]) return promises[hash];
-        return state[hash] = new Promise( async (resolve, reject) => {
-            try{
+        if (!state.allowDownload) return
 
-                const assetInfoData = await PandoraPay.network.getNetworkAssetInfo( MyTextEncode(JSONStringify({height:0, hash}) ));
-                if (!assetInfoData ) throw "Error getting asset info"
+        start = Decimal.max(0, start)
 
-                const assetInfo = JSONParse(MyTextDecode(assetInfoData))
+        if (view === true ) {
+            const viewStart = Decimal.ceil( end.div( consts.assetsInfoPagination )).minus(1).mul( consts.assetsInfoPagination )
+            const viewEnd = viewStart.plus( consts.assetsInfoPagination )
+            commit('setBlocksInfoViewPosition', {starting: start, end: viewEnd})
+        } else if (view === false )
+            commit('setBlocksInfoViewPosition', null )
 
-                assetInfo.hash = hash
-                commit('setAssetInfo', assetInfo)
+        console.log("start, end", start.toString(), end.toString() )
 
-                resolve(assetInfo)
-            }catch(err){
-                reject(err)
-            }
-            finally{
-                delete promises[hash]
-            }
-        })
+        let listByHeight = {
+            ...state.listByHeight,
+        }
 
-    },
+        for (let i = end.minus(1); i.gte(start); i = i.minus(1))
+            if ( !listByHeight[i])
+                listByHeight[i] = await this.dispatch('getAssetInfoByHeight', i)
 
-    async getAssetsInfo( {state, dispatch, commit}, { start, end, count } ){
+        listByHeight = {
+            ...state.listByHeight,
+            ...listByHeight,
+        }
 
-        start = Decimal.min(start, count.minus(1) )
-        end = Decimal.min( start.plus( consts.assetsInfoPagination ), count.minus(1) )
+        let viewPosition = {start, end}
+        if (state.viewPosition)
+            viewPosition = state.viewPosition
 
-        const listByHeight = { }
-
-        for (let i = end; i.gte(start);  i = i.minus(1) )
-            listByHeight[i] = await this.dispatch('getAssetInfoByHeight', i)
+        for (const heightStr in listByHeight){
+            const height = new Decimal(heightStr)
+            if ( height.gt( viewPosition.end ) || height.lt( viewPosition.start.minus(consts.assetsInfoPagination) ) )
+                delete(listByHeight[height])
+        }
 
         commit('setAssetsInfo', listByHeight )
     },

@@ -56,9 +56,8 @@ export default {
 
     computed:{
 
-        finalPage(){
-            if (this.page !== null) return this.page
-            return this.pages
+        finalPage() {
+            return  (this.page !== null) ? this.page : this.pages
         },
 
         address(){
@@ -78,8 +77,7 @@ export default {
         },
 
         ending(){
-            if (!this.txs) return new Decimal(0)
-            return this.txs.count;
+            return this.txs ? this.txs.count : new Decimal(0)
         },
 
         starting() {
@@ -87,10 +85,7 @@ export default {
         },
 
         last() {
-            const out = this.finalPage.plus(1).mul(this.countPerPage)
-            if (this.ending.gt(0)) return Decimal.min( this.ending, out );
-
-            return out
+            return Decimal.min( this.ending, this.finalPage.plus(1).mul(this.countPerPage) );
         },
 
         transactions(){
@@ -105,7 +100,9 @@ export default {
 
             heights.sort((a,b) => b.minus(a) )
 
-            return heights.filter(  height => height.gte( this.starting ) && height.lt( this.ending) ).map( height => txs[height] );
+            console.log("transactions", this.starting.toString(), this.last.toString(), heights)
+
+            return heights.filter(  height => height.gte( this.starting ) && height.lt( this.last) ).map( height => txs[height] );
         },
 
 
@@ -118,7 +115,11 @@ export default {
                 this.error = ''
 
                 await this.$store.state.blockchain.syncPromise;
-                await this.$store.dispatch('downloadAccountTxs', {publicKey: this.publicKey, next: this.last, view: (this.page !== null) } )
+                await this.$store.dispatch('downloadAccountTxs', {
+                    publicKey: this.publicKey,
+                    next: this.last,
+                    view: (this.page !== null)
+                } )
 
             }catch(err){
                 this.error = err.toString()
