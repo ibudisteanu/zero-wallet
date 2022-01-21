@@ -1,7 +1,5 @@
 const promises = {}
 
-import Decimal from "decimal.js"
-
 export default {
 
     downloadMempool( {state, dispatch, commit}, page ){

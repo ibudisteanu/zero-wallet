@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <div class="row bg-200 text-900 py-2 fs--1 fw-semi-bold">
+        <div class="d-none d-sm-flex row bg-200 text-900 py-2 fs--1 fw-semi-bold">
             <span class="d-none d-sm-block col-sm-2 col-md-2 text-truncate">Hash</span>
             <span class="d-none d-md-block col-md-2 text-truncate">Kernel Hash</span>
             <span class="d-none d-sm-block col-sm-2 col-md-2 text-truncate">Height</span>

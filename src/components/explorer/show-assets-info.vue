@@ -2,7 +2,7 @@
 
     <div>
 
-        <div class="row bg-200 text-900 py-2 fs--1 fw-semi-bold">
+        <div class="d-none d-sm-flex row bg-200 text-900 py-2 fs--1 fw-semi-bold">
             <span class="d-none d-sm-block col-sm-5 col-lg-3 text-truncate">Name</span>
             <span class="d-none d-sm-block col-sm-3 col-lg-2 text-truncate">Ticker</span>
             <span class="d-none d-sm-block col-sm-4 col-lg-2 text-truncate">Hash</span>
