@@ -604,7 +604,7 @@ export default {
     mounted(){
     },
 
-    async beforeDestroy() {
+    beforeDestroy() {
         this.destination = {  }
     }
 

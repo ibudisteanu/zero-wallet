@@ -91,7 +91,7 @@ export default {
         },
 
         starting() {
-            return this.page.mul( this.countPerPage )
+            return this.last.minus(this.countPerPage)
         },
 
         last() {
@@ -104,7 +104,7 @@ export default {
         },
 
         lastBlocksInfo() {
-            return this.$store.getters.blocksInfoSorted.filter(a => a.height.gte(this.last.minus( this.countPerPage) ) && a.height.lt( this.last ) );
+            return this.$store.getters.blocksInfoSorted.filter(a => a.height.gte( this.starting ) && a.height.lt( this.last ) );
         },
 
         ending() {
@@ -121,8 +121,10 @@ export default {
 
                 await this.$store.state.blockchain.syncPromise;
 
+                this.$store.commit('setBlocksInfoAllowDownload', true )
+
                 await this.$store.dispatch('getBlocksInfo', {
-                    starting: this.last.minus(this.countPerPage),
+                    starting: this.starting,
                     blockchainEnd: this.ending,
                     view: this.page !== null
                 })
@@ -143,6 +145,10 @@ export default {
 
     mounted() {
         return this.loadBlocksInfo();
+    },
+
+    beforeDestroy() {
+        this.$store.commit('setBlocksInfoAllowDownload', false )
     }
 
 }

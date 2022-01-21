@@ -35,6 +35,8 @@ export default {
 
     async getBlocksInfo( {state, dispatch, commit}, { starting, blockchainEnd, view = null} ){
 
+        if (!state.allowDownload) return
+
         starting = Decimal.max(0, starting )
         const ending = Decimal.min( starting.plus( consts.blocksInfoPagination).minus(1), blockchainEnd.minus(1) )
 
@@ -53,9 +55,7 @@ export default {
         }
 
         let found = false
-        let i = ending
-        while ( i.gte(starting) ) {
-
+        for (let i = ending; i.gte(starting); i = i.minus(1)){
             let beforeHash
             if (listByHeight[i] && listByHeight[i].hash )
                 beforeHash = listByHeight[i].hash
@@ -69,8 +69,6 @@ export default {
                     found = true
 
             }
-
-            i = i.minus(1)
         }
 
         listByHeight = {
@@ -93,13 +91,12 @@ export default {
                     if ( height.gt( viewPosition.ending ) || height.lt( viewPosition.starting ) )
                         delete(listByHeight[height])
                 }
-        } else {
+        } else
             for (const heightStr in listByHeight){
                 const height = new Decimal(heightStr)
                 if ( height.gt( ending ) || height.lt( starting) )
                     delete(listByHeight[height])
             }
-        }
 
         commit('setBlocksInfo', listByHeight )
     },
