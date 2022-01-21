@@ -48,6 +48,7 @@ import Pagination from "src/components/utils/pagination"
 import consts from "consts/consts"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import Decimal from "decimal.js";
+import UtilsHelper from "src/utils/utils-helper";
 
 export default {
 
@@ -61,31 +62,23 @@ export default {
     },
 
     computed:{
+        page() {
+            return UtilsHelper.getPage(this.$route.params.page)
+        },
+        countPerPage(){
+            return consts.mempoolTxsPagination
+        },
+
         finalPage(){
             if (this.page !== null) return this.page
             return this.pages
         },
 
-        countPerPage(){
-            return consts.mempoolTxsPagination
-        },
         mempoolCount(){
             return this.$store.state.mempool.count
         },
         pendingTxs(){
             return Object.keys(this.$store.state.mempool.list)
-        },
-        page(){
-            let page = this.$route.params.page || null
-            if (typeof page == "string"){
-                try{
-                    return new Decimal(page)
-                }catch(err){
-                    this.error = "Invalid page number"
-                    return null
-                }
-            }
-            return page
         },
         pages(){
             return Decimal.max(0, this.mempoolCount.minus(1).div(this.countPerPage).floor() )

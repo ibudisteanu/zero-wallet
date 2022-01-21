@@ -335,7 +335,8 @@ export default {
                     assetCollector = out.collector
                 }
 
-                const holders = await PandoraPay.network.getNetworkAccountsCount( asset )
+                const holdersData = await PandoraPay.network.getNetworkAccountsCount( asset )
+                const holders = JSONParse(MyTextDecode(holdersData)).count
 
                 const ringSize = this.ringSize
                 const newAccounts = this.ringNewAddresses
@@ -371,7 +372,7 @@ export default {
                     }
 
                 if (holders > 1) {
-                    const count = Math.min( holders, ringSize - Object.keys(alreadyUsedIndexes).length )
+                    const count = Decimal.min( holders, ringSize - Object.keys(alreadyUsedIndexes).length )
                     for (let i=0; i < count; i++){
 
                         let index = await PandoraPay.helpers.randomUint64N( holders.toString() )
@@ -382,8 +383,8 @@ export default {
                     }
                 }
 
-                const alreadyUsedIndexesArray = Object.keys(alreadyUsedIndexes).map(it => Number.parseInt(it) )
-                alreadyUsedIndexesArray.sort((a,b) => a - b )
+                const alreadyUsedIndexesArray = Object.keys(alreadyUsedIndexes).map(it => new Decimal(it) )
+                alreadyUsedIndexesArray.sort((a,b) => a.minus( b ) )
 
                 const out = await PandoraPay.network.getNetworkAccountsKeysByIndex( MyTextEncode( JSONStringify({
                     indexes: alreadyUsedIndexesArray,

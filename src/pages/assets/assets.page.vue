@@ -49,6 +49,7 @@ import consts from "consts/consts";
 import Pagination from "src/components/utils/pagination";
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import Decimal from "decimal.js"
+import UtilsHelper from "src/utils/utils-helper";
 
 export default {
 
@@ -62,6 +63,10 @@ export default {
     },
 
     computed:{
+
+        page() {
+            return UtilsHelper.getPage(this.$route.params.page)
+        },
 
         countPerPage() {
             return consts.assetsInfoPagination
@@ -80,17 +85,15 @@ export default {
             return this.ending.minus(1).div( this.countPerPage).floor()
         },
 
-        page() {
-            let page = this.$route.params.page || null
-            if (typeof page == "string") {
-                try{
-                    page = new Decimal(page)
-                }catch(err){
-                    this.error = "Invalid page number"
-                    return null
-                }
-            }
-            return page
+        starting() {
+            return this.last.minus(this.countPerPage)
+        },
+
+        last() {
+            const out = this.finalPage.plus(1).mul(this.countPerPage)
+            if (this.ending.gt(0)) return Decimal.min( this.ending, out );
+
+            return out
         },
 
         assetsInfo(){
@@ -120,11 +123,6 @@ export default {
                 this.loaded = true
             }
         },
-
-        async handleViewMore(resolve){
-
-        }
-
 
     },
 

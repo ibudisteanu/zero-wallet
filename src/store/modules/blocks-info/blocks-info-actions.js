@@ -33,12 +33,9 @@ export default {
 
     },
 
-    async getBlocksInfo( {state, dispatch, commit}, { starting, blockchainEnd, view = null} ){
+    async getBlocksInfo( {state, dispatch, commit}, { starting, ending, view} ){
 
         if (!state.allowDownload) return
-
-        starting = Decimal.max(0, starting )
-        const ending = Decimal.min( starting.plus( consts.blocksInfoPagination).minus(1), blockchainEnd.minus(1) )
 
         if (view === true ) {
             const viewStart = Decimal.ceil( ending.div( consts.blocksInfoPagination )).minus(1).mul( consts.blocksInfoPagination )
@@ -55,7 +52,8 @@ export default {
         }
 
         let found = false
-        for (let i = ending; i.gte(starting); i = i.minus(1)){
+        for (let i = ending.minus(1); i.gte(starting); i = i.minus(1)){
+
             let beforeHash
             if (listByHeight[i] && listByHeight[i].hash )
                 beforeHash = listByHeight[i].hash
@@ -76,27 +74,15 @@ export default {
             ...listByHeight,
         }
 
-        const viewPosition = state.viewPosition
-        if (viewPosition){
-            let c = 0
-            for (const heightStr in listByHeight){
-                const height = new Decimal(heightStr)
-                if ( !( height.gt( viewPosition.ending ) || height.lt( viewPosition.starting ) ) )
-                    c++
-            }
+        let viewPosition = {starting, ending}
+        if (state.viewPosition)
+            viewPosition = state.viewPosition
 
-            if (c >= consts.blocksInfoPagination)
-                for (const heightStr in listByHeight){
-                    const height = new Decimal(heightStr)
-                    if ( height.gt( viewPosition.ending ) || height.lt( viewPosition.starting ) )
-                        delete(listByHeight[height])
-                }
-        } else
-            for (const heightStr in listByHeight){
-                const height = new Decimal(heightStr)
-                if ( height.gt( ending ) || height.lt( starting) )
-                    delete(listByHeight[height])
-            }
+        for (const heightStr in listByHeight){
+            const height = new Decimal(heightStr)
+            if ( height.gt( viewPosition.ending ) || height.lt( viewPosition.starting.minus(consts.blocksInfoPagination) ) )
+                delete(listByHeight[height])
+        }
 
         commit('setBlocksInfo', listByHeight )
     },

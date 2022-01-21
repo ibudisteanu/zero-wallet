@@ -9,6 +9,7 @@ export default {
     },
 
     setBlockchainInfo(store, data){
+        store.end = data.height;
         store.assets = data.assets;
         store.transactions = data.transactions;
     },

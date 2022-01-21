@@ -77,23 +77,18 @@ export default {
             return Decimal.max(0, this.ending.minus(1).div(this.countPerPage).floor() )
         },
 
-        starting(){
-            return ( this.page * this.countPerPage )
-        },
-
         ending(){
             if (!this.txs) return new Decimal(0)
             return this.txs.count;
         },
 
-        last(){
+        starting() {
+            return this.last.minus(this.countPerPage)
+        },
 
-            if (this.page === null) return undefined
-
-            const out = this.page.plus(1).mul( this.countPerPage )
-
-            if (this.ending > 0)
-              return Decimal.min( this.ending, out );
+        last() {
+            const out = this.finalPage.plus(1).mul(this.countPerPage)
+            if (this.ending.gt(0)) return Decimal.min( this.ending, out );
 
             return out
         },
@@ -104,18 +99,13 @@ export default {
 
             const txs = this.txs.hashes;
 
-            let ending = Decimal.min( this.ending, (this.page === null) ? new Decimal(2).pow(64).minus(1) : this.page.plus(1).mul( this.countPerPage) )
-            let starting = Decimal.max(0 ,ending.minus( this.countPerPage ) )
-
-            console.log("starting", starting.toString(), "ending", ending.toString() )
-
             const heights = []
             for ( const heightStr in txs)
                 heights.push( new Decimal(heightStr) )
 
             heights.sort((a,b) => b.minus(a) )
 
-            return heights.filter(  height => height.gte( starting ) && height.lt( ending) ).map( height => txs[height] );
+            return heights.filter(  height => height.gte( this.starting ) && height.lt( this.ending) ).map( height => txs[height] );
         },
 
 

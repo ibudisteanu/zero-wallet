@@ -50,7 +50,7 @@ import LoadingSpinner from "src/components/utils/loading-spinner";
 import consts from "consts/consts"
 import AlertBox from "src/components/utils/alert-box"
 import Decimal from 'decimal.js';
-
+import UtilsHelper from "src/utils/utils-helper"
 export default {
 
     components: {Layout, Pagination, ShowBlocksInfo, LoadingSpinner, LayoutTitle, AlertBox},
@@ -64,30 +64,20 @@ export default {
 
     computed: {
 
+        page() {
+            return UtilsHelper.getPage(this.$route.params.page)
+        },
+
         countPerPage() {
             return consts.blocksInfoPagination
         },
 
         finalPage() {
-            if (this.page !== null) return this.page
-            return this.pages
+            return  (this.page !== null) ? this.page : this.pages
         },
 
         pages() {
             return this.ending.minus(1).div(this.countPerPage).floor()
-        },
-
-        page() {
-            let page = this.$route.params.page || null
-            if (typeof page == "string") {
-                try{
-                    page = new Decimal(page)
-                }catch(err){
-                    this.error = "Invalid page number"
-                    return null
-                }
-            }
-            return page
         },
 
         starting() {
@@ -95,20 +85,15 @@ export default {
         },
 
         last() {
-
-            const out = this.finalPage.plus(1).mul(this.countPerPage)
-            if (this.ending > 0)
-                return Decimal.min( this.ending, out );
-
-            return out
-        },
-
-        lastBlocksInfo() {
-            return this.$store.getters.blocksInfoSorted.filter(a => a.height.gte( this.starting ) && a.height.lt( this.last ) );
+            return Decimal.min( this.ending, this.finalPage.plus(1).mul(this.countPerPage) );
         },
 
         ending() {
             return this.$store.state.blockchain.end;
+        },
+
+        lastBlocksInfo() {
+            return this.$store.getters.blocksInfoSorted.filter(a => a.height.gte( this.starting ) && a.height.lt( this.last ) );
         },
 
     },
@@ -125,12 +110,13 @@ export default {
 
                 await this.$store.dispatch('getBlocksInfo', {
                     starting: this.starting,
-                    blockchainEnd: this.ending,
-                    view: this.page !== null
+                    ending: this.last,
+                    view: this.page !== null,
                 })
 
             } catch (err) {
                 this.error = err.toString()
+                console.error(err)
             } finally {
                 this.loaded = true
             }

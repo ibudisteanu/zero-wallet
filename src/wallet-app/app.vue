@@ -129,7 +129,7 @@ export default {
             const out = await PandoraPay.network.getNetworkBlockchain()
             this.$store.commit('setBlockchainInfo', JSONParse( MyTextDecode(out) ) )
 
-            await this.$store.dispatch('getBlocksInfo',  {starting: this.$store.state.blockchain.end.minus( consts.blocksInfoPagination ), blockchainEnd: this.$store.state.blockchain.end } )
+            await this.$store.dispatch('getBlocksInfo',  {starting: this.$store.state.blockchain.end.minus( consts.blocksInfoPagination ), ending: this.$store.state.blockchain.end } )
 
             for (const key in this.$store.state.wallet.addresses)
                 await this.$store.dispatch('subscribeAccount', this.$store.state.wallet.addresses[key].publicKey)
