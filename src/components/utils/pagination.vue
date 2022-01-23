@@ -1,5 +1,5 @@
 <template>
-    <div class="w-100 d-flex align-items-center justify-content-center">
+    <div class="w-100 d-flex align-items-center justify-content-center" v-if="total.gt(0)">
 
         <nav :aria-label="label">
             <ul class="pagination m-0">
