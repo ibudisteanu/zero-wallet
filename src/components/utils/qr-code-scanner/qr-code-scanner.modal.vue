@@ -3,8 +3,10 @@
     <modal ref="modal" title="Scan QR Code" >
 
         <template slot="body">
-            <qrcode-stream class="qrcodeStream" @decode="onDecode" @init="onInit" />
             <alert-box v-if="error" type="error">{{error}}</alert-box>
+            <template v-else>
+                <qrcode-stream class="qrcodeStream" @decode="onDecode" @init="onInit" />
+            </template>
         </template>
 
         <template slot="footer">

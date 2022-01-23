@@ -42,7 +42,7 @@ export default {
         if (view === true ) {
             const viewStart = Decimal.ceil( end.div( consts.blocksInfoPagination )).minus(1).mul( consts.blocksInfoPagination )
             const viewEnd = viewStart.plus( consts.blocksInfoPagination )
-            commit('setBlocksInfoViewPosition', {starting: start, end: viewEnd})
+            commit('setBlocksInfoViewPosition', {start: start, end: viewEnd})
         } else if (view === false )
             commit('setBlocksInfoViewPosition', null )
 
