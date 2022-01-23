@@ -87,7 +87,7 @@ export default {
             if (this.hash) return this.$store.state.transactions.txsByHash[this.hash];
         },
         txInfo(){
-            if (this.tx) return this.$store.state.transactionsInfo.list[this.tx.hash]
+            if (this.tx) return this.$store.state.transactionsInfo.txsByHash[this.tx.hash]
         },
 
         PandoraPay: () => PandoraPay,

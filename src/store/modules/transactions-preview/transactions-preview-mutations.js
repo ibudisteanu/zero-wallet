@@ -9,40 +9,29 @@ export default {
 
     deleteTransactionsPreview(state, transactions) {
 
-        const txsByHash = state.txsByHash, txsByHeight = state.txsByHeight
+        const txsByHash = state.txsByHash
 
-        for (const tx of transactions) {
+        for (const tx of transactions)
             delete txsByHash[tx.hash]
 
-            if (tx.__height !== undefined)
-                delete txsByHeight[tx.__height]
-        }
-        state.txsByHash = txsByHash
-        state.txsByHeight = txsByHeight
+        state.txsByHash = {...txsByHash}
     },
 
     setTransactionsPreview( state, {txs, overwrite = true } ) {
         const timestamp = new Date().getTime()
-        const txsByHash = state.txsByHash, txsByHeight = state.txsByHeight
+        const txsByHash = state.txsByHash
 
         for (const tx of txs){
             tx.__timestampUsed = timestamp
-            if (overwrite || !txsByHash[tx.hash] ){
-
-                const oldTx  = txsByHash[tx.hash]
-                if (oldTx && oldTx.__height !== undefined) delete txsByHeight[oldTx.__height]
-
+            if (overwrite || !txsByHash[tx.hash] )
                 txsByHash[tx.hash] = tx
-                if (tx.__height !== undefined) txsByHeight[tx.__height] = tx
-            }
         }
 
         state.txsByHash = {...txsByHash}
-        state.txsByHeight = {...txsByHeight}
     },
 
     updateViewTransactionsPreviewHashes(state, {txsHashes, insert} ) {
-        if (!txsHashes) return
+        if (!txsHashes || !txsHashes.length) return
         const viewTxsHashes = state.viewTxsHashes
 
         for (const txHash of txsHashes ){
@@ -56,10 +45,7 @@ export default {
 
         if (!state.txsByHash[txHash]) return
 
-        const txsByHeight = state.txsByHeight
         const tx = {...state.txsByHash[txHash]};
-
-        const removedHeight = tx.__height
 
         if (extraInfo.blockchain) {
             if (extraInfo.blockchain.inserted) tx.__height = extraInfo.blockchain.height
@@ -69,10 +55,7 @@ export default {
         let addedHeight
         if (extraInfo.blockchain && extraInfo.blockchain.inserted) addedHeight = extraInfo.blockchain.height
 
-        if (addedHeight !== undefined) txsByHeight[addedHeight] = tx;
-        if (removedHeight !== undefined && addedHeight !== removedHeight) delete(txsByHeight[removedHeight]);
-        Vue.set(state.txsByHash, txHash, tx );
-        this.txsByHeight = {...txsByHeight}
+        Vue.set(state.txsByHash, txHash, {...tx} );
     },
 
 }

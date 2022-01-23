@@ -4,7 +4,7 @@ import actions from "./transactions-info-actions"
 export default{
 
     state: {
-        list: {},
+        txsByHash: {},
     },
 
     actions,

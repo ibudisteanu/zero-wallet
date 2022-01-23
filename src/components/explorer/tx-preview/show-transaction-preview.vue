@@ -89,7 +89,7 @@ export default {
             return this.$store.state.transactionsPreview.txsByHash[this.txHash]
         },
         txInfo(){
-            return this.$store.state.transactionsInfo.list[this.txHash]
+            return this.$store.state.transactionsInfo.txsByHash[this.txHash]
         },
 
     },

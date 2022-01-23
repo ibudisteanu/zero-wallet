@@ -71,6 +71,7 @@ export default {
         },
 
         closeModal() {
+            if (!this.loaded) return
             return this.$refs.modal.closeModal();
         },
 
@@ -96,7 +97,7 @@ export default {
 
                 this.$router.push('/explorer/tx/'+hash)
 
-                this.closeModal()
+                return this.$refs.modal.closeModal();
 
             }catch(err){
                 this.error = err.toString()

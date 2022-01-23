@@ -42,8 +42,9 @@ export default {
         transactions: {
             immediate: true,
             handler: function (newVal, oldVal) {
-                this.$store.commit('updateViewTransactionsPreviewHashes', {txsHashes: oldVal, insert: false } )
-                this.$store.commit('updateViewTransactionsPreviewHashes', {txsHashes: newVal, insert: true } )
+                if (newVal === oldVal) return
+                this.$store.commit('updateViewTransactionsPreviewHashes', {txsHashes: oldVal && newVal ? oldVal.filter( hash => newVal.indexOf(hash) === -1 ) : oldVal, insert: false } )
+                this.$store.commit('updateViewTransactionsPreviewHashes', {txsHashes: newVal && oldVal ? newVal.filter( hash => oldVal.indexOf(hash) === -1 ) : newVal, insert: true } )
             }
         },
     },

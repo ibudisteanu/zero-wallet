@@ -5,8 +5,6 @@ export default {
 
     state: {
         txsByHash: {},
-        txsByHeight: {},
-
         viewTxsHashes: {},
     },
 
