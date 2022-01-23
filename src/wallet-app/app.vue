@@ -194,11 +194,11 @@ export default {
                 const txsInfoRemoved = []
 
                 for (  const tx of txsRemoved)
-                    if (txsPreviewRemovedMap[tx.hash] || !this.$store.state.transactionsPreview.txsByHash[tx.hash] )
+                    if (txsPreviewRemovedMap[tx.hash] && !this.$store.state.transactionsPreview.txsByHash[tx.hash] )
                         txsInfoRemoved.push(tx)
 
                 for (  const tx of txsPreviewRemoved)
-                    if (txsRemovedMap[tx.hash] || !this.$store.state.transactions.txsByHash[tx.hash] )
+                    if (txsRemovedMap[tx.hash] && !this.$store.state.transactions.txsByHash[tx.hash] )
                         txsInfoRemoved.push(tx)
 
                 if (txsRemoved.length) this.$store.commit('deleteTransactions', txsRemoved )

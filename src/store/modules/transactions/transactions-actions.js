@@ -104,6 +104,7 @@ export default {
     },
 
     txNotification({state, dispatch, commit}, { txHash, extraInfo }) {
+        console.log("txNotification FIRED!!!", txHash, extraInfo)
         dispatch('txPreviewNotification', { txHash, extraInfo } )
         dispatch('txInfoNotification', { txHash, extraInfo } )
         commit('updateTxNotification', { txHash, extraInfo })

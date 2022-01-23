@@ -9,7 +9,7 @@ export default {
 
     deleteTransactions(state, transactions ){
 
-        const txsByHash = state.txsByHash, txsByHeight = state.txsByHeight
+        const txsByHash = {...state.txsByHash}, txsByHeight = {...state.txsByHeight}
 
         for (const tx of transactions) {
             delete txsByHash[tx.hash]
@@ -17,14 +17,14 @@ export default {
             if (tx.__height !== undefined)
                 delete txsByHeight[tx.__height]
         }
-        state.txsByHash = {...txsByHash}
-        state.txsByHeight = {...txsByHeight}
+        state.txsByHash = txsByHash
+        state.txsByHeight = txsByHeight
     },
 
 
     setTransactions( state, {txs, overwrite = true } ) {
         const timestamp = new Date().getTime()
-        const txsByHash = state.txsByHash, txsByHeight = state.txsByHeight
+        const txsByHash = {...state.txsByHash}, txsByHeight = {...state.txsByHeight}
 
         for (const tx of txs){
             tx.__timestampUsed = timestamp
@@ -38,8 +38,8 @@ export default {
             }
         }
 
-        state.txsByHash = {...txsByHash}
-        state.txsByHeight = {...txsByHeight}
+        state.txsByHash = txsByHash
+        state.txsByHeight = txsByHeight
     },
 
     updateViewTransactionsHashes(state, {txsHashes, insert} ) {
@@ -56,9 +56,7 @@ export default {
     updateTxNotification(state, {txHash, extraInfo }) {
         if (!state.txsByHash[txHash]) return
 
-        const txsByHeight = state.txsByHeight
-        const tx = state.txsByHash[txHash];
-        if (!tx) return
+        const tx = {...state.txsByHash[txHash]};
 
         const removedHeight = tx.__height
 
@@ -70,11 +68,10 @@ export default {
         let addedHeight
         if (extraInfo.blockchain && extraInfo.blockchain.inserted) addedHeight = extraInfo.blockchain.height
 
-        if (addedHeight !== undefined) txsByHeight[addedHeight] = tx;
-        if (removedHeight !== undefined && addedHeight !== removedHeight) delete(txsByHeight[removedHeight]);
+        if (addedHeight !== undefined) Vue.set( state.txsByHeight, addedHeight, tx );
+        if (removedHeight !== undefined && addedHeight !== removedHeight) Vue.delete( state.txsByHeight, removedHeight );
 
         Vue.set(state.txsByHash, txHash, tx );
-        this.txsByHeight = {...txsByHeight}
     },
 
 }

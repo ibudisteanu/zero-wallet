@@ -8,12 +8,12 @@ export default {
 
     deleteTransactionsInfo(state, transactions ){
 
-        const txsByHash = state.txsByHash
+        const txsByHash = {...state.txsByHash}
 
         for (const tx of transactions)
             delete txsByHash[tx.hash]
 
-        state.txsByHash = {...txsByHash}
+        state.txsByHash = txsByHash
     },
 
     updateTxInfoNotification(state, {txHash, extraInfo }) {
