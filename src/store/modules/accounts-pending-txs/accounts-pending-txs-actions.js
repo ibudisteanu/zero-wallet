@@ -1,22 +1,11 @@
 export default {
 
-    async processAccountPendingTransactions({dispatch, state, getters, commit }, { publicKey, list }){
-
-        if (!list) list = []
-
-        if (list.length && getters.walletContains(publicKey)) {
-            const txs = await Promise.all( list.map( txHash => dispatch('getTransactionByHash', txHash ) ))
-
-            txs.sort( (a,b) => ( (a.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ? a.nonce : -1) -
-                    ( (b.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ? b.nonce : -1 ) )
-
-        }
+    async processAccountPendingTransactions({dispatch, state, getters, commit }, { publicKey, list  }){
 
         const map = {}
-        list.map( it => map[it] = true )
+        if (list) list.map( it => map[it] = true )
 
         commit('setPendingList', { publicKey, map })
-
     },
 
     async accountPendingTransactionsTxUpdateNotification({dispatch, state, getters, commit}, {publicKey, txHash, extraInfo }){

@@ -17,7 +17,7 @@
                 <alert-box v-if="error" type="error">{{error}}</alert-box>
 
                 <template v-if="!loaded">
-                    <loading-spinner/>
+                    <div class="py-3 text-center"> <loading-spinner class="fs-2" /> </div>
                 </template>
                 <div v-else-if="tx">
                     <show-transaction :tx="tx" :tx-info="txInfo"/>
@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div class="card-body p-0 fs--1">
-                <textarea class="form-control form-control-sm fs--2" rows="10">{{tx}}</textarea>
+                <textarea class="form-control form-control-sm fs--2" rows="10">{{JSONStringify(tx, null, 2)}}</textarea>
             </div>
         </div>
 
@@ -51,11 +51,11 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
-import StringHelper from "src/utils/string-helper"
 import Amount from "src/components/wallet/amount"
 import AlertBox from "src/components/utils/alert-box"
 import LoadingButton from "src/components/utils/loading-button";
 import ShowTransaction from "src/components/explorer/tx/show-transaction"
+import Decimal from "decimal.js"
 
 export default {
 
@@ -74,20 +74,20 @@ export default {
             return (this.$route.params.query||'').toLowerCase();
         },
         height(){
-            if (this.query && this.query.length < 10)
-                return Number.parseInt(this.query)
+            try{
+                if (this.query && this.query.length < 10) return new Decimal(this.query)
+            }catch(err){
+            }
         },
         hash(){
-            if (this.query && this.query.length === 64)
-                return this.query
+            if (this.query && this.query.length === 64) return this.query
         },
-
         tx(){
-            if (this.height !== undefined) return this.$store.state.transactions.txsByHeight[this.height];
+            if (this.height) return this.$store.state.transactions.txsByHeight[this.height];
             if (this.hash) return this.$store.state.transactions.txsByHash[this.hash];
         },
         txInfo(){
-            if (this.tx) return this.$store.state.transactionsInfo.list[this.tx.hash]
+            if (this.tx) return this.$store.state.transactionsInfo.txsByHash[this.tx.hash]
         },
 
         PandoraPay: () => PandoraPay,
@@ -96,13 +96,15 @@ export default {
 
     methods: {
 
+        JSONStringify: (a, b, c) => JSONStringify(a, b, c),
+
         async loadTransaction(){
 
             try{
                 this.loaded = false;
                 this.error = ""
 
-                if (this.height === undefined && !this.hash)
+                if (!this.height && !this.hash)
                     throw 'Tx height/hash was not specified';
 
                 await this.$store.state.blockchain.syncPromise;
@@ -110,18 +112,16 @@ export default {
                 if (this.tx)
                     await this.removed()
 
-                if (this.height !== undefined) await this.$store.dispatch('getTransactionByHeight', this.height);
+                if (this.height) await this.$store.dispatch('getTransactionByHeight', this.height);
                 if (this.hash ) await this.$store.dispatch('getTransactionByHash', this.hash);
 
                 if (this.tx) {
                     this.$store.commit('updateViewTransactionsHashes', {txsHashes: [this.tx.hash], insert: true} )
-                    await this.$store.dispatch('subscribeTransaction', this.tx.hash )
+                    await this.$store.dispatch('subscribeTransaction', {txId: this.tx.hash} )
                 }
 
             }catch(err){
                 this.error = err.toString()
-                console.log(err)
-
             }finally{
                 this.loaded = true
             }
@@ -159,8 +159,8 @@ export default {
         async hash(to, from) {
           if (from === to) return
 
-          this.$store.commit('updateViewTransactionsHashes', {txsHashes: [from], insert: false } )
-          await this.$store.dispatch('unsubscribeTransaction', from )
+            const tx = this.$store.state.transactions.txsByHash[from];
+            if (tx) return this.removed(tx)
         },
 
         async height(to, from){

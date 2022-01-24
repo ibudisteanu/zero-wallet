@@ -17,7 +17,7 @@ export default {
 
     data(){
         return {
-            amountBase: 0,
+            amountBase: new Decimal(0),
         }
     },
 
@@ -61,7 +61,7 @@ export default {
         amount: {
 
             get(){
-                return new Decimal(this.amountBase).div( new Decimal(10).pow(this.assetInfo.decimalSeparator) ).toString()
+                return this.amountBase.div( new Decimal(10).pow(this.assetInfo.decimalSeparator) ).toString()
             },
             set(to, from ){
 
@@ -70,7 +70,7 @@ export default {
                     return
                 }
 
-                this.amountBase = new Decimal(to).mul( new Decimal(10).pow(this.assetInfo.decimalSeparator) ).round().toString()
+                this.amountBase = new Decimal(to).mul( new Decimal(10).pow(this.assetInfo.decimalSeparator) ).round()
 
                 return this.$emit('changed', {
                     amount: this.amountBase,

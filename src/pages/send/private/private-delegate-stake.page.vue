@@ -100,12 +100,12 @@ export default {
             }
 
             if (this.delegatedStakingNewInfo.hasNewDelegatedInfo){
-                const out = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
+                const out = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode( JSONStringify({
                     publicKey: this.delegatePublicKey,
                     asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX,
                 })), password, )
 
-                const params = JSON.parse( MyTextDecode( out ) )
+                const params = JSONParse( MyTextDecode( out ) )
                 if (!params.privateKey) throw "DelegatePrivateKey is missing"
 
                 payloadExtra.delegatePrivateKey = params.privateKey
@@ -119,8 +119,7 @@ export default {
                 delegatedStakingNewFee: this.delegatedStakingNewInfo.delegatedStakingNewFee,
             }
 
-            const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.delegateDestination.amount.toString(), this.getAsset.decimalSeparator ) )
-            data.burns = [amount]
+            data.burns = [ this.delegateDestination.amount ]
             data.payloadExtra[0] = payloadExtra
             data.payloadScriptType[0] = PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_DELEGATE_STAKE
 

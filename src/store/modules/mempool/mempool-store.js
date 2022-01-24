@@ -1,15 +1,16 @@
 import mutations from "./mempool-mutations"
 import actions from "./mempool-actions"
+import Decimal from "decimal.js"
 
 export default {
 
     state: {
         list: {},
 
-        count: 0,
+        count: new Decimal(0),
 
-        page: 0,
-        start: 0,
+        page: new Decimal(0),
+        start: new Decimal(0),
     },
 
     mutations,

@@ -29,6 +29,7 @@ import LoadingButton from "src/components/utils/loading-button";
 import Layout from "src/components/layout/layout";
 import LayoutTitle from "src/components/layout/layout-title";
 import DelegatedStakingNewInfo from "src/components/staking/delegated-staking-new-info"
+import Decimal from "decimal.js"
 
 export default {
 
@@ -52,7 +53,7 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
         balancesOnlyUnclaimed(){
-            const amount = (this.account && this.account.plainAccount) ? this.account.plainAccount.unclaimed : 0
+            const amount = (this.account && this.account.plainAccount) ? this.account.plainAccount.unclaimed : new Decimal(0)
             return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
         },
         buttons(){
@@ -95,10 +96,8 @@ export default {
 
         async handleBeforeProcess(password, data){
 
-            const amount = Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.delegatedStakingClaimAmount.amount.toString(), this.getAsset.decimalSeparator ) )
-
             data.extra = {
-                delegatedStakingClaimAmount: amount,
+                delegatedStakingClaimAmount: this.delegatedStakingClaimAmount.amount,
                 delegatedStakingUpdate: {
                     delegatedStakingHasNewInfo: this.delegatedStakingNewInfo.hasNewDelegatedInfo,
                     delegatedStakingNewPublicKey: this.delegatedStakingNewInfo.delegatedStakingNewPublicKey,

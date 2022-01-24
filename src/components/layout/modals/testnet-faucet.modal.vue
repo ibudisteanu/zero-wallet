@@ -1,9 +1,9 @@
 <template>
-    <modal ref="modal" title="Faucet coins" >
+    <modal ref="modal" title="Faucet coins" :close-button="loaded" >
 
         <template slot="body" v-if="address">
             <div class="pb-4">
-                <label class="pb-2">Receive your coins to this address:</label>
+                <label class="pb-2">Receive your testnet coins to this address:</label>
                 <div class="address align-items-center">
                     <account-identicon :address="address.addressEncoded" size="35" outer-size="13" />
                     <span class="text-break fw-bold">{{ $store.getters.addressDisplay(this.address) }}</span>
@@ -24,7 +24,7 @@
 
             <loading-button :text="`Receive ${$store.state.faucet.faucetTestnetCoins}`" @submit="handleSubmit" icon="fas fa-coins" :disabled="!captchaToken" />
 
-            <button class="btn btn-falcon-secondary" type="button" @click="closeModal">
+            <button :class="`btn btn-falcon-${loaded ? 'primary':'secondary'}`" type="button" @click="closeModal">
                 <i class="fas fa-ban"></i> Cancel
             </button>
 
@@ -49,7 +49,7 @@ export default {
         return{
             captchaToken: "",
             error: "",
-            loaded: false,
+            loaded: true,
         }
     },
 
@@ -65,12 +65,19 @@ export default {
     methods:{
 
         async showModal() {
-            Object.assign(this.$data, this.$options.data());
 
-            return this.$refs.modal.showModal();
+            Object.assign(this.$data, this.$options.data());
+            const promise = this.$refs.modal.showModal()
+
+            this.$store.state.blockchain.syncPromise.then( async ()=>{
+                await this.$store.dispatch('initializeFaucetInfo')
+            })
+
+            return promise
         },
 
         closeModal() {
+            if (!this.loaded) return
             return this.$refs.modal.closeModal();
         },
 
@@ -96,7 +103,7 @@ export default {
 
                 this.$router.push('/explorer/tx/'+hash)
 
-                this.closeModal()
+                return this.$refs.modal.closeModal();
 
             }catch(err){
                 this.error = err.toString()

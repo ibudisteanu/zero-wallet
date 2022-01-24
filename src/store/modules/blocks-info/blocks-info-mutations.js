@@ -8,6 +8,10 @@ export default {
 
     setBlocksInfoViewPosition(state, viewPosition ){
         state.viewPosition = viewPosition
+    },
+
+    setBlocksInfoAllowDownload(state, allowDownload){
+        state.allowDownload = allowDownload
     }
 
 }

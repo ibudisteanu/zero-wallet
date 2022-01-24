@@ -56,7 +56,6 @@ export default {
     updateTxNotification(state, {txHash, extraInfo }) {
         if (!state.txsByHash[txHash]) return
 
-        const txsByHeight = {...state.txsByHeight}
         const tx = {...state.txsByHash[txHash]};
 
         const removedHeight = tx.__height
@@ -69,10 +68,10 @@ export default {
         let addedHeight
         if (extraInfo.blockchain && extraInfo.blockchain.inserted) addedHeight = extraInfo.blockchain.height
 
-        if (addedHeight !== undefined) txsByHeight[addedHeight] = tx;
-        if (removedHeight !== undefined && addedHeight !== removedHeight) delete(txsByHeight[removedHeight]);
+        if (addedHeight !== undefined) Vue.set( state.txsByHeight, addedHeight, tx );
+        if (removedHeight !== undefined && addedHeight !== removedHeight) Vue.delete( state.txsByHeight, removedHeight );
+
         Vue.set(state.txsByHash, txHash, tx );
-        this.txsByHeight = txsByHeight
     },
 
 }

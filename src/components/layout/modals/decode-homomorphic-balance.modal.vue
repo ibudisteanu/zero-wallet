@@ -16,6 +16,7 @@
 import Modal from "src/components/utils/modal"
 import LoadingSpinner from "../../utils/loading-spinner";
 import StringHelper from "src/utils/string-helper";
+import Decimal from 'decimal.js';
 
 export default {
 
@@ -83,25 +84,25 @@ export default {
 
             if (this.closed) return
 
-            const data = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode(JSON.stringify({
+            const data = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode(JSONStringify({
                 publicKey: this.publicKey,
                 asset: this.asset
             })), this.password, )
 
-            const params = JSON.parse( MyTextDecode( data ) )
+            const params = JSONParse( MyTextDecode( data ) )
 
             if (this.closed) return
 
             if (this.returnPrivateKey)
                 this.privateKey = params.privateKey
 
-            const decodedData = await PandoraPayHelper.wallet.decodeBalance(MyTextEncode(JSON.stringify( {
+            const decodedData = await PandoraPayHelper.wallet.decodeBalance(MyTextEncode(JSONStringify( {
                 privateKey: params.privateKey,
                 previousValue: params.previousValue,
                 balanceEncoded: this.balance,
                 asset: this.asset,
             } )), async (status)=>{
-                const final = StringHelper.formatMoney( await PandoraPay.config.assets.assetsConvertToBase( status, this.getAsset.decimalSeparator ), this.getAsset.decimalSeparator )
+                const final = StringHelper.formatMoney( new Decimal( status).div( new Decimal(10).pow( this.getAsset.decimalSeparator ), this.getAsset.decimalSeparator ) )
                 this.status = "Scan  "+final
             })
 
@@ -127,7 +128,7 @@ export default {
                         text: `Decoded successfully!`,
                     })
 
-                    this.balanceDecoded = result[1]
+                    this.balanceDecoded = new Decimal(result[1])
                     this.cancelCallback = null
                     return this.closeModal()
                 }

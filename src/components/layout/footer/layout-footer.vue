@@ -16,7 +16,7 @@
                     <span>WEB: {{version}} WASM: {{buildVersion}} </span>
                 </div>
                 <div class="col-12 col-auto text-center">
-                    <span>2019 - 2021 <a href="https://PandoraPay.org" target="_blank">{{entity}}</a> </span>
+                    <span>2019 - 2022 <a href="https://PandoraPay.org" target="_blank">{{entity}}</a> </span>
                 </div>
             </div>
 

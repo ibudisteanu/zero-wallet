@@ -1,19 +1,20 @@
 import getters from "./blockchain-getters"
 import mutations from "./blockchain-mutations"
+import Decimal from 'decimal.js';
 
 export default {
 
     state: {
 
-        genesisTimestamp: 0,
+        genesisTimestamp: new Decimal(0),
 
-        end: 0,
+        end: new Decimal(0),
 
         hash: '',
         prevHash: '',
         prevKernelHash: '',
-        assets: 0,
-        transactions: 0,
+        assets: new Decimal(0),
+        transactions: new Decimal(0),
 
         status: '',
 

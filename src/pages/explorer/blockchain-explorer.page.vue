@@ -15,12 +15,10 @@
             <div class="card-body p-3 pt-0">
                 <div class="card-body p-0">
 
-                    <alert-box v-if="error" class="w-100 p-3" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
+                    <alert-box v-if="error" class="w-100 mt-2" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
                     <template v-if="!loaded" >
-                        <div class="py-3 text-center">
-                            <loading-spinner />
-                        </div>
+                        <div class="py-3 text-center"> <loading-spinner class="fs-2" /> </div>
                     </template>
                     <template v-else>
                         <show-blocks-info :blocksInfo="lastBlocksInfo"/>
@@ -49,7 +47,8 @@ import Pagination from "src/components/utils/pagination"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import consts from "consts/consts"
 import AlertBox from "src/components/utils/alert-box"
-
+import Decimal from 'decimal.js';
+import UtilsHelper from "src/utils/utils-helper"
 export default {
 
     components: {Layout, Pagination, ShowBlocksInfo, LoadingSpinner, LayoutTitle, AlertBox},
@@ -63,52 +62,36 @@ export default {
 
     computed: {
 
+        page() {
+            return UtilsHelper.getPage(this.$route.params.page)
+        },
+
         countPerPage() {
             return consts.blocksInfoPagination
         },
 
         finalPage() {
-            if (this.page !== null) return this.page
-            return Math.floor((this.ending - 1) / this.countPerPage)
+            return  (this.page !== null) ? this.page : this.pages
         },
 
-        pages() {
-            return Math.floor((this.ending - 1) / this.countPerPage)
-        },
-
-        page() {
-            let page = this.$route.params.page || null
-            if (typeof page == "string") {
-                try{
-                    page = Number.parseInt(page)
-                    if (isNaN(page)) throw "error"
-                }catch(err){
-                    this.error = "Invalid page number"
-                    return null
-                }
-            }
-            return page
+        pages(){
+            return Decimal.max(0, this.ending.minus(1).div(this.countPerPage).floor() )
         },
 
         starting() {
-            return this.page * this.countPerPage
+            return this.last.minus(this.countPerPage)
         },
 
         last() {
-
-            const out = (this.finalPage + 1) * this.countPerPage
-            if (this.ending > 0)
-                return Math.min(this.ending, out);
-
-            return out
-        },
-
-        lastBlocksInfo() {
-            return this.$store.getters.blocksInfoSorted.filter(a => (a.height >= this.last - this.countPerPage) && (a.height < this.last));
+            return Decimal.min( this.ending, this.finalPage.plus(1).mul(this.countPerPage) );
         },
 
         ending() {
             return this.$store.state.blockchain.end;
+        },
+
+        lastBlocksInfo() {
+            return this.$store.getters.blocksInfoSorted.filter(a => a.height.gte( this.starting ) && a.height.lt( this.last ) );
         },
 
     },
@@ -121,14 +104,17 @@ export default {
 
                 await this.$store.state.blockchain.syncPromise;
 
+                this.$store.commit('setBlocksInfoAllowDownload', true )
+
                 await this.$store.dispatch('getBlocksInfo', {
-                    starting: this.last - this.countPerPage,
-                    blockchainEnd: this.ending,
-                    view: this.page !== null
+                    start: this.starting,
+                    end: this.last,
+                    view: this.page !== null,
                 })
 
             } catch (err) {
                 this.error = err.toString()
+                console.error(err)
             } finally {
                 this.loaded = true
             }
@@ -143,6 +129,10 @@ export default {
 
     mounted() {
         return this.loadBlocksInfo();
+    },
+
+    beforeDestroy() {
+        this.$store.commit('setBlocksInfoAllowDownload', false )
     }
 
 }

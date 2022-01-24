@@ -3,22 +3,22 @@ import Vue from "vue";
 export default {
 
     setTransactionInfo(context, {hash, txInfo} ){
-        Vue.set(context.list, hash, txInfo)
+        Vue.set(context.txsByHash, hash, txInfo)
     },
 
     deleteTransactionsInfo(state, transactions ){
 
-        const list = {...state.list}
+        const txsByHash = {...state.txsByHash}
 
         for (const tx of transactions)
-            delete list[tx.hash]
+            delete txsByHash[tx.hash]
 
-        state.list = list
+        state.txsByHash = txsByHash
     },
 
     updateTxInfoNotification(state, {txHash, extraInfo }) {
 
-        const txInfo = {...state.list[txHash]};
+        const txInfo = {...state.txsByHash[txHash]};
 
         if (extraInfo.blockchain){
 
@@ -46,7 +46,7 @@ export default {
 
         }
 
-        Vue.set(state.list, txHash, txInfo );
+        Vue.set(state.txsByHash, txHash, txInfo );
     },
 
 }

@@ -30,7 +30,7 @@
 
                     <div class="row py-2">
                         <div v-if="!showRegistration" class="pointer  w-auto" @click="showRegistration = true">
-                            View Registration Key
+                            View Registration Public Key
                         </div>
                         <div v-else>
                             Registration Key: {{address.registration}}

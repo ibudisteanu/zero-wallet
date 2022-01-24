@@ -36,6 +36,7 @@ import TransactionsPreview from "../../components/wallet/transactions/transactio
 import PendingTransactionsPreview from "../../components/wallet/transactions/pending-transactions-preview";
 import WaitAddress from "../../components/wallet/account/wait-address";
 import WaitAccount from "../../components/wallet/account/wait-account";
+import UtilsHelper from "src/utils/utils-helper";
 
 export default {
 
@@ -52,13 +53,8 @@ export default {
 
     computed:{
 
-        page(){
-            let page = this.$route.params.page || null
-            if (typeof page == "string"){
-                page = Number.parseInt(page)
-                return page;
-            }
-            return page
+        page() {
+            return UtilsHelper.getPage(this.$route.params.page)
         },
 
         address(){
@@ -94,7 +90,7 @@ export default {
 
                 if (address){
                     const addressData = await PandoraPay.addresses.decodeAddress(address)
-                    const addressJSON = JSON.parse( MyTextDecode(addressData))
+                    const addressJSON = JSONParse( MyTextDecode(addressData))
                     publicKey = addressJSON.publicKey
                 } else {
                     publicKey = newAddress||this.mainPublicKey
@@ -138,7 +134,7 @@ export default {
             await this.$store.state.blockchain.syncPromise;
 
             if (to)
-                await this.$store.dispatch('subscribeAccount', to )
+                await this.$store.dispatch('subscribeAccount', {publicKey: to} )
 
             if (from && !this.$store.getters.walletContains(from) )
                 await this.$store.dispatch('unsubscribeAccount', from )

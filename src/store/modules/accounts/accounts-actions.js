@@ -6,9 +6,9 @@ const promises = {
 
 export default {
 
-    async _downloadAccount({state, dispatch, commit, getters}, publicKey){
+    async _downloadAccount({state, dispatch, commit, getters}, {publicKey, forced}){
 
-        if (state.subscribed[publicKey] && state.list[publicKey])
+        if (!forced && state.subscribed[publicKey] && state.list[publicKey])
             return state.list[publicKey]
 
         if (promises.accounts[publicKey]) return promises.accounts[publicKey]
@@ -16,15 +16,15 @@ export default {
             try{
 
                 const result = await Promise.all([
-                    PandoraPay.network.getNetworkAccount(MyTextEncode( JSON.stringify( {publicKey} )) ),
-                    PandoraPay.network.getNetworkAccountMempool( MyTextEncode( JSON.stringify( {publicKey} ) ) ),
+                    PandoraPay.network.getNetworkAccount(MyTextEncode( JSONStringify( {publicKey} )) ),
+                    PandoraPay.network.getNetworkAccountMempool( MyTextEncode( JSONStringify( {publicKey} ) ) ),
                 ])
 
                 if ( !result[0] ) throw "Account was not received"
                 const accountData = result[0]
 
-                let account = JSON.parse(MyTextDecode(accountData))
-                const pendingTxsList = JSON.parse( MyTextDecode(result[1]) )
+                let account = JSONParse(MyTextDecode(accountData))
+                const pendingTxsList = JSONParse( MyTextDecode(result[1]) )
 
                 if ( !Object.keys(account).length ){
                     account = null
@@ -54,10 +54,10 @@ export default {
         })
     },
 
-    async subscribeAccount({state, dispatch, commit}, publicKey){
+    async subscribeAccount({state, dispatch, commit}, {publicKey, forced}){
 
-        if (state.subscribed[publicKey])
-            return dispatch('_downloadAccount', publicKey)
+        if (!forced && state.subscribed[publicKey])
+            return dispatch('_downloadAccount', {publicKey, forced})
 
         if (promises.subscribed[publicKey]) return promises.subscribed[publicKey];
         return promises.subscribed[publicKey] = new Promise( async (resolve, reject) => {
@@ -71,7 +71,7 @@ export default {
 
                 commit('setSubscribedAccountStatus', {publicKey, status: true})
 
-                resolve( await dispatch('_downloadAccount', publicKey) )
+                resolve( await dispatch('_downloadAccount', {publicKey, forced} ) )
 
             }catch(err){
                 console.error("subscribeAccount", err)
@@ -111,7 +111,16 @@ export default {
 
     },
 
-    async accountUpdateNotification( {state, dispatch, commit, getters}, {publicKey, type, data, extraInfo }){
+    async resubscribeAccounts({state, dispatch, commit} ){
+
+        const promises = []
+        for (const publicKey in state.subscribed)
+            promises.push( dispatch('subscribeAccount', {publicKey: publicKey, forced: true }) )
+
+        return Promise.all(promises)
+    },
+
+    accountUpdateNotification( {state, dispatch, commit, getters}, {publicKey, type, data, extraInfo }){
 
         let account = { ... ( state.list[publicKey] || {} ) }
 

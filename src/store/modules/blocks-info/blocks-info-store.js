@@ -8,6 +8,7 @@ export default {
         listByHeight: {},
 
         viewPosition: null,
+        allowDownload: false,
     },
 
     actions,

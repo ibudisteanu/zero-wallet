@@ -5,7 +5,8 @@
 <script>
 export default{
     props: {
-        title: {default: ""}
+        title: {default: ""},
+        center: {default: false},
     },
 }
 </script>

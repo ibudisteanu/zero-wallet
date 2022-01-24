@@ -7,9 +7,9 @@ const promises = {
 
 export default {
 
-    async subscribeTransaction( {state, dispatch, commit}, txId ){
+    async subscribeTransaction( {state, dispatch, commit}, {txId, forced} ){
 
-        if (state.subscribed[txId]) return true
+        if (!forced && state.subscribed[txId]) return true
 
         if (promises.subscribed[txId]) return promises.subscribed[txId];
         return promises.subscribed[txId] = new Promise( async (resolve, reject) => {
@@ -30,7 +30,7 @@ export default {
 
     async unsubscribeTransaction( {state, dispatch, commit}, txId ){
 
-        if (!state.subscribed[txId]) return true
+        if ( !state.subscribed[txId]) return true
 
         if (promises.unsubscribed[txId]) return promises.unsubscribed[txId];
         return promises.unsubscribed[txId] = new Promise( async (resolve, reject) => {
@@ -47,6 +47,15 @@ export default {
                 delete promises.unsubscribed[txId]
             }
         })
+    },
+
+    async resubscribeTransactions({state, dispatch, commit} ){
+
+        const promises = []
+        for (const txId in state.subscribed)
+            promises.push( dispatch('subscribeTransaction', {txId, forced: true }) )
+
+        return Promise.all(promises)
     },
 
     async includeTx( {state, dispatch, commit, getters}, {tx, info, mempool} ){
@@ -74,9 +83,9 @@ export default {
         if (promises.txsByHash[hash]) return promises.txsByHash[hash];
         return promises.txsByHash[hash] = new Promise( async (resolve, reject ) => {
             try{
-                const data = await PandoraPay.network.getNetworkTx( 0, hash );
+                const data = await PandoraPay.network.getNetworkTx( MyTextEncode( JSONStringify({height: 0, hash})) );
                 if (!data) throw "tx fetch failed"; //disconnected
-                resolve( await dispatch('includeTx', JSON.parse(MyTextDecode(data)) ) );
+                resolve( await dispatch('includeTx', JSONParse(MyTextDecode(data)) ) );
             }catch(err){
                 reject(err);
             } finally{
@@ -86,15 +95,14 @@ export default {
     },
 
     async getTransactionByHeight( {state, dispatch, commit}, height){
-        if (typeof height === "string") height = Number.parseInt(height)
 
         if (state.txsByHeight[height]) return state.txsByHeight[height];
         if (promises.txsByHeight[height]) return promises.txsByHeight[height];
         return promises.txsByHeight[height] = new Promise( async (resolve, reject ) => {
             try{
-                const data = await PandoraPay.network.getNetworkTx( height, "" );
+                const data = await PandoraPay.network.getNetworkTx( MyTextEncode(JSONStringify({height, hash:""}) ));
                 if (!data) throw "tx fetch failed"; //disconnected
-                resolve( await dispatch('includeTx', JSON.parse(MyTextDecode(data)) ) );
+                resolve( await dispatch('includeTx', JSONParse(MyTextDecode(data)) ) );
             }catch(err){
                 reject(err);
             } finally{
@@ -105,6 +113,7 @@ export default {
     },
 
     txNotification({state, dispatch, commit}, { txHash, extraInfo }) {
+        console.log("txNotification FIRED!!!", txHash, extraInfo)
         dispatch('txPreviewNotification', { txHash, extraInfo } )
         dispatch('txInfoNotification', { txHash, extraInfo } )
         commit('updateTxNotification', { txHash, extraInfo })

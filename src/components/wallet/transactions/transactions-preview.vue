@@ -36,6 +36,7 @@ import ShowTransactionsPreview from "src/components/explorer/tx-preview/show-tra
 import consts from "consts/consts";
 import Pagination from "src/components/utils/pagination"
 import AlertBox from "src/components/utils/alert-box"
+import Decimal from "decimal.js"
 
 export default {
 
@@ -55,9 +56,8 @@ export default {
 
     computed:{
 
-        finalPage(){
-            if (this.page !== null) return this.page
-            return Math.floor((this.ending-1)/this.countPerPage)
+        finalPage() {
+            return  (this.page !== null) ? this.page : this.pages
         },
 
         address(){
@@ -73,28 +73,19 @@ export default {
         },
 
         pages(){
-            return Math.floor((this.ending-1)/this.countPerPage)
-        },
-
-        starting(){
-            return ( this.page * this.countPerPage )
+            return Decimal.max(0, this.ending.minus(1).div(this.countPerPage).floor() )
         },
 
         ending(){
-            if (!this.txs) return 0
-            return this.txs.count;
+            return this.txs ? this.txs.count : new Decimal(0)
         },
 
-        last(){
+        starting() {
+            return this.last.minus(this.countPerPage)
+        },
 
-            if (this.page === null) return undefined
-
-            const out = ( this.page + 1 ) * this.countPerPage
-
-            if (this.ending > 0)
-              return Math.min( this.ending, out );
-
-            return out
+        last() {
+            return Decimal.min( this.ending, this.finalPage.plus(1).mul(this.countPerPage) );
         },
 
         transactions(){
@@ -103,26 +94,15 @@ export default {
 
             const txs = this.txs.hashes;
 
-            let ending = Math.min( this.ending, (this.page === null) ? Number.MAX_SAFE_INTEGER : ( this.page + 1 ) * this.countPerPage)
-            let starting = ending - this.countPerPage
-
-            console.log("starting", starting, "ending", ending)
-
             const heights = []
             for ( const heightStr in txs)
-                heights.push( Number.parseInt(heightStr) )
+                heights.push( new Decimal(heightStr) )
 
-            heights.sort((a,b) => b-a)
+            heights.sort((a,b) => b.minus(a) )
 
-            const out = [];
-            for (const height of heights ) {
-              console.log("height",height, !!txs[height], ending)
-              if (height >= starting && height < ending) {
-                  out.push(txs[height]);
-                }
-            }
+            console.log("transactions", this.starting.toString(), this.last.toString(), heights)
 
-            return out;
+            return heights.filter(  height => height.gte( this.starting ) && height.lt( this.last) ).map( height => txs[height] );
         },
 
 
@@ -135,7 +115,11 @@ export default {
                 this.error = ''
 
                 await this.$store.state.blockchain.syncPromise;
-                await this.$store.dispatch('downloadAccountTxs', {publicKey: this.publicKey, next: this.last, view: (this.page !== null) } )
+                await this.$store.dispatch('downloadAccountTxs', {
+                    publicKey: this.publicKey,
+                    next: this.last,
+                    view: (this.page !== null)
+                } )
 
             }catch(err){
                 this.error = err.toString()

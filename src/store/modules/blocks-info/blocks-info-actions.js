@@ -1,4 +1,5 @@
 import consts from "consts/consts";
+import Decimal from 'decimal.js';
 
 const promises = {}
 
@@ -11,10 +12,10 @@ export default {
         return promises[height] = new Promise( async (resolve, reject) => {
 
             try{
-                const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( Number.parseInt(height), "" );
+                const blockInfoData = await PandoraPay.network.getNetworkBlockInfo( MyTextEncode(JSONStringify({height, hash: ""}) ) );
                 if (!blockInfoData) throw "Error getting blockData"
 
-                const blockInfo = JSON.parse( MyTextDecode( blockInfoData ) )
+                const blockInfo = JSONParse( MyTextDecode( blockInfoData ) )
 
                 if (!blockInfo || !blockInfo.hash)
                     throw "Error getting block info"
@@ -32,27 +33,27 @@ export default {
 
     },
 
-    async getBlocksInfo( {state, dispatch, commit}, { starting, blockchainEnd, view = null} ){
+    async getBlocksInfo( {state, dispatch, commit}, { start, end, view} ){
 
-        starting = Math.max(0, starting )
-        const ending = Math.min( starting + consts.blocksInfoPagination -1, blockchainEnd-1 )
+        if (!state.allowDownload) return
+
+        start = Decimal.max(0, start)
 
         if (view === true ) {
-            const viewStart = (Math.ceil( ending / consts.blocksInfoPagination )-1) * consts.blocksInfoPagination
-            const viewEnd = viewStart + consts.blocksInfoPagination
-            commit('setBlocksInfoViewPosition', {starting: viewStart, ending: viewEnd})
-        } else if (view === false ) {
+            const viewStart = Decimal.ceil( end.div( consts.blocksInfoPagination )).minus(1).mul( consts.blocksInfoPagination )
+            const viewEnd = viewStart.plus( consts.blocksInfoPagination )
+            commit('setBlocksInfoViewPosition', {start: start, end: viewEnd})
+        } else if (view === false )
             commit('setBlocksInfoViewPosition', null )
-        }
 
-        console.log("starting, ending", starting, ending)
+        console.log("start, end", start.toString(), end.toString() )
 
-        const listByHeight = {
+        let listByHeight = {
             ...state.listByHeight,
         }
 
         let found = false
-        for (let i = ending; i >= starting ; i-- ){
+        for (let i = end.minus(1); i.gte(start); i = i.minus(1)){
 
             let beforeHash
             if (listByHeight[i] && listByHeight[i].hash )
@@ -65,31 +66,23 @@ export default {
 
                 if (!found && beforeHash === blockInfo.hash )
                     found = true
-            }
 
+            }
         }
 
-        const viewPosition = state.viewPosition
-        if (viewPosition){
-            let c = 0
-            for (const heightStr in listByHeight){
-                const height = Number.parseInt(heightStr)
-                if ( !( height > viewPosition.ending || height < viewPosition.starting ) )
-                    c++
-            }
+        listByHeight = {
+            ...state.listByHeight,
+            ...listByHeight,
+        }
 
-            if (c >= consts.blocksInfoPagination)
-                for (const heightStr in listByHeight){
-                    const height = Number.parseInt(heightStr)
-                    if ( height > viewPosition.ending || height < viewPosition.starting )
-                        delete(listByHeight[height])
-                }
-        } else {
-            for (const heightStr in listByHeight){
-                const height = Number.parseInt(heightStr)
-                if ( height > ending || height < starting )
-                    delete(listByHeight[height])
-            }
+        let viewPosition = {start, end}
+        if (state.viewPosition)
+            viewPosition = state.viewPosition
+
+        for (const heightStr in listByHeight){
+            const height = new Decimal(heightStr)
+            if ( height.gt( viewPosition.end ) || height.lt( viewPosition.start.minus(consts.blocksInfoPagination) ) )
+                delete(listByHeight[height])
         }
 
         commit('setBlocksInfo', listByHeight )

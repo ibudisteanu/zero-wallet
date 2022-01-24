@@ -9,6 +9,7 @@ export default {
     },
 
     setBlockchainInfo(store, data){
+        store.end = data.height;
         store.assets = data.assets;
         store.transactions = data.transactions;
     },
@@ -22,9 +23,9 @@ export default {
         if (status === store.status) return;
 
         if (store.status === "sync" && status === "offline")
-            store.commit('createSyncPromise');
+            this.commit('createSyncPromise');
 
-        if ( status === "sync" && !store.syncPromiseResolved)
+        if ( status === "online" && !store.syncPromiseResolved)
             store.syncPromiseResolve(true);
 
         if (!(status === "online" && store.status === "sync"))

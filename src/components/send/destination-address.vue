@@ -62,7 +62,7 @@ export default {
             handler: async function  (to, ) {
                 try{
                     const addressData = await PandoraPay.addresses.decodeAddress(to)
-                    const address = JSON.parse( MyTextDecode(addressData) )
+                    const address = JSONParse( MyTextDecode(addressData) )
                     this.finalAddress = address
                 }catch(err){
                     this.finalAddress = null
@@ -83,8 +83,8 @@ export default {
 
         async showQrCodeScanner(){
             const out = await this.$store.state.page.refQRCodeScannerModal.showModal();
-            if (out.decoded)
-                this.destination = out
+            if (out) this.destination = out
+            console.log("showQrCodeScanner", out)
         },
 
         changedTxAmount(data){

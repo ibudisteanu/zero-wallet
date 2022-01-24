@@ -49,6 +49,7 @@ import Wizard from "../../utils/wizard";
 import TxFee from "../tx-fee";
 import WaitAccount from "src/components/wallet/account/wait-account";
 import ConfirmBroadcastingTx from "./confirm-broadcasting-tx"
+import Decimal from "decimal.js"
 
 export default {
     components: {AlertBox, ExtraData, Wizard, TxFee, WaitAccount, ConfirmBroadcastingTx},
@@ -82,7 +83,7 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
         balancesStakeAvailable(){
-            const amount = (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ? this.account.plainAccount.delegatedStake.stakeAvailable : 0
+            const amount = (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ? this.account.plainAccount.delegatedStake.stakeAvailable : new Decimal(0)
             return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
         },
         getAsset(){
@@ -134,15 +135,15 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const fee = this.fee.feeType ? 0 : Number.parseInt( await PandoraPay.config.assets.assetsConvertToUnits( this.fee.feeManual.amount.toString(), this.getAsset.decimalSeparator ) )
+            const fee = this.fee.feeType ? new Decimal(0) : this.fee.feeManual.amount
 
-            const nonceOut = await PandoraPay.network.getNetworkAccountMempoolNonce(MyTextEncode(JSON.stringify({ publicKey: this.address.publicKey })))
+            const nonceOut = await PandoraPay.network.getNetworkAccountMempoolNonce(MyTextEncode(JSONStringify({ publicKey: this.address.publicKey })))
 
-            const nonce = JSON.parse( MyTextDecode(nonceOut)).nonce
+            const nonce = JSONParse( MyTextDecode(nonceOut)).nonce
 
             const data = {
                 from: this.address.addressEncoded,
-                nonce,
+                nonce: nonce.toString(),
                 data: {
                     data: Buffer.from(this.extraData.data).toString("hex"),
                     encrypt: this.extraData.type === "encrypted",
@@ -150,7 +151,8 @@ export default {
                 },
                 fee: {
                     fixed:  fee,
-                    perByte: 0,
+                    perByte: new Decimal(0),
+                    perByteExtraSpace: new Decimal(0),
                     perByteAuto: this.fee.feeType,
                 },
                 feeVersion: this.feeVersion,
@@ -160,7 +162,7 @@ export default {
             if (this.beforeProcess)
                 await this.beforeProcess(password, data)
 
-            const out = await PandoraPay.transactions.builder.createSimpleTx( MyTextEncode( JSON.stringify(data) ),
+            const out = await PandoraPay.transactions.builder.createSimpleTx( MyTextEncode( JSONStringify(data) ),
                 status => {
                     this.status = status
                 }, password);
@@ -168,7 +170,7 @@ export default {
             if (!out) throw "Transaction couldn't be made";
             this.status = ''
 
-            this.tx = JSON.parse( MyTextDecode( out[0] ) )
+            this.tx = JSONParse( MyTextDecode( out[0] ) )
             this.txSerialized = out[1]
 
         },

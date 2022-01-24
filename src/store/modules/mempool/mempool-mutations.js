@@ -4,19 +4,13 @@ export default {
 
     setMempool(state, { page, mempool }) {
 
-        let list
-        if (page !== 0)
-            list = state.list || {};
-        else
-            list = {}
+        let list = {}
 
-
-        for (const hash of mempool.hashes)
-            list[hash] = true;
+        mempool.hashes.map(hash => list[hash] = true )
 
         state.list = {...list};
         state.chainHash = mempool.chainHash
-        state.page = page+1;
+        state.page = state.page.plus(1);
         state.count = mempool.count;
     },
 

@@ -91,6 +91,7 @@ import Modal from "src/components/utils/modal"
 import AccountIdenticon from "./account-identicon";
 import TxAmount from "src/components/send/tx-amount"
 import Wizard from "src/components/utils/wizard"
+import Decimal from "decimal.js"
 
 export default {
 
@@ -225,12 +226,12 @@ export default {
                 publicKey: this.account.publicKey,
                 registration: this.hasRegistration ? this.account.registration : "",
                 paymentID: this.hasPaymentID ? this.paymentID : "",
-                paymentAmount: this.hasPaymentAmount ? Number.parseInt(this.paymentAmount.amount) : 0,
+                paymentAmount: this.hasPaymentAmount ? this.paymentAmount.amount : new Decimal(0),
                 paymentAsset: this.hasPaymentAsset ? this.paymentAsset : "",
             }
 
-            const out = await PandoraPay.addresses.generateAddress( MyTextEncode( JSON.stringify( args )  ))
-            const json = JSON.parse( MyTextDecode(out) )
+            const out = await PandoraPay.addresses.generateAddress( MyTextEncode( JSONStringify( args )  ))
+            const json = JSONParse( MyTextDecode(out) )
             this.addressGenerated = json[1]
 
         },

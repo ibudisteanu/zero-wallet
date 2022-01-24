@@ -5,10 +5,10 @@ import getters from "./assets-info-getters";
 export default{
 
     state: {
-        list: {},
-
         listByHeight: {},
-        next: null,
+
+        viewPosition: null,
+        allowDownload: false,
     },
 
     actions,

@@ -27,7 +27,7 @@
             <div class="form pt-2">
                 <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Fee:</label>
                 <i class="fas fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
-                <input class="form-control" type="number" v-model="delegatedStakingNewFee" min="0" max="65535" >
+                <input class="form-control" type="number" v-model.number="delegatedStakingNewFee" min="0" max="65535" >
                 <label>in Percentage: {{delegatedStakingNewFee/65535*100}}%</label>
             </div>
         </div>
@@ -40,6 +40,7 @@
 <script>
 import DelegatedStakeNodeModal from "src/components/staking/delegated-stake-node.modal"
 import LoadingButton from "src/components/utils/loading-button";
+import Decimal from "decimal.js"
 
 export default {
     components: {DelegatedStakeNodeModal, LoadingButton},
@@ -48,7 +49,7 @@ export default {
         return {
             hasNewDelegatedInfo: false,
             delegatedStakingNewPublicKey: "",
-            delegatedStakingNewFee: 0,
+            delegatedStakingNewFee: new Decimal(0),
         }
     },
 
@@ -100,7 +101,7 @@ export default {
         delegatedStakingNewFee:{
             immediate: true,
             handler: function (to, from) {
-                this.$emit('onChanges', { delegatedStakingNewFee: Number.parseInt(to) })
+                this.$emit('onChanges', { delegatedStakingNewFee: to })
             }
         },
         validationDelegatedStakingNewPublicKey:{
@@ -118,10 +119,10 @@ export default {
                 const password = await this.$store.state.page.refWalletPasswordModal.showModal()
                 if (password === null ) return
 
-                const nonce = this.account && this.account.plainAccount ? this.account.plainAccount.nonce : 0
+                const nonce = this.account && this.account.plainAccount ? this.account.plainAccount.nonce : new Decimal(0)
 
                 const out = await PandoraPay.wallet.deriveDelegatedStakeWalletAddress( nonce.toString(), this.address.addressEncoded, password )
-                const json = JSON.parse(MyTextDecode(out))
+                const json = JSONParse(MyTextDecode(out))
 
                 this.hasNewDelegatedInfo = true
                 this.delegatedStakingNewPublicKey = json.publicKey

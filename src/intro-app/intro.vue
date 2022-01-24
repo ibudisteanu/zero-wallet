@@ -54,7 +54,7 @@ export default {
             document.getElementsByTagName("html")[0].classList.add('dark');
 
         const formatLoadedSize = function (loaded, total){
-            return `${(loaded / 1024 / 1024 ).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
+            return `${( Math.min(loaded, total) / 1024 / 1024 ).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
         }
 
         try{
@@ -71,6 +71,9 @@ export default {
 
 
                 global.PandoraPayHelperPromise = new Promise((resolver)=>{
+
+                    //for debugging only
+                    //return resolver(true)
 
                     //let download the
                     setTimeout(async ()=>{

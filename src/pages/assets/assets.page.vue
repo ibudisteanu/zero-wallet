@@ -15,12 +15,10 @@
             <div class="card-body p-3 pt-0 ">
                 <div class="card-body p-0">
 
-                    <alert-box v-if="error" type="error">{{error}}</alert-box>
+                    <alert-box class="w-100 mt-2" v-if="error" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
 
                     <template v-if="!loaded">
-                        <div class="py-3 text-center">
-                            <loading-spinner  />
-                        </div>
+                        <div class="py-3 text-center"> <loading-spinner class="fs-2" /> </div>
                     </template>
                     <template v-else>
                         <show-assets-info id="assets" :assetsInfo="assetsInfo" />
@@ -48,6 +46,8 @@ import AlertBox from "src/components/utils/alert-box"
 import consts from "consts/consts";
 import Pagination from "src/components/utils/pagination";
 import LoadingSpinner from "src/components/utils/loading-spinner";
+import Decimal from "decimal.js"
+import UtilsHelper from "src/utils/utils-helper";
 
 export default {
 
@@ -62,35 +62,32 @@ export default {
 
     computed:{
 
+        page() {
+            return UtilsHelper.getPage(this.$route.params.page)
+        },
+
         countPerPage() {
             return consts.assetsInfoPagination
         },
 
         finalPage() {
-            if (this.page !== null) return this.page
-            return 0
+            return  (this.page !== null) ? this.page : this.pages
         },
 
         ending(){
             return this.$store.state.blockchain.assets;
         },
 
-        pages() {
-            return Math.floor((this.ending - 1) / this.countPerPage)
+        pages(){
+            return Decimal.max(0, this.ending.minus(1).div(this.countPerPage).floor() )
         },
 
-        page() {
-            let page = this.$route.params.page || null
-            if (typeof page == "string") {
-                try{
-                    page = Number.parseInt(page)
-                    if (isNaN(page)) throw "error"
-                }catch(err){
-                    this.error = "Invalid page number"
-                    return null
-                }
-            }
-            return page
+        starting() {
+            return this.last.minus(this.countPerPage)
+        },
+
+        last() {
+            return Decimal.min( this.ending, this.finalPage.plus(1).mul(this.countPerPage) );
         },
 
         assetsInfo(){
@@ -108,10 +105,12 @@ export default {
 
                 await this.$store.state.blockchain.syncPromise;
 
+                this.$store.commit('setAssetsInfoAllowDownload', true )
+
                 await this.$store.dispatch('getAssetsInfo', {
-                    start: this.finalPage * this.countPerPage,
-                    end: this.finalPage * (this.countPerPage+1),
-                    count: this.ending
+                    start: this.starting,
+                    end: this.last,
+                    view: this.page !== null,
                 })
 
             } catch (err) {
@@ -120,11 +119,6 @@ export default {
                 this.loaded = true
             }
         },
-
-        async handleViewMore(resolve){
-
-        }
-
 
     },
 
@@ -139,6 +133,7 @@ export default {
     },
 
     beforeDestroy(){
+        this.$store.commit('setAssetsInfoAllowDownload', false)
     }
 }
 

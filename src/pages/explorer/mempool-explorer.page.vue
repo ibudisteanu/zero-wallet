@@ -19,7 +19,7 @@
             <div class="card-body p-3">
 
                 <template v-if="!loaded">
-                    <loading-spinner/>
+                    <div class="py-3 text-center"> <loading-spinner class="fs-2"/> </div>
                 </template>
                 <template v-else>
                     <div v-for="(  hash, key ) in pendingTxs"
@@ -30,7 +30,7 @@
                             <span class="d-block text-truncate fs--1"> {{hash}} </span>
                         </router-link>
                     </div>
-                    <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="page" :total="Math.trunc(mempoolCount/countPerPage)" prefix="/explorer/mempool/" suffix="#mempool" />
+                    <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="pages" prefix="/explorer/mempool/" suffix="#mempool" />
                 </template>
 
             </div>
@@ -47,6 +47,8 @@ import LayoutTitle from "src/components/layout/layout-title"
 import Pagination from "src/components/utils/pagination"
 import consts from "consts/consts"
 import LoadingSpinner from "src/components/utils/loading-spinner";
+import Decimal from "decimal.js";
+import UtilsHelper from "src/utils/utils-helper";
 
 export default {
 
@@ -60,32 +62,31 @@ export default {
     },
 
     computed:{
+        page() {
+            return UtilsHelper.getPage(this.$route.params.page)
+        },
         countPerPage(){
             return consts.mempoolTxsPagination
         },
+
+        finalPage() {
+            return  (this.page !== null) ? this.page : this.pages
+        },
+
         mempoolCount(){
             return this.$store.state.mempool.count
         },
         pendingTxs(){
             return Object.keys(this.$store.state.mempool.list)
         },
-        page(){
-            let page = this.$route.params.page || 0
-            if (typeof page == "string"){
-                page = Number.parseInt(page)
-                return page;
-            }
-            return page
-        },
+        pages(){
+            return Decimal.max(0, this.mempoolCount.minus(1).div(this.countPerPage).floor() )
+        }
     },
 
     methods:{
 
-        downloadMempool(){
-            return this.handleLoadMore( 0 )
-        },
-
-        async handleLoadMore(page = this.page){
+        async downloadMempool(page = this.page){
             try{
 
                 this.loaded = false
@@ -99,7 +100,7 @@ export default {
             }finally{
                 this.loaded = true
             }
-        }
+        },
 
     },
 

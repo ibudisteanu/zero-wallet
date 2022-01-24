@@ -28,7 +28,7 @@
                 <div class="row pt-4">
                     <div class="col-12 col-sm-6">
                         <label>Encryption difficulty: {{encryptionDifficulty}} <i class="fas fa-question" v-tooltip.bottom="'The harder the encryption is, the harder for brute force is to crack it'" /> </label>
-                        <input class="form-range" type="range" min="1" max="5" v-model="encryptionDifficulty" />
+                        <input class="form-range" type="range" min="1" max="5" v-model.number="encryptionDifficulty" />
                         <small v-if="encryptionDifficulty > 2" :class="`fw-semi-bold rounded-pill badge-soft-${encryptionDifficulty > 7 ? 'danger' : 'warning'} p-1`">
                             <i class="fas fa-exclamation-triangle" /> High Difficulty requires {{formatMilliseconds( encryptionTime[encryptionDifficulty] *1000) }} seconds to login.
                         </small>
@@ -121,7 +121,7 @@ export default {
                 //if (this.password.length < 6) throw "password is too weak";
                 if (this.password !== this.retypePassword) throw "passwords are not matching";
 
-                const out = await PandoraPay.wallet.manager.encryption.encryptWallet( this.password, Number.parseInt(this.encryptionDifficulty) );
+                const out = await PandoraPay.wallet.manager.encryption.encryptWallet( this.password, this.encryptionDifficulty );
 
                 if (!out) throw "Result is not true";
 

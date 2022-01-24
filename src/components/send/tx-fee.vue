@@ -11,6 +11,8 @@
 
 <script>
 import TxAmount from "./tx-amount"
+import Decimal from "decimal.js"
+
 export default {
 
     components:{TxAmount},
@@ -26,11 +28,11 @@ export default {
             feeType: true,
 
             feeAuto: {
-                amount: 0,
+                amount: new Decimal(0),
                 validationError: "",
             },
             feeManual: {
-                amount: 0,
+                amount: new Decimal(0),
                 validationError: "",
             },
         }
