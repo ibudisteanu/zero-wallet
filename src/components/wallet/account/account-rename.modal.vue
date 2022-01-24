@@ -1,19 +1,26 @@
 <template>
-    <modal ref="modal" :title="`Delete Address ${title ? ': ' + title : ''}`">
+    <modal ref="modal" :title="`Rename Address ${title ? ': ' + title : ''}`">
 
         <template slot="body" v-if="account">
-            <span class="text-break mb-2 d-block">Are you sure you want to <b>delete</b> address {{this.account.name}}</span>
+            <span class="text-break mb-2 d-block">Do you want to <b>rename</b> address {{this.account.name}} in your wallet</span>
             <div class="address align-items-center">
                 <account-identicon :address="this.account.addressEncoded" size="35" outer-size="13" />
                 <span class="text-break">{{ this.account.addressEncoded }}</span>
             </div>
+
+
+            <div class="pt-4">
+                <label>Account Name</label>
+                <input type="text" class="form-control" v-model="newName" />
+            </div>
+
         </template>
 
         <template slot="footer">
             <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
-            <button class="btn btn-falcon-danger" type="button" @click="handleDelete">
-                <i class="fas fa-times"></i> Yes, Delete account
+            <button class="btn btn-falcon-primary" type="button" @click="handleRename">
+                <i class="fas fa-save"></i> Rename Account
             </button>
             <button class="btn btn-outline-primary" type="button" @click="closeModal">
                 <i class="fas fa-ban"></i> Close
@@ -38,6 +45,7 @@ export default {
             error: '',
             account: null,
             title: "",
+            newName: "",
         }
     },
 
@@ -49,6 +57,7 @@ export default {
 
             this.account = account;
             this.title = account.name;
+            this.newName = account.name;
 
             return this.$refs.modal.showModal();
 
@@ -58,7 +67,7 @@ export default {
             return this.$refs.modal.closeModal();
         },
 
-        async handleDelete(){
+        async handleRename(){
 
             this.$store.state.page.refLoadingModal.showModal();
 
@@ -71,20 +80,20 @@ export default {
                 const password = await this.$store.state.page.refWalletPasswordModal.showModal()
                 if (password === null ) return
 
-                const out = await PandoraPay.wallet.manager.removeWalletAddress( password, address.publicKey );
+                const out = await PandoraPay.wallet.manager.renameWalletAddress( password, address.publicKey, this.newName );
                 if (out) {
                     this.$store.dispatch('addToast', {
                         type: 'success',
-                        title: `Address ${address.name} has been removed successfully`,
-                        text: `The address ${address.addressEncoded} has been removed and deleted from your wallet`,
+                        title: `Address ${address.name} has been renamed successfully`,
+                        text: `The address ${address.addressEncoded} has been renamed from your wallet`,
                     });
-                    this.$store.commit('removeWalletAddress', address.publicKey)
+                    this.$store.commit('renameWalletAddress', {publicKey: address.publicKey, name: this.newName })
                 }
 
             }catch(err){
                 this.$store.dispatch('addToast', {
                     type: 'error',
-                    title: `Address ${address.addressEncoded} could not been removed`,
+                    title: `Address ${address.addressEncoded} could not been renamed`,
                     text: `Raised an error ${err.message}`,
                 })
             }finally{

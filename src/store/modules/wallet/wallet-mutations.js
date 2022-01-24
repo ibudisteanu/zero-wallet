@@ -27,8 +27,15 @@ export default {
         Vue.set(state.addresses, address.publicKey, address )
     },
 
-    removeWalletAddress(state, address){
-        Vue.delete(state.addresses, address.publicKey, address )
+    removeWalletAddress(state, publicKey){
+        Vue.delete(state.addresses, publicKey )
     },
+
+    renameWalletAddress(state, {publicKey, name}){
+        Vue.set(state.addresses, publicKey, {
+            ...state.addresses[publicKey],
+            name,
+        } )
+    }
 
 }

@@ -142,7 +142,7 @@ export default {
                 const out = await PandoraPay.wallet.manager.encryption.logoutWallet();
                 if (!out) throw "logout was not true"
 
-                await this.$store.dispatch('addToast', {
+                this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `You have been logged out!`,
                     text: `You have been logged out. You need to login with the password to access your wallet.`,

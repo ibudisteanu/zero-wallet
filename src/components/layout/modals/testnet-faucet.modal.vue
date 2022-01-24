@@ -95,7 +95,7 @@ export default {
                 const hash = await PandoraPay.network.getNetworkFaucetCoins( this.$store.getters.addressDisplay(this.address), this.captchaToken )
                 if (!hash || hash.length !== 64) throw "hash was not received"
 
-                await this.$store.dispatch('addToast', {
+                this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Faucet created a Tx`,
                     text: `The faucet created a transaction ${hash}`,

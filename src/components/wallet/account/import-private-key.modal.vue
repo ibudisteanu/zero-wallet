@@ -91,7 +91,7 @@ export default {
                 const out = await PandoraPay.wallet.manager.importWalletPrivateKey( password, this.privateKey, this.name, this.selectedType );
                 if (!out) throw "Your address already exists!"
 
-                await this.$store.dispatch('addToast', {
+                this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Imported successfully`,
                     text: `Your Address has been successfully imported.`,
