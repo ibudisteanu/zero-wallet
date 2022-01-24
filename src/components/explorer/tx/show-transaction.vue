@@ -5,47 +5,39 @@
             <div class="row pb-2">
                 <span class="col-5 col-sm-3 text-truncate">Height</span>
                 <div class="col-7 col-sm-9 text-truncate">
-                <span v-if="txInfo && txInfo.height">
-                    {{txInfo.height}}
-                </span>
-                    <span v-else>
-                    -
-                </span>
+                    <span v-if="txInfo && txInfo.height">
+                        <router-link :to="`/explorer/tx/${txInfo.height}`">{{txInfo.height}}</router-link>
+                    </span>
+                    <span v-else>-</span>
                 </div>
             </div>
             <div class="row pt-2 pb-2 bg-light">
                 <span class="col-5 col-sm-3 text-truncate">Block Height</span>
                 <div class="col-7 col-sm-9 text-truncate">
-                <span v-if="txInfo && txInfo.blkHeight ">
-                    <router-link :to="`/explorer/block/${txInfo.blkHeight}`">{{txInfo.blkHeight}}</router-link>
-                </span>
-                    <span v-else>
-                    -
-                </span>
+                    <span v-if="txInfo && txInfo.blkHeight ">
+                        <router-link :to="`/explorer/block/${txInfo.blkHeight}`">{{txInfo.blkHeight}}</router-link>
+                    </span>
+                    <span v-else>-</span>
                 </div>
             </div>
             <div class="row pt-2 pb-2">
                 <span class="col-5 col-sm-3 text-truncate">Block Timestamp</span>
                 <div class="col-7 col-sm-9 text-truncate" >
-                <span v-if="txInfo && txInfo.timestamp" v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp )  ) }`">
-                    {{timeAgo( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp) ) }}
-                    <i class="fas fa-clock"></i>
-                </span>
-                    <span v-else>
-                    -
-                </span>
+                    <span v-if="txInfo && txInfo.timestamp" v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp )  ) }`">
+                        {{timeAgo( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp) ) }}
+                        <i class="fas fa-clock"></i>
+                    </span>
+                    <span v-else>-</span>
                 </div>
             </div>
             <div class="row pt-2 pb-2 bg-light">
                 <span class="col-5 col-sm-3 text-truncate">Confirmations</span>
                 <div class="col-7 col-sm-9 text-truncate">
-                <span v-if="txInfo && txInfo.blkHeight">
-                    {{ $store.state.blockchain.end.minus( txInfo.blkHeight).minus( 1) }}
-                    <i v-if="$store.state.blockchain.end.minus( txInfo.blkHeight ).minus(1).gt(8)" class="fas fa-check"></i>
-                </span>
-                    <span v-else>
-                    -
-                </span>
+                    <span v-if="txInfo && txInfo.blkHeight">
+                        {{ $store.state.blockchain.end.minus( txInfo.blkHeight).minus( 1) }}
+                        <i v-if="$store.state.blockchain.end.minus( txInfo.blkHeight ).minus(1).gt(8)" class="fas fa-check"></i>
+                    </span>
+                    <span v-else>-</span>
                 </div>
             </div>
             <div class="row pt-2 pb-2">
@@ -71,7 +63,9 @@
 
         <div class="row pt-2 pb-2 bg-light">
             <span class="col-5 col-sm-3 text-truncate">Version</span>
-            <span class="col-7 col-sm-9 text-truncate">{{tx.version}}</span>
+            <span class="col-7 col-sm-9 text-truncate">
+                {{tx.version}} <span :class="`badge badge-soft-${$store.getters.getTxVersionBadgeColor(tx.version)}`" v-tooltip.bottom="$store.getters.getTxVersionText(tx.version)">{{$store.getters.getTxVersionText(tx.version)}}</span>
+            </span>
         </div>
 
         <template v-if="tx.version.eq(PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE)" >
@@ -119,7 +113,7 @@
                  :key="`tx_payload_${index}`" >
 
                 <div class="row pt-2 pb-2">
-                    <span class="col-5 col-sm-3 text-truncate">Payload {{index}}</span>
+                    <span class="col-5 col-sm-3 fw-medium text-truncate">Payload {{index}}</span>
                     <span class="col-7 col-sm-9 text-truncate"></span>
                 </div>
 
@@ -141,32 +135,36 @@
 
                 </template>
 
-                <div class="row pt-2 pb-2 ">
+                <div class="row pt-2 pb-2 bg-light">
                     <span class="col-5 col-sm-3 text-truncate">Asset</span>
-                    <span class="col-7 col-sm-9 text-truncate">{{payload.asset}}</span>
+                    <span class="col-7 col-sm-9 text-truncate">
+                        <router-link :to="`/explorer/asset/${payload.asset}`">
+                            {{payload.asset}}
+                        </router-link>
+                    </span>
                 </div>
 
-                <div class="row pt-2 pb-2 bg-light">
+                <div class="row pt-2 pb-2">
                     <span class="col-5 col-sm-3 text-truncate">Script Version</span>
                     <span class="col-7 col-sm-9 text-truncate">
                         {{payload.payloadScript}} <span :class="`badge badge-soft-${$store.getters.getTxScriptBadgeColor(tx.version, payload.payloadScript)}`" v-tooltip.bottom="$store.getters.getTxScriptText(tx.version, payload.payloadScript)">{{$store.getters.getTxScriptText(tx.version, payload.payloadScript)}}</span>
                     </span>
                 </div>
 
-                <div class="row pt-2 pb-2 ">
+                <div class="row pt-2 pb-2 bg-light">
                     <span class="col-5 col-sm-3 text-truncate">Data</span>
                     <span class="col-7 col-sm-9">
                         <show-transaction-data :tx="tx" :id="index" />
                     </span>
                 </div>
 
-                <div class="row pt-2 pb-2 bg-light">
+                <div class="row pt-2 pb-2">
                     <span class="col-5 col-sm-3 text-truncate">Extra</span>
                     <span class="col-7 col-sm-9 text-truncate">
                         <show-transaction-data-extra :data-version="payload.dataVersion" :data="payload.data" />
                     </span>
                 </div>
-                <div class="row pt-2 pb-2">
+                <div class="row pt-2 pb-2 bg-light">
                     <span class="col-5 col-sm-3 text-truncate">Extra HEX</span>
                     <span class="col-7 col-sm-9 text-truncate">{{payload.data}}</span>
                 </div>

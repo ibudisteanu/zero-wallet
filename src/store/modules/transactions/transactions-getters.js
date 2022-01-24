@@ -2,7 +2,16 @@ import StringHelper from "../../../utils/string-helper";
 
 export default {
 
-    getTxScriptTextShort: (state) => (txVersion, txScript)=> {
+    getTxVersionText: state => txVersion => {
+        if (txVersion.eq(PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ) return "Simple Tx"
+        if (txVersion.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER ) ) return "Zether"
+    },
+
+    getTxVersionBadgeColor: state => txVersion => {
+        return StringHelper.badgeColors(txVersion.toNumber() )
+    },
+
+    getTxScriptTextShort: state => (txVersion, txScript)=> {
 
         if (txVersion.eq(PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ){
             if (txScript.eq(PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE) ) return "unstake"
@@ -18,7 +27,7 @@ export default {
         }
     },
 
-    getTxScriptText: (state) => (txVersion, txScript)=> {
+    getTxScriptText: state => (txVersion, txScript)=> {
 
         if (txVersion.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ){
             if (txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE) ) return "unstake"
@@ -34,7 +43,7 @@ export default {
         }
     },
 
-    getTxScriptBadgeColor: (state) => (txVersion, txScript)=> {
+    getTxScriptBadgeColor: state => (txVersion, txScript) => {
         return StringHelper.badgeColors(txVersion.toNumber()*10 + txScript.toNumber())
     },
 
