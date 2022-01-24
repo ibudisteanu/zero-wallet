@@ -54,6 +54,8 @@ export default {
         })
 
         let initialized = false
+        let firstSync = true
+
         PandoraPay.events.listenEvents( async (name, data )=>{
 
             if (data instanceof Uint8Array)
@@ -105,8 +107,27 @@ export default {
                     this.$store.commit('setBlockchainInfo', JSONParse( MyTextDecode(out) ) )
 
                     this.$store.commit('setConsensusStatus', "online")
-                    this.$store.dispatch('initializeFaucetInfo')
-                    this.$store.dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX )
+
+                    if (firstSync){
+
+                        await this.$store.dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX )
+
+                        const promises = []
+
+                        for (const key in this.$store.state.wallet.addresses)
+                            promises.push( this.$store.dispatch('subscribeAccount', {publicKey: this.$store.state.wallet.addresses[key].publicKey} ) )
+
+                        await Promise.all(promises )
+
+                        firstSync = false
+                    }else {
+                        //let's subscribe again
+                        await Promise.all([
+                            this.$store.dispatch('resubscribeAccounts'),
+                            this.$store.dispatch('resubscribeTransactions'),
+                        ])
+                    }
+
                 }
                 else this.$store.commit('setConsensusStatus', "offline")
             }
@@ -130,9 +151,6 @@ export default {
             this.$store.commit('setBlockchainInfo', JSONParse( MyTextDecode(out) ) )
 
             await this.$store.dispatch('getBlocksInfo',  {start: this.$store.state.blockchain.end.minus( consts.blocksInfoPagination ), end: this.$store.state.blockchain.end } )
-
-            for (const key in this.$store.state.wallet.addresses)
-                await this.$store.dispatch('subscribeAccount', this.$store.state.wallet.addresses[key].publicKey)
         },
 
 

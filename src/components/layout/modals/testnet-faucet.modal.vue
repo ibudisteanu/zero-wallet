@@ -65,9 +65,15 @@ export default {
     methods:{
 
         async showModal() {
-            Object.assign(this.$data, this.$options.data());
 
-            return this.$refs.modal.showModal();
+            Object.assign(this.$data, this.$options.data());
+            const promise = this.$refs.modal.showModal()
+
+            this.$store.state.blockchain.syncPromise.then( async ()=>{
+                await this.$store.dispatch('initializeFaucetInfo')
+            })
+
+            return promise
         },
 
         closeModal() {

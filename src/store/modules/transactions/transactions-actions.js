@@ -7,9 +7,9 @@ const promises = {
 
 export default {
 
-    async subscribeTransaction( {state, dispatch, commit}, txId ){
+    async subscribeTransaction( {state, dispatch, commit}, {txId, forced} ){
 
-        if (state.subscribed[txId]) return true
+        if (!forced && state.subscribed[txId]) return true
 
         if (promises.subscribed[txId]) return promises.subscribed[txId];
         return promises.subscribed[txId] = new Promise( async (resolve, reject) => {
@@ -30,7 +30,7 @@ export default {
 
     async unsubscribeTransaction( {state, dispatch, commit}, txId ){
 
-        if (!state.subscribed[txId]) return true
+        if ( !state.subscribed[txId]) return true
 
         if (promises.unsubscribed[txId]) return promises.unsubscribed[txId];
         return promises.unsubscribed[txId] = new Promise( async (resolve, reject) => {
@@ -47,6 +47,15 @@ export default {
                 delete promises.unsubscribed[txId]
             }
         })
+    },
+
+    async resubscribeTransactions({state, dispatch, commit} ){
+
+        const promises = []
+        for (const txId in state.subscribed)
+            promises.push( dispatch('subscribeTransaction', {txId, forced: true }) )
+
+        return Promise.all(promises)
     },
 
     async includeTx( {state, dispatch, commit, getters}, {tx, info, mempool} ){

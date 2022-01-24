@@ -117,7 +117,7 @@ export default {
 
                 if (this.tx) {
                     this.$store.commit('updateViewTransactionsHashes', {txsHashes: [this.tx.hash], insert: true} )
-                    await this.$store.dispatch('subscribeTransaction', this.tx.hash )
+                    await this.$store.dispatch('subscribeTransaction', {txId: this.tx.hash} )
                 }
 
             }catch(err){

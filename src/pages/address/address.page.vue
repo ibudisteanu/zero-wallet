@@ -134,7 +134,7 @@ export default {
             await this.$store.state.blockchain.syncPromise;
 
             if (to)
-                await this.$store.dispatch('subscribeAccount', to )
+                await this.$store.dispatch('subscribeAccount', {publicKey: to} )
 
             if (from && !this.$store.getters.walletContains(from) )
                 await this.$store.dispatch('unsubscribeAccount', from )

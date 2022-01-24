@@ -253,7 +253,7 @@ export default {
             await this.$store.state.blockchain.syncPromise;
 
             if (to && to.address && to.address.publicKey && !this.$store.getters.walletContains(to.address.publicKey) )
-                await this.$store.dispatch('subscribeAccount', to.address.publicKey )
+                await this.$store.dispatch('subscribeAccount', {publicKey: to.address.publicKey} )
 
             if (from && from.address && from.address.publicKey && !this.$store.getters.walletContains(from.address.publicKey) )
                 await this.$store.dispatch('unsubscribeAccount', from.address.publicKey )
@@ -281,7 +281,7 @@ export default {
                         if (this.checkDestinationError) throw this.checkDestinationError
 
                         await this.$store.state.blockchain.syncPromise;
-                        await this.$store.dispatch('subscribeAccount', this.destination.address.publicKey )
+                        await this.$store.dispatch('subscribeAccount', {publicKey: this.destination.address.publicKey} )
 
                         if (!this.$store.state.accounts.list[this.destination.address.publicKey] && !this.destination.address.registration )
                             throw "Destination Address doesn't have the registration. \n You have the shorter version of the address. First time when an address is used it requires the longer version."
