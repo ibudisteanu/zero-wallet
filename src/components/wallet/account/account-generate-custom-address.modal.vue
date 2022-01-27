@@ -5,8 +5,8 @@
         <template slot="body" v-if="account">
 
             <wizard :titles="{
-                0: {icon: 'fas fa-dollar-sign', name: 'Amount', tooltip: 'Include a default Amount' },
-                1: {icon: 'fas fa-money-bill-wave', name: 'Asset', tooltip: 'Include a default Asset' },
+                0: {icon: 'fas fa-money-bill-wave', name: 'Asset', tooltip: 'Include a default Asset' },
+                1: {icon: 'fas fa-dollar-sign', name: 'Amount', tooltip: 'Include a default Amount' },
                 2: {icon: 'fas fa-hand-holding-usd', name: 'Payment ID', tooltip: 'Include a Payment ID' },
                 3: {icon: 'fas fa-signature', name: 'Registration', tooltip: 'Include Registration Signature' },
                 4: {icon: 'fas fa-check', name: 'Done', tooltip: 'Generated Address' }}"
@@ -14,20 +14,25 @@
 
                 <template slot="tab_0">
                     <div class="form-check">
-                        <input class="form-check-input" id="paymentAmount" type="checkbox"  name="checkbox" v-model="hasPaymentAmount"  >
-                        <label class="form-check-label" for="paymentAmount"> Amount </label>
-                        <i class="fas fa-question" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
-                        <tx-amount :allow-zero="true" :allow-empty-asset="true" :balances="null" @changed="amountChanged" text="Amount to Receive" :asset="''" :disabled="!hasPaymentAmount" />
+                        <input class="form-check-input" id="paymentAsset" type="checkbox"  name="checkbox" v-model="hasPaymentAsset"  >
+                        <label class="form-check-label" for="paymentAsset"> Payment Asset </label>
+                        <i class="fas fa-question" v-tooltip.bottom="'Specify a default asset'" ></i>  <br>
+                        <template v-if="hasPaymentAsset" >
+                            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Asset which will be requested</label>
+                            <input :class="`form-control ${validationPaymentAsset ? 'is-invalid' : ''}`" v-if="hasPaymentAsset" type="text" v-model="paymentAsset" >
+                            <div v-if="validationPaymentAsset" class="invalid-feedback d-block">{{validationPaymentAsset}}</div>
+                        </template>
                     </div>
                 </template>
 
                 <template slot="tab_1">
                     <div class="form-check">
-                        <input class="form-check-input" id="paymentAsset" type="checkbox"  name="checkbox" v-model="hasPaymentAsset"  >
-                        <label class="form-check-label" for="paymentAsset"> Payment Asset </label>
-                        <i class="fas fa-question" v-tooltip.bottom="'Specify a default asset'" ></i>  <br>
-                        <input :class="`form-control ${validationPaymentAsset ? 'is-invalid' : ''}`" v-if="hasPaymentAsset" type="text" v-model="paymentAsset" >
-                        <div v-if="validationPaymentAsset" class="invalid-feedback d-block">{{validationPaymentAsset}}</div>
+                        <input class="form-check-input" id="paymentAmount" type="checkbox"  name="checkbox" v-model="hasPaymentAmount"  >
+                        <label class="form-check-label" for="paymentAmount"> Amount </label>
+                        <i class="fas fa-question" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
+                        <template v-if="hasPaymentAmount">
+                            <tx-amount :allow-zero="true" :allow-empty-asset="true" :balances="null" @changed="amountChanged" text="Amount to Receive" :asset="paymentAsset" :disabled="!hasPaymentAmount" />
+                        </template>
                     </div>
                 </template>
 
@@ -163,10 +168,10 @@ export default {
             try{
 
                 if (oldTab === 0 && value === 1)
-                    if (this.paymentAmount.validationError) throw this.paymentAmount.validationError
+                    if (this.validationPaymentAsset) throw this.validationPaymentAsset
 
                 if (oldTab === 1 && value === 2)
-                    if (this.validationPaymentAsset) throw this.validationPaymentAsset
+                    if (this.paymentAmount.validationError) throw this.paymentAmount.validationError
 
                 if (oldTab === 2 && value === 3)
                     if (this.validationPaymentID) throw this.validationPaymentID
