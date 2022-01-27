@@ -7,7 +7,7 @@
                 <amount :value="vinSimpleAmount" :sign="false" />
             </div>
 
-            <template v-if="tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_CLAIM) ">
+            <template v-if="tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE) ">
                 <template v-if="!displayAdvanced">
                     <span class="pointer " @click="displayAdvanced=!displayAdvanced" v-tooltip.bottom="'Display tx output'"  >
                         <i class="fas fa-users" ></i>
@@ -48,6 +48,7 @@
 <script>
 import AccountIdenticon from "../../wallet/account/account-identicon";
 import Amount from "../../wallet/amount";
+import Decimal from "decimal.js"
 
 export default {
 
@@ -69,12 +70,14 @@ export default {
 
         vinSimpleAmount(){
 
-            if (this.tx.version !== PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) return
-            let out = 0
+            if (!this.tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ) return
+            let out = new Decimal(0)
 
-            if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_CLAIM)
-                for (const it of this.tx.base.extra.output)
-                    out += it.amount
+            if (this.tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE) )
+                out = out.plus(this.tx.base.extra.output.amount)
+
+            if (this.tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE) )
+                out = out.plus(this.tx.base.extra.output.delegatedStakingClaimAmount)
 
             return out
         }
