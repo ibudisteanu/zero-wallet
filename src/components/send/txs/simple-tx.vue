@@ -1,5 +1,5 @@
 <template>
-    <wait-account :account="account">
+    <wait-account :account="account" type="transparent">
         <wizard :titles="{ ...titlesOffset,
                 0: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
                 1: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' },

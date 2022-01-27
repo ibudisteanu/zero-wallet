@@ -78,7 +78,7 @@ export default {
             data.extra = {
                 amount: this.unstakeAmount.amount
             }
-            data.txScript = PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE
+            data.txScript = new Decimal(PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE)
 
         }
 

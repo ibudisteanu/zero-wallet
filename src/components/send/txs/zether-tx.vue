@@ -1,5 +1,5 @@
 <template>
-    <wait-account :account="account">
+    <wait-account :account="account" :type="initAvailableBalance ? 'all' : 'zether'">
 
         <wizard :titles="{...titlesOffset,
             0: {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },

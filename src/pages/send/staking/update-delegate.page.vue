@@ -104,7 +104,7 @@ export default {
                     delegatedStakingNewFee: this.delegatedStakingNewInfo.delegatedStakingNewFee,
                 }
             }
-            data.txScript = PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE
+            data.txScript = new Decimal(PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE)
         }
 
     },
