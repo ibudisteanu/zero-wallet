@@ -1,6 +1,7 @@
 <template>
     <div>
         <div class="">
+
             <div class="row align-items-center text-center mb-3">
                 <div class="col-sm-6 text-sm-start">
                     <img :src="require('src/assets/svgs/sending-coins.svg').default" alt="review tx" width="150">
@@ -20,22 +21,17 @@
                 <show-transaction :tx="tx" :show-tx-info="false"/>
             </div>
 
-            <div class="row justify-content-end">
-                <div class="col-auto">
-                    <table class="table table-sm table-borderless fs--1 text-end">
-                        <tbody>
-                            <tr v-for="(fee,index) in fees"
-                                      :key="`fee_${index}`">
-                                <th class="fw-semi-bold">Fee{{ (fees.length > 1) ? index : ''}}:</th>
-                                    <td>
-                                        <amount :asset="fee.asset" :value="fee.amount" value-class="text-900" :sign="true" />
-                                    </td>
-                                </tr>
+            <div v-for="(fee,index) in fees"
+                 :key="`fee_${index}`">
 
-                        </tbody>
-                    </table>
+                <div class="row pt-2 pb-2">
+                    <span class="col-5 col-sm-3 fw-medium text-truncate">Fee{{ (fees.length > 1) ? index : ''}}</span>
+                    <span class="col-7 col-sm-9 text-truncate">
+                        <amount :asset="fee.asset" :value="fee.amount" value-class="text-900" :sign="true" />
+                    </span>
                 </div>
             </div>
+
         </div>
 
     </div>
@@ -44,6 +40,7 @@
 <script>
 import ShowTransaction from "src/components/explorer/tx/show-transaction";
 import Amount from "src/components/wallet/amount"
+import Decimal from "decimal.js";
 
 export default {
 
@@ -63,7 +60,7 @@ export default {
 
                 const out = []
                 for (const payload of this.tx.payloads)
-                    out.push({amount: payload.statement.fee, asset: payload.asset, feeRate: payload.feeRate })
+                    out.push({amount: payload.statement.fee.mul(payload.feeRate).div( new Decimal(10).pow( payload.feeLeadingZeros ) ), asset: payload.asset, feeRate: payload.feeRate })
 
                 return out
             }

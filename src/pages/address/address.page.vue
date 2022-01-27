@@ -117,7 +117,7 @@ export default {
 
     watch: {
         $route (to, from) {
-          if (to === from) return
+            if (to === from) return
             return this.loadAddress();
         },
         async mainPublicKey (to, from){

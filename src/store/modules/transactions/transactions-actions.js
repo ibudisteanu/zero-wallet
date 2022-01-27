@@ -70,7 +70,7 @@ export default {
         if (tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE ))
             await dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX )
 
-        if (tx.version,eq === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER)
+        if (tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER) )
             await Promise.all( tx.payloads.map( payload => dispatch('getAssetByHash', payload.asset ) ) )
 
         commit("setTransactions", { txs: [tx] } )
