@@ -372,8 +372,8 @@ export default {
                     }
 
                 if (holders > 1) {
-                    const count = Decimal.min( holders, ringSize - Object.keys(alreadyUsedIndexes).length )
-                    for (let i=0; i < count; i++){
+                    const count = Decimal.min( holders, ringSize ).minus(Object.keys(alreadyUsedIndexes).length)
+                    for (let i= new Decimal(0); i.lt(count); i = i.plus(1)){
 
                         let index = await PandoraPay.helpers.randomUint64N( holders.toString() )
                         while (alreadyUsedIndexes[index])
