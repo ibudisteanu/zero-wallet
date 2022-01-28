@@ -130,9 +130,11 @@ export default {
     },
 
     watch: {
-        $route (to, from) {
-            if (to === from) return
-            return this.loadAddress();
+        publicKey (to, from){
+            if (to !== from ) return this.loadTransactions()
+        },
+        page(to, from){
+            if (to !== from ) return this.loadTransactions()
         },
     },
 
