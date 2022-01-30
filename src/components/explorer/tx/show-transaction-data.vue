@@ -54,7 +54,7 @@ export default {
             let out = new Decimal(0)
 
             if (this.tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE) )
-                out = out.plus(this.tx.base.extra.output.amount)
+                out = out.plus(this.tx.base.extra.amount)
 
             if (this.tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE) )
                 out = out.plus(this.tx.base.extra.output.delegatedStakingClaimAmount)

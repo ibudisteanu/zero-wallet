@@ -23,7 +23,7 @@ import ToastsStore from "./modules/toasts/toasts-store"
 Vue.use(Vuex);
 
 
-const store = new Vuex.Store({
+export default new Vuex.Store({
 
     modules: {
 
@@ -54,4 +54,3 @@ const store = new Vuex.Store({
 
 });
 
-export default store;

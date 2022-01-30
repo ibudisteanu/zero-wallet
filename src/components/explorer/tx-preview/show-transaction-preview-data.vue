@@ -8,19 +8,11 @@
             </div>
 
             <template v-if="tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE) ">
-                <template v-if="!displayAdvanced">
-                    <span class="pointer " @click="displayAdvanced=!displayAdvanced" v-tooltip.bottom="'Display tx output'"  >
-                        <i class="fas fa-users" ></i>
-                        Outputs: {{tx.base.extra.output.length}}
-                    </span>
-                </template>
-                <template v-else>
-                    <div class="output" v-for="(out, index) in tx.base.extra.output"
-                         :key="`show-transaction-vout-${index}`">
-                        <account-identicon :publicKey="out.publicKey" size="21" outer-size="7" />
-                        <amount :value="out.amount" :sign="true" />
-                    </div>
-                </template>
+                <div class="output" v-for="(out, index) in tx.base.extra.output"
+                     :key="`show-transaction-vout-${index}`">
+                    <account-identicon :publicKey="out.publicKey" size="21" outer-size="7" />
+                    <amount :value="out.amount" :sign="true" />
+                </div>
             </template>
 
         </template>
@@ -74,7 +66,7 @@ export default {
             let out = new Decimal(0)
 
             if (this.tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE) )
-                out = out.plus(this.tx.base.extra.output.amount)
+                out = out.plus(this.tx.base.extra.amount)
 
             if (this.tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE) )
                 out = out.plus(this.tx.base.extra.output.delegatedStakingClaimAmount)

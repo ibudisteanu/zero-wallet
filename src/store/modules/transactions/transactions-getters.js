@@ -21,7 +21,7 @@ export default {
         }else if (txVersion.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER ) ){
             if (txScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_TRANSFER) ) return "transfer"
             if (txScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_DELEGATE_STAKE) ) return "delegate"
-            if (txScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_UNSTAKE) ) return "unstake"
+            if (txScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CLAIM) ) return "claim"
             if (txScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_ASSET_CREATE))  return "asset"
             if (txScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_ASSET_SUPPLY_INCREASE) ) return "asset"
             return "zether"
