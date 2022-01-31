@@ -85,7 +85,9 @@ export default {
         },
 
         last() {
-            return Decimal.min( this.ending, this.finalPage.plus(1).mul(this.countPerPage) );
+            const value = this.finalPage.plus(1).mul(this.countPerPage)
+            if (this.txs) return Decimal.min( this.ending, value );
+            else return value
         },
 
         transactions(){

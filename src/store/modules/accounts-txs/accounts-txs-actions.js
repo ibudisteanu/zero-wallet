@@ -17,18 +17,18 @@ export default {
             try{
                 const out = await PandoraPay.network.getNetworkAccountTxs( MyTextEncode( JSONStringify( {
                     publicKey,
-                    next: next.eq(0) ? new Decimal(2).pow(64).minus(1) : next
+                    next: view ? next : new Decimal(2).pow(64).minus(1)
                 } ) ) );
                 const accountTxs = JSONParse(MyTextDecode( out) )
 
                 console.log("next", next ? next.toString() : null, accountTxs )
 
                 if (accountTxs)
-                    if (next.eq(0)){
+                    if (!view){
                         starting = Decimal.max(0, accountTxs.count.minus( consts.addressTxsPagination ) )
                         ending = accountTxs.count
                     }else {
-                        starting = next.minus( consts.addressTxsPagination )
+                        starting = Decimal.max(0, next.minus( consts.addressTxsPagination ) )
                         ending = next
                     }
 
