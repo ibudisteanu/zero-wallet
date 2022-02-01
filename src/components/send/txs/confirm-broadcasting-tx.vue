@@ -9,7 +9,7 @@
                 <div class="col text-sm-end mt-3 mt-sm-0">
                     <h2 class="mb-3">Transaction Preview</h2>
                     <h5>Transaction Details</h5>
-                    <p class="fs--1 mb-0">Review the transaction details before propagating it to the network</p>
+                    <p class="fs--1 mb-0">Review the transaction details before propagating it to the network. Once the transaction is broadcast, it can not be revert back.</p>
                 </div>
                 <div class="col-12">
                     <hr>

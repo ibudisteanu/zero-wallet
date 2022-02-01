@@ -20,7 +20,7 @@
 
                 <div class="form pb-2">
                     <input class="form-check-input" id="fee-version" type="checkbox"  name="checkbox" v-model="feeVersion">
-                    <label class="form-check-label" for="fee-version">Pay fee Unclaimed balance</label>
+                    <label class="form-check-label" for="fee-version">Pay Fee from Unclaimed balance</label>
                     <i class="fas fa-question " v-tooltip.bottom="`Subtract the fee from the unclaimed balance or from the delegated stake.`" />
                 </div>
 
@@ -139,11 +139,11 @@ export default {
 
             const nonceOut = await PandoraPay.network.getNetworkAccountMempoolNonce(MyTextEncode(JSONStringify({ publicKey: this.address.publicKey })))
 
-            const nonce = JSONParse( MyTextDecode(nonceOut)).nonce
+            const nonce = JSONParse( MyTextDecode(nonceOut) ).nonce
 
             const data = {
                 from: this.address.addressEncoded,
-                nonce: nonce.toString(),
+                nonce: nonce,
                 data: {
                     data: Buffer.from(this.extraData.data).toString("hex"),
                     encrypt: this.extraData.type === "encrypted",

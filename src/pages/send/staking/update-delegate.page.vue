@@ -12,7 +12,7 @@
                     <tx-amount :validate-amount="true" :allow-zero="true" :balances="balancesOnlyUnclaimed" @changed="delegatedStakingClaimAmountChanged" text="Update Staking" tooltip="Claim unclaimed funds to staking amount." />
                 </div>
 
-                <delegated-staking-new-info :public-key="publicKey" @onChanges="delegatedStakingNewInfoChanges" />
+                <delegated-staking-new-info :public-key="publicKey" ref="refDelegatedStakingNewInfo" />
 
             </template>
 
@@ -71,6 +71,8 @@ export default {
 
                 if (oldTab === -1 && value > oldTab){
                     if (this.delegatedStakingClaimAmount.validationError) throw this.delegatedStakingClaimAmount.validationError
+
+                    this.delegatedStakingNewInfo = this.$refs.refDelegatedStakingNewInfo.getData()
                     if (this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey) throw this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey
 
                     if (this.delegatedStakingClaimAmount.amount === 0 && !this.delegatedStakingNewInfo.hasNewDelegatedInfo) throw "You should update something."
@@ -85,13 +87,6 @@ export default {
 
         delegatedStakingClaimAmountChanged(data){
             this.delegatedStakingClaimAmount = {...this.delegatedStakingClaimAmount, ...data}
-        },
-
-        delegatedStakingNewInfoChanges(data){
-            this.delegatedStakingNewInfo = {
-                ...this.delegatedStakingNewInfo,
-                ...data
-            }
         },
 
         async handleBeforeProcess(password, data){

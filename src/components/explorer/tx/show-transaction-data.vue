@@ -4,7 +4,7 @@
 
             <div class="input">
                 <account-identicon :publicKey="tx.vin.publicKey" size="21" outer-size="7" />
-                <amount :value="vinAmount" :sign="false" />
+                <amount :value="vinSimpleAmount" :sign="false" />
             </div>
 
             <template v-if="tx.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE)">
@@ -53,11 +53,11 @@ export default {
             if (!this.tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ) return
             let out = new Decimal(0)
 
-            if (this.tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE) )
-                out = out.plus(this.tx.base.extra.amount)
+            if (this.tx.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE) )
+                out = out.plus(this.tx.extra.amount)
 
-            if (this.tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE) )
-                out = out.plus(this.tx.base.extra.output.delegatedStakingClaimAmount)
+            if (this.tx.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE) )
+                out = out.plus(this.tx.extra.delegatedStakingClaimAmount)
 
             return out
         }
