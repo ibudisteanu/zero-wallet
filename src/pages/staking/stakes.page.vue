@@ -100,7 +100,7 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
         delegatedStake(){
-            if (!this.account || !this.account.plainAccount || this.account.plainAccount.version.eq(0) ) return null
+            if (!this.account || !this.account.plainAccount || this.account.plainAccount.delegatedStake.version.eq(0) ) return null
             return this.account.plainAccount.delegatedStake
         },
 
@@ -113,8 +113,8 @@ export default {
         },
 
         delegateFeePercentage(){
-            if (!this.delegatedStake) return 0
-            return this.delegatedStake.delegatedStakeFee / 65535 * 100;
+            if (!this.delegatedStake) return new Decimal(0)
+            return this.delegatedStake.delegatedStakeFee.mul(100).div( 65535 );
         },
 
         pendingTxs(){

@@ -28,7 +28,7 @@ export default {
     components: {AlertBox, LoadingSpinner},
 
     props: {
-        account: {default: null},
+        account: {default: undefined},
         type: {default: "all"}, //all,transparent,zether
     },
 
