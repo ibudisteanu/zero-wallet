@@ -27,7 +27,7 @@
             <div class="form pt-2">
                 <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Fee:</label>
                 <i class="fas fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
-                <input class="form-control" type="number" v-model.number="delegatedStakingNewFee" min="0" max="65535" >
+                <input class="form-control" type="number" v-model.number="delegatedStakingNewFee" min="0" :max="PandoraPay.config.stake.DELEGATING_STAKING_FEE_MAX_VALUE" >
                 <label>in Percentage: {{delegatedStakingNewFeePercentage}}%</label>
             </div>
         </div>
@@ -58,6 +58,8 @@ export default {
     },
 
     computed:{
+        PandoraPay: () => PandoraPay,
+
         address(){
             return this.$store.state.wallet.addresses[this.publicKey]
         },
@@ -78,7 +80,7 @@ export default {
             return null
         },
         delegatedStakingNewFeePercentage(){
-            return new Decimal(this.delegatedStakingNewFee).mul(100).div(65535).toDecimalPlaces(3)
+            return new Decimal(this.delegatedStakingNewFee).mul(100).div(PandoraPay.config.stake.DELEGATING_STAKING_FEE_MAX_VALUE ).toDecimalPlaces(3)
         }
     },
 

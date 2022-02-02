@@ -220,7 +220,7 @@ export default {
                         txsInfoRemoved.push(tx)
 
                 if (txsRemoved.length) this.$store.commit('deleteTransactions', txsRemoved )
-                if (txsPreviewRemoved.length) this.$store.commit('deleteTransactionsPreview', txsRemoved )
+                if (txsPreviewRemoved.length) this.$store.commit('deleteTransactionsPreview', txsPreviewRemoved )
                 if (txsInfoRemoved.length) this.$store.commit('deleteTransactionsInfo', txsInfoRemoved )
 
                 if (blocksRemoved.length) this.$store.commit('deleteBlocks', blocksRemoved )

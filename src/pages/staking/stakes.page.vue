@@ -113,8 +113,8 @@ export default {
         },
 
         delegateFeePercentage(){
-            if (!this.delegatedStake) return new Decimal(0)
-            return this.delegatedStake.delegatedStakeFee.mul(100).div( 65535 );
+            if (!this.delegatedStake || !this.delegatedStake.delegatedStakeFee) return new Decimal(0)
+            return this.delegatedStake.delegatedStakeFee.mul(100).div( PandoraPay.config.stake.DELEGATING_STAKING_FEE_MAX_VALUE  );
         },
 
         pendingTxs(){

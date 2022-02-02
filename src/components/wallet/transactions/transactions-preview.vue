@@ -6,7 +6,7 @@
                 <div class="col">
                     <h5 class="mb-0">
                         Transactions
-                        <template v-if="!txs">
+                        <template v-if="!loaded">
                             <loading-spinner />
                         </template>
                         <template v-else>
@@ -50,7 +50,7 @@ export default {
     data(){
         return {
             error: "",
-            loaded: true,
+            loaded: false,
         }
     },
 

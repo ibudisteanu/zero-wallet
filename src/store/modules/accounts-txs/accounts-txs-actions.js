@@ -19,18 +19,20 @@ export default {
                     publicKey,
                     next: view ? next : new Decimal(2).pow(64).minus(1)
                 } ) ) );
-                const accountTxs = JSONParse(MyTextDecode( out) )
+                const accountTxs = JSONParse(MyTextDecode( out ) )
+
+                if (!accountTxs || !accountTxs.count)
+                    return resolve(accountTxs)
 
                 console.log("next", next ? next.toString() : null, accountTxs )
 
-                if (accountTxs)
-                    if (!view){
-                        starting = Decimal.max(0, accountTxs.count.minus( consts.addressTxsPagination ) )
-                        ending = accountTxs.count
-                    }else {
-                        starting = Decimal.max(0, next.minus( consts.addressTxsPagination ) )
-                        ending = next
-                    }
+                if (!view){
+                    starting = Decimal.max(0, accountTxs.count.minus( consts.addressTxsPagination ) )
+                    ending = accountTxs.count
+                }else {
+                    starting = Decimal.max(0, next.minus( consts.addressTxsPagination ) )
+                    ending = next
+                }
 
                 console.log("txs starting end", starting.toString(), ending.toString(), accountTxs )
 

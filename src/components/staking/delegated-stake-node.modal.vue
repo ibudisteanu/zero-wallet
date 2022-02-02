@@ -27,7 +27,7 @@
                         <label class="form-label">Delegates MAXIMUM slots: <strong>{{nodeInfo.maximumAllowed}}</strong></label> <br/>
                         <label class="form-label">Delegates Already: <strong>{{nodeInfo.delegatesCount}}</strong></label> <br/>
                         <label class="form-label">Delegates SLOTS: <strong>{{nodeInfo.maximumAllowed.minus( nodeInfo.delegatesCount ) }}</strong></label> <br/>
-                        <label class="form-label">Delegates Fee: <strong>{{nodeInfo.delegatesFee.div( 65535 ).mul( 100 )}}%</strong></label> <br/>
+                        <label class="form-label">Delegates Fee: <strong>{{nodeInfo.delegatesFee.div( PandoraPay.config.stake.DELEGATING_STAKING_FEE_MAX_VALUE ).mul( 100 )}}%</strong></label> <br/>
                     </template>
 
                 </wizard>
@@ -63,6 +63,8 @@ export default {
     },
 
     computed:{
+        PandoraPay: () => PandoraPay,
+
         address(){
             return this.$store.state.wallet.addresses[this.publicKey];
         },
@@ -134,11 +136,11 @@ export default {
 
             console.log(out)
 
-            if (out.delegatesCount instanceof Decimal === false ) throw "delegatesCount is missing"
-            if (out.maximumAllowed  instanceof Decimal === false ) throw "maximumAllowed is missing"
+            if (!(out.delegatesCount instanceof Decimal) ) throw "delegatesCount is missing"
+            if (!(out.maximumAllowed instanceof Decimal) ) throw "maximumAllowed is missing"
             if (typeof out.challenge !== "string" || out.challenge.length !== 64) throw "challenge is missing"
-            if (out.delegatesFee  instanceof Decimal === false ) throw "delegatesFee is missing"
-            if (out.delegatesFee.lt(0) || out.delegatesFee.gt(65535)) throw "delegatesFee exceeded 65535"
+            if (!(out.delegatesFee instanceof Decimal) ) throw "delegatesFee is missing"
+            if (out.delegatesFee.lt(0) || out.delegatesFee.gt(PandoraPay.config.stake.DELEGATING_STAKING_FEE_MAX_VALUE)) throw "delegatesFee exceeded 100000"
 
             if (out.maximumAllowed.lte( out.delegatesCount) ) throw "Node is Full"
 
