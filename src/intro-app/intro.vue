@@ -73,7 +73,7 @@ export default {
                 global.PandoraPayHelperPromise = new Promise((resolver)=>{
 
                     //for debugging only
-                    return resolver(true)
+                    //return resolver(true)
 
                     //let download the
                     setTimeout(async ()=>{
