@@ -1,7 +1,6 @@
 <template>
 
-    <router-link :to="`/address/${finalAddress}`" v-tooltip.bottom="`${ showTooltip ? finalAddressShort : '' }`"
-                 :is=" !finalAddress || disableRoute ? 'span' : 'router-link'" >
+    <router-link :to="disableRoute ? '' : `/address/${finalAddress}`" v-tooltip.bottom="`${ showTooltip ? finalAddressShort : '' }`">
         <div class="identicon outer" :style="`padding: ${outerSize}px`" v-if="identiconSrc">
             <img :src="identiconSrc" class="identicon" :style="`width: ${size}px`"  >
         </div>

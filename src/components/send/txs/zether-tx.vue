@@ -196,6 +196,8 @@ export default {
             if (this.initAvailableBalance) return this.initAvailableBalance
 
             const accounts = this.availableAccounts || []
+            console.log("this.asset", this.asset)
+            console.log("accounts", accounts)
             for (const acc of accounts)
                 if (acc.asset === this.asset.asset )
                     return {  [this.asset.asset]: acc }
