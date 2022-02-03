@@ -1,10 +1,8 @@
-import Vue from 'vue';
-
 export default {
 
     setSubscribedTxStatus(state, {txId, status} ){
-        if (status) Vue.set(state.subscribed, txId, true)
-        else Vue.delete(state.subscribed, txId)
+        if (status) state.subscribed[txId] = true
+        else delete state.subscribed[txId]
     },
 
     deleteTransactions(state, transactions ){
@@ -68,10 +66,10 @@ export default {
         let addedHeight
         if (extraInfo.blockchain && extraInfo.blockchain.inserted) addedHeight = extraInfo.blockchain.height
 
-        if (addedHeight !== undefined) Vue.set( state.txsByHeight, addedHeight, tx );
-        if (removedHeight !== undefined && addedHeight !== removedHeight) Vue.delete( state.txsByHeight, removedHeight );
+        if (addedHeight !== undefined) state.txsByHeight[addedHeight] = tx
+        if (removedHeight !== undefined && addedHeight !== removedHeight) delete state.txsByHeight[ removedHeight ];
 
-        Vue.set(state.txsByHash, txHash, tx );
+        state.txsByHash[txHash] = tx
     },
 
 }

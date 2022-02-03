@@ -6,7 +6,7 @@
         <simple-tx :titles-offset="{ '-1': {icon: 'fas fa-edit', name: 'Update Delegation', tooltip: 'Change delegation info' } }"
                    @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey" :before-process="handleBeforeProcess">
 
-            <template slot="tab_-1">
+            <template v-slot:tab_-1>
 
                 <div class="form pb-2">
                     <tx-amount :validate-amount="true" :allow-zero="true" :balances="balancesOnlyUnclaimed" @changed="delegatedStakingClaimAmountChanged" text="Update Staking" tooltip="Claim unclaimed funds to staking amount." />

@@ -1,9 +1,7 @@
-import Vue from "vue";
-
 export default {
 
     setTransactionInfo(context, {hash, txInfo} ){
-        Vue.set(context.txsByHash, hash, txInfo)
+        context.txsByHash[ hash ] = txInfo
     },
 
     deleteTransactionsInfo(state, transactions ){
@@ -46,7 +44,7 @@ export default {
 
         }
 
-        Vue.set(state.txsByHash, txHash, txInfo );
+        state.txsByHash[ txHash ] = txInfo;
     },
 
 }

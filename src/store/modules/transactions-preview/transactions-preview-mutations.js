@@ -1,10 +1,8 @@
-import Vue from 'vue';
-
 export default {
 
     setSubscribedTxPreviewStatus(state, {txId, status}) {
-        if (status) Vue.set(state.subscribed, txId, true)
-        else Vue.delete(state.subscribed, txId)
+        if (status) state.subscribed[txId] = true
+        else delete state.subscribed[txId]
     },
 
     deleteTransactionsPreview(state, transactions) {
@@ -52,7 +50,7 @@ export default {
             else delete tx.__height
         } else if (extraInfo.mempool) delete tx.__height
 
-        Vue.set(state.txsByHash, txHash, tx );
+        state.txsByHash[txHash] = tx
     },
 
 }

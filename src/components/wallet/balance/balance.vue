@@ -3,8 +3,8 @@
     <div class="row">
         <h4 class="fw-medium pt-2" v-if="getAsset" >
             <template v-if="version === 'zether' && balanceDecoded === null ">
-                <i class="fas fa-lock" v-tooltip.bottom="`Homomorphic Encrypted Amount: ${homomorphicBalanceText}`" />
-                <i class="fas fa-key pointer" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecoded" @click="decodeBalance"></i>
+                <i class="fas fa-lock pe-2" v-tooltip.bottom="`Homomorphic Encrypted Amount: ${homomorphicBalanceText}`" />
+                <i class="fas fa-key pe-2 pointer" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecoded" @click="decodeBalance"></i>
             </template>
             <template v-else>
                 {{ amount }}
@@ -45,7 +45,7 @@ export default {
     computed: {
         homomorphicBalanceText(){
             if (this.version === "zether")
-                return this.balance.match(/.{1,20}/g).join("\n");
+                return this.balance;
         },
         getAsset(){
             return this.$store.getters.getAsset(this.asset );

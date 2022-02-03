@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
+import { createStore } from 'vuex';
+
 import WalletStore from "./modules/wallet/wallet-store"
 import PageSettings from "./modules/settings/settings-store"
 import AddressesStore from "./modules/addresses/addresses-store"
@@ -20,10 +20,7 @@ import MempoolStore from "./modules/mempool/mempool-store"
 import FaucetStore from "./modules/faucet/faucet-store"
 import ToastsStore from "./modules/toasts/toasts-store"
 
-Vue.use(Vuex);
-
-
-export default new Vuex.Store({
+export default createStore({
 
     modules: {
 

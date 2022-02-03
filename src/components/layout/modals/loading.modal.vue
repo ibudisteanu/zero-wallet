@@ -2,7 +2,7 @@
 
     <modal ref="modal" title="Please wait..."  :close-button="false" >
 
-        <template slot="body">
+        <template v-slot:body>
 
             <span class="fw-black">
                 Please wait! <strong>Don't close the webpage</strong> as your wallet is being re-saved in your browser. Otherwise your wallet could get corrupted!

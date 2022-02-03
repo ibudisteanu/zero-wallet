@@ -2,7 +2,7 @@
 
     <modal ref="modal" title="Import Account" content-class="" >
 
-        <template slot="body">
+        <template v-slot:body>
 
             <wizard :titles="{
                 0: {icon: 'fas fa-file', name: 'File', tooltip: 'Select file to import account' },
@@ -11,14 +11,14 @@
                 3: {icon: 'fas fa-check', name: 'Done', tooltip: 'Finish importing account' } }"
                      @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
-                <template slot="tab_0">
+                <template v-slot:tab_0>
                     <div>
                         <label class="form-label" for="selectFile">Select .pandora file</label>
                         <input class="form-control" id="selectFile" type="file" v-on:change="handleImportAccounts" size="1" accept=".pandora" ref="refImportedAddresses" />
                     </div>
                 </template>
 
-                <template slot="tab_1">
+                <template v-slot:tab_1>
                     <span class="mb-3 d-block">Preview Imported Account</span>
                     <div class="d-block" v-if="address">
                         <div class="address align-items-center">
@@ -28,7 +28,7 @@
                     </div>
                 </template>
 
-                <template slot="tab_2">
+                <template v-slot:tab_2>
                     <div class="mb-3">
                         <label class="form-label">Password</label>
                         <password-input v-model="addressPassword" />

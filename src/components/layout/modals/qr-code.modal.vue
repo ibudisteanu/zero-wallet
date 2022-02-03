@@ -1,7 +1,7 @@
 <template>
 
     <modal ref="modal" :title="`QR Code ${title ? ': '+title : ''}`" >
-        <template slot="body">
+        <template v-slot:body>
             <div class="w-100 d-inline-block" >
                 <qr-code :data="address" />
             </div>

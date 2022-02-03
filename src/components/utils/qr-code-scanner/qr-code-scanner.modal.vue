@@ -2,14 +2,14 @@
 
     <modal ref="modal" title="Scan QR Code" >
 
-        <template slot="body">
+        <template v-slot:body>
             <alert-box v-if="error" type="error">{{error}}</alert-box>
             <template v-else>
                 <qrcode-stream class="qrcodeStream" @decode="onDecode" @init="onInit" />
             </template>
         </template>
 
-        <template slot="footer">
+        <template v-slot:footer>
             <button class="btn btn-falcon-secondary" type="button" @click="closeModal">
                 <i class="fas fa-ban"></i> Cancel
             </button>
@@ -22,19 +22,12 @@
 <script>
 
 import Modal from "src/components/utils/modal"
-import Vue from 'vue'
 import AlertBox from "src/components/utils/alert-box"
-
-let VueQrcodeReader = undefined;
-if (typeof window !== "undefined") {
-    VueQrcodeReader = require("vue-qrcode-reader/src/index");
-    Vue.use(VueQrcodeReader);
-    VueQrcodeReader = VueQrcodeReader.QrcodeStream;
-}
+import {QrcodeStream} from "vue-qrcode-reader"
 
 export default {
 
-    components: { Modal, VueQrcodeReader, AlertBox },
+    components: { Modal, QrcodeStream, AlertBox },
 
     data(){
         return {

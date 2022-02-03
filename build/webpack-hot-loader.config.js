@@ -22,11 +22,8 @@ module.exports = merge(base, {
         historyApiFallback: true,
         hot: true,
         open: true,
-        overlay: true,
         port: 8081,
-        stats: {
-            normal: true
-        },
+        static: path.resolve(__dirname, "./../dist/dev"),
     },
 
     plugins: [

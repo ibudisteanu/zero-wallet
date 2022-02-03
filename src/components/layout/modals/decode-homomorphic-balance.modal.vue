@@ -2,7 +2,7 @@
 
     <modal ref="modal" :title="`Decoding ${status}`" contentClass="" @opened="start" :closing-function="stop" >
 
-        <template slot="body">
+        <template v-slot:body>
 
             <canvas id="matrixCanvas" ></canvas>
 

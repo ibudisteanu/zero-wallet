@@ -20,7 +20,7 @@
             <i :class="`fas fa-${$store.state.settings.dark ?'sun':'moon'} nav-item-icon `"  />
          </li>
 
-         <li class="nav-item pointer unselectable" v-tooltip.bottom="`${showNetworksMenu ? '' :'Select network'}`" @click="handleToggleNetworksMenu" v-on-clickaway="closeNetworksMenu">
+         <li class="nav-item pointer unselectable" v-tooltip.bottom="`${showNetworksMenu ? '' :'Select network'}`" @click="handleToggleNetworksMenu" v-click-away="closeNetworksMenu">
             <i class="fas fa-globe-americas nav-item-icon"></i>
             <span class="badge badge-soft-success">{{$store.state.network.networkName}}</span>
             <i class="fas fa-chevron-down"></i>
@@ -46,13 +46,10 @@
 
 import consts from "consts/consts"
 import HeaderAccount from "./account/header-account"
-import { mixin as clickaway } from 'vue-clickaway'
 
 export default {
 
    components: {HeaderAccount},
-
-   mixins: [ clickaway ],
 
    data(){
       return {

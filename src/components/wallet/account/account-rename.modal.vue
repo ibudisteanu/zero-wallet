@@ -1,7 +1,7 @@
 <template>
     <modal ref="modal" :title="`Rename Address ${title ? ': ' + title : ''}`">
 
-        <template slot="body" v-if="account">
+        <template v-slot:body v-if="account">
             <span class="text-break mb-2 d-block">Do you want to <b>rename</b> address {{this.account.name}} in your wallet</span>
             <div class="address align-items-center">
                 <account-identicon :address="this.account.addressEncoded" size="35" outer-size="13" />
@@ -16,7 +16,7 @@
 
         </template>
 
-        <template slot="footer">
+        <template v-slot:footer>
             <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
             <button class="btn btn-falcon-primary" type="button" @click="handleRename">

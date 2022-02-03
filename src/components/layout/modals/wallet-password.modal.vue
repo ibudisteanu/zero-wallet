@@ -2,7 +2,7 @@
 
     <modal ref="modal" title="Wallet Password is Required" >
 
-        <template slot="body">
+        <template v-slot:body>
 
             <span class="fw-black">For this operation, you need to specify the wallet password.</span>
 
@@ -13,7 +13,7 @@
 
         </template>
 
-        <template slot="footer">
+        <template v-slot:footer>
             <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
             <button class="btn btn-falcon-danger" type="button" @click="handleSubmit">

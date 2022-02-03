@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const { VueLoaderPlugin } = require('vue-loader')
 const TerserPlugin = require('terser-webpack-plugin');
 const CompressionWebpackPlugin = require("compression-webpack-plugin");
 
@@ -83,6 +83,8 @@ module.exports = webpackConfig = {
             BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
             LASTCOMMITDATETIME: JSON.stringify(gitRevisionPlugin.lastcommitdatetime()),
             BROWSER: 'true',
+            __VUE_OPTIONS_API__: true,
+            __VUE_PROD_DEVTOOLS__: false,
         }),
         new webpack.ProvidePlugin({
             Buffer: ['buffer', 'Buffer'],

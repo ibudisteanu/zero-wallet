@@ -2,9 +2,9 @@
 
     <modal ref="modal" :title="`Private Key ${ address ? 'of '+address.name : '' }`" >
 
-        <template slot="body">
+        <template v-slot:body>
             <secret-text v-if="privateKey" class="pt-3" :text="privateKey" title="Private Key" >
-                <template slot="warning">
+                <template v-slot:warning>
                     DO NOT share this private key with anyone! This private key can be used to <strong>STEAL YOUR FUNDS FROM THIS ACCOUNT</strong>
                 </template>
             </secret-text>
@@ -31,7 +31,6 @@ export default {
     },
 
     props:{
-        address: {default: null},
     },
 
     computed:{

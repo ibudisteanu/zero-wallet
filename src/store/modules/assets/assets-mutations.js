@@ -1,14 +1,12 @@
-import Vue from 'vue';
-
 export default {
 
     deleteAssets(context, {assets}) {
         for (const key in assets)
-            Vue.delete(context.list, key);
+            delete context.list[key];
     },
 
     setAsset(context, asset ) {
-        Vue.set(context.list, asset.hash, asset )
+        context.list[asset.hash] = asset
     },
 
 }

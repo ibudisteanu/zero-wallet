@@ -1,11 +1,10 @@
-import Vue from "vue";
 import consts from "consts/consts";
 import Decimal from "decimal.js"
 
 export default {
 
     setAccountTxsViewPosition(state, {publicKey, data } ){
-        Vue.set( state.viewTxsPositions, publicKey,  data  )
+        state.viewTxsPositions [ publicKey ] = data
     },
 
     setAccountTxs(state, {publicKey, starting, accountTxs }){
@@ -28,7 +27,7 @@ export default {
             obj.next = new Decimal(0)
         }
 
-        Vue.set(state.list, publicKey, obj );
+        state.list[publicKey] = obj
     },
 
     addAccountTxUpdateNotification(state, {publicKey, txHash, extraInfo }){
@@ -72,7 +71,7 @@ export default {
             }
         }
 
-        Vue.set(state.list, publicKey, obj );
+        state.list[publicKey] = obj
     }
 
 }

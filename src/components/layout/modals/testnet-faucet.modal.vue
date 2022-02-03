@@ -1,7 +1,7 @@
 <template>
     <modal ref="modal" title="Faucet coins" :close-button="loaded" >
 
-        <template slot="body" v-if="address">
+        <template v-slot:body v-if="address">
             <div class="pb-4">
                 <label class="pb-2">Receive your testnet coins to this address:</label>
                 <div class="address align-items-center">
@@ -19,7 +19,7 @@
             </div>
         </template>
 
-        <template slot="footer">
+        <template v-slot:footer>
             <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
 
             <loading-button :text="`Receive ${$store.state.faucet.faucetTestnetCoins}`" @submit="handleSubmit" icon="fas fa-coins" :disabled="!captchaToken" />

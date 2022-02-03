@@ -1,7 +1,7 @@
 <template>
     <modal ref="modal" :title="`Delete Address ${title ? ': ' + title : ''}`">
 
-        <template slot="body" v-if="account">
+        <template v-slot:body v-if="account">
             <span class="text-break mb-2 d-block">Are you sure you want to <b>delete</b> address {{this.account.name}}</span>
             <div class="address align-items-center">
                 <account-identicon :address="this.account.addressEncoded" size="35" outer-size="13" />
@@ -9,7 +9,7 @@
             </div>
         </template>
 
-        <template slot="footer">
+        <template v-slot:footer>
             <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
             <button class="btn btn-falcon-danger" type="button" @click="handleDelete">

@@ -2,7 +2,7 @@
 
     <modal ref="modal" :title="`Custom Address${title ? ': ' + title : ''}`" content-class="">
 
-        <template slot="body" v-if="account">
+        <template v-slot:body v-if="account">
 
             <wizard :titles="{
                 0: {icon: 'fas fa-money-bill-wave', name: 'Asset', tooltip: 'Include a default Asset' },
@@ -12,7 +12,7 @@
                 4: {icon: 'fas fa-check', name: 'Done', tooltip: 'Generated Address' }}"
                 @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
-                <template slot="tab_0">
+                <template v-slot:tab_0>
                     <div class="form-check">
                         <input class="form-check-input" id="paymentAsset" type="checkbox"  name="checkbox" v-model="hasPaymentAsset"  >
                         <label class="form-check-label" for="paymentAsset"> Payment Asset </label>
@@ -25,7 +25,7 @@
                     </div>
                 </template>
 
-                <template slot="tab_1">
+                <template v-slot:tab_1>
                     <div class="form-check">
                         <input class="form-check-input" id="paymentAmount" type="checkbox"  name="checkbox" v-model="hasPaymentAmount"  >
                         <label class="form-check-label" for="paymentAmount"> Amount </label>
@@ -36,7 +36,7 @@
                     </div>
                 </template>
 
-                <template slot="tab_2">
+                <template v-slot:tab_2>
                     <div class="form-check">
                         <input class="form-check-input" id="paymentID" type="checkbox"  name="checkbox" v-model="hasPaymentID"  >
                         <label class="form-check-label" for="paymentID"> PaymentId</label>
@@ -46,7 +46,7 @@
                     </div>
                 </template>
 
-                <template slot="tab_3">
+                <template v-slot:tab_3>
                     <div class="form-check" v-if="account.registration">
                         <input class="form-check-input" id="registration" type="checkbox"  name="checkbox" v-model="hasRegistration"  >
                         <label class="form-check-label" for="registration"> Registration </label>
@@ -54,7 +54,7 @@
                     </div>
                 </template>
 
-                <template slot="tab_4">
+                <template v-slot:tab_4>
                     <template v-if="addressGenerated">
 
                         <div class="form-outline">

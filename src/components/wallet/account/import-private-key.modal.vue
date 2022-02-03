@@ -2,7 +2,7 @@
 
     <modal ref="modal" title="Import Private Key" content-class="">
 
-        <template slot="body">
+        <template v-slot:body>
 
             <wizard :titles="{
                 0: {icon: 'fas fa-pencil-alt', name: 'Information', tooltip: 'Information of the account' },
@@ -10,12 +10,12 @@
                 2: {icon: 'fas fa-check', name: 'Done', tooltip: 'Finish importing account' }}"
                      @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
-                <template slot="tab_0">
+                <template v-slot:tab_0>
                     <label>Account Name</label>
-                    <input type="text" class="form-control" v-model="name"></input>
+                    <input type="text" class="form-control" v-model="name"/>
                 </template>
 
-                <template slot="tab_1">
+                <template v-slot:tab_1>
                     <label>Private Key</label>
                     <textarea class="form-control" rows="4" v-model="privateKey"></textarea>
                 </template>

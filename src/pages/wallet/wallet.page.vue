@@ -61,9 +61,9 @@
                 </div>
             </div>
 
-            <account-private-key-modal ref="refAccountPrivateKeyModal" :address="address"/>
-            <account-delete-modal ref="refAccountDeleteModal" :address="address"/>
-            <account-rename-modal ref="refAccountRenameModal" :address="address"/>
+            <account-private-key-modal ref="refAccountPrivateKeyModal"/>
+            <account-delete-modal ref="refAccountDeleteModal" />
+            <account-rename-modal ref="refAccountRenameModal" />
 
         </wait-address>
 
@@ -141,6 +141,10 @@ export default {
             return this.$refs.refAccountDeleteModal.showModal(this.address)
         },
 
+        handleRenameAddressName(){
+            return this.$refs.refAccountRenameModal.showModal(this.address)
+        },
+
         handleCopyAddress(key){
 
             this.$copyText(key).then(
@@ -157,10 +161,6 @@ export default {
             )
 
         },
-
-        handleRenameAddressName(){
-            return this.$refs.refAccountRenameModal.showModal(this.address)
-        }
 
     },
 

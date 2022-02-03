@@ -11,7 +11,7 @@
                    :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX"
                    :public-key="publicKey" @onSetTab="setTab" :beforeProcess="handleBeforeProcess">
 
-            <template :slot="`tab_${-1}`">
+            <template v-slot:tab_-1>
                 <destination-address text="Delegate Address" @changed="changedDelegateDestination"/>
                 <div class="form-group pt-3">
                     <input class="form-check-input" id="convert-to-unclaimed" type="checkbox"  name="checkbox" v-model="convertToUnclaimed"  >

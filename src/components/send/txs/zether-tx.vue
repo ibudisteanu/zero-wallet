@@ -9,13 +9,11 @@
             4: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' } }"
                 @onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card" >
 
-            <template v-for="(_, index) in titlesOffset">
-                <template :slot="`tab_${index}`">
-                    <slot :name="`tab_${index}`"></slot>
-                </template>
+            <template v-for="(_, index) in titlesOffset" v-slot:[getTabSlotName(index)]>
+                <slot :name="`tab_${index}`"></slot>
             </template>
 
-            <template :slot="`tab_0`">
+            <template v-slot:tab_0>
                 <div class="form" v-if="allowDestinationRandom">
                     <input class="form-check-input" id="random-destination" type="checkbox"  name="checkbox" v-model="randomDestination">
                     <label class="form-check-label" for="random-destination">Random Destination with Zero amount</label>
@@ -26,11 +24,11 @@
                 </template>
             </template>
 
-            <template :slot="`tab_1`">
+            <template v-slot:tab_1>
                 <extra-data :destinations="destination ? [destination] : null" :paymentID="identifiedPaymentID" @changed="changedExtraData" />
             </template>
 
-            <template :slot="`tab_2`">
+            <template v-slot:tab_2>
 
                 <div class="row">
                     <div class="col-12 col-md-6">
@@ -72,7 +70,7 @@
 
             </template>
 
-            <template :slot="`tab_3`">
+            <template v-slot:tab_3>
                 <tx-fee :balances="availableBalances" :asset="asset" :allow-zero="true" @changed="changedFee" />
 
                 <template v-if="asset.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX">
@@ -91,11 +89,11 @@
 
             </template>
 
-            <template :slot="`tab_4`">
+            <template v-slot:tab_4>
                 <confirm-broadcasting-tx v-if="tx" class="my-3 fs--1" :tx="tx" />
             </template>
 
-            <template slot="wizard-footer">
+            <template #wizard-footer>
                 <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
                 <template v-if="status">
                     <span class="d-block">Transaction is being created. It will take 1-2 minutes.</span>
@@ -267,6 +265,10 @@ export default {
     },
 
     methods:{
+
+        getTabSlotName(index){
+            return `tab_${index}`
+        },
 
         async setTab({resolve, reject, oldTab, value}){
 

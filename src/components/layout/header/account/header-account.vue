@@ -2,7 +2,7 @@
 
     <div class="account" v-if="address">
 
-        <div class="toggle unselectable" @click="toggleMenu" v-on-clickaway="closeMenu" >
+        <div class="toggle unselectable" @click="toggleMenu" v-click-away="closeMenu" >
             <account-identicon :address="$store.getters.addressDisplay(this.address)" size="21" outer-size="7" :disable-route="true" :show-tooltip="!menuOpen" />
             <i class="right-float chevron-down fas fa-chevron-down"></i>
         </div>
@@ -22,7 +22,6 @@
 <script>
 
 import HeaderAccountDropdownMenu from "./header-account-dropdown-menu"
-import { mixin as clickaway } from 'vue-clickaway'
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
 import WalletSeedModal from "src/components/wallet/seed/wallet-seed-modal"
 import ImportAccountModal from "src/components/wallet/account/import-account.modal"
@@ -31,8 +30,6 @@ import ImportPrivateKeyModal from "src/components/wallet/account/import-private-
 export default {
 
     components: { HeaderAccountDropdownMenu, AccountIdenticon, WalletSeedModal, ImportAccountModal, ImportPrivateKeyModal },
-
-    mixins: [ clickaway ],
 
     data(){
         return {

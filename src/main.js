@@ -57,9 +57,9 @@ class Main {
     loadWallet(){
 
         if (this.introAppVue){
-            this.introAppVue.$destroy()
-            const elem = document.getElementById("pandora-wallet-intro");
-            document.getElementById("pandora-wallet-intro").parentNode.removeChild(elem);
+            this.introAppVue.unmount()
+            // const elem = document.getElementById("pandora-wallet-intro");
+            // document.getElementById("pandora-wallet-intro").parentNode.removeChild(elem);
         }
 
         const mainVue = require('./wallet-app/main-vue').default;

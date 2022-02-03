@@ -1,6 +1,6 @@
 <template>
 
-    <nav class="navbar navbar-light navbar-vertical navbar-expand-xl" v-on-clickaway="closeMenu" >
+    <nav class="navbar navbar-light navbar-vertical navbar-expand-xl" v-click-away="closeMenu" >
         <div class="d-flex align-items-center">
             <router-link to="/" class="navbar-brand">
                 <div class="d-flex align-items-center py-3">
@@ -202,12 +202,8 @@
 </template>
 
 <script>
-import { mixin as clickaway } from 'vue-clickaway'
-import Vue from 'vue';
 
 export default {
-
-    mixins: [ clickaway ],
 
     data(){
         return {
@@ -227,7 +223,7 @@ export default {
         },
 
         route(){
-            return this.$router.currentRoute.path;
+            return this.$router.currentRoute.path || '';
         },
 
         address(){
@@ -247,8 +243,8 @@ export default {
         },
 
         toggleNavElement(e, key){
-            if (!this.navElementsShown[key]) Vue.set(this.navElementsShown, key, true)
-            else Vue.set(this.navElementsShown, key, false)
+            if (!this.navElementsShown[key]) this.navElementsShown[key] = true
+            else this.navElementsShown[key] = false
             if (e) e.stopPropagation()
         },
         disableNavbarMenu(e){

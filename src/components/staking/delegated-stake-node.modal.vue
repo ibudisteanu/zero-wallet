@@ -2,7 +2,7 @@
 
     <modal ref="modal" title="Delegate Stake to Node" content-class="">
 
-        <template slot="body">
+        <template v-slot:body>
             <wait-address :address="address">
                 <wizard :titles="{
                          0: {icon: 'fas fa-globe-americas', name: 'Select Node', tooltip: 'Select Node you are delegating to' },
@@ -10,7 +10,7 @@
                          2: {icon: 'fas fa-piggy-bank', name: 'Delegate', tooltip: 'Finalizing the delegate' }}"
                          @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
 
-                    <template slot="tab_0">
+                    <template v-slot:tab_0>
                         <div class="form">
                             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Selecting Node to delegate:</label>
                             <select v-if="delegatesNodes" class="form-select" v-model="selectedDelegateNode">
@@ -23,7 +23,7 @@
                         </div>
                     </template>
 
-                    <template slot="tab_1" v-if="nodeInfo">
+                    <template v-slot:tab_1 v-if="nodeInfo">
                         <label class="form-label">Delegates MAXIMUM slots: <strong>{{nodeInfo.maximumAllowed}}</strong></label> <br/>
                         <label class="form-label">Delegates Already: <strong>{{nodeInfo.delegatesCount}}</strong></label> <br/>
                         <label class="form-label">Delegates SLOTS: <strong>{{nodeInfo.maximumAllowed.minus( nodeInfo.delegatesCount ) }}</strong></label> <br/>
