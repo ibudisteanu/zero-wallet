@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const base = require('./webpack-wallet.config');
 const merge = require('webpack-merge');
 
-module.exports = merge(base, {
+module.exports = (env, argv) => merge( base(env, argv), {
 
     devtool: 'eval-cheap-module-source-map',
     mode: 'development',
