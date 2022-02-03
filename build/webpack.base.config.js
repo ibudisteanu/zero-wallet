@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
+const FriendlyErrorsWebpackPlugin = require('@soda/friendly-errors-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const { VueLoaderPlugin } = require('vue-loader')
 const TerserPlugin = require('terser-webpack-plugin');
@@ -102,7 +102,7 @@ module.exports = webpackConfig = {
             })
         ]
         : [
-            new FriendlyErrorsPlugin(),
+            new FriendlyErrorsWebpackPlugin(),
         ])
     ]
 };
