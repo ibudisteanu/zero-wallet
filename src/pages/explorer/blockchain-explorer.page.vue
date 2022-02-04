@@ -131,7 +131,7 @@ export default {
         return this.loadBlocksInfo();
     },
 
-    beforeDestroy() {
+    beforeUnmount() {
         this.$store.commit('setBlocksInfoAllowDownload', false )
     }
 

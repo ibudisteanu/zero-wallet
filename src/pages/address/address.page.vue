@@ -145,7 +145,7 @@ export default {
         return this.loadAddress();
     },
 
-    async beforeDestroy() {
+    async beforeUnmount() {
         if (this.publicKey && !this.$store.getters.walletContains(this.publicKey))
             await this.$store.dispatch('unsubscribeAccount', this.publicKey )
     }

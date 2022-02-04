@@ -49,7 +49,7 @@ export default {
         },
     },
 
-    beforeDestroy() {
+    beforeUnmount() {
         this.$store.commit('updateViewTransactionsPreviewHashes', {txsHashes: this.transactions, insert: false } )
     }
 

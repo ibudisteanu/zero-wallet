@@ -221,7 +221,7 @@ export default {
         return this.loadBlock();
     },
 
-    beforeDestroy(){
+    beforeUnmount(){
         this.$store.commit('setViewBlockHash', null )
     }
 

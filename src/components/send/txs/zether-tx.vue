@@ -620,7 +620,7 @@ export default {
         else this.ringSize = 256
     },
 
-    beforeDestroy() {
+    beforeUnmount() {
         this.destination = {  }
     }
 
