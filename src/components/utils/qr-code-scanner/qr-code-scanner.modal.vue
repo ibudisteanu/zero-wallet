@@ -11,8 +11,8 @@
         </template>
 
         <template v-slot:footer>
-            <select class="form-select camera-select" v-model="cameraSelected">
-                <option v-for="(camera, id) in cameraList" @change="handleSelectCamera"
+            <select class="form-select camera-select" v-model="cameraSelected" @change="handleSelectCamera(cameraSelected)" >
+                <option v-for="(camera, id) in cameraList"
                         :key="`camera-${id}`"
                         :value="id">
                     {{camera.label ? camera.label : '#'+id}}
@@ -93,9 +93,9 @@ export default {
             return this.decoded;
         },
 
-        async handleSelectCamera(event){
+        async handleSelectCamera(cameraSelected){
             if (this.qrScanner)
-                await this.qrScanner.setCamera(this.cameraList[event.target.value])
+                await this.qrScanner.setCamera(this.cameraList[cameraSelected])
         },
 
         closeModal(){
