@@ -2,7 +2,7 @@
 
     <div class="account" v-if="address">
 
-        <div class="toggle unselectable" @click="toggleMenu" v-click-away="closeMenu" >
+        <div class="toggle unselectable" @click.stop="toggleMenu" >
             <account-identicon :address="$store.getters.addressDisplay(this.address)" size="21" outer-size="7" :disable-route="true" :show-tooltip="!menuOpen" />
             <i class="right-float chevron-down fas fa-chevron-down"></i>
         </div>
@@ -48,6 +48,7 @@ export default {
     methods:{
 
         toggleMenu(){
+            if (!this.menuOpen) this.$emit('closeOtherMenus')
             this.menuOpen = !this.menuOpen;
         },
 

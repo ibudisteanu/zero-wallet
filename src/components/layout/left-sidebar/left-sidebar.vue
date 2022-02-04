@@ -1,6 +1,6 @@
 <template>
 
-    <nav class="navbar navbar-light navbar-vertical navbar-expand-xl" v-click-away="closeMenu" >
+    <nav class="navbar navbar-light navbar-vertical navbar-expand-xl" @click.stop >
         <div class="d-flex align-items-center">
             <router-link to="/" class="navbar-brand">
                 <div class="d-flex align-items-center py-3">
@@ -237,24 +237,16 @@ export default {
     },
 
     methods:{
-        closeMenu(){
-            this.$store.commit('setLeftSidebarShow', false)
-        },
 
         toggleNavElement(e, key){
             if (!this.navElementsShown[key]) this.navElementsShown[key] = true
             else this.navElementsShown[key] = false
-            if (e) e.stopPropagation()
         },
         disableNavbarMenu(e){
             this.$store.commit('setLeftSidebarShow', false)
-            if (e) e.stopPropagation()
         }
     },
 
-    mounted(){
-
-    }
 
 }
 </script>
