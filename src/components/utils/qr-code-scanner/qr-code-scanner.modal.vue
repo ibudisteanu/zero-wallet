@@ -4,9 +4,7 @@
 
         <template v-slot:body>
             <alert-box v-if="error" type="error">{{error}}</alert-box>
-            <template v-else>
-                <qrcode-stream class="qrcodeStream" @decode="onDecode" @init="onInit" />
-            </template>
+            <video ref="refVideoElem"></video>
         </template>
 
         <template v-slot:footer>
@@ -23,16 +21,17 @@
 
 import Modal from "src/components/utils/modal"
 import AlertBox from "src/components/utils/alert-box"
-import {QrcodeStream} from "vue-qrcode-reader"
+import QrScanner from 'qr-scanner';
 
 export default {
 
-    components: { Modal, QrcodeStream, AlertBox },
+    components: { Modal, AlertBox },
 
     data(){
         return {
             decoded: "",
             error: '',
+            qrScanner: null,
         }
     },
 
@@ -41,7 +40,27 @@ export default {
         async showModal(){
 
             Object.assign(this.$data, this.$options.data());
-            await this.$refs.modal.showModal();
+
+            const promise = this.$refs.modal.showModal();
+
+            if (! (await QrScanner.hasCamera()) ) this.error = "No camera detected"
+
+
+            if (this.error === ""){
+                this.qrScanner = new QrScanner( this.$refs.refVideoElem, result => {
+                    if (result){
+                        this.decoded = result
+                        this.closeModal()
+                    }
+                });
+
+                this.qrScanner.start();
+            }
+
+            await promise
+
+            if (this.qrScanner) this.qrScanner.destroy();
+
 
             return this.decoded;
         },
@@ -50,29 +69,6 @@ export default {
             return this.$refs.modal.closeModal();
         },
 
-        onDecode (decodedString) {
-            if (decodedString !== ""){
-                this.decoded = decodedString
-                this.closeModal()
-            }
-        },
-
-        async onInit (promise) {
-
-            try {
-                await promise;
-                this.error = '';
-            } catch (error) {
-                if (error.name === 'NotAllowedError') this.error = "ERROR: you need to grant camera access permission";
-                else if (error.name === 'NotFoundError') this.error = "ERROR: no camera on this device";
-                else if (error.name === 'NotSupportedError') this.error = "ERROR: secure context required (HTTPS, localhost)";
-                else if (error.name === 'NotReadableError') this.error = "ERROR: is the camera already in use?";
-                else if (error.name === 'OverconstrainedError') this.error = "ERROR: installed cameras are not suitable";
-                else if (error.name === 'StreamApiNotSupportedError') this.error = "ERROR: Stream API is not supported in this browser";
-            }
-
-        }
-
     },
 
 
@@ -80,4 +76,7 @@ export default {
 </script>
 
 <style scoped>
+video{
+    width: 100%;
+}
 </style>
