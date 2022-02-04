@@ -9,7 +9,7 @@
             <template v-else>
                 {{ amount }}
             </template>
-            <small class="fs--1 text-700">/
+            <small class="ps-1 fs--1 text-700">/
                 <router-link :to="`/explorer/asset/${getAsset.hash}`" class="currency" v-tooltip.bottom="getAsset.hash" >
                     {{getAsset.name}}
                 </router-link>

@@ -4,9 +4,9 @@
 
             <div class="row pb-0 mb-0">
                 <div class="col-12 col-auto text-center">
-                    <span>Consensus</span>
-                    <span v-if="$store.state.blockchain.status === 'sync'" class="text-success">{{blockchainStatus}}</span>
-                    <span>Block Height</span>
+                    <span class="pe-1">Consensus</span>
+                    <span v-if="$store.state.blockchain.status === 'sync'" class="pe-1 text-success">{{blockchainStatus}}</span>
+                    <span class="pe-1">Block Height</span>
                     <span v-if="blockHeight" class="text-success">#{{blockHeight}}</span>
                 </div>
             </div>
