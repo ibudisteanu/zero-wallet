@@ -11,7 +11,7 @@
         </template>
 
         <template v-slot:footer>
-            <select class="form-select camera-select" v-model="cameraSelected" @change="handleSelectCamera(cameraSelected)" >
+            <select class="form-select camera-select" v-model="cameraSelected" @change="handleSelectCamera(this.cameraSelected)" >
                 <option v-for="(camera, id) in cameraList"
                         :key="`camera-${id}`"
                         :value="id">
@@ -43,7 +43,7 @@ export default {
             decoded: "",
             error: '',
             qrScanner: null,
-            cameraSelected: "",
+            cameraSelected: 0,
             cameraList: [],
             loaded: false,
         }
@@ -94,6 +94,7 @@ export default {
         },
 
         async handleSelectCamera(cameraSelected){
+            alert(cameraSelected)
             if (this.qrScanner)
                 await this.qrScanner.setCamera(this.cameraList[cameraSelected])
         },
