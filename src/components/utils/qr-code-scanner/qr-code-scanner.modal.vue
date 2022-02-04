@@ -75,7 +75,7 @@ export default {
                 await this.qrScanner.setInversionMode('both');
 
                 if (this.cameraList.length)
-                    await this.qrScanner.setCamera(this.cameraList[this.cameraSelected])
+                    await this.qrScanner.setCamera(this.cameraList[this.cameraSelected].id)
 
                 await this.qrScanner.start();
             }
@@ -94,9 +94,8 @@ export default {
         },
 
         async handleSelectCamera(cameraSelected){
-            alert(cameraSelected)
             if (this.qrScanner)
-                await this.qrScanner.setCamera(this.cameraList[cameraSelected])
+                await this.qrScanner.setCamera(this.cameraList[cameraSelected].id)
         },
 
         closeModal(){
