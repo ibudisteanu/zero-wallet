@@ -1,6 +1,6 @@
 <template>
 
-    <modal ref="modal" title="Scan QR Code" >
+    <modal ref="modal" title="Scan QR Code" content-class="">
 
         <template v-slot:body>
             <alert-box v-if="error" type="error">{{error}}</alert-box>
@@ -60,9 +60,6 @@ export default {
             if (! (await QrScanner.hasCamera()) ) this.error = "No camera detected"
 
             this.cameraList = await QrScanner.listCameras(true)
-            if (this.cameraList.length){
-                this.cameraSelected = 0
-            }
 
             if (this.error === ""){
                 this.qrScanner = new QrScanner( this.$refs.refVideoElem, result => {
@@ -74,8 +71,12 @@ export default {
 
                 await this.qrScanner.setInversionMode('both');
 
-                if (this.cameraList.length)
+                if (this.cameraList.length) {
+                    const lastCamera = localStorage.getItem('qrcamera')
+                    if (lastCamera)
+                        this.cameraList.forEach((camera, i) => camera.id === lastCamera.id ? this.cameraSelected = i : null )
                     await this.qrScanner.setCamera(this.cameraList[this.cameraSelected].id)
+                }
 
                 await this.qrScanner.start();
             }
@@ -94,8 +95,10 @@ export default {
         },
 
         async handleSelectCamera(cameraSelected){
-            if (this.qrScanner)
+            if (this.qrScanner) {
+                localStorage.setItem('qrcamera', this.cameraList[cameraSelected].id)
                 await this.qrScanner.setCamera(this.cameraList[cameraSelected].id)
+            }
         },
 
         closeModal(){
