@@ -34,7 +34,7 @@
                     <div class="col-12 col-md-6">
                         <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Size</label>
                         <i class="fas fa-question " v-tooltip.bottom="`Bigger the ring, more private is your transaction.`" />
-                        <select class="form-select" v-model="ringSize">
+                        <select class="form-select" v-model.number="ringSize">
                             <option :value="2">2</option>
                             <option :value="4">4</option>
                             <option :value="8">8</option>
@@ -49,7 +49,7 @@
                     <div class="col-12 col-md-6">
                         <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring New Addresses</label>
                         <i class="fas fa-question " v-tooltip.bottom="`Number of new addresses in the ring. Makes new destinations more private.`" />
-                        <input class="form-control"  type="number" v-model="ringNewAddresses" />
+                        <input class="form-control"  type="number" v-model.number="ringNewAddresses" />
                     </div>
                 </div>
 
@@ -162,7 +162,7 @@ export default {
             },
 
             ringSize: 32,
-            ringNewAddresses: 2,
+            ringNewAddresses: 0,
             ringMembers: [],
 
             tx: null,
@@ -196,8 +196,6 @@ export default {
             if (this.initAvailableBalance) return this.initAvailableBalance
 
             const accounts = this.availableAccounts || []
-            console.log("this.asset", this.asset)
-            console.log("accounts", accounts)
             for (const acc of accounts)
                 if (acc.asset === this.asset.asset )
                     return {  [this.asset.asset]: acc }
@@ -294,6 +292,9 @@ export default {
                 }else if (oldTab === 1 && value > oldTab) {
                     if (this.extraData.validationError) throw this.extraData.validationError
                 }else if (oldTab === 2 && value > oldTab) {
+                    if (!this.ringMembers.length)
+                        await this.handleGenerateRing()
+
                     if (this.ringSize !== this.ringMembers.length) throw `Ring members are not generated well ${this.ringSize} vs ${this.ringMembers.length} `
                 }else if (oldTab === 3 && value > oldTab) {
                     if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
@@ -455,7 +456,7 @@ export default {
             }catch(err){
                 this.error = err.toString()
             }finally{
-                resolver()
+                if (resolver) resolver()
             }
 
         },
@@ -607,6 +608,16 @@ export default {
     },
 
     mounted(){
+        const probability = Math.random()
+        if (probability < 0.8) this.ringNewAddresses = 0
+        else if (probability < 0.9) this.ringNewAddresses = 1
+        else this.ringNewAddresses = 2
+
+        const probability2 = Math.random()
+        if (probability2 < 0.4) this.ringSize = 32
+        else if (probability2 < 0.6) this.ringSize = 64
+        else if (probability2 < 0.8) this.ringSize = 128
+        else this.ringSize = 256
     },
 
     beforeDestroy() {

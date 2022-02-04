@@ -4,7 +4,7 @@
         <div class="d-flex align-items-center">
             <router-link to="/" class="navbar-brand">
                 <div class="d-flex align-items-center py-3">
-                    <img class="me-2" :src="require('src/assets/pandora-pay-logo-inline-crop.png').default" alt="PandoraPay" height="42px">
+                    <img class="me-2 logo" :src="require('src/assets/pandora-pay-logo-inline-crop.png').default" alt="PandoraPay">
                 </div>
             </router-link>
         </div>
@@ -231,8 +231,7 @@ export default {
         },
 
         isWalletLogged(){
-            if (this.$store.state.wallet.initialized && !this.$store.state.wallet.loaded ) return false;
-            return true;
+            return !(this.$store.state.wallet.initialized && !this.$store.state.wallet.loaded )
         },
 
     },
@@ -265,5 +264,8 @@ export default {
   .navbar-vertical {
     z-index: auto;
   }
+}
+.logo{
+    height: 42px;
 }
 </style>

@@ -48,7 +48,14 @@ export default {
         if (extraInfo.blockchain) {
             if (extraInfo.blockchain.inserted) tx.__height = extraInfo.blockchain.height
             else delete tx.__height
-        } else if (extraInfo.mempool) delete tx.__height
+        } else if (extraInfo.mempool){
+            if (extraInfo.mempool.inserted) {
+                delete tx.__height
+                tx.mempool = true
+            }
+            else
+                delete tx.mempool
+        }
 
         state.txsByHash[txHash] = tx
     },

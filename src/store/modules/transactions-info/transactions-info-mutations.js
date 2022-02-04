@@ -33,12 +33,12 @@ export default {
 
         } else if (extraInfo.mempool) {
 
-            delete txInfo.blkHeight
-            delete txInfo.timestamp
-            delete txInfo.height
-
-            if (extraInfo.mempool.inserted)
+            if (extraInfo.mempool.inserted) {
+                delete txInfo.blkHeight
+                delete txInfo.timestamp
+                delete txInfo.height
                 txInfo.mempool = true
+            }
             else
                 delete txInfo.mempool
 
