@@ -18,9 +18,6 @@
                     {{camera.label ? camera.label : '#'+id}}
                 </option>
             </select>
-            <button class="btn btn-falcon-secondary" type="button" @click="closeModal">
-                <i class="fas fa-ban"></i> Cancel
-            </button>
         </template>
 
     </modal>
@@ -74,7 +71,7 @@ export default {
                 if (this.cameraList.length) {
                     const lastCamera = localStorage.getItem('qrcamera')
                     if (lastCamera)
-                        this.cameraList.forEach((camera, i) => camera.id === lastCamera.id ? this.cameraSelected = i : null )
+                        this.cameraList.forEach((camera, i) => camera.id === lastCamera ? this.cameraSelected = i : null )
                     await this.qrScanner.setCamera(this.cameraList[this.cameraSelected].id)
                 }
 
@@ -112,11 +109,15 @@ export default {
 </script>
 
 <style scoped>
+
 video{
     width: 100%;
-    max-height: 480px;
+    max-height: 420px;
 }
+
 .camera-select{
-    max-width: 200px
+    max-width: 300px
 }
+
+
 </style>
