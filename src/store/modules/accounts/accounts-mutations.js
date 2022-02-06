@@ -8,10 +8,10 @@ export default {
                     account.accounts[i].index = account.accountsExtra[i].index
                 }
 
-            if (account.plainAccount)
+            if (account.plainAccountExtra)
                 account.plainAccount.index = account.plainAccountExtra.index
 
-            if (account.registration)
+            if (account.registrationExtra)
                 account.registration.index = account.registrationExtra.index
         }
 

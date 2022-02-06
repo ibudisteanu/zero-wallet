@@ -84,7 +84,7 @@ export default {
                         title: `A pending transaction`,
                         text: `There is a pending transaction ${txHash}`,
                     } )
-                else
+                else if (!extraInfo.mempool.included)
                     dispatch('addToast', {
                         type: 'warning',
                         title: `A transaction was removed from the mempool`,

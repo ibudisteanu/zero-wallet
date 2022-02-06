@@ -53,8 +53,12 @@ export default {
                 delete tx.__height
                 tx.mempool = true
             }
-            else
+            else {
+                if (!extraInfo.mempool.included){
+                    delete tx.__height
+                }
                 delete tx.mempool
+            }
         }
 
         state.txsByHash[txHash] = tx
