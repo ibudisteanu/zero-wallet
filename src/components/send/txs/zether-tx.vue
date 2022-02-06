@@ -95,10 +95,21 @@
 
             <template #wizard-footer>
                 <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
-                <template v-if="status">
-                    <span class="d-block">Transaction is being created. It will take 1-2 minutes.</span>
-                    <label class="d-block">Status: {{status}}</label>
-                </template>
+
+                <div class="alert alert-info" v-if="status && statusType === 'signing'" role="alert">
+                    <h4 class="alert-heading fw-semi-bold">Signing Tx...</h4>
+                    <p>Transaction is being created. It will take 1-2 minutes.</p>
+                    <hr>
+                    <p class="mb-0">Status: {{status}}</p>
+                </div>
+
+                <div class="alert alert-info" v-if="status && statusType === 'broadcasting'" role="alert">
+                    <h4 class="alert-heading fw-semi-bold">Broadcasting Tx...</h4>
+                    <p>Your Tx is being broadcasting. It should take 20 seconds max.</p>
+                    <hr>
+                    <p class="mb-0">Status: {{status}}</p>
+                </div>
+
             </template>
 
         </wizard>
@@ -170,6 +181,7 @@ export default {
 
             status: '',
             error: '',
+            statusType: ""
         }
     },
 
@@ -463,6 +475,7 @@ export default {
 
         async handleSendFunds(){
 
+            this.statusType = "signing"
             this.status = '';
 
             const asset = this.asset.asset
@@ -585,12 +598,14 @@ export default {
 
         async handlePropagateTx(){
 
+            this.statusType = "broadcasting"
+
             this.status = 'Cloning transaction...'
 
             const txSerialized = Buffer.alloc(this.txSerialized.length)
             Buffer.from(this.txSerialized).copy(txSerialized, 0)
 
-            this.status = 'Propagating transaction...'
+            this.status = 'Broadcasting your transaction in the network... Please wait...'
 
             await this.$store.dispatch('includeTx', { tx: this.tx, mempool: false } )
 

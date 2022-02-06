@@ -56,7 +56,30 @@ export default {
             this.password = password
             this.returnPrivateKey = returnPrivateKey
 
-            await this.$refs.modal.showModal();
+            let data = await PandoraPay.wallet.decodeBalanceIfMatchesPreviousValueWalletAddress( MyTextEncode(JSONStringify({
+                publicKey: this.publicKey,
+                asset: this.asset,
+                balanceEncoded: this.balance,
+            })), this.password, )
+
+            const out = JSONParse( MyTextDecode( data ) )
+
+            data = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode(JSONStringify({
+                publicKey: this.publicKey,
+                asset: this.asset
+            })), this.password, )
+
+            const params = JSONParse( MyTextDecode( data ) )
+
+            if (this.closed) return
+
+            this.privateKey = params.privateKey
+
+            if (out.decoded)
+                this.balanceDecoded = out.value
+            else
+                await this.$refs.modal.showModal();
+
             return {
                 balanceDecoded: this.balanceDecoded,
                 privateKey: returnPrivateKey ? this.privateKey : undefined,
@@ -84,21 +107,9 @@ export default {
 
             if (this.closed) return
 
-            const data = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode(JSONStringify({
-                publicKey: this.publicKey,
-                asset: this.asset
-            })), this.password, )
-
-            const params = JSONParse( MyTextDecode( data ) )
-
-            if (this.closed) return
-
-            if (this.returnPrivateKey)
-                this.privateKey = params.privateKey
-
             const decodedData = await PandoraPayHelper.wallet.decodeBalance(MyTextEncode(JSONStringify( {
-                privateKey: params.privateKey,
-                previousValue: params.previousValue,
+                privateKey: this.privateKey,
+                previousValue: 0,
                 balanceEncoded: this.balance,
                 asset: this.asset,
             } )), async (status)=>{
@@ -129,6 +140,13 @@ export default {
                     })
 
                     this.balanceDecoded = new Decimal(result[1])
+
+                    await PandoraPay.wallet.updatePreviousValueWalletAddress( MyTextEncode(JSONStringify({
+                        publicKey: this.publicKey,
+                        asset: this.asset,
+                        value: this.balanceDecoded,
+                    })), this.password, )
+
                     this.cancelCallback = null
                     return this.closeModal()
                 }
