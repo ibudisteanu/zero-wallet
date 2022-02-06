@@ -70,6 +70,6 @@ export default {
 <style scoped>
     .input, .output{
         display: inline-block;
-        padding-right: 5px;
+        padding-right: 2px;
     }
 </style>

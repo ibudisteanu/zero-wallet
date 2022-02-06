@@ -57,7 +57,7 @@
                         </span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
-                        <span class="col-5 col-sm-3 text-truncate">Number of Transactions</span>
+                        <span class="col-5 col-sm-3 text-truncate">Transactions</span>
                         <span class="col-7 col-sm-9 text-truncate">{{blk.txs.length}}</span>
                     </div>
                     <div class="row pt-2 pb-2">
