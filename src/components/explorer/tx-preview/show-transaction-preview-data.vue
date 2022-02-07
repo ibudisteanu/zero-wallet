@@ -97,6 +97,6 @@ export default {
 <style scoped>
 .input, .output{
     display: inline-block;
-    padding-right: 2px;
+    padding-right: 1px;
 }
 </style>

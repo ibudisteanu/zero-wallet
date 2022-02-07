@@ -5,7 +5,6 @@ const promises = {
     accountsTxs: {},
 }
 
-
 export default {
 
     async downloadAccountTxs({state, dispatch, commit}, {publicKey, next, view = false, } ){
@@ -56,7 +55,7 @@ export default {
         })
     },
 
-    async accountTxUpdateNotification( {state, dispatch, commit, getters}, {publicKey, txHash, extraInfo }){
+    accountTxUpdateNotification( {state, dispatch, commit, getters}, {publicKey, txHash, extraInfo }){
 
         if (getters.walletContains(publicKey)){
 
@@ -67,14 +66,14 @@ export default {
                         type: 'success',
                         title: `Received a new transaction`,
                         text: `Your address has received a transaction ${txHash}`,
-                    } )
-                else
+                    })
+
+                if (!extraInfo.blockchain.inserted)
                     dispatch('addToast', {
                         type: 'warning',
                         title: `A transaction was removed from blockchain`,
                         text: `Your address got a transaction removed ${txHash}`,
-                    } )
-
+                    })
 
             } else if (extraInfo.mempool) {
 
@@ -95,11 +94,10 @@ export default {
 
         }
 
-        await dispatch('txNotification', { txHash, extraInfo })
-        await dispatch('accountPendingTransactionsTxUpdateNotification', { publicKey, txHash, extraInfo } )
+        dispatch('txNotification', { txHash, extraInfo })
+        dispatch('accountPendingTransactionsTxUpdateNotification', { publicKey, txHash, extraInfo } )
 
         commit('addAccountTxUpdateNotification', { publicKey, txHash, extraInfo } )
-
     }
 
 }

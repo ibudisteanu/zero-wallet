@@ -8,7 +8,7 @@ export default {
         commit('setPendingList', { publicKey, map })
     },
 
-    async accountPendingTransactionsTxUpdateNotification({dispatch, state, getters, commit}, {publicKey, txHash, extraInfo }){
+    accountPendingTransactionsTxUpdateNotification({dispatch, state, getters, commit}, {publicKey, txHash, extraInfo }){
 
         if (extraInfo.blockchain){
             commit('updatePendingList', {publicKey, txHash, inserted: false})

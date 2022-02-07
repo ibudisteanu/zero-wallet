@@ -30,7 +30,7 @@ export default {
         state.list[publicKey] = obj
     },
 
-    addAccountTxUpdateNotification(state, {publicKey, txHash, extraInfo }){
+    addAccountTxUpdateNotification(state, { publicKey, txHash, extraInfo }){
 
         if (!extraInfo.blockchain) return
 
@@ -44,6 +44,10 @@ export default {
             obj.count = obj.count.minus(1)
             delete obj.hashes[ extraInfo.blockchain.txsCount ]
         } else {
+            for (const key in obj.hashes)
+                if (obj.hashes[key] === txHash)
+                    return  //already processed
+
             obj.count = obj.count.plus(1)
             obj.hashes[ extraInfo.blockchain.txsCount ] = txHash
         }

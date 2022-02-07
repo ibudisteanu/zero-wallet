@@ -286,6 +286,8 @@ export default {
 
             try{
 
+                this.status = ""
+
                 if (oldTab === 0 && value > oldTab){
                     if (this.asset.validationError) throw this.asset.validationError
 

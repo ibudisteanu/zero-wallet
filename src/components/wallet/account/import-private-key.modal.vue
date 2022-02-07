@@ -8,7 +8,7 @@
                 0: {icon: 'fas fa-pencil-alt', name: 'Information', tooltip: 'Information of the account' },
                 1: {icon: 'fas fa-file-code', name: 'Private Key', tooltip: 'Private Key' },
                 2: {icon: 'fas fa-check', name: 'Done', tooltip: 'Finish importing account' }}"
-                     @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
+                     @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" :allow-scroll="false" >
 
                 <template v-slot:tab_0>
                     <label>Account Name</label>

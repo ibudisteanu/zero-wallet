@@ -10,7 +10,7 @@
                 2: {icon: 'fas fa-hand-holding-usd', name: 'Payment ID', tooltip: 'Include a Payment ID' },
                 3: {icon: 'fas fa-signature', name: 'Registration', tooltip: 'Include Registration Signature' },
                 4: {icon: 'fas fa-check', name: 'Done', tooltip: 'Generated Address' }}"
-                @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
+                @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" :allow-scroll="false" >
 
                 <template v-slot:tab_0>
                     <div class="form-check">
