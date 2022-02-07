@@ -88,15 +88,15 @@
             </div>
 
             <div class="row pt-2 pb-2 bg-light">
-                <span class="col-4 col-sm-3 text-truncate">Data</span>
-                <span class="col-8 col-sm-9 text-truncate">
+                <span class="d-none d-sm-inline col-12 col-sm-3 text-truncate">Data</span>
+                <span class="col-12 col-sm-9 text-truncate">
                     <show-transaction-data :tx="tx" />
                 </span>
             </div>
 
             <div class="row pt-2 pb-2">
-                <span class="col-4 col-sm-3 text-truncate">Extra Data</span>
-                <span class="col-8 col-sm-9 text-truncate">
+                <span class="col-12 col-sm-3 text-truncate">Data</span>
+                <span class="col-12 col-sm-9">
                     <show-transaction-data-extra :data-version="tx.dataVersion" :data="tx.data" />
                 </span>
             </div>
@@ -151,9 +151,9 @@
                 </div>
 
                 <div class="row pt-2 pb-2 bg-light">
-                    <span class="col-4 col-sm-3 text-truncate">Data</span>
-                    <span class="col-8 col-sm-9">
-                        <show-transaction-data :tx="tx" :id="index" />
+                    <span class="col-12 col-sm-3 text-truncate">Data</span>
+                    <span class="col-12 col-sm-9">
+                        <show-transaction-data :tx="tx" />
                     </span>
                 </div>
 
