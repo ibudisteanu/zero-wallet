@@ -6,7 +6,7 @@ export default {
         state.refQRCodeScannerModal = modals.refQRCodeScannerModal;
         state.refTestnetFaucetModal = modals.refTestnetFaucetModal;
         state.refWalletPasswordModal = modals.refWalletPasswordModal;
-        state.refDecodeHomomorphicBalanceModal = modals.refDecodeHomomorphicBalanceModal;
+        state.refDecryptBalanceModal = modals.refDecryptBalanceModal;
     },
 
     incrementModalIndex(state, value){

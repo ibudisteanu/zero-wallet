@@ -59,7 +59,7 @@ export default {
             let data = await PandoraPay.wallet.tryDecryptBalance( MyTextEncode(JSONStringify({
                 publicKey: this.publicKey,
                 asset: this.asset,
-                balanceEncoded: this.balance,
+                balance: this.balance,
             })), this.password, )
 
             const out = JSONParse( MyTextDecode( data ) )
@@ -110,7 +110,7 @@ export default {
             const decryptedData = await PandoraPayHelper.wallet.decryptBalance(MyTextEncode(JSONStringify( {
                 privateKey: this.privateKey,
                 previousValue: 0,
-                balanceEncoded: this.balance,
+                balance: this.balance,
                 asset: this.asset,
             } )), async (status)=>{
                 const final = StringHelper.formatMoney( new Decimal( status).div( new Decimal(10).pow( this.getAsset.decimalSeparator ), this.getAsset.decimalSeparator ) )
@@ -141,10 +141,11 @@ export default {
 
                     this.balanceDecrypted = new Decimal(result[1])
 
-                    await PandoraPay.wallet.updatePreviousValueWalletAddress( MyTextEncode(JSONStringify({
+                    await PandoraPay.wallet.updatePreviousDecryptedBalanceValueWalletAddress( MyTextEncode(JSONStringify({
                         publicKey: this.publicKey,
                         asset: this.asset,
-                        value: this.balanceDecrypted,
+                        amount: this.balanceDecrypted,
+                        balance: this.balance,
                     })), this.password, )
 
                     this.cancelCallback = null

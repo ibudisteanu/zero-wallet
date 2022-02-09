@@ -9,7 +9,7 @@ export default {
         refQRCodeScannerModal: null,
         refTestnetFaucetModal:null,
         refWalletPasswordModal:null,
-        refDecodeHomomorphicBalanceModal:null,
+        refDecryptBalanceModal:null,
 
         modalIndex: 0,
 

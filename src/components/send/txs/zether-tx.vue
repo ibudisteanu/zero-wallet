@@ -495,7 +495,7 @@ export default {
                         break
                     }
 
-                const out = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.$store.state.wallet.mainPublicKey, balance, asset, true, password )
+                const out = await this.$store.state.page.refDecryptBalanceModal.showModal( this.$store.state.wallet.mainPublicKey, balance, asset, true, password )
                 if (out.balanceDecrypted === null) throw "Decrypting was canceled"
 
                 senderPrivateKey = out.privateKey
