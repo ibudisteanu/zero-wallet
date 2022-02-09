@@ -95,7 +95,7 @@ export default {
             }
 
             if (this.delegatedStakingNewInfo.hasNewDelegatedInfo){
-                const out = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode( JSONStringify({
+                const out = await PandoraPay.wallet.getPrivateDataForDecryptingBalanceWalletAddress( MyTextEncode( JSONStringify({
                     publicKey: this.delegatePublicKey,
                     asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX,
                 })), password, )

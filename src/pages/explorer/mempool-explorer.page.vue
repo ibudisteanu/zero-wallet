@@ -11,7 +11,7 @@
                         <h5 class="mb-0">Mem pool</h5>
                         <div class="subtitle">
                             <h6>Pending Transactions: {{mempoolCount}}</h6>
-                            <i class="fas fa-sync pointer " @click="downloadMempool" v-tooltip.bottom="`Download again the mempool`" ></i>
+                            <i class="fas fa-sync pointer " @click="()=>downloadMempool()" v-tooltip.bottom="`Download again the mempool`" ></i>
                         </div>
                     </div>
                 </div>

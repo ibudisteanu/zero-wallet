@@ -2,13 +2,13 @@ const promises = {}
 
 export default {
 
-    downloadMempool( {state, dispatch, commit}, page ){
+    downloadMempool( {state, dispatch, commit}, page = 0 ){
 
         if (promises[page]) return promises[page]
         return promises[page] = new Promise(async (resolve, reject)=>{
             try{
                 const data = await PandoraPay.network.getNetworkMempool( MyTextEncode(JSONStringify({
-                    chainHash: (page === null) ? "" : state.chainHash,
+                    chainHash: (page === 0) ? "" : state.chainHash,
                     page: page,
                     count : 0,
                 })) )
@@ -21,6 +21,7 @@ export default {
 
                 resolve(true)
             }catch(err){
+                console.error(err)
                 reject(err)
             }finally{
                 delete promises[page]

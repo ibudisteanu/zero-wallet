@@ -1,14 +1,14 @@
 <template>
     <div>
         <template v-if="dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT)">
-            {{data}}
+            <span class="text-truncate">{{dataAscii}}</span>
         </template>
         <template v-else-if="dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_ENCRYPTED)">
 
-            <span v-if="dataDecryptedError" class="text-danger">
+            <span v-if="dataDecryptedError" class="text-danger text-truncate">
                 {{dataDecryptedError}}
             </span>
-            <span v-else>
+            <span class="text-truncate" v-else>
                 {{dataDecrypted}}
             </span>
 
@@ -31,6 +31,11 @@ export default {
 
     computed: {
         PandoraPay: () => PandoraPay,
+
+        dataAscii(){
+            if (!this.data) return ""
+            return Buffer.from(this.data, "hex").toString()
+        }
     }
 
 }

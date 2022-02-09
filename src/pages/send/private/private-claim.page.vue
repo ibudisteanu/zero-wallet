@@ -71,7 +71,7 @@ export default {
 
         async handleBeforeProcess(password, data){
 
-            const out = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode( JSONStringify({
+            const out = await PandoraPay.wallet.getPrivateDataForDecryptingBalanceWalletAddress( MyTextEncode( JSONStringify({
                 publicKey: this.publicKey,
                 asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX,
             })), password, )

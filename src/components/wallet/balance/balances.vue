@@ -24,7 +24,7 @@
                          :key="`balance-asset-${index}`"
                          :balance="accountBalance.balance"
                          :asset="account.accounts[index].asset"
-                         :can-be-decoded="$store.getters.walletContains(publicKey)"
+                         :can-be-decrypted="$store.getters.walletContains(publicKey)"
                          :public-key="publicKey"
                          version="zether">
                 </balance>

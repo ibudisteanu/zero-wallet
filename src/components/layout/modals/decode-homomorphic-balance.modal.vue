@@ -1,6 +1,6 @@
 <template>
 
-    <modal ref="modal" :title="`Decoding ${status}`" contentClass="" @opened="start" :closing-function="stop" >
+    <modal ref="modal" :title="`Decrypting ${status}`" contentClass="" @opened="start" :closing-function="stop" >
 
         <template v-slot:body>
 
@@ -29,7 +29,7 @@ export default {
             balance: "",
             asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX,
             password: "",
-            balanceDecoded: null,
+            balanceDecrypted: null,
             privateKey: null,
             returnPrivateKey: false,
             cancelCallback: null,
@@ -56,7 +56,7 @@ export default {
             this.password = password
             this.returnPrivateKey = returnPrivateKey
 
-            let data = await PandoraPay.wallet.decodeBalanceIfMatchesPreviousValueWalletAddress( MyTextEncode(JSONStringify({
+            let data = await PandoraPay.wallet.tryDecryptBalance( MyTextEncode(JSONStringify({
                 publicKey: this.publicKey,
                 asset: this.asset,
                 balanceEncoded: this.balance,
@@ -64,7 +64,7 @@ export default {
 
             const out = JSONParse( MyTextDecode( data ) )
 
-            data = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode(JSONStringify({
+            data = await PandoraPay.wallet.getPrivateDataForDecryptingBalanceWalletAddress( MyTextEncode(JSONStringify({
                 publicKey: this.publicKey,
                 asset: this.asset
             })), this.password, )
@@ -75,13 +75,13 @@ export default {
 
             this.privateKey = params.privateKey
 
-            if (out.decoded)
-                this.balanceDecoded = out.value
+            if (out.decrypted)
+                this.balanceDecrypted = out.value
             else
                 await this.$refs.modal.showModal();
 
             return {
-                balanceDecoded: this.balanceDecoded,
+                balanceDecrypted: this.balanceDecrypted,
                 privateKey: returnPrivateKey ? this.privateKey : undefined,
             }
         },
@@ -107,7 +107,7 @@ export default {
 
             if (this.closed) return
 
-            const decodedData = await PandoraPayHelper.wallet.decodeBalance(MyTextEncode(JSONStringify( {
+            const decryptedData = await PandoraPayHelper.wallet.decryptBalance(MyTextEncode(JSONStringify( {
                 privateKey: this.privateKey,
                 previousValue: 0,
                 balanceEncoded: this.balance,
@@ -117,16 +117,16 @@ export default {
                 this.status = "Scan  "+final
             })
 
-            this.cancelCallback = decodedData[1]
+            this.cancelCallback = decrptedData[1]
 
             const checkBalance = async () => {
 
-                const result = await decodedData[0]()
+                const result = await decryptedData[0]()
 
                 if (result[2] && result[2] instanceof Error) {
                     this.$store.dispatch('addToast', {
                         type: 'error',
-                        title: `Error decoding your homomorphic balance`,
+                        title: `Error decrypting your homomorphic balance`,
                         text: `${result[2].message}`,
                     })
                     this.cancelCallback = null
@@ -135,16 +135,16 @@ export default {
 
                     this.$store.dispatch('addToast', {
                         type: 'success',
-                        title: `Homomorphic Balance was decoded`,
-                        text: `Decoded successfully!`,
+                        title: `Homomorphic Balance was Decrypted`,
+                        text: `Decryption successful!`,
                     })
 
-                    this.balanceDecoded = new Decimal(result[1])
+                    this.balanceDecrypted = new Decimal(result[1])
 
                     await PandoraPay.wallet.updatePreviousValueWalletAddress( MyTextEncode(JSONStringify({
                         publicKey: this.publicKey,
                         asset: this.asset,
-                        value: this.balanceDecoded,
+                        value: this.balanceDecrypted,
                     })), this.password, )
 
                     this.cancelCallback = null
@@ -199,7 +199,7 @@ export default {
             const createLines = ()=>{
                 lines = [
                     "",
-                    "DECODING",
+                    "DECRYPTING",
                     this.status.replaceAll(" ","^"),
                     "",
                 ].reverse()
