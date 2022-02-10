@@ -3,7 +3,7 @@
 
         <layout-title icon="fas fa-money-bill-alt" title="Account" >See the balance and transactions of an address.</layout-title>
 
-        <wait-wallet-address :address="address">
+        <wait-address :address="address">
 
             <account :address="address" />
 
@@ -17,7 +17,7 @@
                 <pending-transactions-preview :public-key="publicKey" />
             </template>
 
-        </wait-wallet-address>
+        </wait-address>
 
         <alert-box v-if="error" type="error">{{error}}</alert-box>
 

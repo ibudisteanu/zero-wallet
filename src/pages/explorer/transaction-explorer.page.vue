@@ -23,7 +23,6 @@
                     <show-transaction :tx="tx" :tx-info="txInfo"/>
                 </div>
 
-
             </div>
 
         </div>
@@ -132,19 +131,6 @@ export default {
             this.$store.commit('updateViewTransactionsHashes', {txsHashes: [tx.hash], insert: false} )
             await this.$store.dispatch('unsubscribeTransaction', tx.hash )
         },
-
-        async handleDecryptExtraData(resolver){
-            try{
-
-                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
-                if (password === null ) return
-
-                await this.$store.dispatch('decryptTxData', {tx: this.tx, password, commitNow: true })
-
-            }finally{
-                resolver()
-            }
-        }
 
     },
 

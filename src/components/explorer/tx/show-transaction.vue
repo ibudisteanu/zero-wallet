@@ -95,14 +95,14 @@
             </div>
 
             <div class="row pt-2 pb-2">
-                <span class="col-12 col-sm-3 text-truncate">Data</span>
-                <span class="col-12 col-sm-9">
-                    <show-transaction-data-extra :data-version="tx.dataVersion" :data="tx.data" />
+                <span class="col-12 col-sm-3 text-truncate">Message (Memo)</span>
+                <span class="col-12 col-sm-9 text-truncate" v-tooltip.bottom="`${Buffer.from(tx.data, 'hex').toString()}`">
+                    {{Buffer.from(tx.data, "hex").toString()}}
                 </span>
             </div>
 
             <div class="row pt-2 pb-2  bg-light">
-                <span class="col-4 col-sm-3 text-truncate">Extra Data as HEX</span>
+                <span class="col-4 col-sm-3 text-truncate">Message (Memo) as HEX</span>
                 <span class="col-8 col-sm-9 text-truncate">{{tx.data}}</span>
             </div>
 
@@ -130,7 +130,7 @@
 
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-4 col-sm-3 text-truncate">Fee Conversion Rate</span>
-                        <span class="col-8 col-sm-9 text-truncate">{{ computeFeeRate(payload) }}</span>
+                        <span class="col-8 col-sm-9 text-truncate">{{ payload.feeRate.div( new Decimal(10).pow( payload.feeLeadingZeros ) ) }}</span>
                     </div>
                 </template>
 
@@ -158,26 +158,48 @@
                 </div>
 
                 <div class="row pt-2 pb-2">
-                    <span class="col-4 col-sm-3 text-truncate">Extra</span>
-                    <span class="col-8 col-sm-9 text-truncate">
-                        <show-transaction-data-extra :data-version="payload.dataVersion" :data="payload.data" />
+                    <span class="col-4 col-sm-3 text-truncate">Message (Memo)</span>
+                    <span class="col-8 col-sm-9">
+                        <template v-if="payload.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT)">
+                            <span class="text-truncate" v-tooltip.bottom="`${Buffer.from(payload.data, 'hex').toString()}`">{{Buffer.from(payload.data, "hex").toString()}}</span>
+                        </template>
+                        <template v-if="payload.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_ENCRYPTED)">
+                            <span v-if="!decrypted">?</span>
+                            <span v-else class="text-truncate" v-tooltip.bottom="`${Buffer.from(decrypted.zetherTx.payloads[index].message, 'hex').toString()}`">{{Buffer.from(decrypted.zetherTx.payloads[index].message, "hex").toString()}}</span>
+                        </template>
                     </span>
                 </div>
                 <div class="row pt-2 pb-2 bg-light">
-                    <span class="col-4 col-sm-3 text-truncate">Extra HEX</span>
-                    <span class="col-8 col-sm-9 text-truncate">{{payload.data}}</span>
+                    <span class="col-4 col-sm-3 text-truncate">Message (Memo) in HEX</span>
+                    <span class="col-8 col-sm-9 text-truncate" v-tooltip.bottom="`${payload.data}`">{{payload.data}}</span>
                 </div>
+
+                <div class="row pt-2 pb-2">
+                    <span class="col-4 col-sm-3 text-truncate">Amount</span>
+                    <span class="col-8 col-sm-9">
+                        <span v-if="!decrypted">?</span>
+                        <amount v-else-if="decrypted.zetherTx.payloads[index].whisperSenderValid" :value="decrypted.zetherTx.payloads[index].sentAmount" :sign="false" value-class="text-danger" />
+                        <amount v-else-if="decrypted.zetherTx.payloads[index].whisperRecipientValid" :value="decrypted.zetherTx.payloads[index].receivedAmount" :sign="true" value-class="text-success" />
+                    </span>
+                </div>
+
+                <div class="row pt-2 pb-2 bg-light">
+                    <span class="col-4 col-sm-3 text-truncate">Recipient</span>
+                    <span class="col-8 col-sm-9">
+                        <span v-if="!decrypted || !decrypted.zetherTx.payloads[index].recipientPublicKey">?</span>
+                        <account-identicon v-else :publicKey="decrypted.zetherTx.payloads[index].recipientPublicKey" size="17" outer-size="2" />
+                    </span>
+                </div>
+
             </div>
 
         </template>
 
-        <div v-for="(fee,index) in fees"
-             :key="`fee_${index}`">
-
+        <div v-for="(fee,index) in fees" :key="`fee_${index}`">
             <div class="row pt-2 pb-2">
                 <span class="col-4 col-sm-3 fw-medium text-truncate">Fee{{ (fees.length > 1) ? index : ''}}</span>
                 <span class="col-8 col-sm-9 text-truncate">
-                    <amount :asset="fee.asset" :value="fee.amount" value-class="text-900" :sign="false" />
+                    <amount :asset="fee.asset" :value="fee.amount" value-class="text-900 text-danger" :sign="false" />
                     <template v-if="fee.amountNative">
                         => <amount :value="fee.amountNative" value-class="text-900" :sign="true" />
                     </template>
@@ -185,19 +207,22 @@
             </div>
         </div>
 
+        <loading-button v-if="canDecrypt && !decrypted" type="button"  v-tooltip.bottom="`Decrypt the transaction to see the amount, shared text and recipient`" @submit="decryptTx" text="Decrypt" icon="fas fa-unlock" :icon-left="false" class-custom="btn btn-falcon-primary btn-sm" />
+
     </div>
 </template>
 
 <script>
 import ShowTransactionData from "./show-transaction-data"
-import ShowTransactionDataExtra from "./show-transaction-data-extra"
 import StringHelper from "src/utils/string-helper";
 import Decimal from "decimal.js"
 import Amount from "src/components/wallet/amount"
+import AccountIdenticon from "src/components/wallet/account/account-identicon";
+import LoadingButton from "src/components/utils/loading-button";
 
 export default {
 
-    components: {ShowTransactionData, ShowTransactionDataExtra, Amount},
+    components: {ShowTransactionData, Amount, AccountIdenticon, LoadingButton},
 
     props: {
         tx: {default: null},
@@ -205,9 +230,17 @@ export default {
         showTxInfo: {default: true},
     },
 
+    data(){
+        return {
+            decrypted: null,
+        }
+    },
+
     computed:{
 
         PandoraPay: () => PandoraPay,
+        Decimal: () => Decimal,
+        Buffer: () => Buffer,
 
         fees(){
             if (!this.tx) return []
@@ -228,7 +261,16 @@ export default {
                 return out
             }
 
-        }
+        },
+
+        publicKey(){
+            return this.$store.state.wallet.mainPublicKey
+        },
+
+        canDecrypt(){
+            if (!this.tx || !this.publicKey) return false
+            return this.$store.getters.walletContains( this.publicKey)
+        },
 
     },
 
@@ -238,11 +280,36 @@ export default {
         formatSize: (bytes) => StringHelper.formatSize(bytes, 1),
         formatBytes: (bytes) => StringHelper.formatBytes(bytes),
 
-        computeFeeRate(payload){
-            return payload.feeRate.div( new Decimal(10).pow( payload.feeLeadingZeros ) )
+        async decryptTx(resolve){
+            const decrypted = await this.$store.dispatch('decryptTx', {hash: this.tx.hash, publicKey: this.publicKey})
+            if (decrypted) this.decrypted = decrypted
+            resolve(true)
+        },
+
+        loadTxDecrypted(txHash, publicKey){
+            const decrypted = localStorage.getItem(`txDecrypted:${txHash}:${publicKey}`)
+            if (decrypted) this.decrypted = JSONParse(decrypted)
+            else this.decrypted = null
         }
 
-    }
+    },
+
+    watch: {
+        tx:{
+            immediate: true,
+            handler: function (to, from) {
+                if (to === from) return
+                return this.loadTxDecrypted(to.hash, this.publicKey)
+            }
+        },
+        publicKey: {
+            immediate: true,
+            handler: function (to, from) {
+                if (to === from) return
+                return this.loadTxDecrypted(this.tx.hash, to)
+            }
+        },
+    },
 
 }
 </script>

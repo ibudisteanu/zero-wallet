@@ -64,7 +64,7 @@
                 <show-transaction-preview-data :tx="tx" />
             </span>
 
-            <span class="col-4 d-block d-md-none text-dark text-truncate">Message</span>
+            <span class="col-4 d-block d-md-none text-dark text-truncate">Message (Memo)</span>
             <div class="col-8 col-md-2 text-truncate">
                 <template v-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE )">
                     <template v-if="tx.base.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT)">
@@ -156,48 +156,15 @@ export default {
         formatTime : (timestamp) => StringHelper.formatTime( timestamp*1000 ),
 
         async decryptTx(resolve){
-            try{
-
-                const tx = await this.$store.dispatch('getTransactionByHash', this.txHash)
-                if (!tx) throw "Transaction was not found on the blockchain. Maybe it was deleted meanwhile."
-
-
-                const output = await PandoraPay.wallet.decryptTx( Buffer.from(tx._serialized, "hex"), this.publicKey )
-                if (!output) return "Error reading decrypted data"
-
-                const decrypted = JSONParse( MyTextDecode( output ) )
-                console.log(decrypted)
-
-                if (decrypted.zetherTx){
-
-                    decrypted.zetherTx.payloads.forEach((payload, index)=>{
-                        if (!payload.recipientIndex.eq(-1) )
-                            payload.recipientPublicKey = tx.payloads[index].statement.publickeylist[payload.recipientIndex]
-                        delete payload.blinder
-                    })
-
-                    localStorage.setItem(`txDecrypted:${this.txHash}:${this.publicKey}`, JSONStringify(decrypted))
-
-                    this.decrypted = decrypted
-                }
-
-            }catch(err){
-                this.$store.dispatch('addToast', {
-                    type: 'success',
-                    title: `Error decrypting TX!`,
-                    text: `Reason ${err.toString()}`,
-                });
-            }finally{
-                resolve(true)
-            }
+            const decrypted = await this.$store.dispatch('decryptTx', {hash: this.txHash, publicKey: this.publicKey})
+            if (decrypted) this.decrypted = decrypted
+            resolve(true)
         },
 
         loadTxDecrypted(txHash, publicKey){
             const decrypted = localStorage.getItem(`txDecrypted:${txHash}:${publicKey}`)
-            if (decrypted)
-                this.decrypted = JSONParse(decrypted)
-            else
-                this.decrypted = null
+            if (decrypted) this.decrypted = JSONParse(decrypted)
+            else this.decrypted = null
         }
     },
 
@@ -215,6 +182,7 @@ export default {
         publicKey: {
             immediate: true,
             handler: function (to, from) {
+                if (to === from) return
                 this.loadTxDecrypted(this.txHash, to)
             }
         },
