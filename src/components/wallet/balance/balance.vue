@@ -2,9 +2,15 @@
 
     <div class="row">
         <h4 class="fw-medium pt-2" v-if="getAsset" >
-            <template v-if="version === 'zether' && decryptedBalance === null ">
+
+            <template v-if="version === 'zether'">
                 <i class="fas fa-lock pe-2" v-tooltip.bottom="`Homomorphic Encrypted Amount: ${balance}`" />
-                <i class="fas fa-key pe-2 pointer" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecrypted" @click="decryptBalance"></i>
+                <template v-if="decryptedBalance === null">
+                    <i class="fas fa-key pe-2 pointer" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecrypted" @click="decryptBalance"></i>
+                </template>
+                <template v-else>
+                    {{ amount }}
+                </template>
             </template>
             <template v-else>
                 {{ amount }}
@@ -57,7 +63,8 @@ export default {
                     amount = this.decryptedBalance
             }
             return StringHelper.formatMoney( new Decimal(amount).div( new Decimal(10).pow(this.getAsset.decimalSeparator) ).toString(), this.getAsset.decimalSeparator)
-        }
+        },
+
     },
 
     watch: {
@@ -65,7 +72,16 @@ export default {
             immediate: true,
             handler: function (to, from) {
                 if (to === from) return
-                this.decryptedBalance = null
+
+                if (this.version === "zether"){
+                    const walletAddress = this.$store.state.wallet.addresses[this.publicKey]
+                    if (walletAddress.decryptedBalances && walletAddress.decryptedBalances[this.asset])
+                        if (walletAddress.decryptedBalances[this.asset].encryptedBalance === this.balance){
+                            this.decryptedBalance = walletAddress.decryptedBalances[this.asset].amount
+                            return
+                        }
+                    this.decryptedBalance = null
+                }
             }
         },
     },

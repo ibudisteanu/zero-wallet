@@ -439,8 +439,8 @@ export default {
                 let ringMembers = []
 
                 if (!this.createNewSender){
-                    ringMembers.push(this.address.addressEncoded)
-                    delete publicKeysMap[this.address.publicKey]
+                    ringMembers.push(this.walletAddress.addressEncoded)
+                    delete publicKeysMap[this.walletAddress.publicKey]
                 }else {
                     const json = JSONParse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
                     ringMembers.push( json[1] )
@@ -609,7 +609,7 @@ export default {
 
             this.status = 'Broadcasting your transaction in the network... Please wait...'
 
-            await this.$store.dispatch('includeTx', { tx: this.tx, mempool: false } )
+            await this.$store.dispatch('includeTx', { tx: this.tx, serialized: txSerialized, mempool: false } )
 
             const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( txSerialized )
             if (!finalAnswer){
