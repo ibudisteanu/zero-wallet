@@ -31,7 +31,7 @@
                         <div class="d-flex align-items-center">
                             <router-link to="#" class="nav-link" @click.native="e => toggleNavElement( e,'staking')">
                                 <i class="fas fa-piggy-bank"></i>
-                                <span class="nav-link-text ps-1">Staking</span>
+                                <span class="nav-link-text px-1">Staking</span>
                                 <i :class="`nav-chevron fas fa-chevron-${navElementsShown['staking'] ? 'up' : 'down' }`"></i>
                             </router-link>
                         </div>
@@ -116,7 +116,7 @@
                         <div class="d-flex align-items-center">
                             <router-link to="#" class="nav-link" @click.native="e => toggleNavElement( e,'explorer')">
                                 <i class="fas fa-cubes"></i>
-                                <span class="nav-link-text ps-1">Explorer</span>
+                                <span class="nav-link-text px-1">Explorer</span>
                                 <i :class="`nav-chevron fas fa-chevron-${navElementsShown['explorer'] ? 'up' : 'down' }`"></i>
                             </router-link>
                         </div>
@@ -159,7 +159,7 @@
                         <div class="d-flex align-items-center">
                             <router-link to="#" class="nav-link" @click.native="e => toggleNavElement(e,'kad')">
                                 <i class="fas fa-globe-americas"></i>
-                                <span class="nav-link-text ps-1">KAD</span>
+                                <span class="nav-link-text px-1">KAD</span>
                                 <i :class="`nav-chevron fas fa-chevron-${navElementsShown['kad'] ? 'up' : 'down' }`"></i>
                             </router-link>
                         </div>

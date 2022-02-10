@@ -29,7 +29,7 @@ export default {
             balance: "",
             asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX,
             password: "",
-            balanceDecrypted: null,
+            decryptedBalance: null,
             privateKey: null,
             returnPrivateKey: false,
             cancelCallback: null,
@@ -76,12 +76,12 @@ export default {
             this.privateKey = params.privateKey
 
             if (out.decrypted)
-                this.balanceDecrypted = out.value
+                this.decryptedBalance = out.value
             else
                 await this.$refs.modal.showModal();
 
             return {
-                balanceDecrypted: this.balanceDecrypted,
+                decryptedBalance: this.decryptedBalance,
                 privateKey: returnPrivateKey ? this.privateKey : undefined,
             }
         },
@@ -117,7 +117,7 @@ export default {
                 this.status = "Scan  "+final
             })
 
-            this.cancelCallback = decrptedData[1]
+            this.cancelCallback = decryptedData[1]
 
             const checkBalance = async () => {
 
@@ -139,12 +139,12 @@ export default {
                         text: `Decryption successful!`,
                     })
 
-                    this.balanceDecrypted = new Decimal(result[1])
+                    this.decryptedBalance = new Decimal(result[1])
 
                     await PandoraPay.wallet.updatePreviousDecryptedBalanceValueWalletAddress( MyTextEncode(JSONStringify({
                         publicKey: this.publicKey,
                         asset: this.asset,
-                        amount: this.balanceDecrypted,
+                        amount: this.decryptedBalance,
                         balance: this.balance,
                     })), this.password, )
 

@@ -58,7 +58,9 @@ export default {
         return Promise.all(promises)
     },
 
-    async includeTx( {state, dispatch, commit, getters}, {tx, info, mempool} ){
+    async includeTx( {state, dispatch, commit, getters}, {tx, serialized, info, mempool} ){
+
+        tx._serialized = serialized
 
         if (info) tx.__height = info.height
         else {

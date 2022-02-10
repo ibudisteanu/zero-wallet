@@ -485,7 +485,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            let senderPrivateKey, senderBalanceDecrypted
+            let senderPrivateKey, senderDecryptedBalance
             if (!this.createNewSender){
 
                 let balance
@@ -496,13 +496,13 @@ export default {
                     }
 
                 const out = await this.$store.state.page.refDecryptBalanceModal.showModal( this.$store.state.wallet.mainPublicKey, balance, asset, true, password )
-                if (out.balanceDecrypted === null) throw "Decrypting was canceled"
+                if (out.decryptedBalance === null) throw "Decrypting was canceled"
 
                 senderPrivateKey = out.privateKey
-                senderBalanceDecrypted = out.balanceDecrypted
+                senderDecryptedBalance = out.decryptedBalance
             }else {
                 senderPrivateKey = this.newSender.privateKey
-                senderBalanceDecrypted = this.availableBalances[ asset ].amount
+                senderDecryptedBalance = this.availableBalances[ asset ].amount
             }
 
             const accs = { [asset]: {} }
@@ -552,7 +552,7 @@ export default {
             const data = {
                 from: [{
                     privateKey: senderPrivateKey,
-                    balanceDecrypted: senderBalanceDecrypted,
+                    decryptedBalance: senderDecryptedBalance,
                 }],
                 assets: [ asset ],
                 amounts: [ amount  ],

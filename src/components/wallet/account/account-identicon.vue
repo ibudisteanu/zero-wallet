@@ -19,8 +19,8 @@ export default {
         outerSize: {default: 34},
 
         address: {default: null},
-        publicKey: {default: null},
-        hash: {default: null},
+        publicKey: {default: ""},
+        hash: {default: ""},
 
         disableRoute: { default: false },
         showTooltip: {default: true },

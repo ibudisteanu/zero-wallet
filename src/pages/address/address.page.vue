@@ -10,11 +10,11 @@
             <wait-account :account="account">
                 <balances :publicKey="publicKey" />
                 <pending-transactions-preview :publicKey="publicKey" />
-                <transactions-preview :publicKey="publicKey" :page="page" />
+                <transactions-preview :public-key="publicKey" :page="page" />
             </wait-account>
 
             <template v-if="!isFound">
-                <pending-transactions-preview :publicKey="publicKey" />
+                <pending-transactions-preview :public-key="publicKey" />
             </template>
 
         </wait-address>
