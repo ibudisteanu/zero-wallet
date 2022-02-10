@@ -60,7 +60,7 @@ export default {
     computed:{
         PandoraPay: () => PandoraPay,
 
-        address(){
+        walletAddress(){
             return this.$store.state.wallet.addresses[this.publicKey]
         },
         account(){
@@ -93,7 +93,7 @@ export default {
 
                 const nonce = this.account && this.account.plainAccount ? this.account.plainAccount.nonce : new Decimal(0)
 
-                const out = await PandoraPay.wallet.deriveDelegatedStakeWalletAddress( nonce.toString(), this.address.addressEncoded, password )
+                const out = await PandoraPay.wallet.deriveDelegatedStakeWalletAddress( nonce.toString(), this.walletAddress.addressEncoded, password )
                 const json = JSONParse(MyTextDecode(out))
 
                 this.hasNewDelegatedInfo = true

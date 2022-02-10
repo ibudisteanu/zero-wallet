@@ -3,7 +3,7 @@
 
         <layout-title icon="fas fa-money-bill-alt" title="Account" >See the balance and transactions of an address.</layout-title>
 
-        <wait-address :address="address">
+        <wait-wallet-address :address="address">
 
             <account :address="address" />
 
@@ -17,7 +17,7 @@
                 <pending-transactions-preview :public-key="publicKey" />
             </template>
 
-        </wait-address>
+        </wait-wallet-address>
 
         <alert-box v-if="error" type="error">{{error}}</alert-box>
 
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+
 import Layout from "src/components/layout/layout";
 import LayoutTitle from "src/components/layout/layout-title";
 import Balances from "../../components/wallet/balance/balances";
@@ -34,7 +35,7 @@ import Account from "src/components/wallet/account/account"
 import AlertBox from "src/components/utils/alert-box"
 import TransactionsPreview from "../../components/wallet/transactions/transactions-preview";
 import PendingTransactionsPreview from "../../components/wallet/transactions/pending-transactions-preview";
-import WaitAddress from "../../components/wallet/account/wait-address";
+import WaitAddress from "src/components/wallet/account/wait-address";
 import WaitAccount from "../../components/wallet/account/wait-account";
 import UtilsHelper from "src/utils/utils-helper";
 

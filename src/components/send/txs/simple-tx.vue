@@ -74,7 +74,7 @@ export default {
     },
 
     computed:{
-        address(){
+        walletAddress(){
             return this.$store.state.wallet.addresses[this.publicKey];
         },
         account(){
@@ -139,12 +139,12 @@ export default {
 
             const fee = this.fee.feeType ? new Decimal(0) : this.fee.feeManual.amount
 
-            const nonceOut = await PandoraPay.network.getNetworkAccountMempoolNonce(MyTextEncode(JSONStringify({ publicKey: this.address.publicKey })))
+            const nonceOut = await PandoraPay.network.getNetworkAccountMempoolNonce(MyTextEncode(JSONStringify({ publicKey: this.walletAddress.publicKey })))
 
             const nonce = JSONParse( MyTextDecode(nonceOut) ).nonce
 
             const data = {
-                from: this.address.addressEncoded,
+                from: this.walletAddress.addressEncoded,
                 nonce: nonce,
                 data: {
                     data: Buffer.from(this.extraData.data).toString("hex"),

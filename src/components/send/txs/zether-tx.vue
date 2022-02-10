@@ -188,7 +188,7 @@ export default {
     computed:{
         PandoraPay: () => PandoraPay,
 
-        address(){
+        walletAddress(){
             return this.$store.state.wallet.addresses[this.publicKey] ;
         },
         account(){
@@ -220,7 +220,7 @@ export default {
             try{
 
                 if (this.destination.address)
-                    if (this.destination.address.publicKey === this.address.publicKey) throw "Destination can not be the same with from";
+                    if (this.destination.address.publicKey === this.walletAddress.publicKey) throw "Destination can not be the same with from";
 
             }catch (err){
                 return err.toString()

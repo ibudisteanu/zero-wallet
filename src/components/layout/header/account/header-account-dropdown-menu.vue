@@ -13,17 +13,17 @@
             <div class="list-group list-group-flush fs--1">
                 <div class="list-group-title border-bottom">All accounts:</div>
                 <div class="list-group-item div-scrollable" style="max-height:19rem" >
-                    <div v-for="(address, index) in addresses" :class="`notification notification-flush notification-unread ${ address.publicKey === mainPublicKey  ? 'fw-black' : ''} ` "
-                         :key="`address-${index}`">
+                    <div v-for="(walletAddr, index) in walletAddresses" :class="`notification notification-flush notification-unread ${ walletAddr.publicKey === mainPublicKey  ? 'fw-black' : ''} ` "
+                         :key="`wallet-address-${index}`">
                             <div class="notification-body address">
-                                <account-identicon :address="address.addressEncoded" size="21" outer-size="7"  :disable-route="true" />
-                                <div class="account-title pointer " @click="setMainPublicKey(address.publicKey)">
-                                    <span class="fw-semi-bold text-truncate">{{address.name}}</span>
-                                    <span class="fw-normal text-truncate">{{$store.getters.addressDisplay(address)}} </span>
+                                <account-identicon :address="walletAddr.addressEncoded" size="21" outer-size="7"  :disable-route="true" />
+                                <div class="account-title pointer " @click="setMainPublicKey(walletAddr.publicKey)">
+                                    <span class="fw-semi-bold text-truncate">{{walletAddr.name}}</span>
+                                    <span class="fw-normal text-truncate">{{$store.getters.addressDisplay(walletAddr)}} </span>
                                 </div>
                                 <div class="account-tools">
-                                    <span class="fw-light" >{{ (address.seedIndex !== undefined) ? '#'+address.seedIndex : '&nbsp;'}}</span>
-                                    <i class="fas fa-copy pointer " v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( address)" />
+                                    <span class="fw-light" >{{ (walletAddr.seedIndex !== undefined) ? '#'+walletAddr.seedIndex : '&nbsp;'}}</span>
+                                    <i class="fas fa-copy pointer " v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( walletAddr)" />
                                 </div>
                             </div>
                     </div>
@@ -71,11 +71,11 @@ export default {
 
     computed: {
 
-        address(){
+        walletAddress(){
             return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey];
         },
 
-        addresses(){
+        walletAddresses(){
             return this.$store.state.wallet.addresses;
         },
 
@@ -178,7 +178,7 @@ export default {
 
             const json = MyTextDecode(jsonData)
 
-            const fileName = consts.name+"_"+this.address.addressEncoded + ".pandorawallet";
+            const fileName = consts.name+"_"+this.walletAddress.addressEncoded + ".pandorawallet";
 
             const file = new Blob([json], {type: "application/json;charset=utf-8"});
             FileSaver.saveAs(file, fileName);
@@ -194,9 +194,9 @@ export default {
 
         },
 
-        copyAddress( address ){
+        copyAddress( walletAddress ){
 
-            let addr = this.$store.getters.addressDisplay(address)
+            let addr = this.$store.getters.addressDisplay(walletAddress)
 
             this.$copyText(addr).then(
                 e => this.$store.dispatch('addToast',{

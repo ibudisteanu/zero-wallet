@@ -4,9 +4,9 @@
 
         <layout-title icon="fas fa-shopping-basket" title="Staking">Delegate your stakes to a staking node.</layout-title>
 
-        <div class="account-info" v-if="address">
+        <div class="account-info" v-if="walletAddress">
 
-            <account :address="address" />
+            <account :address="walletAddress" />
 
             <wait-account :account="account">
                 <div class="card mb-3">
@@ -95,7 +95,7 @@ export default {
         publicKey(){
             return this.$store.state.wallet.mainPublicKey
         },
-        address(){
+        walletAddress(){
             return this.$store.state.wallet.addresses[this.publicKey];
         },
         account(){
@@ -117,10 +117,6 @@ export default {
         delegateFeePercentage(){
             if (!this.delegatedStake || !this.delegatedStake.delegatedStakeFee) return new Decimal(0)
             return this.delegatedStake.delegatedStakeFee.mul(100).div( PandoraPay.config.stake.DELEGATING_STAKING_FEE_MAX_VALUE  );
-        },
-
-        pendingTxs(){
-            return this.address.pendingTxs;
         },
 
         pendingTransactions(){

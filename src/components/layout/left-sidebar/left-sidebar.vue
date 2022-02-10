@@ -215,7 +215,7 @@ export default {
     computed:{
 
         sendUrl(){
-            if (!this.address) return '';
+            if (!this.walletAddress) return '';
         },
 
         encrypted(){
@@ -226,7 +226,7 @@ export default {
             return this.$router.currentRoute.path || '';
         },
 
-        address(){
+        walletAddress(){
             return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey];
         },
 

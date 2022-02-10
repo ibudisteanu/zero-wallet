@@ -3,7 +3,7 @@
     <modal ref="modal" title="Delegate Stake to Node" content-class="">
 
         <template v-slot:body>
-            <wait-address :address="address">
+            <wait-address :address="walletAddress">
                 <wizard :titles="{
                          0: {icon: 'fas fa-globe-americas', name: 'Select Node', tooltip: 'Select Node you are delegating to' },
                          1: {icon: 'fas fa-robot', name: 'Node Info', tooltip: 'Node information' },
@@ -65,7 +65,7 @@ export default {
     computed:{
         PandoraPay: () => PandoraPay,
 
-        address(){
+        walletAddress(){
             return this.$store.state.wallet.addresses[this.publicKey];
         },
         account(){
@@ -155,10 +155,10 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const signature = await PandoraPay.wallet.signMessageWalletAddress(this.nodeInfo.challenge, this.address.addressEncoded, password )
+            const signature = await PandoraPay.wallet.signMessageWalletAddress(this.nodeInfo.challenge, this.walletAddress.addressEncoded, password )
 
             const out = await HttpHelper.get(this.delegateNodeAddress( this.selectedDelegateNode ) +'/delegator-node/ask', {
-                publicKey: this.address.publicKey,
+                publicKey: this.walletAddress.publicKey,
                 challengeSignature: signature,
             } );
             if (!out) throw "Node is offline";

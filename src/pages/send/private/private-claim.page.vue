@@ -42,7 +42,7 @@ export default {
         publicKey(){
             return this.$store.state.wallet.mainPublicKey
         },
-        address(){
+        walletAddress(){
             return this.$store.state.wallet.addresses[this.publicKey];
         },
         account(){

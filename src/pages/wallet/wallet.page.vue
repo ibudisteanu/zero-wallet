@@ -4,9 +4,9 @@
 
         <layout-title icon="fas fa-wallet" title="Wallet">Access the private key of the selected address.</layout-title>
 
-        <wait-address :address="address">
+        <wait-address :wallet-address="walletAddress">
 
-            <account :address="address" />
+            <account :address="walletAddress" />
 
             <div class="card mb-3">
                 <div class="card-header bg-light">
@@ -23,8 +23,8 @@
                             View Public Key
                         </div>
                         <div v-else>
-                            Public Key: {{address.publicKey}}
-                            <i class="fas fa-copy pointer  d-inline-block" v-tooltip.bottom="'Copy Public Key'"  @click="handleCopyAddress(address.publicKey)" />
+                            Public Key: {{walletAddress.publicKey}}
+                            <i class="fas fa-copy pointer  d-inline-block" v-tooltip.bottom="'Copy Public Key'"  @click="handleCopyAddress(walletAddress.publicKey)" />
                         </div>
                     </div>
 
@@ -33,8 +33,8 @@
                             View Registration Public Key
                         </div>
                         <div v-else>
-                            Registration Public Key: {{address.registration}}
-                            <i class="fas fa-copy pointer  d-inline-block" v-tooltip.bottom="'Copy Registration'"  @click="handleCopyAddress(address.registration)" />
+                            Registration Public Key: {{walletAddress.registration}}
+                            <i class="fas fa-copy pointer  d-inline-block" v-tooltip.bottom="'Copy Registration'"  @click="handleCopyAddress(walletAddress.registration)" />
                         </div>
                     </div>
 
@@ -82,7 +82,7 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title";
 import Account from "src/components/wallet/account/account"
 import AccountDeleteModal from "src/components/wallet/account/account-delete.modal"
-import WaitAddress from "../../components/wallet/account/wait-address";
+import WaitAddress from "src/components/wallet/account/wait-address";
 
 export default {
 
@@ -97,7 +97,7 @@ export default {
 
 
     computed:{
-        address(){
+        walletAddress(){
             return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey];
         }
     },
@@ -121,28 +121,28 @@ export default {
 
             const json = MyTextDecode(jsonData)
 
-            const fileName = consts.name + "_" +this.address.name + "_"+this.address.addressEncoded + ".pandora";
+            const fileName = consts.name + "_" +this.walletAddress.name + "_"+this.walletAddress.addressEncoded + ".pandora";
 
             const file = new Blob([json], {type: "application/json;charset=utf-8"});
             FileSaver.saveAs(file, fileName);
 
             return this.$store.dispatch('addToast', {
                 type: 'success',
-                title: `Address ${this.address.name} has been saved on your machine`,
-                text: `The address ${this.address.addressEncoded} has been saved in the downloads folder.`,
+                title: `Address ${this.walletAddress.name} has been saved on your machine`,
+                text: `The address ${this.walletAddress.addressEncoded} has been saved in the downloads folder.`,
             });
         },
 
         handleShowPrivateKey(){
-            return this.$refs.refAccountPrivateKeyModal.showModal(this.address);
+            return this.$refs.refAccountPrivateKeyModal.showModal(this.walletAddress);
         },
 
         handleDeleteAddress(){
-            return this.$refs.refAccountDeleteModal.showModal(this.address)
+            return this.$refs.refAccountDeleteModal.showModal(this.walletAddress)
         },
 
         handleRenameAddressName(){
-            return this.$refs.refAccountRenameModal.showModal(this.address)
+            return this.$refs.refAccountRenameModal.showModal(this.walletAddress)
         },
 
         handleCopyAddress(key){
