@@ -18,7 +18,7 @@
         </div>
 
         <div class="card-body px-3 py-0" v-if="txs && txs.length">
-            <show-transactions-preview :transactions="txs"/>
+            <show-transactions-preview :transactions="txs" :public-key="publicKey"/>
         </div>
 
         <alert-box v-if="error" type="error">{{error}}</alert-box>

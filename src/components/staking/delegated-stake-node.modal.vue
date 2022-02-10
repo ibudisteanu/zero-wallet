@@ -2,32 +2,32 @@
 
     <modal ref="modal" title="Delegate Stake to Node" content-class="">
 
-        <template slot="body">
+        <template v-slot:body>
             <wait-address :address="address">
                 <wizard :titles="{
                          0: {icon: 'fas fa-globe-americas', name: 'Select Node', tooltip: 'Select Node you are delegating to' },
                          1: {icon: 'fas fa-robot', name: 'Node Info', tooltip: 'Node information' },
                          2: {icon: 'fas fa-piggy-bank', name: 'Delegate', tooltip: 'Finalizing the delegate' }}"
-                         @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
+                         @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" :allow-scroll="false" >
 
-                    <template slot="tab_0">
+                    <template v-slot:tab_0>
                         <div class="form">
                             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Selecting Node to delegate:</label>
-                            <select class="form-select" v-model="selectedDelegateNode">
+                            <select v-if="delegatesNodes" class="form-select" v-model="selectedDelegateNode">
                                 <option v-for="(node, id) in delegatesNodes"
                                         :key="`send-money-${id}`"
-                                        :value="node">
-                                    {{node.name}} || {{delegateNodeAddress(node)}}
+                                        :value="id">
+                                    {{node.name}} || {{delegateNodeAddress(id)}}
                                 </option>
                             </select>
                         </div>
                     </template>
 
-                    <template slot="tab_1" v-if="nodeInfo">
+                    <template v-slot:tab_1 v-if="nodeInfo">
                         <label class="form-label">Delegates MAXIMUM slots: <strong>{{nodeInfo.maximumAllowed}}</strong></label> <br/>
                         <label class="form-label">Delegates Already: <strong>{{nodeInfo.delegatesCount}}</strong></label> <br/>
                         <label class="form-label">Delegates SLOTS: <strong>{{nodeInfo.maximumAllowed.minus( nodeInfo.delegatesCount ) }}</strong></label> <br/>
-                        <label class="form-label">Delegates Fee: <strong>{{nodeInfo.delegatesFee.div( 65535 ).mul( 100 )}}%</strong></label> <br/>
+                        <label class="form-label">Delegates Fee: <strong>{{nodeInfo.delegatesFee.div( PandoraPay.config.stake.DELEGATING_STAKING_FEE_MAX_VALUE ).mul( 100 )}}%</strong></label> <br/>
                     </template>
 
                 </wizard>
@@ -43,6 +43,7 @@ import Modal from "src/components/utils/modal"
 import HttpHelper from "src/utils/http-helper"
 import Wizard from "src/components/utils/wizard"
 import WaitAddress from "src/components/wallet/account/wait-address";
+import Decimal from "decimal.js"
 
 export default {
 
@@ -62,6 +63,8 @@ export default {
     },
 
     computed:{
+        PandoraPay: () => PandoraPay,
+
         address(){
             return this.$store.state.wallet.addresses[this.publicKey];
         },
@@ -104,26 +107,42 @@ export default {
             return this.$refs.modal.closeModal();
         },
 
-        delegateNodeAddress(delegateNode){
-            return `${delegateNode.url.Scheme.replace("ws","http")}://${delegateNode.url.Host}`
+        delegateNodeAddress(delegateNodeIndex){
+            return this.delegatesNodes[delegateNodeIndex].url.replace("ws","http").replace("/ws", "")
         },
 
         async handleConnectNode(){
 
             this.nodeInfo = null;
+            let out
 
-            if (!this.selectedDelegateNode ) throw "You need to select a node"
+            if ( this.selectedDelegateNode === null ) throw "You need to select a node"
 
-            const out = await HttpHelper.get(this.delegateNodeAddress( this.selectedDelegateNode ) +'/delegator-node/info', {} );
-            if (!out) throw "Node is offline";
+            try{
+                out = await HttpHelper.get(this.delegateNodeAddress( this.selectedDelegateNode ) +'/ping' );
+            }catch(err){
+                throw "Node is offline";
+            }
 
-            if (typeof out.delegatesCount !== "number") throw "delegatesCount is missing"
-            if (typeof out.maximumAllowed !== "number") throw "maximumAllowed is missing"
+            if (!out || out.ping !== "pong") throw "Invalid ping answer"
+
+            try{
+                out = await HttpHelper.get(this.delegateNodeAddress( this.selectedDelegateNode ) +'/delegator-node/info' );
+            }catch(err){
+                throw "Node is not configured to receive delegates";
+            }
+
+            if (!out) throw "Node did not answer";
+
+            console.log(out)
+
+            if (!(out.delegatesCount instanceof Decimal) ) throw "delegatesCount is missing"
+            if (!(out.maximumAllowed instanceof Decimal) ) throw "maximumAllowed is missing"
             if (typeof out.challenge !== "string" || out.challenge.length !== 64) throw "challenge is missing"
-            if (typeof out.delegatesFee !== "number") throw "delegatesFee is missing"
-            if (out.delegatesFee > 65535) throw "delegatesFee exceeded 65535"
+            if (!(out.delegatesFee instanceof Decimal) ) throw "delegatesFee is missing"
+            if (out.delegatesFee.lt(0) || out.delegatesFee.gt(PandoraPay.config.stake.DELEGATING_STAKING_FEE_MAX_VALUE)) throw "delegatesFee exceeded 100000"
 
-            if (out.maximumAllowed <= out.delegatesCount) throw "Node is Full"
+            if (out.maximumAllowed.lte( out.delegatesCount) ) throw "Node is Full"
 
             this.nodeInfo = out;
 

@@ -25,7 +25,11 @@
 
                     <div class="row pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Hash</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{blk.bloom.hash}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">
+                            <router-link :to="`/explorer/block/${blk.bloom.hash}`">
+                                {{blk.bloom.hash}}
+                            </router-link>
+                        </span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Kernel Hash</span>
@@ -46,10 +50,14 @@
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Height</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{blk.height}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">
+                            <router-link :to="`/explorer/block/${blk.height}`">
+                                {{blk.height}}
+                            </router-link>
+                        </span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
-                        <span class="col-5 col-sm-3 text-truncate">Number of Transactions</span>
+                        <span class="col-5 col-sm-3 text-truncate">Transactions</span>
                         <span class="col-7 col-sm-9 text-truncate">{{blk.txs.length}}</span>
                     </div>
                     <div class="row pt-2 pb-2">
@@ -187,7 +195,7 @@ export default {
 
                 this.loaded = false
                 this.error = '';
-                this.reward = ''
+                this.reward = new Decimal(0)
 
                 if (!this.height && !this.hash) throw 'Block index was not specified';
 
@@ -198,7 +206,8 @@ export default {
 
                 if (this.blk){
                     this.$store.commit('setViewBlockHash', this.blk.bloom.hash )
-                    this.reward = await PandoraPay.config.reward.getRewardAt( this.blk.height.toString() )
+                    const reward = await PandoraPay.config.reward.getRewardAt( this.blk.height.toString() )
+                    this.reward = new Decimal(reward)
                 }
 
             }catch(err){
@@ -221,7 +230,7 @@ export default {
         return this.loadBlock();
     },
 
-    beforeDestroy(){
+    beforeUnmount(){
         this.$store.commit('setViewBlockHash', null )
     }
 

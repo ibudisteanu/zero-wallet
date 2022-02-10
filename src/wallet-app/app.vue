@@ -19,10 +19,11 @@
 import AlertBox from "src/components/utils/alert-box"
 import consts from "consts/consts"
 import LoadingSpinner from "src/components/utils/loading-spinner";
+import { RouterView } from 'vue-router';
 
 export default {
 
-    components: {  AlertBox, LoadingSpinner },
+    components: {  AlertBox, LoadingSpinner, RouterView },
 
     data(){
         return {
@@ -162,7 +163,7 @@ export default {
 
             const loaded = this.$store.state.wallet.loaded
 
-            const route = this.$router.currentRoute.path;
+            const route = this.$router.currentRoute.path || '';
             if (!loaded && route.indexOf('/login') === -1 ){
 
                 //TODO allow some functionalities even if the wallet was not
@@ -220,7 +221,7 @@ export default {
                         txsInfoRemoved.push(tx)
 
                 if (txsRemoved.length) this.$store.commit('deleteTransactions', txsRemoved )
-                if (txsPreviewRemoved.length) this.$store.commit('deleteTransactionsPreview', txsRemoved )
+                if (txsPreviewRemoved.length) this.$store.commit('deleteTransactionsPreview', txsPreviewRemoved )
                 if (txsInfoRemoved.length) this.$store.commit('deleteTransactionsInfo', txsInfoRemoved )
 
                 if (blocksRemoved.length) this.$store.commit('deleteBlocks', blocksRemoved )

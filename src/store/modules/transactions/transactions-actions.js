@@ -58,7 +58,9 @@ export default {
         return Promise.all(promises)
     },
 
-    async includeTx( {state, dispatch, commit, getters}, {tx, info, mempool} ){
+    async includeTx( {state, dispatch, commit, getters}, {tx, serialized, info, mempool} ){
+
+        tx._serialized = serialized
 
         if (info) tx.__height = info.height
         else {
@@ -67,10 +69,10 @@ export default {
         }
         dispatch('storeTransactionInfo', { hash: tx.hash, txInfo:  info  })
 
-        if (tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE)
+        if (tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE ))
             await dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX )
 
-        if (tx.version === PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER)
+        if (tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER) )
             await Promise.all( tx.payloads.map( payload => dispatch('getAssetByHash', payload.asset ) ) )
 
         commit("setTransactions", { txs: [tx] } )
@@ -113,7 +115,6 @@ export default {
     },
 
     txNotification({state, dispatch, commit}, { txHash, extraInfo }) {
-        console.log("txNotification FIRED!!!", txHash, extraInfo)
         dispatch('txPreviewNotification', { txHash, extraInfo } )
         dispatch('txInfoNotification', { txHash, extraInfo } )
         commit('updateTxNotification', { txHash, extraInfo })

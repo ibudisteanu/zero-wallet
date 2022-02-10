@@ -4,10 +4,10 @@
 
             <div class="input">
                 <account-identicon :publicKey="tx.vin.publicKey" size="21" outer-size="7" />
-                <amount :value="vinAmount" :sign="false" />
+                <amount :value="vinSimpleAmount" :sign="false" />
             </div>
 
-            <template v-if="tx.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_CLAIM)">
+            <template v-if="tx.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE)">
                 <div class="output" v-for="(out, index) in tx.output"
                      :key="`show-transaction-vout-${index}`">
                     <account-identicon :publicKey="out.publicKey" size="21" outer-size="7" />
@@ -34,6 +34,7 @@
 <script>
 import AccountIdenticon from "../../wallet/account/account-identicon";
 import Amount from "../../wallet/amount";
+import Decimal from "decimal.js";
 
 export default {
 
@@ -47,14 +48,16 @@ export default {
     computed:{
         PandoraPay: () => PandoraPay,
 
-        vinAmount(){
+        vinSimpleAmount(){
 
-            if (this.tx.version !== PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) return
-            let out = this.tx.fee
+            if (!this.tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ) return
+            let out = new Decimal(0)
 
-            if (this.tx.txScript === PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_CLAIM)
-                for (const it of this.tx.output)
-                    out += it.amount
+            if (this.tx.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE) )
+                out = out.plus(this.tx.extra.amount)
+
+            if (this.tx.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE) )
+                out = out.plus(this.tx.extra.delegatedStakingClaimAmount)
 
             return out
         }
@@ -67,6 +70,6 @@ export default {
 <style scoped>
     .input, .output{
         display: inline-block;
-        padding-right: 5px;
+        padding-right: 1px;
     }
 </style>

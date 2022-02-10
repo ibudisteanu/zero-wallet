@@ -1,11 +1,10 @@
-import Vue from "vue";
 import consts from "consts/consts";
 import Decimal from "decimal.js"
 
 export default {
 
     setAccountTxsViewPosition(state, {publicKey, data } ){
-        Vue.set( state.viewTxsPositions, publicKey,  data  )
+        state.viewTxsPositions [ publicKey ] = data
     },
 
     setAccountTxs(state, {publicKey, starting, accountTxs }){
@@ -28,10 +27,10 @@ export default {
             obj.next = new Decimal(0)
         }
 
-        Vue.set(state.list, publicKey, obj );
+        state.list[publicKey] = obj
     },
 
-    addAccountTxUpdateNotification(state, {publicKey, txHash, extraInfo }){
+    addAccountTxUpdateNotification(state, { publicKey, txHash, extraInfo }){
 
         if (!extraInfo.blockchain) return
 
@@ -45,6 +44,10 @@ export default {
             obj.count = obj.count.minus(1)
             delete obj.hashes[ extraInfo.blockchain.txsCount ]
         } else {
+            for (const key in obj.hashes)
+                if (obj.hashes[key] === txHash)
+                    return  //already processed
+
             obj.count = obj.count.plus(1)
             obj.hashes[ extraInfo.blockchain.txsCount ] = txHash
         }
@@ -72,7 +75,7 @@ export default {
             }
         }
 
-        Vue.set(state.list, publicKey, obj );
+        state.list[publicKey] = obj
     }
 
 }

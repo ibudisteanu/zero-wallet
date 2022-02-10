@@ -33,7 +33,7 @@
                             View Registration Public Key
                         </div>
                         <div v-else>
-                            Registration Key: {{address.registration}}
+                            Registration Public Key: {{address.registration}}
                             <i class="fas fa-copy pointer  d-inline-block" v-tooltip.bottom="'Copy Registration'"  @click="handleCopyAddress(address.registration)" />
                         </div>
                     </div>
@@ -42,23 +42,28 @@
 
                 <div class="card-body bg-light">
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="handleExportAddress" v-tooltip.bottom="'Export Account'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleExportAddress" v-tooltip.bottom="'Export Account'" >
                         <i class="fas fa-download"></i>
                     </button>
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="handleDeleteAddress" v-tooltip.bottom="'Delete Account'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleDeleteAddress" v-tooltip.bottom="'Delete Account'" >
                         <i class="danger fas fa-times"></i>
                     </button>
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="handleShowPrivateKey" v-tooltip.bottom="'View Private Key'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowPrivateKey" v-tooltip.bottom="'View Private Key'" >
                         <i class="fas fa-eye"></i>
+                    </button>
+
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleRenameAddressName" v-tooltip.bottom="'Rename Address Tag'" >
+                        <i class="fas fa-edit"></i>
                     </button>
 
                 </div>
             </div>
 
-            <account-private-key-modal ref="refAccountPrivateKeyModal" :address="address"/>
-            <account-delete-modal ref="refAccountDeleteModal" :address="address"/>
+            <account-private-key-modal ref="refAccountPrivateKeyModal"/>
+            <account-delete-modal ref="refAccountDeleteModal" />
+            <account-rename-modal ref="refAccountRenameModal" />
 
         </wait-address>
 
@@ -72,6 +77,7 @@ import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import FileSaver from 'file-saver'
 import consts from 'consts/consts';
 import AccountPrivateKeyModal from "src/components/wallet/account/account-private-key.modal"
+import AccountRenameModal from "src/components/wallet/account/account-rename.modal"
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title";
 import Account from "src/components/wallet/account/account"
@@ -80,7 +86,7 @@ import WaitAddress from "../../components/wallet/account/wait-address";
 
 export default {
 
-    components: {WaitAddress, AccountIdenticon, AccountPrivateKeyModal, Layout, Account, LayoutTitle, AccountDeleteModal},
+    components: {WaitAddress, AccountIdenticon, AccountPrivateKeyModal, AccountRenameModal, Layout, Account, LayoutTitle, AccountDeleteModal},
 
     data(){
         return {
@@ -135,6 +141,10 @@ export default {
             return this.$refs.refAccountDeleteModal.showModal(this.address)
         },
 
+        handleRenameAddressName(){
+            return this.$refs.refAccountRenameModal.showModal(this.address)
+        },
+
         handleCopyAddress(key){
 
             this.$copyText(key).then(
@@ -150,7 +160,7 @@ export default {
                 })
             )
 
-        }
+        },
 
     },
 

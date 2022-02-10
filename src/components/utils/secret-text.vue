@@ -3,7 +3,7 @@
         <div :class="`fs-0 fw-bold alert alert-primary`" >
             <div :class="`${visible ? '' : 'noselect blurry-text' }  text-break`">
                 {{text}}
-                <i :class="`fas fa-copy ${visible ? 'pointer' :''}`" v-tooltip.bottom="visible ? `Copy ${title}` : ''"  @click="visible ? copySecret : null"/>
+                <i :class="`fas fa-copy ${visible ? 'pointer' :''}`" v-tooltip.bottom="visible ? `Copy ${title}` : ''"  @click="visible ? copySecret() : null"/>
             </div>
             <div v-show="!visible" class="position-absolute top-50 start-50 translate-middle pointer" @click="visible = true"  v-tooltip.bottom="'Show the secret!'">
                 <i class="fas fa-eye fs-3"></i> Show
@@ -11,7 +11,7 @@
         </div>
         <alert-box type="warning" >
             <h5 class="alert-heading fw-semi-bold">WARNING!</h5>
-            DO NOT share this text with anyone! This text  can be used to <strong>{{warning}}</strong>
+            <slot name="warning"/>
         </alert-box>
     </div>
 </template>
@@ -31,7 +31,6 @@ export default {
     props:{
         text: {default: ''},
         title: {default: ''},
-        warning: {default: 'STEAL ALL YOUR ACCOUNTS.'},
     },
 
     methods:{

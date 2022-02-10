@@ -10,11 +10,11 @@
             <wait-account :account="account">
                 <balances :publicKey="publicKey" />
                 <pending-transactions-preview :publicKey="publicKey" />
-                <transactions-preview :publicKey="publicKey" :page="page" />
+                <transactions-preview :public-key="publicKey" :page="page" />
             </wait-account>
 
             <template v-if="!isFound">
-                <pending-transactions-preview :publicKey="publicKey" />
+                <pending-transactions-preview :public-key="publicKey" />
             </template>
 
         </wait-address>
@@ -117,7 +117,7 @@ export default {
 
     watch: {
         $route (to, from) {
-          if (to === from) return
+            if (to === from) return
             return this.loadAddress();
         },
         async mainPublicKey (to, from){
@@ -145,7 +145,7 @@ export default {
         return this.loadAddress();
     },
 
-    async beforeDestroy() {
+    async beforeUnmount() {
         if (this.publicKey && !this.$store.getters.walletContains(this.publicKey))
             await this.$store.dispatch('unsubscribeAccount', this.publicKey )
     }

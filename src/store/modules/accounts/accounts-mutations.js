@@ -1,9 +1,6 @@
-import Vue from "vue";
-
 export default {
 
     setAccount(state, {publicKey, account  }){
-
         if (account){
             if (account.accountsExtra)
                 for (let i=0; i < account.accountsExtra.length; i++) {
@@ -11,23 +8,23 @@ export default {
                     account.accounts[i].index = account.accountsExtra[i].index
                 }
 
-            if (account.plainAccount)
+            if (account.plainAccountExtra)
                 account.plainAccount.index = account.plainAccountExtra.index
 
-            if (account.registration)
+            if (account.registrationExtra)
                 account.registration.index = account.registrationExtra.index
         }
 
-        Vue.set(state.list, publicKey, account ? {...account} : null );
+        state.list[publicKey] = account ? {...account} : null
     },
 
     removeAccount(state, { publicKey }){
-        Vue.delete(state.list, publicKey );
+        delete state.list[ publicKey] ;
     },
 
     setSubscribedAccountStatus(state, {publicKey,status} ){
-        if (status) Vue.set(state.subscribed, publicKey, true)
-        else Vue.delete(state.subscribed, publicKey)
+        if (status) state.subscribed[publicKey] = true
+        else delete state.subscribed[publicKey]
     },
 
 }

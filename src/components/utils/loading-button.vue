@@ -5,9 +5,9 @@
             <loading-spinner v-if="!loaded" />
         </template>
         <template v-else>
-            <i v-if="icon && iconLeft" :class="icon" />
+            <i v-if="icon && iconLeft" :class="`pe-1 ${icon}`" />
             <span class="hidden-xs">{{text}}</span>
-            <i v-if="icon && !iconLeft" :class="icon" />
+            <i v-if="icon && !iconLeft" :class="`ps-1 ${icon}`" />
         </template>
 
     </button>

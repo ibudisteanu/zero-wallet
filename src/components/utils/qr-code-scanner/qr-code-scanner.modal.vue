@@ -1,18 +1,23 @@
 <template>
 
-    <modal ref="modal" title="Scan QR Code" >
+    <modal ref="modal" title="Scan QR Code" content-class="">
 
-        <template slot="body">
+        <template v-slot:body>
             <alert-box v-if="error" type="error">{{error}}</alert-box>
-            <template v-else>
-                <qrcode-stream class="qrcodeStream" @decode="onDecode" @init="onInit" />
-            </template>
+            <div class="pt-4 text-center" v-if="!loaded">
+                <loading-spinner class="fs-6"/>
+            </div>
+            <video ref="refVideoElem"></video>
         </template>
 
-        <template slot="footer">
-            <button class="btn btn-falcon-secondary" type="button" @click="closeModal">
-                <i class="fas fa-ban"></i> Cancel
-            </button>
+        <template v-slot:footer>
+            <select class="form-select camera-select" v-model="cameraSelected" @change="handleSelectCamera(this.cameraSelected)" >
+                <option v-for="(camera, id) in cameraList"
+                        :key="`camera-${id}`"
+                        :value="id">
+                    {{camera.label ? camera.label : '#'+id}}
+                </option>
+            </select>
         </template>
 
     </modal>
@@ -22,24 +27,22 @@
 <script>
 
 import Modal from "src/components/utils/modal"
-import Vue from 'vue'
 import AlertBox from "src/components/utils/alert-box"
-
-let VueQrcodeReader = undefined;
-if (typeof window !== "undefined") {
-    VueQrcodeReader = require("vue-qrcode-reader/src/index");
-    Vue.use(VueQrcodeReader);
-    VueQrcodeReader = VueQrcodeReader.QrcodeStream;
-}
+import QrScanner from 'qr-scanner';
+import LoadingSpinner from "../../utils/loading-spinner";
 
 export default {
 
-    components: { Modal, VueQrcodeReader, AlertBox },
+    components: { Modal, LoadingSpinner, AlertBox },
 
     data(){
         return {
             decoded: "",
             error: '',
+            qrScanner: null,
+            cameraSelected: 0,
+            cameraList: [],
+            loaded: false,
         }
     },
 
@@ -48,37 +51,56 @@ export default {
         async showModal(){
 
             Object.assign(this.$data, this.$options.data());
-            await this.$refs.modal.showModal();
+
+            const promise = this.$refs.modal.showModal();
+
+            if (! (await QrScanner.hasCamera()) ) this.error = "No camera detected"
+
+            this.cameraList = await QrScanner.listCameras(true)
+
+            if (this.error === ""){
+                this.qrScanner = new QrScanner( this.$refs.refVideoElem, result => {
+                    if (result){
+                        this.decoded = result
+                        this.closeModal()
+                    }
+                });
+
+                await this.qrScanner.setInversionMode('both');
+
+                if (this.cameraList.length) {
+                    const lastCamera = localStorage.getItem('qrcamera')
+                    if (lastCamera)
+                        this.cameraList.forEach((camera, i) => camera.id === lastCamera ? this.cameraSelected = i : null )
+                    await this.qrScanner.setCamera(this.cameraList[this.cameraSelected].id)
+                }
+
+                await this.qrScanner.start();
+            }
+
+            this.loaded = true
+
+            await promise
+
+            if (this.qrScanner) {
+                await this.qrScanner.stop()
+                this.qrScanner.destroy();
+            }
+
 
             return this.decoded;
+        },
+
+        async handleSelectCamera(cameraSelected){
+            if (this.qrScanner) {
+                localStorage.setItem('qrcamera', this.cameraList[cameraSelected].id)
+                await this.qrScanner.setCamera(this.cameraList[cameraSelected].id)
+            }
         },
 
         closeModal(){
             return this.$refs.modal.closeModal();
         },
-
-        onDecode (decodedString) {
-            if (decodedString !== ""){
-                this.decoded = decodedString
-                this.closeModal()
-            }
-        },
-
-        async onInit (promise) {
-
-            try {
-                await promise;
-                this.error = '';
-            } catch (error) {
-                if (error.name === 'NotAllowedError') this.error = "ERROR: you need to grant camera access permission";
-                else if (error.name === 'NotFoundError') this.error = "ERROR: no camera on this device";
-                else if (error.name === 'NotSupportedError') this.error = "ERROR: secure context required (HTTPS, localhost)";
-                else if (error.name === 'NotReadableError') this.error = "ERROR: is the camera already in use?";
-                else if (error.name === 'OverconstrainedError') this.error = "ERROR: installed cameras are not suitable";
-                else if (error.name === 'StreamApiNotSupportedError') this.error = "ERROR: Stream API is not supported in this browser";
-            }
-
-        }
 
     },
 
@@ -87,4 +109,15 @@ export default {
 </script>
 
 <style scoped>
+
+video{
+    width: 100%;
+    max-height: 420px;
+}
+
+.camera-select{
+    max-width: 300px
+}
+
+
 </style>

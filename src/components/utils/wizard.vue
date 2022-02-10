@@ -1,5 +1,5 @@
 <template>
-    <div class="theme-wizard">
+    <div class="theme-wizard" ref="wizard">
         <div class="card-header bg-light pt-2 pb-2">
             <ul class="nav justify-content-between nav-wizard">
                 <li v-for="(titleIndex, index ) in titlesSorted"  class="nav-item"
@@ -61,6 +61,7 @@ export default {
         titles: {default: () => []}, //{icon, name}
         controlsClassName: {default: ""},
         buttons: {default: () => ({}) }, //{icon, text}
+        allowScroll: {default: true },
     },
 
     computed:{
@@ -97,6 +98,9 @@ export default {
                 })
 
                 await promise
+
+                if (this.allowScroll)
+                    this.$refs.wizard.scrollIntoView({behavior: "smooth"})
 
                 this.tab = value
             } catch (err) {

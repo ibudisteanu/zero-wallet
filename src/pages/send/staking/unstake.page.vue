@@ -7,7 +7,7 @@
         <simple-tx :titles-offset="{ '-1': {icon: 'fas fa-edit', name: 'Amount', tooltip: 'Unstaking amount' } }"
                 @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey" :before-process="handleBeforeProcess">
 
-            <template slot="tab_-1">
+            <template v-slot:tab_-1>
                 <tx-amount :balances="balancesStakeAvailable" @changed="amountChanged" text="Amount to unstake" :validate-amount="true" />
             </template>
 
@@ -78,7 +78,7 @@ export default {
             data.extra = {
                 amount: this.unstakeAmount.amount
             }
-            data.txScript = PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE
+            data.txScript = new Decimal(PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE)
 
         }
 

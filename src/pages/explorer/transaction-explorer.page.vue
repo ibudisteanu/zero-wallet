@@ -176,7 +176,7 @@ export default {
         return this.loadTransaction();
     },
 
-    beforeDestroy() {
+    beforeUnmount() {
         if (this.tx) return this.removed()
     },
 

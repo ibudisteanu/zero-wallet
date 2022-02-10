@@ -2,8 +2,12 @@
 
     <modal ref="modal" title="Wallet Seed" >
 
-        <template slot="body">
-            <secret-text v-if="seed" :text="seed" title="Seed"  />
+        <template v-slot:body>
+            <secret-text v-if="seed" :text="seed" title="Seed">
+                <template v-slot:warning>
+                    DO NOT share these secret words with anyone! These secret words can be used to <strong>STEAL ALL YOUR FUNDS FROM THIS WALLET</strong>
+                </template>
+            </secret-text>
         </template>
 
     </modal>

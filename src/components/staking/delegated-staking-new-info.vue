@@ -27,8 +27,8 @@
             <div class="form pt-2">
                 <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Fee:</label>
                 <i class="fas fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
-                <input class="form-control" type="number" v-model.number="delegatedStakingNewFee" min="0" max="65535" >
-                <label>in Percentage: {{delegatedStakingNewFee/65535*100}}%</label>
+                <input class="form-control" type="number" v-model.number="delegatedStakingNewFee" min="0" :max="PandoraPay.config.stake.DELEGATING_STAKING_FEE_MAX_VALUE" >
+                <label>in Percentage: {{delegatedStakingNewFeePercentage}}%</label>
             </div>
         </div>
 
@@ -49,7 +49,7 @@ export default {
         return {
             hasNewDelegatedInfo: false,
             delegatedStakingNewPublicKey: "",
-            delegatedStakingNewFee: new Decimal(0),
+            delegatedStakingNewFee: 0,
         }
     },
 
@@ -58,6 +58,8 @@ export default {
     },
 
     computed:{
+        PandoraPay: () => PandoraPay,
+
         address(){
             return this.$store.state.wallet.addresses[this.publicKey]
         },
@@ -77,39 +79,9 @@ export default {
 
             return null
         },
-    },
-
-    watch: {
-        hasNewDelegatedInfo:{
-            immediate: true,
-            handler: function  (to, from) {
-                const obj = { hasNewDelegatedInfo: to }
-                if (!to){
-                    obj.delegatedStakingNewPublicKey = ""
-                    obj.delegatedStakingNewFee = 0
-                    obj.validationDelegatedStakingNewPublicKey = ""
-                }
-                this.$emit('onChanges', obj )
-            }
-        },
-        delegatedStakingNewPublicKey:{
-            immediate: true,
-            handler: function (to, from) {
-                this.$emit('onChanges', { delegatedStakingNewPublicKey: to })
-            }
-        },
-        delegatedStakingNewFee:{
-            immediate: true,
-            handler: function (to, from) {
-                this.$emit('onChanges', { delegatedStakingNewFee: to })
-            }
-        },
-        validationDelegatedStakingNewPublicKey:{
-            immediate: true,
-            handler: function (to, from) {
-                this.$emit('onChanges', { validationDelegatedStakingNewPublicKey: to })
-            }
-        },
+        delegatedStakingNewFeePercentage(){
+            return new Decimal(this.delegatedStakingNewFee).mul(100).div(PandoraPay.config.stake.DELEGATING_STAKING_FEE_MAX_VALUE ).toDecimalPlaces(3)
+        }
     },
 
     methods:{
@@ -138,13 +110,21 @@ export default {
                 if (output){
                     this.hasNewDelegatedInfo = true
                     this.delegatedStakingNewPublicKey = output.delegateStakingPublicKey
-                    this.delegatedStakingNewFee = output.delegatesFee
+                    this.delegatedStakingNewFee = output.delegatesStakingFee
                 }
             }finally{
                 resolver(true)
             }
         },
 
+        getData(){
+            return {
+                hasNewDelegatedInfo: this.hasNewDelegatedInfo,
+                delegatedStakingNewPublicKey: this.hasNewDelegatedInfo ? this.delegatedStakingNewPublicKey : "",
+                delegatedStakingNewFee: this.hasNewDelegatedInfo ? this.delegatedStakingNewFee : new Decimal(0),
+                validationDelegatedStakingNewPublicKey: this.hasNewDelegatedInfo ? this.validationDelegatedStakingNewPublicKey : "",
+            }
+        }
     }
 
 }

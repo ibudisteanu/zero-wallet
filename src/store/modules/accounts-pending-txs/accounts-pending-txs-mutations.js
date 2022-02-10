@@ -1,9 +1,7 @@
-import Vue from "vue";
-
 export default {
 
     setPendingList(state, {publicKey, map }){
-        Vue.set(state.list, publicKey, map )
+        state.list[ publicKey ] = map
     },
 
     updatePendingList(state, {publicKey, txHash, inserted }){
@@ -14,7 +12,7 @@ export default {
         else
             map[txHash] = true
 
-        Vue.set(state.list, publicKey, map)
+        state.list[publicKey] = map
     },
 
 }

@@ -1,5 +1,3 @@
-import Vue from 'vue';
-
 export default {
 
     deleteBlocks(state, blocks ){
@@ -19,8 +17,8 @@ export default {
         if (!block) return console.error("Block was not found")
 
         block.__timestampUsed = new Date().getTime()
-        Vue.set(state.blocksByHeight, block.height, block);
-        Vue.set(state.blocksByHash, block.bloom.hash, block );
+        state.blocksByHeight[ block.height ] = block;
+        state.blocksByHash[ block.bloom.hash ] = block;
     },
 
     setViewBlockHash(state, hash){

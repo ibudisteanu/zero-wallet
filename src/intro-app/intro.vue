@@ -11,10 +11,12 @@
                     <polygon class="triangle" fill="none" stroke="#fff" stroke-width="1" points="16,1 32,32 1,32" />
                 </svg>
 
+                <h1>{{name.toUpperCase()}}</h1>
+
                 <div class="loading-text-div">
                     <alert-box v-if="error" type="error">{{error}}</alert-box>
                     <span v-else class="loading-text">
-                        <i v-if="isDownloading" class="fas fa-sync fa-spin"></i>
+                        <i v-if="isDownloading" class="fas fa-spinner fa-spin"></i>
                         {{progressStatus}}
                     </span>
                 </div>
@@ -40,6 +42,12 @@ export default {
             progressStatus: "Initialized",
             isDownloading: false,
             error: "",
+        }
+    },
+
+    computed:{
+        name(){
+            return consts.name
         }
     },
 
@@ -132,8 +140,6 @@ export default {
 
             })
 
-            this.isDownloading = false;
-
             this.progressStatus = "WASM serializing...";
             const data = await r.arrayBuffer()
             this.progressStatus = "PandoraPay WASM instantiating...";
@@ -154,6 +160,12 @@ export default {
 </script>
 
 <style scoped>
+
+    h1{
+        font-size: 30px;
+        padding-top:20px;
+        color: #16b6dc;
+    }
 
     .logo{
         max-width: 60px;

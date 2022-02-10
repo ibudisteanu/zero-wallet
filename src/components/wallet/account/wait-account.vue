@@ -5,7 +5,12 @@
             Address was not found on the blockchain or is empty!
         </alert-box>
         <template v-else-if="account">
-            <slot></slot>
+            <alert-box v-if="hasBalanceAvailable" type="warning">
+                {{hasBalanceAvailable}}
+            </alert-box>
+            <template v-else>
+                <slot></slot>
+            </template>
         </template>
         <div class="py-3 text-center" v-else>
             <loading-spinner class="fs-3" />
@@ -24,6 +29,7 @@ export default {
 
     props: {
         account: {default: undefined},
+        type: {default: "all"}, //all,transparent,zether
     },
 
     computed:{
@@ -32,6 +38,17 @@ export default {
         },
         isFound(){
             return this.account !== null
+        },
+        hasBalanceAvailable(){
+            if (this.type === "all")
+                if (!this.account) return "This feature requires any kind of funds."
+
+            if (this.type === "transparent")
+                if (!this.account || !this.account.plainAccount) return "This feature requires public funds."
+
+            if (this.type === "zether")
+                if (!this.account || !this.account.accounts) return "This feature requires private funds."
+
         },
     }
 }

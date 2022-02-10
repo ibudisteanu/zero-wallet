@@ -1,9 +1,7 @@
-import Vue from "vue";
-
 export default {
 
     setTransactionInfo(context, {hash, txInfo} ){
-        Vue.set(context.txsByHash, hash, txInfo)
+        context.txsByHash[ hash ] = txInfo
     },
 
     deleteTransactionsInfo(state, transactions ){
@@ -35,18 +33,24 @@ export default {
 
         } else if (extraInfo.mempool) {
 
-            delete txInfo.blkHeight
-            delete txInfo.timestamp
-            delete txInfo.height
-
-            if (extraInfo.mempool.inserted)
+            if (extraInfo.mempool.inserted) {
+                delete txInfo.blkHeight
+                delete txInfo.timestamp
+                delete txInfo.height
                 txInfo.mempool = true
-            else
+            }
+            else {
                 delete txInfo.mempool
+                if (!extraInfo.mempool.included) {
+                    delete txInfo.blkHeight
+                    delete txInfo.timestamp
+                    delete txInfo.height
+                }
+            }
 
         }
 
-        Vue.set(state.txsByHash, txHash, txInfo );
+        state.txsByHash[ txHash ] = txInfo;
     },
 
 }

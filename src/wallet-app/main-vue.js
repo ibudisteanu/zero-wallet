@@ -1,33 +1,33 @@
 // Import Vue
-import Vue from 'vue';
+import * as Vue from 'vue'
 import App from './app';
 import store from "../store/store";
 import router from "../router/router.index"
 
 import VueClipboard from 'vue-clipboard2'
-import VTooltip from 'v-tooltip/src/index'
-import AsyncComputed from 'vue-async-computed'
-
-Vue.use(VTooltip);
-Vue.use(VueClipboard);
-Vue.use(AsyncComputed)
+import VueTooltip from "v-tooltip"
+import VueTooltipCss from "v-tooltip/dist/v-tooltip.css"
 
 export default (params) => {
 
-    const app = new Vue({
-        el: '#wallet',
-        store,
-        router,
-        render: (createElement) => {
+    const app = Vue.createApp({
+        render () {
 
-            return createElement(App, {
+            return Vue.h(App, {
                 props: {
                     startAutomatically: params.startAutomatically,
                 }
             });
 
         }
-    }).$mount('#wallet');
+    });
+
+    app.use(store);
+    app.use(router);
+    app.use(VueClipboard);
+    app.use(VueTooltip)
+
+    app.mount('#wallet')
 
     window.PandoraPayWalletApp = app;
 

@@ -6,13 +6,13 @@
         <simple-tx :titles-offset="{ '-1': {icon: 'fas fa-edit', name: 'Update Delegation', tooltip: 'Change delegation info' } }"
                    @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey" :before-process="handleBeforeProcess">
 
-            <template slot="tab_-1">
+            <template v-slot:tab_-1>
 
                 <div class="form pb-2">
                     <tx-amount :validate-amount="true" :allow-zero="true" :balances="balancesOnlyUnclaimed" @changed="delegatedStakingClaimAmountChanged" text="Update Staking" tooltip="Claim unclaimed funds to staking amount." />
                 </div>
 
-                <delegated-staking-new-info :public-key="publicKey" @onChanges="delegatedStakingNewInfoChanges" />
+                <delegated-staking-new-info :public-key="publicKey" ref="refDelegatedStakingNewInfo" />
 
             </template>
 
@@ -71,6 +71,8 @@ export default {
 
                 if (oldTab === -1 && value > oldTab){
                     if (this.delegatedStakingClaimAmount.validationError) throw this.delegatedStakingClaimAmount.validationError
+
+                    this.delegatedStakingNewInfo = this.$refs.refDelegatedStakingNewInfo.getData()
                     if (this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey) throw this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey
 
                     if (this.delegatedStakingClaimAmount.amount === 0 && !this.delegatedStakingNewInfo.hasNewDelegatedInfo) throw "You should update something."
@@ -87,13 +89,6 @@ export default {
             this.delegatedStakingClaimAmount = {...this.delegatedStakingClaimAmount, ...data}
         },
 
-        delegatedStakingNewInfoChanges(data){
-            this.delegatedStakingNewInfo = {
-                ...this.delegatedStakingNewInfo,
-                ...data
-            }
-        },
-
         async handleBeforeProcess(password, data){
 
             data.extra = {
@@ -104,7 +99,7 @@ export default {
                     delegatedStakingNewFee: this.delegatedStakingNewInfo.delegatedStakingNewFee,
                 }
             }
-            data.txScript = PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE
+            data.txScript = new Decimal(PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE)
         }
 
     },

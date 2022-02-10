@@ -1,5 +1,5 @@
 <template>
-    <wait-account :account="account">
+    <wait-account :account="account" :type="initAvailableBalance ? 'all' : 'zether'">
 
         <wizard :titles="{...titlesOffset,
             0: {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
@@ -9,13 +9,11 @@
             4: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' } }"
                 @onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card" >
 
-            <template v-for="(_, index) in titlesOffset">
-                <template :slot="`tab_${index}`">
-                    <slot :name="`tab_${index}`"></slot>
-                </template>
+            <template v-for="(_, index) in titlesOffset" v-slot:[getTabSlotName(index)]>
+                <slot :name="`tab_${index}`"></slot>
             </template>
 
-            <template :slot="`tab_0`">
+            <template v-slot:tab_0>
                 <div class="form" v-if="allowDestinationRandom">
                     <input class="form-check-input" id="random-destination" type="checkbox"  name="checkbox" v-model="randomDestination">
                     <label class="form-check-label" for="random-destination">Random Destination with Zero amount</label>
@@ -26,17 +24,17 @@
                 </template>
             </template>
 
-            <template :slot="`tab_1`">
+            <template v-slot:tab_1>
                 <extra-data :destinations="destination ? [destination] : null" :paymentID="identifiedPaymentID" @changed="changedExtraData" />
             </template>
 
-            <template :slot="`tab_2`">
+            <template v-slot:tab_2>
 
                 <div class="row">
                     <div class="col-12 col-md-6">
                         <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Size</label>
                         <i class="fas fa-question " v-tooltip.bottom="`Bigger the ring, more private is your transaction.`" />
-                        <select class="form-select" v-model="ringSize">
+                        <select class="form-select" v-model.number="ringSize">
                             <option :value="2">2</option>
                             <option :value="4">4</option>
                             <option :value="8">8</option>
@@ -51,7 +49,7 @@
                     <div class="col-12 col-md-6">
                         <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring New Addresses</label>
                         <i class="fas fa-question " v-tooltip.bottom="`Number of new addresses in the ring. Makes new destinations more private.`" />
-                        <input class="form-control"  type="number" v-model="ringNewAddresses" />
+                        <input class="form-control"  type="number" v-model.number="ringNewAddresses" />
                     </div>
                 </div>
 
@@ -72,7 +70,7 @@
 
             </template>
 
-            <template :slot="`tab_3`">
+            <template v-slot:tab_3>
                 <tx-fee :balances="availableBalances" :asset="asset" :allow-zero="true" @changed="changedFee" />
 
                 <template v-if="asset.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX">
@@ -91,16 +89,27 @@
 
             </template>
 
-            <template :slot="`tab_4`">
+            <template v-slot:tab_4>
                 <confirm-broadcasting-tx v-if="tx" class="my-3 fs--1" :tx="tx" />
             </template>
 
-            <template slot="wizard-footer">
+            <template #wizard-footer>
                 <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
-                <template v-if="status">
-                    <span class="d-block">Transaction is being created. It will take 1-2 minutes.</span>
-                    <label class="d-block">Status: {{status}}</label>
-                </template>
+
+                <div class="alert alert-info" v-if="status && statusType === 'signing'" role="alert">
+                    <h4 class="alert-heading fw-semi-bold">Signing Tx...</h4>
+                    <p>Transaction is being created. It will take 1-2 minutes.</p>
+                    <hr>
+                    <p class="mb-0">Status: {{status}}</p>
+                </div>
+
+                <div class="alert alert-info" v-if="status && statusType === 'broadcasting'" role="alert">
+                    <h4 class="alert-heading fw-semi-bold">Broadcasting Tx...</h4>
+                    <p>Your Tx is being broadcasting. It should take 20 seconds max.</p>
+                    <hr>
+                    <p class="mb-0">Status: {{status}}</p>
+                </div>
+
             </template>
 
         </wizard>
@@ -164,7 +173,7 @@ export default {
             },
 
             ringSize: 32,
-            ringNewAddresses: 2,
+            ringNewAddresses: 0,
             ringMembers: [],
 
             tx: null,
@@ -172,6 +181,7 @@ export default {
 
             status: '',
             error: '',
+            statusType: ""
         }
     },
 
@@ -268,9 +278,15 @@ export default {
 
     methods:{
 
+        getTabSlotName(index){
+            return `tab_${index}`
+        },
+
         async setTab({resolve, reject, oldTab, value}){
 
             try{
+
+                this.status = ""
 
                 if (oldTab === 0 && value > oldTab){
                     if (this.asset.validationError) throw this.asset.validationError
@@ -290,6 +306,9 @@ export default {
                 }else if (oldTab === 1 && value > oldTab) {
                     if (this.extraData.validationError) throw this.extraData.validationError
                 }else if (oldTab === 2 && value > oldTab) {
+                    if (!this.ringMembers.length)
+                        await this.handleGenerateRing()
+
                     if (this.ringSize !== this.ringMembers.length) throw `Ring members are not generated well ${this.ringSize} vs ${this.ringMembers.length} `
                 }else if (oldTab === 3 && value > oldTab) {
                     if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
@@ -372,8 +391,8 @@ export default {
                     }
 
                 if (holders > 1) {
-                    const count = Decimal.min( holders, ringSize - Object.keys(alreadyUsedIndexes).length )
-                    for (let i=0; i < count; i++){
+                    const count = Decimal.min( holders, ringSize ).minus(Object.keys(alreadyUsedIndexes).length)
+                    for (let i= new Decimal(0); i.lt(count); i = i.plus(1)){
 
                         let index = await PandoraPay.helpers.randomUint64N( holders.toString() )
                         while (alreadyUsedIndexes[index])
@@ -451,13 +470,14 @@ export default {
             }catch(err){
                 this.error = err.toString()
             }finally{
-                resolver()
+                if (resolver) resolver()
             }
 
         },
 
         async handleSendFunds(){
 
+            this.statusType = "signing"
             this.status = '';
 
             const asset = this.asset.asset
@@ -465,7 +485,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            let senderPrivateKey, senderBalanceDecoded
+            let senderPrivateKey, senderDecryptedBalance
             if (!this.createNewSender){
 
                 let balance
@@ -475,14 +495,14 @@ export default {
                         break
                     }
 
-                const out = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.$store.state.wallet.mainPublicKey, balance, asset, true, password )
-                if (out.balanceDecoded === null) throw "Decoding was canceled"
+                const out = await this.$store.state.page.refDecryptBalanceModal.showModal( this.$store.state.wallet.mainPublicKey, balance, asset, true, password )
+                if (out.decryptedBalance === null) throw "Decrypting was canceled"
 
                 senderPrivateKey = out.privateKey
-                senderBalanceDecoded = out.balanceDecoded
+                senderDecryptedBalance = out.decryptedBalance
             }else {
                 senderPrivateKey = this.newSender.privateKey
-                senderBalanceDecoded = this.availableBalances[ asset ].amount
+                senderDecryptedBalance = this.availableBalances[ asset ].amount
             }
 
             const accs = { [asset]: {} }
@@ -532,7 +552,7 @@ export default {
             const data = {
                 from: [{
                     privateKey: senderPrivateKey,
-                    balanceDecoded: senderBalanceDecoded,
+                    decryptedBalance: senderDecryptedBalance,
                 }],
                 assets: [ asset ],
                 amounts: [ amount  ],
@@ -580,12 +600,14 @@ export default {
 
         async handlePropagateTx(){
 
+            this.statusType = "broadcasting"
+
             this.status = 'Cloning transaction...'
 
             const txSerialized = Buffer.alloc(this.txSerialized.length)
             Buffer.from(this.txSerialized).copy(txSerialized, 0)
 
-            this.status = 'Propagating transaction...'
+            this.status = 'Broadcasting your transaction in the network... Please wait...'
 
             await this.$store.dispatch('includeTx', { tx: this.tx, mempool: false } )
 
@@ -603,9 +625,19 @@ export default {
     },
 
     mounted(){
+        const probability = Math.random()
+        if (probability < 0.8) this.ringNewAddresses = 0
+        else if (probability < 0.9) this.ringNewAddresses = 1
+        else this.ringNewAddresses = 2
+
+        const probability2 = Math.random()
+        if (probability2 < 0.4) this.ringSize = 32
+        else if (probability2 < 0.6) this.ringSize = 64
+        else if (probability2 < 0.8) this.ringSize = 128
+        else this.ringSize = 256
     },
 
-    beforeDestroy() {
+    beforeUnmount() {
         this.destination = {  }
     }
 

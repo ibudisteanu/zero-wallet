@@ -1,6 +1,4 @@
-import VueRouter from "vue-router"
-import Vue from "vue";
-
+import {createRouter, createWebHistory} from "vue-router"
 import LoginPage from "src/pages/login/login.page"
 import PrivateSendPage from "src/pages/send/private/private-send.page"
 import PrivateDelegateStakePage from "src/pages/send/private/private-delegate-stake.page"
@@ -23,8 +21,6 @@ import SettingsPage from "src/pages/settings/settings.page"
 import NotFoundPage from "src/pages/not-found/not-found.page"
 
 import KadPage from "src/pages/kad/kad.page"
-
-Vue.use(VueRouter);
 
 import store from "./../store/store"
 
@@ -82,13 +78,13 @@ const routes = [
     {path: '/address/:address', component: AddressPage, beforeEnter: guardDecrypted  },
     {path: '/address/:address/:page', component: AddressPage, beforeEnter: guardDecrypted  },
 
-    { path: '*', name: 'not-found', component: NotFoundPage,}
+    { path: '/:catchAll(.*)', name: 'not-found', component: NotFoundPage,}
 
 ];
 
-const router = new VueRouter({
+const router = createRouter({
     base: PandoraPayWalletOptions.router.base || '/',
-    mode: PandoraPayWalletOptions.router.mode || 'history',
+    history: createWebHistory(),
     scrollBehavior(to, from, savedPosition) {
         if (to.hash && to.hash.length > 1) return { selector: to.hash }
         else if (savedPosition) return savedPosition;

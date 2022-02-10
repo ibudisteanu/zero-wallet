@@ -43,7 +43,7 @@ export default {
     computed:{
 
         route(){
-            return this.$router.currentRoute.path;
+            return this.$router.currentRoute.path || '';
         }
 
     },

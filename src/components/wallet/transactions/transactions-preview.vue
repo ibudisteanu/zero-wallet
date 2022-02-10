@@ -6,7 +6,7 @@
                 <div class="col">
                     <h5 class="mb-0">
                         Transactions
-                        <template v-if="!txs">
+                        <template v-if="!loaded">
                             <loading-spinner />
                         </template>
                         <template v-else>
@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="card-body px-3 py-0" v-if="txs && transactions.length ">
-            <show-transactions-preview :transactions="transactions"/>
+            <show-transactions-preview :transactions="transactions" :public-key="publicKey" />
         </div>
         <div class="card-footer bg-light g-0 d-block-inline p-3" v-if="pages">
             <pagination class="right" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="pages" :prefix="`/address/${address.addressEncoded}/`" suffix="#transactions" />
@@ -50,7 +50,7 @@ export default {
     data(){
         return {
             error: "",
-            loaded: true,
+            loaded: false,
         }
     },
 
@@ -85,7 +85,9 @@ export default {
         },
 
         last() {
-            return Decimal.min( this.ending, this.finalPage.plus(1).mul(this.countPerPage) );
+            const value = this.finalPage.plus(1).mul(this.countPerPage)
+            if (this.txs) return Decimal.min( this.ending, value );
+            else return value
         },
 
         transactions(){
@@ -130,11 +132,11 @@ export default {
     },
 
     watch: {
-        publicKey (to, from) {
-            return this.loadTransactions();
+        publicKey (to, from){
+            if (to !== from ) return this.loadTransactions()
         },
-        page (to, from) {
-            return this.loadTransactions();
+        page(to, from){
+            if (to !== from ) return this.loadTransactions()
         },
     },
 

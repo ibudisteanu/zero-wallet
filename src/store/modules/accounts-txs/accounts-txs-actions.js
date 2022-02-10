@@ -5,7 +5,6 @@ const promises = {
     accountsTxs: {},
 }
 
-
 export default {
 
     async downloadAccountTxs({state, dispatch, commit}, {publicKey, next, view = false, } ){
@@ -17,20 +16,22 @@ export default {
             try{
                 const out = await PandoraPay.network.getNetworkAccountTxs( MyTextEncode( JSONStringify( {
                     publicKey,
-                    next: next.eq(0) ? new Decimal(2).pow(64).minus(1) : next
+                    next: view ? next : new Decimal(2).pow(64).minus(1)
                 } ) ) );
-                const accountTxs = JSONParse(MyTextDecode( out) )
+                const accountTxs = JSONParse(MyTextDecode( out ) )
+
+                if (!accountTxs || !accountTxs.count)
+                    return resolve(accountTxs)
 
                 console.log("next", next ? next.toString() : null, accountTxs )
 
-                if (accountTxs)
-                    if (next.eq(0)){
-                        starting = Decimal.max(0, accountTxs.count.minus( consts.addressTxsPagination ) )
-                        ending = accountTxs.count
-                    }else {
-                        starting = next.minus( consts.addressTxsPagination )
-                        ending = next
-                    }
+                if (!view){
+                    starting = Decimal.max(0, accountTxs.count.minus( consts.addressTxsPagination ) )
+                    ending = accountTxs.count
+                }else {
+                    starting = Decimal.max(0, next.minus( consts.addressTxsPagination ) )
+                    ending = next
+                }
 
                 console.log("txs starting end", starting.toString(), ending.toString(), accountTxs )
 
@@ -54,7 +55,7 @@ export default {
         })
     },
 
-    async accountTxUpdateNotification( {state, dispatch, commit, getters}, {publicKey, txHash, extraInfo }){
+    accountTxUpdateNotification( {state, dispatch, commit, getters}, {publicKey, txHash, extraInfo }){
 
         if (getters.walletContains(publicKey)){
 
@@ -65,14 +66,14 @@ export default {
                         type: 'success',
                         title: `Received a new transaction`,
                         text: `Your address has received a transaction ${txHash}`,
-                    } )
-                else
+                    })
+
+                if (!extraInfo.blockchain.inserted)
                     dispatch('addToast', {
                         type: 'warning',
                         title: `A transaction was removed from blockchain`,
                         text: `Your address got a transaction removed ${txHash}`,
-                    } )
-
+                    })
 
             } else if (extraInfo.mempool) {
 
@@ -82,7 +83,7 @@ export default {
                         title: `A pending transaction`,
                         text: `There is a pending transaction ${txHash}`,
                     } )
-                else
+                else if (!extraInfo.mempool.included)
                     dispatch('addToast', {
                         type: 'warning',
                         title: `A transaction was removed from the mempool`,
@@ -93,11 +94,10 @@ export default {
 
         }
 
-        await dispatch('txNotification', { txHash, extraInfo })
-        await dispatch('accountPendingTransactionsTxUpdateNotification', { publicKey, txHash, extraInfo } )
+        dispatch('txNotification', { txHash, extraInfo })
+        dispatch('accountPendingTransactionsTxUpdateNotification', { publicKey, txHash, extraInfo } )
 
         commit('addAccountTxUpdateNotification', { publicKey, txHash, extraInfo } )
-
     }
 
 }

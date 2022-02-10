@@ -11,13 +11,13 @@
                    :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX"
                    :public-key="publicKey" @onSetTab="setTab" :beforeProcess="handleBeforeProcess">
 
-            <template :slot="`tab_${-1}`">
+            <template v-slot:tab_-1>
                 <destination-address text="Delegate Address" @changed="changedDelegateDestination"/>
                 <div class="form-group pt-3">
                     <input class="form-check-input" id="convert-to-unclaimed" type="checkbox"  name="checkbox" v-model="convertToUnclaimed"  >
                     <label class="form-check-label" for="convert-to-unclaimed">Convert to Unclaimed instead of Staking</label> <i class="fas fa-question " v-tooltip.bottom="`Instead of staking, you deposit to the unclaimed amount`" />
                 </div>
-                <delegated-staking-new-info class="pt-3" :public-key="delegatePublicKey" @onChanges="delegatedStakingNewInfoChanges" />
+                <delegated-staking-new-info class="pt-3" :public-key="delegatePublicKey" ref="refDelegatedStakingNewInfo" />
             </template>
 
         </zether-tx>
@@ -68,6 +68,8 @@ export default {
 
                 if (oldTab === -1 && value > oldTab){
                     if (this.delegateDestination.validationError) throw this.delegateDestination.validationError;
+
+                    this.delegatedStakingNewInfo = this.$refs.refDelegatedStakingNewInfo.getData()
                     if (this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey) throw this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey
 
                     if ( this.delegatedStakingNewInfo.hasNewDelegatedInfo )
@@ -86,13 +88,6 @@ export default {
             this.delegatePublicKey = (this.delegateDestination && this.delegateDestination.address) ? this.delegateDestination.address.publicKey : ""
         },
 
-        delegatedStakingNewInfoChanges(data){
-            this.delegatedStakingNewInfo = {
-                ...this.delegatedStakingNewInfo,
-                ...data
-            }
-        },
-
         async handleBeforeProcess( password, data ){
 
             const payloadExtra = {
@@ -100,7 +95,7 @@ export default {
             }
 
             if (this.delegatedStakingNewInfo.hasNewDelegatedInfo){
-                const out = await PandoraPay.wallet.getPrivateDataForDecodingBalanceWalletAddress( MyTextEncode( JSONStringify({
+                const out = await PandoraPay.wallet.getPrivateDataForDecryptingBalanceWalletAddress( MyTextEncode( JSONStringify({
                     publicKey: this.delegatePublicKey,
                     asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX,
                 })), password, )

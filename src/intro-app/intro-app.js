@@ -1,23 +1,24 @@
-import Vue from "vue";
+import * as Vue from 'vue'
 import Loading from './intro';
 
-import VueRouter from 'vue-router';
-
-Vue.use(VueRouter);
 
 export default (params) => {
 
-    return window.PandoraPayWalletIntro = new Vue({
-        el: '#wallet-loading',
-        render: (createElement) => {
+    const app = window.PandoraPayWalletIntro = Vue.createApp({
 
-            return createElement( Loading, {
+        render () {
+
+            return Vue.h( Loading, {
                 props: {
                     startAutomatically: params.startAutomatically,
                 }
             });
 
         }
+
     });
 
+    app.mount('#wallet-loading')
+
+    return app
 }

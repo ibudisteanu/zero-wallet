@@ -1,5 +1,3 @@
-import Vue from 'vue';
-
 export default {
 
     setNetworkByte(context, {networkByte, networkName, networkPrefix}) {

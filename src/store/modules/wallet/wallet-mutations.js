@@ -1,5 +1,3 @@
-import Vue from 'vue';
-
 export default {
 
     setWallet( state, { wallet, addresses, mainPublicKey } ){
@@ -24,11 +22,18 @@ export default {
     },
 
     addWalletAddress(state, address){
-        Vue.set(state.addresses, address.publicKey, address )
+        state.addresses[address.publicKey] = address
     },
 
-    removeWalletAddress(state, address){
-        Vue.delete(state.addresses, address.publicKey, address )
+    removeWalletAddress(state, publicKey){
+        delete state.addresses[publicKey]
     },
+
+    renameWalletAddress(state, {publicKey, name}){
+        state.addresses[publicKey] = {
+            ...state.addresses[publicKey],
+            name,
+        }
+    }
 
 }

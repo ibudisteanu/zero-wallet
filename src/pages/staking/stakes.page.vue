@@ -38,7 +38,7 @@
                             <div class="pt-4">
                                 <span class="fw-bold fs-0">Delegated Stake</span>
                                 <balance :key="`delegated-balance`"  :balance="delegatedStake.stakeAvailable" />
-                                <span v-if="delegatedStake.stakeAvailable < minimumForStaking" class="text-danger d-block"> Minimum balance required for Staking {{minimumForStaking}}</span>
+                                <span v-if="delegatedStake.stakeAvailable.lt( minimumForStaking )" class="text-danger d-block"> Minimum balance required for Staking {{minimumForStaking}}</span>
                             </div>
                             <div class="pt-4" >
                                 <span class="fw-bold fs-0">Delegated Stakes in pending {{!delegatedStakesPending.length ? 'None' : ''}}</span>
@@ -84,6 +84,8 @@ export default {
     data() {
         return {
             showPublicKey: false,
+            minimumForStaking: new Decimal(0),
+            minimumForStakingText: "",
             error: "",
         }
     },
@@ -100,7 +102,7 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
         delegatedStake(){
-            if (!this.account || !this.account.plainAccount || this.account.plainAccount.version === 0) return null
+            if (!this.account || !this.account.plainAccount || this.account.plainAccount.delegatedStake.version.eq(0) ) return null
             return this.account.plainAccount.delegatedStake
         },
 
@@ -113,8 +115,8 @@ export default {
         },
 
         delegateFeePercentage(){
-            if (!this.delegatedStake) return 0
-            return this.delegatedStake.delegatedStakeFee / 65535 * 100;
+            if (!this.delegatedStake || !this.delegatedStake.delegatedStakeFee) return new Decimal(0)
+            return this.delegatedStake.delegatedStakeFee.mul(100).div( PandoraPay.config.stake.DELEGATING_STAKING_FEE_MAX_VALUE  );
         },
 
         pendingTxs(){
@@ -132,10 +134,7 @@ export default {
     },
 
     asyncComputed:{
-        async minimumForStaking(){
-            const minimum = await PandoraPay.config.stake.getRequiredStake( this.$store.state.blockchain.end.toString() )
-            return StringHelper.formatMoney( new Decimal(minimum).div( new Decimal(10).pow( PandoraPay.config.coins.DECIMAL_SEPARATOR ) ), PandoraPay.config.coins.DECIMAL_SEPARATOR )
-        },
+
     },
 
     methods:{
@@ -144,6 +143,10 @@ export default {
 
     async mounted(){
         if (typeof window === "undefined") return;
+
+        const minimum = await PandoraPay.config.stake.getRequiredStake( this.$store.state.blockchain.end.toString() )
+        this.minimumForStaking = new Decimal(minimum).div( new Decimal(10).pow( PandoraPay.config.coins.DECIMAL_SEPARATOR ) )
+        this.minimumForStakingText = StringHelper.formatMoney( this.minimumForStaking, PandoraPay.config.coins.DECIMAL_SEPARATOR )
     }
 
 }

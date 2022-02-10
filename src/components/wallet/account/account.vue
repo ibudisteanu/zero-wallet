@@ -4,7 +4,7 @@
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0">{{title}}</h5>
+                        <h5 class="mb-0">{{title}} {{walletAddress ? walletAddress.name : ''}}</h5>
                     </div>
                 </div>
             </div>
@@ -68,6 +68,9 @@ export default {
         getAddress(){
             return this.$store.getters.addressDisplay(this.address)
         },
+        walletAddress(){
+            return this.$store.state.wallet.addresses[this.address.publicKey]
+        }
     },
 
     methods: {

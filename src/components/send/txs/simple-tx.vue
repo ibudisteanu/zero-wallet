@@ -1,37 +1,35 @@
 <template>
-    <wait-account :account="account">
+    <wait-account :account="account" type="transparent">
         <wizard :titles="{ ...titlesOffset,
                 0: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
                 1: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' },
                 2: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' } }"
                  @onSetTab="setTab" :buttons="buttons" controls-class-name="card-footer bg-light" class="card" >
 
-            <template v-for="(_, index) in titlesOffset">
-                <template :slot="`tab_${index}`">
-                    <slot :name="`tab_${index}`"></slot>
-                </template>
+            <template v-for="(_, index) in titlesOffset" v-slot:[getTabSlotName(index)]>
+                <slot :name="`tab_${index}`"></slot>
             </template>
 
-            <template :slot="`tab_0`">
+            <template v-slot:tab_0>
                 <extra-data @changed="changedExtraData" />
             </template>
 
-            <template :slot="`tab_1`">
+            <template v-slot:tab_1>
 
                 <div class="form pb-2">
                     <input class="form-check-input" id="fee-version" type="checkbox"  name="checkbox" v-model="feeVersion">
-                    <label class="form-check-label" for="fee-version">Pay fee Unclaimed balance</label>
+                    <label class="form-check-label" for="fee-version">Pay Fee from Unclaimed balance</label>
                     <i class="fas fa-question " v-tooltip.bottom="`Subtract the fee from the unclaimed balance or from the delegated stake.`" />
                 </div>
 
                 <tx-fee :balances="balancesStakeAvailable" :allow-zero="true" @changed="changedFee" />
             </template>
 
-            <template :slot="`tab_2`">
+            <template v-slot:tab_2>
                 <confirm-broadcasting-tx v-if="tx" class="my-3 fs--1" :tx="tx" />
             </template>
 
-            <template slot="wizard-footer">
+            <template #wizard-footer>
                 <template v-if="status">
                     <span class="d-block">Transaction is being created. It will take 1-2 minutes.</span>
                     <label class="d-block">Status: {{status}}</label>
@@ -100,6 +98,10 @@ export default {
 
     methods:{
 
+        getTabSlotName(index){
+            return `tab_${index}`
+        },
+
         async setTab({resolve, reject, oldTab, value}){
             try{
 
@@ -139,11 +141,11 @@ export default {
 
             const nonceOut = await PandoraPay.network.getNetworkAccountMempoolNonce(MyTextEncode(JSONStringify({ publicKey: this.address.publicKey })))
 
-            const nonce = JSONParse( MyTextDecode(nonceOut)).nonce
+            const nonce = JSONParse( MyTextDecode(nonceOut) ).nonce
 
             const data = {
                 from: this.address.addressEncoded,
-                nonce: nonce.toString(),
+                nonce: nonce,
                 data: {
                     data: Buffer.from(this.extraData.data).toString("hex"),
                     encrypt: this.extraData.type === "encrypted",

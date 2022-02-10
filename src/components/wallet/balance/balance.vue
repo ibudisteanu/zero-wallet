@@ -2,14 +2,14 @@
 
     <div class="row">
         <h4 class="fw-medium pt-2" v-if="getAsset" >
-            <template v-if="version === 'zether' && balanceDecoded === null ">
-                <i class="fas fa-lock" v-tooltip.bottom="`Homomorphic Encrypted Amount: ${homomorphicBalanceText}`" />
-                <i class="fas fa-key pointer" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecoded" @click="decodeBalance"></i>
+            <template v-if="version === 'zether' && decryptedBalance === null ">
+                <i class="fas fa-lock pe-2" v-tooltip.bottom="`Homomorphic Encrypted Amount: ${balance}`" />
+                <i class="fas fa-key pe-2 pointer" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecrypted" @click="decryptBalance"></i>
             </template>
             <template v-else>
                 {{ amount }}
             </template>
-            <small class="fs--1 text-700">/
+            <small class="ps-1 fs--1 text-700">/
                 <router-link :to="`/explorer/asset/${getAsset.hash}`" class="currency" v-tooltip.bottom="getAsset.hash" >
                     {{getAsset.name}}
                 </router-link>
@@ -31,22 +31,18 @@ export default {
     props: {
         version: {default: "transparent"},
         asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX},
-        balance: {default: new Decimal(0) },
-        publicKey: {default: null},     //required for version zether
-        canBeDecoded: {default: false}  //required for version zether
+        balance: {default: () => new Decimal(0) },
+        publicKey: {default: ""},     //required for version zether
+        canBeDecrypted: {default: false}  //required for version zether
     },
 
     data(){
         return {
-            balanceDecoded: null,
+            decryptedBalance: null,
         }
     },
 
     computed: {
-        homomorphicBalanceText(){
-            if (this.version === "zether")
-                return this.balance.match(/.{1,20}/g).join("\n");
-        },
         getAsset(){
             return this.$store.getters.getAsset(this.asset );
         },
@@ -55,10 +51,10 @@ export default {
             if (this.version === "transparent")
                 amount = this.balance
             else {
-                if (this.balanceDecoded === null )
+                if (this.decryptedBalance === null )
                     return
                 else
-                    amount = this.balanceDecoded
+                    amount = this.decryptedBalance
             }
             return StringHelper.formatMoney( new Decimal(amount).div( new Decimal(10).pow(this.getAsset.decimalSeparator) ).toString(), this.getAsset.decimalSeparator)
         }
@@ -69,18 +65,18 @@ export default {
             immediate: true,
             handler: function (to, from) {
                 if (to === from) return
-                this.balanceDecoded = null
+                this.decryptedBalance = null
             }
         },
     },
 
     methods: {
-        async decodeBalance(){
+        async decryptBalance(){
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const {balanceDecoded} = await this.$store.state.page.refDecodeHomomorphicBalanceModal.showModal( this.publicKey, this.balance, this.asset, true, password )
-            this.balanceDecoded = balanceDecoded
+            const {decryptedBalance} = await this.$store.state.page.refDecryptBalanceModal.showModal( this.publicKey, this.balance, this.asset, true, password )
+            this.decryptedBalance = decryptedBalance
         }
     },
 

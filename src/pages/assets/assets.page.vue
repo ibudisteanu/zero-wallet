@@ -132,7 +132,7 @@ export default {
         return this.loadAssetsInfo();
     },
 
-    beforeDestroy(){
+    beforeUnmount(){
         this.$store.commit('setAssetsInfoAllowDownload', false)
     }
 }

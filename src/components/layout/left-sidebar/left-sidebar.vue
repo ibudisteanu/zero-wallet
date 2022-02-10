@@ -1,10 +1,10 @@
 <template>
 
-    <nav class="navbar navbar-light navbar-vertical navbar-expand-xl" v-on-clickaway="closeMenu" >
+    <nav class="navbar navbar-light navbar-vertical navbar-expand-xl" @click.stop >
         <div class="d-flex align-items-center">
             <router-link to="/" class="navbar-brand">
                 <div class="d-flex align-items-center py-3">
-                    <img class="me-2" :src="require('src/assets/pandora-pay-logo-inline-crop.png').default" alt="PandoraPay" height="42px">
+                    <img class="me-2 logo" :src="require('src/assets/pandora-pay-logo-inline-crop.png').default" alt="PandoraPay">
                 </div>
             </router-link>
         </div>
@@ -31,7 +31,7 @@
                         <div class="d-flex align-items-center">
                             <router-link to="#" class="nav-link" @click.native="e => toggleNavElement( e,'staking')">
                                 <i class="fas fa-piggy-bank"></i>
-                                <span class="nav-link-text ps-1">Staking</span>
+                                <span class="nav-link-text px-1">Staking</span>
                                 <i :class="`nav-chevron fas fa-chevron-${navElementsShown['staking'] ? 'up' : 'down' }`"></i>
                             </router-link>
                         </div>
@@ -116,7 +116,7 @@
                         <div class="d-flex align-items-center">
                             <router-link to="#" class="nav-link" @click.native="e => toggleNavElement( e,'explorer')">
                                 <i class="fas fa-cubes"></i>
-                                <span class="nav-link-text ps-1">Explorer</span>
+                                <span class="nav-link-text px-1">Explorer</span>
                                 <i :class="`nav-chevron fas fa-chevron-${navElementsShown['explorer'] ? 'up' : 'down' }`"></i>
                             </router-link>
                         </div>
@@ -159,7 +159,7 @@
                         <div class="d-flex align-items-center">
                             <router-link to="#" class="nav-link" @click.native="e => toggleNavElement(e,'kad')">
                                 <i class="fas fa-globe-americas"></i>
-                                <span class="nav-link-text ps-1">KAD</span>
+                                <span class="nav-link-text px-1">KAD</span>
                                 <i :class="`nav-chevron fas fa-chevron-${navElementsShown['kad'] ? 'up' : 'down' }`"></i>
                             </router-link>
                         </div>
@@ -202,12 +202,8 @@
 </template>
 
 <script>
-import { mixin as clickaway } from 'vue-clickaway'
-import Vue from 'vue';
 
 export default {
-
-    mixins: [ clickaway ],
 
     data(){
         return {
@@ -227,7 +223,7 @@ export default {
         },
 
         route(){
-            return this.$router.currentRoute.path;
+            return this.$router.currentRoute.path || '';
         },
 
         address(){
@@ -235,31 +231,22 @@ export default {
         },
 
         isWalletLogged(){
-            if (this.$store.state.wallet.initialized && !this.$store.state.wallet.loaded ) return false;
-            return true;
+            return !(this.$store.state.wallet.initialized && !this.$store.state.wallet.loaded )
         },
 
     },
 
     methods:{
-        closeMenu(){
-            this.$store.commit('setLeftSidebarShow', false)
-        },
 
         toggleNavElement(e, key){
-            if (!this.navElementsShown[key]) Vue.set(this.navElementsShown, key, true)
-            else Vue.set(this.navElementsShown, key, false)
-            if (e) e.stopPropagation()
+            if (!this.navElementsShown[key]) this.navElementsShown[key] = true
+            else this.navElementsShown[key] = false
         },
         disableNavbarMenu(e){
             this.$store.commit('setLeftSidebarShow', false)
-            if (e) e.stopPropagation()
         }
     },
 
-    mounted(){
-
-    }
 
 }
 </script>
@@ -269,5 +256,8 @@ export default {
   .navbar-vertical {
     z-index: auto;
   }
+}
+.logo{
+    height: 42px;
 }
 </style>

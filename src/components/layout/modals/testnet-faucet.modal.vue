@@ -1,7 +1,7 @@
 <template>
     <modal ref="modal" title="Faucet coins" :close-button="loaded" >
 
-        <template slot="body" v-if="address">
+        <template v-slot:body v-if="address">
             <div class="pb-4">
                 <label class="pb-2">Receive your testnet coins to this address:</label>
                 <div class="address align-items-center">
@@ -19,7 +19,7 @@
             </div>
         </template>
 
-        <template slot="footer">
+        <template v-slot:footer>
             <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
 
             <loading-button :text="`Receive ${$store.state.faucet.faucetTestnetCoins}`" @submit="handleSubmit" icon="fas fa-coins" :disabled="!captchaToken" />
@@ -37,7 +37,7 @@
 <script>
 import Modal from "src/components/utils/modal"
 import AccountIdenticon from "../../wallet/account/account-identicon";
-import VueHcaptcha from '@hcaptcha/vue-hcaptcha';
+import VueHcaptcha from '@hcaptcha/vue3-hcaptcha';
 import AlertBox from "src/components/utils/alert-box"
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import LoadingButton from "src/components/utils/loading-button"
@@ -95,7 +95,7 @@ export default {
                 const hash = await PandoraPay.network.getNetworkFaucetCoins( this.$store.getters.addressDisplay(this.address), this.captchaToken )
                 if (!hash || hash.length !== 64) throw "hash was not received"
 
-                await this.$store.dispatch('addToast', {
+                this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Faucet created a Tx`,
                     text: `The faucet created a transaction ${hash}`,

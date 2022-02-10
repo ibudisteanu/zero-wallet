@@ -2,20 +2,20 @@
 
     <modal ref="modal" title="Import Private Key" content-class="">
 
-        <template slot="body">
+        <template v-slot:body>
 
             <wizard :titles="{
                 0: {icon: 'fas fa-pencil-alt', name: 'Information', tooltip: 'Information of the account' },
                 1: {icon: 'fas fa-file-code', name: 'Private Key', tooltip: 'Private Key' },
                 2: {icon: 'fas fa-check', name: 'Done', tooltip: 'Finish importing account' }}"
-                     @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" >
+                     @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" :allow-scroll="false" >
 
-                <template slot="tab_0">
+                <template v-slot:tab_0>
                     <label>Account Name</label>
-                    <input type="text" class="form-control" v-model="name"></input>
+                    <input type="text" class="form-control" v-model="name"/>
                 </template>
 
-                <template slot="tab_1">
+                <template v-slot:tab_1>
                     <label>Private Key</label>
                     <textarea class="form-control" rows="4" v-model="privateKey"></textarea>
                 </template>
@@ -91,7 +91,7 @@ export default {
                 const out = await PandoraPay.wallet.manager.importWalletPrivateKey( password, this.privateKey, this.name, this.selectedType );
                 if (!out) throw "Your address already exists!"
 
-                await this.$store.dispatch('addToast', {
+                this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Imported successfully`,
                     text: `Your Address has been successfully imported.`,

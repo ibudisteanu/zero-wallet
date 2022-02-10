@@ -2,45 +2,20 @@
     <div>
         <template v-if="tx.version.eq(PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE)">
 
-            <div class="input">
+            <template v-if="tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE) ">
+                <i class="fas fa-sync pe-2"/>
+            </template>
+
+            <div class="input ">
                 <account-identicon :publicKey="tx.base.vin" size="21" outer-size="7" />
                 <amount :value="vinSimpleAmount" :sign="false" />
             </div>
 
-            <template v-if="tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_CLAIM) ">
-                <template v-if="!displayAdvanced">
-                    <span class="pointer " @click="displayAdvanced=!displayAdvanced" v-tooltip.bottom="'Display tx output'"  >
-                        <i class="fas fa-users" ></i>
-                        Outputs: {{tx.base.extra.output.length}}
-                    </span>
-                </template>
-                <template v-else>
-                    <div class="output" v-for="(out, index) in tx.base.extra.output"
-                         :key="`show-transaction-vout-${index}`">
-                        <account-identicon :publicKey="out.publicKey" size="21" outer-size="7" />
-                        <amount :value="out.amount" :sign="true" />
-                    </div>
-                </template>
-            </template>
-
         </template>
         <template v-else-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER ) ">
-            <template v-if="!displayAdvanced">
-                <span class="pointer " @click="displayAdvanced=!displayAdvanced" v-tooltip.bottom="'Display Private Tx Ring Members'" >
-                    <i class="fas fa-users"></i>
-                    Rings: {{tx.base.payloads.map(payload => payload.publicKeys.length).join(', ') }}
-                </span>
-            </template>
-            <template v-else>
-                <div v-for="(payload, payloadIndex) in tx.base.payloads"
-                     :key="`${tx.hash}_payload_${payloadIndex}`">
-                    <div class="output" v-for="(publicKey, index) in payload.publicKeys"
-                         :key="`show-transaction-vout-${index}`">
-                        <account-identicon :publicKey="publicKey" size="21" outer-size="7" />
-                        ?
-                    </div>
-                </div>
-            </template>
+            <span class="pointer d-md-flex justify-content-center align-items-center">
+                Rings: {{tx.base.payloads.map(payload => new Decimal(2).pow( payload.ring ) ).join(', ') }}
+            </span>
         </template>
     </div>
 </template>
@@ -48,10 +23,11 @@
 <script>
 import AccountIdenticon from "../../wallet/account/account-identicon";
 import Amount from "../../wallet/amount";
+import Decimal from "decimal.js"
 
 export default {
 
-    components: {AccountIdenticon, Amount },
+    components: { AccountIdenticon, Amount },
 
     props: {
         tx: {default: null},
@@ -59,6 +35,9 @@ export default {
 
     data(){
         return {
+            popoverLeft: 0,
+            popoverTop: 0,
+            popoverInterval: null,
             displayAdvanced: false,
         }
     },
@@ -66,15 +45,18 @@ export default {
     computed:{
 
         PandoraPay: () => PandoraPay,
+        Decimal: () => Decimal,
 
         vinSimpleAmount(){
 
-            if (this.tx.version !== PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) return
-            let out = 0
+            if (!this.tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ) return
+            let out = new Decimal(0)
 
-            if (this.tx.base.txScript === PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_CLAIM)
-                for (const it of this.tx.base.extra.output)
-                    out += it.amount
+            if (this.tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE) )
+                out = out.plus(this.tx.base.extra.amount)
+
+            if (this.tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE) )
+                out = out.plus(this.tx.base.extra.output.delegatedStakingClaimAmount)
 
             return out
         }
@@ -91,9 +73,13 @@ export default {
     },
 
     methods: {
-        showPopover(){
+    },
 
-        }
+    mounted(){
+
+    },
+
+    beforeUnmount() {
     }
 
 }
@@ -102,6 +88,6 @@ export default {
 <style scoped>
 .input, .output{
     display: inline-block;
-    padding-right: 5px;
+    padding-right: 1px;
 }
 </style>

@@ -20,7 +20,7 @@
                 <qr-code-scanner-modal ref="refQRCodeScannerModal" />
                 <testnet-faucet-modal ref="refTestnetFaucetModal" />
                 <wallet-password-modal ref="refWalletPasswordModal" />
-                <decode-homomorphic-balance-modal ref="refDecodeHomomorphicBalanceModal" />
+                <decrypt-balance-modal ref="refDecryptBalanceModal" />
 
                 <layout-footer v-if="!disableLayout" />
 
@@ -43,7 +43,7 @@ import LayoutFooter from "./footer/layout-footer";
 import LoadingModal from "./modals/loading.modal"
 import TestnetFaucetModal from "./modals/testnet-faucet.modal"
 import WalletPasswordModal from "./modals/wallet-password.modal"
-import DecodeHomomorphicBalanceModal from "./modals/decode-homomorphic-balance.modal"
+import DecryptBalanceModal from "./modals/decrypt-balance.modal"
 import QrCodeModal from "./modals/qr-code.modal"
 import LeftSidebar from "./left-sidebar/left-sidebar"
 import WarningBar from "./header/warning-bar"
@@ -53,7 +53,7 @@ import QrCodeScannerModal from "../utils/qr-code-scanner/qr-code-scanner.modal";
 export default {
 
     components: { LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar, QrCodeModal,
-        TestnetFaucetModal, WalletPasswordModal, Toasts, QrCodeScannerModal, DecodeHomomorphicBalanceModal},
+        TestnetFaucetModal, WalletPasswordModal, Toasts, QrCodeScannerModal, DecryptBalanceModal},
 
     props: {
         disableLayout: {default: false},
@@ -71,7 +71,7 @@ export default {
     methods:{
         storeModals(){
 
-            if (!this.$refs.refDecodeHomomorphicBalanceModal) return
+            if (!this.$refs.refDecryptBalanceModal) return
 
             this.$store.commit('setModals', {
                 refLoadingModal: this.$refs.refLoadingModal,
@@ -79,7 +79,7 @@ export default {
                 refQRCodeScannerModal: this.$refs.refQRCodeScannerModal,
                 refTestnetFaucetModal: this.$refs.refTestnetFaucetModal,
                 refWalletPasswordModal: this.$refs.refWalletPasswordModal,
-                refDecodeHomomorphicBalanceModal: this.$refs.refDecodeHomomorphicBalanceModal,
+                refDecryptBalanceModal: this.$refs.refDecryptBalanceModal,
             })
         }
     },
