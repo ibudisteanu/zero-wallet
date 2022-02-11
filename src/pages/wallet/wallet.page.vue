@@ -4,7 +4,7 @@
 
         <layout-title icon="fas fa-wallet" title="Wallet">Access the private key of the selected address.</layout-title>
 
-        <wait-address :wallet-address="walletAddress">
+        <wait-address :address="walletAddress">
 
             <account :address="walletAddress" />
 
