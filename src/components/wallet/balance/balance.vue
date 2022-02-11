@@ -75,7 +75,7 @@ export default {
 
                 if (this.version === "zether"){
                     const walletAddress = this.$store.state.wallet.addresses[this.publicKey]
-                    if (walletAddress.decryptedBalances && walletAddress.decryptedBalances[this.asset])
+                    if (walletAddress && walletAddress.decryptedBalances && walletAddress.decryptedBalances[this.asset])
                         if (walletAddress.decryptedBalances[this.asset].encryptedBalance === this.balance){
                             this.decryptedBalance = walletAddress.decryptedBalances[this.asset].amount
                             return

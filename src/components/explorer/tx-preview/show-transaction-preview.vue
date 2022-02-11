@@ -92,7 +92,7 @@
                         <div v-else v-for="(payload, index) in tx.base.payloads" :key="`tx_payload_${index}`">
                             <span v-if="!decrypted">?</span>
                             <amount v-else-if="decrypted.zetherTx.payloads[index].whisperSenderValid" :value="decrypted.zetherTx.payloads[index].sentAmount" :sign="false" value-class="text-danger" />
-                            <amount v-else-if="decrypted.zetherTx.payloads[index].whisperRecipientValid" :value="decrypted.zetherTx.payloads[index].receivedAmount" :sign="true" value-class="text-success" />
+                            <amount v-else-if="decrypted.zetherTx.payloads[index].whisperRecipientValid" :value="decrypted.zetherTx.payloads[index].receivedAmount" :sign="true" value-class="text-success" :show-plus-sign="true" />
                         </div>
                     </div>
                 </template>

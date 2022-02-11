@@ -2,7 +2,7 @@
     <span>
         <template v-if="getAsset">
             <span :class="valueClass">
-                {{sign?'':'-'}} {{amount}}
+                {{getSign}} {{amount}}
             </span>
             <router-link :to="`/explorer/asset/${getAsset.hash}`" :class="`${assetClass} ps-1`" v-if="showAsset">
                 {{getAsset.name}}
@@ -27,6 +27,7 @@ export default {
         asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX},
         value: {default: () => new Decimal(0) },
         sign: {default: false},
+        showPlusSign: {default: false},
         showAsset: {default: true},
         valueClass: {default: ""},
         assetClass: {default: ""}
@@ -38,6 +39,11 @@ export default {
         },
         amount(){
             return StringHelper.formatMoney( this.value.div( new Decimal(10).pow(this.getAsset.decimalSeparator) ).toString(), this.getAsset.decimalSeparator )
+        },
+        getSign(){
+            if (!this.sign ) return '-'
+            if (this.showPlusSign) return '+'
+            return ''
         }
     },
 
