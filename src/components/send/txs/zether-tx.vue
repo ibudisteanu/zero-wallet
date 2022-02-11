@@ -609,7 +609,7 @@ export default {
 
             this.status = 'Broadcasting your transaction in the network... Please wait...'
 
-            await this.$store.dispatch('includeTx', { tx: this.tx, serialized: txSerialized, mempool: false } )
+            await this.$store.dispatch('includeTx', { tx: this.tx, serialized: txSerialized.toString("hex"), mempool: false } )
 
             const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( txSerialized )
             if (!finalAnswer){

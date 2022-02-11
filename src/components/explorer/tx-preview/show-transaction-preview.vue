@@ -18,7 +18,7 @@
             <span class="col-4 d-block d-md-none text-dark text-truncate">Time</span>
             <div class="col-8 col-md-1 text-truncate">
                 <template v-if="txInfo">
-                    <span v-if="txInfo.mempool">
+                    <span v-if="txInfo.mempool" class="d-md-flex justify-content-center align-items-center">
                         <i class="fas fa-clock" />
                     </span>
                     <span v-else-if="txInfo.timestamp" v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp.plus(  txInfo.timestamp ) ) }`" class="d-md-flex justify-content-center align-items-center"  >
@@ -30,7 +30,7 @@
             <span class="col-4 d-block d-md-none text-dark text-truncate">Confirmations</span>
             <div class="col-8 col-md-1 text-truncate">
                 <template v-if="txInfo">
-                    <span v-if="txInfo.mempool">
+                    <span v-if="txInfo.mempool" class="d-md-flex justify-content-center align-items-center">
                         <i class="fas fa-clock" />
                     </span>
                     <span v-else-if="txInfo.blkHeight" v-tooltip.bottom="`${ txInfo.blkHeight }`" class="d-md-flex justify-content-center align-items-center" >
@@ -90,9 +90,9 @@
                     <div class="text-truncate d-md-flex justify-content-center align-items-center">
                         <loading-button v-if="canDecrypt && !decrypted" type="button"  v-tooltip.bottom="`Decrypt the transaction to see the amount, shared text and recipient`" @submit="decryptTx" text="Decrypt" icon="fas fa-unlock" :icon-left="false" class-custom="btn btn-falcon-primary btn-sm" />
                         <div v-else v-for="(payload, index) in tx.base.payloads" :key="`tx_payload_${index}`">
-                            <amount v-if="decrypted.zetherTx.payloads[index].whisperSenderValid" :value="decrypted.zetherTx.payloads[index].sentAmount" :sign="false" value-class="text-danger" />
+                            <span v-if="!decrypted">?</span>
+                            <amount v-else-if="decrypted.zetherTx.payloads[index].whisperSenderValid" :value="decrypted.zetherTx.payloads[index].sentAmount" :sign="false" value-class="text-danger" />
                             <amount v-else-if="decrypted.zetherTx.payloads[index].whisperRecipientValid" :value="decrypted.zetherTx.payloads[index].receivedAmount" :sign="true" value-class="text-success" />
-                            <span v-else>?</span>
                         </div>
                     </div>
                 </template>
@@ -103,7 +103,7 @@
                 <template v-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER )">
                     <div v-for="(payload, index) in tx.base.payloads" :key="`tx_payload_${index}`" class="text-truncate d-md-flex justify-content-center align-items-center">
                         <span v-if="!decrypted || !decrypted.zetherTx.payloads[index].recipientPublicKey">?</span>
-                        <account-identicon v-else :publicKey="decrypted.zetherTx.payloads[index].recipientPublicKey" size="17" outer-size="2" />
+                        <account-identicon v-else :publicKey="decrypted.zetherTx.payloads[index].recipientPublicKey" size="21" outer-size="4" />
                     </div>
                 </template>
             </div>

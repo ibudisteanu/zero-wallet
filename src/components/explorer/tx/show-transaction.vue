@@ -158,7 +158,7 @@
                 </div>
 
                 <div class="row pt-2 pb-2">
-                    <span class="col-4 col-sm-3 text-truncate">Message (Memo)</span>
+                    <span class="col-4 col-sm-3 text-truncate">Memo</span>
                     <span class="col-8 col-sm-9">
                         <template v-if="payload.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT)">
                             <span class="text-truncate" v-tooltip.bottom="`${Buffer.from(payload.data, 'hex').toString()}`">{{Buffer.from(payload.data, "hex").toString()}}</span>
@@ -170,7 +170,7 @@
                     </span>
                 </div>
                 <div class="row pt-2 pb-2 bg-light">
-                    <span class="col-4 col-sm-3 text-truncate">Message (Memo) in HEX</span>
+                    <span class="col-4 col-sm-3 text-truncate">Memo in HEX</span>
                     <span class="col-8 col-sm-9 text-truncate" v-tooltip.bottom="`${payload.data}`">{{payload.data}}</span>
                 </div>
 
@@ -269,7 +269,13 @@ export default {
 
         canDecrypt(){
             if (!this.tx || !this.publicKey) return false
-            return this.$store.getters.walletContains( this.publicKey)
+
+            if (this.tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER) ) {
+                for (const payload of this.tx.payloads)
+                    for (const publicKey of payload.statement.publickeylist)
+                        if (publicKey === this.publicKey)
+                            return true
+            }
         },
 
     },
