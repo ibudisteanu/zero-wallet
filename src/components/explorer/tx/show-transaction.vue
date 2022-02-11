@@ -187,7 +187,7 @@
                     <span class="col-4 col-sm-3 text-truncate">Recipient</span>
                     <span class="col-8 col-sm-9">
                         <span v-if="!decrypted || !decrypted.zetherTx.payloads[index].recipientPublicKey">?</span>
-                        <account-identicon v-else :publicKey="decrypted.zetherTx.payloads[index].recipientPublicKey" size="17" outer-size="2" />
+                        <account-identicon v-else :publicKey="decrypted.zetherTx.payloads[index].recipientPublicKey" size="21" outer-size="7" />
                     </span>
                 </div>
 
