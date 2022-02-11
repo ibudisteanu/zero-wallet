@@ -6,13 +6,13 @@
 
         <zether-tx ref="refZetherTx"
                    :titles-offset="{ '-1': {icon: 'fas fa-edit', name: 'Delegation', tooltip: 'Delegation update' }}"
-                   :allow-destination-random="true"
-                   :validate-destination-amount="true"
+                   :allow-random-recipient="true"
+                   :validate-recipient-amount="true"
                    :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX"
                    :public-key="publicKey" @onSetTab="setTab" :beforeProcess="handleBeforeProcess">
 
             <template v-slot:tab_-1>
-                <destination-address text="Delegate Address" @changed="changedDelegateDestination"/>
+                <recipient-address text="Delegate Address" @changed="changedDelegateRecipient"/>
                 <div class="form-group pt-3">
                     <input class="form-check-input" id="convert-to-unclaimed" type="checkbox"  name="checkbox" v-model="convertToUnclaimed"  >
                     <label class="form-check-label" for="convert-to-unclaimed">Convert to Unclaimed instead of Staking</label> <i class="fas fa-question " v-tooltip.bottom="`Instead of staking, you deposit to the unclaimed amount`" />
@@ -31,18 +31,18 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title";
 import ZetherTx from "src/components/send/txs/zether-tx";
 import DelegatedStakingNewInfo from "src/components/staking/delegated-staking-new-info"
-import DestinationAddress from "src/components/send/destination-address";
+import RecipientAddress from "src/components/send/recipient-address";
 
 export default {
 
-    components: { ZetherTx,  LayoutTitle, Layout, DelegatedStakingNewInfo, DestinationAddress },
+    components: { ZetherTx,  LayoutTitle, Layout, DelegatedStakingNewInfo, RecipientAddress },
 
     data(){
         return {
             hasNewDelegatedInfo: false,
             convertToUnclaimed: false,
             delegatedStakingNewInfo: {},
-            delegateDestination: {},
+            delegateRecipient: {},
             delegatePublicKey: null,
         }
     },
@@ -67,7 +67,7 @@ export default {
             try{
 
                 if (oldTab === -1 && value > oldTab){
-                    if (this.delegateDestination.validationError) throw this.delegateDestination.validationError;
+                    if (this.delegateRecipient.validationError) throw this.delegateRecipient.validationError;
 
                     this.delegatedStakingNewInfo = this.$refs.refDelegatedStakingNewInfo.getData()
                     if (this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey) throw this.delegatedStakingNewInfo.validationDelegatedStakingNewPublicKey
@@ -83,9 +83,9 @@ export default {
             }
         },
 
-        changedDelegateDestination(data){
-            this.delegateDestination = { ...this.delegateDestination,  ...data, }
-            this.delegatePublicKey = (this.delegateDestination && this.delegateDestination.address) ? this.delegateDestination.address.publicKey : ""
+        changedDelegateRecipient(data){
+            this.delegateRecipient = { ...this.delegateRecipient,  ...data, }
+            this.delegatePublicKey = (this.delegateRecipient && this.delegateRecipient.address) ? this.delegateRecipient.address.publicKey : ""
         },
 
         async handleBeforeProcess( password, data ){
@@ -114,7 +114,7 @@ export default {
                 delegatedStakingNewFee: this.delegatedStakingNewInfo.delegatedStakingNewFee,
             }
 
-            data.burns = [ this.delegateDestination.amount ]
+            data.burns = [ this.delegateRecipient.amount ]
             data.payloadExtra[0] = payloadExtra
             data.payloadScriptType[0] = PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_DELEGATE_STAKE
 

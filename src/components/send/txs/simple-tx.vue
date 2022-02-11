@@ -144,7 +144,7 @@ export default {
             const nonce = JSONParse( MyTextDecode(nonceOut) ).nonce
 
             const data = {
-                from: this.walletAddress.addressEncoded,
+                sender: this.walletAddress.addressEncoded,
                 nonce: nonce,
                 data: {
                     data: Buffer.from(this.extraData.data).toString("hex"),

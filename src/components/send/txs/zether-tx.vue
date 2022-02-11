@@ -14,18 +14,18 @@
             </template>
 
             <template v-slot:tab_0>
-                <div class="form" v-if="allowDestinationRandom">
-                    <input class="form-check-input" id="random-destination" type="checkbox"  name="checkbox" v-model="randomDestination">
-                    <label class="form-check-label" for="random-destination">Random Destination with Zero amount</label>
+                <div class="form" v-if="allowRandomRecipient">
+                    <input class="form-check-input" id="random-recipient" type="checkbox"  name="checkbox" v-model="randomRecipient">
+                    <label class="form-check-label" for="random-recipient">Random Recipient with Zero amount</label>
                 </div>
-                <template v-if="!randomDestination">
+                <template v-if="!randomRecipient">
                     <tx-asset v-if="!initAvailableAsset" :assets="availableAssets" @changed="changedAsset" class="pt-2 pb-2"/>
-                    <destination-address :text="text" :validateAmount="validateDestinationAmount" :balances="availableBalances" :allow-zero="allowDestinationZeroAmount" :asset="asset.asset" @changed="changedDestination" />
+                    <recipient-address :text="text" :validateAmount="validateRecipientAmount" :balances="availableBalances" :allow-zero="allowRecipientZeroAmount" :asset="asset.asset" @changed="changedRecipient" />
                 </template>
             </template>
 
             <template v-slot:tab_1>
-                <extra-data :destinations="destination ? [destination] : null" :paymentID="identifiedPaymentID" @changed="changedExtraData" />
+                <extra-data :recipients="recipient ? [recipient] : null" :paymentID="identifiedPaymentID" @changed="changedExtraData" />
             </template>
 
             <template v-slot:tab_2>
@@ -48,7 +48,7 @@
 
                     <div class="col-12 col-md-6">
                         <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring New Addresses</label>
-                        <i class="fas fa-question " v-tooltip.bottom="`Number of new addresses in the ring. Makes new destinations more private.`" />
+                        <i class="fas fa-question " v-tooltip.bottom="`Number of new addresses in the ring. Makes fresh new recipients more private.`" />
                         <input class="form-control"  type="number" v-model.number="ringNewAddresses" />
                     </div>
                 </div>
@@ -121,7 +121,7 @@ import WaitAccount from "../../wallet/account/wait-account";
 import Account from "../../wallet/account/account";
 import LoadingSpinner from "../../utils/loading-spinner";
 import LoadingButton from "../../utils/loading-button";
-import DestinationAddress from "../destination-address";
+import RecipientAddress from "../recipient-address";
 import TxAmount from "../tx-amount";
 import ExtraData from "../extra-data";
 import AlertBox from "../../utils/alert-box";
@@ -134,7 +134,7 @@ import Decimal from 'decimal.js';
 
 export default {
     components: {
-        WaitAccount,  Account, LoadingSpinner, LoadingButton, DestinationAddress, TxAmount,
+        WaitAccount,  Account, LoadingSpinner, LoadingButton, RecipientAddress, TxAmount,
         ExtraData, AlertBox, TxFee, TxAsset, AccountIdenticon, Wizard, ConfirmBroadcastingTx,
     },
 
@@ -142,12 +142,12 @@ export default {
         publicKey: {default: ""},
         titlesOffset: {default: () => ({}) }, //{icon, name}
         buttonsOffset: {default: () => ({}) },
-        text: {default: "Destination"},
+        text: {default: "Recipient"},
         initAvailableAsset: {default: null },
         initAvailableBalance: {default: null },
-        allowDestinationRandom: {default: false},
-        allowDestinationZeroAmount: {default: true},
-        validateDestinationAmount: {default: true},
+        allowRandomRecipient: {default: false},
+        allowRecipientZeroAmount: {default: true},
+        validateRecipientAmount: {default: true},
         beforeProcess: {default: null}, //function
         createNewSender: {default: false}, //function
     },
@@ -157,10 +157,10 @@ export default {
         return {
             asset: (this.initAvailableAsset !== null) ? { asset: this.initAvailableAsset   } : { }, //contains asset.asset and asset.validation
 
-            randomDestination: this.allowDestinationRandom,
+            randomRecipient: this.allowRandomRecipient,
             newSender: null,
 
-            destination: {},
+            recipient: {},
             fee: {  },
             assetFeeLiquidityAsset: true,
             assetFeeConversionRate: 1,
@@ -215,12 +215,12 @@ export default {
             return null
         },
 
-        checkDestinationError(){
+        checkRecipientError(){
 
             try{
 
-                if (this.destination.address)
-                    if (this.destination.address.publicKey === this.walletAddress.publicKey) throw "Destination can not be the same with from";
+                if (this.recipient.address)
+                    if (this.recipient.address.publicKey === this.walletAddress.publicKey) throw "Recipient can not be the same with from";
 
             }catch (err){
                 return err.toString()
@@ -237,9 +237,9 @@ export default {
         },
 
         identifiedPaymentID(){
-            if (this.destination.address) {
-                if (this.destination.address.paymentID)
-                    return this.destination.address.paymentID
+            if (this.recipient.address) {
+                if (this.recipient.address.paymentID)
+                    return this.recipient.address.paymentID
             }
         },
 
@@ -257,7 +257,7 @@ export default {
     },
 
     watch: {
-        async destination (to, from){
+        async recipient (to, from){
             if (to === from) return
 
             await this.$store.state.blockchain.syncPromise;
@@ -270,8 +270,8 @@ export default {
 
         },
 
-        randomDestination(to, from){
-            this.destination = {address: null, amount: new Decimal(0) }
+        randomRecipient(to, from){
+            this.recipient = {address: null, amount: new Decimal(0) }
         },
 
     },
@@ -291,16 +291,16 @@ export default {
                 if (oldTab === 0 && value > oldTab){
                     if (this.asset.validationError) throw this.asset.validationError
 
-                    if (!this.randomDestination){
+                    if (!this.randomRecipient){
 
-                        if (this.destination.validationError) throw this.destination.validationError;
-                        if (this.checkDestinationError) throw this.checkDestinationError
+                        if (this.recipient.validationError) throw this.recipient.validationError;
+                        if (this.checkRecipientError) throw this.checkRecipientError
 
                         await this.$store.state.blockchain.syncPromise;
-                        await this.$store.dispatch('subscribeAccount', {publicKey: this.destination.address.publicKey} )
+                        await this.$store.dispatch('subscribeAccount', {publicKey: this.recipient.address.publicKey} )
 
-                        if (!this.$store.state.accounts.list[this.destination.address.publicKey] && !this.destination.address.registration )
-                            throw "Destination Address doesn't have the registration. \n You have the shorter version of the address. First time when an address is used it requires the longer version."
+                        if (!this.$store.state.accounts.list[this.recipient.address.publicKey] && !this.recipient.address.registration )
+                            throw "Recipient Address doesn't have the registration. \n You have the shorter version of the address. First time when an address is used it requires the longer version."
                     }
 
                 }else if (oldTab === 1 && value > oldTab) {
@@ -326,8 +326,8 @@ export default {
             }
         },
 
-        changedDestination(data){
-            this.destination = { ...this.destination,  ...data, }
+        changedRecipient(data){
+            this.recipient = { ...this.recipient,  ...data, }
         },
         changedAsset(data){
             this.asset = { ...this.asset,  ...data, }
@@ -381,9 +381,9 @@ export default {
                     if (!foundSender) throw "Account not found for sender"
                 }
 
-                if (!this.randomDestination)
-                    if (this.$store.state.accounts.list[ this.destination.address.publicKey]){
-                        let availableAccounts = this.$store.state.accounts.list[ this.destination.address.publicKey]
+                if (!this.randomRecipient)
+                    if (this.$store.state.accounts.list[ this.recipient.address.publicKey]){
+                        let availableAccounts = this.$store.state.accounts.list[ this.recipient.address.publicKey]
                         if (availableAccounts)
                             for (let i=0; i < availableAccounts.length; i++)
                                 if (availableAccounts.asset === asset)
@@ -447,13 +447,13 @@ export default {
                     this.newSender = {privateKey: json[0], addressEncoded: json[1], publicKey: json[2] }
                 }
 
-                if (this.randomDestination){
+                if (this.randomRecipient){
                     const out = await getRandomPublicKey()
-                    this.destination = { amount: new Decimal(0), addressEncoded: out.addressEncoded, address: { publicKey: out.publicKey }}
+                    this.recipient = { amount: new Decimal(0), addressEncoded: out.addressEncoded, address: { publicKey: out.publicKey }}
                 }
 
-                ringMembers.push(this.destination.addressEncoded)
-                delete publicKeysMap[this.destination.address.publicKey]
+                ringMembers.push(this.recipient.addressEncoded)
+                delete publicKeysMap[this.recipient.address.publicKey]
 
                 for ( let i =0; ringMembers.length < ringSize - newAccounts; i++){
                     const out = await getRandomPublicKey()
@@ -526,7 +526,7 @@ export default {
                 regs[ringShufflePublicKeys[i]] = out.registrationSerialized[i]
             }
 
-            const amount = this.destination.amount
+            const amount = this.recipient.amount
             const fee = this.fee.feeType ? 0 : this.fee.feeManual.amount
 
             let feeRate = 0, feeLeadingZeros = 0
@@ -550,13 +550,13 @@ export default {
 
 
             const data = {
-                from: [{
+                senders: [{
                     privateKey: senderPrivateKey,
                     decryptedBalance: senderDecryptedBalance,
                 }],
                 assets: [ asset ],
                 amounts: [ amount  ],
-                dsts: [ this.destination.addressEncoded ],
+                recipients: [ this.recipient.addressEncoded ],
                 burns: [ new Decimal(0) ],
                 ringMembers: [ this.ringMembers ],
                 fees: [{
@@ -601,7 +601,6 @@ export default {
         async handlePropagateTx(){
 
             this.statusType = "broadcasting"
-
             this.status = 'Cloning transaction...'
 
             const txSerialized = Buffer.alloc(this.txSerialized.length)
@@ -638,7 +637,7 @@ export default {
     },
 
     beforeUnmount() {
-        this.destination = {  }
+        this.recipient = {  }
     }
 
 }

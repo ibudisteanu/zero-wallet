@@ -3,14 +3,14 @@
     <div>
         <div class="col">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{text}} Address {{index !== null ? index+1 : ''}}</label>
-            <i v-if="index !== null" class="fas fa-times float-end pointer " @click="deleteDestinationAddress"></i>
+            <i v-if="index !== null" class="fas fa-times float-end pointer " @click="handleDeleteRecipientAddress"></i>
 
-            <div :class="`${finalAddress ? 'destination-row': ''} `" >
+            <div :class="`${finalAddress ? 'recipient-row': ''} `" >
 
                 <account-identicon v-if="finalAddress" :public-key="finalAddress.publicKey" size="30" outer-size="8" />
 
                 <div class="input-toggle-group">
-                    <input :class="`form-control ${validationError ? 'is-invalid' : ''}`" type="text" v-model="destination">
+                    <input :class="`form-control ${validationError ? 'is-invalid' : ''}`" type="text" v-model="recipient">
                     <i class="fas fa-qrcode input-toggle" @click="showQrCodeScanner" :style="`${ validationError ?'right: 35px' : ''}`"></i>
                 </div>
 
@@ -34,7 +34,7 @@ export default {
 
     data(){
         return {
-            destination: '',
+            recipient: '',
             finalAddress: null,
             identiconSrc: null,
         }
@@ -44,20 +44,20 @@ export default {
         index: {default: null},
         asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX},
         balances: {default: null },
-        text: {default: "Destination"},
+        text: {default: "Recipient"},
         allowZero: {default: false},
         validateAmount: {default: false},
     },
 
     computed:{
         validationError(){
-            if (!this.destination) return `${this.text} was not specified`;
+            if (!this.recipient) return `${this.text} was not specified`;
             if (!this.finalAddress) return `${this.text} is invalid`;
         },
     },
 
     watch: {
-        destination: {
+        recipient: {
             immediate: true,
             handler: async function  (to, ) {
                 try{
@@ -70,7 +70,7 @@ export default {
 
                 this.$emit('changed', {
                     address: this.finalAddress,
-                    addressEncoded: this.destination,
+                    addressEncoded: this.recipient,
                     validationError: this.validationError,
                 });
 
@@ -83,7 +83,7 @@ export default {
 
         async showQrCodeScanner(){
             const out = await this.$store.state.page.refQRCodeScannerModal.showModal();
-            if (out) this.destination = out
+            if (out) this.recipient = out
             console.log("showQrCodeScanner", out)
         },
 
@@ -91,7 +91,7 @@ export default {
             return this.$emit('changed', { ...data, });
         },
 
-        deleteDestinationAddress(){
+        handleDeleteRecipientAddress(){
             return this.$emit('deleted')
         }
 
@@ -101,7 +101,7 @@ export default {
 </script>
 
 <style scoped>
-.destination-row{
+.recipient-row{
     display: grid;
     grid-template-columns: 45px 1fr;
     grid-column-gap: 10px;

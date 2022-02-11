@@ -7,8 +7,8 @@
         <zether-tx ref="refZetherTx"
                    :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX"
                    :init-available-balance="balancesOnlyUnclaimed"
-                   :allow-destination-zero-amount="false"
-                   :validate-destination-amount="true"
+                   :allow-recipient-zero-amount="false"
+                   :validate-recipient-amount="true"
                    :create-new-sender="true"
                    text="Claim" :public-key="publicKey" @onSetTab="setTab" :beforeProcess="handleBeforeProcess">
         </zether-tx>
@@ -22,12 +22,11 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title";
 import ZetherTx from "src/components/send/txs/zether-tx";
 import DelegatedStakingNewInfo from "src/components/staking/delegated-staking-new-info"
-import DestinationAddress from "src/components/send/destination-address";
 import Decimal from "decimal.js"
 
 export default {
 
-    components: { ZetherTx,  LayoutTitle, Layout, DelegatedStakingNewInfo, DestinationAddress },
+    components: { ZetherTx,  LayoutTitle, Layout, DelegatedStakingNewInfo },
 
     data(){
         return {
