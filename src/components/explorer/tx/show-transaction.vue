@@ -164,7 +164,7 @@
                             <span class="text-truncate" v-tooltip.bottom="`${Buffer.from(payload.data, 'hex').toString()}`">{{Buffer.from(payload.data, "hex").toString()}}</span>
                         </template>
                         <template v-if="payload.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_ENCRYPTED)">
-                            <span v-if="!decrypted">?</span>
+                            <span v-if="!decrypted" v-tooltip.bottom="`Encrypted Memo`">?</span>
                             <span v-else class="text-truncate" v-tooltip.bottom="`${Buffer.from(decrypted.zetherTx.payloads[index].message, 'hex').toString()}`">{{Buffer.from(decrypted.zetherTx.payloads[index].message, "hex").toString()}}</span>
                         </template>
                     </span>
@@ -177,17 +177,17 @@
                 <div class="row pt-2 pb-2">
                     <span class="col-4 col-sm-3 text-truncate">Amount</span>
                     <span class="col-8 col-sm-9">
-                        <span v-if="!decrypted">?</span>
+                        <span v-if="!decrypted" v-tooltip.bottom="`Confidential amount`">?</span>
                         <amount v-else-if="decrypted.zetherTx.payloads[index].whisperSenderValid" :value="decrypted.zetherTx.payloads[index].sentAmount" :sign="false" value-class="text-danger" />
                         <amount v-else-if="decrypted.zetherTx.payloads[index].whisperRecipientValid" :value="decrypted.zetherTx.payloads[index].receivedAmount" :sign="true" value-class="text-success" :show-plus-sign="true" />
-                        <span v-else>0</span>
+                        <amount v-else v-tooltip.bottom="`You received zero`" :value="new Decimal(0)" :sign="true"/>
                     </span>
                 </div>
 
                 <div class="row pt-2 pb-2 bg-light">
                     <span class="col-4 col-sm-3 text-truncate">Recipient</span>
                     <span class="col-8 col-sm-9">
-                        <span v-if="!decrypted || !decrypted.zetherTx.payloads[index].recipientPublicKey">?</span>
+                        <span v-if="!decrypted || !decrypted.zetherTx.payloads[index].recipientPublicKey" v-tooltip.bottom="`Unknown Recipient`">?</span>
                         <account-identicon v-else :publicKey="decrypted.zetherTx.payloads[index].recipientPublicKey" size="21" outer-size="7" />
                     </span>
                 </div>
@@ -208,7 +208,7 @@
             </div>
         </div>
 
-        <loading-button v-if="canDecrypt && !decrypted" type="button"  v-tooltip.bottom="`Decrypt the transaction to see the amount, shared text and recipient`" @submit="decryptTx" text="Decrypt" icon="fas fa-unlock" :icon-left="false" class-custom="btn btn-falcon-primary btn-sm" />
+        <loading-button v-if="canDecrypt && !decrypted" type="button"  v-tooltip.bottom="`Decrypt transaction to see the amount, shared text and recipient`" @submit="decryptTx" text="Decrypt" icon="fas fa-unlock" :icon-left="false" class-custom="btn btn-falcon-primary btn-sm" />
 
     </div>
 </template>
