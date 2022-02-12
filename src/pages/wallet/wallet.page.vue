@@ -22,7 +22,7 @@
                         <div v-if="!showPublicKey" class="pointer  w-auto" @click="showPublicKey = true">
                             View Public Key
                         </div>
-                        <div v-else>
+                        <div class="text-truncate" v-else>
                             Public Key: {{walletAddress.publicKey}}
                             <i class="fas fa-copy pointer  d-inline-block" v-tooltip.bottom="'Copy Public Key'"  @click="handleCopyAddress(walletAddress.publicKey)" />
                         </div>
@@ -32,7 +32,7 @@
                         <div v-if="!showRegistration" class="pointer  w-auto" @click="showRegistration = true">
                             View Registration Public Key
                         </div>
-                        <div v-else>
+                        <div class="text-truncate" v-else>
                             Registration Public Key: {{walletAddress.registration}}
                             <i class="fas fa-copy pointer  d-inline-block" v-tooltip.bottom="'Copy Registration'"  @click="handleCopyAddress(walletAddress.registration)" />
                         </div>

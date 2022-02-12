@@ -19,7 +19,7 @@
             <div class="col-8 col-md-1 text-truncate">
                 <template v-if="txInfo">
                     <span v-if="txInfo.mempool" class="d-md-flex justify-content-center align-items-center">
-                        <i class="fas fa-clock" />
+                        <i class="fas fa-clock" v-tooltip.bottom="`Pending...`" />
                     </span>
                     <span v-else-if="txInfo.timestamp" v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp.plus(  txInfo.timestamp ) ) }`" class="d-md-flex justify-content-center align-items-center"  >
                         {{ timeAgo( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp ) ) }}
@@ -31,7 +31,7 @@
             <div class="col-8 col-md-1 text-truncate">
                 <template v-if="txInfo">
                     <span v-if="txInfo.mempool" class="d-md-flex justify-content-center align-items-center">
-                        <i class="fas fa-clock" />
+                        <i class="fas fa-clock" v-tooltip.bottom="`Pending...`" />
                     </span>
                     <span v-else-if="txInfo.blkHeight" v-tooltip.bottom="`${ txInfo.blkHeight }`" class="d-md-flex justify-content-center align-items-center" >
                         <router-link :to="`/explorer/block/${txInfo.blkHeight}`">
@@ -88,7 +88,7 @@
             <div class="col-8 col-md-2 text-truncate">
                 <template v-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER )">
                     <div class="text-truncate d-md-flex justify-content-center align-items-center">
-                        <loading-button v-if="canDecrypt && !decrypted" type="button"  v-tooltip.bottom="`Decrypt the transaction to see the amount, shared text and recipient`" @submit="decryptTx" text="Decrypt" icon="fas fa-unlock" :icon-left="false" class-custom="btn btn-falcon-primary btn-sm" />
+                        <loading-button v-if="canDecrypt && !decrypted" type="button"  v-tooltip.bottom="`Decrypt the transaction to see the amount, shared text and recipient`" @submit="decryptTx" text="Decrypt" icon="fas fa-unlock" :icon-left="false" class-custom="btn btn-falcon-default btn-sm" />
                         <div v-else v-for="(payload, index) in tx.base.payloads" :key="`tx_payload_${index}`">
                             <span v-if="!decrypted" v-tooltip.bottom="`Confidential amount`">?</span>
                             <amount v-else-if="decrypted.zetherTx.payloads[index].whisperSenderValid" :value="decrypted.zetherTx.payloads[index].sentAmount" :sign="false" value-class="text-danger" />
