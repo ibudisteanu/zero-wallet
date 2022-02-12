@@ -1,7 +1,7 @@
 <template>
 
     <router-link :to="disableRoute ? '' : `/address/${finalAddress}`" v-tooltip.bottom="`${ showTooltip ? finalAddressShort : '' }`">
-        <div class="identicon outer" :style="`padding: ${outerSize}px`" v-if="identiconSrc">
+        <div :class="`identicon ${outerSize? 'outer':''}`" :style="`padding: ${outerSize}px`" v-if="identiconSrc">
             <img :src="identiconSrc" class="identicon" :style="`width: ${size}px`"  >
         </div>
     </router-link>
@@ -96,7 +96,6 @@ export default {
 
 
     .outer{
-        display: inline-table;
         -webkit-border-radius: 50%;
         -moz-border-radius: 50%;
         -khtml-border-radius: 50%;
@@ -106,6 +105,7 @@ export default {
     }
 
     .identicon{
+        display: inline-table;
         background-color: white;
     }
 

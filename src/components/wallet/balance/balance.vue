@@ -1,26 +1,27 @@
 <template>
 
-    <div class="row">
-        <h4 class="fw-medium pt-2" v-if="getAsset" >
-
+    <div>
+        <template v-if="version === 'zether'">
+            <i class="fas fa-lock pe-2 fs-2" v-tooltip.bottom="`Homomorphic Encrypted Amount: ${balance}`" />
+            <template v-if="decryptedBalance === null">
+                <i class="fas fa-key pe-2 pointer fs-2 text-primary" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecrypted" @click="decryptBalance"></i>
+            </template>
+        </template>
+        <h4 class="fw-medium pt-2 d-inline-block" v-if="getAsset" >
             <template v-if="version === 'zether'">
-                <i class="fas fa-lock pe-2" v-tooltip.bottom="`Homomorphic Encrypted Amount: ${balance}`" />
-                <template v-if="decryptedBalance === null">
-                    <i class="fas fa-key pe-2 pointer" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecrypted" @click="decryptBalance"></i>
-                </template>
-                <template v-else>
+                <template v-if="decryptedBalance !== null">
                     {{ amount }}
                 </template>
             </template>
             <template v-else>
                 {{ amount }}
             </template>
-            <small class="ps-1 fs--1 text-700">/
-                <router-link :to="`/explorer/asset/${getAsset.hash}`" class="currency" v-tooltip.bottom="getAsset.hash" >
-                    {{getAsset.name}}
-                </router-link>
-            </small>
         </h4>
+        <small class="ps-1 fs--1 text-700 d-inline-block">/
+            <router-link :to="`/explorer/asset/${getAsset.hash}`" class="currency" v-tooltip.bottom="getAsset.hash" >
+                {{getAsset.name}}
+            </router-link>
+        </small>
     </div>
 
 </template>

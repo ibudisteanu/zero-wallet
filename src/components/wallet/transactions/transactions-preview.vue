@@ -19,7 +19,7 @@
         <div class="card-body px-3 py-0" v-if="txs && transactions.length ">
             <show-transactions-preview :transactions="transactions" :public-key="publicKey" />
         </div>
-        <div class="card-footer bg-light g-0 d-block-inline p-3" v-if="pages.gt(0)">
+        <div class="card-footer bg-light g-0 d-inline-block p-3" v-if="pages.gt(0)">
             <pagination class="right" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="pages" :prefix="`/address/${address.addressEncoded}/`" suffix="#transactions" />
         </div>
 

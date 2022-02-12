@@ -1,15 +1,16 @@
 <template>
 
-    <div class="row">
-        <h4 class="fw-medium pt-2">
+    <div>
+        <h4 class="fw-medium pt-2 d-inline-block">
             {{delegatedStakePending.pendingType ? '' : '-'}} {{ amount }}
-            <small class="fs--1 text-700">/
-                <router-link v-if="getAsset" :to="`/explorer/asset/${getAsset.hash}`" v-tooltip.bottom="getAsset.hash" >
-                    {{getAsset.name}}
-                </router-link>
-                <span v-tooltip.bottom="'Activation Block'" >{{delegatedStakePending.activationHeight}}</span>
-            </small>
         </h4>
+        <small class="fs--1 text-700 d-inline-block">
+            <span class="ps-1">/</span>
+            <router-link class="px-1" v-if="getAsset" :to="`/explorer/asset/${getAsset.hash}`" v-tooltip.bottom="getAsset.hash" >
+                {{getAsset.name}}
+            </router-link>
+            <span v-tooltip.bottom="'Activation Block'" >{{delegatedStakePending.activationHeight}}</span>
+        </small>
     </div>
 
 </template>

@@ -69,7 +69,7 @@
 
                         <hr/>
 
-                        <div class="g-0 d-block-inline ">
+                        <div class="g-0 d-inline-block ">
                             <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="copyAddress" v-tooltip.bottom="'Copy Address'" >
                                 <i class="fas fa-copy" />
                             </button>

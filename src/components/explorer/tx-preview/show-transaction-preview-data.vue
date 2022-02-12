@@ -2,20 +2,18 @@
     <div>
         <template v-if="tx.version.eq(PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE)">
 
-            <template v-if="tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE) ">
-                <i class="fas fa-sync pe-2"/>
-            </template>
-
             <div class="input ">
-                <account-identicon :publicKey="tx.base.vin" size="21" outer-size="7" />
+                <account-identicon :publicKey="tx.base.vin" size="21" :outer-size="0" />
                 <amount :value="vinSimpleAmount" :sign="false" />
             </div>
 
         </template>
         <template v-else-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER ) ">
-            <span class="pointer d-md-flex justify-content-center align-items-center">
-                Rings: {{tx.base.payloads.map(payload => new Decimal(2).pow( payload.ring ) ).join(', ') }}
-            </span>
+            <div class="pointer d-md-flex justify-content-center align-items-center">
+                <span v-for="(payload,index) in tx.base.payloads" :key="`ring_${index}`" >
+                    {{new Decimal(2).pow( payload.ring )}}
+                </span>
+            </div>
         </template>
     </div>
 </template>

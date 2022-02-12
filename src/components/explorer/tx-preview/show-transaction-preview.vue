@@ -104,7 +104,7 @@
                 <template v-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER )">
                     <div v-for="(payload, index) in tx.base.payloads" :key="`tx_payload_${index}`" class="text-truncate d-md-flex justify-content-center align-items-center">
                         <span v-if="!decrypted || !decrypted.zetherTx.payloads[index].recipientPublicKey" v-tooltip.bottom="`Unknown Recipient`">?</span>
-                        <account-identicon v-else :publicKey="decrypted.zetherTx.payloads[index].recipientPublicKey" size="21" outer-size="4" />
+                        <account-identicon v-else :publicKey="decrypted.zetherTx.payloads[index].recipientPublicKey" size="21" :outer-size="0" />
                     </div>
                 </template>
             </div>
