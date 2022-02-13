@@ -110,9 +110,11 @@ export default {
             if (decrypted.zetherTx){
 
                 decrypted.zetherTx.payloads.forEach((payload, index)=>{
-                    if (!payload.recipientIndex.eq(-1) )
-                        payload.recipientPublicKey = tx.payloads[index].statement.publickeylist[payload.recipientIndex]
-                    delete payload.blinder
+                    if (payload !== null ){
+                        if (!payload.recipientIndex.eq(-1) )
+                            payload.recipientPublicKey = tx.payloads[index].statement.publickeylist[payload.recipientIndex]
+                        delete payload.blinder
+                    }
                 })
 
                 localStorage.setItem(`txDecrypted:${hash}:${publicKey}`, JSONStringify(decrypted))
