@@ -1,9 +1,17 @@
 <template>
     <div>
         <div :class="`fs-0 fw-bold alert alert-primary`" >
-            <div :class="`${visible ? '' : 'noselect blurry-text' }  text-break`">
-                {{text}}
-                <i :class="`fas fa-copy ${visible ? 'pointer' :''}`" v-tooltip.bottom="visible ? `Copy ${title}` : ''"  @click="visible ? copySecret() : null"/>
+            <div :class="`${visible ? '' : 'noselect blurry-text' }`">
+                <span v-if="!showBadges" class="text-break">
+                    {{text}}
+                </span>
+                <template v-else>
+                    <span v-for="(word, i) in text.split(' ')" :class="`badge badge-soft-success mx-1 ${visible ? '' : 'noselect blurry-text' }`"
+                          :key="`word_${i}`">
+                        {{ word }}
+                    </span>
+                </template>
+                <i :class="`fas fa-copy ps-1 ${visible ? 'pointer' :''}`" v-tooltip.bottom="visible ? `Copy ${title}` : ''"  @click="visible ? copySecret() : null"/>
             </div>
             <div v-show="!visible" class="position-absolute top-50 start-50 translate-middle pointer" @click="visible = true"  v-tooltip.bottom="'Show the secret!'">
                 <i class="fas fa-eye fs-3"></i> Show
@@ -30,6 +38,7 @@ export default {
 
     props:{
         text: {default: ''},
+        showBadges: {default: false},
         title: {default: ''},
     },
 

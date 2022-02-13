@@ -1,7 +1,7 @@
 <template>
     <div>
 
-        <div class="form-group pt-2">
+        <div class="form-check pt-2">
             <input class="form-check-input" id="set-new-delegated-info" type="checkbox"  name="checkbox" v-model="hasNewDelegatedInfo"  >
             <label class="form-check-label" for="set-new-delegated-info">Set new Delegated Info</label>
             <i class="fas fa-question " v-tooltip.bottom="`Set new required keys to enable Delegated Staking`" />

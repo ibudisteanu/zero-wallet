@@ -2,17 +2,32 @@
     <div>
         <template v-if="tx.version.eq(PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE)">
 
-            <div class="input ">
-                <account-identicon :publicKey="tx.base.vin" size="21" :outer-size="0" />
-                <amount :value="vinSimpleAmount" :sign="false" />
+            <div class="pointer d-md-flex justify-content-center align-items-center">
+                <template v-if="tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE)">
+                    <account-identicon :publicKey="tx.base.vin" size="21" :outer-size="0" />
+                    <amount :value="tx.base.extra.amount" :sign="false" />
+                </template>
+                <template v-if="tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE)">
+                    <account-identicon :publicKey="tx.base.vin" size="21" :outer-size="0" />
+                    <amount :value="tx.base.extra.delegatedStakingClaimAmount" :sign="false" />
+                </template>
             </div>
 
         </template>
         <template v-else-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER ) ">
-            <div class="pointer d-md-flex justify-content-center align-items-center">
-                <span v-for="(payload,index) in tx.base.payloads" :key="`ring_${index}`" >
-                    {{new Decimal(2).pow( payload.ring )}}
-                </span>
+            <div class="">
+                <div v-for="(payload,index) in tx.base.payloads" :key="`ring_${index}`" class="col-12 d-md-flex justify-content-center align-items-center">
+                    <i class="fas fa-users px-1"></i>
+                    <span class="pe-1">{{new Decimal(2).pow( payload.ring )}}</span>
+                    <template v-if="payload.payloadScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CLAIM) && payload.extra">
+                        <account-identicon :publicKey="payload.extra.delegatePublicKey" size="21" :outer-size="0" />
+                        <amount :value="payload.extra.delegatedStakingClaimAmount" :sign="true" />
+                    </template>
+                    <template v-if="payload.payloadScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_DELEGATE_STAKE) && payload.extra">
+                        <account-identicon :publicKey="payload.extra.delegatePublicKey" size="21" :outer-size="0" />
+                        <amount :value="payload.burnValue" :sign="true" />
+                    </template>
+                </div>
             </div>
         </template>
     </div>
@@ -44,20 +59,6 @@ export default {
 
         PandoraPay: () => PandoraPay,
         Decimal: () => Decimal,
-
-        vinSimpleAmount(){
-
-            if (!this.tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ) return
-            let out = new Decimal(0)
-
-            if (this.tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE) )
-                out = out.plus(this.tx.base.extra.amount)
-
-            if (this.tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE) )
-                out = out.plus(this.tx.base.extra.output.delegatedStakingClaimAmount)
-
-            return out
-        }
     },
 
     watch: {

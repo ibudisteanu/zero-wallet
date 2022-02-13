@@ -16,7 +16,7 @@
 
             <template v-slot:tab_1>
 
-                <div class="form pb-2">
+                <div class="form-check pb-2">
                     <input class="form-check-input" id="fee-version" type="checkbox"  name="checkbox" v-model="feeVersion">
                     <label class="form-check-label" for="fee-version">Pay Fee from Unclaimed balance</label>
                     <i class="fas fa-question " v-tooltip.bottom="`Subtract the fee from the unclaimed balance or from the delegated stake.`" />

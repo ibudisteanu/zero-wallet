@@ -38,7 +38,8 @@ export default {
             return this.$store.getters.getAsset( this.asset );
         },
         amount(){
-            return StringHelper.formatMoney( this.value.div( new Decimal(10).pow(this.getAsset.decimalSeparator) ).toString(), this.getAsset.decimalSeparator )
+            const value = this.value || new Decimal(0)
+            return StringHelper.formatMoney( value.div( new Decimal(10).pow(this.getAsset.decimalSeparator) ).toString(), this.getAsset.decimalSeparator )
         },
         getSign(){
             if (!this.sign ) return '-'
