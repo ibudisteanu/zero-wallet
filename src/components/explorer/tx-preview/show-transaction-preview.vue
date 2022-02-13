@@ -47,14 +47,13 @@
             </div>
 
             <span class="col-4 d-block d-md-none text-dark text-truncate">Type</span>
-            <div class="col-8 col-md-1 text-truncate">
+            <div class="col-8 col-md-1">
                 <template v-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE )">
-                    <span :class="`badge badge-soft-${$store.getters.getTxScriptBadgeColor(tx.version, tx.base.txScript)} d-md-flex justify-content-center align-items-center`" v-tooltip.bottom="$store.getters.getTxScriptText(tx.version, tx.base.txScript)">{{$store.getters.getTxScriptTextShort(tx.version, tx.base.txScript)}}</span>
+                    <span :class="`text-truncate badge badge-soft-${$store.getters.getTxScriptBadgeColor(tx.version, tx.base.txScript)} d-md-flex justify-content-center align-items-center`" v-tooltip.bottom="$store.getters.getTxScriptText(tx.version, tx.base.txScript)">{{$store.getters.getTxScriptTextShort(tx.version, tx.base.txScript)}}</span>
                 </template>
                 <template v-else-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER )">
-                    <span v-for="(payload, index) in tx.base.payloads"
-                          :key="`tx_type_${index}`">
-                        <span :class="`badge badge-soft-${$store.getters.getTxScriptBadgeColor(tx.version, payload.payloadScript)} d-md-flex justify-content-center align-items-center`" v-tooltip.bottom="$store.getters.getTxScriptText(tx.version, payload.payloadScript)">{{$store.getters.getTxScriptTextShort(tx.version, payload.payloadScript)}}</span>
+                    <span v-for="(payload, index) in tx.base.payloads" :key="`tx_type_${index}`" class="col-12">
+                        <span :class="`text-truncate badge badge-soft-${$store.getters.getTxScriptBadgeColor(tx.version, payload.payloadScript)} d-md-flex justify-content-center align-items-center`" v-tooltip.bottom="$store.getters.getTxScriptText(tx.version, payload.payloadScript)">{{$store.getters.getTxScriptTextShort(tx.version, payload.payloadScript)}}</span>
                     </span>
                 </template>
             </div>
@@ -88,7 +87,7 @@
             <div class="col-8 col-md-2 text-truncate">
                 <template v-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER )">
                     <div class="text-truncate d-md-flex justify-content-center align-items-center">
-                        <loading-button v-if="canDecrypt && !decrypted" type="button"  v-tooltip.bottom="`Decrypt the transaction to see the amount, shared text and recipient`" @submit="decryptTx" text="Decrypt" icon="fas fa-unlock" :icon-left="false" class-custom="btn btn-falcon-default btn-sm" />
+                        <loading-button v-if="canDecrypt && !decrypted" type="button"  v-tooltip.bottom="`Decrypt the transaction to see the amount, shared text and recipient`" @submit="decryptTx" text="Decrypt" icon="fas fa-unlock" :icon-left="false" class-custom="badge rounded-pill bg-info" component="span" />
                         <div v-else v-for="(payload, index) in tx.base.payloads" :key="`tx_payload_${index}`" class="col-12">
                             <span v-if="!decrypted" v-tooltip.bottom="`Confidential amount`">?</span>
                             <amount v-else-if="decrypted.zetherTx.payloads[index].whisperSenderValid" :value="decrypted.zetherTx.payloads[index].sentAmount" :sign="false" value-class="text-danger" />

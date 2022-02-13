@@ -1,5 +1,5 @@
 <template>
-    <button :class="`${classCustom}`" type="button" @click="handleClick">
+    <component :class="`${classCustom}`" type="button" @click="handleClick" :is="component">
 
         <template v-if="!loaded">
             <loading-spinner v-if="!loaded" />
@@ -10,7 +10,7 @@
             <i v-if="icon && !iconLeft" :class="`ps-1 ${icon}`" />
         </template>
 
-    </button>
+    </component>
 </template>
 
 <script>
@@ -28,7 +28,8 @@ export default{
         canDisable: {default: true},
         text: {default: 'Submit'},
         icon : {default: 'fas fa-share'},
-        iconLeft: {default: true}
+        iconLeft: {default: true},
+        component: {default: "button"},
     },
     methods: {
         handleClick(e){
