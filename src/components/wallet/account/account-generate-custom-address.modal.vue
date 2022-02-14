@@ -177,7 +177,7 @@ export default {
                     if (this.validationPaymentID) throw this.validationPaymentID
 
                 if (oldTab === 3 && value === 4)
-                    await this.handleGenerateAddress()
+                    await this.handleCreateAddress()
 
             }catch(err) {
                 reject(err)
@@ -223,7 +223,7 @@ export default {
             return this.$store.state.page.refQRCodeModal.showModal( this.addressGenerated, this.account.name || '');
         },
 
-        async handleGenerateAddress(){
+        async handleCreateAddress(){
 
             this.addressGenerated = ""
 
@@ -235,7 +235,7 @@ export default {
                 paymentAsset: this.hasPaymentAsset ? this.paymentAsset : "",
             }
 
-            const out = await PandoraPay.addresses.generateAddress( MyTextEncode( JSONStringify( args )  ))
+            const out = await PandoraPay.addresses.createAddress( MyTextEncode( JSONStringify( args )  ))
             const json = JSONParse( MyTextDecode(out) )
             this.addressGenerated = json[1]
 

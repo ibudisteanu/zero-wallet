@@ -432,7 +432,7 @@ export default {
                         return {addressEncoded: json[1], publicKey: json[2] }
                     }
 
-                    const json = JSONParse( MyTextDecode( await PandoraPay.addresses.generateAddress( MyTextEncode( JSONStringify( {publicKey: publicKeySelected, registration: "", paymentID: "", paymentAmount: 0, paymentAsset: "" } ) ) ) ) )
+                    const json = JSONParse( MyTextDecode( await PandoraPay.addresses.createAddress( MyTextEncode( JSONStringify( {publicKey: publicKeySelected, registration: "", paymentID: "", paymentAmount: 0, paymentAsset: "" } ) ) ) ) )
                     return {addressEncoded: json[1], publicKey: publicKeySelected}
                 }
 

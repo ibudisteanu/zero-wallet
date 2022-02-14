@@ -53,7 +53,7 @@ export default {
             handler: async function(newVal, oldVal){
                 if (!newVal) return
                 try{
-                    const out = await PandoraPay.addresses.generateAddress( MyTextEncode( JSONStringify( { publicKey: newVal, registration: "", paymentID: "", paymentAmount: 0, paymentAsset: "" })) )
+                    const out = await PandoraPay.addresses.createAddress( MyTextEncode( JSONStringify( { publicKey: newVal, registration: "", paymentID: "", paymentAmount: 0, paymentAsset: "" })) )
                     const json = JSONParse( MyTextDecode(out) )
                     this.identiconSrc = await Identicons.getIdenticon(newVal, this.size )
                     this.finalAddress = json[1]
