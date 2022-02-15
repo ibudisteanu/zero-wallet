@@ -19,7 +19,7 @@
             <div class="row g-0 align-items-center py-2 position-relative border-bottom border-200 text-center">
 
                 <h5 class="text-800 fs-0 pt-4">All private holdings</h5>
-                <h4 v-if="!account.accounts || !account.accounts.length" class="fs-0 pt-1">Empty!</h4>
+                <h4 v-if="!account.accounts || !account.accounts.length" class="fs-0 pt-2">Empty!</h4>
                 <balance v-else v-for="(accountBalance, index) in account.accounts"
                          :key="`balance-asset-${index}`"
                          :balance="accountBalance.balance"
