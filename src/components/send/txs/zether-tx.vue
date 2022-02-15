@@ -73,7 +73,7 @@
             <template v-slot:tab_3>
                 <tx-fee :balances="availableBalances" :asset="asset" :allow-zero="true" @changed="changedFee" />
 
-                <template v-if="asset.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX">
+                <template v-if="asset.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64">
                     <div class="form-check pt-2">
                         <input class="form-check-input" id="assetFeeLiquidityAsset" type="checkbox" v-model="assetFeeLiquidityAsset" />
                         <label class="form-check-label" for="assetFeeLiquidityAsset">Automatically Determine Asset Fee Liquidity</label>
@@ -347,7 +347,7 @@ export default {
 
                 let assetCollector
 
-                if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX){
+                if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64){
                     const outData = await PandoraPay.network.getNetworkFeeLiquidity(0, asset)
                     if (!outData) throw "No Asset Fee Liqiduity for this asset"
                     const out = JSONParse(MyTextDecode(outData))
@@ -531,7 +531,7 @@ export default {
 
             let feeRate = 0, feeLeadingZeros = 0
 
-            if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX)
+            if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64)
                 if (this.assetFeeLiquidityAsset){
                     outData = await PandoraPay.network.getNetworkFeeLiquidity(0, asset)
                     if (!outData) throw "No Asset Fee Liqiduity for this asset"
@@ -568,7 +568,7 @@ export default {
                     leadingZeros: feeLeadingZeros,
                 }],
                 data: [{
-                    data: Buffer.from(this.extraData.data).toString("hex"),
+                    data: Buffer.from(this.extraData.data).toString("base64"),
                     encrypt: this.extraData.type === "encrypted",
                 }],
                 payloadExtra: [ null ],
@@ -608,7 +608,7 @@ export default {
 
             this.status = 'Broadcasting your transaction in the network... Please wait...'
 
-            await this.$store.dispatch('includeTx', { tx: this.tx, serialized: txSerialized.toString("hex"), mempool: false } )
+            await this.$store.dispatch('includeTx', { tx: this.tx, serialized: txSerialized.toString("base64"), mempool: false } )
 
             const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( txSerialized )
             if (!finalAnswer){
@@ -616,7 +616,7 @@ export default {
                 throw "Transaction couldn't be broadcast"
             }
 
-            this.$router.push(`/explorer/tx/${this.tx.hash}`);
+            this.$router.push(`/explorer/tx/${Buffer.from(this.tx.hash, "base64").toString("hex")}`);
 
             this.$emit('onFinished', true )
         },

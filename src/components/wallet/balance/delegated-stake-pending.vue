@@ -6,7 +6,7 @@
         </h4>
         <small class="fs--1 text-700 d-inline-block">
             <span class="ps-1">/</span>
-            <router-link class="px-1" v-if="getAsset" :to="`/explorer/asset/${getAsset.hash}`" v-tooltip.bottom="getAsset.hash" >
+            <router-link class="px-1" v-if="getAsset" :to="`/explorer/asset/${$store.getters.convertBase64ToHex(getAsset.hash)}`" v-tooltip.bottom="$store.getters.convertBase64ToHex(getAsset.hash)" >
                 {{getAsset.name}}
             </router-link>
             <span v-tooltip.bottom="'Activation Block'" >{{delegatedStakePending.activationHeight}}</span>
@@ -28,7 +28,7 @@ export default {
 
     computed: {
         getAsset(){
-            return  this.$store.getters.getAsset( PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX );
+            return  this.$store.getters.getAsset( PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 );
         },
         amount(){
             return StringHelper.formatMoney( new Decimal(this.delegatedStakePending.pendingAmount).div( new Decimal(10).pow(this.getAsset.decimalSeparator) ).toString(), PandoraPay.config.coins.DECIMAL_SEPARATOR )

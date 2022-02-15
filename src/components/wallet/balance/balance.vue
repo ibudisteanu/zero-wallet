@@ -18,7 +18,7 @@
             </template>
         </h4>
         <small class="ps-1 fs--1 text-700 d-inline-block">/
-            <router-link :to="`/explorer/asset/${getAsset.hash}`" class="currency" v-tooltip.bottom="getAsset.hash" >
+            <router-link :to="`/explorer/asset/${$store.getters.convertBase64ToHex(getAsset.hash)}`" class="currency" v-tooltip.bottom="$store.getters.convertBase64ToHex(getAsset.hash)" >
                 {{getAsset.name}}
             </router-link>
         </small>
@@ -37,7 +37,7 @@ export default {
 
     props: {
         version: {default: "transparent"},
-        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX},
+        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64},
         balance: {default: () => new Decimal(0) },
         publicKey: {default: ""},     //required for version zether
         canBeDecrypted: {default: false}  //required for version zether

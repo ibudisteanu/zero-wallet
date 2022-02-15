@@ -8,7 +8,7 @@
                    :titles-offset="{ '-1': {icon: 'fas fa-edit', name: 'Delegation', tooltip: 'Delegation update' }}"
                    :allow-random-recipient="true"
                    :validate-recipient-amount="true"
-                   :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX"
+                   :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64"
                    :public-key="publicKey" @onSetTab="setTab" :beforeProcess="handleBeforeProcess">
 
             <template v-slot:tab_-1>
@@ -57,7 +57,7 @@ export default {
             return this.$store.state.wallet.mainPublicKey
         },
         getAsset() {
-            return this.$store.getters.getAsset(PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX);
+            return this.$store.getters.getAsset(PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64);
         }
     },
 
@@ -97,7 +97,7 @@ export default {
             if (this.delegatedStakingNewInfo.hasNewDelegatedInfo){
                 const out = await PandoraPay.wallet.getPrivateDataForDecryptingBalanceWalletAddress( MyTextEncode( JSONStringify({
                     publicKey: this.delegatePublicKey,
-                    asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX,
+                    asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64,
                 })), password, )
 
                 const params = JSONParse( MyTextDecode( out ) )

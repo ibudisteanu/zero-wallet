@@ -72,7 +72,7 @@ export default {
                 try{
                     const addressData = await PandoraPay.addresses.decodeAddress(newVal)
                     const address = JSONParse( MyTextDecode(addressData))
-                    this.identiconSrc = await Identicons.getIdenticon(address.publicKey, this.size )
+                    this.identiconSrc = await Identicons.getIdenticon( address.publicKey, this.size )
                     this.finalAddress = newVal
                 }catch(err){
                     this.finalAddress = ""

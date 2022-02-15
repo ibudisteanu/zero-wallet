@@ -16,7 +16,9 @@
 
             <span class="col-5 d-block d-sm-none text-dark">Hash</span>
             <span class="col-7 col-sm-2 col-md-2 text-truncate">
-                <router-link :to="`/explorer/block/${blockInfo.hash}`">{{blockInfo.hash}}</router-link>
+                <router-link :to="`/explorer/block/${$store.getters.convertBase64ToHex(blockInfo.hash)}`">
+                    {{$store.getters.convertBase64ToHex(blockInfo.hash)}}
+                </router-link>
             </span>
 
             <span class="col-5 d-xs-none d-sm-none d-md-none text-dark">Kernel Hash</span>

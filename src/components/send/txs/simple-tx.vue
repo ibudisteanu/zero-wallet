@@ -82,7 +82,7 @@ export default {
         },
         balancesStakeAvailable(){
             const amount = (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ? this.account.plainAccount.delegatedStake.stakeAvailable : new Decimal(0)
-            return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
+            return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 } }
         },
         getAsset(){
             return this.$store.getters.getAsset( this.asset ? this.asset.asset : null );
@@ -146,7 +146,7 @@ export default {
                 sender: this.walletAddress.addressEncoded,
                 nonce: nonce,
                 data: {
-                    data: Buffer.from(this.extraData.data).toString("hex"),
+                    data: Buffer.from(this.extraData.data).toString("base64"),
                     encrypt: this.extraData.type === "encrypted",
                     publicKeyToEncrypt: this.extraData.publicKeyToEncrypt,
                 },
@@ -192,7 +192,7 @@ export default {
                 throw "Transaction couldn't be broadcast"
             }
 
-            this.$router.push(`/explorer/tx/${this.tx.hash}`);
+            this.$router.push(`/explorer/tx/${Buffer.from(this.tx.hash, "base64").toString("hex")}`);
 
             this.$emit('onFinished', true )
         }

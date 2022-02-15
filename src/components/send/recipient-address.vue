@@ -42,7 +42,7 @@ export default {
 
     props:{
         index: {default: null},
-        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX},
+        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64},
         balances: {default: null },
         text: {default: "Recipient"},
         allowZero: {default: false},

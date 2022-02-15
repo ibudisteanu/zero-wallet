@@ -54,13 +54,13 @@ export default {
         },
         balancesOnlyUnclaimed(){
             const amount = (this.account && this.account.plainAccount) ? this.account.plainAccount.unclaimed : new Decimal(0)
-            return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
+            return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 } }
         },
         buttons(){
             return { 1: { icon: 'fas fa-marker', text: 'Update delegate' }}
         },
         getAsset() {
-            return this.$store.getters.getAsset(PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX);
+            return this.$store.getters.getAsset(PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64);
         },
     },
 

@@ -3,7 +3,7 @@
     <modal ref="modal" :title="`Private Key ${ address ? 'of '+address.name : '' }`" >
 
         <template v-slot:body>
-            <secret-text v-if="privateKey" class="pt-3" :text="privateKey" title="Private Key" >
+            <secret-text v-if="privateKey" class="pt-3" :text="$store.getters.convertBase64ToHex(privateKey)" title="Private Key" >
                 <template v-slot:warning>
                     DO NOT share this private key with anyone! This private key can be used to <strong>STEAL YOUR FUNDS FROM THIS ACCOUNT</strong>
                 </template>

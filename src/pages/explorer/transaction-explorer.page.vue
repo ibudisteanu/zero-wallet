@@ -8,7 +8,7 @@
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0 text-truncate">Tx {{height ? height : hash}}</h5>
+                        <h5 class="mb-0 text-truncate">Tx {{height ? height : $store.getters.convertBase64ToHex(hash) }}</h5>
                     </div>
                 </div>
             </div>
@@ -79,7 +79,7 @@ export default {
             }
         },
         hash(){
-            if (this.query && this.query.length === 64) return this.query
+            if (this.query && this.query.length === 64) return Buffer.from(this.query, "hex").toString("base64")
         },
         tx(){
             if (this.height) return this.$store.state.transactions.txsByHeight[this.height];
@@ -112,7 +112,7 @@ export default {
                     await this.removed()
 
                 if (this.height) await this.$store.dispatch('getTransactionByHeight', this.height);
-                if (this.hash ) await this.$store.dispatch('getTransactionByHash', this.hash);
+                if (this.hash ) await this.$store.dispatch('getTransactionByHash', this.hash );
 
                 if (this.tx) {
                     this.$store.commit('updateViewTransactionsHashes', {txsHashes: [this.tx.hash], insert: true} )

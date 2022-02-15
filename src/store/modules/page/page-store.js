@@ -1,4 +1,5 @@
 import mutations from "./page-mutations"
+import getters from "./page-getters"
 
 export default {
 
@@ -19,5 +20,5 @@ export default {
     },
 
     mutations,
-
+    getters,
 }

@@ -10,8 +10,8 @@
 
             <span class="col-4 d-block d-md-none text-dark text-truncate">Hash</span>
             <span class="col-8 col-md-1 text-truncate">
-                <router-link :to="`/explorer/tx/${txHash}`">
-                    {{tx.hash}}
+                <router-link :to="`/explorer/tx/${$store.getters.convertBase64ToHex(tx.hash)}`">
+                    {{$store.getters.convertBase64ToHex(tx.hash)}}
                 </router-link>
            </span>
 
@@ -73,11 +73,11 @@
                 <template v-else-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER )">
                     <div v-for="(payload, index) in tx.base.payloads" :key="`tx_payload_${index}`" class="col-12  text-truncate d-md-flex justify-content-center align-items-center">
                         <template v-if="payload.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT)">
-                            <span v-tooltip.bottom="`${Buffer.from(payload.dataPublic, 'hex').toString()}`">{{Buffer.from(payload.dataPublic, "hex").toString()}}</span>
+                            <span v-tooltip.bottom="`${Buffer.from(payload.dataPublic, 'base64').toString()}`">{{Buffer.from(payload.dataPublic, "base64").toString()}}</span>
                         </template>
                         <template v-if="payload.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_ENCRYPTED)">
                             <span v-if="!decrypted || !decrypted.zetherTx.payloads[index]" v-tooltip.bottom="`Encrypted Memo`">?</span>
-                            <span v-else v-tooltip.bottom="`${Buffer.from(decrypted.zetherTx.payloads[index].message, 'hex').toString()}`">{{Buffer.from(decrypted.zetherTx.payloads[index].message, "hex").toString()}}</span>
+                            <span v-else v-tooltip.bottom="`${Buffer.from(decrypted.zetherTx.payloads[index].message, 'base64').toString()}`">{{Buffer.from(decrypted.zetherTx.payloads[index].message, "base64").toString()}}</span>
                         </template>
                     </div>
                 </template>

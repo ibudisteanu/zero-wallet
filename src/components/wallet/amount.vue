@@ -4,12 +4,12 @@
             <span :class="valueClass">
                 {{getSign}} {{amount}}
             </span>
-            <router-link :to="`/explorer/asset/${getAsset.hash}`" :class="`${assetClass} ps-1`" v-if="showAsset">
+            <router-link :to="`/explorer/asset/${$store.getters.convertBase64ToHex(getAsset.hash)}`" :class="`${assetClass} ps-1`" v-if="showAsset">
                 {{getAsset.name}}
             </router-link>
         </template>
         <template v-else>
-            <loading-spinner />`
+            <loading-spinner />
         </template>
     </span>
 </template>
@@ -24,7 +24,7 @@ export default {
     components: {LoadingSpinner},
 
     props: {
-        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX},
+        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64},
         value: {default: () => new Decimal(0) },
         sign: {default: false},
         showPlusSign: {default: false},

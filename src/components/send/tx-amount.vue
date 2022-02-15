@@ -24,7 +24,7 @@ export default {
     props:{
         text: {default: ''},
         tooltip: {default: ''},
-        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX },
+        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 },
         balances: {default: () => ({}) },
         allowZero: {default: false,},
         validateAmount: {default: false },

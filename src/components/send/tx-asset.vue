@@ -6,7 +6,7 @@
                 <option v-for="(asset, id) in assets"
                         :key="`send-money-${id}`"
                         :value="asset">
-                    {{getAssetName(asset)}} {{asset}}
+                    {{getAssetName(asset)}} {{$store.getters.convertBase64ToHex(asset) }}
                 </option>
             </select>
             <div v-if="validationAssetError" class="invalid-feedback d-block">{{validationAssetError}}</div>

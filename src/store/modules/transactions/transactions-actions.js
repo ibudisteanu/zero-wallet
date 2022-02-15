@@ -70,7 +70,7 @@ export default {
         dispatch('storeTransactionInfo', { hash: tx.hash, txInfo:  info  })
 
         if (tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE ))
-            await dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX )
+            await dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 )
 
         if (tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER) )
             await Promise.all( tx.payloads.map( payload => dispatch('getAssetByHash', payload.asset ) ) )
@@ -102,7 +102,7 @@ export default {
             const tx = await dispatch('getTransactionByHash', hash)
             if (!tx) throw "Transaction was not found on the blockchain. Maybe it was deleted meanwhile."
 
-            const output = await PandoraPay.wallet.decryptTx( Buffer.from(tx._serialized, "hex"), publicKey )
+            const output = await PandoraPay.wallet.decryptTx( Buffer.from(tx._serialized, "base64"), publicKey )
             if (!output) return "Error reading decrypted data"
 
             const decrypted = JSONParse( MyTextDecode( output ) )

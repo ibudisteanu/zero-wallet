@@ -79,7 +79,7 @@ export default {
                             return this.$store.dispatch('accountUpdateNotification', {publicKey: key, type: subscriptionType, data: JSONParse(data), extraInfo: extraInfo ? JSONParse(extraInfo) : null   })
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS)
-                            return this.$store.dispatch('accountTxUpdateNotification', { publicKey: key, txHash:data.substr(1,64), extraInfo: extraInfo ? JSONParse(extraInfo) : null  } )
+                            return this.$store.dispatch('accountTxUpdateNotification', { publicKey: key, txHash:data.substr(1,data.length-2 ), extraInfo: extraInfo ? JSONParse(extraInfo) : null  } )
 
                         if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTION)
                             this.$store.dispatch('txNotification', { txHash: key, extraInfo: extraInfo ? JSONParse(extraInfo) : null } )
@@ -111,7 +111,7 @@ export default {
 
                     if (firstSync){
 
-                        await this.$store.dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX )
+                        await this.$store.dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 )
 
                         const promises = []
 
