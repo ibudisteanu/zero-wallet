@@ -93,15 +93,15 @@ export default {
                 await this.$store.state.blockchain.syncPromise;
 
                 const hash = await PandoraPay.network.getNetworkFaucetCoins( this.$store.getters.addressDisplay(this.walletAddress), this.captchaToken )
-                if (!hash || hash.length !== 64) throw "hash was not received"
+                if (!hash || hash.length <= 20) throw "hash was not received"
 
                 this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Faucet created a Tx`,
-                    text: `The faucet created a transaction ${hash}`,
+                    text: `The faucet created a transaction ${Buffer.from(hash, "base64").toString("hex")}`,
                 });
 
-                this.$router.push('/explorer/tx/'+hash)
+                this.$router.push('/explorer/tx/'+Buffer.from(hash, "base64").toString("hex"))
 
                 return this.$refs.modal.closeModal();
 
