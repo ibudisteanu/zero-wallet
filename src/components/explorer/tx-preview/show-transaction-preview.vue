@@ -66,9 +66,11 @@
             <span class="col-4 d-block d-md-none text-dark text-truncate">Message (Memo)</span>
             <div class="col-8 col-md-2 text-truncate">
                 <template v-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE )">
-                    <template v-if="tx.base.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT)">
-                        <span class="text-truncate d-md-flex justify-content-center align-items-center" v-tooltip.bottom="`${Buffer.from(tx.base.dataPublic, 'hex').toString()}`">{{Buffer.from(tx.base.dataPublic, "hex").toString()}}</span>
-                    </template>
+                    <div class="col-12  text-truncate d-md-flex justify-content-center align-items-center">
+                        <template v-if="tx.base.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT)">
+                            <span v-tooltip.bottom="`${Buffer.from(tx.base.dataPublic, 'base64').toString()}`">{{Buffer.from(tx.base.dataPublic, "base64").toString()}}</span>
+                        </template>
+                    </div>
                 </template>
                 <template v-else-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER )">
                     <div v-for="(payload, index) in tx.base.payloads" :key="`tx_payload_${index}`" class="col-12  text-truncate d-md-flex justify-content-center align-items-center">

@@ -105,14 +105,18 @@
 
             <div class="row pt-2 pb-2  bg-light">
                 <span class="col-12 col-sm-3 text-truncate">Message (Memo)</span>
-                <span class="col-12 col-sm-9 text-truncate" v-tooltip.bottom="`${Buffer.from(tx.data, 'hex').toString()}`">
-                    {{Buffer.from(tx.data, "base64").toString()}}
+                <span class="col-12 col-sm-9 text-truncate" >
+                    <template v-if="tx.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT)" v-tooltip.bottom="`${Buffer.from(tx.data, 'hex').toString()}`">
+                        {{Buffer.from(tx.data, "base64").toString()}}
+                    </template>
                 </span>
             </div>
 
             <div class="row pt-2 pb-2 ">
-                <span class="col-4 col-sm-3 text-truncate">Message (Memo) as HEX</span>
-                <span class="col-8 col-sm-9 text-truncate">{{tx.data}}</span>
+                <span class="col-4 col-sm-3 text-truncate">Message (Memo) as Base64</span>
+                <template v-if="tx.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT)" v-tooltip.bottom="`${tx.data}`">
+                    {{tx.data}}
+                </template>
             </div>
 
         </template>
@@ -174,7 +178,7 @@
                     </span>
                 </div>
                 <div class="row pt-2 pb-2">
-                    <span class="col-4 col-sm-3 text-truncate">Memo in HEX</span>
+                    <span class="col-4 col-sm-3 text-truncate">Memo in Base64</span>
                     <span class="col-8 col-sm-9 text-truncate" v-tooltip.bottom="`${payload.data}`">{{payload.data}}</span>
                 </div>
 

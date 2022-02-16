@@ -79,7 +79,7 @@ export default {
 
             try{
 
-                if (this.privateKey.length !== 64) throw "Private key must be 64 hex numbers"
+                if ( Buffer.from(this.privateKey,"base64").length !== 32) throw "Private key must be 32 bytes"
 
                 const password = await this.$store.state.page.refWalletPasswordModal.showModal()
                 if (password === null ) return

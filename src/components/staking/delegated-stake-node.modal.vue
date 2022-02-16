@@ -98,10 +98,10 @@ export default {
             if ( !this.nodeInfo || !this.nodeInfo.acceptCustomKeys || !this.delegatedStakingNewPrivateKey ) return null
 
             try{
-                const buffer = Buffer.from(this.delegatedStakingNewPrivateKey, "hex")
-                if (buffer.length !== 32) return "It must be 64 hex"
+                const buffer = Buffer.from(this.delegatedStakingNewPrivateKey, "base64")
+                if (buffer.length !== 32) return "It must be 32 bytes"
             }catch(err){
-                return "Invalid Hex input"
+                return "Invalid Base64 input"
             }
 
             return null
@@ -172,7 +172,7 @@ export default {
 
             if (!(out.delegatesCount instanceof Decimal) ) throw "delegatesCount is missing"
             if (!(out.maximumAllowed instanceof Decimal) ) throw "maximumAllowed is missing"
-            if (typeof out.challenge !== "string" || out.challenge.length !== 64) throw "challenge is missing"
+            if (typeof out.challenge !== "string" || out.challenge.length < 20) throw "challenge is missing"
             if (!(out.delegatorFee instanceof Decimal) ) throw "delegatorFee is missing"
             if (out.delegatorFee.lt(0) || out.delegatorFee.gt(PandoraPay.config.stake.DELEGATING_STAKING_FEE_MAX_VALUE)) throw "delegatorFee exceeded 100000"
 

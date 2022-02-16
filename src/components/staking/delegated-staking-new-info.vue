@@ -72,10 +72,10 @@ export default {
             if (!this.hasNewDelegatedInfo ) return null
 
             try{
-                const buffer = Buffer.from(this.delegatedStakingNewPublicKey, "hex")
-                if (buffer.length !== 33) return "It must be 66 hex"
+                const buffer = Buffer.from(this.delegatedStakingNewPublicKey, "base64")
+                if (buffer.length !== 33) return "It must be 33 bytes"
             }catch(err){
-                return "Invalid Hex input"
+                return "Invalid Base64 input"
             }
 
             return null

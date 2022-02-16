@@ -23,7 +23,7 @@
                             View Public Key
                         </div>
                         <div class="text-truncate" v-else>
-                            Public Key: {{$store.getters.convertBase64ToHex(walletAddress.publicKey)}}
+                            Public Key: {{walletAddress.publicKey}}
                             <i class="fas fa-copy pointer  d-inline-block" v-tooltip.bottom="'Copy Public Key'"  @click="handleCopyAddress(walletAddress.publicKey)" />
                         </div>
                     </div>
@@ -33,7 +33,7 @@
                             View Registration Public Signatures
                         </div>
                         <div class="text-truncate" v-else>
-                            Registration Public Key: {{$store.getters.convertBase64ToHex(walletAddress.registration)}}
+                            Registration Public Key: {{walletAddress.registration}}
                             <i class="fas fa-copy pointer  d-inline-block" v-tooltip.bottom="'Copy Registration'"  @click="handleCopyAddress(walletAddress.registration)" />
                         </div>
                     </div>

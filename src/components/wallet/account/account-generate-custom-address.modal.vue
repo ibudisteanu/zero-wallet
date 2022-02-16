@@ -31,7 +31,7 @@
                         <label class="form-check-label" for="paymentAmount"> Amount </label>
                         <i class="fas fa-question" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
                         <template v-if="hasPaymentAmount">
-                            <tx-amount :allow-zero="true" :allow-empty-asset="true" :balances="null" @changed="amountChanged" text="Amount to Receive" :asset="paymentAsset" :disabled="!hasPaymentAmount" />
+                            <tx-amount :allow-zero="true" :allow-empty-asset="true" :balances="null" @changed="amountChanged" text="Amount to Receive" :asset="Buffer.from(paymentAsset,'hex').toString('base64')" :disabled="!hasPaymentAmount" />
                         </template>
                     </div>
                 </template>
@@ -122,6 +122,8 @@ export default {
 
     computed:{
 
+        Buffer: () => Buffer,
+
         validationPaymentID(){
             try{
 
@@ -167,8 +169,11 @@ export default {
         async setTab({resolve, reject, oldTab, value}){
             try{
 
-                if (oldTab === 0 && value === 1)
+                if (oldTab === 0 && value === 1) {
                     if (this.validationPaymentAsset) throw this.validationPaymentAsset
+                    const asset = await this.$store.dispatch('getAssetByHash', Buffer.from(this.paymentAsset, "hex").toString("base64") )
+                    if (!asset) throw "Payment Asset doesn't exist"
+                }
 
                 if (oldTab === 1 && value === 2)
                     if (this.paymentAmount.validationError) throw this.paymentAmount.validationError
@@ -230,9 +235,9 @@ export default {
             let args = {
                 publicKey: this.account.publicKey,
                 registration: this.hasRegistration ? this.account.registration : "",
-                paymentID: this.hasPaymentID ? this.paymentID : "",
+                paymentID: this.hasPaymentID ? Buffer.from(this.paymentID, "hex").toString("base64") : "",
                 paymentAmount: this.hasPaymentAmount ? this.paymentAmount.amount : new Decimal(0),
-                paymentAsset: this.hasPaymentAsset ? this.paymentAsset : "",
+                paymentAsset: this.hasPaymentAsset ? Buffer.from(this.paymentAsset, "hex").toString("base64") : "",
             }
 
             const out = await PandoraPay.addresses.createAddress( MyTextEncode( JSONStringify( args )  ))

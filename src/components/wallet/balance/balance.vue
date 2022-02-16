@@ -1,13 +1,13 @@
 <template>
 
-    <div>
+    <div class="pt-2">
         <template v-if="version === 'zether'">
             <i class="fas fa-lock pe-2 fs-2" v-tooltip.bottom="`Homomorphic Encrypted Amount: ${balance}`" />
             <template v-if="decryptedBalance === null">
                 <i class="fas fa-key pe-2 pointer fs-2 text-primary" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecrypted" @click="decryptBalance"></i>
             </template>
         </template>
-        <h4 class="fw-medium pt-2 d-inline-block" v-if="getAsset" >
+        <h4 class="fw-medium d-inline-block" v-if="getAsset" >
             <template v-if="version === 'zether'">
                 <template v-if="decryptedBalance !== null">
                     {{ amount }}
