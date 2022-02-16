@@ -57,6 +57,8 @@ export default {
 
     accountTxUpdateNotification( {state, dispatch, commit, getters}, {publicKey, txHash, extraInfo }){
 
+        const txHashHex = Buffer.from(txHash,"base64").toString("hex")
+
         if (getters.walletContains(publicKey)){
 
             if (extraInfo.blockchain){
@@ -65,14 +67,14 @@ export default {
                     dispatch('addToast', {
                         type: 'success',
                         title: `Received a new transaction`,
-                        text: `Your address has received a transaction ${txHash}`,
+                        text: `Your address has received a transaction ${txHashHex}`,
                     })
 
                 if (!extraInfo.blockchain.inserted)
                     dispatch('addToast', {
                         type: 'warning',
                         title: `A transaction was removed from blockchain`,
-                        text: `Your address got a transaction removed ${txHash}`,
+                        text: `Your address got a transaction removed ${txHashHex}`,
                     })
 
             } else if (extraInfo.mempool) {
@@ -81,13 +83,13 @@ export default {
                     dispatch('addToast', {
                         type: 'info',
                         title: `A pending transaction`,
-                        text: `There is a pending transaction ${txHash}`,
+                        text: `There is a pending transaction ${txHashHex}`,
                     } )
                 else if (!extraInfo.mempool.included)
                     dispatch('addToast', {
                         type: 'warning',
                         title: `A transaction was removed from the mempool`,
-                        text: `A pending transaction was removed from the mempool ${txHash}`,
+                        text: `A pending transaction was removed from the mempool ${txHashHex}`,
                     } )
 
             } else throw "Invalid extraInfo"
