@@ -2,8 +2,8 @@
     <wait-account :account="account" :type="initAvailableBalance ? 'all' : 'zether'">
 
         <wizard :titles="{...titlesOffset,
-            0: {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
-            1: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
+            0: {icon: 'fas fa-users', name: 'Recipient', tooltip: 'Recipient of the private tx' },
+            1: {icon: 'fas fa-pencil-alt', name: 'Memo', tooltip: 'Extra information attached in the tx' },
             2: {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' },
             3: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' },
             4: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' } }"
@@ -14,13 +14,12 @@
             </template>
 
             <template v-slot:tab_0>
-                <div class="form" v-if="allowRandomRecipient">
+                <div class="form-check" v-if="allowRandomRecipient">
                     <input class="form-check-input" id="random-recipient" type="checkbox"  name="checkbox" v-model="randomRecipient">
                     <label class="form-check-label" for="random-recipient">Random Recipient with Zero amount</label>
                 </div>
                 <template v-if="!randomRecipient">
-                    <tx-asset v-if="!initAvailableAsset" :assets="availableAssets" @changed="changedAsset" class="pt-2 pb-2"/>
-                    <recipient-address :text="text" :validateAmount="validateRecipientAmount" :balances="availableBalances" :allow-zero="allowRecipientZeroAmount" :asset="asset.asset" @changed="changedRecipient" />
+                    <tx-recipient :init-available-asset="initAvailableAsset" :available-assets="availableAssets" :text="text" :validate-amount="validateRecipientAmount" :balances="availableBalances" :allow-zero="allowRecipientZeroAmount" @changed="changedRecipient" />
                 </template>
             </template>
 
@@ -71,9 +70,9 @@
             </template>
 
             <template v-slot:tab_3>
-                <tx-fee :balances="availableBalances" :asset="asset" :allow-zero="true" @changed="changedFee" />
+                <tx-fee :balances="availableBalances" :asset="recipient.asset" :allow-zero="true" @changed="changedFee" />
 
-                <template v-if="asset.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64">
+                <template v-if="recipient.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64">
                     <div class="form-check pt-2">
                         <input class="form-check-input" id="assetFeeLiquidityAsset" type="checkbox" v-model="assetFeeLiquidityAsset" />
                         <label class="form-check-label" for="assetFeeLiquidityAsset">Automatically Determine Asset Fee Liquidity</label>
@@ -121,7 +120,7 @@ import WaitAccount from "../../wallet/account/wait-account";
 import Account from "../../wallet/account/account";
 import LoadingSpinner from "../../utils/loading-spinner";
 import LoadingButton from "../../utils/loading-button";
-import RecipientAddress from "../recipient-address";
+import TxRecipient from "../tx-recipient";
 import TxAmount from "../tx-amount";
 import ExtraData from "../extra-data";
 import AlertBox from "../../utils/alert-box";
@@ -131,10 +130,10 @@ import AccountIdenticon from "../../wallet/account/account-identicon";
 import Wizard from "../../utils/wizard";
 import ConfirmBroadcastingTx from "./confirm-broadcasting-tx"
 import Decimal from 'decimal.js';
-
 export default {
+
     components: {
-        WaitAccount,  Account, LoadingSpinner, LoadingButton, RecipientAddress, TxAmount,
+        WaitAccount,  Account, LoadingSpinner, LoadingButton, TxRecipient, TxAmount,
         ExtraData, AlertBox, TxFee, TxAsset, AccountIdenticon, Wizard, ConfirmBroadcastingTx,
     },
 
@@ -155,12 +154,20 @@ export default {
 
     data(){
         return {
-            asset: (this.initAvailableAsset !== null) ? { asset: this.initAvailableAsset   } : { }, //contains asset.asset and asset.validation
 
             randomRecipient: this.allowRandomRecipient,
             newSender: null,
 
-            recipient: {},
+            recipient: {
+                address: null,
+                addressEncoded: "",
+                addressValidationError: "",
+                amount: 0,
+                amountValidationError: "",
+                asset: (this.initAvailableAsset !== null) ? this.initAvailableAsset : null,
+                assetValidationError: "",
+            },
+
             fee: {  },
             assetFeeLiquidityAsset: true,
             assetFeeConversionRate: 1,
@@ -209,8 +216,8 @@ export default {
 
             const accounts = this.availableAccounts || []
             for (const acc of accounts)
-                if (acc.asset === this.asset.asset )
-                    return {  [this.asset.asset]: acc }
+                if (acc.asset === this.recipient.asset )
+                    return {  [this.recipient.asset]: acc }
 
             return null
         },
@@ -244,7 +251,7 @@ export default {
         },
 
         getAsset(){
-            return this.$store.getters.getAsset( this.asset ? this.asset.asset : null );
+            return this.$store.getters.getAsset( this.asset ? this.recipient.asset : null );
         },
 
         buttons(){
@@ -289,11 +296,12 @@ export default {
                 this.status = ""
 
                 if (oldTab === 0 && value > oldTab){
-                    if (this.asset.validationError) throw this.asset.validationError
 
                     if (!this.randomRecipient){
 
-                        if (this.recipient.validationError) throw this.recipient.validationError;
+                        if (this.recipient.addressValidationError) throw this.recipient.addressValidationError;
+                        if (this.recipient.amountValidationError) throw this.recipient.amountValidationError;
+                        if (this.recipient.assetValidationError) throw this.recipient.assetValidationError;
                         if (this.checkRecipientError) throw this.checkRecipientError
 
                         await this.$store.state.blockchain.syncPromise;
@@ -329,9 +337,6 @@ export default {
         changedRecipient(data){
             this.recipient = { ...this.recipient,  ...data, }
         },
-        changedAsset(data){
-            this.asset = { ...this.asset,  ...data, }
-        },
         changedFee(data){
             this.fee = { ...this.fee,  ...data, }
         },
@@ -343,7 +348,7 @@ export default {
 
             try {
 
-                const asset = this.asset.asset
+                const asset = this.recipient.asset
 
                 let assetCollector
 
@@ -449,7 +454,15 @@ export default {
 
                 if (this.randomRecipient){
                     const out = await getRandomPublicKey()
-                    this.recipient = { amount: new Decimal(0), addressEncoded: out.addressEncoded, address: { publicKey: out.publicKey }}
+                    this.recipient =  {
+                        addressEncoded: out.addressEncoded,
+                        address: { publicKey: out.publicKey },
+                        addressValidationError:"",
+                        amount: new Decimal(0),
+                        amountValidationError: "",
+                        asset,
+                        assetValidationError: "",
+                    }
                 }
 
                 ringMembers.push(this.recipient.addressEncoded)
@@ -480,7 +493,7 @@ export default {
             this.statusType = "signing"
             this.status = '';
 
-            const asset = this.asset.asset
+            const asset = this.recipient.asset
 
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return

@@ -30,7 +30,10 @@ export default {
 
     data(){
         return {
-            unstakeAmount: {},
+            unstakeAmount: {
+                amount: 0,
+                amountValidationError: "",
+            },
         }
     },
 
@@ -59,7 +62,7 @@ export default {
             try{
 
                 if (oldTab === -1 && value === 0 )
-                    if (this.unstakeAmount.validationError) throw this.unstakeAmount.validationError
+                    if (this.unstakeAmount.amountValidationError) throw this.unstakeAmount.amountValidationError
 
             }catch(err) {
                 reject(err)
