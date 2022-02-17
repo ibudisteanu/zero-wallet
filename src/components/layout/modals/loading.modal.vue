@@ -26,16 +26,6 @@ export default {
 
     components: {LoadingSpinner, Modal},
 
-    data(){
-        return {
-
-        }
-    },
-
-    computed:{
-
-    },
-
     methods: {
 
         showModal() {

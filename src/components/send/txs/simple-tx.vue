@@ -172,8 +172,13 @@ export default {
             this.status = ''
 
             this.tx = JSONParse( MyTextDecode( out[0] ) )
-            this.txSerialized = out[1]
+            const serialized = out[1]
 
+            const txSerialized = Buffer.alloc(serialized.length)
+            Buffer.from(serialized).copy(txSerialized, 0)
+
+            this.tx._serialized = txSerialized.toString("base64")
+            this.txSerialized = txSerialized
         },
 
         async handlePropagateTx(){
@@ -184,9 +189,9 @@ export default {
 
             this.status = 'Propagating transaction...'
 
-            await this.$store.dispatch('includeTx', {tx: this.tx, mempool: false } )
+            await this.$store.dispatch('includeTx', {tx: this.tx, serialized: this.tx._serialized, mempool: false } )
 
-            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( txSerialized )
+            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
             if (!finalAnswer) {
                 this.$store.commit('deleteTransactions', [this.tx] )
                 throw "Transaction couldn't be broadcast"

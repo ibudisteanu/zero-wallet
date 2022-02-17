@@ -2,43 +2,29 @@
 
     <layout>
 
-        <layout-title icon="fas fa-file-invoice-dollar" title="Transaction" >View a transaction.</layout-title>
+        <layout-title icon="fas fa-file-invoice-dollar" title="Transaction">View a transaction.</layout-title>
 
-        <div class="card mb-3">
-            <div class="card-header bg-light">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <h5 class="mb-0 text-truncate">Tx {{height ? height : $store.getters.convertBase64ToHex(hash) }}</h5>
+        <div v-if="!tx" class="card-body p-3 fs--1">
+            <div class="card mb-3">
+                <div class="card-header bg-light">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h5 class="mb-0 text-truncate">
+                                Block Explorer {{height ? height : $store.getters.convertBase64ToHex(hash) }}
+                            </h5>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="card-body p-3 fs--1">
-
-                <alert-box v-if="error" type="error">{{error}}</alert-box>
-
-                <template v-if="!loaded">
-                    <div class="py-3 text-center"> <loading-spinner class="fs-2" /> </div>
-                </template>
-                <div v-else-if="tx">
-                    <show-transaction :tx="tx" :tx-info="txInfo"/>
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="card mb-3" v-if="tx">
-            <div class="card-header bg-light">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <h5 class="mb-0">JSON Transaction {{tx.__height}}  </h5>
-                    </div>
+                <div class="card-body p-3 fs--1">
+                    <alert-box v-if="error" type="error">{{error}}</alert-box>
+                    <div v-if="!loaded" class="py-3 text-center"> <loading-spinner class="fs-2" /> </div>
                 </div>
             </div>
-            <div class="card-body p-0 fs--1">
-                <textarea class="form-control form-control-sm fs--2" rows="10">{{JSONStringify(tx, null, 2)}}</textarea>
-            </div>
         </div>
+
+        <template v-else>
+            <show-transaction :tx="tx" :tx-info="txInfo" />
+        </template>
 
     </layout>
 

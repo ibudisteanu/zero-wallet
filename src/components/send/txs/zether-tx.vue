@@ -604,10 +604,19 @@ export default {
                 } );
 
             if (!out) throw "Transaction couldn't be made";
-            this.status = ""
+
+            this.status = "Tx built"
 
             this.tx = JSONParse( MyTextDecode( out[0] ) )
-            this.txSerialized = out[1]
+            const serialized = out[1]
+
+            const txSerialized = Buffer.alloc(serialized.length)
+            Buffer.from(serialized).copy(txSerialized, 0)
+
+            this.tx._serialized = txSerialized.toString("base64")
+            this.txSerialized = txSerialized
+
+            this.status = ""
 
         },
 
@@ -616,14 +625,11 @@ export default {
             this.statusType = "broadcasting"
             this.status = 'Cloning transaction...'
 
-            const txSerialized = Buffer.alloc(this.txSerialized.length)
-            Buffer.from(this.txSerialized).copy(txSerialized, 0)
-
             this.status = 'Broadcasting your transaction in the network... Please wait...'
 
-            await this.$store.dispatch('includeTx', { tx: this.tx, serialized: txSerialized.toString("base64"), mempool: false } )
+            await this.$store.dispatch('includeTx', { tx: this.tx, serialized: this.tx._serialized, mempool: false } )
 
-            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( txSerialized )
+            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
             if (!finalAnswer){
                 this.$store.commit('deleteTransactions', [this.tx] )
                 throw "Transaction couldn't be broadcast"
