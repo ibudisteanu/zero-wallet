@@ -92,7 +92,9 @@ export default {
 
                 await this.$store.state.blockchain.syncPromise;
 
-                const hash = await PandoraPay.network.getNetworkFaucetCoins( this.$store.getters.addressDisplay(this.walletAddress), this.captchaToken )
+                const data = await PandoraPay.network.getNetworkFaucetCoins( this.$store.getters.addressDisplay(this.walletAddress), this.captchaToken )
+
+                const {hash} = JSONParse(MyTextDecode( data) )
                 if (!hash || hash.length <= 20) throw "hash was not received"
 
                 this.$store.dispatch('addToast', {
