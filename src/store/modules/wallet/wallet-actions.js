@@ -26,6 +26,7 @@ export default {
             const publicKey = wallet.addresses[i].publicKey
             const addr = {
                 ...wallet.addresses[i],
+                publicKey,
             };
 
             addresses[publicKey] = addr;

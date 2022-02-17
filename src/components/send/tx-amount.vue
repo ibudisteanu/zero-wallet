@@ -3,8 +3,8 @@
         <div class="col-12">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{text}} Amount</label>
             <i v-if="tooltip" class="fas fa-question" v-tooltip.bottom="tooltip" />
-            <input :class="`form-control ${validationAmountError ? 'is-invalid' :''}`" type="number" v-model.number="amount" min="0" :step="getSteps" :disabled="disabled">
-            <div v-if="validationAmountError" class="invalid-feedback d-block">{{validationAmountError}}</div>
+            <input :class="`form-control ${validationError ? 'is-invalid' :''}`" type="number" v-model.number="amount" min="0" :step="getSteps" :disabled="disabled">
+            <div v-if="validationError" class="invalid-feedback d-block">{{validationError}}</div>
         </div>
     </div>
 </template>
@@ -24,7 +24,7 @@ export default {
     props:{
         text: {default: ''},
         tooltip: {default: ''},
-        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX },
+        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 },
         balances: {default: () => ({}) },
         allowZero: {default: false,},
         validateAmount: {default: false },
@@ -40,7 +40,7 @@ export default {
             return new Decimal(1).div( new Decimal(10).pow( this.assetInfo.decimalSeparator) ).toString()
         },
 
-        validationAmountError() {
+        validationError() {
             if (!this.allowZero && Number.parseFloat(this.amount) === 0) return "Amount needs to be greater than 0"
             if (this.amount === Number.NaN || this.amount < 0) return "Amount can not be negative"
             if (this.validateAmount) {
@@ -85,10 +85,12 @@ export default {
 
     watch: {
 
-        validationAmountError: {
+        validationError: {
             immediate: true,
             handler: function (to, from) {
-                return this.$emit('changed', {validationError: to,})
+                return this.$emit('changed', {
+                    amountValidationError: to,
+                })
             }
         },
 

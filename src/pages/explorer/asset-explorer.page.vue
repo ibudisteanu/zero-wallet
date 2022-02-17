@@ -8,7 +8,7 @@
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0 text-truncate">Asset Explorer {{hash}}  </h5>
+                        <h5 class="mb-0 text-truncate">Asset Explorer {{$store.getters.convertBase64ToHex(hash)}}  </h5>
                     </div>
                 </div>
             </div>
@@ -38,8 +38,8 @@
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Hash</span>
                         <span class="col-7 col-sm-9 text-truncate">
-                            <router-link :to="`/explorer/asset/${asset.hash}`">
-                                {{asset.hash}}
+                            <router-link :to="`/explorer/asset/${$store.getters.convertBase64ToHex(asset.hash)}`">
+                                {{$store.getters.convertBase64ToHex(asset.hash)}}
                             </router-link>
                         </span>
                     </div>
@@ -61,11 +61,11 @@
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Update Key</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{asset.updatePublicKey}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{$store.getters.convertBase64ToHex(asset.updatePublicKey)}}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Supply Key</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{asset.supplyPublicKey}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{$store.getters.convertBase64ToHex(asset.supplyPublicKey)}}</span>
                     </div>
 
                 </template>
@@ -111,8 +111,11 @@ export default {
     },
 
     computed:{
-        hash(){
+        query(){
             return this.$route.params.hash||'';
+        },
+        hash(){
+            if (this.query && this.query.length === 40) return Buffer.from(this.query, "hex").toString("base64")
         },
         asset(){
             return this.$store.state.assets.list[this.hash];

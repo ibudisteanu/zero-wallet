@@ -2,14 +2,14 @@
     <span>
         <template v-if="getAsset">
             <span :class="valueClass">
-                {{sign?'':'-'}} {{amount}}
+                {{getSign}} {{amount}}
             </span>
-            <router-link :to="`/explorer/asset/${getAsset.hash}`" :class="`${assetClass} ps-1`" v-if="showAsset">
+            <router-link :to="`/explorer/asset/${$store.getters.convertBase64ToHex(getAsset.hash)}`" :class="`${assetClass} ps-1`" v-if="showAsset">
                 {{getAsset.name}}
             </router-link>
         </template>
         <template v-else>
-            <loading-spinner />`
+            <loading-spinner />
         </template>
     </span>
 </template>
@@ -24,9 +24,10 @@ export default {
     components: {LoadingSpinner},
 
     props: {
-        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX},
+        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64},
         value: {default: () => new Decimal(0) },
         sign: {default: false},
+        showPlusSign: {default: false},
         showAsset: {default: true},
         valueClass: {default: ""},
         assetClass: {default: ""}
@@ -37,7 +38,13 @@ export default {
             return this.$store.getters.getAsset( this.asset );
         },
         amount(){
-            return StringHelper.formatMoney( this.value.div( new Decimal(10).pow(this.getAsset.decimalSeparator) ).toString(), this.getAsset.decimalSeparator )
+            const value = this.value || new Decimal(0)
+            return StringHelper.formatMoney( value.div( new Decimal(10).pow(this.getAsset.decimalSeparator) ).toString(), this.getAsset.decimalSeparator )
+        },
+        getSign(){
+            if (!this.sign ) return '-'
+            if (this.showPlusSign) return '+'
+            return ''
         }
     },
 

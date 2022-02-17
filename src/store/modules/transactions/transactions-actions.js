@@ -70,7 +70,7 @@ export default {
         dispatch('storeTransactionInfo', { hash: tx.hash, txInfo:  info  })
 
         if (tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE ))
-            await dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX )
+            await dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 )
 
         if (tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER) )
             await Promise.all( tx.payloads.map( payload => dispatch('getAssetByHash', payload.asset ) ) )
@@ -94,6 +94,41 @@ export default {
                 delete promises.txsByHash[hash];
             }
         } );
+    },
+
+    async decryptTx({state, dispatch, commit}, {hash, publicKey}){
+        try{
+
+            const tx = await dispatch('getTransactionByHash', hash)
+            if (!tx) throw "Transaction was not found on the blockchain. Maybe it was deleted meanwhile."
+
+            const output = await PandoraPay.wallet.decryptTx( Buffer.from(tx._serialized, "base64"), publicKey )
+            if (!output) return "Error reading decrypted data"
+
+            const decrypted = JSONParse( MyTextDecode( output ) )
+
+            if (decrypted.zetherTx){
+
+                decrypted.zetherTx.payloads.forEach((payload, index)=>{
+                    if (payload !== null ){
+                        if (!payload.recipientIndex.eq(-1) )
+                            payload.recipientPublicKey = tx.payloads[index].statement.publickeylist[payload.recipientIndex]
+                        delete payload.blinder
+                    }
+                })
+
+                localStorage.setItem(`txDecrypted:${hash}:${publicKey}`, JSONStringify(decrypted))
+
+                return decrypted
+            }
+
+        }catch(err){
+            dispatch('addToast', {
+                type: 'success',
+                title: `Error decrypting TX!`,
+                text: `Reason ${err.toString()}`,
+            });
+        }
     },
 
     async getTransactionByHeight( {state, dispatch, commit}, height){

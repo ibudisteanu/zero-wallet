@@ -2,14 +2,14 @@
     <div class="row">
         <div class="col-12" >
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Asset</label>
-            <select :class="`form-select ${validationAssetError ? 'is-invalid' :''}`" v-model="selectedAsset">
+            <select :class="`form-select ${validationError ? 'is-invalid' :''}`" v-model="selectedAsset">
                 <option v-for="(asset, id) in assets"
                         :key="`send-money-${id}`"
                         :value="asset">
-                    {{getAssetName(asset)}} {{asset}}
+                    {{getAssetName(asset)}} {{$store.getters.convertBase64ToHex(asset) }}
                 </option>
             </select>
-            <div v-if="validationAssetError" class="invalid-feedback d-block">{{validationAssetError}}</div>
+            <div v-if="validationError" class="invalid-feedback d-block">{{validationError}}</div>
         </div>
     </div>
 </template>
@@ -33,12 +33,9 @@ export default {
             if (this.selectedAsset === null) return null
             return this.$store.getters.getAsset( this.selectedAsset );
         },
-        validationAssetError(){
+        validationError(){
             if ( !this.selectedAssetInfo) return "Asset was not selected"
         },
-        validationError(){
-            if (this.validationAssetError) return this.validationAssetError
-        }
     },
 
     methods:{
@@ -73,16 +70,20 @@ export default {
         selectedAsset: {
             immediate: true,
             handler: function (to, from) {
-                return this.$emit('changed', {asset: to,})
+                return this.$emit('changed', {
+                    asset: to,
+                })
             }
         },
 
         validationError: {
             immediate: true,
-            handler: function (to, from) {
-                return this.$emit('changed', {validationError: to,})
+            handler: async function  (to, ) {
+                this.$emit('changed', {
+                    assetValidationError: to,
+                });
             }
-        },
+        }
 
     },
 

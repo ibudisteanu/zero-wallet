@@ -2,6 +2,7 @@ export default {
 
     setModals(state, modals ){
         state.refLoadingModal = modals.refLoadingModal;
+        state.refTextareaModal = modals.refTextareaModal
         state.refQRCodeModal = modals.refQRCodeModal;
         state.refQRCodeScannerModal = modals.refQRCodeScannerModal;
         state.refTestnetFaucetModal = modals.refTestnetFaucetModal;

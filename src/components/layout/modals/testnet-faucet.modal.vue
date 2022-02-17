@@ -1,12 +1,12 @@
 <template>
     <modal ref="modal" title="Faucet coins" :close-button="loaded" >
 
-        <template v-slot:body v-if="address">
+        <template v-slot:body v-if="walletAddress">
             <div class="pb-4">
                 <label class="pb-2">Receive your testnet coins to this address:</label>
                 <div class="address align-items-center">
-                    <account-identicon :address="address.addressEncoded" size="35" outer-size="13" />
-                    <span class="text-break fw-bold">{{ $store.getters.addressDisplay(this.address) }}</span>
+                    <account-identicon :address="walletAddress.addressEncoded" size="35" outer-size="13" />
+                    <span class="text-break fw-bold">{{ $store.getters.addressDisplay(this.walletAddress) }}</span>
                 </div>
             </div>
             <div class="text-center">
@@ -54,7 +54,7 @@ export default {
     },
 
     computed:{
-        address(){
+        walletAddress(){
             return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey] ;
         },
         hCaptchaSiteKey(){
@@ -92,16 +92,18 @@ export default {
 
                 await this.$store.state.blockchain.syncPromise;
 
-                const hash = await PandoraPay.network.getNetworkFaucetCoins( this.$store.getters.addressDisplay(this.address), this.captchaToken )
-                if (!hash || hash.length !== 64) throw "hash was not received"
+                const data = await PandoraPay.network.getNetworkFaucetCoins( this.$store.getters.addressDisplay(this.walletAddress), this.captchaToken )
+
+                const {hash} = JSONParse(MyTextDecode( data) )
+                if (!hash || hash.length <= 20) throw "hash was not received"
 
                 this.$store.dispatch('addToast', {
                     type: 'success',
                     title: `Faucet created a Tx`,
-                    text: `The faucet created a transaction ${hash}`,
+                    text: `The faucet created a transaction ${Buffer.from(hash, "base64").toString("hex")}`,
                 });
 
-                this.$router.push('/explorer/tx/'+hash)
+                this.$router.push('/explorer/tx/'+Buffer.from(hash, "base64").toString("hex"))
 
                 return this.$refs.modal.closeModal();
 

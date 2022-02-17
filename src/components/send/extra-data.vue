@@ -15,12 +15,12 @@
                 </div>
             </div>
 
-            <template v-if="destinations">
+            <template v-if="recipients">
 
                 <div class="form-check pt-2">
                     <input class="form-check-input" id="typeEncrypted" type="radio" value="encrypted" v-model="type" />
                     <label class="form-check-label" for="typeEncrypted">Encrypted Message</label>
-                    <i class="fas fa-question " v-tooltip.bottom="`The message will encrypted to the destination. Only the receiver can decrypt the message attached to this transaction.`" />
+                    <i class="fas fa-question " v-tooltip.bottom="`The message will encrypted to selected recipient. Only the selected address can decrypt the message attached to this transaction.`" />
                 </div>
                 <div v-if="type === 'encrypted'">
                     <div class="form-check">
@@ -29,20 +29,20 @@
                     </div>
                     <div class="form-check">
 
-                        <template v-if="destinations.length > 1">
+                        <template v-if="recipients.length > 1">
                             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Address to encrypt:</label>
 
-                            <div :class="`${publicKeyToEncrypt ? 'destination-row' : '' }`" >
+                            <div :class="`${publicKeyToEncrypt ? 'recipient-row' : '' }`" >
 
                                 <account-identicon v-if="publicKeyToEncrypt" :public-key="publicKeyToEncrypt" size="30" outer-size="8" />
 
                                 <select :class="`form-select ${validationPublicKeyToEncrypt ? 'is-invalid' :''} `" v-model="publicKeyToEncrypt">
-                                    <option v-for="(destination, id) in destinations"
+                                    <option v-for="(recipient, id) in recipients"
                                             :key="`selected-address-${id}`"
-                                            :value="(destination.address && destination.address.publicKey) ? destination.address.publicKey : '' "
-                                            :class="`${ (destination.address && destination.address.publicKey) ? '' : 'text-danger'}`">
-                                        <template v-if="destination.address">
-                                            {{destination.addressEncoded}}
+                                            :value="(recipient.address && recipient.address.publicKey) ? recipient.address.publicKey : '' "
+                                            :class="`${ (recipient.address && recipient.address.publicKey) ? '' : 'text-danger'}`">
+                                        <template v-if="recipient.address">
+                                            {{recipient.addressEncoded}}
                                         </template>
                                     </option>
                                 </select>
@@ -71,7 +71,7 @@ export default {
     components: {AccountIdenticon},
 
     props: {
-        destinations: {default: null},
+        recipients: {default: null},
         paymentID: {default: null},
     },
 
@@ -92,7 +92,7 @@ export default {
 
         validationPublicKeyToEncrypt(){
             if (this.type === "public") return
-            if (this.destinations.length > 1 && !this.publicKeyToEncrypt) return "No selected address"
+            if (this.recipients.length > 1 && !this.publicKeyToEncrypt) return "No selected address"
         },
 
         validationError(){
@@ -154,7 +154,7 @@ export default {
 
 <style scoped>
 
-    .destination-row{
+    .recipient-row{
         display: grid;
         grid-template-columns: 45px 1fr;
         grid-column-gap: 10px;

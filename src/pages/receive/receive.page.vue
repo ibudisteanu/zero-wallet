@@ -4,7 +4,7 @@
 
         <layout-title icon="fas fa-file-invoice-dollar" title="Receive funds">Generate your address to receive funds publicly.</layout-title>
 
-        <account :address="address" title="Receive Funds" />
+        <account :address="walletAddress" title="Receive Funds" />
 
     </layout>
 
@@ -31,7 +31,7 @@ export default {
     },
 
     computed:{
-        address(){
+        walletAddress(){
             return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey] ;
         }
     },

@@ -1,11 +1,6 @@
 # PandoraPay wallet
 
-PandoraPay wallet using Vue2. No SSR supported right now.
-
-## Based on
-
-Simple Vue and Webpack boilerplate
-https://github.com/samteb/vue-2-webpack-4-boilerplate/
+PandoraPay wallet using Vue3. No SSR supported as it is intended to be a Single Page Application for Client usage.
 
 ## Compute Resource Hashes
 https://www.srihash.org/
@@ -13,7 +8,6 @@ https://www.srihash.org/
 ## DOCS
 
 [NGINX Setup](/wiki/nginx.md)
-
 
 # DISCLAIMER:
 This source code is released for research purposes only, with the intent of researching and studying a decentralized p2p network protocol.

@@ -22,14 +22,9 @@ class Main {
 
     initialize(){
 
-        if (!PandoraPayWalletOptions)
-            global.PandoraPayWalletOptions = {}
-
-        if (!PandoraPayWalletOptions.router)
-            PandoraPayWalletOptions.router = {}
-
-        if (typeof PandoraPayWalletOptions.resPrefix === "undefined")
-            PandoraPayWalletOptions.resPrefix = '/'
+        if (typeof PandoraPayWalletOptions === "undefined") global.PandoraPayWalletOptions = {}
+        if (!PandoraPayWalletOptions.router) PandoraPayWalletOptions.router = {}
+        if (typeof PandoraPayWalletOptions.resPrefix === "undefined") PandoraPayWalletOptions.resPrefix = '/'
 
         if (!PandoraPayWalletOptions.wallet)
             global.PandoraPayWalletOptions.wallet = {

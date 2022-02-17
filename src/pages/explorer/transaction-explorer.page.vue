@@ -2,44 +2,29 @@
 
     <layout>
 
-        <layout-title icon="fas fa-file-invoice-dollar" title="Transaction" >View a transaction.</layout-title>
+        <layout-title icon="fas fa-file-invoice-dollar" title="Transaction">View a transaction.</layout-title>
 
-        <div class="card mb-3">
-            <div class="card-header bg-light">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <h5 class="mb-0 text-truncate">Tx {{height ? height : hash}}</h5>
+        <div v-if="!tx" class="card-body p-3 fs--1">
+            <div class="card mb-3">
+                <div class="card-header bg-light">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h5 class="mb-0 text-truncate">
+                                Block Explorer {{height ? height : $store.getters.convertBase64ToHex(hash) }}
+                            </h5>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="card-body p-3 fs--1">
-
-                <alert-box v-if="error" type="error">{{error}}</alert-box>
-
-                <template v-if="!loaded">
-                    <div class="py-3 text-center"> <loading-spinner class="fs-2" /> </div>
-                </template>
-                <div v-else-if="tx">
-                    <show-transaction :tx="tx" :tx-info="txInfo"/>
-                </div>
-
-
-            </div>
-
-        </div>
-
-        <div class="card mb-3" v-if="tx">
-            <div class="card-header bg-light">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <h5 class="mb-0">JSON Transaction {{tx.__height}}  </h5>
-                    </div>
+                <div class="card-body p-3 fs--1">
+                    <alert-box v-if="error" type="error">{{error}}</alert-box>
+                    <div v-if="!loaded" class="py-3 text-center"> <loading-spinner class="fs-2" /> </div>
                 </div>
             </div>
-            <div class="card-body p-0 fs--1">
-                <textarea class="form-control form-control-sm fs--2" rows="10">{{JSONStringify(tx, null, 2)}}</textarea>
-            </div>
         </div>
+
+        <template v-else>
+            <show-transaction :tx="tx" :tx-info="txInfo" />
+        </template>
 
     </layout>
 
@@ -80,7 +65,7 @@ export default {
             }
         },
         hash(){
-            if (this.query && this.query.length === 64) return this.query
+            if (this.query && this.query.length === 64) return Buffer.from(this.query, "hex").toString("base64")
         },
         tx(){
             if (this.height) return this.$store.state.transactions.txsByHeight[this.height];
@@ -113,7 +98,7 @@ export default {
                     await this.removed()
 
                 if (this.height) await this.$store.dispatch('getTransactionByHeight', this.height);
-                if (this.hash ) await this.$store.dispatch('getTransactionByHash', this.hash);
+                if (this.hash ) await this.$store.dispatch('getTransactionByHash', this.hash );
 
                 if (this.tx) {
                     this.$store.commit('updateViewTransactionsHashes', {txsHashes: [this.tx.hash], insert: true} )
@@ -132,19 +117,6 @@ export default {
             this.$store.commit('updateViewTransactionsHashes', {txsHashes: [tx.hash], insert: false} )
             await this.$store.dispatch('unsubscribeTransaction', tx.hash )
         },
-
-        async handleDecryptExtraData(resolver){
-            try{
-
-                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
-                if (password === null ) return
-
-                await this.$store.dispatch('decryptTxData', {tx: this.tx, password, commitNow: true })
-
-            }finally{
-                resolver()
-            }
-        }
 
     },
 

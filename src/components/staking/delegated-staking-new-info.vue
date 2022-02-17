@@ -1,7 +1,7 @@
 <template>
     <div>
 
-        <div class="form-group pt-2">
+        <div class="form-check pt-2">
             <input class="form-check-input" id="set-new-delegated-info" type="checkbox"  name="checkbox" v-model="hasNewDelegatedInfo"  >
             <label class="form-check-label" for="set-new-delegated-info">Set new Delegated Info</label>
             <i class="fas fa-question " v-tooltip.bottom="`Set new required keys to enable Delegated Staking`" />
@@ -10,7 +10,7 @@
         <div v-if="hasNewDelegatedInfo" class="pt-2 ms-2">
 
             <div class="form-group pt-2">
-                <loading-button text="Auto Generate Public Key Hash" icon="fas fa-cogs" @submit="handleDeriveDelegatedStake" :disabled="!publicKey" />
+                <loading-button text="Derive Delegated Stake" icon="fas fa-cogs" @submit="handleDeriveDelegatedStake" :disabled="!publicKey" />
             </div>
 
             <div class="form-group pt-2">
@@ -19,7 +19,7 @@
 
             <div class="form pt-2">
                 <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">New Delegated Stake Public Key:</label>
-                <i class="fas fa-question " v-tooltip.bottom="`Public key of the delegator.`" />
+                <i class="fas fa-question " v-tooltip.bottom="`Public key of the delegated stake.`" />
                 <input :class="`form-control ${validationDelegatedStakingNewPublicKey ? 'is-invalid' : ''}`" type="text" v-model="delegatedStakingNewPublicKey"  >
                 <div v-if="validationDelegatedStakingNewPublicKey" class="invalid-feedback d-block">{{validationDelegatedStakingNewPublicKey}}</div>
             </div>
@@ -60,40 +60,44 @@ export default {
     computed:{
         PandoraPay: () => PandoraPay,
 
-        address(){
+        walletAddress(){
             return this.$store.state.wallet.addresses[this.publicKey]
         },
         account(){
             return this.$store.state.accounts.list[this.publicKey]
         },
+
         validationDelegatedStakingNewPublicKey(){
 
-            if (!this.hasNewDelegatedInfo) return null
+            if (!this.hasNewDelegatedInfo ) return null
 
             try{
-                const buffer = Buffer.from(this.delegatedStakingNewPublicKey, "hex")
-                if (buffer.length !== 33) return "It must be 66 hex"
+                const buffer = Buffer.from(this.delegatedStakingNewPublicKey, "base64")
+                if (buffer.length !== 33) return "It must be 33 bytes"
             }catch(err){
-                return "Invalid Hex input"
+                return "Invalid Base64 input"
             }
 
             return null
         },
+
         delegatedStakingNewFeePercentage(){
             return new Decimal(this.delegatedStakingNewFee).mul(100).div(PandoraPay.config.stake.DELEGATING_STAKING_FEE_MAX_VALUE ).toDecimalPlaces(3)
         }
     },
 
     methods:{
+
         async handleDeriveDelegatedStake(resolver){
             try{
 
                 const password = await this.$store.state.page.refWalletPasswordModal.showModal()
                 if (password === null ) return
 
-                const nonce = this.account && this.account.plainAccount ? this.account.plainAccount.nonce : new Decimal(0)
+                const nonceOut = await PandoraPay.network.getNetworkAccountMempoolNonce(MyTextEncode(JSONStringify({ publicKey: this.walletAddress.publicKey })))
+                const nonce = JSONParse( MyTextDecode(nonceOut) ).nonce
 
-                const out = await PandoraPay.wallet.deriveDelegatedStakeWalletAddress( nonce.toString(), this.address.addressEncoded, password )
+                const out = await PandoraPay.wallet.deriveDelegatedStakeWalletAddress( nonce.toString(), this.walletAddress.addressEncoded, password )
                 const json = JSONParse(MyTextDecode(out))
 
                 this.hasNewDelegatedInfo = true
@@ -109,8 +113,8 @@ export default {
                 const output = await this.$refs.refDelegatedStakeNodeModal.showModal(this.publicKey)
                 if (output){
                     this.hasNewDelegatedInfo = true
-                    this.delegatedStakingNewPublicKey = output.delegateStakingPublicKey
-                    this.delegatedStakingNewFee = output.delegatesStakingFee
+                    this.delegatedStakingNewPublicKey = output.delegatedStakingPublicKey
+                    this.delegatedStakingNewFee = output.delegatedStakingFee
                 }
             }finally{
                 resolver(true)

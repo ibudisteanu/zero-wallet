@@ -1,10 +1,12 @@
 import mutations from "./page-mutations"
+import getters from "./page-getters"
 
 export default {
 
     state: {
 
         refLoadingModal: null,
+        refTextareaModal: null,
         refQRCodeModal: null,
         refQRCodeScannerModal: null,
         refTestnetFaucetModal:null,
@@ -19,5 +21,5 @@ export default {
     },
 
     mutations,
-
+    getters,
 }

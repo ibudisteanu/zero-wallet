@@ -31,7 +31,7 @@
                         <label class="form-check-label" for="paymentAmount"> Amount </label>
                         <i class="fas fa-question" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
                         <template v-if="hasPaymentAmount">
-                            <tx-amount :allow-zero="true" :allow-empty-asset="true" :balances="null" @changed="amountChanged" text="Amount to Receive" :asset="paymentAsset" :disabled="!hasPaymentAmount" />
+                            <tx-amount :allow-zero="true" :allow-empty-asset="true" :balances="null" @changed="amountChanged" text="Amount to Receive" :asset="Buffer.from(paymentAsset,'hex').toString('base64')" :disabled="!hasPaymentAmount" />
                         </template>
                     </div>
                 </template>
@@ -69,7 +69,7 @@
 
                         <hr/>
 
-                        <div class="g-0 d-block-inline ">
+                        <div class="g-0 d-inline-block ">
                             <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="copyAddress" v-tooltip.bottom="'Copy Address'" >
                                 <i class="fas fa-copy" />
                             </button>
@@ -122,6 +122,8 @@ export default {
 
     computed:{
 
+        Buffer: () => Buffer,
+
         validationPaymentID(){
             try{
 
@@ -167,8 +169,11 @@ export default {
         async setTab({resolve, reject, oldTab, value}){
             try{
 
-                if (oldTab === 0 && value === 1)
+                if (oldTab === 0 && value === 1) {
                     if (this.validationPaymentAsset) throw this.validationPaymentAsset
+                    const asset = await this.$store.dispatch('getAssetByHash', Buffer.from(this.paymentAsset, "hex").toString("base64") )
+                    if (!asset) throw "Payment Asset doesn't exist"
+                }
 
                 if (oldTab === 1 && value === 2)
                     if (this.paymentAmount.validationError) throw this.paymentAmount.validationError
@@ -177,7 +182,7 @@ export default {
                     if (this.validationPaymentID) throw this.validationPaymentID
 
                 if (oldTab === 3 && value === 4)
-                    await this.handleGenerateAddress()
+                    await this.handleCreateAddress()
 
             }catch(err) {
                 reject(err)
@@ -223,19 +228,19 @@ export default {
             return this.$store.state.page.refQRCodeModal.showModal( this.addressGenerated, this.account.name || '');
         },
 
-        async handleGenerateAddress(){
+        async handleCreateAddress(){
 
             this.addressGenerated = ""
 
             let args = {
                 publicKey: this.account.publicKey,
                 registration: this.hasRegistration ? this.account.registration : "",
-                paymentID: this.hasPaymentID ? this.paymentID : "",
+                paymentID: this.hasPaymentID ? Buffer.from(this.paymentID, "hex").toString("base64") : "",
                 paymentAmount: this.hasPaymentAmount ? this.paymentAmount.amount : new Decimal(0),
-                paymentAsset: this.hasPaymentAsset ? this.paymentAsset : "",
+                paymentAsset: this.hasPaymentAsset ? Buffer.from(this.paymentAsset, "hex").toString("base64") : "",
             }
 
-            const out = await PandoraPay.addresses.generateAddress( MyTextEncode( JSONStringify( args )  ))
+            const out = await PandoraPay.addresses.createAddress( MyTextEncode( JSONStringify( args )  ))
             const json = JSONParse( MyTextDecode(out) )
             this.addressGenerated = json[1]
 

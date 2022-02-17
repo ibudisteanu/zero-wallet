@@ -2,8 +2,8 @@
     <wait-account :account="account" :type="initAvailableBalance ? 'all' : 'zether'">
 
         <wizard :titles="{...titlesOffset,
-            0: {icon: 'fas fa-users', name: 'Receiver', tooltip: 'Receiver of the private tx' },
-            1: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
+            0: {icon: 'fas fa-users', name: 'Recipient', tooltip: 'Recipient of the private tx' },
+            1: {icon: 'fas fa-pencil-alt', name: 'Memo', tooltip: 'Extra information attached in the tx' },
             2: {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' },
             3: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' },
             4: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' } }"
@@ -14,18 +14,17 @@
             </template>
 
             <template v-slot:tab_0>
-                <div class="form" v-if="allowDestinationRandom">
-                    <input class="form-check-input" id="random-destination" type="checkbox"  name="checkbox" v-model="randomDestination">
-                    <label class="form-check-label" for="random-destination">Random Destination with Zero amount</label>
+                <div class="form-check" v-if="allowRandomRecipient">
+                    <input class="form-check-input" id="random-recipient" type="checkbox"  name="checkbox" v-model="randomRecipient">
+                    <label class="form-check-label" for="random-recipient">Random Recipient with Zero amount</label>
                 </div>
-                <template v-if="!randomDestination">
-                    <tx-asset v-if="!initAvailableAsset" :assets="availableAssets" @changed="changedAsset" class="pt-2 pb-2"/>
-                    <destination-address :text="text" :validateAmount="validateDestinationAmount" :balances="availableBalances" :allow-zero="allowDestinationZeroAmount" :asset="asset.asset" @changed="changedDestination" />
+                <template v-if="!randomRecipient">
+                    <tx-recipient :init-available-asset="initAvailableAsset" :available-assets="availableAssets" :text="text" :validate-amount="validateRecipientAmount" :balances="availableBalances" :allow-zero="allowRecipientZeroAmount" @changed="changedRecipient" />
                 </template>
             </template>
 
             <template v-slot:tab_1>
-                <extra-data :destinations="destination ? [destination] : null" :paymentID="identifiedPaymentID" @changed="changedExtraData" />
+                <extra-data :recipients="recipient ? [recipient] : null" :paymentID="identifiedPaymentID" @changed="changedExtraData" />
             </template>
 
             <template v-slot:tab_2>
@@ -48,7 +47,7 @@
 
                     <div class="col-12 col-md-6">
                         <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring New Addresses</label>
-                        <i class="fas fa-question " v-tooltip.bottom="`Number of new addresses in the ring. Makes new destinations more private.`" />
+                        <i class="fas fa-question " v-tooltip.bottom="`Number of new addresses in the ring. Makes fresh new recipients more private.`" />
                         <input class="form-control"  type="number" v-model.number="ringNewAddresses" />
                     </div>
                 </div>
@@ -71,9 +70,9 @@
             </template>
 
             <template v-slot:tab_3>
-                <tx-fee :balances="availableBalances" :asset="asset" :allow-zero="true" @changed="changedFee" />
+                <tx-fee :balances="availableBalances" :asset="recipient.asset" :allow-zero="true" @changed="changedFee" />
 
-                <template v-if="asset.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX">
+                <template v-if="recipient.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64">
                     <div class="form-check pt-2">
                         <input class="form-check-input" id="assetFeeLiquidityAsset" type="checkbox" v-model="assetFeeLiquidityAsset" />
                         <label class="form-check-label" for="assetFeeLiquidityAsset">Automatically Determine Asset Fee Liquidity</label>
@@ -121,7 +120,7 @@ import WaitAccount from "../../wallet/account/wait-account";
 import Account from "../../wallet/account/account";
 import LoadingSpinner from "../../utils/loading-spinner";
 import LoadingButton from "../../utils/loading-button";
-import DestinationAddress from "../destination-address";
+import TxRecipient from "../tx-recipient";
 import TxAmount from "../tx-amount";
 import ExtraData from "../extra-data";
 import AlertBox from "../../utils/alert-box";
@@ -131,10 +130,10 @@ import AccountIdenticon from "../../wallet/account/account-identicon";
 import Wizard from "../../utils/wizard";
 import ConfirmBroadcastingTx from "./confirm-broadcasting-tx"
 import Decimal from 'decimal.js';
-
 export default {
+
     components: {
-        WaitAccount,  Account, LoadingSpinner, LoadingButton, DestinationAddress, TxAmount,
+        WaitAccount,  Account, LoadingSpinner, LoadingButton, TxRecipient, TxAmount,
         ExtraData, AlertBox, TxFee, TxAsset, AccountIdenticon, Wizard, ConfirmBroadcastingTx,
     },
 
@@ -142,12 +141,12 @@ export default {
         publicKey: {default: ""},
         titlesOffset: {default: () => ({}) }, //{icon, name}
         buttonsOffset: {default: () => ({}) },
-        text: {default: "Destination"},
+        text: {default: "Recipient"},
         initAvailableAsset: {default: null },
         initAvailableBalance: {default: null },
-        allowDestinationRandom: {default: false},
-        allowDestinationZeroAmount: {default: true},
-        validateDestinationAmount: {default: true},
+        allowRandomRecipient: {default: false},
+        allowRecipientZeroAmount: {default: true},
+        validateRecipientAmount: {default: true},
         beforeProcess: {default: null}, //function
         createNewSender: {default: false}, //function
     },
@@ -155,12 +154,20 @@ export default {
 
     data(){
         return {
-            asset: (this.initAvailableAsset !== null) ? { asset: this.initAvailableAsset   } : { }, //contains asset.asset and asset.validation
 
-            randomDestination: this.allowDestinationRandom,
+            randomRecipient: this.allowRandomRecipient,
             newSender: null,
 
-            destination: {},
+            recipient: {
+                address: null,
+                addressEncoded: "",
+                addressValidationError: "",
+                amount: 0,
+                amountValidationError: "",
+                asset: (this.initAvailableAsset !== null) ? this.initAvailableAsset : null,
+                assetValidationError: "",
+            },
+
             fee: {  },
             assetFeeLiquidityAsset: true,
             assetFeeConversionRate: 1,
@@ -188,7 +195,7 @@ export default {
     computed:{
         PandoraPay: () => PandoraPay,
 
-        address(){
+        walletAddress(){
             return this.$store.state.wallet.addresses[this.publicKey] ;
         },
         account(){
@@ -209,18 +216,18 @@ export default {
 
             const accounts = this.availableAccounts || []
             for (const acc of accounts)
-                if (acc.asset === this.asset.asset )
-                    return {  [this.asset.asset]: acc }
+                if (acc.asset === this.recipient.asset )
+                    return {  [this.recipient.asset]: acc }
 
             return null
         },
 
-        checkDestinationError(){
+        checkRecipientError(){
 
             try{
 
-                if (this.destination.address)
-                    if (this.destination.address.publicKey === this.address.publicKey) throw "Destination can not be the same with from";
+                if (this.recipient.address)
+                    if (this.recipient.address.publicKey === this.walletAddress.publicKey) throw "Recipient can not be the same with from";
 
             }catch (err){
                 return err.toString()
@@ -237,14 +244,14 @@ export default {
         },
 
         identifiedPaymentID(){
-            if (this.destination.address) {
-                if (this.destination.address.paymentID)
-                    return this.destination.address.paymentID
+            if (this.recipient.address) {
+                if (this.recipient.address.paymentID)
+                    return this.recipient.address.paymentID
             }
         },
 
         getAsset(){
-            return this.$store.getters.getAsset( this.asset ? this.asset.asset : null );
+            return this.$store.getters.getAsset( this.asset ? this.recipient.asset : null );
         },
 
         buttons(){
@@ -257,7 +264,7 @@ export default {
     },
 
     watch: {
-        async destination (to, from){
+        async recipient (to, from){
             if (to === from) return
 
             await this.$store.state.blockchain.syncPromise;
@@ -270,8 +277,8 @@ export default {
 
         },
 
-        randomDestination(to, from){
-            this.destination = {address: null, amount: new Decimal(0) }
+        randomRecipient(to, from){
+            this.recipient = {address: null, amount: new Decimal(0) }
         },
 
     },
@@ -289,18 +296,19 @@ export default {
                 this.status = ""
 
                 if (oldTab === 0 && value > oldTab){
-                    if (this.asset.validationError) throw this.asset.validationError
 
-                    if (!this.randomDestination){
+                    if (!this.randomRecipient){
 
-                        if (this.destination.validationError) throw this.destination.validationError;
-                        if (this.checkDestinationError) throw this.checkDestinationError
+                        if (this.recipient.addressValidationError) throw this.recipient.addressValidationError;
+                        if (this.recipient.amountValidationError) throw this.recipient.amountValidationError;
+                        if (this.recipient.assetValidationError) throw this.recipient.assetValidationError;
+                        if (this.checkRecipientError) throw this.checkRecipientError
 
                         await this.$store.state.blockchain.syncPromise;
-                        await this.$store.dispatch('subscribeAccount', {publicKey: this.destination.address.publicKey} )
+                        await this.$store.dispatch('subscribeAccount', {publicKey: this.recipient.address.publicKey} )
 
-                        if (!this.$store.state.accounts.list[this.destination.address.publicKey] && !this.destination.address.registration )
-                            throw "Destination Address doesn't have the registration. \n You have the shorter version of the address. First time when an address is used it requires the longer version."
+                        if (!this.$store.state.accounts.list[this.recipient.address.publicKey] && !this.recipient.address.registration )
+                            throw "Recipient Address doesn't have the registration. \n You have the shorter version of the address. First time when an address is used it requires the longer version."
                     }
 
                 }else if (oldTab === 1 && value > oldTab) {
@@ -326,11 +334,8 @@ export default {
             }
         },
 
-        changedDestination(data){
-            this.destination = { ...this.destination,  ...data, }
-        },
-        changedAsset(data){
-            this.asset = { ...this.asset,  ...data, }
+        changedRecipient(data){
+            this.recipient = { ...this.recipient,  ...data, }
         },
         changedFee(data){
             this.fee = { ...this.fee,  ...data, }
@@ -343,11 +348,11 @@ export default {
 
             try {
 
-                const asset = this.asset.asset
+                const asset = this.recipient.asset
 
                 let assetCollector
 
-                if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX){
+                if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64){
                     const outData = await PandoraPay.network.getNetworkFeeLiquidity(0, asset)
                     if (!outData) throw "No Asset Fee Liqiduity for this asset"
                     const out = JSONParse(MyTextDecode(outData))
@@ -381,9 +386,9 @@ export default {
                     if (!foundSender) throw "Account not found for sender"
                 }
 
-                if (!this.randomDestination)
-                    if (this.$store.state.accounts.list[ this.destination.address.publicKey]){
-                        let availableAccounts = this.$store.state.accounts.list[ this.destination.address.publicKey]
+                if (!this.randomRecipient)
+                    if (this.$store.state.accounts.list[ this.recipient.address.publicKey]){
+                        let availableAccounts = this.$store.state.accounts.list[ this.recipient.address.publicKey]
                         if (availableAccounts)
                             for (let i=0; i < availableAccounts.length; i++)
                                 if (availableAccounts.asset === asset)
@@ -432,28 +437,36 @@ export default {
                         return {addressEncoded: json[1], publicKey: json[2] }
                     }
 
-                    const json = JSONParse( MyTextDecode( await PandoraPay.addresses.generateAddress( MyTextEncode( JSONStringify( {publicKey: publicKeySelected, registration: "", paymentID: "", paymentAmount: 0, paymentAsset: "" } ) ) ) ) )
+                    const json = JSONParse( MyTextDecode( await PandoraPay.addresses.createAddress( MyTextEncode( JSONStringify( {publicKey: publicKeySelected, registration: "", paymentID: "", paymentAmount: 0, paymentAsset: "" } ) ) ) ) )
                     return {addressEncoded: json[1], publicKey: publicKeySelected}
                 }
 
                 let ringMembers = []
 
                 if (!this.createNewSender){
-                    ringMembers.push(this.address.addressEncoded)
-                    delete publicKeysMap[this.address.publicKey]
+                    ringMembers.push(this.walletAddress.addressEncoded)
+                    delete publicKeysMap[this.walletAddress.publicKey]
                 }else {
                     const json = JSONParse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
                     ringMembers.push( json[1] )
                     this.newSender = {privateKey: json[0], addressEncoded: json[1], publicKey: json[2] }
                 }
 
-                if (this.randomDestination){
+                if (this.randomRecipient){
                     const out = await getRandomPublicKey()
-                    this.destination = { amount: new Decimal(0), addressEncoded: out.addressEncoded, address: { publicKey: out.publicKey }}
+                    this.recipient =  {
+                        addressEncoded: out.addressEncoded,
+                        address: { publicKey: out.publicKey },
+                        addressValidationError:"",
+                        amount: new Decimal(0),
+                        amountValidationError: "",
+                        asset,
+                        assetValidationError: "",
+                    }
                 }
 
-                ringMembers.push(this.destination.addressEncoded)
-                delete publicKeysMap[this.destination.address.publicKey]
+                ringMembers.push(this.recipient.addressEncoded)
+                delete publicKeysMap[this.recipient.address.publicKey]
 
                 for ( let i =0; ringMembers.length < ringSize - newAccounts; i++){
                     const out = await getRandomPublicKey()
@@ -480,7 +493,7 @@ export default {
             this.statusType = "signing"
             this.status = '';
 
-            const asset = this.asset.asset
+            const asset = this.recipient.asset
 
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
@@ -526,12 +539,12 @@ export default {
                 regs[ringShufflePublicKeys[i]] = out.registrationSerialized[i]
             }
 
-            const amount = this.destination.amount
+            const amount = this.recipient.amount
             const fee = this.fee.feeType ? 0 : this.fee.feeManual.amount
 
             let feeRate = 0, feeLeadingZeros = 0
 
-            if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX)
+            if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64)
                 if (this.assetFeeLiquidityAsset){
                     outData = await PandoraPay.network.getNetworkFeeLiquidity(0, asset)
                     if (!outData) throw "No Asset Fee Liqiduity for this asset"
@@ -550,13 +563,13 @@ export default {
 
 
             const data = {
-                from: [{
+                senders: [{
                     privateKey: senderPrivateKey,
                     decryptedBalance: senderDecryptedBalance,
                 }],
                 assets: [ asset ],
                 amounts: [ amount  ],
-                dsts: [ this.destination.addressEncoded ],
+                recipients: [ this.recipient.addressEncoded ],
                 burns: [ new Decimal(0) ],
                 ringMembers: [ this.ringMembers ],
                 fees: [{
@@ -568,7 +581,7 @@ export default {
                     leadingZeros: feeLeadingZeros,
                 }],
                 data: [{
-                    data: Buffer.from(this.extraData.data).toString("hex"),
+                    data: Buffer.from(this.extraData.data).toString("base64"),
                     encrypt: this.extraData.type === "encrypted",
                 }],
                 payloadExtra: [ null ],
@@ -591,33 +604,38 @@ export default {
                 } );
 
             if (!out) throw "Transaction couldn't be made";
-            this.status = ""
+
+            this.status = "Tx built"
 
             this.tx = JSONParse( MyTextDecode( out[0] ) )
-            this.txSerialized = out[1]
+            const serialized = out[1]
+
+            const txSerialized = Buffer.alloc(serialized.length)
+            Buffer.from(serialized).copy(txSerialized, 0)
+
+            this.tx._serialized = txSerialized.toString("base64")
+            this.txSerialized = txSerialized
+
+            this.status = ""
 
         },
 
         async handlePropagateTx(){
 
             this.statusType = "broadcasting"
-
             this.status = 'Cloning transaction...'
-
-            const txSerialized = Buffer.alloc(this.txSerialized.length)
-            Buffer.from(this.txSerialized).copy(txSerialized, 0)
 
             this.status = 'Broadcasting your transaction in the network... Please wait...'
 
-            await this.$store.dispatch('includeTx', { tx: this.tx, mempool: false } )
+            await this.$store.dispatch('includeTx', { tx: this.tx, serialized: this.tx._serialized, mempool: false } )
 
-            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( txSerialized )
+            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
             if (!finalAnswer){
                 this.$store.commit('deleteTransactions', [this.tx] )
                 throw "Transaction couldn't be broadcast"
             }
 
-            this.$router.push(`/explorer/tx/${this.tx.hash}`);
+            this.$router.push(`/explorer/tx/${Buffer.from(this.tx.hash, "base64").toString("hex")}`);
 
             this.$emit('onFinished', true )
         },
@@ -638,7 +656,7 @@ export default {
     },
 
     beforeUnmount() {
-        this.destination = {  }
+        this.recipient = {  }
     }
 
 }

@@ -30,7 +30,10 @@ export default {
 
     data(){
         return {
-            unstakeAmount: {},
+            unstakeAmount: {
+                amount: 0,
+                amountValidationError: "",
+            },
         }
     },
 
@@ -43,13 +46,13 @@ export default {
         },
         balancesStakeAvailable(){
             const amount = (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ? this.account.plainAccount.delegatedStake.stakeAvailable : new Decimal(0)
-            return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
+            return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 } }
         },
         buttons(){
             return { 1: { icon: 'fas fa-unlink', text: 'Unstake now' }}
         },
         getAsset() {
-            return this.$store.getters.getAsset(PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX);
+            return this.$store.getters.getAsset(PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64);
         },
     },
 
@@ -59,7 +62,7 @@ export default {
             try{
 
                 if (oldTab === -1 && value === 0 )
-                    if (this.unstakeAmount.validationError) throw this.unstakeAmount.validationError
+                    if (this.unstakeAmount.amountValidationError) throw this.unstakeAmount.amountValidationError
 
             }catch(err) {
                 reject(err)

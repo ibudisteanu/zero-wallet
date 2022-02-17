@@ -27,7 +27,7 @@ export default {
             matrixInterval: null,
             publicKey: "",
             balance: "",
-            asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX,
+            asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64,
             password: "",
             decryptedBalance: null,
             privateKey: null,

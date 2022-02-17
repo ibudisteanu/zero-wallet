@@ -1,7 +1,7 @@
 <template>
 
     <router-link :to="disableRoute ? '' : `/address/${finalAddress}`" v-tooltip.bottom="`${ showTooltip ? finalAddressShort : '' }`">
-        <div class="identicon outer" :style="`padding: ${outerSize}px`" v-if="identiconSrc">
+        <div :class="`identicon ${outerSize? 'outer':''}`" :style="`padding: ${outerSize}px`" v-if="identiconSrc">
             <img :src="identiconSrc" class="identicon" :style="`width: ${size}px`"  >
         </div>
     </router-link>
@@ -53,7 +53,7 @@ export default {
             handler: async function(newVal, oldVal){
                 if (!newVal) return
                 try{
-                    const out = await PandoraPay.addresses.generateAddress( MyTextEncode( JSONStringify( { publicKey: newVal, registration: "", paymentID: "", paymentAmount: 0, paymentAsset: "" })) )
+                    const out = await PandoraPay.addresses.createAddress( MyTextEncode( JSONStringify( { publicKey: newVal, registration: "", paymentID: "", paymentAmount: 0, paymentAsset: "" })) )
                     const json = JSONParse( MyTextDecode(out) )
                     this.identiconSrc = await Identicons.getIdenticon(newVal, this.size )
                     this.finalAddress = json[1]
@@ -72,7 +72,7 @@ export default {
                 try{
                     const addressData = await PandoraPay.addresses.decodeAddress(newVal)
                     const address = JSONParse( MyTextDecode(addressData))
-                    this.identiconSrc = await Identicons.getIdenticon(address.publicKey, this.size )
+                    this.identiconSrc = await Identicons.getIdenticon( address.publicKey, this.size )
                     this.finalAddress = newVal
                 }catch(err){
                     this.finalAddress = ""
@@ -96,7 +96,6 @@ export default {
 
 
     .outer{
-        display: inline-table;
         -webkit-border-radius: 50%;
         -moz-border-radius: 50%;
         -khtml-border-radius: 50%;
@@ -106,6 +105,7 @@ export default {
     }
 
     .identicon{
+        display: inline-table;
         background-color: white;
     }
 

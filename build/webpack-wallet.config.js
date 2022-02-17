@@ -12,7 +12,7 @@ module.exports = (env, argv) => merge( base(env, argv), {
         app: "./src/main.js",
     },
     output: {
-        path: path.resolve(__dirname, "./../dist/dev"),
+        path: path.resolve(__dirname, "./../dist/build"),
         filename: "Wallet-User-Interface.js"
     },
 

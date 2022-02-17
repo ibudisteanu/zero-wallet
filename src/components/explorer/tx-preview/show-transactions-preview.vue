@@ -10,7 +10,7 @@
             <span class="d-none d-md-block col-md-1 text-truncate"  v-tooltip.bottom="'Tx Type'" ><i class="fas fa-credit-card"/></span>
             <span class="d-none d-md-block col-md-2 text-truncate"  v-tooltip.bottom="'Tx Data'"><i class="fas fa-users"/></span>
             <span class="d-none d-md-block col-md-2 text-truncate"  v-tooltip.bottom="'Tx Message (memo)'"><i class="fas fa-comment-dots"/></span>
-            <span class="d-none d-md-block col-md-2 text-truncate"  v-tooltip.bottom="'Tx Amount'"><i class="fas fa-comment-dollar"/></span>
+            <span class="d-none d-md-block col-md-2 text-truncate"  v-tooltip.bottom="'Tx Amount'"><i class="fas fa-dollar-sign"/></span>
             <span class="d-none d-md-block col-md-1 text-truncate"  v-tooltip.bottom="'Tx Recipient'"><i class="fas fa-user"/></span>
         </div>
 

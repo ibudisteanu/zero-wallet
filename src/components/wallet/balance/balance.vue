@@ -1,20 +1,27 @@
 <template>
 
-    <div class="row">
-        <h4 class="fw-medium pt-2" v-if="getAsset" >
-            <template v-if="version === 'zether' && decryptedBalance === null ">
-                <i class="fas fa-lock pe-2" v-tooltip.bottom="`Homomorphic Encrypted Amount: ${balance}`" />
-                <i class="fas fa-key pe-2 pointer" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecrypted" @click="decryptBalance"></i>
+    <div class="pt-2">
+        <template v-if="version === 'zether'">
+            <i class="fas fa-lock pe-2 fs-2" v-tooltip.bottom="`Homomorphic Encrypted Amount: ${balance}`" />
+            <template v-if="decryptedBalance === null">
+                <i class="fas fa-key pe-2 pointer fs-2 text-primary" v-tooltip.bottom="'Decrypt Amount'" v-if="canBeDecrypted" @click="decryptBalance"></i>
+            </template>
+        </template>
+        <h4 class="fw-medium d-inline-block" v-if="getAsset" >
+            <template v-if="version === 'zether'">
+                <template v-if="decryptedBalance !== null">
+                    {{ amount }}
+                </template>
             </template>
             <template v-else>
                 {{ amount }}
             </template>
-            <small class="ps-1 fs--1 text-700">/
-                <router-link :to="`/explorer/asset/${getAsset.hash}`" class="currency" v-tooltip.bottom="getAsset.hash" >
-                    {{getAsset.name}}
-                </router-link>
-            </small>
         </h4>
+        <small class="ps-1 fs--1 text-700 d-inline-block">/
+            <router-link :to="`/explorer/asset/${$store.getters.convertBase64ToHex(getAsset.hash)}`" class="currency" v-tooltip.bottom="$store.getters.convertBase64ToHex(getAsset.hash)" >
+                {{getAsset.name}}
+            </router-link>
+        </small>
     </div>
 
 </template>
@@ -30,7 +37,7 @@ export default {
 
     props: {
         version: {default: "transparent"},
-        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX},
+        asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64},
         balance: {default: () => new Decimal(0) },
         publicKey: {default: ""},     //required for version zether
         canBeDecrypted: {default: false}  //required for version zether
@@ -57,7 +64,8 @@ export default {
                     amount = this.decryptedBalance
             }
             return StringHelper.formatMoney( new Decimal(amount).div( new Decimal(10).pow(this.getAsset.decimalSeparator) ).toString(), this.getAsset.decimalSeparator)
-        }
+        },
+
     },
 
     watch: {
@@ -65,7 +73,16 @@ export default {
             immediate: true,
             handler: function (to, from) {
                 if (to === from) return
-                this.decryptedBalance = null
+
+                if (this.version === "zether"){
+                    const walletAddress = this.$store.state.wallet.addresses[this.publicKey]
+                    if (walletAddress && walletAddress.decryptedBalances && walletAddress.decryptedBalances[this.asset])
+                        if (walletAddress.decryptedBalances[this.asset].encryptedBalance === this.balance){
+                            this.decryptedBalance = walletAddress.decryptedBalances[this.asset].amount
+                            return
+                        }
+                    this.decryptedBalance = null
+                }
             }
         },
     },

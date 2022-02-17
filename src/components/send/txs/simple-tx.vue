@@ -1,7 +1,7 @@
 <template>
     <wait-account :account="account" type="transparent">
         <wizard :titles="{ ...titlesOffset,
-                0: {icon: 'fas fa-pencil-alt', name: 'Extra Info', tooltip: 'Extra information attached in the tx' },
+                0: {icon: 'fas fa-pencil-alt', name: 'Memo', tooltip: 'Extra information attached in the tx' },
                 1: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' },
                 2: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' } }"
                  @onSetTab="setTab" :buttons="buttons" controls-class-name="card-footer bg-light" class="card" >
@@ -16,7 +16,7 @@
 
             <template v-slot:tab_1>
 
-                <div class="form pb-2">
+                <div class="form-check pb-2">
                     <input class="form-check-input" id="fee-version" type="checkbox"  name="checkbox" v-model="feeVersion">
                     <label class="form-check-label" for="fee-version">Pay Fee from Unclaimed balance</label>
                     <i class="fas fa-question " v-tooltip.bottom="`Subtract the fee from the unclaimed balance or from the delegated stake.`" />
@@ -74,7 +74,7 @@ export default {
     },
 
     computed:{
-        address(){
+        walletAddress(){
             return this.$store.state.wallet.addresses[this.publicKey];
         },
         account(){
@@ -82,7 +82,7 @@ export default {
         },
         balancesStakeAvailable(){
             const amount = (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ? this.account.plainAccount.delegatedStake.stakeAvailable : new Decimal(0)
-            return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
+            return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64]: {amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 } }
         },
         getAsset(){
             return this.$store.getters.getAsset( this.asset ? this.asset.asset : null );
@@ -139,15 +139,14 @@ export default {
 
             const fee = this.fee.feeType ? new Decimal(0) : this.fee.feeManual.amount
 
-            const nonceOut = await PandoraPay.network.getNetworkAccountMempoolNonce(MyTextEncode(JSONStringify({ publicKey: this.address.publicKey })))
-
+            const nonceOut = await PandoraPay.network.getNetworkAccountMempoolNonce(MyTextEncode(JSONStringify({ publicKey: this.walletAddress.publicKey })))
             const nonce = JSONParse( MyTextDecode(nonceOut) ).nonce
 
             const data = {
-                from: this.address.addressEncoded,
+                sender: this.walletAddress.addressEncoded,
                 nonce: nonce,
                 data: {
-                    data: Buffer.from(this.extraData.data).toString("hex"),
+                    data: Buffer.from(this.extraData.data).toString("base64"),
                     encrypt: this.extraData.type === "encrypted",
                     publicKeyToEncrypt: this.extraData.publicKeyToEncrypt,
                 },
@@ -173,8 +172,13 @@ export default {
             this.status = ''
 
             this.tx = JSONParse( MyTextDecode( out[0] ) )
-            this.txSerialized = out[1]
+            const serialized = out[1]
 
+            const txSerialized = Buffer.alloc(serialized.length)
+            Buffer.from(serialized).copy(txSerialized, 0)
+
+            this.tx._serialized = txSerialized.toString("base64")
+            this.txSerialized = txSerialized
         },
 
         async handlePropagateTx(){
@@ -185,15 +189,15 @@ export default {
 
             this.status = 'Propagating transaction...'
 
-            await this.$store.dispatch('includeTx', {tx: this.tx, mempool: false } )
+            await this.$store.dispatch('includeTx', {tx: this.tx, serialized: this.tx._serialized, mempool: false } )
 
-            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( txSerialized )
+            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
             if (!finalAnswer) {
                 this.$store.commit('deleteTransactions', [this.tx] )
                 throw "Transaction couldn't be broadcast"
             }
 
-            this.$router.push(`/explorer/tx/${this.tx.hash}`);
+            this.$router.push(`/explorer/tx/${Buffer.from(this.tx.hash, "base64").toString("hex")}`);
 
             this.$emit('onFinished', true )
         }

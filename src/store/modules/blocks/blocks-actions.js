@@ -23,7 +23,6 @@ export default {
 
                 const {block, txs} = JSONParse(MyTextDecode(data))
                 block.txs = txs || []
-                if (block.bloom.hash !== hash) throw "Block hash was not matching"
 
                 resolve( dispatch('_includeBlock', block ) );
 

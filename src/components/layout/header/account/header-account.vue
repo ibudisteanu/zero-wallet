@@ -1,9 +1,9 @@
 <template>
 
-    <div class="account" v-if="address">
+    <div class="account" v-if="walletAddress">
 
         <div class="toggle unselectable" @click.stop="toggleMenu" >
-            <account-identicon :address="$store.getters.addressDisplay(this.address)" size="21" outer-size="7" :disable-route="true" :show-tooltip="!menuOpen" />
+            <account-identicon :address="$store.getters.addressDisplay(this.walletAddress)" size="21" outer-size="7" :disable-route="true" :show-tooltip="!menuOpen" />
             <i class="right-float chevron-down fas fa-chevron-down"></i>
         </div>
 
@@ -39,7 +39,7 @@ export default {
 
     computed: {
 
-        address(){
+        walletAddress(){
             return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey];
         },
 

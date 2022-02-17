@@ -5,10 +5,10 @@
         <layout-title icon="fas fa-search-dollar" title="Private Claim">Claim funds from Unclaimed funds</layout-title>
 
         <zether-tx ref="refZetherTx"
-                   :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX"
+                   :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64"
                    :init-available-balance="balancesOnlyUnclaimed"
-                   :allow-destination-zero-amount="false"
-                   :validate-destination-amount="true"
+                   :allow-recipient-zero-amount="false"
+                   :validate-recipient-amount="true"
                    :create-new-sender="true"
                    text="Claim" :public-key="publicKey" @onSetTab="setTab" :beforeProcess="handleBeforeProcess">
         </zether-tx>
@@ -22,12 +22,11 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title";
 import ZetherTx from "src/components/send/txs/zether-tx";
 import DelegatedStakingNewInfo from "src/components/staking/delegated-staking-new-info"
-import DestinationAddress from "src/components/send/destination-address";
 import Decimal from "decimal.js"
 
 export default {
 
-    components: { ZetherTx,  LayoutTitle, Layout, DelegatedStakingNewInfo, DestinationAddress },
+    components: { ZetherTx,  LayoutTitle, Layout, DelegatedStakingNewInfo },
 
     data(){
         return {
@@ -42,7 +41,7 @@ export default {
         publicKey(){
             return this.$store.state.wallet.mainPublicKey
         },
-        address(){
+        walletAddress(){
             return this.$store.state.wallet.addresses[this.publicKey];
         },
         account(){
@@ -50,10 +49,10 @@ export default {
         },
         balancesOnlyUnclaimed(){
             const amount = (this.account && this.account.plainAccount ) ? this.account.plainAccount.unclaimed : new Decimal(0)
-            return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX]: { amount: amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX } }
+            return { [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64]: { amount: amount, asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 } }
         },
         getAsset() {
-            return this.$store.getters.getAsset(PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX);
+            return this.$store.getters.getAsset(PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64);
         },
     },
 
@@ -73,7 +72,7 @@ export default {
 
             const out = await PandoraPay.wallet.getPrivateDataForDecryptingBalanceWalletAddress( MyTextEncode( JSONStringify({
                 publicKey: this.publicKey,
-                asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX,
+                asset: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64,
             })), password, )
 
             const params = JSONParse( MyTextDecode( out ) )

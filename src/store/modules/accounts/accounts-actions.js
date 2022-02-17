@@ -37,7 +37,7 @@ export default {
                         await Promise.all( account.accountsExtra.map( accExtra => dispatch('getAssetByHash', accExtra.asset ) ) )
 
                     if (account.plainAccount)
-                        await dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_HEX )
+                        await dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 )
                 }
 
                 await dispatch('processAccountPendingTransactions', {publicKey, list: pendingTxsList.list })
