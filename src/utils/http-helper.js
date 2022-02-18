@@ -9,7 +9,13 @@ class HttpHelper {
                 .join('&');
 
         const out = await fetch(`${address}${params ? '?' + query: ''}`)
-        return JSONParse( await out.text() )
+
+        const result = await out.text()
+
+        if (!out.ok)
+            throw `${out.statusText} : ${result}`
+
+        return JSONParse( result )
     }
 
     async post(address, body, timeout = 20000){
@@ -20,7 +26,12 @@ class HttpHelper {
             },
             timeout,
         } )
-        return JSONParse( await out.text())
+        const result = await out.text()
+
+        if (!out.ok)
+            throw `${out.statusText} : ${result}`
+
+        return JSONParse( result )
     }
 
 }
