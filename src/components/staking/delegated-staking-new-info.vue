@@ -109,15 +109,12 @@ export default {
         },
 
         async handleShowDelegateStakeNode(resolver){
-            try{
-                const output = await this.$refs.refDelegatedStakeNodeModal.showModal(this.publicKey)
-                if (output){
-                    this.hasNewDelegatedInfo = true
-                    this.delegatedStakingNewPublicKey = output.delegatedStakingPublicKey
-                    this.delegatedStakingNewFee = output.delegatedStakingFee
-                }
-            }finally{
-                resolver(true)
+            resolver(true)
+            const output = await this.$refs.refDelegatedStakeNodeModal.showModal(this.publicKey)
+            if (output){
+                this.hasNewDelegatedInfo = true
+                this.delegatedStakingNewPublicKey = output.delegatedStakingPublicKey
+                this.delegatedStakingNewFee = output.delegatedStakingFee
             }
         },
 

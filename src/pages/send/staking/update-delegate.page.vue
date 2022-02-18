@@ -4,7 +4,9 @@
         <layout-title icon="fas fa-marker" title="Update Delegate Info">Change Delegation Information</layout-title>
 
         <simple-tx :titles-offset="{ '-1': {icon: 'fas fa-edit', name: 'Update Delegation', tooltip: 'Change delegation info' } }"
-                   @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey" :before-process="handleBeforeProcess">
+                   @onSetTab="setTab" :buttons-offset="buttons" :public-key="publicKey" :before-process="handleBeforeProcess"
+                   @onBroadcast="broadcastTx"
+        >
 
             <template v-slot:tab_-1>
 
@@ -100,6 +102,10 @@ export default {
                 }
             }
             data.txScript = new Decimal(PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE)
+        },
+
+        broadcastTx({tx}){
+
         }
 
     },

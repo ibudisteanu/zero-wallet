@@ -637,7 +637,7 @@ export default {
 
             this.$router.push(`/explorer/tx/${Buffer.from(this.tx.hash, "base64").toString("hex")}`);
 
-            this.$emit('onFinished', true )
+            this.$emit('onBroadcast', {tx: this.tx} )
         },
 
     },

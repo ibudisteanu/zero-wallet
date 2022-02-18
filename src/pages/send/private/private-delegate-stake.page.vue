@@ -6,10 +6,11 @@
 
         <zether-tx ref="refZetherTx"
                    :titles-offset="{ '-1': {icon: 'fas fa-edit', name: 'Delegate Stake', tooltip: 'Delegate your Stake' }}"
+                   :public-key="publicKey" @onSetTab="setTab" :beforeProcess="handleBeforeProcess"
                    :allow-random-recipient="true"
                    :validate-recipient-amount="true"
                    :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64"
-                   :public-key="publicKey" @onSetTab="setTab" :beforeProcess="handleBeforeProcess">
+                   @onBroadcast="broadcastTx">
 
             <template v-slot:tab_-1>
                 <tx-recipient text="Delegate" :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64" @changed="changedDelegateRecipient"/>
@@ -122,6 +123,10 @@ export default {
             data.burns = [ this.delegateRecipient.amount ]
             data.payloadExtra[0] = payloadExtra
             data.payloadScriptType[0] = PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_DELEGATE_STAKE
+
+        },
+
+        broadcastTx({tx}){
 
         }
 

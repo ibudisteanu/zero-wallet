@@ -5,12 +5,13 @@
         <layout-title icon="fas fa-search-dollar" title="Private Claim">Claim funds from Unclaimed funds</layout-title>
 
         <zether-tx ref="refZetherTx"
+                   :public-key="publicKey" @onSetTab="setTab" :beforeProcess="handleBeforeProcess"
                    :init-available-asset="PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64"
                    :init-available-balance="balancesOnlyUnclaimed"
                    :allow-recipient-zero-amount="false"
                    :validate-recipient-amount="true"
                    :create-new-sender="true"
-                   text="Claim" :public-key="publicKey" @onSetTab="setTab" :beforeProcess="handleBeforeProcess">
+                   text="Claim">
         </zether-tx>
 
     </layout>

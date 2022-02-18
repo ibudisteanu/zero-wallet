@@ -37,8 +37,8 @@
 
                             <div class="pt-4">
                                 <span class="fw-bold fs-0">Delegated Stake</span>
-                                <balance :key="`delegated-balance`"  :balance="delegatedStake.stakeAvailable" />
-                                <span v-if="delegatedStake.stakeAvailable.lt( minimumForStaking )" class="text-danger d-block"> Minimum balance required for Staking {{minimumForStaking}}</span>
+                                <balance :key="`delegated-balance`"  :balance="stakeAvailable " />
+                                <span v-if="stakeAvailable.lt( minimumForStaking )" class="text-danger d-block"> Minimum balance required for Staking {{minimumForStaking}}</span>
                             </div>
                             <div class="pt-4" >
                                 <span class="fw-bold fs-0">Delegated Stakes in pending {{!delegatedStakesPending.length ? 'None' : ''}}</span>
@@ -51,12 +51,17 @@
                         </template>
 
                     </div>
+                    <div class="card-footer bg-light g-0 d-block p-3">
+                        <loading-button :disabled="!delegatedStake" type="button"  v-tooltip.bottom="`Notify delegator with your stake`" @submit="handleNotify" text="" icon="fas fa-laptop-code" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" />
+                    </div>
 
                 </div>
 
             </wait-account>
 
         </div>
+
+        <delegated-stake-node-modal ref="refDelegatedStakeNodeModal" />
 
     </layout>
 
@@ -74,12 +79,14 @@ import DelegatedStakePending from "src/components/wallet/balance/delegated-stake
 import AlertBox from "src/components/utils/alert-box"
 import WaitAccount from "src/components/wallet/account/wait-account";
 import Decimal from 'decimal.js';
+import DelegatedStakeNodeModal from "src/components/staking/delegated-stake-node.modal"
+import LoadingButton from "src/components/utils/loading-button";
 
 export default {
 
     components: {
         WaitAccount, AccountIdenticon, Layout, Account, LoadingSpinner, LayoutTitle, DelegatedStakePending,
-        Balance, AlertBox },
+        Balance, AlertBox, DelegatedStakeNodeModal, LoadingButton },
 
     data() {
         return {
@@ -125,7 +132,12 @@ export default {
 
         isDelegateStakeInPending(){
             return this.pendingTransactions.length > 0;
-        }
+        },
+
+        stakeAvailable(){
+            if (this.delegatedStake && this.delegatedStake.stakeAvailable) return this.delegatedStake.stakeAvailable
+            return new Decimal(0)
+        },
 
     },
 
@@ -134,7 +146,10 @@ export default {
     },
 
     methods:{
-
+        async handleNotify(resolve){
+            resolve(true)
+            await this.$refs.refDelegatedStakeNodeModal.showModal(this.publicKey, true)
+        }
     },
 
     async mounted(){

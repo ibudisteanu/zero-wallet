@@ -1,6 +1,6 @@
 <template>
 
-    <modal ref="modal" title="Delegate Stake to Node" content-class="">
+    <modal ref="modal" :title="`${notify ? 'Notify Node' : 'Delegate Stake to Node' }`" content-class="">
 
         <template v-slot:body>
             <wait-address :address="walletAddress">
@@ -76,6 +76,8 @@ export default {
 
             delegatedStakingNewPrivateKey: "",
 
+            notify: false,
+
             output: null,
         }
     },
@@ -90,7 +92,7 @@ export default {
             return this.$store.state.accounts.list[this.publicKey]
         },
         buttons(){
-            return { 1: { icon: 'fas fa-laptop-code', text: 'Stake to Node' }}
+            return { 1: { icon: 'fas fa-laptop-code', text: this.notify ? 'Stake to Node' : 'Notify the node' }}
         },
 
         validationDelegatedStakingNewPrivateKey(){
@@ -118,7 +120,11 @@ export default {
 
                 if (oldTab === 1 && value === 2) {
                     if (this.validationDelegatedStakingNewPrivateKey) throw this.validationDelegatedStakingNewPrivateKey
-                    await this.handleDelegateAsk()
+
+                    if (this.notify )
+                        await this.handleDelegateNotify()
+                    else
+                        await this.handleDelegateAsk()
                 }
 
             }catch(err) {
@@ -128,9 +134,12 @@ export default {
             }
         },
 
-        async showModal(publicKey) {
+        async showModal(publicKey, notify = false,) {
             Object.assign(this.$data, this.$options.data());
+
             this.publicKey = publicKey
+            this.notify = notify
+
             this.delegatesNodes = JSONParse( MyTextDecode( await PandoraPay.config.helpers.getNetworkSelectedDelegatesNodes() ) )
             await this.$refs.modal.showModal();
 
@@ -167,8 +176,6 @@ export default {
             }
 
             if (!out) throw "Node did not answer";
-
-            console.log(out)
 
             if (!(out.delegatesCount instanceof Decimal) ) throw "delegatesCount is missing"
             if (!(out.maximumAllowed instanceof Decimal) ) throw "maximumAllowed is missing"
@@ -216,11 +223,18 @@ export default {
                 publicKey: this.walletAddress.publicKey,
                 challengeSignature: signature,
             } );
+
             if (!out) throw "Node is offline";
 
             if (typeof out.exists !== "boolean") throw "exists is not a boolean"
-            if (out.exists)
-                throw `Your address already has been delegated to this node.`
+            if (out.exists) {
+                this.$store.dispatch('addToast', {
+                    type: 'success',
+                    title: 'Already delegated!',
+                    text: 'Your address already has been delegated to this node'
+                });
+                return this.closeModal()
+            }
 
             this.output = {
                 delegatedStakingFee: this.nodeInfo.delegatorFee,
@@ -234,6 +248,36 @@ export default {
                 if (typeof out.delegatedStakingPublicKey !== "string") throw "delegateStakingPublicKey is missing"
                 this.output.delegatedStakingPublicKey = out.delegatedStakingPublicKey
             }
+
+            this.closeModal()
+        },
+
+        async handleDelegateNotify(){
+
+            if (!this.nodeInfo) throw "NodeInfo was not assigned"
+
+            const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+            if (password === null ) return
+
+            const signature = await PandoraPay.wallet.signMessageWalletAddress(this.nodeInfo.challenge, this.walletAddress.addressEncoded, password )
+
+            const out = await HttpHelper.get(this.delegateNodeAddress( this.selectedDelegateNode ) +'/delegator-node/notify', {
+                delegatedStakingPrivateKey: (this.nodeInfo.acceptCustomKeys && this.delegatedStakingNewPrivateKey) ? this.delegatedStakingNewPrivateKey : "",
+                publicKey: this.walletAddress.publicKey,
+                challengeSignature: signature,
+            } );
+
+            if (!out) throw "Node is offline";
+
+            if (typeof out.result !== "boolean") throw "exists is not a boolean"
+            if (!out.result)
+                throw `Delegated node returned false.`
+
+            this.$store.dispatch('addToast', {
+                type: 'success',
+                title: 'You delegated your stake to this node!',
+                text: 'Your address already has been delegated to this node!'
+            });
 
             this.closeModal()
         },

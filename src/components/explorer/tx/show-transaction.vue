@@ -258,9 +258,9 @@
                 </div>
             </div>
             <div class="card-footer bg-light g-0 d-block p-3">
-                <loading-button v-if="canDecrypt && !decrypted" type="button"  v-tooltip.bottom="`Decrypt transaction to see the amount, shared text and recipient`" @submit="decryptTx" text="" icon="fas fa-unlock" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" />
-                <loading-button type="button"  v-tooltip.bottom="`Show transaction as JSON`" @submit="showJSON" text="" icon="fas fa-file" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" />
-                <loading-button type="button"  v-tooltip.bottom="`Show transaction as raw serialized binary`" @submit="showTxRaw" text="" icon="fas fa-file-code" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" />
+                <loading-button v-if="canDecrypt && !decrypted" type="button"  @submit="handleDecryptTx" text="" icon="fas fa-unlock" v-tooltip.bottom="`Decrypt transaction to see the amount, shared text and recipient`" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" />
+                <loading-button type="button" @submit="handleShowJSON" text="" icon="fas fa-file" v-tooltip.bottom="`Show transaction as JSON`" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" />
+                <loading-button type="button" @submit="handleShowTxRaw" text="" icon="fas fa-file-code" v-tooltip.bottom="`Show transaction as raw serialized binary`" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" />
             </div>
         </div>
 
@@ -341,7 +341,7 @@ export default {
         formatSize: (bytes) => StringHelper.formatSize(bytes, 1),
         formatBytes: (bytes) => StringHelper.formatBytes(bytes),
 
-        async decryptTx(resolve){
+        async handleDecryptTx(resolve){
             const decrypted = await this.$store.dispatch('decryptTx', {hash: this.tx.hash, publicKey: this.publicKey})
             if (decrypted) this.decrypted = decrypted
             resolve(true)
@@ -353,12 +353,12 @@ export default {
             else this.decrypted = null
         },
 
-        showJSON(resolve){
+        handleShowJSON(resolve){
             resolve()
             return this.$store.state.page.refTextareaModal.showModal("TX JSON", JSONStringify(this.tx, null, 2) )
         },
 
-        showTxRaw(resolve){
+        handleShowTxRaw(resolve){
             resolve()
             return this.$store.state.page.refTextareaModal.showModal("TX JSON", this.tx._serialized )
         },
