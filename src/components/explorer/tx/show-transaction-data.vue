@@ -18,13 +18,12 @@
         </template>
         <template v-else-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER)">
 
-            <div v-for="(payload, payloadId) in tx.payloads"
-                 :key="`show-tx-payload-${payloadId}`">
-                <div v-if="!id || payloadId === id" class="output" v-for="(publicKey, index) in payload.statement.publickeylist"
-                     :key="`show-transaction-vout-${index}`">
+            <div class="output" v-for="(publicKey, index) in payload.statement.publickeylist"
+                 :key="`show-transaction-vout-${index}`">
+                <template v-if="(index%2 === parity) === payload.parity">
                     <account-identicon :publicKey="publicKey" size="21" outer-size="7" />
                     ?
-                </div>
+                </template>
             </div>
 
         </template>
@@ -42,7 +41,8 @@ export default {
 
     props: {
         tx: {default: null},
-        id: {default: "" },
+        payload: {default: null},
+        parity: {default: 0},
     },
 
     computed:{

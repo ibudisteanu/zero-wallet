@@ -1,13 +1,9 @@
 export default {
 
-    setBlockchainNotification(store, data){
-        store.end = data.end;
-        store.hash = data.hash;
-        store.prevHash = data.prevHash;
-    },
-
     setBlockchainInfo(store, data){
         store.end = data.height;
+        store.hash = data.hash
+        store.kernelHash = data.kernelHash
         store.assets = data.assets;
         store.transactions = data.transactions;
     },

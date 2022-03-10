@@ -189,13 +189,32 @@
                         </div>
 
                         <div class="row pt-2 pb-2">
-                            <span class="col-12 col-sm-3 text-truncate">Data</span>
-                            <span class="col-12 col-sm-9">
-                                <show-transaction-data :tx="tx" />
+                            <span class="col-4 col-sm-3 text-truncate">Parity</span>
+                            <span class="col-8 col-sm-9 text-truncate">{{payload.parity ? 'true' : 'false'}}</span>
+                        </div>
+
+                        <div class="row pt-2 pb-2 bg-light">
+                            <span class="col-4 col-sm-3 text-truncate">Burn</span>
+                            <span class="col-8 col-sm-9 text-truncate">
+                                <amount :value="payload.burnValue" :sign="false" />
+                            </span>
+                        </div>
+
+                        <div class="row pt-2 pb-2">
+                            <span class="col-12 col-sm-3 text-truncate">Sender</span>
+                            <span class="col-12 col-sm-9" v-if="!payload.payloadScript.eq(PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_STAKING_REWARD)">
+                                <show-transaction-data :tx="tx" :payload="payload" :parity="0" />
                             </span>
                         </div>
 
                         <div class="row pt-2 pb-2 bg-light">
+                            <span class="col-12 col-sm-3 text-truncate">Recipient</span>
+                            <span class="col-12 col-sm-9" v-if="!payload.payloadScript.eq(PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_STAKING)">
+                                <show-transaction-data :tx="tx" :payload="payload" :parity="1" />
+                            </span>
+                        </div>
+
+                        <div class="row pt-2 pb-2">
                             <span class="col-4 col-sm-3 text-truncate">Memo</span>
                             <span class="col-8 col-sm-9">
                                 <template v-if="payload.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT)">
@@ -207,12 +226,12 @@
                                 </template>
                             </span>
                         </div>
-                        <div class="row pt-2 pb-2">
+                        <div class="row pt-2 pb-2 bg-light">
                             <span class="col-4 col-sm-3 text-truncate">Memo in Base64</span>
                             <span class="col-8 col-sm-9 text-truncate" v-tooltip.bottom="`${payload.data}`">{{payload.data}}</span>
                         </div>
 
-                        <div class="row pt-2 pb-2 bg-light">
+                        <div class="row pt-2 pb-2">
                             <span class="col-4 col-sm-3 text-truncate">Amount</span>
                             <span class="col-8 col-sm-9">
                                 <span v-if="!decrypted || !decrypted.zetherTx.payloads[index]" v-tooltip.bottom="`Confidential amount`">?</span>
@@ -222,7 +241,7 @@
                             </span>
                         </div>
 
-                        <div class="row pt-2 pb-2">
+                        <div class="row pt-2 pb-2 bg-light">
                             <span class="col-4 col-sm-3 text-truncate">Recipient</span>
                             <span class="col-8 col-sm-9">
                                 <span v-if="!decrypted || !decrypted.zetherTx.payloads[index] || !decrypted.zetherTx.payloads[index].recipientPublicKey" v-tooltip.bottom="`Unknown Recipient`">?</span>

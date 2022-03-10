@@ -60,6 +60,7 @@ export default {
                 publicKey: this.publicKey,
                 asset: this.asset,
                 balance: this.balance,
+                previousValue: 0,
             })), this.password, )
 
             const out = JSONParse( MyTextDecode( data ) )
@@ -141,12 +142,12 @@ export default {
 
                     this.decryptedBalance = new Decimal(result[1])
 
-                    await PandoraPay.wallet.updatePreviousDecryptedBalanceValueWalletAddress( MyTextEncode(JSONStringify({
-                        publicKey: this.publicKey,
-                        asset: this.asset,
-                        amount: this.decryptedBalance,
-                        balance: this.balance,
-                    })), this.password, )
+                    // await PandoraPay.wallet.updatePreviousDecryptedBalanceValueWalletAddress( MyTextEncode(JSONStringify({
+                    //     publicKey: this.publicKey,
+                    //     asset: this.asset,
+                    //     amount: this.decryptedBalance,
+                    //     balance: this.balance,
+                    // })), this.password, )
 
                     this.cancelCallback = null
                     return this.closeModal()

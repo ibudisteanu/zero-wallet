@@ -328,6 +328,7 @@ export default {
                 } else return this.$emit('onSetTab', {resolve, reject, oldTab, value} )
 
             }catch(err) {
+                console.error(err)
                 reject(err)
             }finally{
                 resolve(true)
@@ -586,8 +587,8 @@ export default {
                 }],
                 payloadExtra: [ null ],
                 payloadScriptType: [  PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_TRANSFER ],
-                height: this.$store.state.blockchain.end,
-                hash: this.$store.state.blockchain.hash,
+                chainKernelHeight: this.$store.state.blockchain.end-1,
+                chainKernelHash: this.$store.state.blockchain.kernelHash,
                 accs,
                 regs,
             }

@@ -122,7 +122,7 @@ export default {
 
             data.burns = [ this.delegateRecipient.amount ]
             data.payloadExtra[0] = payloadExtra
-            data.payloadScriptType[0] = PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_DELEGATE_STAKE
+            data.payloadScriptType[0] = PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_STAKING
 
         },
 

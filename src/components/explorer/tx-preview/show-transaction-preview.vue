@@ -88,7 +88,7 @@
             <span class="col-4 d-block d-md-none text-dark text-truncate">Amount</span>
             <div class="col-8 col-md-2 text-truncate">
                 <template v-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER )">
-                    <div class="text-truncate d-md-flex justify-content-center align-items-center">
+                    <div class="">
                         <loading-button v-if="canDecrypt && !decrypted" type="button"  v-tooltip.bottom="`Decrypt the transaction to see the amount, shared text and recipient`" @submit="decryptTx" text="Decrypt" icon="fas fa-unlock" :icon-left="false" class-custom="badge rounded-pill bg-info" component="span" />
                         <div v-else v-for="(payload, index) in tx.base.payloads" :key="`tx_payload_${index}`" class="col-12 text-truncate d-md-flex justify-content-center align-items-center">
                             <span v-if="!decrypted || !decrypted.zetherTx.payloads[index]" v-tooltip.bottom="`Confidential amount`">?</span>

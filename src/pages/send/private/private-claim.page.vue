@@ -82,7 +82,7 @@ export default {
             data.payloadExtra[0] = {
                 delegatePrivateKey: params.privateKey
             }
-            data.payloadScriptType[0] = PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CLAIM
+            data.payloadScriptType[0] = PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_STAKING_REWARD
 
         }
 
