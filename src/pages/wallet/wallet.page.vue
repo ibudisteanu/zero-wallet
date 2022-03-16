@@ -30,10 +30,10 @@
 
                     <div class="row py-2">
                         <div v-if="!showRegistration" class="pointer  w-auto" @click="showRegistration = true">
-                            View Registration Public Signatures
+                            View Registration Public Signature
                         </div>
                         <div class="text-truncate" v-else>
-                            Registration Public Key: {{walletAddress.registration}}
+                            Registration Public Signature: {{walletAddress.registration}}
                             <i class="fas fa-copy pointer  d-inline-block" v-tooltip.bottom="'Copy Registration'"  @click="handleCopyAddress(walletAddress.registration)" />
                         </div>
                     </div>
@@ -50,7 +50,7 @@
                         <i class="danger fas fa-times"></i>
                     </button>
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowPrivateKey" v-tooltip.bottom="'View Private Key'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowSecretKey" v-tooltip.bottom="'View Secret Key'" >
                         <i class="fas fa-eye"></i>
                     </button>
 
@@ -61,7 +61,7 @@
                 </div>
             </div>
 
-            <account-private-key-modal ref="refAccountPrivateKeyModal"/>
+            <account-secret-key-modal ref="refAccountSecretKeyModal"/>
             <account-delete-modal ref="refAccountDeleteModal" />
             <account-rename-modal ref="refAccountRenameModal" />
 
@@ -76,7 +76,7 @@
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import FileSaver from 'file-saver'
 import consts from 'consts/consts';
-import AccountPrivateKeyModal from "src/components/wallet/account/account-private-key.modal"
+import AccountSecretKeyModal from "src/components/wallet/account/account-secret-key.modal"
 import AccountRenameModal from "src/components/wallet/account/account-rename.modal"
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title";
@@ -86,7 +86,7 @@ import WaitAddress from "src/components/wallet/account/wait-address";
 
 export default {
 
-    components: {WaitAddress, AccountIdenticon, AccountPrivateKeyModal, AccountRenameModal, Layout, Account, LayoutTitle, AccountDeleteModal},
+    components: {WaitAddress, AccountIdenticon, AccountSecretKeyModal, AccountRenameModal, Layout, Account, LayoutTitle, AccountDeleteModal},
 
     data(){
         return {
@@ -133,8 +133,8 @@ export default {
             });
         },
 
-        handleShowPrivateKey(){
-            return this.$refs.refAccountPrivateKeyModal.showModal(this.walletAddress);
+        handleShowSecretKey(){
+            return this.$refs.refAccountSecretKeyModal.showModal(this.walletAddress);
         },
 
         handleDeleteAddress(){

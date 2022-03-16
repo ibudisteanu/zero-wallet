@@ -28,7 +28,9 @@ export default {
     methods: {
 
         showModal(title, data, rows=20) {
-            Object.assign(this.$data, this.$options.data());
+
+            Object.assign(this.$data, this.$options.data.apply(this))
+
             this.title = title
             this.data = data
             this.rows = rows

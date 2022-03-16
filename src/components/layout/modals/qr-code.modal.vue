@@ -35,7 +35,7 @@ export default {
 
         showModal(address, title) {
 
-            Object.assign(this.$data, this.$options.data());
+            Object.assign(this.$data, this.$options.data.apply(this))
 
             this.address = address;
             this.title = title;

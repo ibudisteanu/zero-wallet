@@ -37,22 +37,6 @@
                         </div>
                         <ul :class="`nav collapse ${navElementsShown['staking'] ? 'show':''}`">
                             <li class="nav-item">
-                                <router-link :class="`nav-link ${route.indexOf('/stakes') === 0 ? 'active' : ''} nav-link`" to="/stakes" @click.native="disableNavbarMenu">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-shopping-basket" />
-                                        <span class="nav-link-text ps-1">Stakes</span>
-                                    </div>
-                                </router-link>
-                            </li>
-                            <li class="nav-item">
-                                <router-link :class="`nav-link ${route.indexOf('/txs/unstake') === 0 ? 'active' : ''} nav-link`" to="/txs/unstake" @click.native="disableNavbarMenu">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-unlink" />
-                                        <span class="nav-link-text ps-1">Unstake</span>
-                                    </div>
-                                </router-link>
-                            </li>
-                            <li class="nav-item">
                                 <router-link :class="`nav-link ${route.indexOf('/txs/update-delegate') === 0 ? 'active' : ''} nav-link`" to="/txs/update-delegate" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
                                         <i class="fas fa-marker" />

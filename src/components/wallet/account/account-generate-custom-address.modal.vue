@@ -193,7 +193,7 @@ export default {
 
         showModal(account) {
 
-            Object.assign(this.$data, this.$options.data());
+            Object.assign(this.$data, this.$options.data.apply(this))
 
             this.account = account;
             this.title = account.name;

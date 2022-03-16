@@ -135,7 +135,7 @@ export default {
         },
 
         async showModal(publicKey, notify = false,) {
-            Object.assign(this.$data, this.$options.data());
+            Object.assign(this.$data, this.$options.data.apply(this))
 
             this.publicKey = publicKey
             this.notify = notify

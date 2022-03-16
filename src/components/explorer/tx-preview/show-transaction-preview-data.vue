@@ -3,10 +3,6 @@
         <template v-if="tx.version.eq(PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE)">
 
             <div class="pointer d-md-flex justify-content-center align-items-center">
-                <template v-if="tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE)">
-                    <account-identicon :publicKey="tx.base.vin" size="21" :outer-size="0" />
-                    <amount :value="tx.base.extra.amount" :sign="false" />
-                </template>
                 <template v-if="tx.base.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE)">
                     <account-identicon :publicKey="tx.base.vin" size="21" :outer-size="0" />
                     <amount :value="tx.base.extra.delegatedStakingClaimAmount" :sign="false" />

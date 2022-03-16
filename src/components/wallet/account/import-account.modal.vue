@@ -93,7 +93,7 @@ export default {
         },
 
         showModal() {
-            Object.assign(this.$data, this.$options.data());
+            Object.assign(this.$data, this.$options.data.apply(this))
             return this.$refs.modal.showModal();
         },
 

@@ -29,12 +29,11 @@ export default {
     methods: {
 
         showModal() {
-            Object.assign(this.$data, this.$options.data());
             return this.$refs.modal.showModal();
         },
 
         closeModal() {
-            return this.$refs.modal.closeModal();
+            if (this.$refs.modal) return this.$refs.modal.closeModal();
         },
 
     }

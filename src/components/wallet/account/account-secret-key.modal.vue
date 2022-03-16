@@ -3,9 +3,9 @@
     <modal ref="modal" :title="`Private Key ${ address ? 'of '+address.name : '' }`" >
 
         <template v-slot:body>
-            <secret-text v-if="privateKey" class="pt-3" :text="privateKey" title="Private Key" >
+            <secret-text v-if="secretKey" class="pt-3" :text="secretKey" title="Secret Key" >
                 <template v-slot:warning>
-                    DO NOT share this private key with anyone! This private key can be used to <strong>STEAL YOUR FUNDS FROM THIS ACCOUNT</strong>
+                    DO NOT share this secret key with anyone! This private key can be used to <strong>STEAL YOUR FUNDS FROM THIS ACCOUNT</strong>
                 </template>
             </secret-text>
         </template>
@@ -26,7 +26,7 @@ export default {
 
     data(){
         return {
-            privateKey: '',
+            secretKey: '',
             address: null,
         }
     },
@@ -41,14 +41,14 @@ export default {
 
         async showModal(address,) {
 
-            Object.assign(this.$data, this.$options.data());
+            Object.assign(this.$data, this.$options.data.apply(this))
 
             this.address = address;
 
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            this.privateKey = await PandoraPay.wallet.getWalletAddressPrivateKey( this.address.publicKey, password )
+            this.secretKey = await PandoraPay.wallet.getWalletAddressSecretKey( this.address.publicKey, password )
 
             return this.$refs.modal.showModal();
 

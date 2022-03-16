@@ -1,27 +1,32 @@
 <template>
 
-    <div class="modal fade show" v-if="open" :style="`display: flex !important; z-index: ${this.zIndex}`">
+    <div :class="`${open ? 'modal fade show' : ''}`" :style="` ${open ? 'display: flex !important; z-index: '+this.zIndex : 'display: none'}`">
 
-        <div class="modal-backdrop fade show" @click="handleClickBackground"></div>
+        <template v-if="open">
 
-        <div class="modal-dialog modal-dialog-centered" :style="`z-index: ${this.zIndex}`">
+          <div class="modal-backdrop fade show" @click="handleClickBackground"></div>
+
+          <div class="modal-dialog modal-dialog-centered" :style="`z-index: ${this.zIndex}`">
             <div class="modal-content position-relative">
-                <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
-                    <button v-if="closeButton" class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" @click="closeModal"></button>
+              <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+                <button v-if="closeButton" class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" @click="closeModal"></button>
+              </div>
+              <div class="modal-body p-0" ref="refModalBody">
+                <div v-if="title" class="rounded-top-lg py-3 ps-3 pe-6 bg-light">
+                  <h5 class="mb-1">{{title}}</h5>
                 </div>
-                <div class="modal-body p-0" ref="refModalBody">
-                    <div v-if="title" class="rounded-top-lg py-3 ps-3 pe-6 bg-light">
-                        <h5 class="mb-1">{{title}}</h5>
-                    </div>
-                    <div v-if="hasBodySlot" :class="`${contentClass} pb-20 d-inline-block w-100`">
-                        <slot name="body"/>
-                    </div>
+                <div v-if="hasBodySlot" :class="`${contentClass} pb-20 d-inline-block w-100`">
+                  <slot name="body"/>
                 </div>
-                <div v-if="hasFooterSlot" class="modal-footer bg-light">
-                    <slot name="footer"/>
-                </div>
+              </div>
+              <div v-if="hasFooterSlot" class="modal-footer bg-light">
+                <slot name="footer"/>
+              </div>
             </div>
-        </div>
+          </div>
+
+        </template>
+
 
     </div>
 
@@ -88,7 +93,7 @@ export default{
 
             if ( e ) e.stopPropagation();
 
-            Object.assign(this.$data, this.$options.data());
+            Object.assign(this.$data, this.$options.data.apply(this))
             this.zIndex = 1060 + this.$store.state.page.modalIndex
 
             this.promise = new Promise((resolve)=>{

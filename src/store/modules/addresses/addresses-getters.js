@@ -5,7 +5,6 @@ export default {
     addressesContains: (state)=>(tx)=>{
 
         // if (tx.txScript === scriptType.SCRIPT_NORMAL ||
-        //     tx.txScript === scriptType.SCRIPT_UNSTAKE ||
         //     tx.txScript === scriptType.SCRIPT_WITHDRAW ||
         //     tx.txScript === scriptType.SCRIPT_STAKING ) return true;
         //

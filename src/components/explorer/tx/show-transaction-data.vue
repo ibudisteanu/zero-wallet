@@ -7,14 +7,6 @@
                 <amount :value="vinSimpleAmount" :sign="false" />
             </div>
 
-            <template v-if="tx.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE)">
-                <div class="output" v-for="(out, index) in tx.output"
-                     :key="`show-transaction-vout-${index}`">
-                    <account-identicon :publicKey="out.publicKey" size="21" outer-size="7" />
-                    <amount :value="out.amount" :sign="true" />
-                </div>
-            </template>
-
         </template>
         <template v-else-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER)">
 
@@ -52,9 +44,6 @@ export default {
 
             if (!this.tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ) return
             let out = new Decimal(0)
-
-            if (this.tx.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UNSTAKE) )
-                out = out.plus(this.tx.extra.amount)
 
             if (this.tx.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE) )
                 out = out.plus(this.tx.extra.delegatedStakingClaimAmount)

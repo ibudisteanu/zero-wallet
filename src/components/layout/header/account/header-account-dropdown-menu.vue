@@ -33,7 +33,7 @@
                     <span @click="handleViewAccount" v-tooltip.left="'View account'" class="pointer dropdown-item "> <i class="fas fa-hand-pointer "></i> View account </span>
                     <span @click="handleCreateAccount" v-tooltip.left="'Create a new Address'" class="pointer dropdown-item fw-normal "> <i class="fas fa-plus"></i> Create Account </span>
                     <span @click="handleImportAccount" v-tooltip.left="'Import an address from json file'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i> Import Account (json)</span>
-                    <span @click="handleImportPrivateKey" v-tooltip.left="'Import an address from Private Key'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i> Import Private Key</span>
+                    <span @click="handleImportSecretKey" v-tooltip.left="'Import an address from Secret Key'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i> Import Secret Key</span>
                     <div class="dropdown-divider"></div>
                     <span @click="handleViewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" class="pointer dropdown-item fw-normal "><i class="fas fa-key"></i>View Secret Phrase</span>
                     <span @click="handleExportWallet" v-tooltip.left="'Export your wallet to your computer'" class="pointer dropdown-item fw-normal "><i class="fas fa-download"></i>Export Wallet</span>
@@ -92,7 +92,7 @@ export default {
     methods:{
 
         handleViewAccount(){
-            this.$router.push('/address/'+this.address.addressEncoded)
+            this.$router.push('/address/'+this.walletAddress.addressEncoded)
         },
 
         async handleCreateAccount(){
@@ -158,8 +158,8 @@ export default {
             return this.$emit('showImportAccount');
         },
 
-        handleImportPrivateKey(){
-            return this.$emit('showImportPrivateKey');
+        handleImportSecretKey(){
+            return this.$emit('showImportSecretKey');
         },
 
         async handleExportWallet(){

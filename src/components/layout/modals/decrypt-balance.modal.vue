@@ -48,7 +48,7 @@ export default {
 
         async showModal(publicKey, balance, asset, returnPrivateKey, password ) {
 
-            Object.assign(this.$data, this.$options.data());
+            Object.assign(this.$data, this.$options.data.apply(this))
 
             this.publicKey = publicKey
             this.balance = balance

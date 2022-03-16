@@ -40,7 +40,7 @@ export default {
 
         async showModal() {
 
-            Object.assign(this.$data, this.$options.data());
+            Object.assign(this.$data, this.$options.data.apply(this))
 
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return

@@ -27,6 +27,14 @@
                         Nonce: {{account.plainAccount.nonce}}
                     </small>
                 </div>
+                <div class="p-3" v-if="account && account.registration">
+                  <div>
+                    <small class="fs--1 text-700"> Stakable: {{account.registration.stakable ? 'Yes': 'No'}} </small>
+                  </div>
+                  <div>
+                    <small class="fs--1 text-700"> Spend Public Key: {{account.registration.spendPublicKey}} </small>
+                  </div>
+                </div>
                 <div class="card-footer bg-light g-0 d-block p-3">
 
                     <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
@@ -70,7 +78,7 @@ export default {
         },
         walletAddress(){
             return this.$store.state.wallet.addresses[this.address.publicKey]
-        }
+        },
     },
 
     methods: {
