@@ -31,6 +31,7 @@ export default {
             password: "",
             decryptedBalance: null,
             privateKey: null,
+            spendPrivateKey: null,
             returnPrivateKey: false,
             cancelCallback: null,
             status: "",
@@ -65,7 +66,7 @@ export default {
 
             const out = JSONParse( MyTextDecode( data ) )
 
-            data = await PandoraPay.wallet.getPrivateDataForDecryptingBalanceWalletAddress( MyTextEncode(JSONStringify({
+            data = await PandoraPay.wallet.getPrivateKeysWalletAddress( MyTextEncode(JSONStringify({
                 publicKey: this.publicKey,
                 asset: this.asset
             })), this.password, )
@@ -75,6 +76,7 @@ export default {
             if (this.closed) return
 
             this.privateKey = params.privateKey
+            this.spendPrivateKey = params.spendPrivateKey
 
             if (out.decrypted)
                 this.decryptedBalance = out.value
@@ -84,6 +86,7 @@ export default {
             return {
                 decryptedBalance: this.decryptedBalance,
                 privateKey: returnPrivateKey ? this.privateKey : undefined,
+                spendPrivateKey: returnPrivateKey ? this.spendPrivateKey : undefined
             }
         },
 

@@ -8,12 +8,13 @@
         </div>
 
         <div class="menu" >
-            <header-account-dropdown-menu v-if="menuOpen" @viewMnemonic="viewMnemonic" @showImportAccount="showImportAccount" @showImportSecretKey="showImportSecretKey" />
+            <header-account-dropdown-menu v-if="menuOpen" @viewMnemonic="viewMnemonic" @showCreateNewAddress="showCreateNewAddress" @showImportAccount="showImportAccount" @showImportSecretKey="showImportSecretKey" />
         </div>
 
         <wallet-seed-modal ref="refWalletSeedModal" />
         <import-account-modal ref="refImportAccountModal" />
         <import-secret-key-modal ref="refImportSecretKeyModal" />
+        <create-new-address-modal ref="refCreateNewAddressModal" />
 
     </div>
 
@@ -26,10 +27,12 @@ import AccountIdenticon from "src/components/wallet/account/account-identicon"
 import WalletSeedModal from "src/components/wallet/seed/wallet-seed-modal"
 import ImportAccountModal from "src/components/wallet/account/import-account.modal"
 import ImportSecretKeyModal from "src/components/wallet/account/import-secret-key.modal"
+import CreateNewAddressModal from "src/components/wallet/account/create-new-address.modal"
 
 export default {
 
-    components: { HeaderAccountDropdownMenu, AccountIdenticon, WalletSeedModal, ImportAccountModal, ImportSecretKeyModal },
+    components: { HeaderAccountDropdownMenu, AccountIdenticon, WalletSeedModal, ImportAccountModal,
+      ImportSecretKeyModal, CreateNewAddressModal },
 
     data(){
         return {
@@ -66,6 +69,10 @@ export default {
 
         showImportSecretKey(){
             return this.$refs.refImportSecretKeyModal.showModal( );
+        },
+
+        showCreateNewAddress(){
+          return this.$refs.refCreateNewAddressModal.showModal()
         },
 
     },

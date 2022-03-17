@@ -31,7 +31,7 @@
                 <div class="list-group-item">
                     <div class="list-group-title border-bottom">Operations:</div>
                     <span @click="handleViewAccount" v-tooltip.left="'View account'" class="pointer dropdown-item "> <i class="fas fa-hand-pointer "></i> View account </span>
-                    <span @click="handleCreateAccount" v-tooltip.left="'Create a new Address'" class="pointer dropdown-item fw-normal "> <i class="fas fa-plus"></i> Create Account </span>
+                    <span @click="handleCreateNewAddress" v-tooltip.left="'Create a new Address'" class="pointer dropdown-item fw-normal "> <i class="fas fa-plus"></i> Create Account </span>
                     <span @click="handleImportAccount" v-tooltip.left="'Import an address from json file'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i> Import Account (json)</span>
                     <span @click="handleImportSecretKey" v-tooltip.left="'Import an address from Secret Key'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i> Import Secret Key</span>
                     <div class="dropdown-divider"></div>
@@ -95,37 +95,8 @@ export default {
             this.$router.push('/address/'+this.walletAddress.addressEncoded)
         },
 
-        async handleCreateAccount(){
-
-            try{
-
-                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
-                if (password === null ) return
-
-                this.$store.state.page.refLoadingModal.showModal();
-
-                await UtilsHelper.sleep(50 )
-
-                const out = await PandoraPay.wallet.manager.addNewWalletAddress(password);
-                if (!out) throw "Result is false"
-
-                this.$store.dispatch('addToast',{
-                    type: 'success',
-                    title: 'Address has been added successfully',
-                    text: 'A new address has been added and saved in your wallet'
-                });
-
-            }catch(err){
-                this.$store.dispatch('addToast',{
-                    type: 'error',
-                    title: 'Error creating an address',
-                    text: 'An error was encountered: ' + err.toString()
-                });
-                console.error(err);
-            }finally{
-                this.$store.state.page.refLoadingModal.closeModal();
-            }
-
+      handleCreateNewAddress(){
+          return this.$emit('showCreateNewAddress')
         },
 
         setMainPublicKey(publicKey){
