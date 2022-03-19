@@ -30,10 +30,7 @@ export default {
     },
 
     renameWalletAddress(state, {publicKey, name}){
-        state.addresses[publicKey] = {
-            ...state.addresses[publicKey],
-            name,
-        }
+        state.addresses[publicKey].name = name
     }
 
 }

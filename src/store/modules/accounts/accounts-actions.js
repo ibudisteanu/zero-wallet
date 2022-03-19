@@ -122,7 +122,7 @@ export default {
 
     accountUpdateNotification( {state, dispatch, commit, getters}, {publicKey, type, data, extraInfo }){
 
-        let account = { ... ( state.list[publicKey] || {} ) }
+        let account = state.list[publicKey] || {}
 
         if (type === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT){
 

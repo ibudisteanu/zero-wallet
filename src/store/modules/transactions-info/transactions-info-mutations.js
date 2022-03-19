@@ -6,17 +6,14 @@ export default {
 
     deleteTransactionsInfo(state, transactions ){
 
-        const txsByHash = {...state.txsByHash}
-
         for (const tx of transactions)
-            delete txsByHash[tx.hash]
+            delete state.txsByHash[tx.hash]
 
-        state.txsByHash = txsByHash
     },
 
     updateTxInfoNotification(state, {txHash, extraInfo }) {
 
-        const txInfo = {...state.txsByHash[txHash]};
+        const txInfo = state.txsByHash[txHash]||{};
 
         if (extraInfo.blockchain){
 

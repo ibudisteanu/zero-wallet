@@ -21,7 +21,7 @@ export default {
             }
         }
 
-        state.list[publicKey] = account ? {...account} : null
+        state.list[publicKey] = account
     },
 
     removeAccount(state, { publicKey }){
