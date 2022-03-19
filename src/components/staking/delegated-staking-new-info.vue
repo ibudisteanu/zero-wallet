@@ -97,7 +97,7 @@ export default {
                 const nonceOut = await PandoraPay.network.getNetworkAccountMempoolNonce(MyTextEncode(JSONStringify({ publicKey: this.walletAddress.publicKey })))
                 const nonce = JSONParse( MyTextDecode(nonceOut) ).nonce
 
-                const out = await PandoraPay.wallet.deriveDelegatedStakeWalletAddress( nonce.toString(), this.walletAddress.addressEncoded, password )
+                const out = await PandoraPay.wallet.deriveSharedStakedWalletAddress( nonce.toString(), this.walletAddress.addressEncoded, password )
                 const json = JSONParse(MyTextDecode(out))
 
                 this.hasNewDelegatedInfo = true

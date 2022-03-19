@@ -470,7 +470,6 @@ export default {
 
                     }
 
-
                     if (step === 0){
 
                       if (!this.createNewSender){

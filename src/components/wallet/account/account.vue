@@ -29,7 +29,7 @@
                 </div>
                 <div class="p-3" v-if="account && account.registration">
                   <div>
-                    <small class="fs--1 text-700"> Stakable: {{account.registration.stakable ? 'Yes': 'No'}} </small>
+                    <small class="fs--1 text-700"> Staked: {{account.registration.staked ? 'Yes': 'No'}} </small>
                   </div>
                   <div>
                     <small class="fs--1 text-700"> Spend Public Key: {{account.registration.spendPublicKey}} </small>

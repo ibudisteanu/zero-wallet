@@ -18,8 +18,8 @@
                     </div>
 
                     <div class="form-check pt-4">
-                      <input class="form-check-input" id="stakable" type="checkbox" v-model="stakable" />
-                      <label class="form-check-label" for="stakable">Stakable</label>
+                      <input class="form-check-input" id="staked" type="checkbox" v-model="staked" />
+                      <label class="form-check-label" for="staked">Staked</label>
                     </div>
 
                     <div class="form-check pt-2">
@@ -55,7 +55,7 @@ export default {
     data(){
         return {
             secretKey: '',
-            stakable: false,
+            staked: false,
             spendRequired: false,
             name: '',
         }
@@ -104,7 +104,7 @@ export default {
 
                 await UtilsHelper.sleep(50 )
 
-                const out = await PandoraPay.wallet.manager.importWalletSecretKey( password, this.secretKey, this.name, this.stakable, this.spendRequired );
+                const out = await PandoraPay.wallet.manager.importWalletSecretKey( password, this.secretKey, this.name, this.staked, this.spendRequired );
                 if (!out) throw "Your address already exists!"
 
                 this.$store.dispatch('addToast', {
