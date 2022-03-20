@@ -36,8 +36,9 @@
                   </div>
                 </div>
                 <div class="card-footer bg-light g-0 d-block p-3">
-                    <loading-button can-disable="false" @submit="showAccountQRCode" text="" icon="fas fa-qrcode" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Show Address QR Code" />
-                    <loading-button can-disable="false" @submit="createCustomAddress" text="" icon="fas fa-tools" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Create custom address" />
+                    <loading-button :can-disable="false" @submit="showAccountQRCode" text="" icon="fas fa-qrcode" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Show Address QR Code" />
+                    <loading-button :can-disable="false" @submit="showGenerateCustomAddress" text="" icon="fas fa-tools" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Create custom address" />
+                    <loading-button :can-disable="false" @submit="showAddressJSON" text="" icon="fas fa-file" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Show JSON address" />
                 </div>
             </div>
         </div>
@@ -93,12 +94,16 @@ export default {
 
         },
 
-        createCustomAddress(){
+        showGenerateCustomAddress(){
             return this.$refs.refGenerateCustomAddress.showModal(this.address);
         },
 
         showAccountQRCode(){
             return this.$store.state.page.refQRCodeModal.showModal(this.getAddress, this.address.name || '');
+        },
+
+        showAddressJSON(){
+          return this.$store.state.page.refTextareaModal.showModal("ADDRESS JSON", JSONStringify(this.account, null, 2) )
         },
 
         sendFunds(){

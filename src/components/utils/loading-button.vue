@@ -39,21 +39,21 @@ export default{
 
             if (e) e.stopPropagation();
 
-            this.loaded = false;
-            if ( this.canDisable ){
-              this.disabled=true;
-              let resolver;
-              const promise = new Promise( resolve => {
-                resolver = resolve;
-              });
+            if ( !this.canDisable )
+              return this.$emit('submit' );
 
-              promise.then( answer => {
-                this.loaded = true;
-                if (this.canDisable) this.disabled = false;
-              });
-              this.$emit('submit', resolver );
-            }else
-              this.$emit('submit' );
+            this.loaded = false;
+            this.disabled=true;
+            let resolver;
+            const promise = new Promise( resolve => {
+              resolver = resolve;
+            });
+
+            promise.then( answer => {
+              this.loaded = true;
+              if (this.canDisable) this.disabled = false;
+            });
+            this.$emit('submit', resolver );
 
         },
     }
