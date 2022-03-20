@@ -45,9 +45,6 @@ export default {
             if (!this.tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ) return
             let out = new Decimal(0)
 
-            if (this.tx.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_DELEGATE) )
-                out = out.plus(this.tx.extra.delegatedStakingClaimAmount)
-
             return out
         }
 

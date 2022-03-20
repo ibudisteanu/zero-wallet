@@ -36,15 +36,8 @@
                   </div>
                 </div>
                 <div class="card-footer bg-light g-0 d-block p-3">
-
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
-                        <i class="fas fa-qrcode" />
-                    </button>
-
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="createCustomAddress"  v-tooltip.bottom="'Create custom address'">
-                        <i class="fas fa-tools" />
-                    </button>
-
+                    <loading-button can-disable="false" @submit="showAccountQRCode" text="" icon="fas fa-qrcode" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Show Address QR Code" />
+                    <loading-button can-disable="false" @submit="createCustomAddress" text="" icon="fas fa-tools" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Create custom address" />
                 </div>
             </div>
         </div>
@@ -58,11 +51,12 @@
 
 import AccountIdenticon from "./account-identicon";
 import AccountGenerateCustomAddress from "./account-generate-custom-address.modal"
+import LoadingButton from "src/components/utils/loading-button";
 const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 
-    components: { AccountGenerateCustomAddress, AccountIdenticon },
+    components: { AccountGenerateCustomAddress, AccountIdenticon, LoadingButton },
 
     props: {
         address: {default: null},

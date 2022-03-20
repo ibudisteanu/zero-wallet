@@ -364,7 +364,7 @@ export default {
                 const holders = JSONParse(MyTextDecode(holdersData)).count
 
                 const ringSize = this.ringSize
-                const newAccounts = this.ringNewAddresses
+                let newAccounts = this.ringNewAddresses
 
                 if (ringSize < 0 ) throw "RingSize can not be negative"
                 if ( (Math.log(ringSize)/Math.log(2)) % 1 !== 0 ) throw "RingSize needs to be power of 2"
@@ -409,7 +409,7 @@ export default {
                         alreadyUsedIndexes = {}
                     }
 
-                    if (holders > 1) {
+                    if ( holders.gt(2) ) {
                       const count = Decimal.min( holders, ringSize ).minus(Object.keys(alreadyUsedIndexes).length)
                       for (let i = new Decimal(0); i.lt(count); i = i.plus(1)){
 
@@ -449,12 +449,9 @@ export default {
                     const accountsData = JSONParse( MyTextDecode( outData ) )
                     for (let i=0; i < publicKeys.length; i++) {
                       if (publicKeys[i] !== assetCollector)
-                        if (!accountsData.registration[i] || !accountsData.registration[i].spendPublicKey){  //making sure it doesn't have a spendPublicKey
+                        if (!accountsData.registration[i] || !accountsData.registration[i].spendPublicKey)  //making sure it doesn't have a spendPublicKey
                           publicKeysMap[publicKeys[i]] = true
-                        }
                     }
-
-                    if (Object.keys(publicKeysMap).length < 2) continue
 
                     async function getRandomPublicKey(){
 
@@ -496,6 +493,9 @@ export default {
 
                       ringMembers.push(this.recipient.addressEncoded)
                       delete publicKeysMap[this.recipient.address.publicKey]
+
+                      if (holders.lt(ringSize))
+                        newAccounts = ringSize
 
                       for (let i=0; i < newAccounts && ringMembers.length < ringSize; i++){
                         const json = JSONParse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
@@ -633,8 +633,6 @@ export default {
                 regs,
             }
 
-            console.log("data", JSON.stringify(data) )
-
             if (this.beforeProcess)
                 await this.beforeProcess(password, data)
 
@@ -670,10 +668,15 @@ export default {
 
             await this.$store.dispatch('includeTx', { tx: this.tx, serialized: this.tx._serialized, mempool: false } )
 
-            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
-            if (!finalAnswer){
+            try{
+              const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
+              if (!finalAnswer){
                 this.$store.commit('deleteTransactions', [this.tx] )
                 throw "Transaction couldn't be broadcast"
+              }
+            }catch(err){
+              this.txSerialized = Buffer.from(this.tx._serialized, "base64")
+              throw err
             }
 
             this.$router.push(`/explorer/tx/${Buffer.from(this.tx.hash, "base64").toString("hex")}`);

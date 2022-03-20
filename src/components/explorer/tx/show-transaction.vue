@@ -264,7 +264,7 @@
                 </div>
             </div>
             <div class="card-body p-3 fs--1">
-                <div v-for="(fee,index) in fees" :key="`fee_${index}`">
+                <div v-for="(fee, index) in fees" :key="`fee_${index}`">
                     <div :class="`row pt-2 pb-2 ${index % 2 ? 'bg-light':''}`">
                         <span class="col-4 col-sm-3 fw-medium text-truncate">Fee{{ (fees.length > 1) ? index : ''}}</span>
                         <span class="col-8 col-sm-9 text-truncate">
@@ -277,9 +277,9 @@
                 </div>
             </div>
             <div class="card-footer bg-light g-0 d-block p-3">
-                <loading-button v-if="canDecrypt && !decrypted" type="button"  @submit="handleDecryptTx" text="" icon="fas fa-unlock" v-tooltip.bottom="`Decrypt transaction to see the amount, shared text and recipient`" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" />
-                <loading-button type="button" @submit="handleShowJSON" text="" icon="fas fa-file" v-tooltip.bottom="`Show transaction as JSON`" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" />
-                <loading-button type="button" @submit="handleShowTxRaw" text="" icon="fas fa-file-code" v-tooltip.bottom="`Show transaction as raw serialized binary`" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" />
+                <loading-button v-if="canDecrypt && !decrypted" @submit="handleDecryptTx" text="" icon="fas fa-unlock" tooltip="Decrypt transaction to see the amount, shared text and recipient" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" />
+                <loading-button @submit="handleShowJSON" :can-disable="false" text="" icon="fas fa-file" tooltip="Show transaction as JSON" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" />
+                <loading-button @submit="handleShowTxRaw" :can-disable="false" text="" icon="fas fa-file-code" tooltip="Show transaction as raw serialized binary" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" />
             </div>
         </div>
 
@@ -361,9 +361,12 @@ export default {
         formatBytes: (bytes) => StringHelper.formatBytes(bytes),
 
         async handleDecryptTx(resolve){
+          try{
             const decrypted = await this.$store.dispatch('decryptTx', {hash: this.tx.hash, publicKey: this.publicKey})
             if (decrypted) this.decrypted = decrypted
+          }finally{
             resolve(true)
+          }
         },
 
         loadTxDecrypted(txHash, publicKey){
@@ -372,13 +375,11 @@ export default {
             else this.decrypted = null
         },
 
-        handleShowJSON(resolve){
-            resolve()
+        handleShowJSON(){
             return this.$store.state.page.refTextareaModal.showModal("TX JSON", JSONStringify(this.tx, null, 2) )
         },
 
-        handleShowTxRaw(resolve){
-            resolve()
+        handleShowTxRaw(){
             return this.$store.state.page.refTextareaModal.showModal("TX JSON", this.tx._serialized )
         },
     },

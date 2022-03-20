@@ -1,13 +1,13 @@
 <template>
-    <component :class="`${classCustom}`" type="button" @click="handleClick" :is="component">
+    <component :class="`${classCustom}`" type="button" @click="handleClick" :is="component" v-tooltip.bottom="tooltip" >
 
         <template v-if="!loaded">
             <loading-spinner v-if="!loaded" />
         </template>
         <template v-else>
-            <i v-if="icon && iconLeft" :class="`pe-1 ${icon}`" />
-            <span class="hidden-xs">{{text}}</span>
-            <i v-if="icon && !iconLeft" :class="`ps-1 ${icon}`" />
+            <i v-if="icon && iconLeft" :class="`${text? 'pe-1':''} ${icon}`" />
+            <span v-if="text" class="hidden-xs">{{text}}</span>
+            <i v-if="icon && !iconLeft" :class="`${text ? 'ps-1': ''} ${icon}`" />
         </template>
 
     </component>
@@ -30,27 +30,31 @@ export default{
         icon : {default: 'fas fa-share'},
         iconLeft: {default: true},
         component: {default: "button"},
+        tooltip: {default: ""},
     },
     methods: {
         handleClick(e){
 
             if (this.disabled && this.canDisable  === true) return false;
 
+            if (e) e.stopPropagation();
+
             this.loaded = false;
-            if ( this.canDisable ) this.disabled=true;
-            let resolver;
-
-            const promise = new Promise( resolve => {
+            if ( this.canDisable ){
+              this.disabled=true;
+              let resolver;
+              const promise = new Promise( resolve => {
                 resolver = resolve;
-            });
+              });
 
-            promise.then( answer => {
+              promise.then( answer => {
                 this.loaded = true;
                 if (this.canDisable) this.disabled = false;
-            });
+              });
+              this.$emit('submit', resolver );
+            }else
+              this.$emit('submit' );
 
-            if (e) e.stopPropagation();
-            this.$emit('submit', resolver );
         },
     }
 }

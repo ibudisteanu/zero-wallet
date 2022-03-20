@@ -33,10 +33,11 @@ import Modal from "src/components/utils/modal"
 import LoadingSpinner from "../../utils/loading-spinner";
 import PasswordInput from "src/components/utils/password-input";
 import AlertBox from "src/components/utils/alert-box"
+import LoadingButton from "src/components/utils/loading-button";
 
 export default {
 
-    components: {LoadingSpinner, Modal, PasswordInput, AlertBox},
+    components: {LoadingButton, LoadingSpinner, Modal, PasswordInput, AlertBox},
 
     data(){
         return {

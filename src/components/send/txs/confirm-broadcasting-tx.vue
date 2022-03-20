@@ -17,7 +17,6 @@
 
         <show-transaction :tx="tx" :confirmation="true"/>
 
-
     </div>
 </template>
 
