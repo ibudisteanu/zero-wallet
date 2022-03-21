@@ -57,14 +57,24 @@
                 </div>
 
                 <div class="col-12 pt-4">
-                    <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Members</label>
+                    <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Sender Ring Members</label>
                     <i class="fas fa-question " v-tooltip.bottom="`Preview of the Ring Members used for your private transaction.`" />
                     <div class="pt-2">
-                        <div v-for="(ringMember, index) in ringMembers" class="d-inline-block"
+                        <div v-for="(ringMember, index) in ringSenderMembers" class="d-inline-block"
                              :key="`ring_member_${index}`">
                             <account-identicon :address="ringMember" size="21" outer-size="7" :disable-route="true" />
                         </div>
                     </div>
+                </div>
+                <div class="col-12 pt-1">
+                  <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Recipient Ring Members</label>
+                  <i class="fas fa-question " v-tooltip.bottom="`Preview of the Ring Members used for your private transaction.`" />
+                  <div class="pt-2">
+                    <div v-for="(ringMember, index) in ringRecipientMembers" class="d-inline-block"
+                         :key="`ring_member_${index}`">
+                      <account-identicon :address="ringMember" size="21" outer-size="7" :disable-route="true" />
+                    </div>
+                  </div>
                 </div>
 
             </template>
@@ -181,7 +191,8 @@ export default {
 
             ringSize: 32,
             ringNewAddresses: 0,
-            ringMembers: [],
+            ringSenderMembers: [],
+            ringRecipientMembers: [],
 
             tx: null,
             txSerialized: null,
@@ -314,10 +325,11 @@ export default {
                 }else if (oldTab === 1 && value > oldTab) {
                     if (this.extraData.validationError) throw this.extraData.validationError
                 }else if (oldTab === 2 && value > oldTab) {
-                    if (!this.ringMembers.length)
+                    if (!this.ringSenderMembers.length || !this.ringRecipientMembers.length)
                         await this.handleGenerateRing()
 
-                    if (this.ringSize !== this.ringMembers.length) throw `Ring members are not generated well ${this.ringSize} vs ${this.ringMembers.length} `
+                    if (this.ringSize/2 !== this.ringSenderMembers.length) throw `Ring Sender members are not generated well ${this.ringSize/2} vs ${this.ringSenderMembers.length} `
+                    if (this.ringSize/2 !== this.ringRecipientMembers.length) throw `Ring Sender members are not generated well ${this.ringSize/2} vs ${this.ringRecipientMembers.length} `
                 }else if (oldTab === 3 && value > oldTab) {
                     if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
                     if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
@@ -373,7 +385,7 @@ export default {
                 if ( newAccounts < 0 || newAccounts > ringSize-2) throw "New accounts needs to be in the interval [0, ringSize-2]"
 
                 const alreadyUsedAllIndexes = {}
-                let alreadyUsedIndexes = {}
+                let senderAlreadyUsedIndexes = {}, recipientAlreadyUsedIndexes = {}
 
                 if (!this.createNewSender){
                     if (!this.availableAccounts || !this.availableAccounts.length ) throw "You don't have any available private funds"
@@ -381,7 +393,8 @@ export default {
                     let foundSender = false
                     for (let i=0; i < this.availableAccounts.length; i++)
                         if (this.availableAccounts[i].asset === asset){
-                            alreadyUsedIndexes[this.availableAccounts[i].index] = true
+                            senderAlreadyUsedIndexes[this.availableAccounts[i].index] = true
+                            alreadyUsedAllIndexes[this.availableAccounts[i].index] = true
                             foundSender = true
                             break
                         }
@@ -393,41 +406,50 @@ export default {
                         let availableAccounts = this.$store.state.accounts.list[ this.recipient.address.publicKey]
                         if (availableAccounts)
                             for (let i=0; i < availableAccounts.length; i++)
-                                if (availableAccounts.asset === asset)
-                                  alreadyUsedIndexes[availableAccounts[i].index] = true
+                                if (availableAccounts.asset === asset) {
+                                  recipientAlreadyUsedIndexes[availableAccounts[i].index] = true
+                                  alreadyUsedAllIndexes[availableAccounts[i].index] = true
+                                }
                     }
 
-                let ringMembers = []
+                let ringSenderMembers = [], ringRecipientMembers = []
 
                 let step = -1
-                while (ringMembers.length < ringSize ){
+                while (ringSenderMembers.length < ringSize /2 || ringRecipientMembers.length < ringSize / 2  ){
 
                     step++
-                    if (step > 0 ){
-                        for (const key in alreadyUsedIndexes )
-                          alreadyUsedAllIndexes[key] = alreadyUsedIndexes[key]
-                        alreadyUsedIndexes = {}
+                    if (step > 0){
+                      senderAlreadyUsedIndexes = {}
+                      recipientAlreadyUsedIndexes = {}
                     }
 
-                    if ( holders.gt(2) ) {
-                      const count = Decimal.min( holders, ringSize ).minus(Object.keys(alreadyUsedIndexes).length)
-                      for (let i = new Decimal(0); i.lt(count); i = i.plus(1)){
+                    async function getRandomAccounts(alreadyUsedIndexes){
 
-                        let trials = 0
+                      if ( holders.gt(2) ) {
+                        const count = Decimal.min( holders, ringSize/2 ).minus(Object.keys(alreadyUsedIndexes).length)
+                        for (let i = new Decimal(0); i.lt(count); i = i.plus(1)){
 
-                        let index = await PandoraPay.helpers.randomUint64N( holders.toString() )
-                        while (alreadyUsedIndexes[index] && trials < 10) {
-                          index = await PandoraPay.helpers.randomUint64N(holders.toString())
-                          trials++
+                          let trials = 0
+
+                          let index = await PandoraPay.helpers.randomUint64N( holders.toString() )
+                          while ( alreadyUsedAllIndexes[index] && trials < 10) {
+                            index = await PandoraPay.helpers.randomUint64N(holders.toString())
+                            trials++
+                          }
+
+                          if (trials > 10) break
+
+                          alreadyUsedIndexes[index] = true
+                          alreadyUsedAllIndexes[index] = true
                         }
-
-                        if (trials > 10) break
-
-                        alreadyUsedIndexes[index] = true
                       }
+
                     }
 
-                    const alreadyUsedIndexesArray = Object.keys(alreadyUsedIndexes).map(it => new Decimal(it) )
+                    await getRandomAccounts(senderAlreadyUsedIndexes)
+                    await getRandomAccounts(recipientAlreadyUsedIndexes)
+
+                    const alreadyUsedIndexesArray = Object.keys(senderAlreadyUsedIndexes).map(it => new Decimal(it)).concat( Object.keys(recipientAlreadyUsedIndexes).map(it => new Decimal(it)) )
                     alreadyUsedIndexesArray.sort((a,b) => a.minus( b ) )
 
                     let outData = await PandoraPay.network.getNetworkAccountsKeysByIndex( MyTextEncode( JSONStringify({
@@ -438,22 +460,31 @@ export default {
 
                     const publicKeys = JSONParse( MyTextDecode( outData ) ).publicKeys
 
+                    const senderAlreadyUsedIndexesMap = {}, recipientAlreadyUsedIndexesMap = {}
+
+                    alreadyUsedIndexesArray.map( (index, i) => {
+                      if (senderAlreadyUsedIndexes[index]) senderAlreadyUsedIndexesMap[publicKeys[i]] = true
+                      if (recipientAlreadyUsedIndexes[index]) recipientAlreadyUsedIndexesMap[publicKeys[i]] = true
+                    } )
+
                     outData = await PandoraPay.network.getNetworkAccountsByKeys(MyTextEncode( JSONStringify({
                       keys: publicKeys.map(it => ({publicKey: it }) ),
                       asset,
                       includeMempool: true,
                     })))
 
-                    const publicKeysMap = {}
+                    const senderPublicKeysMap = {}, recipientPublicKeysMap = {}
 
                     const accountsData = JSONParse( MyTextDecode( outData ) )
                     for (let i=0; i < publicKeys.length; i++) {
                       if (publicKeys[i] !== assetCollector)
-                        if (!accountsData.registration[i] || !accountsData.registration[i].spendPublicKey)  //making sure it doesn't have a spendPublicKey
-                          publicKeysMap[publicKeys[i]] = true
+
+                        if (recipientAlreadyUsedIndexesMap[publicKeys[i]]) recipientPublicKeysMap[publicKeys[i]] = true
+                        else if ( (!accountsData.registration[i] || !accountsData.registration[i].spendPublicKey) ) //making sure it doesn't have a spendPublicKey
+                          senderPublicKeysMap[publicKeys[i]] = true
                     }
 
-                    async function getRandomPublicKey(){
+                    async function getRandomPublicKey(publicKeysMap){
 
                       let publicKeysList = Object.keys(publicKeysMap)
                       if (!publicKeysList.length) return null
@@ -470,16 +501,16 @@ export default {
                     if (step === 0){
 
                       if (!this.createNewSender){
-                        ringMembers.push(this.walletAddress.addressEncoded)
-                        delete publicKeysMap[this.walletAddress.publicKey]
+                        ringSenderMembers.push(this.walletAddress.addressEncoded)
+                        delete senderPublicKeysMap[this.walletAddress.publicKey]
                       }else {
                         const json = JSONParse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
-                        ringMembers.push( json[1] )
+                        ringSenderMembers.push( json[1] )
                         this.newSender = {privateKey: json[0], addressEncoded: json[1], publicKey: json[2] }
                       }
 
                       if (this.randomRecipient){
-                        const out = await getRandomPublicKey()
+                        const out = await getRandomPublicKey(recipientPublicKeysMap)
                         this.recipient =  {
                           addressEncoded: out.addressEncoded,
                           address: { publicKey: out.publicKey },
@@ -491,28 +522,35 @@ export default {
                         }
                       }
 
-                      ringMembers.push(this.recipient.addressEncoded)
-                      delete publicKeysMap[this.recipient.address.publicKey]
+                      ringRecipientMembers.push(this.recipient.addressEncoded)
+                      delete recipientPublicKeysMap[this.recipient.address.publicKey]
 
                       if (holders.lt(ringSize))
                         newAccounts = ringSize
 
-                      for (let i=0; i < newAccounts && ringMembers.length < ringSize; i++){
+                      for (let i=0; i < newAccounts && ringRecipientMembers.length < ringSize/2; i++){
                         const json = JSONParse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
-                        ringMembers.push( json[1] )
+                        ringRecipientMembers.push( json[1] )
                       }
 
                     }
 
-                    for ( let i =0; ringMembers.length < ringSize; i++){
-                      const out = await getRandomPublicKey()
+                    for ( let i =0; ringSenderMembers.length < ringSize / 2; i++){
+                      const out = await getRandomPublicKey(senderPublicKeysMap)
                       if (!out) break
-                      ringMembers.push( out.addressEncoded )
+                      ringSenderMembers.push( out.addressEncoded )
+                    }
+
+                    for ( let i =0; ringRecipientMembers.length < ringSize / 2; i++){
+                      const out = await getRandomPublicKey(recipientPublicKeysMap)
+                      if (!out) break
+                      ringRecipientMembers.push( out.addressEncoded )
                     }
 
                   }
 
-                  this.ringMembers = ringMembers
+                  this.ringSenderMembers = ringSenderMembers
+                  this.ringRecipientMembers = ringRecipientMembers
 
             }catch(err){
                 this.error = err.toString()
@@ -557,8 +595,10 @@ export default {
             const accs = { [asset]: {} }
             const regs = {}
 
-            const shuffle =  JSONParse( MyTextDecode( await PandoraPay.helpers.shuffleArray_for_Zether( this.ringMembers.length.toString()  )) )
-            const ringShuffle = shuffle.map( it => this.ringMembers[it] )
+            const list = this.ringSenderMembers.concat(this.ringRecipientMembers)
+
+            const shuffle =  JSONParse( MyTextDecode( await PandoraPay.helpers.shuffleArray_for_Zether( list.length.toString()  )) )
+            const ringShuffle = shuffle.map( it => list[it] )
 
             const ringShufflePublicKeys = await Promise.all( ringShuffle.map( async it => JSONParse( MyTextDecode( await PandoraPay.addresses.decodeAddress(it) )).publicKey ) )
 
@@ -610,7 +650,8 @@ export default {
                     amount: amount ,
                     recipient: this.recipient.addressEncoded,
                     burn: new Decimal(0),
-                    ringMembers: this.ringMembers,
+                    ringSenderMembers: this.ringSenderMembers,
+                    ringRecipientMembers: this.ringRecipientMembers,
                     fees: {
                       fixed:  fee,
                       perByte: new Decimal(0),
