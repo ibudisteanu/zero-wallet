@@ -202,14 +202,14 @@
 
                         <div class="row pt-2 pb-2">
                             <span class="col-12 col-sm-3 text-truncate">Sender</span>
-                            <span class="col-12 col-sm-9" v-if="!payload.payloadScript.eq(PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_STAKING_REWARD)">
+                            <span class="col-12 col-sm-9">
                                 <show-transaction-data :tx="tx" :payload="payload" :parity="0" />
                             </span>
                         </div>
 
                         <div class="row pt-2 pb-2 bg-light">
                             <span class="col-12 col-sm-3 text-truncate">Recipient</span>
-                            <span class="col-12 col-sm-9" v-if="!payload.payloadScript.eq(PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_STAKING)">
+                            <span class="col-12 col-sm-9">
                                 <show-transaction-data :tx="tx" :payload="payload" :parity="1" />
                             </span>
                         </div>

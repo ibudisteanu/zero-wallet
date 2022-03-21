@@ -504,7 +504,7 @@ export default {
                         ringSenderMembers.push(this.walletAddress.addressEncoded)
                         delete senderPublicKeysMap[this.walletAddress.publicKey]
                       }else {
-                        const json = JSONParse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
+                        const json = JSONParse( MyTextDecode( await PandoraPay.addresses.generateNewAddress( MyTextEncode( JSONStringify( { registration: true, staked: Math.random() < 0.1 } ) ) ) ) )
                         ringSenderMembers.push( json[1] )
                         this.newSender = {privateKey: json[0], addressEncoded: json[1], publicKey: json[2] }
                       }
@@ -529,7 +529,7 @@ export default {
                         newAccounts = ringSize
 
                       for (let i=0; i < newAccounts && ringRecipientMembers.length < ringSize/2; i++){
-                        const json = JSONParse( MyTextDecode( await PandoraPay.addresses.generateNewAddress() ) )
+                        const json = JSONParse( MyTextDecode( await PandoraPay.addresses.generateNewAddress( MyTextEncode( JSONStringify( { registration: true, staked: Math.random() < 0.1 } ) ) ) ) )
                         ringRecipientMembers.push( json[1] )
                       }
 

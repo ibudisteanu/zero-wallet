@@ -2,7 +2,7 @@
 
     <modal ref="modal" :title="`Custom Address${title ? ': ' + title : ''}`" content-class="">
 
-        <template v-slot:body v-if="account">
+        <template v-slot:body v-if="address">
 
             <wizard :titles="{
                 0: {icon: 'fas fa-money-bill-wave', name: 'Asset', tooltip: 'Include a default Asset' },
@@ -47,7 +47,7 @@
                 </template>
 
                 <template v-slot:tab_3>
-                    <div class="form-check" v-if="account.registration">
+                    <div class="form-check" :disabled="!address.registration">
                         <input class="form-check-input" id="registration" type="checkbox"  name="checkbox" v-model="hasRegistration"  >
                         <label class="form-check-label" for="registration"> Registration </label>
                         <i class="fas fa-question" v-tooltip.bottom="'Specify registration. Required only first time when used'" ></i>  <br>
@@ -74,7 +74,7 @@
                                 <i class="fas fa-copy" />
                             </button>
 
-                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="showAddressQRCode" v-tooltip.bottom="'Show Address QR Code'">
                                 <i class="fas fa-qrcode" />
                             </button>
                         </div>
@@ -104,7 +104,7 @@ export default {
 
     data(){
         return {
-            account: null,
+            address: null,
             title: "",
 
             hasRegistration: false,
@@ -191,12 +191,12 @@ export default {
             }
         },
 
-        showModal(account) {
+        showModal(address) {
 
             Object.assign(this.$data, this.$options.data.apply(this))
 
-            this.account = account;
-            this.title = account.name;
+            this.address = address;
+            this.title = address.name;
 
             return this.$refs.modal.showModal();
         },
@@ -224,8 +224,8 @@ export default {
             this.paymentAmount = {...this.paymentAmount, ...data}
         },
 
-        showAccountQRCode(){
-            return this.$store.state.page.refQRCodeModal.showModal( this.addressGenerated, this.account.name || '');
+        showAddressQRCode(){
+            return this.$store.state.page.refQRCodeModal.showModal( this.addressGenerated, this.address.name || '');
         },
 
         async handleCreateAddress(){
@@ -233,8 +233,8 @@ export default {
             this.addressGenerated = ""
 
             let args = {
-                publicKey: this.account.publicKey,
-                registration: this.hasRegistration ? this.account.registration : "",
+                publicKey: this.address.publicKey,
+                registration: this.hasRegistration ? this.address.registration : "",
                 paymentID: this.hasPaymentID ? Buffer.from(this.paymentID, "hex").toString("base64") : "",
                 paymentAmount: this.hasPaymentAmount ? this.paymentAmount.amount : new Decimal(0),
                 paymentAsset: this.hasPaymentAsset ? Buffer.from(this.paymentAsset, "hex").toString("base64") : "",
