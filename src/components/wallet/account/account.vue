@@ -37,13 +37,15 @@
                 </div>
                 <div class="card-footer bg-light g-0 d-block p-3">
                     <loading-button :can-disable="false" @submit="showAccountQRCode" text="" icon="fas fa-qrcode" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Show Address QR Code" />
-                    <loading-button :can-disable="false" @submit="showGenerateCustomAddress" text="" icon="fas fa-tools" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Create custom address" />
+                    <loading-button :can-disable="false" @submit="showGenerateCustomAddress" text="" icon="fas fa-tools" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Generate custom address" />
                     <loading-button :can-disable="false" @submit="showAddressJSON" text="" icon="fas fa-file" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Show JSON address" />
+                    <loading-button :disabled="!account || !account.registration || !account.registration.staked" :can-disable="false" @submit="showShareStaked" text="" icon="fas fa-piggy-bank" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Share staked address with a delegator node" />
                 </div>
             </div>
         </div>
 
-        <account-generate-custom-address ref="refGenerateCustomAddress"/>
+        <account-generate-custom-address-modal ref="refGenerateCustomAddressModal"/>
+        <shared-staked-delegator-node-modal ref="refSharedStakedDelegatorNodeModal"/>
 
     </div>
 </template>
@@ -51,13 +53,14 @@
 <script>
 
 import AccountIdenticon from "./account-identicon";
-import AccountGenerateCustomAddress from "./account-generate-custom-address.modal"
+import AccountGenerateCustomAddressModal from "./account-generate-custom-address.modal"
 import LoadingButton from "src/components/utils/loading-button";
+import SharedStakedDelegatorNodeModal from "src/components/staking/shared-staked-delegator-node.modal"
 const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 
-    components: { AccountGenerateCustomAddress, AccountIdenticon, LoadingButton },
+    components: { AccountGenerateCustomAddressModal, AccountIdenticon, LoadingButton, SharedStakedDelegatorNodeModal },
 
     props: {
         address: {default: null},
@@ -95,7 +98,7 @@ export default {
         },
 
         showGenerateCustomAddress(){
-            return this.$refs.refGenerateCustomAddress.showModal(this.address);
+            return this.$refs.refGenerateCustomAddressModal.showModal(this.address);
         },
 
         showAccountQRCode(){
@@ -104,6 +107,10 @@ export default {
 
         showAddressJSON(){
           return this.$store.state.page.refTextareaModal.showModal("ADDRESS JSON", JSONStringify(this.account, null, 2) )
+        },
+
+        showShareStaked(){
+          return this.$refs.refSharedStakedDelegatorNodeModal.showModal(this.address.publicKey)
         },
 
         sendFunds(){
