@@ -33,7 +33,7 @@
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Ticker</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{asset.ticker}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{asset.identification}}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Hash</span>

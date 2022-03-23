@@ -5,7 +5,7 @@
                 {{getSign}} {{amount}}
             </span>
             <router-link :to="`/explorer/asset/${$store.getters.convertBase64ToHex(asset)}`" :class="`${assetClass} ps-1`" v-if="showAsset">
-                {{getAsset.name}}
+                {{getAsset.identification}}
             </router-link>
         </template>
         <template v-else>
