@@ -1,0 +1,76 @@
+<template>
+
+  <router-link :to="uri" v-tooltip.bottom="`${ tooltip}`">
+    <div :class="`identicon ${outerSize? 'outer':''}`" :style="`padding: ${outerSize}px`" v-if="identiconSrc">
+      <img :src="identiconSrc" class="identicon" :style="`width: ${size}px`" >
+    </div>
+  </router-link>
+
+</template>
+
+<script>
+
+import Identicons from "src/utils/identicons"
+import StringHelper from "src/utils/string-helper";
+export default {
+
+  props:{
+    size: {default: 40},
+    outerSize: {default: 34},
+
+    uri: {default: ""},
+    hash: {default: null},
+
+    tooltip: {default: ""}
+  },
+
+  data(){
+    return{
+      identiconSrc: "",
+      finalAddress: "",
+    }
+  },
+
+  watch:{
+
+    hash: {
+      immediate: true,
+      handler: async function(newVal, oldVal){
+        if (!newVal) return
+        try{
+          this.identiconSrc = await Identicons.getIdenticon( newVal, this.size )
+        }catch(err){
+          this.finalAddress = ""
+          this.identiconSrc = ""
+        }
+      }
+    },
+
+  },
+
+
+}
+</script>
+
+<style scoped>
+
+
+.outer{
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -khtml-border-radius: 50%;
+  border-radius: 50%;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.identicon{
+  display: inline-table;
+  background-color: white;
+}
+
+.dark .identicon{
+  background-color: black;
+}
+
+</style>
