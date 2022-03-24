@@ -61,7 +61,6 @@
                 </div>
             </div>
 
-            <account-secret-key-modal ref="refAccountSecretKeyModal"/>
             <account-delete-modal ref="refAccountDeleteModal" />
             <account-rename-modal ref="refAccountRenameModal" />
 
@@ -76,7 +75,6 @@
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import FileSaver from 'file-saver'
 import consts from 'consts/consts';
-import AccountSecretKeyModal from "src/components/wallet/account/account-secret-key.modal"
 import AccountRenameModal from "src/components/wallet/account/account-rename.modal"
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title";
@@ -86,7 +84,7 @@ import WaitAddress from "src/components/wallet/account/wait-address";
 
 export default {
 
-    components: {WaitAddress, AccountIdenticon, AccountSecretKeyModal, AccountRenameModal, Layout, Account, LayoutTitle, AccountDeleteModal},
+    components: {WaitAddress, AccountIdenticon, AccountRenameModal, Layout, Account, LayoutTitle, AccountDeleteModal},
 
     data(){
         return {
@@ -133,8 +131,13 @@ export default {
             });
         },
 
-        handleShowSecretKey(){
-            return this.$refs.refAccountSecretKeyModal.showModal(this.walletAddress);
+        async handleShowSecretKey(){
+            const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+            if (password === null ) return
+
+            const secretKey = await PandoraPay.wallet.getWalletAddressSecretKey( this.walletAddress.publicKey, password )
+
+            return this.$store.state.page.refSecretModal.showModal(secretKey, `Secret Key of ${this.walletAddress ? this.walletAddress.name : ''}`, 'DO NOT share this secret key with anyone! This private key can be used to STEAL YOUR FUNDS FROM THIS ACCOUNT');
         },
 
         handleDeleteAddress(){

@@ -9,6 +9,7 @@ export default {
         state.refTestnetFaucetModal = modals.refTestnetFaucetModal;
         state.refWalletPasswordModal = modals.refWalletPasswordModal;
         state.refDecryptBalanceModal = modals.refDecryptBalanceModal;
+        state.refSecretModal = modals.refSecretModal
     },
 
     incrementModalIndex(state, value){

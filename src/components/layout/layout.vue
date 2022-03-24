@@ -23,7 +23,7 @@
                 <testnet-faucet-modal ref="refTestnetFaucetModal" />
                 <wallet-password-modal ref="refWalletPasswordModal" />
                 <decrypt-balance-modal ref="refDecryptBalanceModal" />
-
+                <secret-modal ref="refSecretModal" />
                 <layout-footer v-if="!disableLayout" />
 
             </div>
@@ -53,10 +53,12 @@ import LeftSidebar from "./left-sidebar/left-sidebar"
 import WarningBar from "./header/warning-bar"
 import Toasts from "./toasts/toasts"
 import QrCodeScannerModal from "../utils/qr-code-scanner/qr-code-scanner.modal";
+import SecretModal from "./modals/secret.modal"
 
 export default {
 
-    components: { LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar, QrCodeModal,
+    components: {
+        LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar, QrCodeModal, SecretModal,
         TestnetFaucetModal, WalletPasswordModal, Toasts, QrCodeScannerModal, DecryptBalanceModal, TextareaModal,
         ConfirmationModal},
 
@@ -87,6 +89,7 @@ export default {
                 refTestnetFaucetModal: this.$refs.refTestnetFaucetModal,
                 refWalletPasswordModal: this.$refs.refWalletPasswordModal,
                 refDecryptBalanceModal: this.$refs.refDecryptBalanceModal,
+                refSecretModal: this.$refs.refSecretModal,
             })
         }
     },
