@@ -3,7 +3,7 @@
   <modal ref="modal" :title="title">
 
     <template v-slot:body>
-      <alert-box type="info">
+      <alert-box :type="type">
         {{text}}
       </alert-box>
     </template>
@@ -34,18 +34,20 @@ export default {
     return{
       title: "Text",
       text: "",
+      type: "info",
       confirmation: false,
     }
   },
 
   methods: {
 
-    async showModal( title, text ) {
+    async showModal( title, text, type = "info" ) {
 
       Object.assign(this.$data, this.$options.data.apply(this))
 
       this.title = title
       this.text = text
+      this.type = type
       this.confirmation = false
 
       await this.$refs.modal.showModal();

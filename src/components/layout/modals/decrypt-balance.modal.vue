@@ -57,19 +57,19 @@ export default {
             this.password = password
             this.returnPrivateKey = returnPrivateKey
 
-            let data = await PandoraPay.wallet.tryDecryptBalance( MyTextEncode(JSONStringify({
+            let data = await PandoraPay.wallet.tryDecryptBalance( this.password, MyTextEncode(JSONStringify({
                 publicKey: this.publicKey,
                 asset: this.asset,
                 balance: this.balance,
                 previousValue: 0,
-            })), this.password, )
+            })), )
 
             const out = JSONParse( MyTextDecode( data ) )
 
-            data = await PandoraPay.wallet.getPrivateKeysWalletAddress( MyTextEncode(JSONStringify({
+            data = await PandoraPay.wallet.getPrivateKeysWalletAddress( this.password, MyTextEncode(JSONStringify({
                 publicKey: this.publicKey,
                 asset: this.asset
-            })), this.password, )
+            })), )
 
             const params = JSONParse( MyTextDecode( data ) )
 

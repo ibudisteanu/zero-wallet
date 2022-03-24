@@ -8,13 +8,14 @@
         </div>
 
         <div class="menu" >
-            <header-account-dropdown-menu v-if="menuOpen" @viewMnemonic="viewMnemonic" @newWallet="newWallet" @importMnemonic="importMnemonic" @viewSeed="viewSeed" @showCreateNewAddress="showCreateNewAddress" @showImportAccount="showImportAccount" @showImportSecretKey="showImportSecretKey" />
+            <header-account-dropdown-menu v-if="menuOpen" @viewMnemonic="viewMnemonic" @newWallet="newWallet" @importMnemonic="importMnemonic" @viewSeed="viewSeed" @showCreateNewAddress="showCreateNewAddress" @showImportAccount="showImportAccount" @showImportSecretKey="showImportSecretKey" @showImportWallet="showImportWallet" />
         </div>
 
-        <wallet-seed-modal ref="refWalletSeedModal" />
         <import-account-modal ref="refImportAccountModal" />
         <import-secret-key-modal ref="refImportSecretKeyModal" />
         <create-new-address-modal ref="refCreateNewAddressModal" />
+        <import-mnemonic-modal ref="refImportMnemonicModal" />
+        <import-wallet-modal ref="refImportWalletModal" />
 
     </div>
 
@@ -28,11 +29,13 @@ import ImportAccountModal from "src/components/wallet/account/import-account.mod
 import ImportSecretKeyModal from "src/components/wallet/account/import-secret-key.modal"
 import CreateNewAddressModal from "src/components/wallet/account/create-new-address.modal"
 import UtilsHelper from "src/utils/utils-helper";
+import ImportMnemonicModal from "src/components/wallet/import-mnemonic.modal";
+import ImportWalletModal from "src/components/wallet/import-wallet.modal";
 
 export default {
 
-    components: { HeaderAccountDropdownMenu, AccountIdenticon, ImportAccountModal,
-      ImportSecretKeyModal, CreateNewAddressModal },
+    components: { HeaderAccountDropdownMenu, AccountIdenticon, ImportAccountModal, ImportMnemonicModal,
+      ImportSecretKeyModal, CreateNewAddressModal, ImportWalletModal },
 
     data(){
         return {
@@ -86,14 +89,18 @@ export default {
         },
 
         showCreateNewAddress(){
-          return this.$refs.refCreateNewAddressModal.showModal()
+          return this.$refs.refCreateNewAddressModal.showModal();
+        },
+
+        showImportWallet(){
+          return this.$refs.refImportWalletModal.showModal();
         },
 
         async newWallet(){
 
           try{
 
-            const confirmed = await this.$store.state.page.refConfirmationModal.showModal("Clear existing wallet?", "It will clear your existing wallet and you will get a new wallet!")
+            const confirmed = await this.$store.state.page.refConfirmationModal.showModal("Clear existing wallet?", "It will clear your existing wallet and you will get a new wallet!", "warning")
             if (!confirmed) return
 
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
@@ -120,7 +127,7 @@ export default {
         },
 
         async importMnemonic(){
-
+          this.$refs.refImportMnemonicModal.showModal()
         },
 
     },

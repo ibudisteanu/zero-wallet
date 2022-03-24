@@ -2,7 +2,7 @@
 
   <modal ref="modal" :title="title" >
     <template v-slot:body>
-      <secret-text v-if="secret" class="pt-3" :text="secret" :title="title" >
+      <secret-text v-if="secret" class="pt-1" :text="secret" :title="title" >
         <template v-slot:warning>
           {{security}}
         </template>

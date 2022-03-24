@@ -38,8 +38,8 @@
                     <span @click="handleViewMnemonic" v-tooltip.left="'Show your Secret Words (Mnemonic)'" class="pointer dropdown-item fw-normal "><i class="fas fa-key"></i>View Secret Phrase</span>
                     <span @click="handleViewSeed" v-tooltip.left="'Show your Secret Seed'" class="pointer dropdown-item fw-normal "><i class="fas fa-key"></i>View Secret Seed</span>
                     <div class="dropdown-divider"></div>
-                    <span @click="handleNewWallet" v-tooltip.left="'Clear & create new wallet'" class="pointer dropdown-item fw-normal "><i class="fas fa-key"></i>New Wallet</span>
-                    <span @click="handleImportMnemonic" v-tooltip.left="'Clear wallet & import a new wallet from Secret Words (Mnemonic)'" class="pointer dropdown-item fw-normal "><i class="fas fa-key"></i>Import Secret Phrase</span>
+                    <span @click="handleNewWallet" v-tooltip.left="'Clear & create new wallet'" class="pointer dropdown-item fw-normal "><i class="fas fa-trash"></i>New Wallet</span>
+                    <span @click="handleImportMnemonic" v-tooltip.left="'Clear wallet & import a new wallet from Secret Words (Mnemonic)'" class="pointer dropdown-item fw-normal "><i class="fas fa-file-import"></i>Import Secret Phrase</span>
                     <div class="dropdown-divider"></div>
                     <span @click="handleExportWallet" v-tooltip.left="'Export your wallet to your computer'" class="pointer dropdown-item fw-normal "><i class="fas fa-download"></i>Export Wallet</span>
                     <span @click="handleImportWallet" v-tooltip.left="'Import a pandora wallet from your computer'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i>Import Wallet</span>
@@ -161,7 +161,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const jsonData = await PandoraPay.wallet.exportWalletJSON(  password );
+            const jsonData = await PandoraPay.wallet.manager.exportWalletJSON(  password );
             if (!jsonData) return false;
 
             const json = MyTextDecode(jsonData)
@@ -179,7 +179,7 @@ export default {
         },
 
         handleImportWallet(){
-
+          return this.$emit('showImportWallet')
         },
 
         copyAddress( walletAddress ){

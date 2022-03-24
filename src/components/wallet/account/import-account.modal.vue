@@ -109,7 +109,6 @@ export default {
             if ((window.File && window.FileReader && window.FileList && window.Blob) === false)
                 throw `Your browser/device doesn't support file import.`
 
-
             const file = this.$refs.refImportedAddresses.files[0];
 
             if (!file) throw `No file selected.`
@@ -144,7 +143,7 @@ export default {
 
                 await UtilsHelper.sleep(50 )
 
-                const out = await PandoraPay.wallet.manager.importWalletAddressJSON( this.addressData, this.addressPassword, password, );
+                const out = await PandoraPay.wallet.manager.importWalletAddressJSON( password, this.addressData, this.addressPassword,  );
                 if (!out) throw `Your address already exists`
 
                 this.$store.dispatch('addToast',{

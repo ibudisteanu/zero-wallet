@@ -92,6 +92,7 @@ export default {
 
             if (initialized) {
                 if (name === "wallet/added") this.readWallet()
+                else if (name === "wallet/loaded") this.readWallet()
                 else if (name === "wallet/removed") this.readWallet()
                 else if (name === "wallet/encrypted") this.readWallet()
                 else if (name === "wallet/removed-encryption") this.readWallet()

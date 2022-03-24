@@ -114,7 +114,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const jsonData = await PandoraPay.wallet.manager.getWalletAddress(  this.address.publicKey, password );
+            const jsonData = await PandoraPay.wallet.manager.getWalletAddress(  password, this.walletAddress.publicKey );
             if (!jsonData) return false;
 
             const json = MyTextDecode(jsonData)
@@ -135,7 +135,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const secretKey = await PandoraPay.wallet.getWalletAddressSecretKey( this.walletAddress.publicKey, password )
+            const secretKey = await PandoraPay.wallet.getWalletAddressSecretKey( password, this.walletAddress.publicKey )
 
             return this.$store.state.page.refSecretModal.showModal(secretKey, `Secret Key of ${this.walletAddress ? this.walletAddress.name : ''}`, 'DO NOT share this secret key with anyone! This private key can be used to STEAL YOUR FUNDS FROM THIS ACCOUNT');
         },
