@@ -3,9 +3,9 @@
     <modal ref="modal" title="Wallet Seed" >
 
         <template v-slot:body>
-            <secret-text v-if="seed" :text="seed" title="Seed">
+            <secret-text v-if="seed" :text="seed" title="Seed Words" :show-badges="true">
                 <template v-slot:warning>
-                    DO NOT share this secret seed with anyone! This secret can be used to <strong>STEAL ALL YOUR FUNDS FROM THIS WALLET</strong>
+                    DO NOT share these secret words (mnemonic) with anyone! These secret words can be used to <strong>STEAL ALL YOUR FUNDS FROM THIS WALLET</strong>
                 </template>
             </secret-text>
         </template>
@@ -45,7 +45,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            this.seed = await PandoraPay.wallet.getWalletSeed( password )
+            this.seed = await PandoraPay.wallet.getWalletMnemonic( password )
 
             return this.$refs.modal.showModal();
         },

@@ -35,7 +35,12 @@
                     <span @click="handleImportAccount" v-tooltip.left="'Import an address from json file'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i> Import Account (json)</span>
                     <span @click="handleImportSecretKey" v-tooltip.left="'Import an address from Secret Key'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i> Import Secret Key</span>
                     <div class="dropdown-divider"></div>
-                    <span @click="handleViewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" class="pointer dropdown-item fw-normal "><i class="fas fa-key"></i>View Secret Phrase</span>
+                    <span @click="handleViewMnemonic" v-tooltip.left="'Show your Secret Words (Mnemonic)'" class="pointer dropdown-item fw-normal "><i class="fas fa-key"></i>View Secret Phrase</span>
+                    <span @click="handleViewSeed" v-tooltip.left="'Show your Secret Seed'" class="pointer dropdown-item fw-normal "><i class="fas fa-key"></i>View Secret Seed</span>
+                    <div class="dropdown-divider"></div>
+                    <span @click="handleNewWallet" v-tooltip.left="'Clear & create new wallet'" class="pointer dropdown-item fw-normal "><i class="fas fa-key"></i>New Wallet</span>
+                    <span @click="handleImportMnemonic" v-tooltip.left="'Clear wallet & import a new wallet from Secret Words (Mnemonic)'" class="pointer dropdown-item fw-normal "><i class="fas fa-key"></i>Import Secret Phrase</span>
+                    <div class="dropdown-divider"></div>
                     <span @click="handleExportWallet" v-tooltip.left="'Export your wallet to your computer'" class="pointer dropdown-item fw-normal "><i class="fas fa-download"></i>Export Wallet</span>
                     <span @click="handleImportWallet" v-tooltip.left="'Import a pandora wallet from your computer'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i>Import Wallet</span>
                     <template v-if="encrypted">
@@ -105,6 +110,18 @@ export default {
 
         handleViewMnemonic(){
             return this.$emit('viewMnemonic')
+        },
+
+        handleViewSeed(){
+          return this.$emit('viewSeed')
+        },
+
+        handleNewWallet(){
+          return this.$emit('newWallet')
+        },
+
+        handleImportMnemonic(){
+          return this.$emit('importMnemonic')
         },
 
         async handleLogout(){
