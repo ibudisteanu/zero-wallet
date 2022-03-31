@@ -37,22 +37,6 @@
                              version="transparent">
                     </balance>
 
-                    <div v-if="delegatedStake">
-                        <h5 class="text-800 fs-0 pt-4">Delegated Stake</h5>
-                        <balance :key="`delegated-balance`"
-                                 :balance="delegatedStake.stakeAvailable"
-                                 version="transparent">
-                        </balance>
-
-                        <div v-if="delegatedStakesPending.length" >
-                            <h5 class="text-800 fs-0 pt-4">Delegated Stakes in pending</h5>
-                            <delegated-stake-pending v-for="(delegatedStakePending, index) in delegatedStakesPending"
-                                                     :key="`delegated-stake-pending-${index}`"
-                                                     :delegatedStakePending="delegatedStakePending">
-                            </delegated-stake-pending>
-                        </div>
-                    </div>
-
                 </template>
 
             </div>
@@ -65,11 +49,10 @@
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import Balance from "./balance"
 import AccountIdenticon from "../account/account-identicon";
-import DelegatedStakePending from "./delegated-stake-pending"
 
 export default {
 
-    components: {AccountIdenticon, LoadingSpinner, Balance, DelegatedStakePending},
+    components: {AccountIdenticon, LoadingSpinner, Balance},
 
     props: {
         publicKey: {default: ""}
@@ -79,14 +62,6 @@ export default {
 
         account(){
             return this.$store.state.accounts.list[this.publicKey]
-        },
-
-        delegatedStake(){
-            return this.account.plainAccount ? this.account.plainAccount.delegatedStake : null
-        },
-
-        delegatedStakesPending(){
-            return this.delegatedStake.stakesPending ? this.delegatedStake.stakesPending : []
         },
 
         isLoading(){

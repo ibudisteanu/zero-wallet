@@ -27,21 +27,25 @@
                         Nonce: {{account.plainAccount.nonce}}
                     </small>
                 </div>
+                <div class="p-3" v-if="account && account.registration">
+                  <div>
+                    <small class="fs--1 text-700"> Staked: {{account.registration.staked ? 'Yes': 'No'}} </small>
+                  </div>
+                  <div>
+                    <small class="fs--1 text-700"> Spend Public Key: {{account.registration.spendPublicKey}} </small>
+                  </div>
+                </div>
                 <div class="card-footer bg-light g-0 d-block p-3">
-
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="showAccountQRCode" v-tooltip.bottom="'Show Address QR Code'">
-                        <i class="fas fa-qrcode" />
-                    </button>
-
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="createCustomAddress"  v-tooltip.bottom="'Create custom address'">
-                        <i class="fas fa-tools" />
-                    </button>
-
+                    <loading-button :can-disable="false" @submit="showAccountQRCode" text="" icon="fas fa-qrcode" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Show Address QR Code" />
+                    <loading-button :can-disable="false" @submit="showGenerateCustomAddress" text="" icon="fas fa-tools" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Generate custom address" />
+                    <loading-button :can-disable="false" @submit="showAddressJSON" text="" icon="fas fa-file" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Show JSON address" />
+                    <loading-button :disabled="!account || !account.registration || !account.registration.staked" :can-disable="false" @submit="showShareStaked" text="" icon="fas fa-piggy-bank" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Share staked address with a delegator node" />
                 </div>
             </div>
         </div>
 
-        <account-generate-custom-address ref="refGenerateCustomAddress"/>
+        <account-generate-custom-address-modal ref="refGenerateCustomAddressModal"/>
+        <shared-staked-delegator-node-modal ref="refSharedStakedDelegatorNodeModal"/>
 
     </div>
 </template>
@@ -49,12 +53,14 @@
 <script>
 
 import AccountIdenticon from "./account-identicon";
-import AccountGenerateCustomAddress from "./account-generate-custom-address.modal"
+import AccountGenerateCustomAddressModal from "./account-generate-custom-address.modal"
+import LoadingButton from "src/components/utils/loading-button";
+import SharedStakedDelegatorNodeModal from "src/components/staking/shared-staked-delegator-node.modal"
 const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 
-    components: { AccountGenerateCustomAddress, AccountIdenticon },
+    components: { AccountGenerateCustomAddressModal, AccountIdenticon, LoadingButton, SharedStakedDelegatorNodeModal },
 
     props: {
         address: {default: null},
@@ -70,7 +76,7 @@ export default {
         },
         walletAddress(){
             return this.$store.state.wallet.addresses[this.address.publicKey]
-        }
+        },
     },
 
     methods: {
@@ -91,12 +97,20 @@ export default {
 
         },
 
-        createCustomAddress(){
-            return this.$refs.refGenerateCustomAddress.showModal(this.address);
+        showGenerateCustomAddress(){
+            return this.$refs.refGenerateCustomAddressModal.showModal(this.address);
         },
 
         showAccountQRCode(){
             return this.$store.state.page.refQRCodeModal.showModal(this.getAddress, this.address.name || '');
+        },
+
+        showAddressJSON(){
+          return this.$store.state.page.refTextareaModal.showModal("ADDRESS JSON", JSONStringify(this.account, null, 2) )
+        },
+
+        showShareStaked(){
+          return this.$refs.refSharedStakedDelegatorNodeModal.showModal(this.address.publicKey)
         },
 
         sendFunds(){

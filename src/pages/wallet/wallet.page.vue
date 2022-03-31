@@ -30,10 +30,10 @@
 
                     <div class="row py-2">
                         <div v-if="!showRegistration" class="pointer  w-auto" @click="showRegistration = true">
-                            View Registration Public Signatures
+                            View Registration Public Signature
                         </div>
                         <div class="text-truncate" v-else>
-                            Registration Public Key: {{walletAddress.registration}}
+                            Registration Public Signature: {{walletAddress.registration}}
                             <i class="fas fa-copy pointer  d-inline-block" v-tooltip.bottom="'Copy Registration'"  @click="handleCopyAddress(walletAddress.registration)" />
                         </div>
                     </div>
@@ -50,7 +50,7 @@
                         <i class="danger fas fa-times"></i>
                     </button>
 
-                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowPrivateKey" v-tooltip.bottom="'View Private Key'" >
+                    <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" type="button" @click="handleShowSecretKey" v-tooltip.bottom="'View Secret Key'" >
                         <i class="fas fa-eye"></i>
                     </button>
 
@@ -61,7 +61,6 @@
                 </div>
             </div>
 
-            <account-private-key-modal ref="refAccountPrivateKeyModal"/>
             <account-delete-modal ref="refAccountDeleteModal" />
             <account-rename-modal ref="refAccountRenameModal" />
 
@@ -76,7 +75,6 @@
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import FileSaver from 'file-saver'
 import consts from 'consts/consts';
-import AccountPrivateKeyModal from "src/components/wallet/account/account-private-key.modal"
 import AccountRenameModal from "src/components/wallet/account/account-rename.modal"
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title";
@@ -86,7 +84,7 @@ import WaitAddress from "src/components/wallet/account/wait-address";
 
 export default {
 
-    components: {WaitAddress, AccountIdenticon, AccountPrivateKeyModal, AccountRenameModal, Layout, Account, LayoutTitle, AccountDeleteModal},
+    components: {WaitAddress, AccountIdenticon, AccountRenameModal, Layout, Account, LayoutTitle, AccountDeleteModal},
 
     data(){
         return {
@@ -116,7 +114,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const jsonData = await PandoraPay.wallet.manager.getWalletAddress(  this.address.publicKey, password );
+            const jsonData = await PandoraPay.wallet.manager.getWalletAddress(  password, this.walletAddress.publicKey );
             if (!jsonData) return false;
 
             const json = MyTextDecode(jsonData)
@@ -133,8 +131,13 @@ export default {
             });
         },
 
-        handleShowPrivateKey(){
-            return this.$refs.refAccountPrivateKeyModal.showModal(this.walletAddress);
+        async handleShowSecretKey(){
+            const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+            if (password === null ) return
+
+            const secretKey = await PandoraPay.wallet.getWalletAddressSecretKey( password, this.walletAddress.publicKey )
+
+            return this.$store.state.page.refSecretModal.showModal(secretKey, `Secret Key of ${this.walletAddress ? this.walletAddress.name : ''}`, 'DO NOT share this secret key with anyone! This private key can be used to STEAL YOUR FUNDS FROM THIS ACCOUNT');
         },
 
         handleDeleteAddress(){

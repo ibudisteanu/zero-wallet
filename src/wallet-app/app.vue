@@ -92,6 +92,7 @@ export default {
 
             if (initialized) {
                 if (name === "wallet/added") this.readWallet()
+                else if (name === "wallet/loaded") this.readWallet()
                 else if (name === "wallet/removed") this.readWallet()
                 else if (name === "wallet/encrypted") this.readWallet()
                 else if (name === "wallet/removed-encryption") this.readWallet()
@@ -146,7 +147,6 @@ export default {
         async processUpdate(data){
 
             this.$store.commit('setConsensusStatus', "sync")
-            this.$store.commit('setBlockchainNotification', data)
 
             const out = await PandoraPay.network.getNetworkBlockchain()
             this.$store.commit('setBlockchainInfo', JSONParse( MyTextDecode(out) ) )

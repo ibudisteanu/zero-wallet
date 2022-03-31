@@ -66,7 +66,7 @@ export default {
 
         async showModal() {
 
-            Object.assign(this.$data, this.$options.data());
+            Object.assign(this.$data, this.$options.data.apply(this))
             const promise = this.$refs.modal.showModal()
 
             this.$store.state.blockchain.syncPromise.then( async ()=>{

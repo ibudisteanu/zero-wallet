@@ -46,8 +46,7 @@ export default {
 
         getAssetName(asset){
             const assetInfo = this.getAsset( asset )
-            if (assetInfo)
-                return assetInfo.name;
+            return assetInfo ? assetInfo.identification : '';
         },
 
     },

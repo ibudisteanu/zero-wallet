@@ -31,11 +31,16 @@
                 <div class="list-group-item">
                     <div class="list-group-title border-bottom">Operations:</div>
                     <span @click="handleViewAccount" v-tooltip.left="'View account'" class="pointer dropdown-item "> <i class="fas fa-hand-pointer "></i> View account </span>
-                    <span @click="handleCreateAccount" v-tooltip.left="'Create a new Address'" class="pointer dropdown-item fw-normal "> <i class="fas fa-plus"></i> Create Account </span>
+                    <span @click="handleCreateNewAddress" v-tooltip.left="'Create a new Address'" class="pointer dropdown-item fw-normal "> <i class="fas fa-plus"></i> Create Account </span>
                     <span @click="handleImportAccount" v-tooltip.left="'Import an address from json file'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i> Import Account (json)</span>
-                    <span @click="handleImportPrivateKey" v-tooltip.left="'Import an address from Private Key'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i> Import Private Key</span>
+                    <span @click="handleImportSecretKey" v-tooltip.left="'Import an address from Secret Key'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i> Import Secret Key</span>
                     <div class="dropdown-divider"></div>
-                    <span @click="handleViewMnemonic" v-tooltip.left="'Show your Secret Seed Words'" class="pointer dropdown-item fw-normal "><i class="fas fa-key"></i>View Secret Phrase</span>
+                    <span @click="handleViewMnemonic" v-tooltip.left="'Show your Secret Words (Mnemonic)'" class="pointer dropdown-item fw-normal "><i class="fas fa-key"></i>View Secret Phrase</span>
+                    <span @click="handleViewSeed" v-tooltip.left="'Show your Secret Seed'" class="pointer dropdown-item fw-normal "><i class="fas fa-key"></i>View Secret Seed</span>
+                    <div class="dropdown-divider"></div>
+                    <span @click="handleNewWallet" v-tooltip.left="'Clear & create new wallet'" class="pointer dropdown-item fw-normal "><i class="fas fa-trash"></i>New Wallet</span>
+                    <span @click="handleImportMnemonic" v-tooltip.left="'Clear wallet & import a new wallet from Secret Words (Mnemonic)'" class="pointer dropdown-item fw-normal "><i class="fas fa-file-import"></i>Import Secret Phrase</span>
+                    <div class="dropdown-divider"></div>
                     <span @click="handleExportWallet" v-tooltip.left="'Export your wallet to your computer'" class="pointer dropdown-item fw-normal "><i class="fas fa-download"></i>Export Wallet</span>
                     <span @click="handleImportWallet" v-tooltip.left="'Import a pandora wallet from your computer'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i>Import Wallet</span>
                     <template v-if="encrypted">
@@ -92,40 +97,11 @@ export default {
     methods:{
 
         handleViewAccount(){
-            this.$router.push('/address/'+this.address.addressEncoded)
+            this.$router.push('/address/'+this.walletAddress.addressEncoded)
         },
 
-        async handleCreateAccount(){
-
-            try{
-
-                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
-                if (password === null ) return
-
-                this.$store.state.page.refLoadingModal.showModal();
-
-                await UtilsHelper.sleep(50 )
-
-                const out = await PandoraPay.wallet.manager.addNewWalletAddress(password);
-                if (!out) throw "Result is false"
-
-                this.$store.dispatch('addToast',{
-                    type: 'success',
-                    title: 'Address has been added successfully',
-                    text: 'A new address has been added and saved in your wallet'
-                });
-
-            }catch(err){
-                this.$store.dispatch('addToast',{
-                    type: 'error',
-                    title: 'Error creating an address',
-                    text: 'An error was encountered: ' + err.toString()
-                });
-                console.error(err);
-            }finally{
-                this.$store.state.page.refLoadingModal.closeModal();
-            }
-
+      handleCreateNewAddress(){
+          return this.$emit('showCreateNewAddress')
         },
 
         setMainPublicKey(publicKey){
@@ -134,6 +110,18 @@ export default {
 
         handleViewMnemonic(){
             return this.$emit('viewMnemonic')
+        },
+
+        handleViewSeed(){
+          return this.$emit('viewSeed')
+        },
+
+        handleNewWallet(){
+          return this.$emit('newWallet')
+        },
+
+        handleImportMnemonic(){
+          return this.$emit('importMnemonic')
         },
 
         async handleLogout(){
@@ -158,8 +146,8 @@ export default {
             return this.$emit('showImportAccount');
         },
 
-        handleImportPrivateKey(){
-            return this.$emit('showImportPrivateKey');
+        handleImportSecretKey(){
+            return this.$emit('showImportSecretKey');
         },
 
         async handleExportWallet(){
@@ -173,7 +161,7 @@ export default {
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
 
-            const jsonData = await PandoraPay.wallet.exportWalletJSON(  password );
+            const jsonData = await PandoraPay.wallet.manager.exportWalletJSON(  password );
             if (!jsonData) return false;
 
             const json = MyTextDecode(jsonData)
@@ -191,7 +179,7 @@ export default {
         },
 
         handleImportWallet(){
-
+          return this.$emit('showImportWallet')
         },
 
         copyAddress( walletAddress ){

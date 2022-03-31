@@ -87,15 +87,11 @@
                         <span class="col-7 col-sm-9 text-truncate">{{blk.version}}</span>
                     </div>
 
-                    <div class="row pt-2 pb-2  bg-light">
-                        <span class="col-5 col-sm-3 text-truncate">Forger</span>
-                        <div class="col-7 col-sm-9 text-truncate">
-                            <account-identicon class="vertical-center" :public-key="blk.delegatedStakePublicKey" size="21" outer-size="7"  />
-                            <span class="forger-address">{{blk.delegatedStakePublicKey}}</span>
-                        </div>
-                    </div>
                 </template>
 
+            </div>
+            <div class="card-footer bg-light g-0 d-block p-3">
+              <loading-button :disabled="!blk" :can-disable="false" @submit="showBlockJSON" text="" icon="fas fa-file" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Show JSON block" />
             </div>
 
         </div>
@@ -110,19 +106,6 @@
             </div>
             <div class="card-body p-3 py-0 fs--1">
                 <show-transactions-preview :transactions="txs"/>
-            </div>
-        </div>
-
-        <div class="card mb-3" v-if="blk">
-            <div class="card-header bg-light">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <h5 class="mb-0">JSON Block {{blk.height}}  </h5>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body p-0 fs--1">
-                <textarea class="form-control form-control-sm fs--2" rows="10">{{JSONStringify(blk, null, 2)}}</textarea>
             </div>
         </div>
 
@@ -142,10 +125,11 @@ import AlertBox from "src/components/utils/alert-box"
 import Amount from "src/components/wallet/amount"
 import StringHelper from "src/utils/string-helper"
 import Decimal from "decimal.js"
+import LoadingButton from "src/components/utils/loading-button"
 
 export default {
 
-    components: {LoadingSpinner, Layout, ShowBlocksInfo, ShowTransactionsPreview, AccountIdenticon, AlertBox, LayoutTitle, Amount },
+    components: {LoadingSpinner, Layout, ShowBlocksInfo, ShowTransactionsPreview, AccountIdenticon, AlertBox, LayoutTitle, Amount, LoadingButton },
 
     data(){
         return {
@@ -219,6 +203,10 @@ export default {
                 this.loaded = true
             }
 
+        },
+
+        showBlockJSON(){
+          return this.$store.state.page.refTextareaModal.showModal("BLOCK JSON", JSONStringify(this.blk, null, 2) )
         },
 
     },

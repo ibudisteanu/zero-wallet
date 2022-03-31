@@ -1,14 +1,9 @@
 import {createRouter, createWebHistory} from "vue-router"
 import LoginPage from "src/pages/login/login.page"
 import PrivateSendPage from "src/pages/send/private/private-send.page"
-import PrivateDelegateStakePage from "src/pages/send/private/private-delegate-stake.page"
-import PrivateClaim from "src/pages/send/private/private-claim.page"
-import UnstakePage from "src/pages/send/staking/unstake.page"
-import UpdateDelegatePage from "src/pages/send/staking/update-delegate.page"
 import ReceivePage from "src/pages/receive/receive.page"
 import WalletPage from "src/pages/wallet/wallet.page"
 import AddressPage from "src/pages/address/address.page"
-import StakesPage from "src/pages/staking/stakes.page"
 import SetPasswordPage from "src/pages/encryption/set-password.page"
 import RemovePasswordPage from "src/pages/encryption/remove-password.page"
 import BlockchainExplorerPage from "src/pages/explorer/blockchain-explorer.page"
@@ -41,11 +36,6 @@ const guardLogin = (to, from, next) =>{
 const routes = [
 
     {path: '/txs/private/send', component: PrivateSendPage, beforeEnter: guardDecrypted },
-    {path: '/txs/private/delegate', component: PrivateDelegateStakePage, beforeEnter: guardDecrypted },
-    {path: '/txs/private/claim', component: PrivateClaim, beforeEnter: guardDecrypted },
-
-    {path: '/txs/unstake', component: UnstakePage, beforeEnter: guardDecrypted },
-    {path: '/txs/update-delegate', component: UpdateDelegatePage, beforeEnter: guardDecrypted },
 
     {path: '/receive', component: ReceivePage, beforeEnter: guardDecrypted },
     {path: '/wallet', component: WalletPage, beforeEnter: guardDecrypted },
@@ -65,8 +55,6 @@ const routes = [
 
     {path: '/explorer', component: BlockchainExplorerPage },
     {path: '/explorer/:page', component: BlockchainExplorerPage },
-
-    {path: '/stakes', component: StakesPage, beforeEnter: guardDecrypted },
 
     {path: '/kad', component: KadPage },
 

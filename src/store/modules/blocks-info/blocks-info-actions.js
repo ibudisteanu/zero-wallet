@@ -48,21 +48,19 @@ export default {
 
         console.log("start, end", start.toString(), end.toString() )
 
-        let listByHeight = {
-            ...state.listByHeight,
-        }
+        const newBlocksInfo = {}
 
         let found = false
         for (let i = end.minus(1); i.gte(start); i = i.minus(1)){
 
             let beforeHash
-            if (listByHeight[i] && listByHeight[i].hash )
-                beforeHash = listByHeight[i].hash
+            if (state.listByHeight[i] && state.listByHeight[i].hash )
+                beforeHash = state.listByHeight[i].hash
 
-            if (!found || !listByHeight[i]) {
+            if (!found || !state.listByHeight[i]) {
 
                 let blockInfo = await this.dispatch('_getBlockInfo', i)
-                listByHeight[i] = blockInfo
+                newBlocksInfo[i] = blockInfo
 
                 if (!found && beforeHash === blockInfo.hash )
                     found = true
@@ -70,22 +68,7 @@ export default {
             }
         }
 
-        listByHeight = {
-            ...state.listByHeight,
-            ...listByHeight,
-        }
-
-        let viewPosition = {start, end}
-        if (state.viewPosition)
-            viewPosition = state.viewPosition
-
-        for (const heightStr in listByHeight){
-            const height = new Decimal(heightStr)
-            if ( height.gt( viewPosition.end ) || height.lt( viewPosition.start.minus(consts.blocksInfoPagination) ) )
-                delete(listByHeight[height])
-        }
-
-        commit('setBlocksInfo', listByHeight )
+        commit('setBlocksInfo', {newBlocksInfo, start, end} )
     },
 
 }

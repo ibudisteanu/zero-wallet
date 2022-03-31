@@ -31,6 +31,7 @@ export default {
             password: "",
             decryptedBalance: null,
             privateKey: null,
+            spendPrivateKey: null,
             returnPrivateKey: false,
             cancelCallback: null,
             status: "",
@@ -48,7 +49,7 @@ export default {
 
         async showModal(publicKey, balance, asset, returnPrivateKey, password ) {
 
-            Object.assign(this.$data, this.$options.data());
+            Object.assign(this.$data, this.$options.data.apply(this))
 
             this.publicKey = publicKey
             this.balance = balance
@@ -56,24 +57,26 @@ export default {
             this.password = password
             this.returnPrivateKey = returnPrivateKey
 
-            let data = await PandoraPay.wallet.tryDecryptBalance( MyTextEncode(JSONStringify({
+            let data = await PandoraPay.wallet.tryDecryptBalance( this.password, MyTextEncode(JSONStringify({
                 publicKey: this.publicKey,
                 asset: this.asset,
                 balance: this.balance,
-            })), this.password, )
+                previousValue: 0,
+            })), )
 
             const out = JSONParse( MyTextDecode( data ) )
 
-            data = await PandoraPay.wallet.getPrivateDataForDecryptingBalanceWalletAddress( MyTextEncode(JSONStringify({
+            data = await PandoraPay.wallet.getPrivateKeysWalletAddress( this.password, MyTextEncode(JSONStringify({
                 publicKey: this.publicKey,
                 asset: this.asset
-            })), this.password, )
+            })), )
 
             const params = JSONParse( MyTextDecode( data ) )
 
             if (this.closed) return
 
             this.privateKey = params.privateKey
+            this.spendPrivateKey = params.spendPrivateKey
 
             if (out.decrypted)
                 this.decryptedBalance = out.value
@@ -83,6 +86,7 @@ export default {
             return {
                 decryptedBalance: this.decryptedBalance,
                 privateKey: returnPrivateKey ? this.privateKey : undefined,
+                spendPrivateKey: returnPrivateKey ? this.spendPrivateKey : undefined
             }
         },
 
@@ -141,12 +145,12 @@ export default {
 
                     this.decryptedBalance = new Decimal(result[1])
 
-                    await PandoraPay.wallet.updatePreviousDecryptedBalanceValueWalletAddress( MyTextEncode(JSONStringify({
-                        publicKey: this.publicKey,
-                        asset: this.asset,
-                        amount: this.decryptedBalance,
-                        balance: this.balance,
-                    })), this.password, )
+                    // await PandoraPay.wallet.updatePreviousDecryptedBalanceValueWalletAddress( MyTextEncode(JSONStringify({
+                    //     publicKey: this.publicKey,
+                    //     asset: this.asset,
+                    //     amount: this.decryptedBalance,
+                    //     balance: this.balance,
+                    // })), this.password, )
 
                     this.cancelCallback = null
                     return this.closeModal()

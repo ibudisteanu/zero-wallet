@@ -1,18 +1,16 @@
 <template>
-
-    <router-link :to="disableRoute ? '' : `/address/${finalAddress}`" v-tooltip.bottom="`${ showTooltip ? finalAddressShort : '' }`">
-        <div :class="`identicon ${outerSize? 'outer':''}`" :style="`padding: ${outerSize}px`" v-if="identiconSrc">
-            <img :src="identiconSrc" class="identicon" :style="`width: ${size}px`"  >
-        </div>
-    </router-link>
-
+    <identicon :hash="identiconHash" :size="size" :outer-size="outerSize" :uri="`${disableRoute ? '' : '/address/'+finalAddress}`" :tooltip="showTooltip ? finalAddressShort : ''"  />
 </template>
 
 <script>
 
 import Identicons from "src/utils/identicons"
 import StringHelper from "src/utils/string-helper";
+import Identicon from "src/components/utils/identicon"
+
 export default {
+
+    components:{Identicon},
 
     props:{
         size: {default: 40},
@@ -28,7 +26,7 @@ export default {
 
     data(){
         return{
-            identiconSrc: "",
+            identiconHash: "",
             finalAddress: "",
         }
     },
@@ -40,10 +38,10 @@ export default {
             handler: async function(newVal, oldVal){
                 if (!newVal) return
                 try{
-                    this.identiconSrc = await Identicons.getIdenticon( newVal, this.size )
+                    this.identiconHash = newVal
                 }catch(err){
                     this.finalAddress = ""
-                    this.identiconSrc = ""
+                    this.identiconHash = ""
                 }
             }
         },
@@ -55,11 +53,11 @@ export default {
                 try{
                     const out = await PandoraPay.addresses.createAddress( MyTextEncode( JSONStringify( { publicKey: newVal, registration: "", paymentID: "", paymentAmount: 0, paymentAsset: "" })) )
                     const json = JSONParse( MyTextDecode(out) )
-                    this.identiconSrc = await Identicons.getIdenticon(newVal, this.size )
+                    this.identiconHash = newVal
                     this.finalAddress = json[1]
                 }catch(err){
                     this.finalAddress = ""
-                    this.identiconSrc = ""
+                    this.identiconHash = ""
                 }
             }
         },
@@ -72,11 +70,11 @@ export default {
                 try{
                     const addressData = await PandoraPay.addresses.decodeAddress(newVal)
                     const address = JSONParse( MyTextDecode(addressData))
-                    this.identiconSrc = await Identicons.getIdenticon( address.publicKey, this.size )
+                    this.identiconHash = address.publicKey
                     this.finalAddress = newVal
                 }catch(err){
                     this.finalAddress = ""
-                    this.identiconSrc = ""
+                    this.identiconHash = ""
                 }
             }
         }
@@ -91,26 +89,3 @@ export default {
 
 }
 </script>
-
-<style scoped>
-
-
-    .outer{
-        -webkit-border-radius: 50%;
-        -moz-border-radius: 50%;
-        -khtml-border-radius: 50%;
-        border-radius: 50%;
-        overflow: hidden;
-        padding: 10px;
-    }
-
-    .identicon{
-        display: inline-table;
-        background-color: white;
-    }
-
-    .dark .identicon{
-        background-color: black;
-    }
-
-</style>

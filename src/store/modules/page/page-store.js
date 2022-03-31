@@ -7,6 +7,8 @@ export default {
 
         refLoadingModal: null,
         refTextareaModal: null,
+        refConfirmationModal: null,
+        refSecretModal: null,
         refQRCodeModal: null,
         refQRCodeScannerModal: null,
         refTestnetFaucetModal:null,

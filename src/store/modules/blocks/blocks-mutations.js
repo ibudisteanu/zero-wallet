@@ -1,14 +1,12 @@
 export default {
 
     deleteBlocks(state, blocks ){
-        const {blocksByHeight, blocksByHash } = state
 
         for (const block of blocks){
-            delete blocksByHeight[block.height]
-            delete blocksByHash[block.bloom.hash]
+            delete state.blocksByHeight[block.height]
+            delete state.blocksByHash[block.bloom.hash]
         }
-        state.blocksByHeight = {...blocksByHeight}
-        state.blocksByHash = {...blocksByHash}
+
     },
 
     setBlock(state, {hash, height, block}){

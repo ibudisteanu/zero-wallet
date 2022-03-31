@@ -18,8 +18,8 @@
             </template>
         </h4>
         <small class="ps-1 fs--1 text-700 d-inline-block">/
-            <router-link :to="`/explorer/asset/${$store.getters.convertBase64ToHex(getAsset.hash)}`" class="currency" v-tooltip.bottom="$store.getters.convertBase64ToHex(getAsset.hash)" >
-                {{getAsset.name}}
+            <router-link :to="`/explorer/asset/${$store.getters.convertBase64ToHex(asset)}`" class="currency" v-tooltip.bottom="$store.getters.convertBase64ToHex(asset)" >
+                {{getAsset ? getAsset.identification : ''}}
             </router-link>
         </small>
     </div>

@@ -34,11 +34,9 @@ export default {
 
         if (!extraInfo.blockchain) return
 
-        const obj = {
-            hashes: {},
-            count: new Decimal(0),
-            ...state.list[publicKey]
-        };
+        const obj = state.list[publicKey] || {}
+        if (!obj.hashes) obj.hashes = {}
+        if (!obj.count) obj.count = new Decimal(0)
 
         if (!extraInfo.blockchain.inserted){ //removed
             obj.count = obj.count.minus(1)

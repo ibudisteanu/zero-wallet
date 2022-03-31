@@ -2,20 +2,26 @@ export default {
 
     setAccount(state, {publicKey, account  }){
         if (account){
-            if (account.accountsExtra)
-                for (let i=0; i < account.accountsExtra.length; i++) {
+            if (account.accountsExtra) {
+                for (let i = 0; i < account.accountsExtra.length; i++) {
                     account.accounts[i].asset = account.accountsExtra[i].asset
                     account.accounts[i].index = account.accountsExtra[i].index
                 }
+                delete account.accountsExtra
+            }
 
-            if (account.plainAccountExtra)
+            if (account.plainAccountExtra) {
                 account.plainAccount.index = account.plainAccountExtra.index
+                delete account.plainAccountExtra
+            }
 
-            if (account.registrationExtra)
+            if (account.registrationExtra) {
                 account.registration.index = account.registrationExtra.index
+                delete account.registrationExtra
+            }
         }
 
-        state.list[publicKey] = account ? {...account} : null
+        state.list[publicKey] = account
     },
 
     removeAccount(state, { publicKey }){

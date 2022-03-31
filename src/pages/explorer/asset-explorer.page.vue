@@ -24,7 +24,7 @@
                     <div class="row pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Identicon</span>
                         <span class="col-7 col-sm-9 text-truncate">
-                            <account-identicon v-if="asset.hash" :hash="asset.hash" size="21" outer-size="7"  />
+                            <identicon v-if="asset.hash" :hash="asset.hash" size="21" outer-size="7" :uri="`/explorer/asset/${$store.getters.convertBase64ToHex(asset.hash)}`"  />
                         </span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
@@ -33,7 +33,7 @@
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Ticker</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{asset.ticker}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{asset.identification}}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Hash</span>
@@ -61,28 +61,18 @@
                     </div>
                     <div class="row pt-2 pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Update Key</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{$store.getters.convertBase64ToHex(asset.updatePublicKey)}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{asset.updatePublicKey}}</span>
                     </div>
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Supply Key</span>
-                        <span class="col-7 col-sm-9 text-truncate">{{$store.getters.convertBase64ToHex(asset.supplyPublicKey)}}</span>
+                        <span class="col-7 col-sm-9 text-truncate">{{asset.supplyPublicKey}}</span>
                     </div>
 
                 </template>
 
             </div>
-        </div>
-
-        <div class="card mb-3" v-if="asset">
-            <div class="card-header bg-light">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <h5 class="mb-0">JSON Asset</h5>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body p-0 fs--1">
-                <textarea class="form-control form-control-sm fs--2" rows="10">{{JSONStringify(asset, null, 2) }}</textarea>
+            <div class="card-footer bg-light g-0 d-block p-3">
+              <loading-button :disabled="!asset" :can-disable="false" @submit="showAssetJSON" text="" icon="fas fa-file" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Show JSON block" />
             </div>
         </div>
 
@@ -94,13 +84,14 @@
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title"
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import AccountIdenticon from "src/components/wallet/account/account-identicon";
+import Identicon from "src/components/utils/identicon";
 import AlertBox from "src/components/utils/alert-box"
 import Decimal from 'decimal.js';
+import LoadingButton from "src/components/utils/loading-button"
 
 export default {
 
-    components: {Layout, LoadingSpinner, AccountIdenticon, AlertBox, LayoutTitle},
+    components: {Layout, LoadingSpinner, Identicon, AlertBox, LayoutTitle, LoadingButton},
 
     data(){
         return{
@@ -150,6 +141,9 @@ export default {
                 this.loaded = true
             }
 
+        },
+        showAssetJSON(){
+          return this.$store.state.page.refTextareaModal.showModal("ASSET JSON", JSONStringify(this.asset, null, 2) )
         },
 
     },

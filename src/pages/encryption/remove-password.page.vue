@@ -24,7 +24,7 @@
                 <alert-box v-if="error" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
                 <div class="text-center">
-                    <loading-button text="Remove password" @submit="handleRemovePassword" icon="fas fa-unlock-alt"  :disabled="password.length === 0" />
+                    <loading-button text="Remove password" @submit="handleRemovePassword" icon="fas fa-unlock-alt"  :disabled="!password.length" />
                 </div>
 
             </div>

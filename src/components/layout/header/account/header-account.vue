@@ -8,12 +8,14 @@
         </div>
 
         <div class="menu" >
-            <header-account-dropdown-menu v-if="menuOpen" @viewMnemonic="viewMnemonic" @showImportAccount="showImportAccount" @showImportPrivateKey="showImportPrivateKey" />
+            <header-account-dropdown-menu v-if="menuOpen" @viewMnemonic="viewMnemonic" @newWallet="newWallet" @importMnemonic="importMnemonic" @viewSeed="viewSeed" @showCreateNewAddress="showCreateNewAddress" @showImportAccount="showImportAccount" @showImportSecretKey="showImportSecretKey" @showImportWallet="showImportWallet" />
         </div>
 
-        <wallet-seed-modal ref="refWalletSeedModal" />
         <import-account-modal ref="refImportAccountModal" />
-        <import-private-key-modal ref="refImportPrivateKeyModal" />
+        <import-secret-key-modal ref="refImportSecretKeyModal" />
+        <create-new-address-modal ref="refCreateNewAddressModal" />
+        <import-mnemonic-modal ref="refImportMnemonicModal" />
+        <import-wallet-modal ref="refImportWalletModal" />
 
     </div>
 
@@ -23,13 +25,17 @@
 
 import HeaderAccountDropdownMenu from "./header-account-dropdown-menu"
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
-import WalletSeedModal from "src/components/wallet/seed/wallet-seed-modal"
 import ImportAccountModal from "src/components/wallet/account/import-account.modal"
-import ImportPrivateKeyModal from "src/components/wallet/account/import-private-key.modal"
+import ImportSecretKeyModal from "src/components/wallet/account/import-secret-key.modal"
+import CreateNewAddressModal from "src/components/wallet/account/create-new-address.modal"
+import UtilsHelper from "src/utils/utils-helper";
+import ImportMnemonicModal from "src/components/wallet/import-mnemonic.modal";
+import ImportWalletModal from "src/components/wallet/import-wallet.modal";
 
 export default {
 
-    components: { HeaderAccountDropdownMenu, AccountIdenticon, WalletSeedModal, ImportAccountModal, ImportPrivateKeyModal },
+    components: { HeaderAccountDropdownMenu, AccountIdenticon, ImportAccountModal, ImportMnemonicModal,
+      ImportSecretKeyModal, CreateNewAddressModal, ImportWalletModal },
 
     data(){
         return {
@@ -56,16 +62,72 @@ export default {
             this.menuOpen = false;
         },
 
-        viewMnemonic(){
-            return this.$refs.refWalletSeedModal.showModal(  );
+        async viewMnemonic(){
+          const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+          if (password === null ) return
+
+          const secret = await PandoraPay.wallet.getWalletMnemonic( password )
+
+          return this.$store.state.page.refSecretModal.showModal(secret, `Secret Phrase (Mnemonic)`, 'DO NOT share these secret words with anyone! These secret words can be used to STEAL YOUR FUNDS FROM ALL YOUR ACCOUNTS');
+        },
+
+        async viewSeed(){
+          const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+          if (password === null ) return
+
+          const secret = await PandoraPay.wallet.getWalletSeed( password )
+
+          return this.$store.state.page.refSecretModal.showModal(secret, `Secret Seed`, 'DO NOT share this secret seed with anyone! This secret seed can be used to STEAL YOUR FUNDS FROM ALL YOUR ACCOUNTS');
         },
 
         showImportAccount(){
             return this.$refs.refImportAccountModal.showModal( );
         },
 
-        showImportPrivateKey(){
-            return this.$refs.refImportPrivateKeyModal.showModal( );
+        showImportSecretKey(){
+            return this.$refs.refImportSecretKeyModal.showModal( );
+        },
+
+        showCreateNewAddress(){
+          return this.$refs.refCreateNewAddressModal.showModal();
+        },
+
+        showImportWallet(){
+          return this.$refs.refImportWalletModal.showModal();
+        },
+
+        async newWallet(){
+
+          try{
+
+            const confirmed = await this.$store.state.page.refConfirmationModal.showModal("Clear existing wallet?", "It will clear your existing wallet and you will get a new wallet!", "warning")
+            if (!confirmed) return
+
+            const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+            if (password === null ) return
+
+            this.$store.state.page.refLoadingModal.showModal();
+            await UtilsHelper.sleep(50 )
+
+            await PandoraPay.wallet.createNewWallet(password)
+            this.$store.dispatch('addToast', {
+              type: 'success',
+              title: `New wallet`,
+              text: `You got a new wallet`,
+            })
+          }catch(err){
+            this.$store.dispatch('addToast', {
+              type: 'error',
+              title: `Error creating a new wallet`,
+              text: `Raised an error ${err.message}`,
+            })
+          }finally{
+            this.$store.state.page.refLoadingModal.closeModal();
+          }
+        },
+
+        async importMnemonic(){
+          this.$refs.refImportMnemonicModal.showModal()
         },
 
     },

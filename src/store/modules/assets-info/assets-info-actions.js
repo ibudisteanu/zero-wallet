@@ -46,30 +46,13 @@ export default {
 
         console.log("start, end", start.toString(), end.toString() )
 
-        let listByHeight = {
-            ...state.listByHeight,
-        }
+        const newAssetsInfo = {}
 
         for (let i = end.minus(1); i.gte(start); i = i.minus(1))
-            if ( !listByHeight[i])
-                listByHeight[i] = await this.dispatch('getAssetInfoByHeight', i)
+            if ( !state.listByHeight[i])
+                newAssetsInfo[i] = await this.dispatch('getAssetInfoByHeight', i)
 
-        listByHeight = {
-            ...state.listByHeight,
-            ...listByHeight,
-        }
-
-        let viewPosition = {start, end}
-        if (state.viewPosition)
-            viewPosition = state.viewPosition
-
-        for (const heightStr in listByHeight){
-            const height = new Decimal(heightStr)
-            if ( height.gt( viewPosition.end ) || height.lt( viewPosition.start.minus(consts.assetsInfoPagination) ) )
-                delete(listByHeight[height])
-        }
-
-        commit('setAssetsInfo', listByHeight )
+        commit('setAssetsInfo', {newAssetsInfo, start, end} )
     },
 
 }

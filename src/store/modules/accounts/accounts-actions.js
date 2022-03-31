@@ -120,9 +120,9 @@ export default {
         return Promise.all(promises)
     },
 
-    accountUpdateNotification( {state, dispatch, commit, getters}, {publicKey, type, data, extraInfo }){
+    async accountUpdateNotification( {state, dispatch, commit, getters}, {publicKey, type, data, extraInfo }){
 
-        let account = { ... ( state.list[publicKey] || {} ) }
+        let account = state.list[publicKey] || {}
 
         if (type === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT){
 
@@ -175,6 +175,10 @@ export default {
 
         if (!Object.keys(account).length)
             account = null
+
+        if (account && account.accounts)
+            for (let i = 0; i < account.accounts.length; i++)
+                await dispatch('getAssetByHash', account.accounts[i].asset )
 
         commit('setAccount', {publicKey, account})
 

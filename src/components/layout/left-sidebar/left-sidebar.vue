@@ -29,57 +29,6 @@
                     </li>
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <router-link to="#" class="nav-link" @click.native="e => toggleNavElement( e,'staking')">
-                                <i class="fas fa-piggy-bank"></i>
-                                <span class="nav-link-text px-1">Staking</span>
-                                <i :class="`nav-chevron fas fa-chevron-${navElementsShown['staking'] ? 'up' : 'down' }`"></i>
-                            </router-link>
-                        </div>
-                        <ul :class="`nav collapse ${navElementsShown['staking'] ? 'show':''}`">
-                            <li class="nav-item">
-                                <router-link :class="`nav-link ${route.indexOf('/stakes') === 0 ? 'active' : ''} nav-link`" to="/stakes" @click.native="disableNavbarMenu">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-shopping-basket" />
-                                        <span class="nav-link-text ps-1">Stakes</span>
-                                    </div>
-                                </router-link>
-                            </li>
-                            <li class="nav-item">
-                                <router-link :class="`nav-link ${route.indexOf('/txs/unstake') === 0 ? 'active' : ''} nav-link`" to="/txs/unstake" @click.native="disableNavbarMenu">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-unlink" />
-                                        <span class="nav-link-text ps-1">Unstake</span>
-                                    </div>
-                                </router-link>
-                            </li>
-                            <li class="nav-item">
-                                <router-link :class="`nav-link ${route.indexOf('/txs/update-delegate') === 0 ? 'active' : ''} nav-link`" to="/txs/update-delegate" @click.native="disableNavbarMenu">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-marker" />
-                                        <span class="nav-link-text ps-1">Update delegate</span>
-                                    </div>
-                                </router-link>
-                            </li>
-                            <li class="nav-item">
-                                <router-link :class="`nav-link ${route.indexOf('/txs/private/delegate') === 0 ? 'active' : ''} nav-link`" to="/txs/private/delegate" @click.native="disableNavbarMenu">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-seedling"></i>
-                                        <span class="nav-link-text ps-1">Private Delegate</span>
-                                    </div>
-                                </router-link>
-                            </li>
-                            <li class="nav-item">
-                                <router-link :class="`nav-link ${route.indexOf('/txs/private/claim') === 0 ? 'active' : ''} nav-link`" to="/txs/private/claim" @click.native="disableNavbarMenu">
-                                    <div class="d-flex align-items-center">
-                                        <i class="fas fa-search-dollar" />
-                                        <span class="nav-link-text ps-1">Private Claim</span>
-                                    </div>
-                                </router-link>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="nav-item">
-                        <div class="d-flex align-items-center">
                             <router-link :disabled="!isWalletLogged" to="/txs/private/send" :class="`${ route === '/txs/private/send' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
                                 <i class="fas fa-money-check-alt"></i>
                                 <span class="nav-link-text ps-1">Private Transfer</span>

@@ -6,44 +6,36 @@ export default {
     },
 
     deleteTransactionsPreview(state, transactions) {
-
-        const txsByHash = {...state.txsByHash}
-
         for (const tx of transactions)
-            delete txsByHash[tx.hash]
-
-        state.txsByHash = txsByHash
+            delete state.txsByHash[tx.hash]
     },
 
     setTransactionsPreview( state, {txs, overwrite = true } ) {
         const timestamp = new Date().getTime()
-        const txsByHash = {...state.txsByHash}
 
         for (const tx of txs){
             tx.__timestampUsed = timestamp
-            if (overwrite || !txsByHash[tx.hash] )
-                txsByHash[tx.hash] = tx
+            if (overwrite || !state.txsByHash[tx.hash] )
+                state.txsByHash[tx.hash] = tx
         }
 
-        state.txsByHash = txsByHash
     },
 
     updateViewTransactionsPreviewHashes(state, {txsHashes, insert} ) {
         if (!txsHashes || !txsHashes.length) return
-        const viewTxsHashes = {...state.viewTxsHashes}
 
         for (const txHash of txsHashes ){
-            if (insert) viewTxsHashes[txHash] = true
-            else delete viewTxsHashes[txHash]
+            if (insert) state.viewTxsHashes[txHash] = true
+            else delete state.viewTxsHashes[txHash]
         }
-        state.viewTxsHashes = viewTxsHashes
+
     },
 
     updateTxPreviewNotification(state, {txHash, extraInfo }) {
 
         if (!state.txsByHash[txHash]) return
 
-        const tx = {...state.txsByHash[txHash]}
+        const tx = state.txsByHash[txHash]
 
         if (extraInfo.blockchain) {
             if (extraInfo.blockchain.inserted) tx.__height = extraInfo.blockchain.height
@@ -61,7 +53,6 @@ export default {
             }
         }
 
-        state.txsByHash[txHash] = tx
     },
 
 }

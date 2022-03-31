@@ -5,14 +5,12 @@ export default {
     },
 
     updatePendingList(state, {publicKey, txHash, inserted }){
-        const map = {...state.list[publicKey]}
 
         if (!inserted)
-            delete map[txHash]
+            delete state.list[publicKey][txHash]
         else
-            map[txHash] = true
+            state.list[publicKey][txHash] = true
 
-        state.list[publicKey] = map
     },
 
 }

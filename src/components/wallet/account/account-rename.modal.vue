@@ -17,8 +17,6 @@
         </template>
 
         <template v-slot:footer>
-            <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
-
             <button class="btn btn-falcon-primary" type="button" @click="handleRename">
                 <i class="fas fa-save"></i> Rename Account
             </button>
@@ -42,7 +40,6 @@ export default {
 
     data() {
         return {
-            error: '',
             account: null,
             title: "",
             newName: "",
@@ -53,7 +50,7 @@ export default {
 
         async showModal(account) {
 
-            Object.assign(this.$data, this.$options.data());
+            Object.assign(this.$data, this.$options.data.apply(this))
 
             this.account = account;
             this.title = account.name;
