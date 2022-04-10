@@ -16,14 +16,14 @@
                     <span>WEB: {{version}} WASM: {{buildVersion}} </span>
                 </div>
                 <div class="col-12 col-auto text-center">
-                    <span>2019 - 2022 <a href="https://PandoraPay.org" target="_blank">{{entity}}</a> </span>
+                    <span>2019 - 2022 <a :href="website" target="_blank">{{entity}}</a> </span>
                 </div>
             </div>
 
         </div>
 
 
-        <div class="fixed-button pointer " @click="handleShowTestnetFaucer" v-tooltip.top="`Testnet Faucet`">
+        <div v-if="!$store.getters.isTestnet" class="fixed-button pointer " @click="handleShowTestnetFaucet" v-tooltip.top="`Testnet Faucet`">
             <div class="rounded-fixed-btn btn-secondary"><i class="fas fa-coins"></i></div>
         </div>
 
@@ -36,8 +36,12 @@ import consts from 'consts/consts';
 export default {
 
     computed:{
+
         entity(){
             return consts.entity;
+        },
+        website(){
+            return consts.website
         },
 
         blockHeight(){
@@ -67,7 +71,7 @@ export default {
     },
 
     methods:{
-        handleShowTestnetFaucer(){
+        handleShowTestnetFaucet(){
             this.$store.state.page.refTestnetFaucetModal.showModal()
         },
     }

@@ -3,6 +3,7 @@ export default {
     name: "PandoraPay",
     title: 'PandoraPay',
     entity: 'PandoraPay',
+    website: 'https://pandorapay.org/',
 
     assetsInfoPagination: 10,
     blocksInfoPagination: 10,
