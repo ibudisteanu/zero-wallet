@@ -14,15 +14,15 @@ self.onmessage = async function(event) {
             const go = new Go();
             go.argv = data.goArgv
 
-            self.postMessage({ type: "initialize-answer", status: "PandoraPay WASM creating...", })
+            self.postMessage({ type: "initialize-answer", status: "WASM creating...", })
 
             const result = await WebAssembly.instantiate( data.data, go.importObject)
 
-            self.postMessage({ type: "initialize-answer", status: "PandoraPay WASM executing...", })
+            self.postMessage({ type: "initialize-answer", status: "WASM executing...", })
 
             go.run(result.instance)
 
-            self.postMessage({ type: "initialize-answer", status: "PandoraPay WASM executed", })
+            self.postMessage({ type: "initialize-answer", status: "WASM executed", })
 
             const transferable = []
             const PandoraPayClone = Helper.ProcessObject( PandoraPay, transferable )
