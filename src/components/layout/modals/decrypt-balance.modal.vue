@@ -112,6 +112,7 @@ export default {
             if (this.closed) return
 
             const decryptedData = await PandoraPayHelper.wallet.decryptBalance(MyTextEncode(JSONStringify( {
+                publicKey: this.publicKey,
                 privateKey: this.privateKey,
                 previousValue: 0,
                 balance: this.balance,
