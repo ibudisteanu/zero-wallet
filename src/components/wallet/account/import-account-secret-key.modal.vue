@@ -1,6 +1,6 @@
 <template>
 
-    <modal ref="modal" title="Import Secret Key" content-class="">
+    <modal ref="modal" title="Import Address Secret Key" content-class="">
 
         <template v-slot:body>
 
@@ -73,7 +73,7 @@ export default {
             try{
 
                 if (oldTab === 1 && value === 2)
-                    await this.handleImportSecretKey()
+                    await this.handleImportAccountSecretKey()
 
             }catch(err) {
                 reject(err)
@@ -91,7 +91,7 @@ export default {
             return this.$refs.modal.closeModal();
         },
 
-        async handleImportSecretKey(){
+        async handleImportAccountSecretKey(){
 
             try{
 

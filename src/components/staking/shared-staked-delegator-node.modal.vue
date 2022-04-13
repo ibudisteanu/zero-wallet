@@ -30,6 +30,11 @@
                         <label class="form-label">Delegates Already: <strong>{{nodeInfo.delegatesCount}}</strong></label> <br/>
                         <label class="form-label">Delegates SLOTS: <strong>{{nodeInfo.maximumAllowed.minus( nodeInfo.delegatesCount ) }}</strong></label> <br/>
 
+                        <div class="form-check">
+                          <input class="form-check-input" id="accepted" type="checkbox" v-model="accepted" />
+                          <label class="form-check-label" for="accepted">This option requires your account to have a <strong>spend key</strong> assigned to your address. If you don't have one set and registered on the blockchain, the delegator can steal your funds from this address.</label>
+                        </div>
+
                     </template>
 
                 </wizard>
@@ -60,6 +65,8 @@ export default {
             selectedDelegateNode: null,
 
             nodeInfo: null,
+
+            accepted: false,
 
             output: null,
         }
@@ -153,6 +160,9 @@ export default {
         async handleNotifyDelegator(){
 
             if (!this.nodeInfo) throw "NodeInfo was not assigned"
+
+            if (!this.accepted) throw "You need to accept the condition"
+            if (!this.account || !this.account.registration || !this.account.registration.spendPublicKey.length) throw "You account doesn't have Spend Public Key assigned. It is not safe to share for stake"
 
             const password = await this.$store.state.page.refWalletPasswordModal.showModal()
             if (password === null ) return
