@@ -91,7 +91,7 @@ export default {
                     //let download the
                     setTimeout(async ()=>{
 
-                        const integrationHelper = new PandoraPayWebworkerIntegration("Helper", "wasm/PandoraPay-wallet-helper.wasm", "workers/PandoraPay-helper-webworker.js", (status)=>{
+                        const integrationHelper = new PandoraPayWebworkerIntegration("PandoraPayHelper", "wasm/PandoraPay-wallet-helper.wasm", "workers/PandoraPay-helper-webworker.js", (status)=>{
                             console.log("Helper status:", status)
                         }, async ()=>{
 
