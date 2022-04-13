@@ -33,10 +33,9 @@
                     <span @click="handleViewAccount" v-tooltip.left="'View account'" class="pointer dropdown-item "> <i class="fas fa-hand-pointer "></i> View account </span>
                     <span @click="handleCreateNewAddress" v-tooltip.left="'Create a new Address'" class="pointer dropdown-item fw-normal "> <i class="fas fa-plus"></i> Create Account </span>
                     <span @click="handleImportAccount" v-tooltip.left="'Import an address from json file'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i> Import Account (json)</span>
-                    <span @click="handleImportSecretKey" v-tooltip.left="'Import an address from Secret Key'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i> Import Secret Key</span>
+                    <span @click="handleImportAccountSecretKey" v-tooltip.left="'Import an address from Secret Key'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i> Import Account Secret Key</span>
                     <div class="dropdown-divider"></div>
                     <span @click="handleViewMnemonic" v-tooltip.left="'Show your Secret Words (Mnemonic)'" class="pointer dropdown-item fw-normal "><i class="fas fa-key"></i>View Secret Phrase</span>
-                    <span @click="handleViewSeed" v-tooltip.left="'Show your Secret Seed'" class="pointer dropdown-item fw-normal "><i class="fas fa-key"></i>View Secret Seed</span>
                     <div class="dropdown-divider"></div>
                     <span @click="handleNewWallet" v-tooltip.left="'Clear & create new wallet'" class="pointer dropdown-item fw-normal "><i class="fas fa-trash"></i>New Wallet</span>
                     <span @click="handleImportMnemonic" v-tooltip.left="'Clear wallet & import a new wallet from Secret Words (Mnemonic)'" class="pointer dropdown-item fw-normal "><i class="fas fa-file-import"></i>Import Secret Phrase</span>
@@ -146,8 +145,8 @@ export default {
             return this.$emit('showImportAccount');
         },
 
-        handleImportSecretKey(){
-            return this.$emit('showImportSecretKey');
+        handleImportAccountSecretKey(){
+            return this.$emit('showImportAccountSecretKey');
         },
 
         async handleExportWallet(){
