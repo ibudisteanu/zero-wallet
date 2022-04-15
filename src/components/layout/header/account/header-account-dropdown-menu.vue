@@ -22,7 +22,7 @@
                                     <span class="fw-normal text-truncate">{{$store.getters.addressDisplay(walletAddr)}} </span>
                                 </div>
                                 <div class="account-tools">
-                                    <span class="fw-light" >{{ (walletAddr.seedIndex !== undefined) ? '#'+walletAddr.seedIndex : '&nbsp;'}}</span>
+                                    <span class="fw-light" >{{ walletAddr.isImported ?  '&nbsp;'  : '#'+walletAddr.seedIndex }}</span>
                                     <i class="fas fa-copy pointer " v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( walletAddr)" />
                                 </div>
                             </div>
@@ -109,10 +109,6 @@ export default {
 
         handleViewMnemonic(){
             return this.$emit('viewMnemonic')
-        },
-
-        handleViewSeed(){
-          return this.$emit('viewSeed')
         },
 
         handleNewWallet(){
