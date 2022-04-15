@@ -74,7 +74,7 @@ export default {
 
             this.isDownloading = true;
 
-            const integration = new PandoraPayWebworkerIntegration( consts.name, "wasm/PandoraPay-wallet-main.wasm", "workers/PandoraPay-webworker.js",(status)=>{
+            const integration = new PandoraPayWebworkerIntegration( "PandoraPay", "wasm/PandoraPay-wallet-main.wasm?"+FILES_VERSIONING, "workers/PandoraPay-webworker.js",(status)=>{
                 this.progressStatus = status
             }, async ()=>{
 
@@ -91,7 +91,7 @@ export default {
                     //let download the
                     setTimeout(async ()=>{
 
-                        const integrationHelper = new PandoraPayWebworkerIntegration("PandoraPayHelper", "wasm/PandoraPay-wallet-helper.wasm", "workers/PandoraPay-helper-webworker.js", (status)=>{
+                        const integrationHelper = new PandoraPayWebworkerIntegration("PandoraPayHelper", "wasm/PandoraPay-wallet-helper.wasm?"+FILES_VERSIONING, "workers/PandoraPay-helper-webworker.js", (status)=>{
                             console.log("Helper status:", status)
                         }, async ()=>{
 
