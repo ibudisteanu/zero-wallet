@@ -106,9 +106,9 @@ export default {
 
                             resolver(true)
 
-                            const balanceDecoderTableSize = Number.parseInt( localStorage.getItem('balanceDecoderTableSize') || '18');
+                            const balanceDecryptorTableSize = Number.parseInt( localStorage.getItem('balanceDecryptorTableSize') || '18');
 
-                            const promise = PandoraPayHelper.wallet.initializeBalanceDecryptor( 2**balanceDecoderTableSize, status =>{
+                            const promise = PandoraPayHelper.wallet.initializeBalanceDecryptor( 2**balanceDecryptorTableSize, status =>{
                                 if (PandoraPayHelper.balanceDecoderCallback) PandoraPayHelper.balanceDecoderCallback(status)
                             })
 
