@@ -8,7 +8,7 @@
         </div>
 
         <div class="menu" >
-            <header-account-dropdown-menu v-if="menuOpen" @viewMnemonic="viewMnemonic" @newWallet="newWallet" @importMnemonic="importMnemonic" @viewSeed="viewSeed" @showCreateNewAddress="showCreateNewAddress" @showImportAccount="showImportAccount" @showImportAccountSecretKey="showImportAccountSecretKey" @showImportWallet="showImportWallet" />
+            <header-account-dropdown-menu v-if="menuOpen" @viewMnemonic="viewMnemonic" @newWallet="newWallet" @importMnemonic="importMnemonic" @showCreateNewAddress="showCreateNewAddress" @showImportAccount="showImportAccount" @showImportAccountSecretKey="showImportAccountSecretKey" @showImportWallet="showImportWallet" />
         </div>
 
         <import-account-modal ref="refImportAccountModal" />
