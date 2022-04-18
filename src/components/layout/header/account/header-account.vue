@@ -8,11 +8,11 @@
         </div>
 
         <div class="menu" >
-            <header-account-dropdown-menu v-if="menuOpen" @viewMnemonic="viewMnemonic" @newWallet="newWallet" @importMnemonic="importMnemonic" @viewSeed="viewSeed" @showCreateNewAddress="showCreateNewAddress" @showImportAccount="showImportAccount" @showImportSecretKey="showImportSecretKey" @showImportWallet="showImportWallet" />
+            <header-account-dropdown-menu v-if="menuOpen" @viewMnemonic="viewMnemonic" @newWallet="newWallet" @importMnemonic="importMnemonic" @showCreateNewAddress="showCreateNewAddress" @showImportAccount="showImportAccount" @showImportAccountSecretKey="showImportAccountSecretKey" @showImportWallet="showImportWallet" />
         </div>
 
         <import-account-modal ref="refImportAccountModal" />
-        <import-secret-key-modal ref="refImportSecretKeyModal" />
+        <import-account-secret-key-modal ref="refImportAccountSecretKeyModal" />
         <create-new-address-modal ref="refCreateNewAddressModal" />
         <import-mnemonic-modal ref="refImportMnemonicModal" />
         <import-wallet-modal ref="refImportWalletModal" />
@@ -26,7 +26,7 @@
 import HeaderAccountDropdownMenu from "./header-account-dropdown-menu"
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
 import ImportAccountModal from "src/components/wallet/account/import-account.modal"
-import ImportSecretKeyModal from "src/components/wallet/account/import-secret-key.modal"
+import ImportAccountSecretKeyModal from "src/components/wallet/account/import-account-secret-key.modal"
 import CreateNewAddressModal from "src/components/wallet/account/create-new-address.modal"
 import UtilsHelper from "src/utils/utils-helper";
 import ImportMnemonicModal from "src/components/wallet/import-mnemonic.modal";
@@ -35,7 +35,7 @@ import ImportWalletModal from "src/components/wallet/import-wallet.modal";
 export default {
 
     components: { HeaderAccountDropdownMenu, AccountIdenticon, ImportAccountModal, ImportMnemonicModal,
-      ImportSecretKeyModal, CreateNewAddressModal, ImportWalletModal },
+      ImportAccountSecretKeyModal, CreateNewAddressModal, ImportWalletModal },
 
     data(){
         return {
@@ -71,21 +71,12 @@ export default {
           return this.$store.state.page.refSecretModal.showModal(secret, `Secret Phrase (Mnemonic)`, 'DO NOT share these secret words with anyone! These secret words can be used to STEAL YOUR FUNDS FROM ALL YOUR ACCOUNTS');
         },
 
-        async viewSeed(){
-          const password = await this.$store.state.page.refWalletPasswordModal.showModal()
-          if (password === null ) return
-
-          const secret = await PandoraPay.wallet.getWalletSeed( password )
-
-          return this.$store.state.page.refSecretModal.showModal(secret, `Secret Seed`, 'DO NOT share this secret seed with anyone! This secret seed can be used to STEAL YOUR FUNDS FROM ALL YOUR ACCOUNTS');
-        },
-
         showImportAccount(){
             return this.$refs.refImportAccountModal.showModal( );
         },
 
-        showImportSecretKey(){
-            return this.$refs.refImportSecretKeyModal.showModal( );
+        showImportAccountSecretKey(){
+            return this.$refs.refImportAccountSecretKeyModal.showModal( );
         },
 
         showCreateNewAddress(){

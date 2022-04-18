@@ -4,7 +4,7 @@
         <div class="d-flex align-items-center">
             <router-link to="/" class="navbar-brand">
                 <div class="d-flex align-items-center py-3">
-                    <img class="me-2 logo" :src="require('src/assets/pandora-pay-logo-inline-crop.png').default" alt="PandoraPay">
+                    <img class="me-2 logo" :src="require('src/assets/pandora-pay-logo-inline-crop.png').default" :alt="name">
                 </div>
             </router-link>
         </div>
@@ -151,6 +151,7 @@
 </template>
 
 <script>
+import consts from "consts/consts"
 
 export default {
 
@@ -163,8 +164,8 @@ export default {
 
     computed:{
 
-        sendUrl(){
-            if (!this.walletAddress) return '';
+        name(){
+          return consts.name
         },
 
         encrypted(){

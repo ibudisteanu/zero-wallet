@@ -4,7 +4,7 @@ export default {
 
     state: {
         dark: true,
-        balanceDecoderTableSize: 18,
+        balanceDecryptorTableSize: 18,
         mobile: false,
         tablet: false,
     },

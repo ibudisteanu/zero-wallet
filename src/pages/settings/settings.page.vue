@@ -6,13 +6,24 @@
         <div class="card overflow-hidden">
             <div class="card-header card-header audience-chart-header p-0 bg-light scrollbar-overlay ">
                 <ul class="nav nav-tabs border-0 chart-tab flex-nowrap" >
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link mb-0 active" >
+                    <li class="nav-item" role="presentation" @click="tab='balanceDecryptor'">
+                        <a :class="`nav-link mb-0 ${tab === 'balanceDecryptor' ? 'active' : ''}`">
                             <div class="audience-tab-item p-2 pe-4">
-                                <h6 class="text-800 fs--2 text-nowrap">Balance decoder</h6>
+                                <h6 class="text-800 fs--2 text-nowrap">Balance Decryptor</h6>
                                 <h5 class="text-800 align-middle">
                                     <i class="fas fa-laptop-code"></i>
-                                    Decoder
+                                    Decryptor
+                                </h5>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="nav-item" role="presentation" @click="tab='expert'">
+                        <a :class="`nav-link mb-0 ${tab === 'expert' ? 'active' : ''}`">
+                            <div class="audience-tab-item p-2 pe-4">
+                                <h6 class="text-800 fs--2 text-nowrap">Expert</h6>
+                                <h5 class="text-800 align-middle">
+                                    <i class="fas fa-laptop-code"></i>
+                                    Expert settings
                                 </h5>
                             </div>
                         </a>
@@ -21,15 +32,25 @@
             </div>
             <div class="card-body">
                 <div class="tab-content">
-                    <div class="tab-pane active">
+                    <div :class="`tab-pane ${tab === 'balanceDecryptor' ? 'active' : ''}`">
                         <div class="row pt-2">
                             <div class="col-12 col-sm-6">
-                                <label>Precomputed Table size: {{balanceDecoderTableSize}} <i class="fas fa-question" v-tooltip.bottom="'Balance Decoder Precomputed Init Table'" /> </label> <br/>
-                                <label>Scanner Performance: {{balanceDecoderPerformance[balanceDecoderTableSize]}}/s <i class="fas fa-question" v-tooltip.bottom="'Balance Decoder performance using this precomputed table'" /> </label>
-                                <input class="form-range" type="range" min="16" max="22" v-model="balanceDecoderTableSize" />
-                                <small :class="`fw-semi-bold rounded-pill badge-soft-${balanceDecoderTableSize >= 20 ? 'danger' : 'warning'} p-1`">
-                                    <i class="fas fa-exclamation-triangle" /> High will require {{formatMilliseconds( balanceDecoderTime[balanceDecoderTableSize] *1000 )}} initialize (bootstrap) time.
+                                <label>Precomputed Table size: {{balanceDecryptorTableSize}} <i class="fas fa-question" v-tooltip.bottom="'Balance Decryptor Precomputed Init Table'" /> </label> <br/>
+                                <label>Scanner Performance: {{balanceDecryptorPerformance[balanceDecryptorTableSize]}}/s <i class="fas fa-question" v-tooltip.bottom="'Balance Decryptor performance using this precomputed table'" /> </label>
+                                <input class="form-range" type="range" min="16" max="22" v-model="balanceDecryptorTableSize" />
+                                <small :class="`fw-semi-bold rounded-pill badge-soft-${balanceDecryptorTableSize >= 20 ? 'danger' : 'warning'} p-1`">
+                                    <i class="fas fa-exclamation-triangle" /> High will require {{formatMilliseconds( balanceDecryptorTime[balanceDecryptorTableSize] *1000 )}} initialize (bootstrap) time.
                                 </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div :class="`tab-pane ${tab === 'expert' ? 'active' : ''}`">
+                        <div class="row pt-2">
+                            <div class="col-12 col-sm-6">
+                                <div>
+                                  <input class="form-check-input" id="legacyNonHardening" type="checkbox" v-model="legacyNonHardening" @change="changeLegacyNonHardening" />
+                                  <label class="form-check-label" for="legacyNonHardening">Legacy Non Hardening</label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -67,12 +88,14 @@ export default {
             error: "",
             status: "",
             info: "",
-            balanceDecoderTableSize: 18,
+            balanceDecryptorTableSize: 18,
+            tab: "balanceDecryptor",
+            legacyNonHardening: false,
         }
     },
 
     computed:{
-        balanceDecoderTime(){
+        balanceDecryptorTime(){
             return {
                 16: 8,
                 17: 12,
@@ -83,7 +106,7 @@ export default {
                 22: 600,
             }
         },
-        balanceDecoderPerformance(){
+        balanceDecryptorPerformance(){
             return {
                 16: 125,
                 17: 250,
@@ -102,20 +125,24 @@ export default {
         handleSave(resolver){
             try{
                 this.status = ""
-                this.$store.commit('setBalanceDecoderTableSize', this.balanceDecoderTableSize)
-                this.status = "Balance Decoder table stored"
+                this.$store.commit('setBalanceDecryptorTableSize', this.balanceDecryptorTableSize)
+                this.status = "Balance Decryptor table stored"
                 this.info = "Restart is required to have an effect"
             }catch(err) {
                 this.error = err.toString()
             }finally{
                 resolver()
             }
-        }
+        },
+
+        changeLegacyNonHardening(){
+          PandoraPay.wallet.manager.setWalletNonHardening(this.legacyNonHardening)
+        },
 
     },
 
     mounted(){
-        this.balanceDecoderTableSize = this.$store.state.settings.balanceDecoderTableSize
+        this.balanceDecryptorTableSize = this.$store.state.settings.balanceDecryptorTableSize
     }
 
 }
