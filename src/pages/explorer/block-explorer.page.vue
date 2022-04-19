@@ -155,7 +155,7 @@ export default {
             }
         },
         hash(){
-            if (this.query && this.query.length === 64) return Buffer.from(this.query, "hex").toString("base64")
+            if (this.query && this.query.length === PandoraPay.cryptography.HASH_SIZE) return Buffer.from(this.query, "hex").toString("base64")
         },
         blk(){
             if (this.height )

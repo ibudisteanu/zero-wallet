@@ -202,12 +202,13 @@ export default {
 
 <style scoped>
 
-    .dropdown-menu-notification{
-        min-width: 16.4rem;
+    .dropdown-menu{
+      margin-top: 10px;
+      right: -2.5625rem !important;
     }
 
-    .navbar .dropdown-menu.dropdown-menu-end{
-        right: -2.5625rem
+    .dropdown-menu-notification{
+        min-width: 16.4rem;
     }
 
     .notification{
