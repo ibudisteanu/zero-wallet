@@ -106,4 +106,13 @@ typings/
 
 
 dist/build/assets
+dist/build/wasm
+dist/build/workers
+dist/build/.html
+dist/build/*.js
+
 dist/dev/assets
+dist/dev/wasm
+dist/dev/workers
+dist/dev/.html
+dist/dev/*.js

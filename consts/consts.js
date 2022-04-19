@@ -1,4 +1,4 @@
-export default {
+module.exports = {
 
     name: "PandoraPay",
     title: 'PandoraPay',
@@ -17,5 +17,10 @@ export default {
         '--consensus=wallet',
         '--tcp-max-clients=1'
     ],
+
+    webpage:{
+        title: "PandoraPay",
+        description: "PandoraPay",
+    },
 
 }
