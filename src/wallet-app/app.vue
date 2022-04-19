@@ -88,6 +88,8 @@ export default {
 
 
                     this.readWallet()
+
+                    setTimeout(PandoraPayHelperLoader, 1000)
                 }
 
             if (initialized) {

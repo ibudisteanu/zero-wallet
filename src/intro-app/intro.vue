@@ -83,54 +83,57 @@ export default {
                 PandoraPayWallet.loadWallet()
 
 
+
+                let PandoraPayHelperPromiseResolved = false
                 global.PandoraPayHelperPromise = new Promise((resolver)=>{
 
                     //for debugging only
                     //return resolver(true)
 
-                    //let download the
-                    setTimeout(async ()=>{
+                    window.PandoraPayHelperLoader = async function(){
 
-                        const integrationHelper = new PandoraPayWebworkerIntegration("PandoraPayHelper", "wasm/PandoraPay-wallet-helper.wasm?"+FILES_VERSIONING, "workers/PandoraPay-helper-webworker.js", (status)=>{
-                            console.log("Helper status:", status)
-                        }, async ()=>{
+                      if (PandoraPayHelperPromiseResolved) return //already resolved
+                      PandoraPayHelperPromiseResolved = true
 
-                            let promiseDecoderResolve, promiseDecoderReject
-                            PandoraPayHelper.promiseDecoder = new Promise((resolve, reject)=>{
-                                promiseDecoderResolve = resolve
-                                promiseDecoderReject = reject
-                            })
+                      const integrationHelper = new PandoraPayWebworkerIntegration("PandoraPayHelper", "wasm/PandoraPay-wallet-helper.wasm?"+FILES_VERSIONING, "workers/PandoraPay-helper-webworker.js", (status)=>{
+                        console.log("Helper status:", status)
+                      }, async ()=>{
 
-                            await PandoraPayHelper.helloPandoraHelper()
-                            console.log("Helper WASM is working")
-
-                            resolver(true)
-
-                            const balanceDecryptorTableSize = Number.parseInt( localStorage.getItem('balanceDecryptorTableSize') || '18');
-
-                            const promise = PandoraPayHelper.wallet.initializeBalanceDecryptor( 2**balanceDecryptorTableSize, status =>{
-                                if (PandoraPayHelper.balanceDecoderCallback) PandoraPayHelper.balanceDecoderCallback(status)
-                            })
-
-                            promise
-                                .then( answ => promiseDecoderResolve(answ) )
-                                .catch( err => promiseDecoderReject(err) )
-
-                            await promise
-                        } )
-
-                        let lastSize = 0
-                        const r = await integrationHelper.downloadWasm((loaded, total)=>{
-                            if (loaded - lastSize > 5*1024){
-                                lastSize = loaded
-                                console.log( 'WASM: ' + formatLoadedSize(loaded, total ) )
-                            }
+                        let promiseDecoderResolve, promiseDecoderReject
+                        PandoraPayHelper.promiseDecoder = new Promise((resolve, reject)=>{
+                          promiseDecoderResolve = resolve
+                          promiseDecoderReject = reject
                         })
-                        const data = await r.arrayBuffer()
-                        integrationHelper.createWorker()
-                        integrationHelper.initialize(data)
 
-                    }, 100)
+                        await PandoraPayHelper.helloPandoraHelper()
+                        console.log("Helper WASM is working")
+
+                        resolver(true)
+
+                        const balanceDecryptorTableSize = Number.parseInt( localStorage.getItem('balanceDecryptorTableSize') || '18');
+
+                        const promise = PandoraPayHelper.wallet.initializeBalanceDecryptor( 2**balanceDecryptorTableSize, status =>{
+                          if (PandoraPayHelper.balanceDecoderCallback) PandoraPayHelper.balanceDecoderCallback(status)
+                        })
+
+                        promise
+                            .then( answ => promiseDecoderResolve(answ) )
+                            .catch( err => promiseDecoderReject(err) )
+
+                        await promise
+                      } )
+
+                      let lastSize = 0
+                      const r = await integrationHelper.downloadWasm((loaded, total)=>{
+                        if (loaded - lastSize > 5*1024){
+                          lastSize = loaded
+                          console.log( 'WASM: ' + formatLoadedSize(loaded, total ) )
+                        }
+                      })
+                      const data = await r.arrayBuffer()
+                      integrationHelper.createWorker()
+                      integrationHelper.initialize(data)
+                    }
 
                 })
 
