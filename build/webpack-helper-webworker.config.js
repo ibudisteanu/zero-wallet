@@ -3,18 +3,21 @@ const base = require('./webpack.base.config')
 const merge = require('webpack-merge')
 const path = require('path')
 
-module.exports = (env, argv) => merge( base(env, argv), {
-    target: 'web',
-    mode: 'production',
+module.exports = (env, argv) => {
 
-    //define entry point
-    entry: {
-        app: "./src/webworkers/pandorapay-helper-webworker/pandorapay-helper-webworker.js",
-    },
+    const isProd = argv.mode === "production"
 
-    output: {
-        path: path.resolve(__dirname, "./../dist/build/workers"),
-        filename: "PandoraPay-helper-webworker.js"
-    },
+    return merge( base(env, argv), {
 
-});
+        //define entry point
+        entry: {
+            app: "./src/webworkers/pandorapay-helper-webworker/pandorapay-helper-webworker.js",
+        },
+
+        output: {
+            path: path.resolve(__dirname, `./../dist/${isProd ? 'build' : 'dev'}/workers`),
+            filename: "PandoraPay-helper-webworker.js"
+        },
+
+    });
+}
