@@ -18,9 +18,4 @@ module.exports = {
         '--tcp-max-clients=1'
     ],
 
-    webpage:{
-        title: "PandoraPay",
-        description: "PandoraPay",
-    },
-
 }

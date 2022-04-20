@@ -15,6 +15,8 @@ module.exports = (env, argv) => {
     const isAnalyze = process.argv.includes('--analyzer');
 
     return {
+        target: 'web',
+
         mode: isProd ? 'production' : 'development',
         //define entry point
         devtool: isProd ? false : 'eval-cheap-module-source-map',

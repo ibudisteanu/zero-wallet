@@ -7,7 +7,6 @@ module.exports = (env, argv) => {
     const isProd = argv.mode === "production"
 
     return merge( base(env, argv), {
-        target: 'web',
 
         //define entry point
         entry: {

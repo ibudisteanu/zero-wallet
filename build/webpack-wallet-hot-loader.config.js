@@ -12,7 +12,6 @@ module.exports = (env, argv) => merge( base(env, argv), {
     ],
 
     output: {
-        filename: "Wallet-User-Interface-dev.js"
     },
 
     devServer: {
