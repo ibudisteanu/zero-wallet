@@ -41,8 +41,14 @@ export default {
         if (hex.length === PandoraPay.config.coins.ASSET_LENGTH)
           return this.$router.push('/explorer/asset/'+this.search)
 
-        if (hex.length === PandoraPay.cryptography.HASH_SIZE)
-          return this.$router.push('/explorer/tx/'+this.search)
+        if (hex.length === PandoraPay.cryptography.HASH_SIZE) {
+
+          const exists = await PandoraPay.network.getNetworkBlockExists( MyTextEncode(JSONStringify({ hash: hex.toString('base64') } ) ) )
+          if (exists)
+            return this.$router.push('/explorer/block/' + this.search)
+
+          return this.$router.push('/explorer/tx/' + this.search)
+        }
 
       }catch(err){
 
