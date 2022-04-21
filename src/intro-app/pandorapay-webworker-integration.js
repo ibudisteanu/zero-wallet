@@ -17,7 +17,7 @@ export default class PandorapayWebworkerIntegration{
 
         const response = await fetch(PandoraPayWalletOptions.resPrefix+this.wasmFileName, {
             headers: {
-                'Content-Encoding': 'gzip',
+                'accept-encoding': 'deflate, gzip, br',
             }
         })
 
@@ -39,40 +39,38 @@ export default class PandorapayWebworkerIntegration{
         const total = parseInt(contentLength, 10);
         let loaded = 0;
 
-        let r = await ( new Response(
-                new ReadableStream({
-                    start(controller) {
-                        const reader = response.body.getReader();
+        return new Response(
+            new ReadableStream({
+                start(controller) {
+                    const reader = response.body.getReader();
 
-                        let lastTransferred = 0
-                        function read() {
-                            reader.read().then(({done, value}) => {
-                                if (done) {
-                                    controller.close();
-                                    return;
-                                }
-                                loaded += value.byteLength;
+                    let lastTransferred = 0
+                    function read() {
+                        reader.read().then(({done, value}) => {
+                            if (done) {
+                                controller.close();
+                                return;
+                            }
+                            loaded += value.byteLength;
 
-                                if (loaded - lastTransferred > 20240) {
-                                    lastTransferred = loaded
-                                    progressStatusCallback(loaded, total)
-                                }
+                            if (loaded - lastTransferred > 20240) {
+                                lastTransferred = loaded
+                                progressStatusCallback(loaded, total)
+                            }
 
-                                controller.enqueue(value);
-                                read();
+                            controller.enqueue(value);
+                            read();
 
-                            }).catch(error => {
-                                controller.error(error)
-                            })
-                        }
-
-                        read();
-
+                        }).catch(error => {
+                            controller.error(error)
+                        })
                     }
-                })
-        ) );
 
-        return r
+                    read();
+
+                }
+            })
+        );
     }
 
     createWorker(){
