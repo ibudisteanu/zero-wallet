@@ -7,7 +7,7 @@
             2: {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' },
             3: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' },
             4: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' } }"
-                @onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card" >
+                @onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card" ref="refWizard" >
 
             <template v-for="(_, index) in titlesOffset" v-slot:[getTabSlotName(index)]>
                 <slot :name="`tab_${index}`"></slot>
@@ -336,7 +336,15 @@ export default {
 
                     await this.handleSendFunds()
                 }else if (oldTab === 4 && value > oldTab) {
+                  try{
                     await this.handlePropagateTx()
+                  }catch(e){
+                    this.status = ""
+                    this.error = e
+                    setTimeout(()=>{
+                      this.$refs.refWizard.setTab(resolve, 3 )
+                    }, 1000)
+                  }
                 } else return this.$emit('onSetTab', {resolve, reject, oldTab, value} )
 
             }catch(err) {
@@ -709,15 +717,10 @@ export default {
 
             await this.$store.dispatch('includeTx', { tx: this.tx, serialized: this.tx._serialized, mempool: false } )
 
-            try{
-              const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
-              if (!finalAnswer){
-                this.$store.commit('deleteTransactions', [this.tx] )
-                throw "Transaction couldn't be broadcast"
-              }
-            }catch(err){
-              this.txSerialized = Buffer.from(this.tx._serialized, "base64")
-              throw err
+            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
+            if (!finalAnswer){
+              this.$store.commit('deleteTransactions', [this.tx] )
+              throw "Transaction couldn't be broadcast"
             }
 
             this.$router.push(`/explorer/tx/${Buffer.from(this.tx.hash, "base64").toString("hex")}`);

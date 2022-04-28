@@ -179,7 +179,7 @@ export default {
         max-width: 60px;
         position: absolute;
         margin-top: 95px;
-        margin-left: 70px;
+        margin-left: 67px;
     }
 
     .dark .logo{
