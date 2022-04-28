@@ -661,7 +661,7 @@ export default {
                       leadingZeros: feeLeadingZeros,
                     },
                     data: {
-                      data: Buffer.from(this.extraData.data).toString("base64"),
+                      data: this.identifiedPaymentID ? this.extraData.data : Buffer.from( this.extraData.data ).toString("base64"),
                       encrypt: this.extraData.type === "encrypted",
                     },
                     extra: null,
