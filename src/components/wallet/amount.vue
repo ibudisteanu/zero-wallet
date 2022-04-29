@@ -46,8 +46,19 @@ export default {
             if (!this.sign ) return '-'
             if (this.showPlusSign) return '+'
             return ''
-        }
+        },
     },
+
+    watch: {
+      asset: {
+        immediate: true,
+        handler: function (to, from) {
+          if (to === from) return
+          if (to)
+            this.$store.dispatch('getAssetByHash', to)
+        }
+      }
+    }
 
 }
 </script>
