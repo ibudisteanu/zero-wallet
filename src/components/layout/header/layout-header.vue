@@ -10,7 +10,7 @@
 
     <router-link class="navbar-brand me-1 me-sm-3" to="/">
       <div class="d-flex align-items-center">
-        <img class="me-2" :src="require('src/assets/pandora-pay-logo-square.png').default" :alt="title" width="40">
+        <img class="me-2" :src="require(`src/assets/logo-square${$store.state.settings.dark?'':''}.png`).default" :alt="title" width="40">
       </div>
     </router-link>
 

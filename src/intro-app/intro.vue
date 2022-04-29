@@ -5,7 +5,7 @@
 
             <div class="center">
 
-                <img :src="require('src/assets/pandora-pay-logo-square.png').default" class="logo" :alt="name" >
+                <img :src="require(`src/assets/logo-square${dark?'':''}.png`).default" class="logo" :alt="name" >
 
                 <div style="text-align: center;">
                   <svg width="200px" height="200px" viewBox="0 0 33 33">
@@ -13,7 +13,7 @@
                   </svg>
                 </div>
 
-                <h1>{{name.toUpperCase()}}</h1>
+                <h1 style="text-align: center;">{{name.toUpperCase()}}</h1>
 
                 <div class="loading-text-div">
                     <alert-box v-if="error" type="error">{{error}}</alert-box>
