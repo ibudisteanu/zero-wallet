@@ -88,7 +88,7 @@ function FixObject(worker, src){
     else if ( src instanceof ArrayBuffer ) dst = new Uint8Array(src)
     else if (src instanceof Uint8Array ){ }
     else if (typeof src === "object" && src.__type === "error" ) {
-        dst = new Error(src.message)
+        dst = new Error(src.__message)
     } else if (typeof src === "object" && src.__type === "callback" && src.__id ){
 
         let callbackId = src.__id
