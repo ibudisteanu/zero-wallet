@@ -3,11 +3,11 @@
 
     <main :class="`main`" >
 
-<!--        <warning-bar v-if="$store.getters.isTestnet" />-->
+        <warning-bar v-if="$store.getters.isTestnet" />
 
         <div class="container" data-layout="container">
 
-            <left-sidebar v-if="!disableLayout" ref="refSidebar" />
+            <left-sidebar v-if="!disableLayout" ref="refSidebar" :style="`${$store.getters.isTestnet ? 'top: 50px' : ''}`" />
 
             <div :class="`${disableLayout ? 'row flex-center min-vh-100 py-6' : 'content'}`">
 
