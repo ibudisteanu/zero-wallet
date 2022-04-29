@@ -340,7 +340,7 @@ export default {
                     await this.handlePropagateTx()
                   }catch(e){
                     this.status = ""
-                    this.error = e
+                    this.error = e.toString()
                     setTimeout(()=>{
                       this.$refs.refWizard.setTab(resolve, 3 )
                     }, 1000)
