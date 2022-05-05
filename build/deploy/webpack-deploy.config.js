@@ -1,7 +1,7 @@
 const path = require('path')
 const webpack = require('webpack');
 const base = require('../webpack-wallet.config');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const CopyPlugin = require('copy-webpack-plugin');
 
 const config = merge(base, {

@@ -1,7 +1,7 @@
 const path = require('path')
 const webpack = require('webpack');
 const base = require('./webpack-wallet-base.config');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 
 module.exports = (env, argv) => merge( base(env, argv), {
 
