@@ -6,11 +6,7 @@ module.exports = (env, argv) => merge( base(env, argv), {
 
     entry: [
         'webpack-hot-middleware/client',
-        './src/main.js'
     ],
-
-    output: {
-    },
 
     devServer: {
         historyApiFallback: true,

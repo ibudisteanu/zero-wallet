@@ -1,8 +1,7 @@
 require('../dist/wasm_exec.js')
 
 const Helper = require("../helpers/helper");
-
-const sha256 = (typeof DEV_SERVER === "undefined") ? require('js-sha256') : undefined;
+const sha256 = require('js-sha256');
 
 module.exports = function (wasmGlobalObjectName, wasmSri){
 
@@ -20,10 +19,10 @@ module.exports = function (wasmGlobalObjectName, wasmSri){
                 self.postMessage({ type: "initialize-answer",  status: `${Math.floor(steps/stepsTotal*100)}% WebWorker initializing...`, })
                 steps++
 
-                if (wasmSri && sha256){
+                if (data.sri){
                     const hash = sha256.create()
                     hash.update(data.data);
-                    if (hash.hex() !== wasmSri)
+                    if (hash.hex() !== data.sri)
                         return self.postMessage({ type: "initialize-answer",  status: `Sri mismatch. Aborted.`})
                     self.postMessage({ type: "initialize-answer",  status: `${Math.floor(steps/stepsTotal*100)}% WASM hash match!`, })
                 }else{
@@ -51,7 +50,7 @@ module.exports = function (wasmGlobalObjectName, wasmSri){
                 steps++
 
                 const transferable = []
-                const clone = Helper.ProcessObject( global[wasmGlobalObjectName], transferable )
+                const clone = Helper.ProcessObject( global[data.name], transferable )
 
                 self.postMessage({ type: "initialize-done", clone, }, transferable)
                 steps++

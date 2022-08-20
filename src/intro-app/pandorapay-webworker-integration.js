@@ -3,10 +3,12 @@ import Helper from "src/webworkers/helpers/helper"
 
 export default class PandorapayWebworkerIntegration{
 
-    constructor(name, wasmFileName, workerFileName, initializeStatusEvent, initializedEvent) {
+    constructor(name, wasmFileName, wasmSri, workerFileName, initializeStatusEvent, initializedEvent) {
         if (!name) throw "name was not defined"
+
         this.name = name
         this.wasmFileName = wasmFileName
+        this.wasmSri = wasmSri
         this.workerFileName = workerFileName
 
         this.initializeStatusEvent = initializeStatusEvent || function () {}
@@ -105,14 +107,16 @@ export default class PandorapayWebworkerIntegration{
 
     initialize(data){
         let transferable = []
-        const newArgs = Helper.ProcessObject( data, transferable)
 
-        this.worker.postMessage({
+        const final = Helper.ProcessObject( {
             type: "initialize",
             goArgv: consts.goArgv,
             data: data,
-            DEV_SERVER: typeof DEV_SERVER !== "undefined",
-        }, transferable);
+            name: this.name,
+            sri: this.wasmSri,
+        }, transferable)
+
+        this.worker.postMessage(final, transferable);
     }
 
     fixInstanceObject(src){

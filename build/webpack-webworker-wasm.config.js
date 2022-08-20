@@ -1,4 +1,4 @@
-const base = require('./webpack.base.config')
+const base = require('./webpack-base-config')
 const { merge } = require('webpack-merge')
 const path = require('path')
 
@@ -10,12 +10,12 @@ module.exports = (env, argv) => {
 
         //define entry point
         entry: {
-            app: "./src/webworkers/pandorapay-webworker/pandorapay-webworker.js",
+            app: "./src/webworkers/webworker-entry.js",
         },
 
         output: {
             path: path.resolve(__dirname, `./../dist/${isProd ? 'build': 'dev'}/workers`),
-            filename: "PandoraPay-webworker.js"
+            filename: "PandoraPay-webworker-wasm.js"
         },
 
     });

@@ -74,7 +74,9 @@ export default {
 
             this.isDownloading = true;
 
-            const integration = new PandoraPayWebworkerIntegration( "PandoraPay", "wasm/PandoraPay-wallet-main.wasm?"+FILES_VERSIONING, "workers/PandoraPay-webworker.js",(status)=>{
+            let wasmSri = (typeof DEV_SERVER === "undefined") ? require('src/webworkers/dist/sri/build-main').default.wasm : ""
+
+            const integration = new PandoraPayWebworkerIntegration( "PandoraPay", "wasm/PandoraPay-wallet-main.wasm?"+FILES_VERSIONING, wasmSri, "workers/PandoraPay-webworker-wasm.js", (status)=>{
               console.log("Main status:", status)
                 this.progressStatus = status
             }, async ()=>{
@@ -82,8 +84,6 @@ export default {
                 await PandoraPay.helpers.helloPandora()
                 this.progressStatus = "WASM is working!"
                 PandoraPayWallet.loadWallet()
-
-
 
                 let PandoraPayHelperPromiseResolved = false
                 global.PandoraPayHelperPromise = new Promise((resolver)=>{
@@ -96,7 +96,9 @@ export default {
                       if (PandoraPayHelperPromiseResolved) return //already resolved
                       PandoraPayHelperPromiseResolved = true
 
-                      const integrationHelper = new PandoraPayWebworkerIntegration("PandoraPayHelper", "wasm/PandoraPay-wallet-helper.wasm?"+FILES_VERSIONING, "workers/PandoraPay-helper-webworker.js", (status)=>{
+                      wasmSri = (typeof DEV_SERVER === "undefined") ? require('src/webworkers/dist/sri/build-helper').default.wasm : ""
+
+                      const integrationHelper = new PandoraPayWebworkerIntegration("PandoraPayHelper", "wasm/PandoraPay-wallet-helper.wasm?"+FILES_VERSIONING, wasmSri, "workers/PandoraPay-webworker-wasm.js", (status)=>{
                         console.log("Helper status:", status)
                       }, async ()=>{
 

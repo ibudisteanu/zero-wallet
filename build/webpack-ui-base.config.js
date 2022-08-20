@@ -1,4 +1,4 @@
-const base = require('./webpack.base.config')
+const base = require('./webpack-base-config')
 const { merge } = require('webpack-merge')
 const path = require('path')
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -11,9 +11,9 @@ module.exports = (env, argv) => {
 
     return merge( base(env, argv), {
 
-        entry: {
-            app: "./src/main.js",
-        },
+        entry: [
+            "./src/main.js",
+        ],
 
         output: {
             filename: "Wallet-User-Interface.js"
