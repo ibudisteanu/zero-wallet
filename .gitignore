@@ -108,18 +108,6 @@ typings/
 .tern-port
 
 
-dist/build/assets
-dist/build/wasm
-dist/build/workers
-dist/build/*.html
-dist/build/*.js
-dist/build/*.gz
 
-dist/dev/assets
-dist/dev/wasm
-dist/dev/workers
-dist/dev/*.html
-dist/dev/*.js
-dist/dev/*.gz
 
 src/webworkers/dist

@@ -15,7 +15,6 @@ module.exports = (env, argv) => {
     const isAnalyze = process.argv.includes('--analyzer');
     const isDevServer = process.env.WEBPACK_DEV_SERVER
 
-
     console.log("isProd", isProd)
 
     return {
@@ -79,10 +78,11 @@ module.exports = (env, argv) => {
             }
             ]
         },
-        optimization: {
+        optimization: isProd ? {
             minimize: true,
             minimizer: [new TerserPlugin()],
-        },
+        } : undefined,
+
         plugins: [
             new VueLoaderPlugin(),
             new webpack.DefinePlugin({
