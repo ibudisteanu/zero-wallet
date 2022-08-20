@@ -1,9 +1,13 @@
 const base = require('./webpack-wallet-base.config')
 const { merge } = require('webpack-merge')
-const path = require('path')
+const { SubresourceIntegrityPlugin } = require("webpack-subresource-integrity");
 
 module.exports = (env, argv) => merge( base (env, argv), {
+    output: {
+        // the following setting is required for SRI to work:
+        crossOriginLoading: "anonymous",
+    },
     plugins: [
-
+        new SubresourceIntegrityPlugin(),
     ],
 });

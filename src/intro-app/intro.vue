@@ -75,6 +75,7 @@ export default {
             this.isDownloading = true;
 
             const integration = new PandoraPayWebworkerIntegration( "PandoraPay", "wasm/PandoraPay-wallet-main.wasm?"+FILES_VERSIONING, "workers/PandoraPay-webworker.js",(status)=>{
+              console.log("Main status:", status)
                 this.progressStatus = status
             }, async ()=>{
 

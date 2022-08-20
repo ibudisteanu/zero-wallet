@@ -13,6 +13,10 @@ module.exports = (env, argv) => {
 
     const isProd = argv.mode === "production"
     const isAnalyze = process.argv.includes('--analyzer');
+    const isDevServer = process.env.WEBPACK_DEV_SERVER
+
+
+    console.log("isProd", isProd)
 
     return {
         target: 'web',
@@ -107,7 +111,11 @@ module.exports = (env, argv) => {
                     ]
                     : [
                         new FriendlyErrorsWebpackPlugin(),
-                    ])
+                    ]),
+
+            new webpack.DefinePlugin({
+                DEV_SERVER: isProd ? undefined : 'true'
+            }),
         ]
     }
 

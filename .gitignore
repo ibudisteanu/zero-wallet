@@ -121,3 +121,5 @@ dist/dev/workers
 dist/dev/*.html
 dist/dev/*.js
 dist/dev/*.gz
+
+src/webworkers/dist

@@ -10,7 +10,7 @@
                     <div class="row align-items-center">
                         <div class="col">
                             <h5 class="mb-0 text-truncate">
-                                Block Explorer {{height ? height : $store.getters.convertBase64ToHex(hash) }}
+                                Block Explorer {{height ? height : $base64ToHex(hash) }}
                             </h5>
                         </div>
                     </div>

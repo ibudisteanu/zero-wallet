@@ -89,9 +89,9 @@ export default class PandorapayWebworkerIntegration{
                 }
                 else if (data.type === "initialize-done") {
 
-                    const {PandoraPayClone} = data
+                    const {clone} = data
 
-                    this.fixInstanceObject(PandoraPayClone)
+                    this.fixInstanceObject(clone)
 
                     this.initializedEvent()
                 }
@@ -104,11 +104,15 @@ export default class PandorapayWebworkerIntegration{
     }
 
     initialize(data){
+        let transferable = []
+        const newArgs = Helper.ProcessObject( data, transferable)
+
         this.worker.postMessage({
             type: "initialize",
             goArgv: consts.goArgv,
             data: data,
-        });
+            DEV_SERVER: typeof DEV_SERVER !== "undefined",
+        }, transferable);
     }
 
     fixInstanceObject(src){
