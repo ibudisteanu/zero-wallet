@@ -26,8 +26,8 @@
                          :class="`row g-0  py-2  border-bottom border-200 d-flex ${key % 2 === 1 ?'bg-light':''}`" style="text-align: center"
                          :key="`pending_${hash}`">
 
-                        <router-link :to="`/explorer/tx/${$store.getters.convertBase64ToHex(hash)}`" >
-                            <span class="d-block text-truncate fs--1"> {{$store.getters.convertBase64ToHex(hash)}} </span>
+                        <router-link :to="`/explorer/tx/${$base64ToHex(hash)}`" >
+                            <span class="d-block text-truncate fs--1"> {{$base64ToHex(hash)}} </span>
                         </router-link>
                     </div>
                     <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="pages" prefix="/explorer/mempool/" suffix="#mempool" />

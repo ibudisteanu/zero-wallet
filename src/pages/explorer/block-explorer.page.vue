@@ -9,7 +9,7 @@
                 <div class="row align-items-center">
                     <div class="col">
                         <h5 class="mb-0 text-truncate">
-                            Block Explorer {{height ? height : $store.getters.convertBase64ToHex(hash) }}
+                            Block Explorer {{height ? height : $base64ToHex(hash) }}
                         </h5>
                     </div>
                 </div>
@@ -26,8 +26,8 @@
                     <div class="row pb-2">
                         <span class="col-5 col-sm-3 text-truncate">Hash</span>
                         <span class="col-7 col-sm-9 text-truncate">
-                            <router-link :to="`/explorer/block/${$store.getters.convertBase64ToHex(blk.bloom.hash)}`">
-                                {{$store.getters.convertBase64ToHex(blk.bloom.hash)}}
+                            <router-link :to="`/explorer/block/${$base64ToHex(blk.bloom.hash)}`">
+                                {{$base64ToHex(blk.bloom.hash)}}
                             </router-link>
                         </span>
                     </div>
@@ -42,8 +42,8 @@
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Time</span>
                         <span class="col-7 col-sm-9 text-truncate">
-                            <span  v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp.plus( blk.timestamp) ) }`">
-                                {{  timeAgo( $store.state.blockchain.genesisTimestamp.plus( blk.timestamp ) ) }} ago
+                            <span  v-tooltip.bottom="`${ $formatTime( $store.state.blockchain.genesisTimestamp.plus( blk.timestamp) ).times(1000) }`">
+                                {{  $timeSince( $store.state.blockchain.genesisTimestamp.plus( blk.timestamp ).times(1000), false ) }} ago
                                 <i class="fas fa-clock"></i>
                             </span>
                         </span>
@@ -67,8 +67,8 @@
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Previous Hash</span>
                         <span class="col-7 col-sm-9 text-truncate">
-                            <router-link :to="`/explorer/block/${$store.getters.convertBase64ToHex(blk.prevHash)}`" class="p-0">
-                                {{$store.getters.convertBase64ToHex(blk.prevHash)}}
+                            <router-link :to="`/explorer/block/${$base64ToHex(blk.prevHash)}`" class="p-0">
+                                {{$base64ToHex(blk.prevHash)}}
                             </router-link>
                         </span>
                     </div>
@@ -172,8 +172,6 @@ export default {
 
     methods: {
 
-        timeAgo: (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
-        formatTime : (timestamp) => StringHelper.formatTime( timestamp*1000 ),
         JSONStringify: (a, b, c) => JSONStringify(a, b, c),
 
         async loadBlock(){

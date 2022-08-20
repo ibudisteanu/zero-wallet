@@ -5,7 +5,6 @@ const { merge } = require('webpack-merge');
 
 module.exports = (env, argv) => merge( base(env, argv), {
 
-
     entry: [
         'webpack-hot-middleware/client',
         './src/main.js'
@@ -23,9 +22,7 @@ module.exports = (env, argv) => merge( base(env, argv), {
     },
 
     plugins: [
-        new webpack.DefinePlugin({
-            DEV_SERVER: 'true'
-        }),
+
     ]
 
 });

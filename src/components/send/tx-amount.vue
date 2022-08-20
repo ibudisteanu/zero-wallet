@@ -54,7 +54,7 @@ export default {
                     return 'Available funds: none'
 
                 if (this.amountBase > this.balances[this.asset].amount )
-                    return `Amount is higher than available funds ${StringHelper.formatMoney( new Decimal(this.balances[this.asset].amount).div( new Decimal(10).pow(this.assetInfo.decimalSeparator) ).toString(), this.assetInfo.decimalSeparator)}`
+                    return `Amount is higher than available funds ${this.$formatMoney( new Decimal(this.balances[this.asset].amount).div( new Decimal(10).pow(this.assetInfo.decimalSeparator) ).toString(), this.assetInfo.decimalSeparator)}`
 
             }
         },

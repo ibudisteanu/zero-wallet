@@ -15,14 +15,14 @@
 
             <span class="col-5 d-block d-sm-none text-dark">Hash</span>
             <span class="col-7 col-sm-2 col-md-2 text-truncate">
-                <router-link :to="`/explorer/block/${$store.getters.convertBase64ToHex(blockInfo.hash)}`">
-                    {{$store.getters.convertBase64ToHex(blockInfo.hash)}}
+                <router-link :to="`/explorer/block/${$base64ToHex(blockInfo.hash)}`">
+                    {{$base64ToHex(blockInfo.hash)}}
                 </router-link>
             </span>
 
             <span class="col-5 d-xs-none d-sm-none d-md-none text-dark">Kernel Hash</span>
             <span class="col-7 d-xs-none d-sm-none d-md-block  col-md-2 text-truncate">
-                {{$store.getters.convertBase64ToHex(blockInfo.kernelHash)}}
+                {{$base64ToHex(blockInfo.kernelHash)}}
             </span>
 
             <span class="col-5 d-block d-sm-none text-dark">Height</span>
@@ -36,14 +36,14 @@
             </span>
 
             <span class="col-5 d-block d-sm-none text-dark">Timestamp</span>
-            <span class="col-7 col-sm-2 col-md-1  text-truncate" v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp.plus( blockInfo.timestamp) ) }`" >
-                {{timeAgo( $store.state.blockchain.genesisTimestamp.plus( blockInfo.timestamp) )  }}
+            <span class="col-7 col-sm-2 col-md-1  text-truncate" v-tooltip.bottom="`${ $formatTime( $store.state.blockchain.genesisTimestamp.plus( blockInfo.timestamp).times(1000) ) }`" >
+                {{$timeSince( $store.state.blockchain.genesisTimestamp.plus( blockInfo.timestamp).times(1000), false )  }}
             </span>
 
             <span class="col-5 d-block d-sm-none text-dark">Size</span>
             <div class="col-7 col-sm-2 col-md-2 text-truncate">
-                <span v-tooltip.bottom="`${ formatBytes(blockInfo.size) }`">
-                    {{formatSize(blockInfo.size)}}
+                <span v-tooltip.bottom="`${ $formatBytes(blockInfo.size) }`">
+                    {{$formatSize(blockInfo.size, 1)}}
                 </span>
             </div>
 
@@ -71,12 +71,6 @@ export default {
     },
 
     methods: {
-
-        timeAgo : (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
-        formatTime : (timestamp) => StringHelper.formatTime( timestamp*1000 ),
-        formatSize: (bytes) => StringHelper.formatSize(bytes, 1),
-        formatBytes: (bytes) => StringHelper.formatBytes(bytes),
-
     },
 
 }
