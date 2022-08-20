@@ -1,7 +1,6 @@
 require('../dist/wasm_exec.js')
 
 const Helper = require("../helpers/helper");
-const sha256 = require('js-sha256');
 const PandoraStorage = require("./storage/pandora-storage");
 
 module.exports = function (){
@@ -13,7 +12,7 @@ module.exports = function (){
             const data = Helper.FixObject( self, event.data )
 
             let steps = 0
-            let stepsTotal = 6
+            let stepsTotal = 5
 
             if (data.type === "initialize"){
 
@@ -25,19 +24,6 @@ module.exports = function (){
                     PandoraStorage.exportStorage()
                 }
                 self.postMessage({ type: "initialize-answer",  status: `${Math.floor(steps/stepsTotal*100)}% WebWorker libraries initialised...`, })
-                steps++
-
-
-                if (data.sri){
-                    const hash = sha256.create()
-                    hash.update(data.data);
-                    if (hash.hex() !== data.sri)
-                        return self.postMessage({ type: "initialize-answer",  status: `Sri mismatch. Aborted.`})
-                    self.postMessage({ type: "initialize-answer",  status: `${Math.floor(steps/stepsTotal*100)}% WASM hash match!`, })
-                }else{
-                    self.postMessage({ type: "initialize-answer",  status: `${Math.floor(steps/stepsTotal*100)}% WASM hash skipped`, })
-                }
-
                 steps++
 
                 const go = new Go();

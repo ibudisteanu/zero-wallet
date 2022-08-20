@@ -20,7 +20,8 @@ export default class PandorapayWebworkerIntegration{
         const response = await fetch(PandoraPayWalletOptions.resPrefix+this.wasmFileName, {
             headers: {
                 'accept-encoding': 'deflate, gzip, br',
-            }
+            },
+            integrity: this.wasmSri,
         })
 
         if (!response.ok) throw response.status+' '+response.statusText
@@ -113,7 +114,6 @@ export default class PandorapayWebworkerIntegration{
             goArgv: consts.goArgv,
             data: data,
             name: this.name,
-            sri: this.wasmSri,
         }, transferable)
 
         this.worker.postMessage(final, transferable);
