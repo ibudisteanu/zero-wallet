@@ -2,8 +2,9 @@ require('../dist/wasm_exec.js')
 
 const Helper = require("../helpers/helper");
 const sha256 = require('js-sha256');
+const PandoraStorage = require("./storage/pandora-storage");
 
-module.exports = function (wasmGlobalObjectName, wasmSri){
+module.exports = function (){
 
     self.onmessage = async function(event) {
 
@@ -12,12 +13,20 @@ module.exports = function (wasmGlobalObjectName, wasmSri){
             const data = Helper.FixObject( self, event.data )
 
             let steps = 0
-            let stepsTotal = 5
+            let stepsTotal = 6
 
             if (data.type === "initialize"){
 
                 self.postMessage({ type: "initialize-answer",  status: `${Math.floor(steps/stepsTotal*100)}% WebWorker initializing...`, })
                 steps++
+
+                //here we can initialise various libraries used by different wasm modules.
+                if (data.name === "PandoraPay"){
+                    PandoraStorage.exportStorage()
+                }
+                self.postMessage({ type: "initialize-answer",  status: `${Math.floor(steps/stepsTotal*100)}% WebWorker libraries initialised...`, })
+                steps++
+
 
                 if (data.sri){
                     const hash = sha256.create()
