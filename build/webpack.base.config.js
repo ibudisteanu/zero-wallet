@@ -84,6 +84,10 @@ module.exports = (env, argv) => {
         } : undefined,
 
         plugins: [
+            new webpack.ProvidePlugin({
+                Buffer: ['buffer', 'Buffer'],
+            }),
+
             new VueLoaderPlugin(),
             new webpack.DefinePlugin({
                 VERSION: JSON.stringify(gitRevisionPlugin.version()),
@@ -94,9 +98,6 @@ module.exports = (env, argv) => {
                 FILES_VERSIONING: Math.random().toString(),
                 __VUE_OPTIONS_API__: true,
                 __VUE_PROD_DEVTOOLS__: false,
-            }),
-            new webpack.ProvidePlugin({
-                Buffer: ['buffer', 'Buffer'],
             }),
             ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
             ... ( isProd ? [
@@ -111,11 +112,10 @@ module.exports = (env, argv) => {
                     ]
                     : [
                         new FriendlyErrorsWebpackPlugin(),
+                        new webpack.DefinePlugin({
+                            DEV_SERVER: 'true'
+                        }),
                     ]),
-
-            new webpack.DefinePlugin({
-                DEV_SERVER: isProd ? undefined : 'true'
-            }),
         ]
     }
 
