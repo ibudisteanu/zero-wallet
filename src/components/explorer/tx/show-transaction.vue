@@ -5,7 +5,7 @@
             <div class="card-header bg-light">
                 <div class="row align-items-center">
                     <div class="col">
-                        <h5 class="mb-0 text-truncate">Tx {{ $store.getters.convertBase64ToHex(tx.hash) }}</h5>
+                        <h5 class="mb-0 text-truncate">Tx {{ $base64ToHex(tx.hash) }}</h5>
                     </div>
                 </div>
             </div>
@@ -14,8 +14,8 @@
                 <div class="row pb-2">
                     <span class="col-4 col-sm-3 text-truncate">Hash</span>
                     <div class="col-8 col-sm-9 text-truncate">
-                        <router-link :to="`/explorer/tx/${$store.getters.convertBase64ToHex(tx.hash)}`">
-                            {{$store.getters.convertBase64ToHex(tx.hash)}}
+                        <router-link :to="`/explorer/tx/${$base64ToHex(tx.hash)}`">
+                            {{$base64ToHex(tx.hash)}}
                         </router-link>
                     </div>
                 </div>
@@ -42,8 +42,8 @@
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-4 col-sm-3 text-truncate">Block Timestamp</span>
                         <div class="col-8 col-sm-9 text-truncate" >
-                            <span v-if="txInfo && txInfo.timestamp" v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp )  ) }`">
-                                {{timeAgo( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp) ) }}
+                            <span v-if="txInfo && txInfo.timestamp" v-tooltip.bottom="`${ $formatTime( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp )  ).times(1000) }`">
+                                {{ $timeSince( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp).times(1000), false ) }}
                                 <i class="fas fa-clock"></i>
                             </span>
                             <span v-else>-</span>
@@ -69,14 +69,14 @@
                 <div class="row pt-2 pb-2">
                     <span class="col-4 col-sm-3 text-truncate">Size</span>
                     <div class="col-8 col-sm-9 text-truncate">
-                        <span v-tooltip.bottom="`${ formatBytes(tx.size.toNumber()) }`"> {{formatSize(tx.size.toNumber())}} </span>
+                        <span v-tooltip.bottom="`${ $formatBytes(tx.size.toNumber()) }`"> {{$formatBytes(tx.size.toNumber())}} </span>
                     </div>
                 </div>
 
                 <div class="row pt-2 pb-2 bg-light">
                     <span class="col-4 col-sm-3 text-truncate">Space Extra Size</span>
                     <div class="col-8 col-sm-9 text-truncate">
-                        <span v-tooltip.bottom="`${ formatBytes(tx.spaceExtra.toNumber()) }`"> {{formatSize(tx.spaceExtra.toNumber())}} </span>
+                        <span v-tooltip.bottom="`${ $formatBytes(tx.spaceExtra.toNumber()) }`"> {{$formatBytes(tx.spaceExtra.toNumber())}} </span>
                     </div>
                 </div>
 
@@ -175,8 +175,8 @@
                         <div class="row pt-2 pb-2">
                             <span class="col-4 col-sm-3 text-truncate">Asset</span>
                             <span class="col-8 col-sm-9 text-truncate">
-                                <router-link :to="`/explorer/asset/${$store.getters.convertBase64ToHex(payload.asset)}`">
-                                    {{$store.getters.convertBase64ToHex(payload.asset)}}
+                                <router-link :to="`/explorer/asset/${$base64ToHex(payload.asset)}`">
+                                    {{$base64ToHex(payload.asset)}}
                                 </router-link>
                             </span>
                         </div>
@@ -355,10 +355,7 @@ export default {
     },
 
     methods: {
-        timeAgo : (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
-        formatTime : (timestamp) => StringHelper.formatTime( timestamp*1000 ),
-        formatSize: (bytes) => StringHelper.formatSize(bytes, 1),
-        formatBytes: (bytes) => StringHelper.formatBytes(bytes),
+
 
         async handleDecryptTx(resolve){
           try{

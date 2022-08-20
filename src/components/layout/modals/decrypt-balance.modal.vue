@@ -118,7 +118,7 @@ export default {
                 balance: this.balance,
                 asset: this.asset,
             } )), async (status)=>{
-                const final = StringHelper.formatMoney( new Decimal( status).div( new Decimal(10).pow( this.getAsset.decimalSeparator ), this.getAsset.decimalSeparator ) )
+                const final = this.$formatMoney( new Decimal( status).div( new Decimal(10).pow( this.getAsset.decimalSeparator ), this.getAsset.decimalSeparator ) )
                 this.status = "Scan  "+final
             })
 

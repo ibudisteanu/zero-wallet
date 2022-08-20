@@ -87,7 +87,10 @@ export default {
                     })
 
 
-                    this.readWallet()
+                    this.readWallet().then(()=>{
+                      setTimeout(PandoraPayHelperLoader, 1000)
+                    })
+
                 }
 
             if (initialized) {

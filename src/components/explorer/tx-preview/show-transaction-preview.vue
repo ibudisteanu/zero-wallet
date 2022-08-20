@@ -10,8 +10,8 @@
 
             <span class="col-4 d-block d-md-none text-dark text-truncate">Hash</span>
             <span class="col-8 col-md-1 text-truncate">
-                <router-link :to="`/explorer/tx/${$store.getters.convertBase64ToHex(tx.hash)}`">
-                    {{$store.getters.convertBase64ToHex(tx.hash)}}
+                <router-link :to="`/explorer/tx/${$base64ToHex(tx.hash)}`">
+                    {{$base64ToHex(tx.hash)}}
                 </router-link>
            </span>
 
@@ -21,8 +21,8 @@
                     <span v-if="txInfo.mempool" class="d-md-flex justify-content-center align-items-center">
                         <i class="fas fa-clock" v-tooltip.bottom="`Pending...`" />
                     </span>
-                    <span v-else-if="txInfo.timestamp" v-tooltip.bottom="`${ formatTime( $store.state.blockchain.genesisTimestamp.plus(  txInfo.timestamp ) ) }`" class="d-md-flex justify-content-center align-items-center"  >
-                        {{ timeAgo( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp ) ) }}
+                    <span v-else-if="txInfo.timestamp" v-tooltip.bottom="`${ $formatTime( $store.state.blockchain.genesisTimestamp.plus(  txInfo.timestamp ).times(1000) ) }`" class="d-md-flex justify-content-center align-items-center"  >
+                        {{ $timeSince( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp ).times(1000), false ) }}
                     </span>
                 </template>
             </div>
@@ -156,8 +156,6 @@ export default {
     },
 
     methods:{
-        timeAgo : (timestamp) => StringHelper.timeSince( timestamp*1000, false ),
-        formatTime : (timestamp) => StringHelper.formatTime( timestamp*1000 ),
 
         async decryptTx(resolve){
             const decrypted = await this.$store.dispatch('decryptTx', {hash: this.txHash, publicKey: this.publicKey})

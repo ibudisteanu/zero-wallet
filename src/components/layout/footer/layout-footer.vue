@@ -23,7 +23,7 @@
         </div>
 
 
-        <div v-if="!$store.getters.isTestnet" class="fixed-button pointer " @click="handleShowTestnetFaucet" v-tooltip.top="`Testnet Faucet`">
+        <div v-if="$store.getters.isTestnet" class="fixed-button pointer " @click="handleShowTestnetFaucet" v-tooltip.top="`Testnet Faucet`">
             <div class="rounded-fixed-btn btn-secondary"><i class="fas fa-coins"></i></div>
         </div>
 

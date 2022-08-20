@@ -1,8 +1,8 @@
 <template>
     <div>
         <div class="warning" v-if="shown">
-            You are connecting to the <strong>{{$store.state.network.networkPrefix}}</strong>. Don't use your Mainnet accounts in the Testnet!
-            <i class="fas fa-times" @click="hide"></i>
+          You are connecting to the <strong>{{$store.state.network.networkPrefix}}NET</strong>. Don't use your Mainnet accounts in this testnet!
+          <i class="fas fa-times" @click="hide"></i>
         </div>
     </div>
 </template>

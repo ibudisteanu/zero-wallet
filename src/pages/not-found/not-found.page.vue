@@ -3,7 +3,7 @@
         <div class="row flex-center min-vh-100 py-6 text-center">
             <div class="col-sm-10 col-md-8 col-lg-6 col-xxl-5">
                 <router-link to="/" class="d-flex flex-center mb-4" >
-                    <img class="me-2" :src="require('src/assets/pandora-pay-logo-inline.png').default" :alt="name" height="100">
+                  <img class="me-2" :src="require(`src/assets/logo-inline${$store.state.settings.dark?'':''}.png`).default" :alt="name" height="100">
                 </router-link>
                 <div class="card">
                     <div class="card-body p-4 p-sm-5">

@@ -30,7 +30,7 @@ export default {
     data(){
         return {
             img: "",
-            logo: require('src/assets/pandora-pay-logo-square.png').default,
+            logo: require(`src/assets/logo-square.png`).default,
             loaded: false,
             options: {
                 data: this.data,

@@ -13,14 +13,21 @@ module.exports = (env, argv) => {
 
     const isProd = argv.mode === "production"
     const isAnalyze = process.argv.includes('--analyzer');
+    const isDevServer = process.env.WEBPACK_DEV_SERVER
+
+
+    console.log("isProd", isProd)
 
     return {
+        target: 'web',
+
+        mode: isProd ? 'production' : 'development',
         //define entry point
         devtool: isProd ? false : 'eval-cheap-module-source-map',
 
         // send to distribution
         output: {
-            path: path.resolve(__dirname, './../dist'),
+            path: path.resolve(__dirname, `./../dist/${isProd ? 'build' : 'dev'}`),
             publicPath: '/',
             filename: '[name].[chunkhash].js'
         },
@@ -94,7 +101,6 @@ module.exports = (env, argv) => {
             ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
             ... ( isProd ? [
                         new TerserPlugin(),
-                        ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
                         new CompressionWebpackPlugin({
                             filename: '[path][base].gz',
                             algorithm: 'gzip',
@@ -105,7 +111,11 @@ module.exports = (env, argv) => {
                     ]
                     : [
                         new FriendlyErrorsWebpackPlugin(),
-                    ])
+                    ]),
+
+            new webpack.DefinePlugin({
+                DEV_SERVER: isProd ? undefined : 'true'
+            }),
         ]
     }
 

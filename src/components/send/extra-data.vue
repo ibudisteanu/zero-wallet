@@ -4,7 +4,7 @@
         <div class="col">
 
             <div class="form-check">
-                <input class="form-check-input" id="typePublic" type="radio" value="public" v-model="type" />
+                <input class="form-check-input" id="typePublic" type="radio" value="public" v-model="type" :disabled="!!paymentID" />
                 <label class="form-check-label" for="typePublic">Public Message</label>
                 <i class="fas fa-question " v-tooltip.bottom="`The message will be public on the chain. Anybody can see this message attached to this transaction.`" />
             </div>
@@ -18,7 +18,7 @@
             <template v-if="recipients">
 
                 <div class="form-check pt-2">
-                    <input class="form-check-input" id="typeEncrypted" type="radio" value="encrypted" v-model="type" />
+                    <input class="form-check-input" id="typeEncrypted" type="radio" value="encrypted" v-model="type" :disabled="!!paymentID" />
                     <label class="form-check-label" for="typeEncrypted">Encrypted Message</label>
                     <i class="fas fa-question " v-tooltip.bottom="`The message will encrypted to selected recipient. Only the selected address can decrypt the message attached to this transaction.`" />
                 </div>
@@ -108,8 +108,11 @@ export default {
             immediate: true,
             handler: function (to, from) {
 
-                if (to && this.data !== to )
-                    return this.data = to
+                if (to && this.data !== to ) {
+                  this.data = to
+                  this.type = "encrypted"
+                  return
+                }
 
                 if (this.data === from) this.data = ""
             },

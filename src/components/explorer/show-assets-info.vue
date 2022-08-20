@@ -14,8 +14,8 @@
 
             <span class="col-5 d-block d-sm-none text-dark">Name</span>
             <span class="col-7 col-sm-4 col-lg-3 text-truncate">
-                <identicon v-if="assetInfo.hash" :hash="assetInfo.hash" size="21" outer-size="7" class="pe-1" :uri="`/explorer/asset/${$store.getters.convertBase64ToHex(assetInfo.hash)}`" />
-                <router-link :to="`/explorer/asset/${$store.getters.convertBase64ToHex(assetInfo.hash)}`">
+                <identicon v-if="assetInfo.hash" :hash="assetInfo.hash" size="21" outer-size="7" class="pe-1" :uri="`/explorer/asset/${$base64ToHex(assetInfo.hash)}`" />
+                <router-link :to="`/explorer/asset/${$base64ToHex(assetInfo.hash)}`">
                     {{assetInfo.identification}}
                 </router-link>
             </span>
@@ -27,7 +27,7 @@
 
             <span class="col-5 d-block d-sm-none text-dark">Hash</span>
             <span class="col-7 col-sm-2 col-lg-2 text-truncate">
-                {{$store.getters.convertBase64ToHex(assetInfo.hash)}}
+                {{$base64ToHex(assetInfo.hash)}}
             </span>
 
             <span class="col-5 d-block d-sm-none text-dark">Description</span>

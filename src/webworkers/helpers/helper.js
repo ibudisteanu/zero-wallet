@@ -8,13 +8,11 @@ async function OnMessage(worker, data ){
 
         //console.log("OnMessage1", cb, data.arguments, typeof data.arguments )
 
-        const transferable = []
-        let out = ProcessObject( data.arguments, transferable )
-        out = FixObject(worker, out )
+        let out = data.arguments
 
         //console.log("OnMessage2", cb, data.arguments, out )
 
-        let result, err
+        let result
 
         try{
             if (data.isArray)
@@ -45,7 +43,12 @@ function ProcessObject(src, transferable = []){
 
     let dst = src
 
-    if ( src instanceof Error  || src === null || src === undefined) { }
+    if ( src instanceof Error)
+        dst = {
+            __type: "error",
+            __message: src.message,
+        }
+    else if ( src === null || src === undefined) { }
     else if ( src instanceof ArrayBuffer )
         transferable.push(dst)
     else if ( src instanceof Uint8Array ) {
@@ -82,7 +85,9 @@ function FixObject(worker, src){
     if ( src instanceof Error  || src === null || src === undefined) { }
     else if ( src instanceof ArrayBuffer ) dst = new Uint8Array(src)
     else if (src instanceof Uint8Array ){ }
-    else if (typeof src === "object" && src.__type === "callback" && src.__id ){
+    else if (typeof src === "object" && src.__type === "error" ) {
+        dst = new Error(src.__message)
+    } else if (typeof src === "object" && src.__type === "callback" && src.__id ){
 
         let callbackId = src.__id
 

@@ -39,6 +39,9 @@ bower_components
 # Compiled binary addons (https://nodejs.org/api/addons.html)
 build/Release
 
+# Package-lock
+package-lock.json
+
 # Dependency directories
 node_modules/
 jspm_packages/
@@ -106,4 +109,17 @@ typings/
 
 
 dist/build/assets
+dist/build/wasm
+dist/build/workers
+dist/build/*.html
+dist/build/*.js
+dist/build/*.gz
+
 dist/dev/assets
+dist/dev/wasm
+dist/dev/workers
+dist/dev/*.html
+dist/dev/*.js
+dist/dev/*.gz
+
+src/webworkers/dist

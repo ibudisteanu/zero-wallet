@@ -16,7 +16,8 @@ export default {
             try{
                 const out = await PandoraPay.network.getNetworkAccountTxs( MyTextEncode( JSONStringify( {
                     publicKey,
-                    next: view ? next : new Decimal(2).pow(64).minus(1)
+                    start: view ? next : new Decimal(2).pow(64).minus(1),
+                    dsc: true,
                 } ) ) );
                 const accountTxs = JSONParse(MyTextDecode( out ) )
 

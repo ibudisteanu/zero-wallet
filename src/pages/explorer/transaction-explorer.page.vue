@@ -10,7 +10,7 @@
                     <div class="row align-items-center">
                         <div class="col">
                             <h5 class="mb-0 text-truncate">
-                                Block Explorer {{height ? height : $store.getters.convertBase64ToHex(hash) }}
+                                Block Explorer {{height ? height : $base64ToHex(hash) }}
                             </h5>
                         </div>
                     </div>
@@ -65,7 +65,7 @@ export default {
             }
         },
         hash(){
-            if (this.query && this.query.length === 64) return Buffer.from(this.query, "hex").toString("base64")
+            if (this.query && this.query.length === 2*PandoraPay.cryptography.HASH_SIZE) return Buffer.from(this.query, "hex").toString("base64")
         },
         tx(){
             if (this.height) return this.$store.state.transactions.txsByHeight[this.height];
