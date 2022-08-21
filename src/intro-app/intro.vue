@@ -127,14 +127,14 @@ export default {
                       } )
 
                       let lastSize = 0
-                      const r = await integrationHelper.downloadWasm((loaded, total)=>{
+                      const r = await integrationHelper.downloadWasm( (loaded, total)=>{
                         if (loaded - lastSize > 5*1024){
                           lastSize = loaded
                           console.log( 'WASM: ' + formatLoadedSize(loaded, total ) )
                         }
                       })
                       const data = await r.arrayBuffer()
-                      integrationHelper.createWorker()
+                      await integrationHelper.createWorker()
                       integrationHelper.initialize(data)
                     }
 
@@ -155,7 +155,7 @@ export default {
             const data = await r.arrayBuffer()
             this.progressStatus = "WASM instantiating...";
 
-            integration.createWorker()
+            await integration.createWorker()
             integration.initialize(data)
 
         }catch(err){
