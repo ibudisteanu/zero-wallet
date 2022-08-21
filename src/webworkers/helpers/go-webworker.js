@@ -26,6 +26,14 @@ module.exports = function (){
                 self.postMessage({ type: "initialize-answer",  status: `${Math.floor(steps/stepsTotal*100)}% WebWorker libraries initialised...`, })
                 steps++
 
+                global.WASMLoaded = ()=>{
+                    const transferable = []
+                    const clone = Helper.ProcessObject( global[data.name], transferable )
+
+                    self.postMessage({ type: "initialize-done", clone, }, transferable)
+                    steps++
+                }
+
                 const go = new Go();
                 go.argv = data.goArgv
 
@@ -44,11 +52,7 @@ module.exports = function (){
                 self.postMessage({ type: "initialize-answer", status: `${Math.floor(steps/stepsTotal*100)}% WASM executed`, })
                 steps++
 
-                const transferable = []
-                const clone = Helper.ProcessObject( global[data.name], transferable )
 
-                self.postMessage({ type: "initialize-done", clone, }, transferable)
-                steps++
 
             }
 
