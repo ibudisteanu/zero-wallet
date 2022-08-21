@@ -50,7 +50,7 @@ export default {
 
     props: {
       startAutomatically: {default: true},
-      defaultTheme: {default: 'false'},
+      defaultTheme: {default: 'true'},
     },
 
     computed:{

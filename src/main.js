@@ -32,7 +32,7 @@ class Main {
         if (!options.wallet)
             options.wallet = {
                 appId: '#wallet',
-                defaultTheme: 'false',
+                defaultTheme: 'true',
                 startAutomatically: true,
             }
 
