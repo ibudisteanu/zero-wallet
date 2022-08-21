@@ -94,7 +94,7 @@ module.exports = (env, argv) => {
                 COMMITHASH: JSON.stringify(gitRevisionPlugin.commithash()),
                 BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
                 LASTCOMMITDATETIME: JSON.stringify(gitRevisionPlugin.lastcommitdatetime()),
-                BROWSER: 'true',
+                BROWSER: true,
                 FILES_VERSIONING: Math.random().toString(),
                 __VUE_OPTIONS_API__: true,
                 __VUE_PROD_DEVTOOLS__: false,
@@ -113,7 +113,7 @@ module.exports = (env, argv) => {
                     : [
                         new FriendlyErrorsWebpackPlugin(),
                         new webpack.DefinePlugin({
-                            DEV_SERVER: 'true'
+                            DEV_SERVER: true
                         }),
                     ]),
         ]
