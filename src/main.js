@@ -42,28 +42,30 @@ class Main {
                 startAutomatically: true,
             }
 
+        this.options = options
+
         /**
          * On Window Load
          */
 
-        this.start()
+        return this.start()
 
     }
 
-    start(){
+    async start(){
         const introAppVue = require('./intro-app/intro-app').default;
-        this.introAppVue = introAppVue(PandoraPayWalletOptions.intro);
+        this.introAppVue = introAppVue(this.options);
     }
 
-    loadWallet(){
+    async loadApp(){
 
         if (this.introAppVue) {
             this.introAppVue.unmount()
-            document.getElementById("wallet-loading").remove()
+            document.getElementById(this.options.intro.appId.slice(1)).remove()
         }
 
         const mainVue = require('./app/main-vue').default;
-        this.walletAppVue = mainVue(PandoraPayWalletOptions.wallet);
+        this.walletAppVue = await mainVue(this.options.wallet);
     }
 
 }
