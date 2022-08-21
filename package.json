@@ -6,13 +6,12 @@
     "DEX"
   ],
   "scripts": {
-    "build-wallet": "webpack --config build/webpack-ui.config.js",
-    "build-wallet-analyzer": "webpack --config build/webpack-ui.config.js --mode=production --analyzer",
-    "build-webworker-wasm": "webpack --config build/webpack-webworker-wasm.config.js ",
-    "build-webworker-wasm-helper": "webpack --config build/webpack-webworker-wasm-helper.config.js",
-    "build": "npm run build-wallet -- --mode=production && npm run build-webworker-wasm -- --mode=production && npm run build-webworker-wasm-helper -- --mode=production",
+    "build-wallet": "webpack --config build/webpack-ui-config.js",
+    "build-wallet-analyzer": "webpack --config build/webpack-ui-config.js --mode=production --analyzer",
+    "build-webworker-wasm": "webpack --config build/webpack-webworker-wasm.config.js",
+    "build": "npm run build-wallet -- --mode=production && npm run build-webworker-wasm -- --mode=production",
     "test": "npm run build-wallet",
-    "dev": "npm run build-webworker-wasm && npm run build-webworker-wasm-helper && webpack-dev-server --config=./build/webpack-ui-dev-server.config.js --hot --host 0.0.0.0"
+    "dev": "webpack --config build/webpack-webworker-wasm.config.js && webpack-dev-server --config=./build/webpack-ui-dev-server.config.js --hot --host 0.0.0.0"
   },
   "dependencies": {
     "@hcaptcha/vue3-hcaptcha": "^1.0.1",
@@ -22,7 +21,6 @@
     "html-webpack-plugin": "^5.5.0",
     "html-webpack-tags-plugin": "^3.0.2",
     "i": "^0.3.7",
-    "js-sha256": "^0.9.0",
     "localforage": "^1.9.0",
     "node-fetch": "^3.0.0",
     "npm": "^8.3.1",

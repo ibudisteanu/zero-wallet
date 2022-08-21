@@ -3,22 +3,42 @@ import Helper from "src/webworkers/helpers/helper"
 
 export default class PandorapayWebworkerIntegration{
 
-    constructor(name, wasmFileName, workerFileName, initializeStatusEvent, initializedEvent) {
+    constructor(name, wasmFileName, wasmSri, workerFileName, initializeStatusEvent, initializedEvent) {
         if (!name) throw "name was not defined"
+
         this.name = name
         this.wasmFileName = wasmFileName
+        this.wasmSri = wasmSri
         this.workerFileName = workerFileName
 
         this.initializeStatusEvent = initializeStatusEvent || function () {}
         this.initializedEvent = initializedEvent || function (){}
     }
 
-    async downloadWasm(progressStatusCallback){
+    newWorker (blob){
 
-        const response = await fetch(PandoraPayWalletOptions.resPrefix+this.wasmFileName, {
+        // Build a worker from an anonymous function body
+        const blobURL = URL.createObjectURL(blob);
+
+        const worker = new Worker(blobURL);
+
+        // Won't be needing this anymore
+        URL.revokeObjectURL(blobURL);
+
+        return worker;
+    }
+
+    async downloadWasm( progressStatusCallback){
+        return this.download(PandoraPayWalletOptions.resPrefix+this.wasmFileName, this.wasmSri, progressStatusCallback)
+    }
+
+    async download(filename, sri, progressStatusCallback){
+
+        const response = await fetch(filename, {
             headers: {
                 'accept-encoding': 'deflate, gzip, br',
-            }
+            },
+            integrity: sri,
         })
 
         if (!response.ok) throw response.status+' '+response.statusText
@@ -55,7 +75,7 @@ export default class PandorapayWebworkerIntegration{
 
                             if (loaded - lastTransferred > 20240) {
                                 lastTransferred = loaded
-                                progressStatusCallback(loaded, total)
+                                if (progressStatusCallback) progressStatusCallback(loaded, total)
                             }
 
                             controller.enqueue(value);
@@ -73,9 +93,11 @@ export default class PandorapayWebworkerIntegration{
         );
     }
 
-    createWorker(){
+    async createWorker(){
 
-        this.worker = new Worker(PandoraPayWalletOptions.resPrefix+this.workerFileName);
+        const code = await this.download(PandoraPayWalletOptions.resPrefix+this.workerFileName, global.SRI_WEB_WORKER_WASM, null )
+
+        this.worker = this.newWorker( await code.blob() );
 
         this.worker.onmessage = async (event) => {
 
@@ -105,14 +127,15 @@ export default class PandorapayWebworkerIntegration{
 
     initialize(data){
         let transferable = []
-        const newArgs = Helper.ProcessObject( data, transferable)
 
-        this.worker.postMessage({
+        const final = Helper.ProcessObject( {
             type: "initialize",
             goArgv: consts.goArgv,
             data: data,
-            DEV_SERVER: typeof DEV_SERVER !== "undefined",
-        }, transferable);
+            name: this.name,
+        }, transferable)
+
+        this.worker.postMessage(final, transferable);
     }
 
     fixInstanceObject(src){

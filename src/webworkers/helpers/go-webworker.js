@@ -1,10 +1,9 @@
 require('../dist/wasm_exec.js')
 
 const Helper = require("../helpers/helper");
+const PandoraStorage = require("./storage/pandora-storage");
 
-const sha256 = (typeof DEV_SERVER === "undefined") ? require('js-sha256') : undefined;
-
-module.exports = function (wasmGlobalObjectName, wasmSri){
+module.exports = function (){
 
     self.onmessage = async function(event) {
 
@@ -20,16 +19,11 @@ module.exports = function (wasmGlobalObjectName, wasmSri){
                 self.postMessage({ type: "initialize-answer",  status: `${Math.floor(steps/stepsTotal*100)}% WebWorker initializing...`, })
                 steps++
 
-                if (wasmSri && sha256){
-                    const hash = sha256.create()
-                    hash.update(data.data);
-                    if (hash.hex() !== wasmSri)
-                        return self.postMessage({ type: "initialize-answer",  status: `Sri mismatch. Aborted.`})
-                    self.postMessage({ type: "initialize-answer",  status: `${Math.floor(steps/stepsTotal*100)}% WASM hash match!`, })
-                }else{
-                    self.postMessage({ type: "initialize-answer",  status: `${Math.floor(steps/stepsTotal*100)}% WASM hash skipped`, })
+                //here we can initialise various libraries used by different wasm modules.
+                if (data.name === "PandoraPay"){
+                    PandoraStorage.exportStorage()
                 }
-
+                self.postMessage({ type: "initialize-answer",  status: `${Math.floor(steps/stepsTotal*100)}% WebWorker libraries initialised...`, })
                 steps++
 
                 const go = new Go();
@@ -51,7 +45,7 @@ module.exports = function (wasmGlobalObjectName, wasmSri){
                 steps++
 
                 const transferable = []
-                const clone = Helper.ProcessObject( global[wasmGlobalObjectName], transferable )
+                const clone = Helper.ProcessObject( global[data.name], transferable )
 
                 self.postMessage({ type: "initialize-done", clone, }, transferable)
                 steps++

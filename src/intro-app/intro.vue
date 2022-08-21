@@ -74,7 +74,9 @@ export default {
 
             this.isDownloading = true;
 
-            const integration = new PandoraPayWebworkerIntegration( "PandoraPay", "wasm/PandoraPay-wallet-main.wasm?"+FILES_VERSIONING, "workers/PandoraPay-webworker.js",(status)=>{
+            let wasmSri = (typeof DEV_SERVER === "undefined") ? 'sha256-'+Buffer.from( require('src/webworkers/dist/sri/build-main').default.wasm, "hex").toString("base64") : ""
+
+            const integration = new PandoraPayWebworkerIntegration( "PandoraPay", "wasm/PandoraPay-wallet-main.wasm?"+FILES_VERSIONING, wasmSri, "workers/PandoraPay-webworker-wasm.js", (status)=>{
               console.log("Main status:", status)
                 this.progressStatus = status
             }, async ()=>{
@@ -82,8 +84,6 @@ export default {
                 await PandoraPay.helpers.helloPandora()
                 this.progressStatus = "WASM is working!"
                 PandoraPayWallet.loadWallet()
-
-
 
                 let PandoraPayHelperPromiseResolved = false
                 global.PandoraPayHelperPromise = new Promise((resolver)=>{
@@ -96,7 +96,9 @@ export default {
                       if (PandoraPayHelperPromiseResolved) return //already resolved
                       PandoraPayHelperPromiseResolved = true
 
-                      const integrationHelper = new PandoraPayWebworkerIntegration("PandoraPayHelper", "wasm/PandoraPay-wallet-helper.wasm?"+FILES_VERSIONING, "workers/PandoraPay-helper-webworker.js", (status)=>{
+                      wasmSri = (typeof DEV_SERVER === "undefined") ? 'sha256-'+Buffer.from( require('src/webworkers/dist/sri/build-helper').default.wasm, "base64").toString("base64") : ""
+
+                      const integrationHelper = new PandoraPayWebworkerIntegration("PandoraPayHelper", "wasm/PandoraPay-wallet-helper.wasm?"+FILES_VERSIONING, wasmSri, "workers/PandoraPay-webworker-wasm.js", (status)=>{
                         console.log("Helper status:", status)
                       }, async ()=>{
 
@@ -125,14 +127,14 @@ export default {
                       } )
 
                       let lastSize = 0
-                      const r = await integrationHelper.downloadWasm((loaded, total)=>{
+                      const r = await integrationHelper.downloadWasm( (loaded, total)=>{
                         if (loaded - lastSize > 5*1024){
                           lastSize = loaded
                           console.log( 'WASM: ' + formatLoadedSize(loaded, total ) )
                         }
                       })
                       const data = await r.arrayBuffer()
-                      integrationHelper.createWorker()
+                      await integrationHelper.createWorker()
                       integrationHelper.initialize(data)
                     }
 
@@ -153,7 +155,7 @@ export default {
             const data = await r.arrayBuffer()
             this.progressStatus = "WASM instantiating...";
 
-            integration.createWorker()
+            await integration.createWorker()
             integration.initialize(data)
 
         }catch(err){

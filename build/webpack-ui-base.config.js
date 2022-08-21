@@ -1,19 +1,33 @@
-const base = require('./webpack.base.config')
+const base = require('./webpack-base-config')
 const { merge } = require('webpack-merge')
 const path = require('path')
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const consts = require('../consts/consts')
 const {SubresourceIntegrityPlugin} = require("webpack-subresource-integrity");
 const HtmlWebpackTagsPlugin = require("html-webpack-tags-plugin");
+const webpack = require('webpack');
+const fs = require('fs')
+
+const crypto = require('crypto')
+
+function sha256(a){
+    return crypto.createHash('sha256').update(a).digest('base64');
+}
+
+function sha256file(a){
+    const fileBuffer = fs.readFileSync(a)
+    return sha256(fileBuffer)
+}
+
 module.exports = (env, argv) => {
 
     const isProd = argv.mode === "production"
 
     return merge( base(env, argv), {
 
-        entry: {
-            app: "./src/main.js",
-        },
+        entry: [
+            "./src/main.js",
+        ],
 
         output: {
             filename: "Wallet-User-Interface.js"
@@ -28,7 +42,10 @@ module.exports = (env, argv) => {
                 filename: path.resolve(__dirname + `/../dist/${isProd ? 'build' : 'dev'}/index.html`) //relative to root of the application
             }),
             new SubresourceIntegrityPlugin({enabled: isProd }),
-            new HtmlWebpackTagsPlugin({ tags: ['static/theme.css', 'static/OverlayScrollbars.min.css', 'static/fonts.css'], append: true })
+            new HtmlWebpackTagsPlugin({ tags: ['static/theme.css', 'static/OverlayScrollbars.min.css', 'static/fonts.css'], append: true }),
+            new webpack.DefinePlugin({
+                SRI_WEB_WORKER_WASM: isProd ? 'sha256-'+sha256file( path.resolve(__dirname + `/../dist/${isProd ? 'build' : 'dev'}/workers/PandoraPay-webworker-wasm.js`) ) : ''
+            }),
         ],
     });
 }
