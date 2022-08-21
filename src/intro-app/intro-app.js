@@ -9,16 +9,15 @@ export default (params) => {
         render () {
 
             return Vue.h( Loading, {
-                props: {
-                    startAutomatically: params.startAutomatically,
-                }
+                startAutomatically: params.startAutomatically,
+                defaultTheme: params.defaultTheme,
             });
 
         }
 
     });
 
-    app.mount('#wallet-loading')
+    app.mount(params.appId)
 
     return app
 }

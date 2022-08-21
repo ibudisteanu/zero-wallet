@@ -8,8 +8,8 @@ class Main {
         const decoder = new TextDecoder("utf-8")
         const encoder = new TextEncoder("utf-8")
 
-        global.MyTextDecode = (a)=> a ? decoder.decode(a) : null
-        global.MyTextEncode = (a)=> a ? encoder.encode(a) : null
+        global.MyTextDecode = a => a ? decoder.decode(a) : null
+        global.MyTextEncode = a => a ? encoder.encode(a) : null
 
         global.JSONStringify = JSONStringify
         global.JSONParse = JSONParse
@@ -23,18 +23,24 @@ class Main {
     initialize(){
 
         if (typeof PandoraPayWalletOptions === "undefined") global.PandoraPayWalletOptions = {}
-        if (!PandoraPayWalletOptions.router) PandoraPayWalletOptions.router = {}
-        if (typeof PandoraPayWalletOptions.resPrefix === "undefined") PandoraPayWalletOptions.resPrefix = '/'
 
-        if (!PandoraPayWalletOptions.wallet)
-            global.PandoraPayWalletOptions.wallet = {
-                activated: true,
-                style: "dark",
-                id: "Wallet",
+        const options = PandoraPayWalletOptions
+
+        if (!options.router) options.router = {}
+        if (typeof options.resPrefix === "undefined") options.resPrefix = '/'
+
+        if (!options.wallet)
+            options.wallet = {
+                appId: '#wallet',
+                defaultTheme: 'false',
+                startAutomatically: true,
             }
 
-        if (!PandoraPayWalletOptions.intro)
-            global.PandoraPayWalletOptions.intro = { }
+        if (!options.intro)
+            options.intro = {
+                appId: '#wallet-loading',
+                startAutomatically: true,
+            }
 
         /**
          * On Window Load
@@ -51,14 +57,13 @@ class Main {
 
     loadWallet(){
 
-        if (this.introAppVue){
+        if (this.introAppVue) {
             this.introAppVue.unmount()
-            // const elem = document.getElementById("pandora-wallet-intro");
-            // document.getElementById("pandora-wallet-intro").parentNode.removeChild(elem);
+            document.getElementById("wallet-loading").remove()
         }
 
         const mainVue = require('./wallet-app/main-vue').default;
-        this.walletVueApp = mainVue(PandoraPayWalletOptions.wallet);
+        this.walletAppVue = mainVue(PandoraPayWalletOptions.wallet);
     }
 
 }

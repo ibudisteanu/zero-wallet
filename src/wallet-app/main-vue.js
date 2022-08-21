@@ -48,12 +48,16 @@ export default (params) => {
         return StringHelper.formatMoney(a, b, c )
     }
 
+    store.commit('createSyncPromise')
+    store.commit('setScreenInformation')
+    store.commit('readLocalStorage')
+
     app.use(store);
     app.use(router);
     app.use(VueClipboard);
     app.use(VueTooltip)
 
-    app.mount('#wallet')
+    app.mount( params.appId )
 
     window.PandoraPayWalletApp = app;
 

@@ -1,12 +1,12 @@
-import consts from "consts/consts";
 import Helper from "src/webworkers/helpers/helper"
 
 export default class PandorapayWebworkerIntegration{
 
-    constructor(name, wasmFileName, wasmSri, workerFileName, initializeStatusEvent, initializedEvent) {
+    constructor(name, wasmFileName, wasmSri, goArgv, workerFileName, initializeStatusEvent, initializedEvent) {
         if (!name) throw "name was not defined"
 
         this.name = name
+        this.goArgv = goArgv
         this.wasmFileName = wasmFileName
         this.wasmSri = wasmSri
         this.workerFileName = workerFileName
@@ -29,7 +29,7 @@ export default class PandorapayWebworkerIntegration{
     }
 
     async downloadWasm( progressStatusCallback){
-        return this.download(PandoraPayWalletOptions.resPrefix+this.wasmFileName, this.wasmSri, progressStatusCallback)
+        return this.download(this.wasmFileName, this.wasmSri, progressStatusCallback)
     }
 
     async download(filename, sri, progressStatusCallback){
@@ -95,7 +95,7 @@ export default class PandorapayWebworkerIntegration{
 
     async createWorker(){
 
-        const code = await this.download(PandoraPayWalletOptions.resPrefix+this.workerFileName, global.SRI_WEB_WORKER_WASM, null )
+        const code = await this.download(this.workerFileName, global.SRI_WEB_WORKER_WASM, null )
 
         this.worker = this.newWorker( await code.blob() );
 
@@ -130,7 +130,7 @@ export default class PandorapayWebworkerIntegration{
 
         const final = Helper.ProcessObject( {
             type: "initialize",
-            goArgv: consts.goArgv,
+            goArgv: this.goArgv,
             data: data,
             name: this.name,
         }, transferable)
