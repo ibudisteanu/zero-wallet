@@ -65,7 +65,7 @@ class Main {
         }
 
         const mainVue = require('./app/main-vue').default;
-        this.walletAppVue = await mainVue(this.options.wallet);
+        this.walletAppVue = await mainVue(this.options);
     }
 
 }

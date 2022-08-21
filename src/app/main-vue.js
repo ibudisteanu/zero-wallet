@@ -9,17 +9,13 @@ import VueTooltip from "v-tooltip"
 import VueTooltipCss from "v-tooltip/dist/v-tooltip.css"
 import StringHelper from "../utils/string-helper";
 
-export default (params) => {
+export default (options) => {
 
     const app = Vue.createApp({
         render () {
-
             return Vue.h(App, {
-                props: {
-                    startAutomatically: params.startAutomatically,
-                }
+                options,
             });
-
         }
     });
 
@@ -57,7 +53,7 @@ export default (params) => {
     app.use(VueClipboard);
     app.use(VueTooltip)
 
-    app.mount( params.appId )
+    app.mount( options.wallet.appId )
 
     window.PandoraPayWalletApp = app;
 
