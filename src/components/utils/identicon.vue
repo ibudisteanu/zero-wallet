@@ -2,7 +2,7 @@
 
   <router-link :to="uri" v-tooltip.bottom="`${ tooltip}`">
     <div :class="`identicon ${outerSize? 'outer':''}`" :style="`padding: ${outerSize}px`" v-if="identiconSrc">
-      <img :src="identiconSrc" class="identicon" :style="`width: ${size}px`" >
+      <img v-if="identiconSrc" :src="identiconSrc" class="identicon" :style="`width: ${size}px`" >
     </div>
   </router-link>
 
@@ -11,7 +11,6 @@
 <script>
 
 import Identicons from "src/utils/identicons"
-import StringHelper from "src/utils/string-helper";
 export default {
 
   props:{
@@ -31,23 +30,30 @@ export default {
     }
   },
 
-  watch:{
-
-    hash: {
-      immediate: true,
-      handler: async function(newVal, oldVal){
-        if (!newVal) return
-        try{
-          this.identiconSrc = await Identicons.getIdenticon( newVal, this.size )
-        }catch(err){
-          this.finalAddress = ""
-          this.identiconSrc = ""
-        }
+  methods:{
+    async load(){
+      try{
+        if (!this.hash) throw "invalid"
+        this.identiconSrc = await Identicons.getIdenticon( this.hash, this.size )
+      }catch(err){
+        this.finalAddress = ""
+        this.identiconSrc = ""
       }
     },
-
   },
 
+  watch:{
+    hash:{
+      handler (val, oldVal) {
+        if (val === oldVal) return
+        return this.load()
+      }
+    }
+  },
+
+  mounted(){
+    return this.load()
+  },
 
 }
 </script>

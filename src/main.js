@@ -62,7 +62,7 @@ class Main {
             document.getElementById("wallet-loading").remove()
         }
 
-        const mainVue = require('./wallet-app/main-vue').default;
+        const mainVue = require('./app/main-vue').default;
         this.walletAppVue = mainVue(PandoraPayWalletOptions.wallet);
     }
 
