@@ -1,6 +1,6 @@
 import Helper from "src/webworkers/helpers/helper"
 
-export default class PandorapayWebworkerIntegration{
+export default class WasmWebworkerIntegration {
 
     constructor(name, wasmFileName, wasmSri, goArgv, workerFileName, initializeStatusEvent, initializedEvent) {
         if (!name) throw "name was not defined"

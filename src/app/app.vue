@@ -33,7 +33,7 @@ export default {
     },
 
     props: {
-      startAutomatically: {default: true},
+      options: {default: null},
     },
 
     computed:{
@@ -43,7 +43,7 @@ export default {
 
         if (typeof window === "undefined") return;
 
-        if (this.startAutomatically)
+        if (this.options.wallet.startAutomatically)
           return this.start()
     },
 
