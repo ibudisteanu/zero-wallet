@@ -95,7 +95,7 @@ export default class WasmWebworkerIntegration {
 
     async createWorker(){
 
-        const code = await this.download(this.workerFileName, global.SRI_WEB_WORKER_WASM, null )
+        const code = await this.download(this.workerFileName+"?"+global.SRI_WEB_WORKER_WASM, global.SRI_WEB_WORKER_WASM, null )
 
         this.worker = this.newWorker( await code.blob() );
 

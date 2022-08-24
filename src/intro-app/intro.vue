@@ -86,9 +86,8 @@ export default {
 
           this.isDownloading = true;
 
-          let wasmSri = (typeof DEV_SERVER === "undefined") ? 'sha256-'+Buffer.from( require('src/webworkers/dist/sri/build-main').default.wasm, "hex").toString("base64") : ""
-
-          const integration = new WasmWebworkerIntegration( "PandoraPay", this.options.resPrefix + "wasm/PandoraPay-wallet-main.wasm?"+FILES_VERSIONING, wasmSri, consts.goArgv, this.options.resPrefix + "workers/PandoraPay-webworker-wasm.js", (status)=>{
+          const wasmMainSri = global.SRI_WASM_MAIN || ''
+          const integration = new WasmWebworkerIntegration( "PandoraPay", this.options.resPrefix + "wasm/PandoraPay-wallet-main.wasm?"+wasmMainSri, wasmMainSri, consts.goArgv, this.options.resPrefix + "workers/PandoraPay-webworker-wasm.js", (status)=>{
             console.log("Main status:", status)
             this.progressStatus = status
           }, async ()=>{
@@ -96,60 +95,63 @@ export default {
             await PandoraPay.helpers.helloPandora()
             this.progressStatus = "WASM is working!"
 
-            let helperPromiseResolved = false
-            global.PandoraPayHelperPromise = new Promise((resolver)=>{
+            if (this.options.intro.loadWasmHelper){
+              let helperPromiseResolved = false
+              global.PandoraPayHelperPromise = new Promise((resolver)=>{
 
-              //for debugging only
-              //return resolver(true)
+                //for debugging only
+                //return resolver(true)
 
-              window.PandoraPayHelperLoader = async () => {
+                global.PandoraPayHelperLoader = async () => {
 
-                if (helperPromiseResolved) return //already resolved
-                helperPromiseResolved = true
+                  if (helperPromiseResolved) return //already resolved
+                  helperPromiseResolved = true
 
-                wasmSri = (typeof DEV_SERVER === "undefined") ? 'sha256-'+Buffer.from( require('src/webworkers/dist/sri/build-helper').default.wasm, "base64").toString("base64") : ""
+                  const wasmHelperSri = global.SRI_WASM_HELPER || ''
+                  const integrationHelper = new WasmWebworkerIntegration("PandoraPayHelper", this.options.resPrefix +"wasm/PandoraPay-wallet-helper.wasm?"+wasmHelperSri, wasmHelperSri, consts.goArgv, this.options.resPrefix + "workers/PandoraPay-webworker-wasm.js", (status)=>{
+                    console.log("Helper status:", status)
+                  }, async ()=>{
 
-                const integrationHelper = new WasmWebworkerIntegration("PandoraPayHelper", this.options.resPrefix +"wasm/PandoraPay-wallet-helper.wasm?"+FILES_VERSIONING, wasmSri, consts.goArgv, this.options.resPrefix + "workers/PandoraPay-webworker-wasm.js?"+FILES_VERSIONING, (status)=>{
-                  console.log("Helper status:", status)
-                }, async ()=>{
+                    let promiseDecoderResolve, promiseDecoderReject
+                    global.PandoraPayHelper.decoderPromise = new Promise((resolve, reject)=>{
+                      promiseDecoderResolve = resolve
+                      promiseDecoderReject = reject
+                    })
 
-                  let promiseDecoderResolve, promiseDecoderReject
-                  PandoraPayHelper.promiseDecoder = new Promise((resolve, reject)=>{
-                    promiseDecoderResolve = resolve
-                    promiseDecoderReject = reject
+                    await PandoraPayHelper.helloPandoraHelper()
+                    console.log("Helper WASM is working")
+
+                    resolver(true)
+
+                    const balanceDecryptorTableSize = Number.parseInt( localStorage.getItem('balanceDecryptorTableSize') || '18');
+
+                    const promise = PandoraPayHelper.wallet.initializeBalanceDecryptor( MyTextEncode( JSONStringify( { tableSize: 1 << balanceDecryptorTableSize } )) , status =>{
+                      if (PandoraPayHelper.balanceDecoderCallback) PandoraPayHelper.balanceDecoderCallback(status)
+                    })
+
+                    promise
+                        .then( answ => promiseDecoderResolve(answ) )
+                        .catch( err => promiseDecoderReject(err) )
+
+                    await promise
+                  } )
+
+                  let lastSize = 0
+                  const r = await integrationHelper.downloadWasm( (loaded, total)=>{
+                    if (loaded - lastSize > 5*1024){
+                      lastSize = loaded
+                      console.log( 'WASM: ' + formatLoadedSize(loaded, total ) )
+                    }
                   })
+                  const data = await r.arrayBuffer()
+                  await integrationHelper.createWorker()
+                  integrationHelper.initialize(data)
+                }
 
-                  await PandoraPayHelper.helloPandoraHelper()
-                  console.log("Helper WASM is working")
+              })
 
-                  resolver(true)
 
-                  const balanceDecryptorTableSize = Number.parseInt( localStorage.getItem('balanceDecryptorTableSize') || '18');
-
-                  const promise = PandoraPayHelper.wallet.initializeBalanceDecryptor( 2**balanceDecryptorTableSize, status =>{
-                    if (PandoraPayHelper.balanceDecoderCallback) PandoraPayHelper.balanceDecoderCallback(status)
-                  })
-
-                  promise
-                      .then( answ => promiseDecoderResolve(answ) )
-                      .catch( err => promiseDecoderReject(err) )
-
-                  await promise
-                } )
-
-                let lastSize = 0
-                const r = await integrationHelper.downloadWasm( (loaded, total)=>{
-                  if (loaded - lastSize > 5*1024){
-                    lastSize = loaded
-                    console.log( 'WASM: ' + formatLoadedSize(loaded, total ) )
-                  }
-                })
-                const data = await r.arrayBuffer()
-                await integrationHelper.createWorker()
-                integrationHelper.initialize(data)
-              }
-
-            })
+            }
 
             await PandoraPayWallet.loadApp()
 

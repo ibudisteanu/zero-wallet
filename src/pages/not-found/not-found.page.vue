@@ -10,10 +10,10 @@
 
                         <div class="fw-black lh-1 text-300 fs-error">404</div>
 
-                        <p class="lead mt-4 text-800 font-sans-serif fw-semi-bold w-md-75 w-xl-100 mx-auto">The page you're looking for is not found.</p>
+                        <p class="lead mt-4 text-800 font-sans-serif fw-semi-bold w-md-75 w-xl-100 mx-auto">The page {{route}} you're looking for is not found.</p>
                         <hr>
-                        <p>Make sure the address is correct and that the page hasn't moved.
-                            If you think this is a mistake, contact the devs.
+                        <p>
+                          Make sure the address is correct and that the page hasn't moved. If you think this is a mistake, contact the devs.
                         </p>
 
                         <router-link class="btn btn-falcon-primary btn-sm mt-3" to="/">
@@ -48,7 +48,7 @@ export default {
         },
 
         route(){
-            return this.$router.currentRoute.path || '';
+            return this.$route.path || '';
         }
 
     },
