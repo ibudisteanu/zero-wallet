@@ -99,14 +99,14 @@ export default {
             this.startMatrix()
 
             this.status = "Downloading wasm"
-            await global.PandoraPayHelperPromise
+            await PandoraPayHelperPromise
             this.status = ""
 
             PandoraPayHelper.balanceDecoderCallback = (status)=>{
                 this.status = "Init  "+status
             }
 
-            await PandoraPayHelper.promiseDecoder
+            await PandoraPayHelper.decoderPromise
             this.status = ""
 
             if (this.closed) return

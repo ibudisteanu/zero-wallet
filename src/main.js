@@ -29,18 +29,19 @@ class Main {
         if (!options.router) options.router = {}
         if (typeof options.resPrefix === "undefined") options.resPrefix = '/'
 
-        if (!options.wallet)
-            options.wallet = {
-                appId: '#wallet',
-                defaultTheme: 'true',
-                startAutomatically: true,
-            }
+        options.wallet = {
+            appId: '#wallet',
+            startAutomatically: true,
+            ...(options.wallet||{}),
+        }
 
-        if (!options.intro)
-            options.intro = {
-                appId: '#wallet-loading',
-                startAutomatically: true,
-            }
+        options.intro = {
+            appId: '#wallet-loading',
+            startAutomatically: true,
+            defaultTheme: 'true',
+            loadWasmHelper: true,
+            ...(options.intro||{}),
+        }
 
         this.options = options
 

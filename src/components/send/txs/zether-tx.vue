@@ -685,6 +685,8 @@ export default {
             if (this.beforeProcess)
                 await this.beforeProcess(password, data)
 
+            await PandoraPayHelperPromise
+
             //compute extra
             out = await PandoraPayHelper.transactions.builder.createZetherTx( MyTextEncode( JSONStringify( data ) ),
                 status => {
