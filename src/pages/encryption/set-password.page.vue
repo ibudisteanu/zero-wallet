@@ -17,11 +17,11 @@
                 <div class="row">
                     <div class="col-12 col-sm-6">
                         <label>Password</label>
-                        <password-input v-model="password"/>
+                        <password-input :value="password" @changed="a =>this.password = a"/>
                     </div>
                     <div class="col-12 col-sm-6">
-                        <label >Retype Password</label>
-                        <password-input v-model="retypePassword"/>
+                        <label>Retype Password</label>
+                        <password-input :value="retypePassword" @changed="a =>this.retypePassword = a"/>
                     </div>
                 </div>
 
@@ -114,12 +114,12 @@ export default {
             try{
 
                 this.error = '';
-                this.$store.state.page.refLoadingModal.showModal();
 
-                await UtilsHelper.sleep(50 )
-
-                //if (this.password.length < 6) throw "password is too weak";
                 if (this.password !== this.retypePassword) throw "passwords are not matching";
+                //if (this.password.length < 6) throw "password is too weak";
+
+                this.$store.state.page.refLoadingModal.showModal();
+                await UtilsHelper.sleep(50 )
 
                 const out = await PandoraPay.wallet.manager.encryption.encryptWallet( this.password, this.encryptionDifficulty );
 

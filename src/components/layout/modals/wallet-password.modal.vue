@@ -8,7 +8,7 @@
 
             <div class="pt-4">
                 <label>Password</label>
-                <password-input v-model="password"/>
+                <password-input :value="password" @changed="a => this.password = a "/>
             </div>
 
         </template>

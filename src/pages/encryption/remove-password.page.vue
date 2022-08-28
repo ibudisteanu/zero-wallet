@@ -15,7 +15,7 @@
             <div class="card-body">
 
                 <label>Password</label>
-                <password-input v-model="password"/>
+                <password-input :value="password" @changed="a => this.password=a"/>
 
             </div>
 
