@@ -56,7 +56,7 @@ module.exports = function (){
 
             }
 
-            return Helper.OnMessage(self, data)
+            return Helper.OnMessage(self, data, false )
         }
 
     }

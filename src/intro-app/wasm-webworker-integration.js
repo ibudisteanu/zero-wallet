@@ -118,7 +118,7 @@ export default class WasmWebworkerIntegration {
                     this.initializedEvent()
                 }
 
-                return Helper.OnMessage(this.worker, data)
+                return Helper.OnMessage(this.worker, data, true )
             }
 
         }
