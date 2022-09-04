@@ -5,7 +5,8 @@ import Decimal from "decimal.js"
 export default {
     state:{
 
-        hCaptchaSiteKey: null,
+        origin: null,
+        challengeUri: null,
         faucetTestnetEnabled: false,
         faucetTestnetCoins: new Decimal(0),
 
