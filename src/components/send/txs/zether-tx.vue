@@ -688,10 +688,12 @@ export default {
             await PandoraPayHelperPromise
 
             //compute extra
-            out = await PandoraPayHelper.transactions.builder.createZetherTx( MyTextEncode( JSONStringify( data ) ),
+            out = await PandoraPayHelper.transactions.builder.createZetherTx(
+                MyTextEncode( JSONStringify( data ) ),
                 status => {
                     this.status = status
-                } );
+                }
+            );
 
             if (!out) throw "Transaction couldn't be made";
 
