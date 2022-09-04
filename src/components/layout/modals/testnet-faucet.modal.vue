@@ -10,11 +10,8 @@
                 </div>
             </div>
             <div class="text-center">
-                <template v-if="!hCaptchaSiteKey">
-                    <loading-spinner />
-                </template>
-                <template v-else>
-                    <vue-hcaptcha :sitekey="hCaptchaSiteKey" @verify="handleCaptchaToken" :theme="`${$store.state.settings.dark ? 'dark' : 'light'}`" />
+                <template v-if="$store.state.faucet.faucetTestnetEnabled">
+                  <iframe :src="$store.state.faucet.origin+$store.state.faucet.challengeUri" title="Solve Challenge" sandbox="allow-scripts"></iframe>
                 </template>
             </div>
         </template>
@@ -57,9 +54,6 @@ export default {
         walletAddress(){
             return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey] ;
         },
-        hCaptchaSiteKey(){
-            return this.$store.state.faucet.hCaptchaSiteKey
-        }
     },
 
     methods:{
@@ -70,7 +64,28 @@ export default {
             const promise = this.$refs.modal.showModal()
 
             this.$store.state.blockchain.syncPromise.then( async ()=>{
-                await this.$store.dispatch('initializeFaucetInfo')
+
+                const faucetInfo = await this.$store.dispatch('initializeFaucetInfo')
+
+                if (faucetInfo.faucetTestnetEnabled){
+                  const handler = (event) => {
+
+                    //if (event.origin !== faucetInfo.origin) return
+                    if (typeof event.data !== "object") return
+
+                    const object = event.data
+                    if (typeof object !== "object") return
+                    if (object.type === "solution")
+                      this.handleCaptchaToken(object.solution)
+                  }
+
+                  window.addEventListener("message", handler, false);
+
+                  promise.then(()=>{
+                    window.removeEventListener("message", handler, false);
+                  })
+                }
+
             })
 
             return promise
@@ -125,5 +140,8 @@ export default {
         display: grid;
         grid-template-columns: 60px 1fr;
         grid-column-gap: 10px;
+    }
+    iframe{
+      width: 100%
     }
 </style>
