@@ -10,7 +10,7 @@
         </div>
         <div :class="`navbar-collapse collapse ${this.$store.state.page.leftSidebarShow ? 'show' : ''}`">
             <div class="navbar-vertical-content scrollbar">
-                <ul class="navbar-nav flex-column mb-3">
+                <ul class="navbar-nav flex-column mt-3 mb-3">
                     <li class="nav-item">
                         <router-link to="/" :class="`${route === '/'  || route === '/login' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
                             <div class="d-flex align-items-center">
