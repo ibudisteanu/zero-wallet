@@ -65,8 +65,7 @@ export default {
           PandoraPay.events.listenEvents( async (name, data )=>{
 
             if ( data instanceof ArrayBuffer ) data = new Uint8Array(data)
-            if (typeof data instanceof Uint8Array  )
-              data = MyTextDecode(data)
+            if ( data instanceof Uint8Array  ) data = MyTextDecode(data)
 
             console.log("JS NAME:", name, "data", data)
 

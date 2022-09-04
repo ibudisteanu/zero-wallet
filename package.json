@@ -1,5 +1,5 @@
 {
-  "name": "PandoraPay-Wallet",
+  "name": "pandorapay-wallet",
   "keywords": [
     "PandoraPay",
     "Wallet",
@@ -9,7 +9,7 @@
     "build-ui": "webpack --config build/webpack-ui-config.js",
     "build-ui-analyzer": "webpack --config build/webpack-ui-config.js --mode=production --analyzer",
     "build-webworker-wasm": "webpack --config build/webpack-webworker-wasm-config.js",
-    "build": "npm run build-ui -- --mode=production && npm run build-webworker-wasm -- --mode=production",
+    "build": "npm run build-webworker-wasm -- --mode=production && npm run build-ui -- --mode=production",
     "test": "npm run build-ui",
     "dev": "npm run build-webworker-wasm && webpack-dev-server --config=./build/webpack-ui-dev-server-config.js --hot --host 0.0.0.0"
   },
