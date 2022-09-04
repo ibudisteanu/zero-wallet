@@ -42,8 +42,8 @@
                     <div class="row pt-2 pb-2 bg-light">
                         <span class="col-5 col-sm-3 text-truncate">Time</span>
                         <span class="col-7 col-sm-9 text-truncate">
-                            <span  v-tooltip.bottom="`${ $formatTime( $store.state.blockchain.genesisTimestamp.plus( blk.timestamp) ).times(1000) }`">
-                                {{  $timeSince( $store.state.blockchain.genesisTimestamp.plus( blk.timestamp ).times(1000), false ) }} ago
+                            <span  v-tooltip.bottom="`${ $formatTime( $store.state.blockchain.genesisTimestamp.plus( blk.timestamp).times(1000) ) }`">
+                                {{  $timeSince( $store.state.blockchain.genesisTimestamp.plus( blk.timestamp.times(1000) ), false ) }} ago
                                 <i class="fas fa-clock"></i>
                             </span>
                         </span>

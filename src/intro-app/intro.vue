@@ -1,5 +1,5 @@
 <template>
-    <div id="pandora-wallet-intro" >
+    <div>
 
         <main class="container">
 
@@ -7,13 +7,13 @@
 
                 <img :src="require(`src/assets/logo-square${dark?'':''}.png`).default" class="logo" :alt="name" >
 
-                <div style="text-align: center;">
+                <div class="text-center">
                   <svg width="200px" height="200px" viewBox="0 0 33 33">
                     <polygon class="triangle" fill="none" stroke="#fff" stroke-width="1" points="16,1 32,32 1,32" />
                   </svg>
                 </div>
 
-                <h1 style="text-align: center;">{{name.toUpperCase()}}</h1>
+                <h1 class="text-center">{{name.toUpperCase()}}</h1>
 
                 <div class="loading-text-div">
                     <alert-box v-if="error" type="error">{{error}}</alert-box>
@@ -33,7 +33,7 @@
 
 import consts from "consts/consts"
 import AlertBox from "src/components/utils/alert-box"
-import PandoraPayWebworkerIntegration from './pandorapay-webworker-integration'
+import WasmWebworkerIntegration from './wasm-webworker-integration'
 
 export default {
 
@@ -48,120 +48,136 @@ export default {
         }
     },
 
+    props: {
+      options: {default: null },
+    },
+
     computed:{
         name(){
             return consts.name
         }
     },
 
-    async mounted(){
+    mounted(){
 
         if (typeof window === "undefined") return;
 
         if (typeof localStorage !== "undefined" && !localStorage.getItem('dark') )
-            localStorage.setItem('dark', 'true')
+            localStorage.setItem('dark', this.options.intro.defaultTheme )
 
         if (typeof localStorage !== "undefined" && localStorage.getItem('dark') === 'true') {
           document.getElementsByTagName("html")[0].classList.add('dark');
           this.dark = true
         }
 
-        const formatLoadedSize = function (loaded, total){
-            return `${( Math.min(loaded, total) / 1024 / 1024 ).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
+        if (this.options.intro.startAutomatically) return this.start()
+
+    },
+
+    methods:{
+
+      async start(){
+
+        const formatLoadedSize = (loaded, total) => {
+          return `${( Math.min(loaded, total) / 1024 / 1024 ).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
         }
 
         try{
 
-            this.isDownloading = true;
+          this.isDownloading = true;
 
-            const integration = new PandoraPayWebworkerIntegration( "PandoraPay", "wasm/PandoraPay-wallet-main.wasm?"+FILES_VERSIONING, "workers/PandoraPay-webworker.js",(status)=>{
-              console.log("Main status:", status)
-                this.progressStatus = status
-            }, async ()=>{
+          const wasmMainSri = global.SRI_WASM_MAIN || ''
+          const integration = new WasmWebworkerIntegration( "PandoraPay", this.options.resPrefix + "wasm/PandoraPay-wallet-main.wasm?"+wasmMainSri, wasmMainSri, consts.goArgv, this.options.resPrefix + "workers/PandoraPay-webworker-wasm.js", (status)=>{
+            console.log("Main status:", status)
+            this.progressStatus = status
+          }, async ()=>{
 
-                await PandoraPay.helpers.helloPandora()
-                this.progressStatus = "WASM is working!"
-                PandoraPayWallet.loadWallet()
+            await PandoraPay.helpers.helloPandora()
+            this.progressStatus = "WASM is working!"
 
+            if (this.options.intro.loadWasmHelper){
+              let helperPromiseResolved = false
+              global.PandoraPayHelperPromise = new Promise((resolver)=>{
 
+                //for debugging only
+                //return resolver(true)
 
-                let PandoraPayHelperPromiseResolved = false
-                global.PandoraPayHelperPromise = new Promise((resolver)=>{
+                global.PandoraPayHelperLoader = async () => {
 
-                    //for debugging only
-                    //return resolver(true)
+                  if (helperPromiseResolved) return //already resolved
+                  helperPromiseResolved = true
 
-                    window.PandoraPayHelperLoader = async function(){
+                  const wasmHelperSri = global.SRI_WASM_HELPER || ''
+                  const integrationHelper = new WasmWebworkerIntegration("PandoraPayHelper", this.options.resPrefix +"wasm/PandoraPay-wallet-helper.wasm?"+wasmHelperSri, wasmHelperSri, consts.goArgv, this.options.resPrefix + "workers/PandoraPay-webworker-wasm.js", (status)=>{
+                    console.log("Helper status:", status)
+                  }, async ()=>{
 
-                      if (PandoraPayHelperPromiseResolved) return //already resolved
-                      PandoraPayHelperPromiseResolved = true
+                    let promiseDecoderResolve, promiseDecoderReject
+                    global.PandoraPayHelper.decoderPromise = new Promise((resolve, reject)=>{
+                      promiseDecoderResolve = resolve
+                      promiseDecoderReject = reject
+                    })
 
-                      const integrationHelper = new PandoraPayWebworkerIntegration("PandoraPayHelper", "wasm/PandoraPay-wallet-helper.wasm?"+FILES_VERSIONING, "workers/PandoraPay-helper-webworker.js", (status)=>{
-                        console.log("Helper status:", status)
-                      }, async ()=>{
+                    await PandoraPayHelper.helloPandoraHelper()
+                    console.log("Helper WASM is working")
 
-                        let promiseDecoderResolve, promiseDecoderReject
-                        PandoraPayHelper.promiseDecoder = new Promise((resolve, reject)=>{
-                          promiseDecoderResolve = resolve
-                          promiseDecoderReject = reject
-                        })
+                    resolver(true)
 
-                        await PandoraPayHelper.helloPandoraHelper()
-                        console.log("Helper WASM is working")
+                    const balanceDecryptorTableSize = Number.parseInt( localStorage.getItem('balanceDecryptorTableSize') || '18');
 
-                        resolver(true)
+                    const promise = PandoraPayHelper.wallet.initializeBalanceDecryptor( MyTextEncode( JSONStringify( { tableSize: 1 << balanceDecryptorTableSize } )) , status =>{
+                      if (PandoraPayHelper.balanceDecoderCallback) PandoraPayHelper.balanceDecoderCallback(status)
+                    })
 
-                        const balanceDecryptorTableSize = Number.parseInt( localStorage.getItem('balanceDecryptorTableSize') || '18');
+                    promise
+                        .then( answ => promiseDecoderResolve(answ) )
+                        .catch( err => promiseDecoderReject(err) )
 
-                        const promise = PandoraPayHelper.wallet.initializeBalanceDecryptor( 2**balanceDecryptorTableSize, status =>{
-                          if (PandoraPayHelper.balanceDecoderCallback) PandoraPayHelper.balanceDecoderCallback(status)
-                        })
+                    await promise
+                  } )
 
-                        promise
-                            .then( answ => promiseDecoderResolve(answ) )
-                            .catch( err => promiseDecoderReject(err) )
-
-                        await promise
-                      } )
-
-                      let lastSize = 0
-                      const r = await integrationHelper.downloadWasm((loaded, total)=>{
-                        if (loaded - lastSize > 5*1024){
-                          lastSize = loaded
-                          console.log( 'WASM: ' + formatLoadedSize(loaded, total ) )
-                        }
-                      })
-                      const data = await r.arrayBuffer()
-                      integrationHelper.createWorker()
-                      integrationHelper.initialize(data)
+                  let lastSize = 0
+                  const r = await integrationHelper.downloadWasm( (loaded, total)=>{
+                    if (loaded - lastSize > 5*1024){
+                      lastSize = loaded
+                      console.log( 'WASM: ' + formatLoadedSize(loaded, total ) )
                     }
-
-                })
-
-            })
-
-            let lastSize = 0
-            const r = await integration.downloadWasm((loaded, total)=>{
-                if (loaded - lastSize > 5*1024) {
-                    lastSize = loaded
-                    this.progressStatus = 'WASM: ' + formatLoadedSize(loaded, total)
+                  })
+                  const data = await r.arrayBuffer()
+                  await integrationHelper.createWorker()
+                  integrationHelper.initialize(data)
                 }
 
-            })
+              })
 
-            this.progressStatus = "WASM serializing...";
-            const data = await r.arrayBuffer()
-            this.progressStatus = "WASM instantiating...";
 
-            integration.createWorker()
-            integration.initialize(data)
+            }
+
+            await PandoraPayWallet.loadApp()
+
+          })
+
+          let lastSize = 0
+          const r = await integration.downloadWasm((loaded, total)=>{
+            if (loaded - lastSize > 5*1024) {
+              lastSize = loaded
+              this.progressStatus = 'WASM: ' + formatLoadedSize(loaded, total)
+            }
+          })
+
+          this.progressStatus = "WASM serializing...";
+          const data = await r.arrayBuffer()
+          this.progressStatus = "WASM instantiating...";
+
+          await integration.createWorker()
+          integration.initialize(data)
 
         }catch(err){
-            this.error = err.toString()
+          this.error = err.toString()
         }
 
-
-    }
+      }
+    },
 
     //based on https://codepen.io/alexrmota/pen/NWqwGyJ
 

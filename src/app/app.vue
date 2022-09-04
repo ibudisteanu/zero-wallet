@@ -32,120 +32,123 @@ export default {
         }
     },
 
-    computed:{
+    props: {
+      options: {default: null},
     },
 
-    beforeMount(){
-        this.$store.commit('createSyncPromise')
+    computed:{
     },
 
     async mounted(){
 
         if (typeof window === "undefined") return;
 
-        this.$store.commit('setScreenInformation')
-        this.$store.commit('readLocalStorage')
+        if (this.options.wallet.startAutomatically)
+          return this.start()
+    },
 
-        setTimeout( ()=> this.clearUnusedDataStoreWorker(), 1000)
+    methods:{
 
-        this.$store.commit('setNetworkByte', {
+        async start(){
+
+          setTimeout( ()=> this.clearUnusedDataStoreWorker(), 1000)
+
+          this.$store.commit('setNetworkByte', {
             networkByte: PandoraPay.config.NETWORK_SELECTED,
             networkPrefix: PandoraPay.config.NETWORK_SELECTED_NAME,
             networkName: PandoraPay.config.NETWORK_SELECTED_NAME,
-        })
+          })
 
-        let initialized = false
-        let firstSync = true
+          let initialized = false
+          let firstSync = true
 
-        PandoraPay.events.listenEvents( async (name, data )=>{
+          PandoraPay.events.listenEvents( async (name, data )=>{
 
-            if (data instanceof Uint8Array)
-                data = MyTextDecode(data)
+            if ( data instanceof ArrayBuffer ) data = new Uint8Array(data)
+            if ( data instanceof Uint8Array  ) data = MyTextDecode(data)
 
             console.log("JS NAME:", name, "data", data)
 
             if (name === "main")
-                if (data === "initialized"){
-                    initialized = true
+              if (data === "initialized"){
+                initialized = true
 
-                    await PandoraPay.events.listenNetworkNotifications(( subscriptionType, key, data, extraInfo)=>{
+                await PandoraPay.events.listenNetworkNotifications(( subscriptionType, key, data, extraInfo)=>{
 
-                        if (extraInfo) extraInfo = MyTextDecode( extraInfo )
-                        if (data) data = MyTextDecode( data )
+                  if (extraInfo) extraInfo = MyTextDecode( extraInfo )
+                  if (data) data = MyTextDecode( data )
 
-                        console.log("listenNetworkNotifications", subscriptionType, key, data, extraInfo)
+                  console.log("listenNetworkNotifications", subscriptionType, key, data, extraInfo)
 
-                        if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT || subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_PLAIN_ACCOUNT || subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_REGISTRATION )
-                            return this.$store.dispatch('accountUpdateNotification', {publicKey: key, type: subscriptionType, data: JSONParse(data), extraInfo: extraInfo ? JSONParse(extraInfo) : null   })
+                  if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT || subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_PLAIN_ACCOUNT || subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_REGISTRATION )
+                    return this.$store.dispatch('accountUpdateNotification', {publicKey: key, type: subscriptionType, data: JSONParse(data), extraInfo: extraInfo ? JSONParse(extraInfo) : null   })
 
-                        if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS)
-                            return this.$store.dispatch('accountTxUpdateNotification', { publicKey: key, txHash:data.substr(1,data.length-2 ), extraInfo: extraInfo ? JSONParse(extraInfo) : null  } )
+                  if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_ACCOUNT_TRANSACTIONS)
+                    return this.$store.dispatch('accountTxUpdateNotification', { publicKey: key, txHash:data.substr(1,data.length-2 ), extraInfo: extraInfo ? JSONParse(extraInfo) : null  } )
 
-                        if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTION)
-                            this.$store.dispatch('txNotification', { txHash: key, extraInfo: extraInfo ? JSONParse(extraInfo) : null } )
+                  if (subscriptionType === PandoraPay.enums.api.websockets.subscriptionType.SUBSCRIPTION_TRANSACTION)
+                    this.$store.dispatch('txNotification', { txHash: key, extraInfo: extraInfo ? JSONParse(extraInfo) : null } )
 
-                    })
+                })
 
 
-                    this.readWallet().then(()=>{
-                      setTimeout(PandoraPayHelperLoader, 1000)
-                    })
+                this.readWallet().then(()=>{
+                  setTimeout(PandoraPayHelperLoader, 1000)
+                })
 
-                }
+              }
 
             if (initialized) {
-                if (name === "wallet/added") this.readWallet()
-                else if (name === "wallet/loaded") this.readWallet()
-                else if (name === "wallet/removed") this.readWallet()
-                else if (name === "wallet/encrypted") this.readWallet()
-                else if (name === "wallet/removed-encryption") this.readWallet()
-                else if (name === "wallet/logged-out") this.readWallet()
-                else if (name === "consensus/update")
-                    this.processUpdate( JSONParse( data ) )
+              if (name === "wallet/added") this.readWallet()
+              else if (name === "wallet/loaded") this.readWallet()
+              else if (name === "wallet/removed") this.readWallet()
+              else if (name === "wallet/encrypted") this.readWallet()
+              else if (name === "wallet/removed-encryption") this.readWallet()
+              else if (name === "wallet/logged-out") this.readWallet()
+              else if (name === "consensus/update")
+                this.processUpdate( JSONParse( data ) )
 
             }
 
             if (name === "sockets/totalSocketsChanged"){
-                if (data > 0) {
+              if (data > 0) {
 
-                    const out = await PandoraPay.network.getNetworkBlockchain()
-                    this.$store.commit('setBlockchainInfo', JSONParse( MyTextDecode(out) ) )
+                const out = await PandoraPay.network.getNetworkBlockchain()
+                this.$store.commit('setBlockchainInfo', JSONParse( MyTextDecode(out) ) )
 
-                    this.$store.commit('setConsensusStatus', "online")
+                this.$store.commit('setConsensusStatus', "online")
 
-                    if (firstSync){
+                if (firstSync){
 
-                        await this.$store.dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 )
+                  await this.$store.dispatch('getAssetByHash', PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 )
 
-                        const promises = []
+                  const promises = []
 
-                        for (const key in this.$store.state.wallet.addresses)
-                            promises.push( this.$store.dispatch('subscribeAccount', {publicKey: this.$store.state.wallet.addresses[key].publicKey} ) )
+                  for (const key in this.$store.state.wallet.addresses)
+                    promises.push( this.$store.dispatch('subscribeAccount', {publicKey: this.$store.state.wallet.addresses[key].publicKey} ) )
 
-                        await Promise.all(promises )
+                  await Promise.all(promises )
 
-                        firstSync = false
-                    }else {
-                        //let's subscribe again
-                        await Promise.all([
-                            this.$store.dispatch('resubscribeAccounts'),
-                            this.$store.dispatch('resubscribeTransactions'),
-                        ])
-                    }
-
+                  firstSync = false
+                }else {
+                  //let's subscribe again
+                  await Promise.all([
+                    this.$store.dispatch('resubscribeAccounts'),
+                    this.$store.dispatch('resubscribeTransactions'),
+                  ])
                 }
-                else this.$store.commit('setConsensusStatus', "offline")
+
+              }
+              else this.$store.commit('setConsensusStatus', "offline")
             }
 
-        })
+          })
 
-        PandoraPay.helpers.start().then(()=>{
+          PandoraPay.helpers.start().then(()=>{
 
-        })
+          })
 
-    },
-
-    methods:{
+        },
 
         async processUpdate(data){
 

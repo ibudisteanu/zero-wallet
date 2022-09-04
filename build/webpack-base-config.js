@@ -15,7 +15,6 @@ module.exports = (env, argv) => {
     const isAnalyze = process.argv.includes('--analyzer');
     const isDevServer = process.env.WEBPACK_DEV_SERVER
 
-
     console.log("isProd", isProd)
 
     return {
@@ -79,24 +78,26 @@ module.exports = (env, argv) => {
             }
             ]
         },
-        optimization: {
+        optimization: isProd ? {
             minimize: true,
             minimizer: [new TerserPlugin()],
-        },
+        } : undefined,
+
         plugins: [
+            new webpack.ProvidePlugin({
+                Buffer: ['buffer', 'Buffer'],
+            }),
+
             new VueLoaderPlugin(),
             new webpack.DefinePlugin({
                 VERSION: JSON.stringify(gitRevisionPlugin.version()),
                 COMMITHASH: JSON.stringify(gitRevisionPlugin.commithash()),
                 BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
                 LASTCOMMITDATETIME: JSON.stringify(gitRevisionPlugin.lastcommitdatetime()),
-                BROWSER: 'true',
+                BROWSER: true,
                 FILES_VERSIONING: Math.random().toString(),
                 __VUE_OPTIONS_API__: true,
                 __VUE_PROD_DEVTOOLS__: false,
-            }),
-            new webpack.ProvidePlugin({
-                Buffer: ['buffer', 'Buffer'],
             }),
             ...(isAnalyze ? [new BundleAnalyzerPlugin()] : []),
             ... ( isProd ? [
@@ -107,15 +108,14 @@ module.exports = (env, argv) => {
                             test: new RegExp('\\.(js|css)$'),
                             threshold:10240,
                             minRatio: 0.8,
-                        })
+                        }),
                     ]
                     : [
                         new FriendlyErrorsWebpackPlugin(),
+                        new webpack.DefinePlugin({
+                            DEV_SERVER: true
+                        }),
                     ]),
-
-            new webpack.DefinePlugin({
-                DEV_SERVER: isProd ? undefined : 'true'
-            }),
         ]
     }
 

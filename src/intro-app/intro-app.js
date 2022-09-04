@@ -2,23 +2,17 @@ import * as Vue from 'vue'
 import Loading from './intro';
 
 
-export default (params) => {
+export default (options) => {
 
     const app = window.PandoraPayWalletIntro = Vue.createApp({
-
         render () {
-
             return Vue.h( Loading, {
-                props: {
-                    startAutomatically: params.startAutomatically,
-                }
+                options,
             });
-
         }
-
     });
 
-    app.mount('#wallet-loading')
+    app.mount(options.intro.appId)
 
     return app
 }

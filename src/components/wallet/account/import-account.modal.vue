@@ -31,7 +31,7 @@
                 <template v-slot:tab_2>
                     <div class="mb-3">
                         <label class="form-label">Password</label>
-                        <password-input v-model="addressPassword" />
+                        <password-input :value="addressPassword" @changed="a => this.addressPassword = a" />
                     </div>
                 </template>
 

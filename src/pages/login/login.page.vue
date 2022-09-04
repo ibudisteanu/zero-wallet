@@ -17,7 +17,7 @@
 
             <div>
                 <label>Password</label>
-                <password-input v-model="password" v-on:keyup.native.enter="()=>$refs.refLoadingButton.handleClick()" />
+                <password-input :value="password" @changed="a=>this.password=a" @enter="$refs.refLoadingButton.handleClick" />
 
                 <alert-box class="mt-3" v-if="error" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''" >{{error}}</alert-box>
 
