@@ -16,7 +16,7 @@
             </ul>
         </div>
         <div class="card-body py-3">
-            <div class="tab-content">
+            <div class="tab-content px-3">
                 <div v-for="(titleIndex, index) in titlesSorted" :class="`tab-pane ${tab===titleIndex?'active':''}`"
                      :key="`tab_option_${index}`">
                     <slot :name="`tab_${titleIndex}`"/>

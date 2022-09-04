@@ -171,8 +171,12 @@ export default {
 
                 if (oldTab === 0 && value === 1) {
                     if (this.validationPaymentAsset) throw this.validationPaymentAsset
-                    const asset = await this.$store.dispatch('getAssetByHash', Buffer.from(this.paymentAsset, "hex").toString("base64") )
-                    if (!asset) throw "Payment Asset doesn't exist"
+
+                    if (this.hasPaymentAsset){
+                      const asset = await this.$store.dispatch('getAssetByHash', Buffer.from(this.paymentAsset, "hex").toString("base64") )
+                      if (!asset) throw "Payment Asset doesn't exist"
+                    }
+
                 }
 
                 if (oldTab === 1 && value === 2)
