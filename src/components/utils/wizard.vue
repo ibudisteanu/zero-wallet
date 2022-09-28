@@ -34,7 +34,7 @@
                     <loading-button v-if="tab > start" text="Back" @submit="handleBack" icon="fas fa-chevron-left ms-2" classCustom="btn btn-link" :iconLeft="false" />
                 </li>
                 <li class="next">
-                    <loading-button v-if="tab <= end" :text="`${ buttons[tab] ? buttons[tab].text : 'Next'}`" @submit="handleNext" :icon="`${ buttons[tab] ? buttons[tab].icon : 'fas fa-chevron-right ms-2' }`"  />
+                    <loading-button v-if="tab <= end && (!buttons[tab] || !buttons[tab].hide)" :text="`${ buttons[tab] ? buttons[tab].text : 'Next'}`" @submit="handleNext" :icon="`${ buttons[tab] ? buttons[tab].icon : 'fas fa-chevron-right ms-2' }`"  />
                 </li>
             </ul>
 

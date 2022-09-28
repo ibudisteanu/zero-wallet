@@ -24,6 +24,7 @@ export default {
             if (txScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_ASSET_CREATE))  return "asset"
             if (txScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_ASSET_SUPPLY_INCREASE) ) return "asset"
             if (txScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_PLAIN_ACCOUNT_FUND) ) return "fund"
+            if (txScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_PAY_IN_FUTURE) ) return "future"
             return "zether"
         }
     },
@@ -41,6 +42,7 @@ export default {
             if (txScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_ASSET_CREATE) ) return "private asset create"
             if (txScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_ASSET_SUPPLY_INCREASE) ) return "private asset supply increase"
             if (txScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_PLAIN_ACCOUNT_FUND) ) return "private fund"
+            if (txScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_PAY_IN_FUTURE) ) return "pay in future"
             return "zether"
         }
     },
@@ -48,5 +50,13 @@ export default {
     getTxScriptBadgeColor: state => (txVersion, txScript) => {
         return StringHelper.badgeColors(txVersion.toNumber()*10 + txScript.toNumber())
     },
+
+    printEncryptedTxMemo: state => (message) => {
+        const b = Buffer.from(message, 'base64')
+        let i
+        for (i=b.length-1; i>0; i--)
+            if (b[i] !== 0) break
+        return b.slice(0, i+1).toString()
+    }
 
 }

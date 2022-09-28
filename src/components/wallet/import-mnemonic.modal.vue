@@ -62,7 +62,7 @@ export default {
         this.$store.state.page.refLoadingModal.showModal();
         await UtilsHelper.sleep(50 )
 
-        const out = await PandoraPay.wallet.importMnemonic( password, this.mnemonic );
+        const out = await PandoraPay.wallet.importMnemonic( password, this.mnemonic.trim() );
         if (out)
           this.$store.dispatch('addToast', {
             type: 'success',
