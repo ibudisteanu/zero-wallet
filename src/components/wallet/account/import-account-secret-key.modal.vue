@@ -95,7 +95,8 @@ export default {
 
             try{
 
-                if ( Buffer.from(this.secretKey,"base64").length < 80) throw "Secret key must be at least 80 bytes"
+                const secretKey = this.secretKey.trim()
+                if ( Buffer.from(secretKey,"base64").length < 80) throw "Secret key must be at least 80 bytes"
 
                 const password = await this.$store.state.page.refWalletPasswordModal.showModal()
                 if (password === null ) return
@@ -104,7 +105,7 @@ export default {
 
                 await UtilsHelper.sleep(50 )
 
-                const out = await PandoraPay.wallet.manager.importWalletSecretKey( password, this.secretKey, this.name, this.staked, this.spendRequired );
+                const out = await PandoraPay.wallet.manager.importWalletSecretKey( password, secretKey, this.name, this.staked, this.spendRequired );
                 if (!out) throw "Your address already exists!"
 
                 this.$store.dispatch('addToast', {
