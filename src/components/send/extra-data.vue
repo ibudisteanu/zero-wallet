@@ -24,7 +24,7 @@
                 </div>
                 <div v-if="type === 'encrypted'">
                     <div class="form-check">
-                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Message:</label>
+                        <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{paymentID ? 'PAYMENT ID' : 'Message:'}}</label>
                         <input class="form-control" type="text" v-model="data" :disabled="!!paymentID">
                     </div>
                     <div class="form-check">

@@ -159,7 +159,10 @@ export default {
         },
 
         buttons(){
-            return { 3: { icon: 'fas fa-cogs', text: 'Generate Address' }}
+            return {
+              3: { icon: 'fas fa-cogs', text: 'Generate Address' },
+              4: { hide: true },
+            }
         },
 
     },

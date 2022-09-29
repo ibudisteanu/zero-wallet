@@ -58,12 +58,10 @@ export default {
             if (this.version === "transparent")
                 amount = this.balance
             else {
-                if (this.decryptedBalance === null )
-                    return
-                else
-                    amount = this.decryptedBalance
+                if (this.decryptedBalance === null ) return
+                  amount = this.decryptedBalance
             }
-            return this.$formatMoney( new Decimal(amount).div( new Decimal(10).pow(this.getAsset.decimalSeparator) ).toString(), this.getAsset.decimalSeparator)
+            return this.$formatMoney( new Decimal(amount || 0).div( new Decimal(10).pow(this.getAsset.decimalSeparator) ).toString(), this.getAsset.decimalSeparator)
         },
 
     },

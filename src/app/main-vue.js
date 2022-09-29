@@ -43,6 +43,9 @@ export default (options) => {
     app.config.globalProperties.$formatMoney = function(a, b, c) {
         return StringHelper.formatMoney(a, b, c )
     }
+    app.config.globalProperties.$formatMilliseconds = function(a, b, c) {
+        return StringHelper.formatMilliseconds(a, b, c )
+    }
 
     store.commit('createSyncPromise')
     store.commit('setScreenInformation')
