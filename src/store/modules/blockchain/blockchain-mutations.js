@@ -14,21 +14,19 @@ export default {
 
     setConsensusStatus(store, status){
 
-        if (status === store.status) return;
-
-        if (store.status === "sync" && status === "offline")
+        if ( status === "offline" )
             this.commit('createSyncPromise');
 
-        if ( status === "online" && !store.syncPromiseResolved)
+        if ( status === "online" && !store.syncPromiseResolved) {
             store.syncPromiseResolve(true);
+            store.syncPromiseResolved = true
+        }
 
-        if (!(status === "online" && store.status === "sync"))
-            store.status = status;
-
+        store.status = status;
     },
 
     createSyncPromise(store){
-        if (store.syncPromiseResolved)
+        if (!store.syncPromise || store.syncPromiseResolved)
             store.syncPromise = new Promise(resolve => {
                 store.syncPromiseResolve = resolve;
                 store.syncPromiseResolved = false;

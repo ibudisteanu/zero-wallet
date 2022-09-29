@@ -20,7 +20,7 @@ export default {
 
         syncPromise: null,
         syncPromiseResolve: null,
-        syncPromiseResolved: true,
+        syncPromiseResolved: false,
 
     },
 
