@@ -260,7 +260,7 @@
 
                         <template v-if="payload.payloadScript.equals(PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_PAY_IN_FUTURE)" >
                           <div class="row pt-2 pb-2">
-                            <span class="col-4 col-sm-3 text-truncate">Deadline</span>
+                            <span class="col-4 col-sm-3 text-truncate">Deadline </span>
                             <span class="col-8 col-sm-9 text-truncate">
                               <template v-if="!txInfo.blkHeight">
                                 Not included
@@ -296,12 +296,29 @@
                           </div>
                           <div class="row pt-2 pb-2 bg-light">
                             <span class="col-4 col-sm-3 text-truncate">Multisig Threshold</span>
-                            <span class="col-8 col-sm-9 text-truncate">{{payload.extra.multisigThreshold}} out of {{payload.extra.multisigPublicKeys.length}}</span>
+                            <span class="col-8 col-sm-9 text-truncate">
+                              {{payload.extra.multisigThreshold}} of {{payload.extra.multisigPublicKeys.length}}
+                            </span>
                           </div>
                           <div v-for="(pub, key) in payload.extra.multisigPublicKeys" :class="`row pt-2 pb-2 ${key % 2 ? 'bg-light': ''}`">
                             <span class="col-4 col-sm-3 text-truncate">Multisig Pub Key {{key}}</span>
                             <span class="col-8 col-sm-9 text-truncate">{{pub}}</span>
                           </div>
+
+                          <div class="my-2">
+                            <button class="btn btn-falcon-default rounded-pill me-1  pointer" type="button" @click="handleSignResolutionModal(index)"
+                                    :disabled="!txInfo || $store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight )">
+                              <i class="fa fa-signature"/>
+                              Sign Resolution
+                            </button>
+
+                            <router-link :to="`/txs/public/resolution-pay-in-future/${$base64ToHex(tx.hash)}/${index}`"  type="button" @click="handleCreateSimpleResolutionPayInFuture(payload)"
+                                         :class="`btn btn-falcon-default rounded-pill me-1 pointer ${!txInfo || $store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight ) ? 'disabled': ''} `"  >
+                              <i class="fa fa-gavel"/>
+                              Create Resolution Tx
+                            </router-link>
+                          </div>
+
                         </template>
 
                     </div>
@@ -338,20 +355,21 @@
             </div>
         </div>
 
+        <sign-resolution-modal ref="signResolutionModal"/>
+
     </div>
 </template>
 
 <script>
 import ShowTransactionData from "./show-transaction-data"
-import StringHelper from "src/utils/string-helper";
-import Decimal from "decimal.js"
 import Amount from "src/components/wallet/amount"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import LoadingButton from "src/components/utils/loading-button";
+import SignResolutionModal from "./sign-resolution-modal";
 
 export default {
 
-    components: {ShowTransactionData, Amount, AccountIdenticon, LoadingButton},
+    components: {ShowTransactionData, Amount, AccountIdenticon, LoadingButton, SignResolutionModal},
 
     props: {
         tx: {default: null},
@@ -366,10 +384,6 @@ export default {
     },
 
     computed:{
-
-        PandoraPay: () => PandoraPay,
-        Decimal: () => Decimal,
-        Buffer: () => Buffer,
 
         fees(){
             if (!this.tx) return []
@@ -434,6 +448,15 @@ export default {
         handleShowTxRaw(){
             return this.$store.state.page.refTextareaModal.showModal("TX JSON", this.tx._serialized )
         },
+
+        handleSignResolutionModal(payloadIndex){
+            this.$refs.signResolutionModal.showModal(this.tx, payloadIndex)
+        },
+
+        handleCreateSimpleResolutionPayInFuture(){
+
+        },
+
     },
 
     watch: {

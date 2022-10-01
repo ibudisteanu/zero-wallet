@@ -114,13 +114,11 @@
 </template>
 
 <script>
-import StringHelper from "src/utils/string-helper";
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import ShowTransactionPreviewData from "./show-transaction-preview-data"
 import Amount from "src/components/wallet/amount"
 import LoadingButton from "src/components/utils/loading-button";
 import AccountIdenticon from "../../wallet/account/account-identicon";
-import Decimal from "decimal.js";
 export default {
 
     components: { LoadingSpinner, ShowTransactionPreviewData, Amount, LoadingButton, AccountIdenticon},
@@ -137,9 +135,6 @@ export default {
     },
 
     computed:{
-        PandoraPay: () => PandoraPay,
-        Buffer: () => Buffer,
-        Decimal: () => Decimal,
 
         tx(){
             return this.$store.state.transactionsPreview.txsByHash[this.txHash]

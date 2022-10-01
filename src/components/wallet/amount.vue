@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import StringHelper from "src/utils/string-helper";
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import Decimal from 'decimal.js';
 

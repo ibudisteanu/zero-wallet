@@ -122,8 +122,6 @@ export default {
 
     computed:{
 
-        Buffer: () => Buffer,
-
         validationPaymentID(){
             try{
 
@@ -191,10 +189,9 @@ export default {
                 if (oldTab === 3 && value === 4)
                     await this.handleCreateAddress()
 
+                resolve(true)
             }catch(err) {
                 reject(err)
-            }finally{
-                resolve(true)
             }
         },
 

@@ -10,9 +10,6 @@
 </template>
 
 <script>
-import StringHelper from "../../utils/string-helper";
-import Decimal from "decimal.js";
-
 export default {
 
     data(){

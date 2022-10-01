@@ -1,12 +1,13 @@
 <template>
     <wait-account :account="account" :type="initAvailableBalance ? 'all' : 'zether'">
 
-        <wizard :titles="{...titlesOffset,
+        <wizard :titles="{
             0: {icon: 'fas fa-users', name: 'Recipient', tooltip: 'Recipient of the private tx' },
             1: {icon: 'fas fa-pencil-alt', name: 'Memo', tooltip: 'Extra information attached in the tx' },
             2: {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' },
             3: {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee' },
-            4: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' } }"
+            4: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' },
+            ...titlesOffset }"
                 @onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card" ref="refWizard" >
 
             <template v-for="(_, index) in titlesOffset" v-slot:[getTabSlotName(index)]>
@@ -105,19 +106,19 @@
             <template #wizard-footer>
                 <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''">{{error}}</alert-box>
 
-                <div class="alert alert-info" v-if="status && statusType === 'signing'" role="alert">
-                    <h4 class="alert-heading fw-semi-bold">Signing Tx...</h4>
-                    <p>Transaction is being created. It will take 1-2 minutes.</p>
-                    <hr>
-                    <p class="mb-0">Status: {{status}}</p>
-                </div>
+                <alert-box v-if="status && statusType === 'signing'" class="w-100" type="info">
+                  <h4 class="alert-heading fw-semi-bold">Signing Tx...</h4>
+                  <p>Transaction is being created. It will take 1-2 minutes.</p>
+                  <hr>
+                  <p class="mb-0">Status: {{status}}</p>
+                </alert-box>
 
-                <div class="alert alert-info" v-if="status && statusType === 'broadcasting'" role="alert">
-                    <h4 class="alert-heading fw-semi-bold">Broadcasting Tx...</h4>
-                    <p>Your Tx is being broadcasting. It should take 20 seconds max.</p>
-                    <hr>
-                    <p class="mb-0">Status: {{status}}</p>
-                </div>
+                <alert-box v-if="status && statusType === 'broadcasting'" class="w-100" type="info" >
+                  <h4 class="alert-heading fw-semi-bold">Broadcasting Tx...</h4>
+                  <p>Your Tx is being broadcasting. It should take 20 seconds max.</p>
+                  <hr>
+                  <p class="mb-0">Status: {{status}}</p>
+                </alert-box>
 
             </template>
 
@@ -204,7 +205,6 @@ export default {
     },
 
     computed:{
-        PandoraPay: () => PandoraPay,
 
         walletAddress(){
             return this.$store.state.wallet.addresses[this.publicKey] ;
@@ -339,19 +339,15 @@ export default {
                   try{
                     await this.handlePropagateTx()
                   }catch(e){
-                    this.status = ""
-                    this.error = e.toString()
-                    setTimeout(()=>{
-                      this.$refs.refWizard.setTab(resolve, 3 )
-                    }, 1000)
+                    this.$refs.refWizard.setTab(resolve, 3 )
+                    reject(e)
                   }
                 } else return this.$emit('onSetTab', {resolve, reject, oldTab, value} )
 
+                resolve(true)
             }catch(err) {
                 console.error(err)
                 reject(err)
-            }finally{
-                resolve(true)
             }
         },
 
@@ -570,23 +566,24 @@ export default {
 
         async handleSendFunds(){
 
-            this.statusType = "signing"
-            this.status = '';
+            try{
+              this.statusType = "signing"
+              this.status = '';
 
-            const asset = this.recipient.asset
+              const asset = this.recipient.asset
 
-            const password = await this.$store.state.page.refWalletPasswordModal.showModal()
-            if (password === null ) return
+              const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+              if (password === null ) return
 
-            let senderPrivateKey, senderDecryptedBalance, senderSpendPrivateKey
-            if (!this.createNewSender){
+              let senderPrivateKey, senderDecryptedBalance, senderSpendPrivateKey
+              if (!this.createNewSender){
 
                 let balance
                 for (const availableAccount of this.availableAccounts)
-                    if (availableAccount.asset === asset){
-                        balance = availableAccount.balance
-                        break
-                    }
+                  if (availableAccount.asset === asset){
+                    balance = availableAccount.balance
+                    break
+                  }
 
                 const out = await this.$store.state.page.refDecryptBalanceModal.showModal( this.$store.state.wallet.mainPublicKey, balance, asset, true, password )
                 if (out.decryptedBalance === null) throw "Decrypting was canceled"
@@ -594,59 +591,59 @@ export default {
                 senderPrivateKey = out.privateKey
                 senderSpendPrivateKey = out.spendPrivateKey
                 senderDecryptedBalance = out.decryptedBalance
-            }else {
+              }else {
                 senderPrivateKey = this.newSender.privateKey
                 senderSpendPrivateKey = null
                 senderDecryptedBalance = this.availableBalances[ asset ].amount
-            }
+              }
 
-            const accs = { [asset]: {} }
-            const regs = {}
+              const accs = { [asset]: {} }
+              const regs = {}
 
-            const list = this.ringSenderMembers.concat(this.ringRecipientMembers)
+              const list = this.ringSenderMembers.concat(this.ringRecipientMembers)
 
-            const shuffle =  JSONParse( MyTextDecode( await PandoraPay.helpers.shuffleArray_for_Zether( list.length.toString()  )) )
-            const ringShuffle = shuffle.map( it => list[it] )
+              const shuffle =  JSONParse( MyTextDecode( await PandoraPay.helpers.shuffleArray_for_Zether( list.length.toString()  )) )
+              const ringShuffle = shuffle.map( it => list[it] )
 
-            const ringShufflePublicKeys = await Promise.all( ringShuffle.map( async it => JSONParse( MyTextDecode( await PandoraPay.addresses.decodeAddress(it) )).publicKey ) )
+              const ringShufflePublicKeys = await Promise.all( ringShuffle.map( async it => JSONParse( MyTextDecode( await PandoraPay.addresses.decodeAddress(it) )).publicKey ) )
 
-            let outData = await PandoraPay.network.getNetworkAccountsByKeys(MyTextEncode( JSONStringify({
-              keys: ringShufflePublicKeys.map(it => ({publicKey: it }) ),
-              asset,
-              includeMempool: true,
-            })))
+              let outData = await PandoraPay.network.getNetworkAccountsByKeys(MyTextEncode( JSONStringify({
+                keys: ringShufflePublicKeys.map(it => ({publicKey: it }) ),
+                asset,
+                includeMempool: true,
+              })))
 
-            let out = JSONParse( MyTextDecode( outData ) )
+              let out = JSONParse( MyTextDecode( outData ) )
 
-            for (let i=0; i < out.accountSerialized.length; i++){
-              accs[asset][ringShufflePublicKeys[i]] = out.accountSerialized[i]
-              regs[ringShufflePublicKeys[i]] = out.registrationSerialized[i]
-            }
+              for (let i=0; i < out.accountSerialized.length; i++){
+                accs[asset][ringShufflePublicKeys[i]] = out.accountSerialized[i]
+                regs[ringShufflePublicKeys[i]] = out.registrationSerialized[i]
+              }
 
-            const amount = this.recipient.amount
-            const fee = this.fee.feeType ? 0 : this.fee.feeManual.amount
+              const amount = this.recipient.amount
+              const fee = this.fee.feeType ? 0 : this.fee.feeManual.amount
 
-            let feeRate = 0, feeLeadingZeros = 0
+              let feeRate = 0, feeLeadingZeros = 0
 
-            if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64)
+              if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64)
                 if (this.assetFeeLiquidityAsset){
-                    outData = await PandoraPay.network.getNetworkFeeLiquidity(0, asset)
-                    if (!outData) throw "No Asset Fee Liqiduity for this asset"
-                    out = JSONParse( MyTextDecode(outData))
+                  outData = await PandoraPay.network.getNetworkFeeLiquidity(0, asset)
+                  if (!outData) throw "No Asset Fee Liqiduity for this asset"
+                  out = JSONParse( MyTextDecode(outData))
 
-                    feeRate = out.rate
-                    feeLeadingZeros = out.leadingZeros
+                  feeRate = out.rate
+                  feeLeadingZeros = out.leadingZeros
                 }else {
 
-                    const parts = this.assetFeeConversionRate.toString().split(".")
-                    if (parts.length > 1)
-                        feeLeadingZeros = parts[1].length
+                  const parts = this.assetFeeConversionRate.toString().split(".")
+                  if (parts.length > 1)
+                    feeLeadingZeros = parts[1].length
 
-                    feeRate = new Decimal( this.assetFeeConversionRate ).mul( new Decimal(10).pow( feeLeadingZeros) )
+                  feeRate = new Decimal( this.assetFeeConversionRate ).mul( new Decimal(10).pow( feeLeadingZeros) )
                 }
 
 
-            const data = {
+              const data = {
                 payloads:[
                   {
                     sender: {
@@ -680,56 +677,64 @@ export default {
                 chainKernelHash: this.$store.state.blockchain.kernelHash,
                 accs,
                 regs,
-            }
+              }
 
-            if (this.beforeProcess)
+              if (this.beforeProcess)
                 await this.beforeProcess(password, data)
 
-            await PandoraPayHelperPromise
+              await PandoraPayHelperPromise
 
-            //compute extra
-            out = await PandoraPayHelper.transactions.builder.createZetherTx(
-                MyTextEncode( JSONStringify( data ) ),
-                status => {
+              //compute extra
+              out = await PandoraPayHelper.transactions.builder.createZetherTx(
+                  MyTextEncode( JSONStringify( data ) ),
+                  status => {
                     this.status = status
-                }
-            );
+                  }
+              );
 
-            if (!out) throw "Transaction couldn't be made";
+              if (!out) throw "Transaction couldn't be made";
 
-            this.status = "Tx built"
+              this.tx = JSONParse( MyTextDecode( out[0] ) )
+              const serialized = out[1]
 
-            this.tx = JSONParse( MyTextDecode( out[0] ) )
-            const serialized = out[1]
+              this.status = 'Cloning transaction...'
 
-            const txSerialized = Buffer.alloc(serialized.length)
-            Buffer.from(serialized).copy(txSerialized, 0)
+              const txSerialized = Buffer.alloc(serialized.length)
+              Buffer.from(serialized).copy(txSerialized, 0)
 
-            this.tx._serialized = txSerialized.toString("base64")
-            this.txSerialized = txSerialized
+              this.tx._serialized = txSerialized.toString("base64")
+              this.txSerialized = txSerialized
 
-            this.status = ""
+              this.status = "Tx built"
+
+            }finally{
+              this.status = ""
+            }
+
 
         },
 
         async handlePropagateTx(){
 
-            this.statusType = "broadcasting"
-            this.status = 'Cloning transaction...'
+            try{
+              this.statusType = "broadcasting"
+              this.status = 'Broadcasting your transaction in the network... Please wait...'
 
-            this.status = 'Broadcasting your transaction in the network... Please wait...'
+              await this.$store.dispatch('includeTx', { tx: this.tx, serialized: this.tx._serialized, mempool: false } )
 
-            await this.$store.dispatch('includeTx', { tx: this.tx, serialized: this.tx._serialized, mempool: false } )
+              const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
+              if (!finalAnswer){
+                this.$store.commit('deleteTransactions', [this.tx] )
+                throw "Transaction couldn't be broadcast"
+              }
 
-            const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
-            if (!finalAnswer){
-              this.$store.commit('deleteTransactions', [this.tx] )
-              throw "Transaction couldn't be broadcast"
+              this.$router.push(`/explorer/tx/${Buffer.from(this.tx.hash, "base64").toString("hex")}`);
+
+              this.$emit('onBroadcast', {tx: this.tx} )
+            }finally{
+              this.status = ""
             }
 
-            this.$router.push(`/explorer/tx/${Buffer.from(this.tx.hash, "base64").toString("hex")}`);
-
-            this.$emit('onBroadcast', {tx: this.tx} )
         },
 
     },
