@@ -3,9 +3,7 @@
         <div class="col-12" >
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Asset</label>
             <select :class="`form-select ${validationError ? 'is-invalid' :''}`" v-model="selectedAsset">
-                <option v-for="(asset, id) in assets"
-                        :key="`send-money-${id}`"
-                        :value="asset">
+                <option v-for="(asset, id) in assets" :key="`send-money-${id}`" :value="asset">
                     {{getAssetName(asset)}} {{$base64ToHex(asset) }}
                 </option>
             </select>
@@ -18,6 +16,7 @@
 export default {
 
     props:{
+        initAsset: {default: null},
         text: {default: 'Amount'},
         assets: {default: null },
     },
@@ -53,6 +52,13 @@ export default {
 
     watch: {
 
+        initAsset:{
+            immediate: true,
+            handler: function(to, from){
+                this.selectedAsset = to
+            }
+        },
+
         assets: {
             immediate: true,
             handler: function(to, from){
@@ -69,18 +75,14 @@ export default {
         selectedAsset: {
             immediate: true,
             handler: function (to, from) {
-                return this.$emit('changed', {
-                    asset: to,
-                })
+                return this.$emit('changed', { asset: to })
             }
         },
 
         validationError: {
             immediate: true,
             handler: async function  (to, ) {
-                this.$emit('changed', {
-                    assetValidationError: to,
-                });
+                this.$emit('changed', { assetValidationError: to, });
             }
         }
 

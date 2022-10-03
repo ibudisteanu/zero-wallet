@@ -16,7 +16,7 @@
                 <div class="form-check pb-2">
                     <input class="form-check-input" id="fee-version" type="checkbox"  name="checkbox" v-model="feeVersion">
                     <label class="form-check-label" for="fee-version">Pay Fee from Unclaimed balance</label>
-                    <i class="fas fa-question " v-tooltip.bottom="`Subtract the fee from the unclaimed balance or from the delegated stake.`" />
+                    <i class="fas fa-question ms-1" v-tooltip.bottom="`Subtract the fee from the unclaimed balance or from the delegated stake.`" />
                 </div>
 
                 <tx-fee :balances="balancesStakeAvailable" :allow-zero="true" @changed="changedFee" />
@@ -31,7 +31,7 @@
                     <h4 class="alert-heading fw-semi-bold">Signing Tx...</h4>
                     <p>Transaction is being created</p>
                     <hr>
-                    <span class="d-block">Transaction is being created. It will take 1-2 minutes.</span>
+                    <span class="d-block">Transaction is being created.</span>
                     <label class="d-block">Status: {{status}}</label>
                 </alert-box>
             </template>
@@ -71,7 +71,7 @@ export default {
         publicKey: {default: ""},
         titlesOffset: {default: () => ({}) }, //{icon, name}
         buttonsOffset: {default: () => ({}) },
-        beforeProcess: {default: null}, //function
+        beforeProcessCb: {default: null}, //function
         enableFee: {default: true},
         enableSender: {default: true},
     },
@@ -186,8 +186,8 @@ export default {
                 height: this.$store.state.blockchain.end,
               }
 
-              if (this.beforeProcess)
-                await this.beforeProcess(password, data)
+              if (this.beforeProcessCb)
+                await this.beforeProcessCb(password, data)
 
               const out = await PandoraPay.transactions.builder.createSimpleTx( MyTextEncode( JSONStringify(data) ),
                   status => {
@@ -199,13 +199,8 @@ export default {
               this.tx = JSONParse( MyTextDecode( out[0] ) )
               const serialized = out[1]
 
-              this.status = 'Cloning transaction...'
-
-              const txSerialized = Buffer.alloc(serialized.length)
-              Buffer.from(serialized).copy(txSerialized, 0)
-
-              this.tx._serialized = txSerialized.toString("base64")
-              this.txSerialized = txSerialized
+              this.tx._serialized = serialized.toString("base64")
+              this.txSerialized = serialized
 
               this.status = 'Tx built'
 
@@ -216,12 +211,19 @@ export default {
         },
 
         async handlePropagateTx(){
+
             try{
+
+              this.status = 'Cloning transaction...'
+
+              const txSerialized = Buffer.alloc(this.txSerialized.length)
+              Buffer.from(this.txSerialized).copy(txSerialized, 0)
+
               this.status = 'Propagating transaction...'
 
               await this.$store.dispatch('includeTx', {tx: this.tx, serialized: this.tx._serialized, mempool: false } )
 
-              const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( this.txSerialized )
+              const finalAnswer = await PandoraPay.network.postNetworkMempoolBroadcastTransaction( txSerialized )
               if (!finalAnswer) {
                 this.$store.commit('deleteTransactions', [this.tx] )
                 throw "Transaction couldn't be broadcast"

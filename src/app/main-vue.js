@@ -56,11 +56,6 @@ export default (options) => {
     app.config.globalProperties.JSONStringify = JSONStringify
     app.config.globalProperties.JSONParse = JSONParse
 
-    if (typeof global !== "undefined"){
-        global.Buffer = Buffer
-        global.Decimal = Decimal
-    }
-
     store.commit('createSyncPromise')
     store.commit('setScreenInformation')
     store.commit('readLocalStorage')

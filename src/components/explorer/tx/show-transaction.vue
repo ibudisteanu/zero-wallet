@@ -141,6 +141,44 @@
                             {{tx.data}}
                         </template>
                     </div>
+
+                    <template v-if="tx.txScript.equals(PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_RESOLUTION_PAY_IN_FUTURE)">
+
+                        <div class="row pt-2 pb-2  bg-light">
+                            <span class="col-4 col-sm-3 text-truncate">Tx Id</span>
+                            <span class="col-12 col-sm-9 text-truncate" >
+                                <router-link :to="`/explorer/tx/${$base64ToHex(tx.extra.txId)}`" >
+                                    {{ $base64ToHex(tx.extra.txId) }}
+                                </router-link>
+                            </span>
+                        </div>
+
+                        <div class="row pt-2 pb-2 ">
+                            <span class="col-4 col-sm-3 text-truncate">Payload</span>
+                            <span class="col-12 col-sm-9 text-truncate" >
+                                {{tx.extra.payloadIndex}}
+                            </span>
+                        </div>
+
+                        <div class="row pt-2 pb-2  bg-light">
+                            <span class="col-4 col-sm-3 text-truncate">Resolution</span>
+                            <span class="col-12 col-sm-9 text-truncate" >
+                                {{tx.extra.resolution ? 'Receiver' : 'Sender'}}
+                            </span>
+                        </div>
+
+                        <div v-for="(pub, i) in tx.extra.multisigPublicKeys" class="row pt-2 pb-2" :key="`multisig-public-key-${i}`">
+                            <span class="col-4 col-sm-3 text-truncate">Multisig Public Key {{i}}</span>
+                            <span class="col-12 col-sm-9 text-truncate">{{pub}}</span>
+                        </div>
+
+                        <div v-for="(sig, i) in tx.extra.signatures" class="row pt-2 pb-2" :key="`signature-${i}`">
+                            <span class="col-4 col-sm-3 text-truncate">Signature {{i}}</span>
+                            <span class="col-12 col-sm-9 text-truncate">{{sig}}</span>
+                        </div>
+
+                    </template>
+
                 </div>
             </div>
 
@@ -262,7 +300,7 @@
                           <div class="row pt-2 pb-2">
                             <span class="col-4 col-sm-3 text-truncate">Deadline </span>
                             <span class="col-8 col-sm-9 text-truncate">
-                              <template v-if="!txInfo.blkHeight">
+                              <template v-if="!txInfo || !txInfo.blkHeight">
                                 Not included
                               </template>
                               <template v-else-if="$store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight )">
@@ -276,7 +314,7 @@
                           <div class="row pt-2 pb-2 bg-light">
                             <span class="col-4 col-sm-3 text-truncate">Deadline in Time</span>
                             <span class="col-8 col-sm-9 text-truncate">
-                              <template v-if="!txInfo.blkHeight">
+                              <template v-if="!txInfo || !txInfo.blkHeight">
                                 Not included
                               </template>
                               <template v-else-if="$store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight )">
@@ -307,13 +345,13 @@
 
                           <div class="my-2">
                             <button class="btn btn-falcon-default rounded-pill me-1  pointer" type="button" @click="handleSignResolutionModal(index)"
-                                    :disabled="!txInfo || $store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight )">
+                                    :disabled="!txInfo || !txInfo.blkHeight || $store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight )">
                               <i class="fa fa-signature"/>
                               Sign Resolution
                             </button>
 
-                            <router-link :to="`/txs/public/resolution-pay-in-future/${$base64ToHex(tx.hash)}/${index}`"  type="button" @click="handleCreateSimpleResolutionPayInFuture(payload)"
-                                         :class="`btn btn-falcon-default rounded-pill me-1 pointer ${!txInfo || $store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight ) ? 'disabled': ''} `"  >
+                            <router-link :to="`/advanced-txs/public/resolution-pay-in-future?txId=${$base64ToHex(tx.hash)}&payloadIndex=${index}`" type="button" @click="handleCreateSimpleResolutionPayInFuture(payload)"
+                                         :class="`btn btn-falcon-default rounded-pill me-1 pointer ${!txInfo || !txInfo.blkHeight || $store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight ) ? 'disabled': ''} `"  >
                               <i class="fa fa-gavel"/>
                               Create Resolution Tx
                             </router-link>

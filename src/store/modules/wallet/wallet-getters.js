@@ -1,4 +1,5 @@
 export default {
+
     walletContains: (state)=>(addressPublicKey)=>{
         for (const key in state.addresses){
             if (state.addresses[key].publicKey === addressPublicKey){

@@ -6,7 +6,7 @@
             <div class="form-check">
                 <input class="form-check-input" id="typePublic" type="radio" value="public" v-model="type" :disabled="!!paymentID" />
                 <label class="form-check-label" for="typePublic">Public Message</label>
-                <i class="fas fa-question " v-tooltip.bottom="`The message will be public on the chain. Anybody can see this message attached to this transaction.`" />
+                <i class="fas fa-question ms-1" v-tooltip.bottom="`The message will be public on the chain. Anybody can see this message attached to this transaction.`" />
             </div>
             <div v-if="type === 'public'">
                 <div class="form-check">
@@ -20,7 +20,7 @@
                 <div class="form-check pt-2">
                     <input class="form-check-input" id="typeEncrypted" type="radio" value="encrypted" v-model="type" :disabled="!!paymentID" />
                     <label class="form-check-label" for="typeEncrypted">Encrypted Message</label>
-                    <i class="fas fa-question " v-tooltip.bottom="`The message will encrypted to selected recipient. Only the selected address can decrypt the message attached to this transaction.`" />
+                    <i class="fas fa-question ms-1" v-tooltip.bottom="`The message will encrypted to selected recipient. Only the selected address can decrypt the message attached to this transaction.`" />
                 </div>
                 <div v-if="type === 'encrypted'">
                     <div class="form-check">
@@ -73,6 +73,8 @@ export default {
     props: {
         recipients: {default: null},
         paymentID: {default: null},
+        initData: {default: ""},
+        initDataEncryption: {default: "public"}
     },
 
     data(){
@@ -116,6 +118,20 @@ export default {
 
                 if (this.data === from) this.data = ""
             },
+        },
+
+        initData: {
+            immediate: true,
+            handler: function (to, from) {
+                this.data = to
+            }
+        },
+
+        initDataEncryption: {
+            immediate: true,
+            handler: function (to, from) {
+                this.type = to
+            }
         },
 
         type: {

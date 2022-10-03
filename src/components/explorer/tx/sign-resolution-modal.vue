@@ -4,6 +4,7 @@
     <template v-slot:body v-if="tx">
 
       <div class="row">
+
         <div class="d-inline-block">
           <label class="form-label me-2">Resolution</label>
           <div class="form-check form-check-inline">
