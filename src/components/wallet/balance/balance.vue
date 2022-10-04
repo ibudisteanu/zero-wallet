@@ -28,9 +28,6 @@
 
 <script>
 
-import StringHelper from "src/utils/string-helper"
-import Decimal from 'decimal.js';
-
 export default {
 
     components: {},

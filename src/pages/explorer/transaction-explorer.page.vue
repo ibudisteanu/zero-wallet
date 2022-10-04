@@ -75,13 +75,9 @@ export default {
             if (this.tx) return this.$store.state.transactionsInfo.txsByHash[this.tx.hash]
         },
 
-        PandoraPay: () => PandoraPay,
-
     },
 
     methods: {
-
-        JSONStringify: (a, b, c) => JSONStringify(a, b, c),
 
         async loadTransaction(){
 
@@ -94,15 +90,15 @@ export default {
 
                 await this.$store.state.blockchain.syncPromise;
 
-                if (this.tx)
-                    await this.removed()
+                if (this.tx) await this.removed()
 
-                if (this.height) await this.$store.dispatch('getTransactionByHeight', this.height);
-                if (this.hash ) await this.$store.dispatch('getTransactionByHash', this.hash );
+                let tx
+                if (this.height) tx = await this.$store.dispatch('getTransactionByHeight', this.height);
+                if (this.hash ) tx = await this.$store.dispatch('getTransactionByHash', this.hash );
 
-                if (this.tx) {
-                    this.$store.commit('updateViewTransactionsHashes', {txsHashes: [this.tx.hash], insert: true} )
-                    await this.$store.dispatch('subscribeTransaction', {txId: this.tx.hash} )
+                if (tx) {
+                    this.$store.commit('updateViewTransactionsHashes', {txsHashes: [tx.hash], insert: true} )
+                    await this.$store.dispatch('subscribeTransaction', {txId: tx.hash} )
                 }
 
             }catch(err){
@@ -122,6 +118,7 @@ export default {
 
     watch: {
         '$route': {
+            immediate: true,
             handler: async function (to, from ) {
                 if (to === from) return
                 return this.loadTransaction();
@@ -129,7 +126,7 @@ export default {
         },
 
         async hash(to, from) {
-          if (from === to) return
+            if (from === to) return
 
             const tx = this.$store.state.transactions.txsByHash[from];
             if (tx) return this.removed(tx)
@@ -142,10 +139,6 @@ export default {
             if (tx) return this.removed(tx)
         },
 
-    },
-
-    mounted(){
-        return this.loadTransaction();
     },
 
     beforeUnmount() {

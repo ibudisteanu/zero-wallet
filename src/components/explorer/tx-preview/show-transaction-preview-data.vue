@@ -50,9 +50,6 @@ export default {
     },
 
     computed:{
-
-        PandoraPay: () => PandoraPay,
-        Decimal: () => Decimal,
     },
 
     watch: {

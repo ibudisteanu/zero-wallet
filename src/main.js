@@ -1,5 +1,6 @@
 import JSONParse from 'src/utils/custom-json/json-parse'
 import  JSONStringify from 'src/utils/custom-json/json-stringify'
+import Decimal from "decimal.js";
 
 class Main {
 
@@ -13,6 +14,9 @@ class Main {
 
         global.JSONStringify = JSONStringify
         global.JSONParse = JSONParse
+
+        global.Buffer = Buffer
+        global.Decimal = Decimal
 
         window.addEventListener("load", () => {
             this.initialize()

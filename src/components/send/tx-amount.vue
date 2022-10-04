@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-12">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{text}} Amount</label>
-            <i v-if="tooltip" class="fas fa-question" v-tooltip.bottom="tooltip" />
+            <i v-if="tooltip" class="fas fa-question ms-1" v-tooltip.bottom="tooltip" />
             <input :class="`form-control ${validationError ? 'is-invalid' :''}`" type="number" v-model.number="amount" min="0" :step="getSteps" :disabled="disabled">
             <div v-if="validationError" class="invalid-feedback d-block">{{validationError}}</div>
         </div>
@@ -10,9 +10,6 @@
 </template>
 
 <script>
-import StringHelper from "../../utils/string-helper";
-import Decimal from "decimal.js";
-
 export default {
 
     data(){
@@ -24,6 +21,7 @@ export default {
     props:{
         text: {default: ''},
         tooltip: {default: ''},
+        initAmount: {default: new Decimal(0)},
         asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 },
         balances: {default: () => ({}) },
         allowZero: {default: false,},
@@ -80,10 +78,14 @@ export default {
         },
     },
 
-    methods:{
-    },
-
     watch: {
+
+        initAmount: {
+            immediate: true,
+            handler: function(to){
+                this.amount = to.div( new Decimal(10).pow(this.assetInfo.decimalSeparator) )
+            }
+        },
 
         validationError: {
             immediate: true,

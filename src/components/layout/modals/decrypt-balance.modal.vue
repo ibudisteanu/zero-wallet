@@ -15,7 +15,6 @@
 <script>
 import Modal from "src/components/utils/modal"
 import LoadingSpinner from "../../utils/loading-spinner";
-import StringHelper from "src/utils/string-helper";
 import Decimal from 'decimal.js';
 
 export default {

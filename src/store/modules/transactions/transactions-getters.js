@@ -15,6 +15,7 @@ export default {
 
         if (txVersion.eq(PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ){
             if (txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_ASSET_FEE_LIQUIDITY )) return "liquidity"
+            if (txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_RESOLUTION_PAY_IN_FUTURE )) return "resolution"
             return "simple"
         }else if (txVersion.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER ) ){
             if (txScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_TRANSFER) ) return "transfer"
@@ -33,6 +34,7 @@ export default {
 
         if (txVersion.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE) ){
             if (txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_ASSET_FEE_LIQUIDITY )) return "asset liquidity"
+            if (txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_RESOLUTION_PAY_IN_FUTURE )) return "resolution"
             return "simple"
         }else if (txVersion.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER ) ){
             if (txScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_TRANSFER) ) return "private transfer"
