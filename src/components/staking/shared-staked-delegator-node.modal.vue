@@ -73,7 +73,6 @@ export default {
     },
 
     computed:{
-        PandoraPay: () => PandoraPay,
 
         walletAddress(){
             return this.$store.state.wallet.addresses[this.publicKey];
@@ -98,10 +97,9 @@ export default {
                 if (oldTab === 1 && value === 2)
                     await this.handleNotifyDelegator()
 
+                resolve(true)
             }catch(err) {
                 reject(err)
-            }finally{
-                resolve(true)
             }
         },
 

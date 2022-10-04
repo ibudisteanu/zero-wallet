@@ -1,6 +1,8 @@
 import {createRouter, createWebHistory} from "vue-router"
 import LoginPage from "src/pages/login/login.page"
 import PrivateSendPage from "src/pages/send/private/private-send.page"
+import PrivatePayInFuturePage from "../pages/send/private/private-pay-in-future-page";
+import SimpleTxResolutionPayInFuturePage from "src/pages/send/public/simple-tx-resolution-pay-in-future-page"
 import ReceivePage from "src/pages/receive/receive.page"
 import WalletPage from "src/pages/wallet/wallet.page"
 import AddressPage from "src/pages/address/address.page"
@@ -36,6 +38,9 @@ const guardLogin = (to, from, next) =>{
 const routes = [
 
     {path: '/txs/private/send', component: PrivateSendPage, beforeEnter: guardDecrypted },
+
+    {path: '/advanced-txs/private/pay-in-future', component: PrivatePayInFuturePage, beforeEnter: guardDecrypted },
+    {path: '/advanced-txs/public/resolution-pay-in-future', component: SimpleTxResolutionPayInFuturePage, beforeEnter: guardDecrypted},
 
     {path: '/receive', component: ReceivePage, beforeEnter: guardDecrypted },
     {path: '/wallet', component: WalletPage, beforeEnter: guardDecrypted },

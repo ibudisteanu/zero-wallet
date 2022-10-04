@@ -97,12 +97,13 @@ export default {
                     this.$emit('onSetTab', {resolve, reject, oldTab: this.tab, value} )
                 })
 
-                await promise
+                const result = await promise
 
                 if (this.allowScroll)
                     this.$refs.wizard.scrollIntoView({behavior: "smooth"})
 
-                this.tab = value
+                if (result === true) this.tab = value
+                else if (typeof result === "number") this.tab = value
             } catch (err) {
                 this.error = err.toString()
             } finally {

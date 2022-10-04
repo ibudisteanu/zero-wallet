@@ -59,7 +59,6 @@
 <script>
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
-import StringHelper from "src/utils/string-helper"
 import Amount from "src/components/wallet/amount"
 
 export default {

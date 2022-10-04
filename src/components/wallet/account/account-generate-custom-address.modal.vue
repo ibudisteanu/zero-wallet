@@ -16,7 +16,7 @@
                     <div class="form-check">
                         <input class="form-check-input" id="paymentAsset" type="checkbox"  name="checkbox" v-model="hasPaymentAsset"  >
                         <label class="form-check-label" for="paymentAsset"> Payment Asset </label>
-                        <i class="fas fa-question" v-tooltip.bottom="'Specify a default asset'" ></i>  <br>
+                        <i class="fas fa-question ms-1" v-tooltip.bottom="'Specify a default asset'" ></i>  <br>
                         <template v-if="hasPaymentAsset" >
                             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Asset which will be requested</label>
                             <input :class="`form-control ${validationPaymentAsset ? 'is-invalid' : ''}`" v-if="hasPaymentAsset" type="text" v-model="paymentAsset" >
@@ -29,7 +29,7 @@
                     <div class="form-check">
                         <input class="form-check-input" id="paymentAmount" type="checkbox"  name="checkbox" v-model="hasPaymentAmount"  >
                         <label class="form-check-label" for="paymentAmount"> Amount </label>
-                        <i class="fas fa-question" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
+                        <i class="fas fa-question ms-1" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
                         <template v-if="hasPaymentAmount">
                             <tx-amount :allow-zero="true" :allow-empty-asset="true" :balances="null" @changed="amountChanged" text="Amount to Receive" :asset="Buffer.from(paymentAsset,'hex').toString('base64')" :disabled="!hasPaymentAmount" />
                         </template>
@@ -40,7 +40,7 @@
                     <div class="form-check">
                         <input class="form-check-input" id="paymentID" type="checkbox"  name="checkbox" v-model="hasPaymentID"  >
                         <label class="form-check-label" for="paymentID"> PaymentId</label>
-                        <i class="fas fa-question" v-tooltip.bottom="'Specify a default message (paymentID)'" ></i>  <br>
+                        <i class="fas fa-question ms-1" v-tooltip.bottom="'Specify a default message (paymentID)'" ></i>  <br>
                         <input :class="`form-control ${validationPaymentID ? 'is-invalid' : ''}`" v-if="hasPaymentID" type="text" v-model="paymentID" >
                         <div v-if="validationPaymentID" class="invalid-feedback d-block">{{validationPaymentID}}</div>
                     </div>
@@ -50,7 +50,7 @@
                     <div class="form-check" :disabled="!address.registration">
                         <input class="form-check-input" id="registration" type="checkbox"  name="checkbox" v-model="hasRegistration"  >
                         <label class="form-check-label" for="registration"> Registration </label>
-                        <i class="fas fa-question" v-tooltip.bottom="'Specify registration. Required only first time when used'" ></i>  <br>
+                        <i class="fas fa-question ms-1" v-tooltip.bottom="'Specify registration. Required only first time when used'" ></i>  <br>
                     </div>
                 </template>
 
@@ -122,8 +122,6 @@ export default {
 
     computed:{
 
-        Buffer: () => Buffer,
-
         validationPaymentID(){
             try{
 
@@ -191,10 +189,9 @@ export default {
                 if (oldTab === 3 && value === 4)
                     await this.handleCreateAddress()
 
+                resolve(true)
             }catch(err) {
                 reject(err)
-            }finally{
-                resolve(true)
             }
         },
 

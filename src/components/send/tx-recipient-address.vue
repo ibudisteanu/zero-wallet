@@ -21,9 +21,12 @@
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
 
 export default {
+
     components: {AccountIdenticon},
+
     props: {
         text: {default: ""},
+        initRecipient: {default: ""},
     },
 
     data(){
@@ -42,6 +45,14 @@ export default {
     },
 
     watch: {
+
+        initRecipient: {
+            immediate: true,
+            handler: async function (to){
+                this.recipient = to
+            }
+        },
+
         recipient: {
             immediate: true,
             handler: async function  (to, ) {
@@ -77,7 +88,6 @@ export default {
         async showQrCodeScanner(){
             const out = await this.$store.state.page.refQRCodeScannerModal.showModal();
             if (out) this.recipient = out
-            console.log("showQrCodeScanner", out)
         },
 
     }

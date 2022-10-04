@@ -75,10 +75,9 @@ export default {
                 if (oldTab === 1 && value === 2)
                     await this.handleImportAccountSecretKey()
 
+                resolve(true)
             }catch(err) {
                 reject(err)
-            }finally{
-                resolve(true)
             }
         },
 

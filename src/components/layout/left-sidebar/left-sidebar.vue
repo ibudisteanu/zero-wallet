@@ -97,6 +97,31 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
+                        <div class="d-flex align-items-center">
+                            <router-link to="#" class="nav-link" @click.native="e => toggleNavElement(e,'advanced-txs')">
+                                <i class="fas fa-money-check"></i>
+                                <span class="nav-link-text px-1">Advanced Transfers</span>
+                                <i :class="`nav-chevron fas fa-chevron-${navElementsShown['advanced-txs'] ? 'up' : 'down' }`"></i>
+                            </router-link>
+                        </div>
+                        <ul :class="`nav collapse ${navElementsShown['advanced-txs'] ? 'show':''}`">
+                            <li class="nav-item">
+                                <router-link :disabled="!isWalletLogged" :class="`nav-link ${ route === '/advanced-txs/private/pay-in-future' ? 'selected' : ''} nav-link`" to="/advanced-txs/private/pay-in-future" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <span class="nav-link-text ps-1">Private Pay in Future</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link :disabled="!isWalletLogged" :class="`nav-link ${ route === '/advanced-txs/public/resolution-pay-in-future' ? 'selected' : ''} nav-link`" to="/advanced-txs/public/resolution-pay-in-future" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <span class="nav-link-text ps-1">Resolution Pay in Future</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
                         <router-link :class="`nav-link ${route.indexOf('/settings') === 0 ? 'active' : ''} nav-link`" to="/settings" @click.native="disableNavbarMenu">
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-wrench"></i>

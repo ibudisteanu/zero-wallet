@@ -133,7 +133,7 @@ export default {
                 if (account.accounts ) {
                     for (let i = 0; i < account.accounts.length; i++)
                         if (account.accounts[i].asset === asset) {
-                            account.accounts.slice(i, 1)
+                            account.accounts.splice(i, 1) //remove
                             break
                         }
                     if (!account.accounts.length)

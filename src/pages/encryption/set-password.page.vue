@@ -27,14 +27,14 @@
 
                 <div class="row pt-4">
                     <div class="col-12 col-sm-6">
-                        <label>Encryption difficulty: {{encryptionDifficulty}} <i class="fas fa-question" v-tooltip.bottom="'The harder the encryption is, the harder for brute force is to crack it'" /> </label>
+                        <label>Encryption difficulty: {{encryptionDifficulty}} <i class="fas fa-question ms-1" v-tooltip.bottom="'The harder the encryption is, the harder for brute force is to crack it'" /> </label>
                         <input class="form-range" type="range" min="1" max="5" v-model.number="encryptionDifficulty" />
                         <small v-if="encryptionDifficulty > 2" :class="`fw-semi-bold rounded-pill badge-soft-${encryptionDifficulty > 7 ? 'danger' : 'warning'} p-1`">
-                            <i class="fas fa-exclamation-triangle" /> High Difficulty requires {{formatMilliseconds( encryptionTime[encryptionDifficulty] *1000) }} seconds to login.
+                            <i class="fas fa-exclamation-triangle" /> High Difficulty requires {{$formatMilliseconds( encryptionTime[encryptionDifficulty] *1000) }} seconds to login.
                         </small>
                     </div>
                     <div class="col-12 col-sm-6">
-                        <label>Password Strength <i class="fas fa-question" v-tooltip.bottom="'Avoid using guessable passwords as dictionary attacks can crack it.'" /> </label>
+                        <label>Password Strength <i class="fas fa-question ms-1" v-tooltip.bottom="'Avoid using guessable passwords as dictionary attacks can crack it.'" /> </label>
                         <progress-bar :value="strengthPassword/3*encryptionDifficulty" :text="strengthPasswordMessage" />
                     </div>
                 </div>
@@ -68,7 +68,6 @@ import ProgressBar from "src/components/utils/progress-bar"
 import AlertBox from "src/components/utils/alert-box"
 import LayoutTitle from "src/components/layout/layout-title";
 import UtilsHelper from "src/utils/utils-helper"
-import StringHelper from "src/utils/string-helper";
 const getPasswordStrength = require('password-strength-calc');
 
 export default {
@@ -106,8 +105,6 @@ export default {
     },
 
     methods: {
-
-        formatMilliseconds: (milliseconds) => StringHelper.formatMilliseconds(milliseconds),
 
         async handleSetPassword(resolve){
 

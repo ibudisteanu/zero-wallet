@@ -33,11 +33,9 @@ export default {
     methods: {
         async setTab({resolve, reject, oldTab, value}){
             try{
-
+              resolve(true)
             }catch(err) {
                 reject(err)
-            }finally{
-                resolve(true)
             }
         },
 

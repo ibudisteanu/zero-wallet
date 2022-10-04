@@ -35,11 +35,11 @@
                     <div :class="`tab-pane ${tab === 'balanceDecryptor' ? 'active' : ''}`">
                         <div class="row pt-2">
                             <div class="col-12 col-sm-6">
-                                <label>Precomputed Table size: {{balanceDecryptorTableSize}} <i class="fas fa-question" v-tooltip.bottom="'Balance Decryptor Precomputed Init Table'" /> </label> <br/>
-                                <label>Scanner Performance: {{balanceDecryptorPerformance[balanceDecryptorTableSize]}}/s <i class="fas fa-question" v-tooltip.bottom="'Balance Decryptor performance using this precomputed table'" /> </label>
+                                <label>Precomputed Table size: {{balanceDecryptorTableSize}} <i class="fas fa-question ms-1" v-tooltip.bottom="'Balance Decryptor Precomputed Init Table'" /> </label> <br/>
+                                <label>Scanner Performance: {{balanceDecryptorPerformance[balanceDecryptorTableSize]}}/s <i class="fas fa-question ms-1" v-tooltip.bottom="'Balance Decryptor performance using this precomputed table'" /> </label>
                                 <input class="form-range" type="range" min="16" max="22" v-model="balanceDecryptorTableSize" />
                                 <small :class="`fw-semi-bold rounded-pill badge-soft-${balanceDecryptorTableSize >= 20 ? 'danger' : 'warning'} p-1`">
-                                    <i class="fas fa-exclamation-triangle" /> High will require {{formatMilliseconds( balanceDecryptorTime[balanceDecryptorTableSize] *1000 )}} initialize (bootstrap) time.
+                                    <i class="fas fa-exclamation-triangle" /> High will require {{$formatMilliseconds( balanceDecryptorTime[balanceDecryptorTableSize] *1000 )}} initialize (bootstrap) time.
                                 </small>
                             </div>
                         </div>
@@ -75,13 +75,12 @@
 <script>
 import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title";
-import StringHelper from "src/utils/string-helper";
 import LoadingButton from "../../components/utils/loading-button";
 import AlertBox from "src/components/utils/alert-box"
 
 export default {
 
-    components: {LoadingButton, Layout, LayoutTitle, StringHelper, AlertBox},
+    components: {LoadingButton, Layout, LayoutTitle, AlertBox},
 
     data(){
         return {
@@ -120,7 +119,6 @@ export default {
     },
 
     methods: {
-        formatMilliseconds: (milliseconds) => StringHelper.formatMilliseconds(milliseconds),
 
         handleSave(resolver){
             try{

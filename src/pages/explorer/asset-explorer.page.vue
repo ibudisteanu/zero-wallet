@@ -122,8 +122,6 @@ export default {
 
     methods: {
 
-        JSONStringify: (a, b, c) => JSONStringify(a, b, c),
-
         async loadAsset() {
 
             try{

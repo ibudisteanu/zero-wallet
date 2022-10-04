@@ -123,7 +123,6 @@ import ShowTransactionsPreview from "src/components/explorer/tx-preview/show-tra
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import AlertBox from "src/components/utils/alert-box"
 import Amount from "src/components/wallet/amount"
-import StringHelper from "src/utils/string-helper"
 import Decimal from "decimal.js"
 import LoadingButton from "src/components/utils/loading-button"
 
@@ -143,7 +142,6 @@ export default {
     },
 
     computed:{
-        Buffer: () => Buffer,
 
         query(){
             return (this.$route.params.query||'').toLowerCase();
@@ -171,8 +169,6 @@ export default {
     },
 
     methods: {
-
-        JSONStringify: (a, b, c) => JSONStringify(a, b, c),
 
         async loadBlock(){
 

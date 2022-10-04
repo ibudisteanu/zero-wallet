@@ -13,7 +13,7 @@
               </div>
               <div class="modal-body p-0" ref="refModalBody">
                 <div v-if="title" class="rounded-top-lg py-3 ps-3 pe-6 bg-light">
-                  <h5 class="mb-1">{{title}}</h5>
+                  <h5 class="mb-1 text-truncate">{{title}}</h5>
                 </div>
                 <div v-if="hasBodySlot" :class="`${contentClass} pb-20 d-inline-block w-100`">
                   <slot name="body"/>

@@ -2,10 +2,12 @@
     <div>
         <template v-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_SIMPLE)">
 
-            <div class="input">
-                <account-identicon :publicKey="tx.vin.publicKey" size="21" outer-size="7" />
-                <amount :value="vinSimpleAmount" :sign="false" />
-            </div>
+            <template v-if="tx.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_ASSET_FEE_LIQUIDITY)">
+              <div class="input">
+                  <account-identicon :publicKey="tx.vin.publicKey" size="21" outer-size="7" />
+                  <amount :value="vinSimpleAmount" :sign="false" />
+              </div>
+            </template>
 
         </template>
         <template v-else-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER)">
@@ -38,7 +40,6 @@ export default {
     },
 
     computed:{
-        PandoraPay: () => PandoraPay,
 
         vinSimpleAmount(){
 
