@@ -514,7 +514,7 @@ export default {
                 for (let payloadIndex = 0; payloadIndex < this.payloads.length; payloadIndex++) {
 
                     const canStake = function () {
-                        return Math.random() < 0.1 && payload.payloadScript !== PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_PAY_IN_FUTURE;
+                        return Math.random() < 0.1 && payload.payloadScript !== PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CONDITIONAL_PAYMENT;
                     }
 
                     let senderRingMembers = [], recipientRingMembers = []
@@ -674,7 +674,7 @@ export default {
                                 if (publicKeys[i] === assetCollector) continue
 
                                 const index = tempSelectedArray[i]
-                                if (payload.payloadScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_PAY_IN_FUTURE && accountsData.registration[i].staked) continue
+                                if (payload.payloadScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CONDITIONAL_PAYMENT && accountsData.registration[i].staked) continue
 
                                 if (recipientTempSelected[index]) { //receiver
                                     recipientAdd[publicKeys[i]] = {index}

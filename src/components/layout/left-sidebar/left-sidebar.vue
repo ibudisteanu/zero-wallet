@@ -106,16 +106,16 @@
                         </div>
                         <ul :class="`nav collapse ${navElementsShown['advanced-txs'] ? 'show':''}`">
                             <li class="nav-item">
-                                <router-link :disabled="!isWalletLogged" :class="`nav-link ${ route === '/advanced-txs/private/pay-in-future' ? 'selected' : ''} nav-link`" to="/advanced-txs/private/pay-in-future" @click.native="disableNavbarMenu">
+                                <router-link :disabled="!isWalletLogged" :class="`nav-link ${ route === '/advanced-txs/private/conditional-payment' ? 'selected' : ''} nav-link`" to="/advanced-txs/private/conditional-payment" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
-                                        <span class="nav-link-text ps-1">Private Pay in Future</span>
+                                        <span class="nav-link-text ps-1">Private Conditional Payment</span>
                                     </div>
                                 </router-link>
                             </li>
                             <li class="nav-item">
-                                <router-link :disabled="!isWalletLogged" :class="`nav-link ${ route === '/advanced-txs/public/resolution-pay-in-future' ? 'selected' : ''} nav-link`" to="/advanced-txs/public/resolution-pay-in-future" @click.native="disableNavbarMenu">
+                                <router-link :disabled="!isWalletLogged" :class="`nav-link ${ route === '/advanced-txs/public/resolution-conditional-payment' ? 'selected' : ''} nav-link`" to="/advanced-txs/public/resolution-conditional-payment" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
-                                        <span class="nav-link-text ps-1">Resolution Pay in Future</span>
+                                        <span class="nav-link-text ps-1">Resolution Conditional Payment</span>
                                     </div>
                                 </router-link>
                             </li>

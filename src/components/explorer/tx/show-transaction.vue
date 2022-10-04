@@ -142,7 +142,7 @@
                         </template>
                     </div>
 
-                    <template v-if="tx.txScript.equals(PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_RESOLUTION_PAY_IN_FUTURE)">
+                    <template v-if="tx.txScript.equals(PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_RESOLUTION_CONDITIONAL_PAYMENT)">
 
                         <div class="row pt-2 pb-2  bg-light">
                             <span class="col-4 col-sm-3 text-truncate">Tx Id</span>
@@ -296,7 +296,7 @@
                             </span>
                         </div>
 
-                        <template v-if="payload.payloadScript.equals(PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_PAY_IN_FUTURE)" >
+                        <template v-if="payload.payloadScript.equals(PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CONDITIONAL_PAYMENT)" >
                           <div class="row pt-2 pb-2">
                             <span class="col-4 col-sm-3 text-truncate">Deadline </span>
                             <span class="col-8 col-sm-9 text-truncate">
@@ -350,7 +350,7 @@
                               Sign Resolution
                             </button>
 
-                            <router-link :to="`/advanced-txs/public/resolution-pay-in-future?txId=${$base64ToHex(tx.hash)}&payloadIndex=${index}`" type="button" @click="handleCreateSimpleResolutionPayInFuture(payload)"
+                            <router-link :to="`/advanced-txs/public/resolution-conditional-payment?txId=${$base64ToHex(tx.hash)}&payloadIndex=${index}`" type="button"
                                          :class="`btn btn-falcon-default rounded-pill me-1 pointer ${!txInfo || !txInfo.blkHeight || $store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight ) ? 'disabled': ''} `"  >
                               <i class="fa fa-gavel"/>
                               Create Resolution Tx
@@ -489,10 +489,6 @@ export default {
 
         handleSignResolutionModal(payloadIndex){
             this.$refs.signResolutionModal.showModal(this.tx, payloadIndex)
-        },
-
-        handleCreateSimpleResolutionPayInFuture(){
-
         },
 
     },

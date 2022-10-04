@@ -86,7 +86,7 @@ export default {
       try{
         this.result = ""
 
-        const out = JSONParse( MyTextDecode( await PandoraPay.transactions.signResolutionPayInFuture(MyTextEncode( JSON.stringify( {
+        const out = JSONParse( MyTextDecode( await PandoraPay.transactions.signResolutionConditionalPayment(MyTextEncode( JSON.stringify( {
           txId: this.tx.hash,
           payloadIndex: this.payloadIndex,
           resolution: this.resolution === "receiver",

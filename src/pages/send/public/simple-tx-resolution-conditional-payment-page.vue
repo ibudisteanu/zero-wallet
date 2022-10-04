@@ -2,7 +2,7 @@
 
   <layout>
 
-    <layout-title icon="fas fa-money-check-alt" title="Resolution Pay in Future">Create a Public Transaction to make the conclusion of a pay in future.</layout-title>
+    <layout-title icon="fas fa-money-check-alt" title="Resolution Conditional Payment">Create a Public Transaction to draw the conclusion of a conditional payment.</layout-title>
 
     <simple-tx :public-key="publicKey" @onSetTab="setTab" account-type="none" :titles-offset="titlesOffset"
                :enable-fee="false" :enable-sender="false" :before-process-cb="beforeProcessCb" >
@@ -134,8 +134,8 @@ export default {
 
                     if (!this.payload) throw "Payload was not found!"
 
-                    if (!this.payload.payloadScript.equals(PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_PAY_IN_FUTURE))
-                        throw "Payload Script is not PAY IN FUTURE"
+                    if (!this.payload.payloadScript.equals(PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CONDITIONAL_PAYMENT))
+                        throw "Payload Script is not SCRIPT_CONDITIONAL_PAYMENT"
 
                     if (!this.txInfo)
                         throw "Transaction is not included in Blockchain"
@@ -178,7 +178,7 @@ export default {
 
         beforeProcessCb(password, data) {
 
-            data.txScript = PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_RESOLUTION_PAY_IN_FUTURE
+            data.txScript = PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_RESOLUTION_CONDITIONAL_PAYMENT
             data.extra = {
                 txId: this.hash,
                 payloadIndex: new Decimal(this.payloadIndex),

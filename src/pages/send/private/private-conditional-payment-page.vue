@@ -2,8 +2,7 @@
 
     <layout>
 
-        <layout-title icon="fas fa-money-check-alt" title="Private Pay in Future">Conditional payment to another address
-        </layout-title>
+        <layout-title icon="fas fa-money-check-alt" title="Private Conditional Payment">Private conditional payment to a recipient.</layout-title>
 
         <zether-tx :public-key="publicKey" @onSetTab="setTab" ref="zetherTx"
                    :titles-offset="{0.5: {name: 'Conditional Payment', icon: 'fa fa-check',  tooltip: 'Conditional Payment'} }"
@@ -147,7 +146,7 @@ export default {
 
         buildPayloadCb(index, payload) {
             if (index === 0) {
-                payload.payloadScript = PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_PAY_IN_FUTURE
+                payload.payloadScript = PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CONDITIONAL_PAYMENT
             } else if (index === 1) {
                 payload.allowRandomRecipient = true
                 payload.allowRandomRecipient = true
