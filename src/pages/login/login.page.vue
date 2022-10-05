@@ -78,10 +78,10 @@ export default {
 
             }catch(err){
 
-                if (err.message === "Invalid password")
+                if (err.toString() === "Invalid password")
                     this.error = 'Password is invalid';
                 else
-                    this.error = err.message;
+                    this.error = err.toString();
 
             }finally{
                 resolve(true);

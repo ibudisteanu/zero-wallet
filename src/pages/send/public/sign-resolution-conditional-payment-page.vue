@@ -3,17 +3,17 @@
   <layout>
 
     <layout-title icon="fas fa-money-check-alt" title="Resolution Conditional Payment">
-      Create a Public Transaction to draw the conclusion of a conditional payment.
+      Sign Resolution for a Conditional Payment
     </layout-title>
 
-    <simple-tx :titles-offset="{
-                    '-2': { icon: 'fas fa-credit-card',  name: 'Conditional Payment', tooltip: 'Conditional Payment Transaction ID' },
-                    '-1': {icon: 'fas fa-signature', name: 'Signatures', tooltip: 'Signatures required for multisig'} }"
-               :public-key="publicKey" @onSetTab="setTab" account-type="none"
-               :enable-fee="false" :enable-sender="false" :before-process-cb="beforeProcessCb">
+    <wizard :titles="{
+                0: {icon: 'fas fa-credit-card', name: 'Transaction Info', tooltip: 'Conditional Payment Transaction ID' },
+                1: {icon: 'fas fa-key', name: 'Private Key', tooltip: 'Private Key of the Conditional Payment' },
+                2: {icon: 'fas fa-signature', name: 'Generated Signature', tooltip: 'View your Signature' }}"
+            @onSetTab="setTab" controls-class-name="card-footer bg-light" class="card"
+            :buttons="{1: {icon: 'fas fa-file-upload', text: 'Sign Resolution'}, 2: {hide: true } }">
 
-      <template v-slot:tab_-2>
-
+      <template v-slot:tab_0>
         <div class="pb-2">
           <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Transaction Id:</label>
           <input :class="`form-control ${$store.getters.validateHash(txId) ? 'is-invalid': ''}`" type="text" v-model="txId">
@@ -29,77 +29,74 @@
             {{ $store.getters.validateNumber(payloadIndex) }}
           </div>
         </div>
-
       </template>
 
-      <template v-slot:tab_-1>
+      <template v-slot:tab_1>
 
         <div class="row">
           <div class="d-inline-block">
             <label class="form-label me-2">Resolution</label>
             <div class="form-check form-check-inline">
-              <input class="form-check-input pointer" id="sender" type="radio" value="sender" v-model="resolution">
+              <input class="form-check-input pointer" id="sender" type="radio" value="sender" v-model="resolution"/>
               <label class="form-check-label pointer" for="sender">Sender</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input pointer" id="recipient" type="radio" value="recipient" v-model="resolution">
-              <label class="form-check-label pointer" for="recipient">Recipient</label>
+              <input class="form-check-input pointer" id="recipient" type="radio" value="recipient"
+                     v-model="resolution"/>
+              <label class="form-check-label pointer" for="recipient">Receiver</label>
             </div>
           </div>
         </div>
 
-        <div class="row mt-2" v-if="payload">
-          <label class="form-label mt-2">Multisig Threshold: {{ payload.extra.multisigThreshold }} of
-            {{ payload.extra.multisigPublicKeys.length }} </label>
-          <div v-for="(pub, i) in multisigPublicKeys" :key="i" class="my-4">
-            <label class="form-label">Public Key: {{ pub }}</label>
-            <div class="row">
-              <div class="col-12">
-                <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Signature</label>
-                <input :class="`form-control ${validationSignatures[i] ? 'is-invalid': ''}`" type="text" v-model="signatures[i]">
-                <div v-if="validationSignatures[i]" class="invalid-feedback d-block">
-                  {{ validationSignatures[i] }}
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="row mt-2 mb-2">
+          <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Private Key</label>
+          <textarea class="form-control" rows="3" v-model="privateKey"></textarea>
         </div>
 
       </template>
 
-    </simple-tx>
+      <template v-slot:tab_2>
+
+        <div class="row mt-2">
+          <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Signature</label>
+          <textarea class="form-control" rows="3" v-model="resultSignature" disabled="true"></textarea>
+        </div>
+
+        <div class="row mt-4">
+          <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Public Key</label>
+          <textarea class="form-control" rows="3" v-model="resultPublicKey" disabled="true"></textarea>
+        </div>
+
+      </template>
+
+    </wizard>
 
   </layout>
 </template>
 
 <script>
-
-import Layout from "src/components/layout/layout"
+import Modal from "src/components/utils/modal"
+import AlertBox from "src/components/utils/alert-box";
+import Wizard from "src/components/utils/wizard"
+import Layout from "src/components/layout/layout";
 import LayoutTitle from "src/components/layout/layout-title";
-import SimpleTx from "src/components/send/txs/simple-tx";
-
 
 export default {
 
-  components: {SimpleTx, LayoutTitle, Layout,},
-
-  props: {},
+  components: {Modal, AlertBox, Wizard, Layout, LayoutTitle},
 
   data() {
     return {
       txId: "",
       payloadIndex: 0,
       resolution: "sender",
-      multisigPublicKeys: [],
-      signatures: [],
-      error: "",
+      privateKey: "",
+      resultSignature: "",
+      resultPublicKey: "",
     }
   },
 
   computed: {
-    publicKey() {
-      return this.$store.state.wallet.mainPublicKey
-    },
     hash() {
       try {
         const x = Buffer.from(this.txId, "hex")
@@ -119,21 +116,14 @@ export default {
     payload() {
       return this.tx && this.tx.payloads[this.payloadIndex] ? this.tx.payloads[this.payloadIndex] : null
     },
-    validationSignatures() {
-      const out = []
-      for (let i = 0; i < this.signatures.length; i++)
-        if (this.signatures[i])
-          out[i] = this.$store.getters.validateSignature(this.signatures[i])
-      return out
-    },
   },
 
   methods: {
+
     async setTab({resolve, reject, oldTab, value}) {
       try {
 
-        if (oldTab === -2 && value === -1) {
-
+        if (oldTab === 0 && value === 1) {
           await this.loadTransaction()
           if (!this.tx) throw "Transaction was not found"
 
@@ -153,48 +143,14 @@ export default {
 
           this.multisigPublicKeys = this.payload.extra.multisigPublicKeys.map(it => it)
         }
-        if (oldTab === -1 && value === 0) {
-          let counter = 0
 
-          const v = this.validationSignatures
-
-          for (let i = 0; i < this.signatures.length; i++)
-            if (this.signatures[i]) {
-              if (v[i]) throw v[i]
-              if (this.signatures[i]) counter++
-            }
-
-          if (counter < this.payload.extra.multisigThreshold)
-            throw `You will need at least ${this.payload.extra.multisigThreshold} signatures`
-
-        }
+        if (oldTab === 1 && value === 2)
+          await this.handleSign()
 
         resolve(true)
-
       } catch (err) {
         reject(err)
       }
-
-
-    },
-
-    beforeProcessCb(password, data) {
-
-      data.txScript = PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_RESOLUTION_CONDITIONAL_PAYMENT
-      data.extra = {
-        txId: this.hash,
-        payloadIndex: new Decimal(this.payloadIndex),
-        resolution: this.resolution === "recipient",
-        multisigPublicKeys: [],
-        signatures: [],
-      }
-
-      for (let i = 0; i < this.signatures.length; i++)
-        if (this.signatures[i] !== null) {
-          data.extra.multisigPublicKeys.push(this.multisigPublicKeys[i])
-          data.extra.signatures.push(this.signatures[i])
-        }
-
     },
 
     async loadTransaction() {
@@ -233,8 +189,9 @@ export default {
         if (to.query.resolution !== undefined) this.resolution = to.query.resolution === "recipient"
         else this.resolution = "sender"
 
-        if (to.query.signatures !== undefined) this.signatures = to.query.signatures.split(",").map(it => Buffer.from(it, "hex").toString("base64"))
-        else this.signatures = []
+        if (to.query.privateKey !== undefined) this.privateKey = Buffer.from(to.query.privateKey, "hex").toString("base64")
+        else this.privateKey = ""
+
 
         if (this.hash) await this.loadTransaction()
 
@@ -245,6 +202,32 @@ export default {
           text: `Raised an error ${e.toString()}`,
         })
       }
+    },
+
+    async handleSign() {
+
+      this.result = ""
+
+      const out = JSONParse(MyTextDecode(await PandoraPay.transactions.signResolutionConditionalPayment(MyTextEncode(JSONStringify({
+        txId: this.hash,
+        payloadIndex: new Decimal(this.payloadIndex),
+        resolution: this.resolution === "recipient",
+        privateKey: this.privateKey
+      })))))
+
+      let foundPublicKey = false
+      for (const publicKey of this.tx.payloads[this.payloadIndex].extra.multisigPublicKeys)
+        if (publicKey === out.publicKey) {
+          foundPublicKey = true
+          break
+        }
+
+      if (!foundPublicKey)
+        throw "Public Key is not found in multisig list"
+
+      this.resultPublicKey = out.publicKey
+      this.resultSignature = out.signature
+
     },
 
   },
@@ -263,6 +246,4 @@ export default {
   },
 
 }
-
 </script>
-

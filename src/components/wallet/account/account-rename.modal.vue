@@ -91,7 +91,7 @@ export default {
                 this.$store.dispatch('addToast', {
                     type: 'error',
                     title: `Address ${address.addressEncoded} could not been renamed`,
-                    text: `Raised an error ${err.message}`,
+                    text: `Raised an error ${err.toString()}`,
                 })
             }finally{
                 this.$store.state.page.refLoadingModal.closeModal();
