@@ -28,8 +28,8 @@
                             <label class="form-check-label pointer" for="sender">Sender</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input pointer" id="receiver" type="radio" value="receiver" v-model="defaultResolution"/>
-                            <label class="form-check-label pointer" for="receiver">Receiver</label>
+                            <input class="form-check-input pointer" id="recipient" type="radio" value="recipient" v-model="defaultResolution"/>
+                            <label class="form-check-label pointer" for="recipient">Recipient</label>
                         </div>
                     </div>
                 </div>
@@ -157,7 +157,7 @@ export default {
         async beforeProcessCb(password, txData) {
             txData.payloads[0].extra = {
                 deadline: new Decimal(this.deadline),
-                defaultResolution: this.defaultResolution === "receiver",
+                defaultResolution: this.defaultResolution === "recipient",
                 threshold: new Decimal(this.threshold),
                 multisigPublicKeys: this.multisigPublicKeys,
             }
@@ -199,7 +199,7 @@ export default {
                 this.$store.dispatch('addToast', {
                     type: 'error',
                     title: `There was an error processing URL query`,
-                    text: `Raised an error ${e.message}`,
+                    text: `Raised an error ${e.toString()}`,
                 })
             }
         },

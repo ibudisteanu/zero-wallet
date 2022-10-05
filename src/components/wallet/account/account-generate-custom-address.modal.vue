@@ -10,7 +10,8 @@
                 2: {icon: 'fas fa-hand-holding-usd', name: 'Payment ID', tooltip: 'Include a Payment ID' },
                 3: {icon: 'fas fa-signature', name: 'Registration', tooltip: 'Include Registration Signature' },
                 4: {icon: 'fas fa-check', name: 'Done', tooltip: 'Generated Address' }}"
-                @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" :allow-scroll="false" >
+                @onSetTab="setTab" controls-class-name="modal-footer bg-light" :allow-scroll="false"
+                :buttons="{ 3: { icon: 'fas fa-cogs', text: 'Generate Address' }, 4: { hide: true } }">
 
                 <template v-slot:tab_0>
                     <div class="form-check">
@@ -153,13 +154,6 @@ export default {
                 if (buf.length !== 20) throw "PaymentAsset should be an 8 byte hexadecimal number"
             }catch(err){
                 return err.toString()
-            }
-        },
-
-        buttons(){
-            return {
-              3: { icon: 'fas fa-cogs', text: 'Generate Address' },
-              4: { hide: true },
             }
         },
 

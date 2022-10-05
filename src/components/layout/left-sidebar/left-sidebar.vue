@@ -10,9 +10,10 @@
         </div>
         <div :class="`navbar-collapse collapse ${this.$store.state.page.leftSidebarShow ? 'show' : ''}`">
             <div class="navbar-vertical-content scrollbar">
+
                 <ul class="navbar-nav flex-column mt-3 mb-3">
                     <li class="nav-item">
-                        <router-link to="/" :class="`${route === '/'  || route === '/login' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
+                        <router-link to="/" :class="`${route === '/'  || route === '/login' ? 'active' : ''} nav-link`" @click.native="disableNavbarMenu">
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-money-bill-alt"></i>
                                 <span class="nav-link-text ps-1">Account</span>
@@ -20,7 +21,7 @@
                         </router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link :disabled="!isWalletLogged" to="/wallet" :class="`${ route === '/wallet' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
+                        <router-link :disabled="!isWalletLogged" to="/wallet" :class="`${ route === '/wallet' ? 'active' : ''} nav-link`" @click.native="disableNavbarMenu" >
                             <div class="d-flex align-items-center">
                                 <i class="fas fa-wallet"></i>
                                 <span class="nav-link-text ps-1">Wallet</span>
@@ -29,7 +30,7 @@
                     </li>
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <router-link :disabled="!isWalletLogged" to="/txs/private/send" :class="`${ route === '/txs/private/send' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
+                            <router-link :disabled="!isWalletLogged" to="/txs/private/send" :class="`${ route === '/txs/private/send' ? 'active' : ''} nav-link`" @click.native="disableNavbarMenu" >
                                 <i class="fas fa-money-check-alt"></i>
                                 <span class="nav-link-text ps-1">Private Transfer</span>
                             </router-link>
@@ -37,7 +38,7 @@
                     </li>
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <router-link :disabled="!isWalletLogged" to="/receive" :class="`${ route === '/receive' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu" >
+                            <router-link :disabled="!isWalletLogged" to="/receive" :class="`${ route === '/receive' ? 'active' : ''} nav-link`" @click.native="disableNavbarMenu" >
                                 <i class="fas fa-hand-holding-usd"></i>
                                 <span class="nav-link-text ps-1">Private Receive</span>
                             </router-link>
@@ -47,13 +48,13 @@
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
                             <template v-if="!encrypted">
-                                <router-link to="/set-password" class="nav-link" @click.native="disableNavbarMenu">
+                                <router-link to="/set-password" :class="`nav-link ${route.indexOf('/set-password') === 0 ? 'active' : ''}`" @click.native="disableNavbarMenu">
                                     <i class="fas fa-lock"></i>
                                     <span class="nav-link-text ps-1">Set Password</span>
                                 </router-link>
                             </template>
                             <template v-else>
-                                <router-link to="/remove-password" class="nav-link" @click.native="disableNavbarMenu">
+                                <router-link to="/remove-password" :class="`nav-link ${route.indexOf('/remove-passwor') === 0 ? 'active' : ''}`" @click.native="disableNavbarMenu">
                                     <i class="fas fa-unlock-alt"></i>
                                     <span class="nav-link-text ps-1">Remove Password</span>
                                 </router-link>
@@ -63,15 +64,15 @@
 
                     <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <router-link to="#" class="nav-link" @click.native="e => toggleNavElement( e,'explorer')">
+                            <span :class="`nav-link pointer ${route.indexOf('/explorer') === 0 ? 'active' : ''}`" @click.native="e => toggleNavElement( e,'explorer')">
                                 <i class="fas fa-cubes"></i>
                                 <span class="nav-link-text px-1">Explorer</span>
                                 <i :class="`nav-chevron fas fa-chevron-${navElementsShown['explorer'] ? 'up' : 'down' }`"></i>
-                            </router-link>
+                            </span>
                         </div>
                         <ul :class="`nav collapse ${navElementsShown['explorer'] ? 'show':''}`">
                             <li class="nav-item">
-                                <router-link :class="`nav-link ${route.indexOf('/explorer') === 0 ? 'active' : ''} nav-link`" to="/explorer" @click.native="disableNavbarMenu">
+                                <router-link :class="`nav-link ${route === '/explorer' ? 'active' : ''}`" to="/explorer" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
                                         <i class="fas fa-cube" />
                                         <span class="nav-link-text ps-1">Blocks</span>
@@ -79,43 +80,61 @@
                                 </router-link>
                             </li>
                             <li class="nav-item">
-                                <router-link :class="`nav-link ${route.indexOf('/explorer/mempool') === 0 ? 'active' : ''}  nav-link`" to="/explorer/mempool" @click.native="disableNavbarMenu">
+                                <router-link :class="`nav-link ${route.indexOf('/explorer/mempool') === 0 ? 'active' : ''}`" to="/explorer/mempool" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
                                         <i class="fas fa-list-ol" />
                                         <span class="nav-link-text ps-1">Mem pool</span>
                                     </div>
                                 </router-link>
                             </li>
+                            <li class="nav-item">
+                                <router-link :class="`nav-link ${route.indexOf('/explorer/assets') === 0 ? 'active' : ''} nav-link`" to="/explorer/assets" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-file-invoice-dollar"></i>
+                                        <span class="nav-link-text ps-1">Assets</span>
+                                    </div>
+                                </router-link>
+                            </li>
                         </ul>
                     </li>
                     <li class="nav-item">
-                        <router-link :class="`nav-link ${route.indexOf('/explorer/assets') === 0 ? 'active' : ''} nav-link`" to="/explorer/assets" @click.native="disableNavbarMenu">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-file-invoice-dollar"></i>
-                                <span class="nav-link-text ps-1">Assets</span>
-                            </div>
-                        </router-link>
-                    </li>
-                    <li class="nav-item">
                         <div class="d-flex align-items-center">
-                            <router-link to="#" class="nav-link" @click.native="e => toggleNavElement(e,'advanced-txs')">
+                            <span :class="`nav-link pointer ${route.indexOf('/advanced-txs') === 0 ? 'active' : ''}`" @click.native="e => toggleNavElement(e,'advanced-txs')">
                                 <i class="fas fa-money-check"></i>
                                 <span class="nav-link-text px-1">Advanced Transfers</span>
                                 <i :class="`nav-chevron fas fa-chevron-${navElementsShown['advanced-txs'] ? 'up' : 'down' }`"></i>
-                            </router-link>
+                            </span>
                         </div>
                         <ul :class="`nav collapse ${navElementsShown['advanced-txs'] ? 'show':''}`">
                             <li class="nav-item">
-                                <router-link :disabled="!isWalletLogged" :class="`nav-link ${ route === '/advanced-txs/private/conditional-payment' ? 'selected' : ''} nav-link`" to="/advanced-txs/private/conditional-payment" @click.native="disableNavbarMenu">
+                                <router-link :disabled="!isWalletLogged" :class="`nav-link ${ route.indexOf( '/advanced-txs/private/conditional-payment' ) === 0 ? 'active' : ''} nav-link`" to="/advanced-txs/private/conditional-payment" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
+                                        <i class="fas fa-balance-scale"></i>
                                         <span class="nav-link-text ps-1">Private Conditional Payment</span>
                                     </div>
                                 </router-link>
                             </li>
                             <li class="nav-item">
-                                <router-link :disabled="!isWalletLogged" :class="`nav-link ${ route === '/advanced-txs/public/resolution-conditional-payment' ? 'selected' : ''} nav-link`" to="/advanced-txs/public/resolution-conditional-payment" @click.native="disableNavbarMenu">
+                                <router-link :class="`nav-link ${ route.indexOf( '/advanced-txs/sign-resolution-conditional-payment' ) === 0 ? 'active' : ''} nav-link`" to="/advanced-txs/sign-resolution-conditional-payment" @click.native="disableNavbarMenu">
                                     <div class="d-flex align-items-center">
-                                        <span class="nav-link-text ps-1">Resolution Conditional Payment</span>
+                                        <i class="fas fa-signature"></i>
+                                        <span class="nav-link-text ps-1">Sign Resolution</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link :disabled="!isWalletLogged" :class="`nav-link ${ route.indexOf('/advanced-txs/public/resolution-conditional-payment') === 0 ? 'active' : ''} nav-link`" to="/advanced-txs/public/resolution-conditional-payment" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-gavel"/>
+                                        <span class="nav-link-text ps-1">Resolution Conditional Tx</span>
+                                    </div>
+                                </router-link>
+                            </li>
+                            <li class="nav-item">
+                                <router-link :disabled="!isWalletLogged" :class="`nav-link ${ route.indexOf('/advanced-txs/import-link') === 0 ? 'active' : ''} nav-link`" to="/advanced-txs/import-link" @click.native="disableNavbarMenu">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fa fa-terminal"/>
+                                        <span class="nav-link-text ps-1">Import Link</span>
                                     </div>
                                 </router-link>
                             </li>
@@ -128,45 +147,6 @@
                                 <span class="nav-link-text ps-1">Settings</span>
                             </div>
                         </router-link>
-                    </li>
-                    <li class="nav-item">
-                        <div class="d-flex align-items-center">
-                            <router-link to="#" class="nav-link" @click.native="e => toggleNavElement(e,'kad')">
-                                <i class="fas fa-globe-americas"></i>
-                                <span class="nav-link-text px-1">KAD</span>
-                                <i :class="`nav-chevron fas fa-chevron-${navElementsShown['kad'] ? 'up' : 'down' }`"></i>
-                            </router-link>
-                        </div>
-                        <ul :class="`nav collapse ${navElementsShown['kad'] ? 'show':''}`">
-                            <li class="nav-item">
-                                <router-link :disabled="!isWalletLogged" to="#" :class="`nav-link ${ route === '/kad/chat' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
-                                    <div class="d-flex align-items-center">
-                                        <span class="nav-link-text ps-1">Encrypted Chat</span>
-                                    </div>
-                                </router-link>
-                            </li>
-                            <li class="nav-item">
-                                <router-link :disabled="!isWalletLogged" to="#" :class="`nav-link ${ route === '/kad/dex' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
-                                    <div class="d-flex align-items-center">
-                                        <span class="nav-link-text ps-1">DEX</span>
-                                    </div>
-                                </router-link>
-                            </li>
-                            <li class="nav-item">
-                                <router-link :disabled="!isWalletLogged" to="#" :class="`nav-link ${ route === '/kad/p2p/dex' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
-                                    <div class="d-flex align-items-center">
-                                        <span class="nav-link-text ps-1">Peer to Peer Exchange</span>
-                                    </div>
-                                </router-link>
-                            </li>
-                            <li class="nav-item">
-                                <router-link :disabled="!isWalletLogged" to="#" :class="`nav-link ${ route === '/kad/p2p/bazaar' ? 'selected' : ''} nav-link`" @click.native="disableNavbarMenu">
-                                    <div class="d-flex align-items-center">
-                                        <span class="nav-link-text ps-1">Peer to Peer Bazaar</span>
-                                    </div>
-                                </router-link>
-                            </li>
-                        </ul>
                     </li>
                 </ul>
             </div>
@@ -183,7 +163,10 @@ export default {
     data(){
         return {
             toggle: false,
-            navElementsShown: {},
+            navElementsShown: {
+                explorer: true,
+                "advanced-txs": true,
+            },
         }
     },
 
@@ -198,7 +181,7 @@ export default {
         },
 
         route(){
-            return this.$router.currentRoute.path || '';
+            return this.$route.fullPath || '';
         },
 
         walletAddress(){

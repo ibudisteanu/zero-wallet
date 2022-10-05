@@ -296,66 +296,55 @@
                             </span>
                         </div>
 
-                        <template v-if="payload.payloadScript.equals(PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CONDITIONAL_PAYMENT)" >
-                          <div class="row pt-2 pb-2">
-                            <span class="col-4 col-sm-3 text-truncate">Deadline </span>
-                            <span class="col-8 col-sm-9 text-truncate">
-                              <template v-if="!txInfo || !txInfo.blkHeight">
-                                Not included
-                              </template>
-                              <template v-else-if="$store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight )">
-                                Deadline expired
-                              </template>
-                              <template v-else>
-                                {{txInfo.blkHeight.plus(payload.extra.deadline).minus( $store.state.blockchain.end) }} blocks
-                              </template>
-                            </span>
-                          </div>
-                          <div class="row pt-2 pb-2 bg-light">
-                            <span class="col-4 col-sm-3 text-truncate">Deadline in Time</span>
-                            <span class="col-8 col-sm-9 text-truncate">
-                              <template v-if="!txInfo || !txInfo.blkHeight">
-                                Not included
-                              </template>
-                              <template v-else-if="$store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight )">
-                                Deadline expired
-                              </template>
-                              <template v-else>
-                              ~ {{ $formatMilliseconds( payload.extra.deadline.plus( txInfo.blkHeight ).minus( $store.state.blockchain.end) * PandoraPay.config.BLOCK_TIME *1000 ) }}
-                                <i class="fas fa-clock"></i>
-                              </template>
-                            </span>
-                          </div>
-                          <div class="row pt-2 pb-2">
-                            <span class="col-4 col-sm-3 text-truncate">Default Resolution</span>
-                            <span class="col-8 col-sm-9 text-truncate">
-                              {{payload.extra.defaultResolution ? 'Receiver' : 'Sender'}}
-                            </span>
-                          </div>
-                          <div class="row pt-2 pb-2 bg-light">
-                            <span class="col-4 col-sm-3 text-truncate">Multisig Threshold</span>
-                            <span class="col-8 col-sm-9 text-truncate">
-                              {{payload.extra.multisigThreshold}} of {{payload.extra.multisigPublicKeys.length}}
-                            </span>
-                          </div>
-                          <div v-for="(pub, key) in payload.extra.multisigPublicKeys" :class="`row pt-2 pb-2 ${key % 2 ? 'bg-light': ''}`">
-                            <span class="col-4 col-sm-3 text-truncate">Multisig Pub Key {{key}}</span>
-                            <span class="col-8 col-sm-9 text-truncate">{{pub}}</span>
-                          </div>
+                        <template v-if="payload.payloadScript.equals(PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CONDITIONAL_PAYMENT)">
+                            <div class="row pt-2 pb-2">
+                                <span class="col-4 col-sm-3 text-truncate">Deadline </span>
+                                <span class="col-8 col-sm-9 text-truncate">
+                                    <template v-if="!txInfo || !txInfo.blkHeight">Not included</template>
+                                    <template v-else-if="$store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight )">Deadline expired</template>
+                                    <template v-else>
+                                        {{ txInfo.blkHeight.plus(payload.extra.deadline).minus($store.state.blockchain.end) }} blocks
+                                    </template>
+                                </span>
+                            </div>
+                            <div class="row pt-2 pb-2 bg-light">
+                                <span class="col-4 col-sm-3 text-truncate">Deadline in Time</span>
+                                <span class="col-8 col-sm-9 text-truncate">
+                                    <template v-if="!txInfo || !txInfo.blkHeight">Not included</template>
+                                    <template v-else-if="$store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight )">Deadline expired</template>
+                                    <template v-else>
+                                        ~ {{ $formatMilliseconds(payload.extra.deadline.plus(txInfo.blkHeight).minus($store.state.blockchain.end) * PandoraPay.config.BLOCK_TIME * 1000)  }}
+                                        <i class="fas fa-clock"></i>
+                                    </template>
+                                </span>
+                            </div>
+                            <div class="row pt-2 pb-2">
+                                <span class="col-4 col-sm-3 text-truncate">Default Resolution</span>
+                                <span class="col-8 col-sm-9 text-truncate">{{ payload.extra.defaultResolution ? 'Receiver' : 'Sender' }}</span>
+                            </div>
+                            <div class="row pt-2 pb-2 bg-light">
+                                <span class="col-4 col-sm-3 text-truncate">Multisig Threshold</span>
+                                <span class="col-8 col-sm-9 text-truncate"> {{ payload.extra.multisigThreshold }} of {{ payload.extra.multisigPublicKeys.length }}</span>
+                            </div>
+                            <div v-for="(pub, key) in payload.extra.multisigPublicKeys" :class="`row pt-2 pb-2 ${key % 2 ? 'bg-light': ''}`">
+                                <span class="col-4 col-sm-3 text-truncate">Multisig Pub Key {{ key }}</span>
+                                <span class="col-8 col-sm-9 text-truncate">{{ pub }}</span>
+                            </div>
 
-                          <div class="my-2">
-                            <button class="btn btn-falcon-default rounded-pill me-1  pointer" type="button" @click="handleSignResolutionModal(index)"
-                                    :disabled="!txInfo || !txInfo.blkHeight || $store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight )">
-                              <i class="fa fa-signature"/>
-                              Sign Resolution
-                            </button>
+                            <div class="my-2">
 
-                            <router-link :to="`/advanced-txs/public/resolution-conditional-payment?txId=${$base64ToHex(tx.hash)}&payloadIndex=${index}`" type="button"
-                                         :class="`btn btn-falcon-default rounded-pill me-1 pointer ${!txInfo || !txInfo.blkHeight || $store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight ) ? 'disabled': ''} `"  >
-                              <i class="fa fa-gavel"/>
-                              Create Resolution Tx
-                            </router-link>
-                          </div>
+                                <router-link :to="`/advanced-txs/sign-resolution-conditional-payment?txId=${$base64ToHex(tx.hash)}&payloadIndex=${index}`"
+                                             :class="`btn btn-falcon-default rounded-pill me-1 pointer ${!txInfo || !txInfo.blkHeight || $store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight ) ? 'disabled': ''} `">
+                                    <i class="fa fa-signature"/>
+                                    Sign Resolution
+                                </router-link>
+
+                                <router-link :to="`/advanced-txs/public/resolution-conditional-payment?txId=${$base64ToHex(tx.hash)}&payloadIndex=${index}`"
+                                             :class="`btn btn-falcon-default rounded-pill me-1 pointer ${!txInfo || !txInfo.blkHeight || $store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight ) ? 'disabled': ''} `">
+                                    <i class="fa fa-gavel"/>
+                                    Create Resolution Tx
+                                </router-link>
+                            </div>
 
                         </template>
 
@@ -393,8 +382,6 @@
             </div>
         </div>
 
-        <sign-resolution-modal ref="signResolutionModal"/>
-
     </div>
 </template>
 
@@ -403,11 +390,10 @@ import ShowTransactionData from "./show-transaction-data"
 import Amount from "src/components/wallet/amount"
 import AccountIdenticon from "src/components/wallet/account/account-identicon";
 import LoadingButton from "src/components/utils/loading-button";
-import SignResolutionModal from "./sign-resolution-modal";
 
 export default {
 
-    components: {ShowTransactionData, Amount, AccountIdenticon, LoadingButton, SignResolutionModal},
+    components: {ShowTransactionData, Amount, AccountIdenticon, LoadingButton},
 
     props: {
         tx: {default: null},
@@ -487,9 +473,6 @@ export default {
             return this.$store.state.page.refTextareaModal.showModal("TX JSON", this.tx._serialized )
         },
 
-        handleSignResolutionModal(payloadIndex){
-            this.$refs.signResolutionModal.showModal(this.tx, payloadIndex)
-        },
 
     },
 

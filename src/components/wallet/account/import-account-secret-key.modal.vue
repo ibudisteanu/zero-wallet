@@ -8,7 +8,8 @@
                 0: {icon: 'fas fa-pencil-alt', name: 'Information', tooltip: 'Information of the account' },
                 1: {icon: 'fas fa-file-code', name: 'Secret Key', tooltip: 'Secret Key' },
                 2: {icon: 'fas fa-check', name: 'Done', tooltip: 'Finish importing account' }}"
-                     @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" :allow-scroll="false" >
+                     @onSetTab="setTab" controls-class-name="modal-footer bg-light" :allow-scroll="false"
+                     :buttons="{ 1: { icon: 'fas fa-file-upload', text: 'Import Account' }}">
 
                 <template v-slot:tab_0>
 
@@ -30,8 +31,8 @@
                 </template>
 
                 <template v-slot:tab_1>
-                    <label>Secret Key</label>
-                    <textarea class="form-control" rows="4" v-model="secretKey"></textarea>
+                    <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1" for="secret-key">Secret Key</label>
+                    <textarea class="form-control form-control-sm fs--2" rows="4" v-model="secretKey" id="secret-key"></textarea>
                 </template>
 
             </wizard>
@@ -62,9 +63,6 @@ export default {
     },
 
     computed:{
-        buttons(){
-            return { 1: { icon: 'fas fa-file-upload', text: 'Import Account' }}
-        }
     },
 
     methods:{

@@ -110,7 +110,7 @@ export default {
             this.$store.dispatch('addToast', {
               type: 'error',
               title: `Error creating a new wallet`,
-              text: `Raised an error ${err.message}`,
+              text: `Raised an error ${err.toString()}`,
             })
           }finally{
             this.$store.state.page.refLoadingModal.closeModal();

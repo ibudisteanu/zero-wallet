@@ -60,7 +60,7 @@ export default {
     components: {
         LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar, QrCodeModal, SecretModal,
         TestnetFaucetModal, WalletPasswordModal, Toasts, QrCodeScannerModal, DecryptBalanceModal, TextareaModal,
-        ConfirmationModal},
+        ConfirmationModal },
 
     props: {
         disableLayout: {default: false},
