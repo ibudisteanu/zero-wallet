@@ -19,7 +19,7 @@ export default {
             return "Signature is invalid. It should be Base64 encoded."
 
         const s = Buffer.from(data, "base64")
-        if (s.length !== PandoraPay.cryptography.SIGNATURE_SIZE) throw "Signature size is invalid"
+        if (s.length !== PandoraPay.cryptography.SIGNATURE_SIZE) return "Signature size is invalid"
 
         return ""
     },
@@ -30,7 +30,7 @@ export default {
             return "Public Key is invalid. It should be Base64 encoded."
 
         const s = Buffer.from(data, "base64")
-        if (s.length !== PandoraPay.cryptography.PUBLIC_KEY_SIZE) throw "Public Key size is invalid"
+        if (s.length !== PandoraPay.cryptography.PUBLIC_KEY_SIZE) return "Public Key size is invalid"
 
         return ""
     },
