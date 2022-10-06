@@ -190,7 +190,7 @@ export default {
       }
 
       for (let i = 0; i < this.signatures.length; i++)
-        if (this.signatures[i] !== null) {
+        if (this.signatures[i]) {
           data.extra.multisigPublicKeys.push(this.multisigPublicKeys[i])
           data.extra.signatures.push(this.signatures[i])
         }

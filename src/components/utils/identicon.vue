@@ -1,10 +1,10 @@
 <template>
 
-  <router-link :to="uri" v-tooltip.bottom="`${ tooltip}`">
+  <component :is="type" :to="uri" v-tooltip.bottom="`${ tooltip}`" class="pointer">
     <div :class="`identicon ${outerSize? 'outer':''}`" :style="`padding: ${outerSize}px`" v-if="identiconSrc">
       <img v-if="identiconSrc" :src="identiconSrc" class="identicon" :style="`width: ${size}px`" >
     </div>
-  </router-link>
+  </component>
 
 </template>
 
@@ -21,6 +21,13 @@ export default {
     hash: {default: null},
 
     tooltip: {default: ""}
+  },
+
+  computed:{
+    type(){
+      if ( !this.uri ) return "span"
+      return "router-link"
+    }
   },
 
   data(){
