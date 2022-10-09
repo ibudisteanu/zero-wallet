@@ -3,9 +3,7 @@
   <modal ref="modal" :title="title">
 
     <template v-slot:body>
-      <alert-box :type="type">
-        {{text}}
-      </alert-box>
+      <alert-box :type="type">{{text}}</alert-box>
     </template>
 
     <template v-slot:footer>
@@ -24,7 +22,7 @@
 
 <script>
 import Modal from "src/components/utils/modal"
-import AlertBox from "../../utils/alert-box";
+import AlertBox from "src/components/utils/alert-box";
 
 export default {
 
