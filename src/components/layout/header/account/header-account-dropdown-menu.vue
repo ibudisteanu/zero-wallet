@@ -31,51 +31,21 @@
         </div>
         <div class="list-group-item">
           <div class="list-group-title border-bottom">Operations:</div>
-          <span @click="handleViewAccount" v-tooltip.left="'View account'" class="cursor-pointer dropdown-item ">
-            <i class="fas fa-hand-cursor-pointer "></i>
-            View account
-          </span>
-          <span @click="handleCreateNewAddress" v-tooltip.left="'Create a new Address'" class="cursor-pointer dropdown-item fw-normal ">
-            <i class="fas fa-plus"></i>
-            Create Account
-          </span>
-          <span @click="handleImportAccount" v-tooltip.left="'Import an address from json file'" class="cursor-pointer dropdown-item fw-normal ">
-            <i class="fas fa-upload"></i>
-            Import Account (json)
-          </span>
-          <span @click="handleImportAccountSecretKey" v-tooltip.left="'Import an address from Secret Key'" class="cursor-pointer dropdown-item fw-normal ">
-            <i class="fas fa-upload"></i>
-            Import Account Secret Key
-          </span>
+          <loading-button :submit="handleViewAccount" text="View Account" icon="fas fa-hand-cursor-pointer " tooltip="View account" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <loading-button :submit="handleCreateNewAddress" text="Create Account" icon="fas fa-plus" tooltip="Create a new Address" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <loading-button :submit="handleImportAccount" text="Import Account (json)" icon="fas fa-upload" tooltip="Import an address from json file" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <loading-button :submit="handleImportAccountSecretKey" text="Import Account Secret Key" icon="fas fa-upload" tooltip="Import an address from Secret Key" class-custom="cursor-pointer dropdown-item" component="span"/>
           <div class="dropdown-divider"></div>
-          <span @click="handleViewMnemonic" v-tooltip.left="'Show your Secret Words (Mnemonic)'" class="cursor-pointer dropdown-item fw-normal ">
-            <i class="fas fa-key"></i>
-            View Secret Phrase
-          </span>
+          <loading-button :submit="handleViewMnemonic" text="View Secret Phrase" icon="fas fa-key" tooltip="Show your Secret Words (Mnemonic)" class-custom="cursor-pointer dropdown-item" component="span"/>
           <div class="dropdown-divider"></div>
-          <span @click="handleNewWallet" v-tooltip.left="'Clear & create new wallet'" class="cursor-pointer dropdown-item fw-normal ">
-            <i class="fas fa-trash"></i>
-            New Wallet
-          </span>
-          <span @click="handleImportMnemonic" v-tooltip.left="'Clear wallet & import a new wallet from Secret Words (Mnemonic)'" class="cursor-pointer dropdown-item fw-normal ">
-            <i class="fas fa-file-import"></i>
-            Import Secret Phrase
-          </span>
+          <loading-button :submit="handleNewWallet" text="New Wallet" icon="fas fa-trash" tooltip="Clear & create new wallet" class-custom="cursor-pointer dropdown-item" component="span" />
+          <loading-button :submit="handleImportMnemonic" text="Import Secret Phrase" icon="fas fa-file-import" tooltip="Clear wallet & import a new wallet from Secret Words (Mnemonic)" class-custom="cursor-pointer dropdown-item" component="span" />
           <div class="dropdown-divider"></div>
-          <span @click="handleExportWallet" v-tooltip.left="'Export your wallet to your computer'" class="cursor-pointer dropdown-item fw-normal ">
-            <i class="fas fa-download"></i>
-            Export Wallet
-          </span>
-          <span @click="handleImportWallet" v-tooltip.left="'Import a pandora wallet from your computer'" class="cursor-pointer dropdown-item fw-normal ">
-            <i class="fas fa-upload"></i>
-            Import Wallet
-          </span>
+          <loading-button :submit="handleExportWallet" text="Export Wallet" icon="fas fa-download" tooltip="Export your wallet to your computer" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <loading-button :submit="handleImportWallet" text="Improt Wallet" icon="fas fa-upload" tooltip="Import a pandora wallet from your computer" class-custom="cursor-pointer dropdown-item" component="span"/>
           <template v-if="encrypted">
             <div class="dropdown-divider"></div>
-            <span @click="handleLogout" v-tooltip.left="'Return to the password screen'" class="cursor-pointer dropdown-item fw-normal ">
-              <i class="fas fa-sign-out-alt"></i>
-              Logout
-            </span>
+            <loading-button :submit="handleLogout" text="Logout" icon="fas fa-sign-out-alt" tooltip="Return to the password screen" class-custom="cursor-pointer dropdown-item" component="span"/>
           </template>
         </div>
       </div>
@@ -91,12 +61,13 @@ import AccountIdenticon from "src/components/wallet/account/account-identicon"
 import UtilsHelper from "src/utils/utils-helper";
 import FileSaver from 'file-saver'
 import consts from "consts/consts";
+import LoadingButton from "../../../utils/loading-button";
 
 const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 
-  components: {AccountIdenticon},
+  components: {LoadingButton, AccountIdenticon},
 
   data() {
     return {
@@ -138,12 +109,39 @@ export default {
       return this.$store.commit('setMainPublicKey', publicKey);
     },
 
-    handleViewMnemonic() {
-      return this.$emit('viewMnemonic')
+    async handleViewMnemonic() {
+      const password = await this.$store.state.page.walletPasswordModal.showModal()
+      if (password === null) return
+
+      const secret = await PandoraPay.wallet.getWalletMnemonic(password)
+
+      return this.$store.state.page.secretModal.showModal(secret, `Secret Phrase (Mnemonic)`, 'DO NOT share these secret words with anyone! These secret words can be used to STEAL YOUR FUNDS FROM ALL YOUR ACCOUNTS');
     },
 
-    handleNewWallet() {
-      return this.$emit('newWallet')
+    async handleNewWallet() {
+
+        try {
+
+          const confirmed = await this.$store.state.page.confirmationModal.showModal("Clear existing wallet?", "It will clear your existing wallet and you will get a new wallet!", "warning")
+          if (!confirmed) return
+
+          const password = await this.$store.state.page.walletPasswordModal.showModal()
+          if (password === null) return
+
+          await this.$store.state.page.loadingModal.showModal();
+
+          await PandoraPay.wallet.createNewWallet(password)
+          this.$store.dispatch('addToast', {
+            type: 'success',
+            title: `New wallet`,
+            text: `You got a new wallet`,
+          })
+        } catch (e) {
+          throw e
+        } finally {
+          this.$store.state.page.loadingModal.closeModal();
+        }
+
     },
 
     handleImportMnemonic() {
@@ -152,19 +150,14 @@ export default {
 
     async handleLogout() {
 
-      try {
-        const out = await PandoraPay.wallet.manager.encryption.logoutWallet();
-        if (!out) throw "logout was not true"
+      const out = await PandoraPay.wallet.manager.encryption.logoutWallet();
+      if (!out) throw "logout was not true"
 
-        this.$store.dispatch('addToast', {
-          type: 'success',
-          title: `You have been logged out!`,
-          text: `You have been logged out. You need to login with the password to access your wallet.`,
-        });
-
-      } catch (err) {
-        console.error(err)
-      }
+      this.$store.dispatch('addToast', {
+        type: 'success',
+        title: `You have been logged out!`,
+        text: `You have been logged out. You need to login with the password to access your wallet.`,
+      });
 
     },
 
@@ -177,12 +170,7 @@ export default {
     },
 
     async handleExportWallet() {
-      if (typeof Blob === "undefined")
-        return this.$store.dispatch('addToast', {
-          type: 'error',
-          title: `Blob is not supported by your Browser`,
-          text: `Update your browser`,
-        })
+      if (typeof Blob === "undefined") throw "Blob Blob is not supported by your Browser. Update your Browser."
 
       const password = await this.$store.state.page.walletPasswordModal.showModal()
       if (password === null) return
@@ -208,22 +196,14 @@ export default {
       return this.$emit('showImportWallet')
     },
 
-    copyAddress(walletAddress) {
-
-      let addr = this.$store.getters.addressDisplay(walletAddress)
-
-      this.$copyText(addr).then(
-          e => this.$store.dispatch('addToast', {
-            type: 'success',
-            title: `Copied to clipboard successfully`,
-            text: `Address ${addr} copied to clipboard`,
-          }),
-          e => this.$store.dispatch('addToast', {
-            type: 'error',
-            title: `Clipboard failed`,
-            text: `Failed to copy to clipboard`,
-          })
-      )
+    async copyAddress(walletAddress) {
+      const addr = this.$store.getters.addressDisplay(walletAddress)
+      try{
+        await this.$copyText(addr)
+        this.$store.dispatch('addToast', {type: 'success', title: `Copied to clipboard successfully`, text: `Address ${addr} copied to clipboard`})
+      }catch(e){
+        this.$store.dispatch('addToast', {type: 'error', title: `Clipboard failed`, text: `Failed to copy to clipboard`,})
+      }
     }
 
   }

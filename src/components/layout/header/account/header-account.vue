@@ -9,10 +9,8 @@
     </div>
 
     <div class="menu">
-      <header-account-dropdown-menu v-if="menuOpen" @viewMnemonic="viewMnemonic" @newWallet="newWallet"
-                                    @importMnemonic="importMnemonic" @showCreateNewAddress="showCreateNewAddress"
-                                    @showImportAccount="showImportAccount"
-                                    @showImportAccountSecretKey="showImportAccountSecretKey"
+      <header-account-dropdown-menu v-if="menuOpen" @importMnemonic="importMnemonic" @showCreateNewAddress="showCreateNewAddress"
+                                    @showImportAccount="showImportAccount" @showImportAccountSecretKey="showImportAccountSecretKey"
                                     @showImportWallet="showImportWallet"/>
     </div>
 
@@ -33,7 +31,6 @@ import AccountIdenticon from "src/components/wallet/account/account-identicon"
 import ImportAccountModal from "src/components/wallet/account/import-account.modal"
 import ImportAccountSecretKeyModal from "src/components/wallet/account/import-account-secret-key.modal"
 import CreateNewAddressModal from "src/components/wallet/account/create-new-address.modal"
-import UtilsHelper from "src/utils/utils-helper";
 import ImportMnemonicModal from "src/components/wallet/import-mnemonic.modal";
 import ImportWalletModal from "src/components/wallet/import-wallet.modal";
 
@@ -69,15 +66,6 @@ export default {
       this.menuOpen = false;
     },
 
-    async viewMnemonic() {
-      const password = await this.$store.state.page.walletPasswordModal.showModal()
-      if (password === null) return
-
-      const secret = await PandoraPay.wallet.getWalletMnemonic(password)
-
-      return this.$store.state.page.secretModal.showModal(secret, `Secret Phrase (Mnemonic)`, 'DO NOT share these secret words with anyone! These secret words can be used to STEAL YOUR FUNDS FROM ALL YOUR ACCOUNTS');
-    },
-
     showImportAccount() {
       return this.$refs.refImportAccountModal.showModal();
     },
@@ -94,37 +82,8 @@ export default {
       return this.$refs.refImportWalletModal.showModal();
     },
 
-    async newWallet() {
-
-      try {
-
-        const confirmed = await this.$store.state.page.confirmationModal.showModal("Clear existing wallet?", "It will clear your existing wallet and you will get a new wallet!", "warning")
-        if (!confirmed) return
-
-        const password = await this.$store.state.page.walletPasswordModal.showModal()
-        if (password === null) return
-
-        await this.$store.state.page.loadingModal.showModal();
-
-        await PandoraPay.wallet.createNewWallet(password)
-        this.$store.dispatch('addToast', {
-          type: 'success',
-          title: `New wallet`,
-          text: `You got a new wallet`,
-        })
-      } catch (err) {
-        this.$store.dispatch('addToast', {
-          type: 'error',
-          title: `Error creating a new wallet`,
-          text: `Raised an error ${err.toString()}`,
-        })
-      } finally {
-        this.$store.state.page.loadingModal.closeModal();
-      }
-    },
-
     async importMnemonic() {
-      this.$refs.refImportMnemonicModal.showModal()
+      return this.$refs.refImportMnemonicModal.showModal()
     },
 
   },
