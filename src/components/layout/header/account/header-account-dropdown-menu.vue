@@ -58,10 +58,9 @@
 <script>
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
-import UtilsHelper from "src/utils/utils-helper";
 import FileSaver from 'file-saver'
 import consts from "consts/consts";
-import LoadingButton from "../../../utils/loading-button";
+import LoadingButton from "src/components/utils/loading-button";
 
 const {version} = PandoraPay.enums.wallet.address;
 
