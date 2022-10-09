@@ -1,9 +1,7 @@
 <template>
   <component :class="`${classCustom}`" type="button" @click="handleClick" :is="component" v-tooltip.bottom="tooltip">
 
-    <template v-if="!loaded">
-      <loading-spinner v-if="!loaded"/>
-    </template>
+    <loading-spinner v-if="!loaded"/>
     <template v-else>
       <i v-if="icon && iconLeft" :class="`${text? 'pe-1':''} ${icon}`"/>
       <span v-if="text" class="hidden-xs">{{ text }}</span>
