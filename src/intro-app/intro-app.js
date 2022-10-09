@@ -5,8 +5,8 @@ import Loading from './intro';
 export default (options) => {
 
     const app = window.PandoraPayWalletIntro = Vue.createApp({
-        render () {
-            return Vue.h( Loading, {
+        render() {
+            return Vue.h(Loading, {
                 options,
             });
         }

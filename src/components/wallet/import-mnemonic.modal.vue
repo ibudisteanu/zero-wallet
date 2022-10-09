@@ -4,7 +4,8 @@
     <template v-slot:body>
 
       <alert-box type="warning">
-        This operation will delete the existing wallet from your browser and will replace it with the one from the mnemonic
+        This operation will delete the existing wallet from your browser and will replace it with the one from the
+        mnemonic
       </alert-box>
 
       <div>
@@ -33,7 +34,7 @@ import UtilsHelper from "src/utils/utils-helper";
 
 export default {
 
-  components: { Modal, AlertBox},
+  components: {Modal, AlertBox},
 
   data() {
     return {
@@ -52,17 +53,16 @@ export default {
       return this.$refs.modal.closeModal();
     },
 
-    async handleImport(){
+    async handleImport() {
 
-      try{
+      try {
 
-        const password = await this.$store.state.page.refWalletPasswordModal.showModal()
-        if (password === null ) return
+        const password = await this.$store.state.page.walletPasswordModal.showModal()
+        if (password === null) return
 
-        this.$store.state.page.refLoadingModal.showModal();
-        await UtilsHelper.sleep(50 )
+        await this.$store.state.page.loadingModal.showModal();
 
-        const out = await PandoraPay.wallet.importMnemonic( password, this.mnemonic.trim() );
+        const out = await PandoraPay.wallet.importMnemonic(password, this.mnemonic.trim());
         if (out)
           this.$store.dispatch('addToast', {
             type: 'success',
@@ -71,14 +71,14 @@ export default {
           });
 
         this.closeModal()
-      }catch(err){
+      } catch (err) {
         this.$store.dispatch('addToast', {
           type: 'error',
           title: `Error importing mnemonic`,
           text: `Raised an error ${err.toString()}`,
         })
-      }finally{
-        this.$store.state.page.refLoadingModal.closeModal();
+      } finally {
+        this.$store.state.page.loadingModal.closeModal();
       }
 
     },

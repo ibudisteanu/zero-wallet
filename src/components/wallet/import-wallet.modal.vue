@@ -81,11 +81,10 @@ export default {
 
       try{
 
-        const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+        const password = await this.$store.state.page.walletPasswordModal.showModal()
         if (password === null ) return
 
-        this.$store.state.page.refLoadingModal.showModal();
-        await UtilsHelper.sleep(50 )
+        await this.$store.state.page.loadingModal.showModal();
 
         const out = await PandoraPay.wallet.manager.importWalletJSON( password, this.walletData );
         if (out)
@@ -103,7 +102,7 @@ export default {
           text: `Raised an error ${err.toString()}`,
         })
       }finally{
-        this.$store.state.page.refLoadingModal.closeModal();
+        this.$store.state.page.loadingModal.closeModal();
       }
 
     },

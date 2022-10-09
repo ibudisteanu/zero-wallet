@@ -1,10 +1,10 @@
 <template>
 
-  <modal ref="modal" :title="title" >
+  <modal ref="modal" :title="title">
     <template v-slot:body>
-      <secret-text v-if="secret" class="pt-1" :text="secret" :title="title" >
+      <secret-text v-if="secret" class="pt-1" :text="secret" :title="title">
         <template v-slot:warning>
-          {{security}}
+          {{ security }}
         </template>
       </secret-text>
     </template>
@@ -19,20 +19,14 @@ import SecretText from "src/components/utils/secret-text"
 
 export default {
 
-  components: { Modal, SecretText },
+  components: {Modal, SecretText},
 
-  data(){
+  data() {
     return {
       secret: '',
-      title: '',
+      title: 'Secret',
       security: 'DO NOT share this secret key with anyone! This private key can be used to STEAL YOUR FUNDS FROM THIS ACCOUNT'
     }
-  },
-
-  props:{
-  },
-
-  computed:{
   },
 
   methods: {
@@ -40,8 +34,8 @@ export default {
     async showModal(secret, title, security) {
       Object.assign(this.$data, this.$options.data.apply(this))
       this.secret = secret;
-      this.title = title
-      this.security = security
+      if (title) this.title = title
+      if (security) this.security = security
       return this.$refs.modal.showModal();
     },
 

@@ -66,15 +66,13 @@ export default {
 
         async handleRename(){
 
-            this.$store.state.page.refLoadingModal.showModal();
-
-            await UtilsHelper.sleep(50 )
+            await this.$store.state.page.loadingModal.showModal();
 
             const address = this.account
 
             try{
 
-                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+                const password = await this.$store.state.page.walletPasswordModal.showModal()
                 if (password === null ) return
 
                 const out = await PandoraPay.wallet.manager.renameWalletAddress( password, address.publicKey, this.newName );
@@ -94,7 +92,7 @@ export default {
                     text: `Raised an error ${err.toString()}`,
                 })
             }finally{
-                this.$store.state.page.refLoadingModal.closeModal();
+                this.$store.state.page.loadingModal.closeModal();
             }
 
 
