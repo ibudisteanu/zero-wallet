@@ -71,11 +71,11 @@
                         <hr/>
 
                         <div class="g-0 d-inline-block ">
-                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="copyAddress" v-tooltip.bottom="'Copy Address'" >
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer " type="button" @click="copyAddress" v-tooltip.bottom="'Copy Address'" >
                                 <i class="fas fa-copy" />
                             </button>
 
-                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="showAddressQRCode" v-tooltip.bottom="'Show Address QR Code'">
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer " type="button" @click="showAddressQRCode" v-tooltip.bottom="'Show Address QR Code'">
                                 <i class="fas fa-qrcode" />
                             </button>
                         </div>
@@ -223,7 +223,7 @@ export default {
         },
 
         showAddressQRCode(){
-            return this.$store.state.page.refQRCodeModal.showModal( this.addressGenerated, this.address.name || '');
+            return this.$store.state.page.QRCodeModal.showModal( this.addressGenerated, this.address.name || '');
         },
 
         async handleCreateAddress(){

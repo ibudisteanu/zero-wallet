@@ -1,32 +1,32 @@
 <template>
-    <div>
+  <div>
 
-        <main class="container">
+    <main class="container">
 
-            <div class="center">
+      <div class="center">
 
-                <img :src="require(`src/assets/logo-square${dark?'':''}.png`).default" class="logo" :alt="name" >
+        <img :src="require(`src/assets/logo-square${dark?'':''}.png`).default" class="logo" :alt="name">
 
-                <div class="text-center">
-                  <svg width="200px" height="200px" viewBox="0 0 33 33">
-                    <polygon class="triangle" fill="none" stroke="#fff" stroke-width="1" points="16,1 32,32 1,32" />
-                  </svg>
-                </div>
+        <div class="text-center">
+          <svg width="200px" height="200px" viewBox="0 0 33 33">
+            <polygon class="triangle" fill="none" stroke="#fff" stroke-width="1" points="16,1 32,32 1,32"/>
+          </svg>
+        </div>
 
-                <h1 class="text-center">{{name.toUpperCase()}}</h1>
+        <h1 class="text-center">{{ name.toUpperCase() }}</h1>
 
-                <div class="loading-text-div">
-                    <alert-box v-if="error" type="error">{{error}}</alert-box>
-                    <span v-else class="loading-text">
-                        <i v-if="isDownloading" class="fas fa-spinner fa-spin"></i>
-                        {{progressStatus}}
-                    </span>
-                </div>
-            </div>
+        <div class="loading-text-div">
+          <alert-box v-if="error" type="error">{{ error }}</alert-box>
+          <span v-else class="loading-text">
+              <i v-if="isDownloading" class="fas fa-spinner fa-spin"></i>
+              {{ progressStatus }}
+          </span>
+        </div>
+      </div>
 
-        </main>
+    </main>
 
-    </div>
+  </div>
 </template>
 
 <script>

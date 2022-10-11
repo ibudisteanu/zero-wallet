@@ -1,20 +1,20 @@
 <template>
 
-    <modal ref="modal" title="Please wait..."  :close-button="false" >
+  <modal ref="modal" title="Please wait..." :close-button="false">
 
-        <template v-slot:body>
+    <template v-slot:body>
 
-            <span class="fw-black">
-                Please wait! <strong>Don't close the webpage</strong> as your wallet is being re-saved in your browser. Otherwise your wallet could get corrupted!
-            </span>
+      <span class="fw-black">
+          Please wait! <strong>Don't close the webpage</strong> as your wallet is being re-saved in your browser. Otherwise your wallet could get corrupted!
+      </span>
 
-            <div class="pt-4 text-center">
-                <loading-spinner class="fs-6"/>
-            </div>
+      <div class="pt-4 text-center">
+        <loading-spinner class="fs-6"/>
+      </div>
 
-        </template>
+    </template>
 
-    </modal>
+  </modal>
 
 </template>
 
@@ -24,19 +24,22 @@ import LoadingSpinner from "../../utils/loading-spinner";
 
 export default {
 
-    components: {LoadingSpinner, Modal},
+  components: {LoadingSpinner, Modal},
 
-    methods: {
+  methods: {
 
-        showModal() {
-            return this.$refs.modal.showModal();
-        },
+    showModal() {
+      this.$refs.modal.showModal();
+      return new Promise((resolve, reject) => {
+        this.$nextTick(() => resolve())
+      })
+    },
 
-        closeModal() {
-            if (this.$refs.modal) return this.$refs.modal.closeModal();
-        },
+    closeModal() {
+      if (this.$refs.modal) return this.$refs.modal.closeModal();
+    },
 
-    }
+  }
 
 }
 

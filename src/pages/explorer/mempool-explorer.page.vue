@@ -1,42 +1,45 @@
 <template>
 
-    <layout>
+  <layout>
 
-        <layout-title icon="fas fa-list-ol" title="Mem pool">View the latest transactions that are in pending for the next blocks.</layout-title>
+    <layout-title icon="fas fa-list-ol" title="Mem pool">
+      View the latest transactions that are in pending for the next blocks.
+    </layout-title>
 
-        <div class="card mb-3">
-            <div class="card-header bg-light" id="mempool">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <h5 class="mb-0">Mem pool</h5>
-                        <div class="subtitle">
-                            <h6>Pending Transactions: {{mempoolCount}}</h6>
-                            <i class="fas fa-sync pointer " @click="()=>downloadMempool()" v-tooltip.bottom="`Download again the mempool`" ></i>
-                        </div>
-                    </div>
-                </div>
+    <div class="card mb-3">
+      <div class="card-header bg-light" id="mempool">
+        <div class="row align-items-center">
+          <div class="col">
+            <h5 class="mb-0">Mem pool</h5>
+            <div class="subtitle">
+              <h6>Pending Transactions: {{ mempoolCount }}</h6>
+              <i class="fas fa-sync cursor-pointer " @click="()=>downloadMempool()" v-tooltip.bottom="`Download again the mempool`"></i>
             </div>
-            <div class="card-body p-3">
-
-                <template v-if="!loaded">
-                    <div class="py-3 text-center"> <loading-spinner class="fs-2"/> </div>
-                </template>
-                <template v-else>
-                    <div v-for="(  hash, key ) in pendingTxs"
-                         :class="`row g-0  py-2  border-bottom border-200 d-flex ${key % 2 === 1 ?'bg-light':''}`" style="text-align: center"
-                         :key="`pending_${hash}`">
-
-                        <router-link :to="`/explorer/tx/${$base64ToHex(hash)}`" >
-                            <span class="d-block text-truncate fs--1"> {{$base64ToHex(hash)}} </span>
-                        </router-link>
-                    </div>
-                    <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="finalPage" :total="pages" prefix="/explorer/mempool/" suffix="#mempool" />
-                </template>
-
-            </div>
+          </div>
         </div>
+      </div>
+      <div class="card-body p-3">
 
-    </layout>
+        <div v-if="!loaded" class="py-3 text-center">
+          <loading-spinner class="fs-2"/>
+        </div>
+        <template v-else>
+          <div v-for="(  hash, key ) in pendingTxs"
+               :class="`row g-0  py-2  border-bottom border-200 d-flex ${key % 2 === 1 ?'bg-light':''}`"
+               style="text-align: center" :key="`pending_${hash}`">
+
+            <router-link :to="`/explorer/tx/${$base64ToHex(hash)}`">
+              <span class="d-block text-truncate fs--1"> {{ $base64ToHex(hash) }} </span>
+            </router-link>
+          </div>
+          <pagination class="right pt-2" :inverted="true" :count-per-page="countPerPage" :current="finalPage"
+                      :total="pages" prefix="/explorer/mempool/" suffix="#mempool"/>
+        </template>
+
+      </div>
+    </div>
+
+  </layout>
 
 </template>
 
@@ -52,67 +55,67 @@ import UtilsHelper from "src/utils/utils-helper";
 
 export default {
 
-    components: { Layout, LayoutTitle, Pagination, LoadingSpinner },
+  components: {Layout, LayoutTitle, Pagination, LoadingSpinner},
 
-    data(){
-        return {
-            error: '',
-            loaded: false,
-        }
+  data() {
+    return {
+      error: '',
+      loaded: false,
+    }
+  },
+
+  computed: {
+    page() {
+      return UtilsHelper.getPage(this.$route.params.page)
+    },
+    countPerPage() {
+      return consts.mempoolTxsPagination
     },
 
-    computed:{
-        page() {
-            return UtilsHelper.getPage(this.$route.params.page)
-        },
-        countPerPage(){
-            return consts.mempoolTxsPagination
-        },
-
-        finalPage() {
-            return  (this.page !== null) ? this.page : this.pages
-        },
-
-        mempoolCount(){
-            return this.$store.state.mempool.count
-        },
-        pendingTxs(){
-            return Object.keys(this.$store.state.mempool.list)
-        },
-        pages(){
-            return Decimal.max(0, this.mempoolCount.minus(1).div(this.countPerPage).floor() )
-        }
+    finalPage() {
+      return (this.page !== null) ? this.page : this.pages
     },
 
-    methods:{
+    mempoolCount() {
+      return this.$store.state.mempool.count
+    },
+    pendingTxs() {
+      return Object.keys(this.$store.state.mempool.list)
+    },
+    pages() {
+      return Decimal.max(0, this.mempoolCount.minus(1).div(this.countPerPage).floor())
+    }
+  },
 
-        async downloadMempool(page = this.page){
-            try{
+  methods: {
 
-                this.loaded = false
-                this.error = ""
+    async downloadMempool(page = this.page) {
+      try {
 
-                await this.$store.state.blockchain.syncPromise;
-                await this.$store.dispatch('downloadMempool', page );
+        this.loaded = false
+        this.error = ""
 
-            }catch(err){
-                this.error = err.toString()
-            }finally{
-                this.loaded = true
-            }
-        },
+        await this.$store.state.blockchain.syncPromise;
+        await this.$store.dispatch('downloadMempool', page);
 
+      } catch (err) {
+        this.error = err.toString()
+      } finally {
+        this.loaded = true
+      }
     },
 
-    watch: {
-        '$route' (to, from) {
-            return this.downloadMempool();
-        }
-    },
+  },
 
-    mounted(){
-        return this.downloadMempool();
-    },
+  watch: {
+    '$route'(to, from) {
+      return this.downloadMempool();
+    }
+  },
+
+  mounted() {
+    return this.downloadMempool();
+  },
 
 
 }
@@ -120,10 +123,11 @@ export default {
 </script>
 
 <style scoped>
-    .subtitle i, .subtitle h6 {
-        display: inline-block;
-    }
-    .subtitle i {
-        padding-left: 10px;
-    }
+.subtitle i, .subtitle h6 {
+  display: inline-block;
+}
+
+.subtitle i {
+  padding-left: 10px;
+}
 </style>

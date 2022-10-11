@@ -5,15 +5,13 @@ export default {
 
     state: {
 
-        refLoadingModal: null,
-        refTextareaModal: null,
-        refConfirmationModal: null,
-        refSecretModal: null,
-        refQRCodeModal: null,
-        refQRCodeScannerModal: null,
-        refTestnetFaucetModal:null,
-        refWalletPasswordModal:null,
-        refDecryptBalanceModal:null,
+        loadingModal: null,
+        inputModal: null,
+        QRCodeModal: null,
+        QRCodeScannerModal: null,
+        testnetFaucetModal:null,
+        walletPasswordModal:null,
+        decryptBalanceModal:null,
 
         modalIndex: 0,
 

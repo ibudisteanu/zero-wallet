@@ -1,6 +1,6 @@
 <template>
 
-  <component :is="type" :to="uri" v-tooltip.bottom="`${ tooltip}`" class="pointer">
+  <component :is="type" :to="uri" v-tooltip.bottom="`${ tooltip}`" class="cursor-pointer">
     <div :class="`identicon ${outerSize? 'outer':''}`" :style="`padding: ${outerSize}px`" v-if="identiconSrc">
       <img v-if="identiconSrc" :src="identiconSrc" class="identicon" :style="`width: ${size}px`" >
     </div>

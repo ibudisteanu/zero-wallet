@@ -102,7 +102,7 @@ export default {
           message = Buffer.from(out, "base64")
         }
 
-        const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+        const password = await this.$store.state.page.walletPasswordModal.showModal()
         if (password === null ) return
 
         out = await PandoraPay.wallet.signMessageWalletAddress( password, message.toString("base64"), this.account.addressEncoded );

@@ -1,38 +1,36 @@
 <template>
 
 
-    <main :class="`main`" >
+  <main :class="`main`">
 
-        <warning-bar v-if="$store.getters.isTestnet" />
+    <warning-bar v-if="$store.getters.isTestnet"/>
 
-        <div class="container" data-layout="container">
+    <div class="container" data-layout="container">
 
-            <left-sidebar v-if="!disableLayout" ref="refSidebar" :style="`${$store.getters.isTestnet ? 'top: 50px' : ''}`" />
+      <left-sidebar v-if="!disableLayout" ref="refSidebar" :style="`${$store.getters.isTestnet ? 'top: 50px' : ''}`"/>
 
-            <div :class="`${disableLayout ? 'row flex-center min-vh-100 py-6' : 'content'}`">
+      <div :class="`${disableLayout ? 'row flex-center min-vh-100 py-6' : 'content'}`">
 
-                <layout-header v-if="!disableLayout" > </layout-header>
+        <layout-header v-if="!disableLayout"></layout-header>
 
-                <slot/>
+        <slot/>
 
-                <loading-modal ref="refLoadingModal" />
-                <textarea-modal ref="refTextareaModal" />
-                <confirmation-modal ref="refConfirmationModal" />
-                <qr-code-modal ref="refQRCodeModal" />
-                <qr-code-scanner-modal ref="refQRCodeScannerModal" />
-                <testnet-faucet-modal ref="refTestnetFaucetModal" />
-                <wallet-password-modal ref="refWalletPasswordModal" />
-                <decrypt-balance-modal ref="refDecryptBalanceModal" />
-                <secret-modal ref="refSecretModal" />
-                <layout-footer v-if="!disableLayout" />
+        <loading-modal ref="loadingModal"/>
+        <input-modal ref="inputModal"/>
+        <qr-code-modal ref="QRCodeModal"/>
+        <qr-code-scanner-modal ref="QRCodeScannerModal"/>
+        <testnet-faucet-modal ref="testnetFaucetModal"/>
+        <wallet-password-modal ref="walletPasswordModal"/>
+        <decrypt-balance-modal ref="decryptBalanceModal"/>
+        <layout-footer v-if="!disableLayout"/>
 
-            </div>
+      </div>
 
-        </div>
+    </div>
 
-        <toasts />
+    <toasts/>
 
-    </main>
+  </main>
 
 </template>
 
@@ -44,8 +42,7 @@ import LayoutHeader from "./header/layout-header";
 import LayoutFooter from "./footer/layout-footer";
 import LoadingModal from "./modals/loading.modal"
 import TestnetFaucetModal from "./modals/testnet-faucet.modal"
-import TextareaModal from "./modals/textarea.modal"
-import ConfirmationModal from "./modals/confirmation.modal"
+import InputModal from "./modals/input-modal"
 import WalletPasswordModal from "./modals/wallet-password.modal"
 import DecryptBalanceModal from "./modals/decrypt-balance.modal"
 import QrCodeModal from "./modals/qr-code.modal"
@@ -53,50 +50,44 @@ import LeftSidebar from "./left-sidebar/left-sidebar"
 import WarningBar from "./header/warning-bar"
 import Toasts from "./toasts/toasts"
 import QrCodeScannerModal from "../utils/qr-code-scanner/qr-code-scanner.modal";
-import SecretModal from "./modals/secret.modal"
 
 export default {
 
-    components: {
-        LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar, QrCodeModal, SecretModal,
-        TestnetFaucetModal, WalletPasswordModal, Toasts, QrCodeScannerModal, DecryptBalanceModal, TextareaModal,
-        ConfirmationModal },
+  components: {
+    LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar, QrCodeModal,
+    TestnetFaucetModal, WalletPasswordModal, Toasts, QrCodeScannerModal, DecryptBalanceModal, InputModal,
+  },
 
-    props: {
-        disableLayout: {default: false},
-    },
+  props: {
+    disableLayout: {default: false},
+  },
 
-    data(){
-        return {
-        }
-    },
+  data() {
+    return {}
+  },
 
-    computed:{
+  computed: {},
 
-    },
+  methods: {
+    storeModals() {
 
-    methods:{
-        storeModals(){
+      if (!this.$refs.decryptBalanceModal) return
 
-            if (!this.$refs.refDecryptBalanceModal) return
-
-            this.$store.commit('setModals', {
-                refLoadingModal: this.$refs.refLoadingModal,
-                refTextareaModal: this.$refs.refTextareaModal,
-                refConfirmationModal: this.$refs.refConfirmationModal,
-                refQRCodeModal: this.$refs.refQRCodeModal,
-                refQRCodeScannerModal: this.$refs.refQRCodeScannerModal,
-                refTestnetFaucetModal: this.$refs.refTestnetFaucetModal,
-                refWalletPasswordModal: this.$refs.refWalletPasswordModal,
-                refDecryptBalanceModal: this.$refs.refDecryptBalanceModal,
-                refSecretModal: this.$refs.refSecretModal,
-            })
-        }
-    },
-
-    mounted(){
-        this.storeModals()
+      this.$store.commit('setModals', {
+        loadingModal: this.$refs.loadingModal,
+        inputModal: this.$refs.inputModal,
+        QRCodeModal: this.$refs.QRCodeModal,
+        QRCodeScannerModal: this.$refs.QRCodeScannerModal,
+        testnetFaucetModal: this.$refs.testnetFaucetModal,
+        walletPasswordModal: this.$refs.walletPasswordModal,
+        decryptBalanceModal: this.$refs.decryptBalanceModal,
+      })
     }
+  },
+
+  mounted() {
+    this.storeModals()
+  }
 
 }
 
@@ -105,10 +96,10 @@ export default {
 
 <style scoped>
 
-    @media (min-width: 576px){
-        .content {
-            padding-bottom: 5.5875rem;
-        }
-    }
+@media (min-width: 576px) {
+  .content {
+    padding-bottom: 5.5875rem;
+  }
+}
 
 </style>

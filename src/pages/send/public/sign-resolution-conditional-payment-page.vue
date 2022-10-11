@@ -37,13 +37,13 @@
           <div class="d-inline-block">
             <label class="form-label me-2">Resolution</label>
             <div class="form-check form-check-inline">
-              <input class="form-check-input pointer" id="sender" type="radio" value="sender" v-model="resolution"/>
-              <label class="form-check-label pointer" for="sender">Sender</label>
+              <input class="form-check-input cursor-pointer" id="sender" type="radio" value="sender" v-model="resolution"/>
+              <label class="form-check-label cursor-pointer" for="sender">Sender</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input pointer" id="recipient" type="radio" value="recipient"
+              <input class="form-check-input cursor-pointer" id="recipient" type="radio" value="recipient"
                      v-model="resolution"/>
-              <label class="form-check-label pointer" for="recipient">Receiver</label>
+              <label class="form-check-label cursor-pointer" for="recipient">Receiver</label>
             </div>
           </div>
         </div>

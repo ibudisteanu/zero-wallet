@@ -1,238 +1,255 @@
 <template>
 
-    <div class="dropdown-menu dropdown-menu-end dropdown-menu-card dropdown-menu-notification show">
-        <div class="card card-notification shadow-none">
-            <div class="card-header">
-                <div class="row justify-content-between align-items-center">
-                    <div class="col-auto">
-                        <h6 class="card-header-title mb-0">My accounts</h6>
-                    </div>
-                </div>
-            </div>
-
-            <div class="list-group list-group-flush fs--1">
-                <div class="list-group-title border-bottom">All accounts:</div>
-                <div class="list-group-item div-scrollable" style="max-height:19rem" >
-                    <div v-for="(walletAddr, index) in walletAddresses" :class="`notification notification-flush notification-unread ${ walletAddr.publicKey === mainPublicKey  ? 'fw-black' : ''} ` "
-                         :key="`wallet-address-${index}`">
-                            <div class="notification-body address">
-                                <account-identicon :address="walletAddr.addressEncoded" size="21" outer-size="7"  :disable-route="true" />
-                                <div class="account-title pointer " @click="setMainPublicKey(walletAddr.publicKey)">
-                                    <span class="fw-semi-bold text-truncate">{{walletAddr.name}}</span>
-                                    <span class="fw-normal text-truncate">{{$store.getters.addressDisplay(walletAddr)}} </span>
-                                </div>
-                                <div class="account-tools">
-                                    <span class="fw-light" >{{ walletAddr.isImported ?  '&nbsp;'  : '#'+walletAddr.seedIndex }}</span>
-                                    <i class="fas fa-copy pointer " v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( walletAddr)" />
-                                </div>
-                            </div>
-                    </div>
-                </div>
-                <div class="list-group-item">
-                    <div class="list-group-title border-bottom">Operations:</div>
-                    <span @click="handleViewAccount" v-tooltip.left="'View account'" class="pointer dropdown-item "> <i class="fas fa-hand-pointer "></i> View account </span>
-                    <span @click="handleCreateNewAddress" v-tooltip.left="'Create a new Address'" class="pointer dropdown-item fw-normal "> <i class="fas fa-plus"></i> Create Account </span>
-                    <span @click="handleImportAccount" v-tooltip.left="'Import an address from json file'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i> Import Account (json)</span>
-                    <span @click="handleImportAccountSecretKey" v-tooltip.left="'Import an address from Secret Key'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i> Import Account Secret Key</span>
-                    <div class="dropdown-divider"></div>
-                    <span @click="handleViewMnemonic" v-tooltip.left="'Show your Secret Words (Mnemonic)'" class="pointer dropdown-item fw-normal "><i class="fas fa-key"></i>View Secret Phrase</span>
-                    <div class="dropdown-divider"></div>
-                    <span @click="handleNewWallet" v-tooltip.left="'Clear & create new wallet'" class="pointer dropdown-item fw-normal "><i class="fas fa-trash"></i>New Wallet</span>
-                    <span @click="handleImportMnemonic" v-tooltip.left="'Clear wallet & import a new wallet from Secret Words (Mnemonic)'" class="pointer dropdown-item fw-normal "><i class="fas fa-file-import"></i>Import Secret Phrase</span>
-                    <div class="dropdown-divider"></div>
-                    <span @click="handleExportWallet" v-tooltip.left="'Export your wallet to your computer'" class="pointer dropdown-item fw-normal "><i class="fas fa-download"></i>Export Wallet</span>
-                    <span @click="handleImportWallet" v-tooltip.left="'Import a pandora wallet from your computer'" class="pointer dropdown-item fw-normal "><i class="fas fa-upload"></i>Import Wallet</span>
-                    <template v-if="encrypted">
-                        <div class="dropdown-divider"></div>
-                        <span @click="handleLogout" v-tooltip.left="'Return to the password screen'" class="pointer dropdown-item fw-normal "><i class="fas fa-sign-out-alt"></i>  Logout</span>
-                    </template>
-                </div>
-            </div>
+  <div class="dropdown-menu dropdown-menu-end dropdown-menu-card dropdown-menu-notification show">
+    <div class="card card-notification shadow-none">
+      <div class="card-header">
+        <div class="row justify-content-between align-items-center">
+          <div class="col-auto">
+            <h6 class="card-header-title mb-0">My accounts</h6>
+          </div>
         </div>
+      </div>
 
+      <div class="list-group list-group-flush fs--1">
+        <div class="list-group-title border-bottom">All accounts:</div>
+        <div class="list-group-item div-scrollable" style="max-height:19rem">
+          <div v-for="(walletAddr, index) in walletAddresses"
+               :class="`notification notification-flush notification-unread ${ walletAddr.publicKey === mainPublicKey  ? 'fw-black' : ''} ` "
+               :key="`wallet-address-${index}`">
+            <div class="notification-body address">
+              <account-identicon :address="walletAddr.addressEncoded" size="21" outer-size="7" :disable-route="true"/>
+              <div class="account-title cursor-pointer " @click="setMainPublicKey(walletAddr.publicKey)">
+                <span class="fw-semi-bold text-truncate">{{ walletAddr.name }}</span>
+                <span class="fw-normal text-truncate">{{ $store.getters.addressDisplay(walletAddr) }} </span>
+              </div>
+              <div class="account-tools">
+                <span class="fw-light">{{ walletAddr.isImported ? '&nbsp;' : '#' + walletAddr.seedIndex }}</span>
+                <i class="fas fa-copy cursor-pointer " v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( walletAddr)"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="list-group-item">
+          <div class="list-group-title border-bottom">Operations:</div>
+          <loading-button :submit="handleViewAccount" text="View Account" icon="fas fa-hand-cursor-pointer " tooltip="View account" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <loading-button :submit="handleCreateNewAddress" text="Create Account" icon="fas fa-plus" tooltip="Create a new Address" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <loading-button :submit="handleImportAccount" text="Import Account (json)" icon="fas fa-upload" tooltip="Import an address from json file" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <loading-button :submit="handleImportAccountSecretKey" text="Import Account Secret Key" icon="fas fa-upload" tooltip="Import an address from Secret Key" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <div class="dropdown-divider"></div>
+          <loading-button :submit="handleViewMnemonic" text="View Secret Phrase" icon="fas fa-key" tooltip="Show your Secret Words (Mnemonic)" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <div class="dropdown-divider"></div>
+          <loading-button :submit="handleNewWallet" text="New Wallet" icon="fas fa-trash" tooltip="Clear & create new wallet" class-custom="cursor-pointer dropdown-item" component="span" />
+          <loading-button :submit="handleImportMnemonic" text="Import Secret Phrase" icon="fas fa-file-import" tooltip="Clear wallet & import a new wallet from Secret Words (Mnemonic)" class-custom="cursor-pointer dropdown-item" component="span" />
+          <div class="dropdown-divider"></div>
+          <loading-button :submit="handleExportWallet" text="Export Wallet" icon="fas fa-download" tooltip="Export your wallet to your computer" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <loading-button :submit="handleImportWallet" text="Improt Wallet" icon="fas fa-upload" tooltip="Import a pandora wallet from your computer" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <template v-if="encrypted">
+            <div class="dropdown-divider"></div>
+            <loading-button :submit="handleLogout" text="Logout" icon="fas fa-sign-out-alt" tooltip="Return to the password screen" class-custom="cursor-pointer dropdown-item" component="span"/>
+          </template>
+        </div>
+      </div>
     </div>
+
+  </div>
 
 </template>
 
 <script>
 
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
-import UtilsHelper from "src/utils/utils-helper";
 import FileSaver from 'file-saver'
 import consts from "consts/consts";
+import LoadingButton from "src/components/utils/loading-button";
 
 const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 
-    components: {AccountIdenticon},
+  components: {LoadingButton, AccountIdenticon},
 
-    data(){
-        return {
-            allowClose: false,
-        }
-    },
-
-    computed: {
-
-        walletAddress(){
-            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey];
-        },
-
-        walletAddresses(){
-            return this.$store.state.wallet.addresses;
-        },
-
-        mainPublicKey(){
-            return this.$store.state.wallet.mainPublicKey;
-        },
-
-        encrypted(){
-            return this.$store.state.wallet.isEncrypted;
-        }
-
-    },
-
-    methods:{
-
-        handleViewAccount(){
-            this.$router.push('/address/'+this.walletAddress.addressEncoded)
-        },
-
-      handleCreateNewAddress(){
-          return this.$emit('showCreateNewAddress')
-        },
-
-        setMainPublicKey(publicKey){
-            return this.$store.commit('setMainPublicKey', publicKey );
-        },
-
-        handleViewMnemonic(){
-            return this.$emit('viewMnemonic')
-        },
-
-        handleNewWallet(){
-          return this.$emit('newWallet')
-        },
-
-        handleImportMnemonic(){
-          return this.$emit('importMnemonic')
-        },
-
-        async handleLogout(){
-
-            try{
-                const out = await PandoraPay.wallet.manager.encryption.logoutWallet();
-                if (!out) throw "logout was not true"
-
-                this.$store.dispatch('addToast', {
-                    type: 'success',
-                    title: `You have been logged out!`,
-                    text: `You have been logged out. You need to login with the password to access your wallet.`,
-                });
-
-            }catch(err){
-                console.error(err)
-            }
-
-        },
-
-        handleImportAccount(){
-            return this.$emit('showImportAccount');
-        },
-
-        handleImportAccountSecretKey(){
-            return this.$emit('showImportAccountSecretKey');
-        },
-
-        async handleExportWallet(){
-            if ( typeof Blob === "undefined")
-                return this.$store.dispatch('addToast', {
-                    type: 'error',
-                    title: `Blob is not supported by your Browser`,
-                    text: `Update your browser`,
-                })
-
-            const password = await this.$store.state.page.refWalletPasswordModal.showModal()
-            if (password === null ) return
-
-            const jsonData = await PandoraPay.wallet.manager.exportWalletJSON(  password );
-            if (!jsonData) return false;
-
-            const json = MyTextDecode(jsonData)
-
-            const fileName = consts.name+"_"+this.walletAddress.addressEncoded + ".pandorawallet";
-
-            const file = new Blob([json], {type: "application/json;charset=utf-8"});
-            FileSaver.saveAs(file, fileName);
-
-            return this.$store.dispatch('addToast', {
-                type: 'success',
-                title: `Wallet has been saved on your machine`,
-                text: `The wallet has been saved in the downloads folder.`,
-            });
-        },
-
-        handleImportWallet(){
-          return this.$emit('showImportWallet')
-        },
-
-        copyAddress( walletAddress ){
-
-            let addr = this.$store.getters.addressDisplay(walletAddress)
-
-            this.$copyText(addr).then(
-                e => this.$store.dispatch('addToast',{
-                    type: 'success',
-                    title: `Copied to clipboard successfully`,
-                    text: `Address ${addr} copied to clipboard`,
-                }),
-                e => this.$store.dispatch('addToast',{
-                    type: 'error',
-                    title: `Clipboard failed`,
-                    text: `Failed to copy to clipboard`,
-                })
-            )
-        }
-
+  data() {
+    return {
+      allowClose: false,
     }
+  },
+
+  computed: {
+
+    walletAddress() {
+      return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey];
+    },
+
+    walletAddresses() {
+      return this.$store.state.wallet.addresses;
+    },
+
+    mainPublicKey() {
+      return this.$store.state.wallet.mainPublicKey;
+    },
+
+    encrypted() {
+      return this.$store.state.wallet.isEncrypted;
+    }
+
+  },
+
+  methods: {
+
+    handleViewAccount() {
+      this.$router.push('/address/' + this.walletAddress.addressEncoded)
+    },
+
+    handleCreateNewAddress() {
+      return this.$emit('showCreateNewAddress')
+    },
+
+    setMainPublicKey(publicKey) {
+      return this.$store.commit('setMainPublicKey', publicKey);
+    },
+
+    async handleViewMnemonic() {
+      const password = await this.$store.state.page.walletPasswordModal.showModal()
+      if (password === null) return
+
+      const secret = await PandoraPay.wallet.getWalletMnemonic(password)
+
+      return this.$store.state.page.inputModal.showModal({
+        title: "Secret",
+        secret: {value: secret, title: `Secret Phrase (Mnemonic)`, security: 'DO NOT share these secret words with anyone! These secret words can be used to STEAL YOUR FUNDS FROM ALL YOUR ACCOUNTS' },
+        button: null,
+      });
+    },
+
+    async handleNewWallet() {
+
+        try {
+
+          const confirmed = await this.$store.state.page.inputModal.showModal({
+            title: "Clear existing wallet?", data: "It will clear your existing wallet and you will get a new wallet!",
+            confirmation: {type: "warning"},
+            button: { text: "Yes, I confirm", icon: 'fas fa-times', class:'btn btn-falcon-danger'} })
+          if (!confirmed) return
+
+          const password = await this.$store.state.page.walletPasswordModal.showModal()
+          if (password === null) return
+
+          await this.$store.state.page.loadingModal.showModal();
+
+          await PandoraPay.wallet.createNewWallet(password)
+          this.$store.dispatch('addToast', {
+            type: 'success',
+            title: `New wallet`,
+            text: `You got a new wallet`,
+          })
+        } catch (e) {
+          throw e
+        } finally {
+          this.$store.state.page.loadingModal.closeModal();
+        }
+
+    },
+
+    handleImportMnemonic() {
+      return this.$emit('importMnemonic')
+    },
+
+    async handleLogout() {
+
+      const out = await PandoraPay.wallet.manager.encryption.logoutWallet();
+      if (!out) throw "logout was not true"
+
+      this.$store.dispatch('addToast', {
+        type: 'success',
+        title: `You have been logged out!`,
+        text: `You have been logged out. You need to login with the password to access your wallet.`,
+      });
+
+    },
+
+    handleImportAccount() {
+      return this.$emit('showImportAccount');
+    },
+
+    handleImportAccountSecretKey() {
+      return this.$emit('showImportAccountSecretKey');
+    },
+
+    async handleExportWallet() {
+      if (typeof Blob === "undefined") throw "Blob Blob is not supported by your Browser. Update your Browser."
+
+      const password = await this.$store.state.page.walletPasswordModal.showModal()
+      if (password === null) return
+
+      const jsonData = await PandoraPay.wallet.manager.exportWalletJSON(password);
+      if (!jsonData) return false;
+
+      const json = MyTextDecode(jsonData)
+
+      const fileName = consts.name + "_" + this.walletAddress.addressEncoded + ".pandorawallet";
+
+      const file = new Blob([json], {type: "application/json;charset=utf-8"});
+      FileSaver.saveAs(file, fileName);
+
+      return this.$store.dispatch('addToast', {
+        type: 'success',
+        title: `Wallet has been saved on your machine`,
+        text: `The wallet has been saved in the downloads folder.`,
+      });
+    },
+
+    handleImportWallet() {
+      return this.$emit('showImportWallet')
+    },
+
+    async copyAddress(walletAddress) {
+      const addr = this.$store.getters.addressDisplay(walletAddress)
+      try{
+        await this.$copyText(addr)
+        this.$store.dispatch('addToast', {type: 'success', title: `Copied to clipboard successfully`, text: `Address ${addr} copied to clipboard`})
+      }catch(e){
+        this.$store.dispatch('addToast', {type: 'error', title: `Clipboard failed`, text: `Failed to copy to clipboard`,})
+      }
+    }
+
+  }
 
 }
 </script>
 
 <style scoped>
 
-    .dropdown-menu{
-      margin-top: 10px;
-      right: -2.5625rem !important;
-    }
+.dropdown-menu {
+  margin-top: 10px;
+  right: -2.5625rem !important;
+}
 
-    .dropdown-menu-notification{
-        min-width: 16.4rem;
-    }
+.dropdown-menu-notification {
+  min-width: 16.4rem;
+}
 
-    .notification{
-        display: block;
-    }
+.notification {
+  display: block;
+}
 
-    .address{
-        display: grid;
-        grid-template-columns: 32px 160px 30px;
-        grid-column-gap: 10px;
-        text-align: left;
-    }
+.address {
+  display: grid;
+  grid-template-columns: 32px 160px 30px;
+  grid-column-gap: 10px;
+  text-align: left;
+}
 
-    .dropdown-item i{
-        margin-right: 5px;
-    }
+.dropdown-item i {
+  margin-right: 5px;
+}
 
-    .account-title span,
-    .account-tools span, .account-tools i{
-        display: block;
-    }
+.account-title span,
+.account-tools span, .account-tools i {
+  display: block;
+}
 
-    .account-tools{
-        float: right;
-    }
+.account-tools {
+  float: right;
+}
 
 </style>

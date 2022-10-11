@@ -17,7 +17,7 @@
                             </div>
                             <span class="fw-bold d-block text-break">
                                 {{ getAddress }}
-                                <i class="fas fa-copy pointer " @click="copyAddress" v-tooltip.bottom="'Copy Address'"  ></i>
+                                <i class="fas fa-copy cursor-pointer " @click="copyAddress" v-tooltip.bottom="'Copy Address'"  ></i>
                             </span>
                         </div>
                     </div>
@@ -36,10 +36,10 @@
                   </div>
                 </div>
                 <div class="card-footer bg-light g-0 d-block p-3">
-                    <loading-button :can-disable="false" @submit="showAccountQRCode" text="" icon="fas fa-qrcode" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Show Address QR Code" />
-                    <loading-button :can-disable="false" @submit="showGenerateCustomAddress" text="" icon="fas fa-tools" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Generate custom address" />
-                    <loading-button :can-disable="false" @submit="showAddressJSON" text="" icon="fas fa-file" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Show JSON address" />
-                    <loading-button :disabled="!account || !account.registration || !account.registration.staked" :can-disable="false" @submit="showShareStaked" text="" icon="fas fa-piggy-bank" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 pointer" tooltip="Share staked address with a delegator node" />
+                    <loading-button :submit="showAccountQRCode" text="" icon="fas fa-qrcode" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer" tooltip="Show Address QR Code" />
+                    <loading-button :submit="showGenerateCustomAddress" text="" icon="fas fa-tools" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer" tooltip="Generate custom address" />
+                    <loading-button :submit="showAddressJSON" text="" icon="fas fa-file" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer" tooltip="Show JSON address" />
+                    <loading-button :disabled="!account || !account.registration || !account.registration.staked" :submit="showShareStaked" text="" icon="fas fa-piggy-bank" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer" tooltip="Share staked address with a delegator node" />
                 </div>
             </div>
         </div>
@@ -102,11 +102,11 @@ export default {
         },
 
         showAccountQRCode(){
-            return this.$store.state.page.refQRCodeModal.showModal(this.getAddress, this.address.name || '');
+            return this.$store.state.page.QRCodeModal.showModal(this.getAddress, this.address.name || '');
         },
 
         showAddressJSON(){
-          return this.$store.state.page.refTextareaModal.showModal("ADDRESS JSON", JSONStringify(this.account, null, 2) )
+          return this.$store.state.page.inputModal.showModal({ title:"ADDRESS JSON", data: JSONStringify(this.account, null, 2), textarea: { allowEdit:false }, button: null })
         },
 
         showShareStaked(){

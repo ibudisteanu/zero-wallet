@@ -1,15 +1,13 @@
 export default {
 
     setModals(state, modals ){
-        state.refLoadingModal = modals.refLoadingModal;
-        state.refTextareaModal = modals.refTextareaModal
-        state.refConfirmationModal = modals.refConfirmationModal
-        state.refQRCodeModal = modals.refQRCodeModal;
-        state.refQRCodeScannerModal = modals.refQRCodeScannerModal;
-        state.refTestnetFaucetModal = modals.refTestnetFaucetModal;
-        state.refWalletPasswordModal = modals.refWalletPasswordModal;
-        state.refDecryptBalanceModal = modals.refDecryptBalanceModal;
-        state.refSecretModal = modals.refSecretModal
+        state.loadingModal = modals.loadingModal;
+        state.inputModal = modals.inputModal
+        state.QRCodeModal = modals.QRCodeModal;
+        state.QRCodeScannerModal = modals.QRCodeScannerModal;
+        state.testnetFaucetModal = modals.testnetFaucetModal;
+        state.walletPasswordModal = modals.walletPasswordModal;
+        state.decryptBalanceModal = modals.decryptBalanceModal;
     },
 
     incrementModalIndex(state, value){

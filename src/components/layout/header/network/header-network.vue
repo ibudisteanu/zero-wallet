@@ -1,5 +1,5 @@
 <template>
-  <div class="pointer" v-tooltip.bottom="`${showNetworksMenu ? '' :'Select network'}`" @click.stop="handleToggleNetworksMenu" >
+  <div class="cursor-pointer" v-tooltip.bottom="`${showNetworksMenu ? '' :'Select network'}`" @click.stop="handleToggleNetworksMenu" >
 
     <i class="fas fa-globe-americas nav-item-icon"></i>
     <span class="badge badge-soft-success">{{ $store.state.network.networkName }}</span>
