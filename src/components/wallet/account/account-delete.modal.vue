@@ -60,15 +60,13 @@ export default {
 
         async handleDelete(){
 
-            this.$store.state.page.refLoadingModal.showModal();
-
-            await UtilsHelper.sleep(50 )
+            await this.$store.state.page.loadingModal.showModal();
 
             const address = this.account
 
             try{
 
-                const password = await this.$store.state.page.refWalletPasswordModal.showModal()
+                const password = await this.$store.state.page.walletPasswordModal.showModal()
                 if (password === null ) return
 
                 const out = await PandoraPay.wallet.manager.removeWalletAddress( password, address.publicKey );
@@ -85,10 +83,10 @@ export default {
                 this.$store.dispatch('addToast', {
                     type: 'error',
                     title: `Address ${address.addressEncoded} could not been removed`,
-                    text: `Raised an error ${err.message}`,
+                    text: `Raised an error ${err.toString()}`,
                 })
             }finally{
-                this.$store.state.page.refLoadingModal.closeModal();
+                this.$store.state.page.loadingModal.closeModal();
             }
 
 

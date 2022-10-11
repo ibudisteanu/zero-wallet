@@ -8,6 +8,8 @@ import VueClipboard from 'vue-clipboard2'
 import VueTooltip from "v-tooltip"
 import VueTooltipCss from "v-tooltip/dist/v-tooltip.css"
 import StringHelper from "../utils/string-helper";
+import Decimal from "decimal.js"
+import JSONParse from "../utils/custom-json/json-parse";
 
 export default (options) => {
 
@@ -43,6 +45,16 @@ export default (options) => {
     app.config.globalProperties.$formatMoney = function(a, b, c) {
         return StringHelper.formatMoney(a, b, c )
     }
+    app.config.globalProperties.$formatMilliseconds = function(a, b, c) {
+        return StringHelper.formatMilliseconds(a, b, c )
+    }
+
+    app.config.globalProperties.PandoraPay = PandoraPay
+    app.config.globalProperties.Decimal = Decimal
+    app.config.globalProperties.Buffer = Buffer
+
+    app.config.globalProperties.JSONStringify = JSONStringify
+    app.config.globalProperties.JSONParse = JSONParse
 
     store.commit('createSyncPromise')
     store.commit('setScreenInformation')

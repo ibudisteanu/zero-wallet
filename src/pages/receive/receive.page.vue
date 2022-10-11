@@ -1,12 +1,14 @@
 <template>
 
-    <layout>
+  <layout>
 
-        <layout-title icon="fas fa-file-invoice-dollar" title="Receive funds">Generate your address to receive funds publicly.</layout-title>
+    <layout-title icon="fas fa-file-invoice-dollar" title="Receive funds">
+      Generate your address to receive funds publicly.
+    </layout-title>
 
-        <account :address="walletAddress" title="Receive Funds" />
+    <account :address="walletAddress" title="Receive Funds"/>
 
-    </layout>
+  </layout>
 
 </template>
 
@@ -18,23 +20,19 @@ import LayoutTitle from "src/components/layout/layout-title"
 
 export default {
 
-    components: { Account, Layout, LayoutTitle},
+  components: {Account, Layout, LayoutTitle},
 
-    data(){
-        return {
+  data() {
+    return {}
+  },
 
-        }
-    },
+  methods: {},
 
-    methods:{
-
-    },
-
-    computed:{
-        walletAddress(){
-            return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey] ;
-        }
-    },
+  computed: {
+    walletAddress() {
+      return this.$store.state.wallet.addresses[this.$store.state.wallet.mainPublicKey];
+    }
+  },
 
 }
 </script>

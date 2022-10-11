@@ -1,6 +1,10 @@
 import {createRouter, createWebHistory} from "vue-router"
 import LoginPage from "src/pages/login/login.page"
 import PrivateSendPage from "src/pages/send/private/private-send.page"
+import PrivateConditionalPaymentPage from "../pages/send/private/private-conditional-payment-page";
+import SimpleTxResolutionConditionalPaymentPage from "../pages/send/public/simple-tx-resolution-conditional-payment-page"
+import SignResolutionConditionalPaymentPage from "src/pages/send/public/sign-resolution-conditional-payment-page";
+import ImportLinkPage from "../pages/other/import-link-page";
 import ReceivePage from "src/pages/receive/receive.page"
 import WalletPage from "src/pages/wallet/wallet.page"
 import AddressPage from "src/pages/address/address.page"
@@ -14,8 +18,6 @@ import MempoolExplorerPage from "src/pages/explorer/mempool-explorer.page"
 import AssetsPage from "src/pages/assets/assets.page"
 import SettingsPage from "src/pages/settings/settings.page"
 import NotFoundPage from "src/pages/not-found/not-found.page"
-
-import KadPage from "src/pages/kad/kad.page"
 
 import store from "./../store/store"
 
@@ -37,6 +39,11 @@ const routes = [
 
     {path: '/txs/private/send', component: PrivateSendPage, beforeEnter: guardDecrypted },
 
+    {path: '/advanced-txs/private/conditional-payment', component: PrivateConditionalPaymentPage, beforeEnter: guardDecrypted },
+    {path: '/advanced-txs/public/resolution-conditional-payment', component: SimpleTxResolutionConditionalPaymentPage, beforeEnter: guardDecrypted},
+    {path: '/advanced-txs/sign-resolution-conditional-payment', component: SignResolutionConditionalPaymentPage },
+    {path: '/advanced-txs/import-link', component: ImportLinkPage },
+
     {path: '/receive', component: ReceivePage, beforeEnter: guardDecrypted },
     {path: '/wallet', component: WalletPage, beforeEnter: guardDecrypted },
 
@@ -55,8 +62,6 @@ const routes = [
 
     {path: '/explorer', component: BlockchainExplorerPage },
     {path: '/explorer/:page', component: BlockchainExplorerPage },
-
-    {path: '/kad', component: KadPage },
 
     {path: '/settings', component: SettingsPage },
 

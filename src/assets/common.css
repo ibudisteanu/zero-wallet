@@ -138,13 +138,6 @@ a .disabled{
     color: #025d90
 }
 
-.pointer{
-    cursor: pointer;
-}
-
-.pointer:hover{
-    color: #27bcfd !important;
-}
 
 a, a:hover,a:visited, a:focus {
     text-decoration:none;
@@ -159,17 +152,6 @@ a, a:hover,a:visited, a:focus {
 .disabled {
     pointer-events: none;
 }
-
-.blurry-text {
-    text-shadow: 0 0 15px black;
-    color: transparent;
-}
-
-.dark .blurry-text {
-    text-shadow: 0 0 15px white;
-    color: transparent;
-}
-
 
 @media (max-width: 576px) {
     .theme-wizard .nav-item-circle-parent {

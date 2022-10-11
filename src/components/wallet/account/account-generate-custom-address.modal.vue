@@ -10,13 +10,14 @@
                 2: {icon: 'fas fa-hand-holding-usd', name: 'Payment ID', tooltip: 'Include a Payment ID' },
                 3: {icon: 'fas fa-signature', name: 'Registration', tooltip: 'Include Registration Signature' },
                 4: {icon: 'fas fa-check', name: 'Done', tooltip: 'Generated Address' }}"
-                @onSetTab="setTab" controls-class-name="modal-footer bg-light" :buttons="buttons" :allow-scroll="false" >
+                @onSetTab="setTab" controls-class-name="modal-footer bg-light" :allow-scroll="false"
+                :buttons="{ 3: { icon: 'fas fa-cogs', text: 'Generate Address' }, 4: { hide: true } }">
 
                 <template v-slot:tab_0>
                     <div class="form-check">
                         <input class="form-check-input" id="paymentAsset" type="checkbox"  name="checkbox" v-model="hasPaymentAsset"  >
                         <label class="form-check-label" for="paymentAsset"> Payment Asset </label>
-                        <i class="fas fa-question" v-tooltip.bottom="'Specify a default asset'" ></i>  <br>
+                        <i class="fas fa-question ms-1" v-tooltip.bottom="'Specify a default asset'" ></i>  <br>
                         <template v-if="hasPaymentAsset" >
                             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Asset which will be requested</label>
                             <input :class="`form-control ${validationPaymentAsset ? 'is-invalid' : ''}`" v-if="hasPaymentAsset" type="text" v-model="paymentAsset" >
@@ -29,7 +30,7 @@
                     <div class="form-check">
                         <input class="form-check-input" id="paymentAmount" type="checkbox"  name="checkbox" v-model="hasPaymentAmount"  >
                         <label class="form-check-label" for="paymentAmount"> Amount </label>
-                        <i class="fas fa-question" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
+                        <i class="fas fa-question ms-1" v-tooltip.bottom="'Specify a default amount to be sent to you'" ></i>  <br>
                         <template v-if="hasPaymentAmount">
                             <tx-amount :allow-zero="true" :allow-empty-asset="true" :balances="null" @changed="amountChanged" text="Amount to Receive" :asset="Buffer.from(paymentAsset,'hex').toString('base64')" :disabled="!hasPaymentAmount" />
                         </template>
@@ -40,7 +41,7 @@
                     <div class="form-check">
                         <input class="form-check-input" id="paymentID" type="checkbox"  name="checkbox" v-model="hasPaymentID"  >
                         <label class="form-check-label" for="paymentID"> PaymentId</label>
-                        <i class="fas fa-question" v-tooltip.bottom="'Specify a default message (paymentID)'" ></i>  <br>
+                        <i class="fas fa-question ms-1" v-tooltip.bottom="'Specify a default message (paymentID)'" ></i>  <br>
                         <input :class="`form-control ${validationPaymentID ? 'is-invalid' : ''}`" v-if="hasPaymentID" type="text" v-model="paymentID" >
                         <div v-if="validationPaymentID" class="invalid-feedback d-block">{{validationPaymentID}}</div>
                     </div>
@@ -50,7 +51,7 @@
                     <div class="form-check" :disabled="!address.registration">
                         <input class="form-check-input" id="registration" type="checkbox"  name="checkbox" v-model="hasRegistration"  >
                         <label class="form-check-label" for="registration"> Registration </label>
-                        <i class="fas fa-question" v-tooltip.bottom="'Specify registration. Required only first time when used'" ></i>  <br>
+                        <i class="fas fa-question ms-1" v-tooltip.bottom="'Specify registration. Required only first time when used'" ></i>  <br>
                     </div>
                 </template>
 
@@ -70,11 +71,11 @@
                         <hr/>
 
                         <div class="g-0 d-inline-block ">
-                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="copyAddress" v-tooltip.bottom="'Copy Address'" >
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer " type="button" @click="copyAddress" v-tooltip.bottom="'Copy Address'" >
                                 <i class="fas fa-copy" />
                             </button>
 
-                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 pointer " type="button" @click="showAddressQRCode" v-tooltip.bottom="'Show Address QR Code'">
+                            <button class="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer " type="button" @click="showAddressQRCode" v-tooltip.bottom="'Show Address QR Code'">
                                 <i class="fas fa-qrcode" />
                             </button>
                         </div>
@@ -122,8 +123,6 @@ export default {
 
     computed:{
 
-        Buffer: () => Buffer,
-
         validationPaymentID(){
             try{
 
@@ -158,10 +157,6 @@ export default {
             }
         },
 
-        buttons(){
-            return { 3: { icon: 'fas fa-cogs', text: 'Generate Address' }}
-        },
-
     },
 
     methods: {
@@ -171,8 +166,12 @@ export default {
 
                 if (oldTab === 0 && value === 1) {
                     if (this.validationPaymentAsset) throw this.validationPaymentAsset
-                    const asset = await this.$store.dispatch('getAssetByHash', Buffer.from(this.paymentAsset, "hex").toString("base64") )
-                    if (!asset) throw "Payment Asset doesn't exist"
+
+                    if (this.hasPaymentAsset){
+                      const asset = await this.$store.dispatch('getAssetByHash', Buffer.from(this.paymentAsset, "hex").toString("base64") )
+                      if (!asset) throw "Payment Asset doesn't exist"
+                    }
+
                 }
 
                 if (oldTab === 1 && value === 2)
@@ -184,10 +183,9 @@ export default {
                 if (oldTab === 3 && value === 4)
                     await this.handleCreateAddress()
 
+                resolve(true)
             }catch(err) {
                 reject(err)
-            }finally{
-                resolve(true)
             }
         },
 
@@ -225,7 +223,7 @@ export default {
         },
 
         showAddressQRCode(){
-            return this.$store.state.page.refQRCodeModal.showModal( this.addressGenerated, this.address.name || '');
+            return this.$store.state.page.QRCodeModal.showModal( this.addressGenerated, this.address.name || '');
         },
 
         async handleCreateAddress(){

@@ -20,11 +20,11 @@
         <header-search-bar />
       </div>
 
-      <div class="menu-right-item pointer" v-tooltip.bottom="`Switch theme`" @click="handleToggleDark">
+      <div class="menu-right-item cursor-pointer" v-tooltip.bottom="`Switch theme`" @click="handleToggleDark">
         <i :class="`fas fa-${$store.state.settings.dark ?'sun':'moon'} nav-item-icon `"/>
       </div>
 
-      <div class="menu-right-item pointer" style="min-width: 70px">
+      <div class="menu-right-item cursor-pointer" style="min-width: 70px">
         <header-network ref="refHeaderNetwork" @closeOtherMenus="closeMenu"  />
       </div>
 

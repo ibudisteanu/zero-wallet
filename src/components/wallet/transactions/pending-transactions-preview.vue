@@ -7,11 +7,9 @@
                 <div class="col">
                     <h5 class="mb-0">
                         Pending Transactions {{txs ? txs.length : ''}}
-                        <template v-if="!txs">
-                            <div class="py-3 text-center">
-                                <loading-spinner />
-                            </div>
-                        </template>
+                        <div v-if="!txs" class="py-3 text-center">
+                            <loading-spinner />
+                        </div>
                     </h5>
                 </div>
             </div>

@@ -8,7 +8,7 @@ export default {
         if (promises[hash]) return promises[hash];
         return promises[hash] = new Promise( async (resolve, reject) => {
             try{
-                const assetData = await PandoraPay.network.getNetworkAsset(0, hash);
+                const assetData = await PandoraPay.network.getNetworkAsset( MyTextEncode(JSONStringify({height: 0, hash}) ));
                 if (!assetData ) throw "Error getting block info"
 
                 const asset = JSONParse(MyTextDecode(assetData) )

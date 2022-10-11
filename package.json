@@ -14,7 +14,6 @@
     "dev": "npm run build-webworker-wasm && webpack-dev-server --config=./build/webpack-ui-dev-server-config.js --hot --host 0.0.0.0"
   },
   "dependencies": {
-    "@hcaptcha/vue3-hcaptcha": "^1.0.1",
     "buffer": "^6.0.3",
     "decimal.js": "^10.3.1",
     "file-saver": "^2.0.5",
