@@ -1,5 +1,5 @@
 <template>
-  <modal ref="modal" title="Import wallet from Seed Words">
+  <modal ref="modal" title="Import wallet from json file">
 
     <template v-slot:body>
 
@@ -15,9 +15,7 @@
     </template>
 
     <template v-slot:footer>
-      <button :disabled="!walletData" class="btn btn-falcon-danger" type="button" @click="handleImportWallet">
-        <i class="fas fa-save"></i> Import Wallet
-      </button>
+      <loading-button :disabled="!walletData" class-custom="btn btn-falcon-danger" @click="handleImportWallet" text="Import wallet" icon="fas fa-save"/>
       <button class="btn btn-outline-primary" type="button" @click="closeModal">
         <i class="fas fa-ban"></i> Close
       </button>
@@ -30,10 +28,11 @@
 import Modal from "src/components/utils/modal"
 import AlertBox from "src/components/utils/alert-box";
 import UtilsHelper from "src/utils/utils-helper";
+import LoadingButton from "../utils/loading-button";
 
 export default {
 
-  components: { Modal, AlertBox},
+  components: {LoadingButton, Modal, AlertBox},
 
   data() {
     return {
@@ -54,26 +53,34 @@ export default {
 
     handleFileUpload(){
 
-      this.walletData = ""
+      try{
+        this.walletData = ""
 
-      if ((window.File && window.FileReader && window.FileList && window.Blob) === false)
-        throw `Your browser/device doesn't support file import.`
+        if ((window.File && window.FileReader && window.FileList && window.Blob) === false)
+          throw `Your browser/device doesn't support file import.`
 
-      const file = this.$refs.refFile.files[0];
+        const file = this.$refs.refFile.files[0];
 
-      if (!file) throw `No file selected.`
+        if (!file) throw `No file selected.`
 
-      let extension = file.name.split('.').pop();
+        let extension = file.name.split('.').pop();
 
-      if (extension !== "pandorawallet") throw `File not supported. Maybe wrong file? `
+        if (extension !== "pandorawallet") throw `File not supported. Maybe wrong file? `
 
-      const reader = new FileReader();
+        const reader = new FileReader();
 
-      reader.onload = async (e) => {
-        this.walletData = reader.result;
+        reader.onload = async (e) => {
+          this.walletData = reader.result;
+        }
+
+        reader.readAsText(file);
+      }catch(e){
+        this.$store.dispatch('addToast', {
+          type: 'error',
+          title: `There was an error processing your file`,
+          text: `Raised an error ${e.toString()}`,
+        })
       }
-
-      reader.readAsText(file);
 
     },
 
@@ -95,12 +102,8 @@ export default {
           });
 
         this.closeModal()
-      }catch(err){
-        this.$store.dispatch('addToast', {
-          type: 'error',
-          title: `Error importing the wallet`,
-          text: `Raised an error ${err.toString()}`,
-        })
+      }catch(e){
+        throw e
       }finally{
         this.$store.state.page.loadingModal.closeModal();
       }

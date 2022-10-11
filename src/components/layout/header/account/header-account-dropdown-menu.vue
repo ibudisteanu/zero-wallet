@@ -126,8 +126,8 @@ export default {
         try {
 
           const confirmed = await this.$store.state.page.inputModal.showModal({
-            title: "Clear existing wallet?", data: "It will clear your existing wallet and you will get a new wallet!",
-            confirmation: {type: "warning"},
+            title: "Clear existing wallet?",
+            alert: {type: "warning", text: "It will clear your existing wallet and you will get a new wallet!"},
             button: { text: "Yes, I confirm", icon: 'fas fa-times', class:'btn btn-falcon-danger'} })
           if (!confirmed) return
 
@@ -150,8 +150,36 @@ export default {
 
     },
 
-    handleImportMnemonic() {
-      return this.$emit('importMnemonic')
+    async handleImportMnemonic() {
+
+      const mnemonic = await this.$store.state.page.inputModal.showModal({
+        title: "Import Mnemonic",
+        textarea: {allowEdit: true, rows: 4}, button: {text: "Import mnemonic", icon: 'fas fa-disk', class:'btn btn-primary'},
+        alert: {type: "warning", text: "This operation will delete the existing wallet from your browser and will replace it with the one from the mnemonic", class:"mt-2"},
+      })
+      if (!mnemonic) throw "Canceled"
+
+      const password = await this.$store.state.page.walletPasswordModal.showModal()
+      if (password === null) return
+
+      try {
+
+        await this.$store.state.page.loadingModal.showModal();
+
+        const out = await PandoraPay.wallet.importMnemonic(password, mnemonic.trim());
+        if (out)
+          this.$store.dispatch('addToast', {
+            type: 'success',
+            title: `Mnemonic Imported Successfully`,
+            text: `The mnemonic was imported successfully into your wallet`,
+          });
+
+      } catch (e) {
+        throw e.toString()
+      } finally {
+        this.$store.state.page.loadingModal.closeModal();
+      }
+
     },
 
     async handleLogout() {

@@ -44,7 +44,7 @@ export default {
       try{
         if (this.submit) await this.submit()
       }catch(e){
-        this.$store.dispatch('addToast', {type:"error", title:`Unexpected error`, body: e.toString() })
+        this.$store.dispatch('addToast', {type:"error", title:`Unexpected error`, text: e.toString() })
       }finally {
         this.loaded = true;
         this.disabled = false;
