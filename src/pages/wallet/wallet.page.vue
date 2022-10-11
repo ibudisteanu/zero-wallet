@@ -44,25 +44,11 @@
 
         <div class="card-body bg-light">
 
-          <button class="btn btn-falcon-default rounded-pill me-2 mb-1 cursor-pointer" type="button" @click="handleExportAddress" v-tooltip.bottom="'Export Account'">
-            <i class="fas fa-download"></i>
-          </button>
-
-          <button class="btn btn-falcon-default rounded-pill me-2 mb-1 cursor-pointer" type="button" @click="handleDeleteAddress" v-tooltip.bottom="'Delete Account'">
-            <i class="danger fas fa-times"></i>
-          </button>
-
-          <button class="btn btn-falcon-default rounded-pill me-2 mb-1 cursor-pointer" type="button" @click="handleShowSecretKey" v-tooltip.bottom="'View Secret Key'">
-            <i class="fas fa-eye"></i>
-          </button>
-
-          <button class="btn btn-falcon-default rounded-pill me-2 mb-1 cursor-pointer" type="button" @click="handleRenameAddressName" v-tooltip.bottom="'Rename Address Tag'">
-            <i class="fas fa-edit"></i>
-          </button>
-
-          <button class="btn btn-falcon-default rounded-pill me-2 mb-1 cursor-pointer" type="button" @click="handleSignMessage" v-tooltip.bottom="'Sign message'">
-            <i class="fas fa-signature"></i>
-          </button>
+          <loading-button :submit="handleExportAddress" tooltip="Export Account" icon="fas fa-download" class-custom="btn btn-falcon-default rounded-pill me-2 mb-1 cursor-pointer"  text=""/>
+          <loading-button :submit="handleDeleteAddress" tooltip="Delete Account" icon="text-danger fas fa-times" class-custom="btn btn-falcon-default rounded-pill me-2 mb-1 cursor-pointer" text=""/>
+          <loading-button :submit="handleShowSecretKey" tooltip="View Secret Key" icon="fas fa-eye" class-custom="btn btn-falcon-default rounded-pill me-2 mb-1 cursor-pointer" text=""/>
+          <loading-button :submit="handleRenameAddressName" tooltip="Rename Address Tag" icon="fas fa-edit" class-custom="btn btn-falcon-default rounded-pill me-2 mb-1 cursor-pointer" text=""/>
+          <loading-button :submit="handleSignMessage" tooltip="Sign message" icon="fas fa-signature" class-custom="btn btn-falcon-default rounded-pill me-2 mb-1 cursor-pointer" text=""/>
 
         </div>
       </div>
@@ -89,11 +75,12 @@ import Account from "src/components/wallet/account/account"
 import AccountDeleteModal from "src/components/wallet/account/account-delete.modal"
 import WaitAddress from "src/components/wallet/account/wait-address";
 import AccountSignMessageModal from "src/components/wallet/account/account-sign-message-modal"
+import LoadingButton from "src/components/utils/loading-button";
 
 export default {
 
   components: {
-    AccountSignMessageModal,
+    AccountSignMessageModal,LoadingButton,
     WaitAddress, AccountIdenticon, AccountRenameModal, Layout, Account, LayoutTitle, AccountDeleteModal
   },
 
@@ -115,12 +102,7 @@ export default {
 
     async handleExportAddress() {
 
-      if (typeof Blob === "undefined")
-        return this.$store.dispatch('addToast', {
-          type: 'error',
-          title: `Blob is not supported by your Browser`,
-          text: `Update your browser`,
-        })
+      if (typeof Blob === "undefined") throw "Blob Blob is not supported by your Browser. Update your Browser."
 
       const password = await this.$store.state.page.walletPasswordModal.showModal()
       if (password === null) return
@@ -140,6 +122,7 @@ export default {
         title: `Address ${this.walletAddress.name} has been saved on your machine`,
         text: `The address ${this.walletAddress.addressEncoded} has been saved in the downloads folder.`,
       });
+
     },
 
     async handleShowSecretKey() {
@@ -188,6 +171,3 @@ export default {
 
 }
 </script>
-
-<style scoped>
-</style>

@@ -412,7 +412,7 @@ export default {
   props: {
     tx: {default: null},
     txInfo: {default: null},
-    confirmation: {default: false},
+    alert: {default: false},
   },
 
   data() {
@@ -476,11 +476,13 @@ export default {
     },
 
     handleShowJSON() {
-      return this.$store.state.page.inputModal.showModal({ title: "TX JSON", data: JSONStringify(this.tx, null, 2), textarea: { allowEdit:false }, button: null } )
+      return this.$store.state.page.inputModal.showModal({ title: "TX JSON", data: JSONStringify(this.tx, null, 2),
+        textarea: { allowEdit:false, class:"form-control-sm fs--2" }, button: null } )
     },
 
     handleShowTxRaw() {
-      return this.$store.state.page.inputModal.showModal({ title: "TX JSON", data:this.tx._serialized, textarea: { allowEdit:false }, button: null })
+      return this.$store.state.page.inputModal.showModal({ title: "TX JSON", data:this.tx._serialized,
+        textarea: { allowEdit:false, class:"form-control-sm fs--2" }, button: null })
     },
 
 
