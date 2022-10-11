@@ -6,6 +6,11 @@
       <textarea v-if="textarea" class="form-control form-control-sm fs--2" :rows="textarea.rows" v-model="data" :disabled="!textarea.allowEdit"/>
       <input v-if="input" class="form-control" v-model="data" :disabled="!input.allowEdit"/>
       <alert-box v-if="confirmation" :type="confirmation.type">{{data}}</alert-box>
+      <secret-text v-if="secret" class="pt-1" :text="secret.value" :title="secret.title">
+        <template v-slot:warning>
+          {{ secret.security }}
+        </template>
+      </secret-text>
     </template>
 
     <template v-slot:footer>
@@ -27,10 +32,11 @@
 <script>
 import Modal from "src/components/utils/modal"
 import AlertBox from "src/components/utils/alert-box"
+import SecretText from "src/components/utils/secret-text"
 
 export default {
 
-  components: {Modal, AlertBox},
+  components: {Modal, AlertBox, SecretText},
 
   data() {
     return {
@@ -41,22 +47,24 @@ export default {
       input: {allowEdit: true},
       textarea: {rows: 20, allowEdit:true},
       confirmation: {type: "info"},
+      secret: {title: "Secret", security: "DO NOT share this secret key with anyone! This private key can be used to STEAL YOUR FUNDS FROM THIS ACCOUNT"},
       button: {text: "Save", icon: 'fas fa-disk', class:'btn btn-primary'},
     }
   },
 
   methods: {
 
-    async showModal( { title = "Text", data = "", confirmation, textarea , input, button }) {
+    async showModal( { title = "Text", data = "", confirmation = null, textarea = null, input = null, secret = null, button }) {
 
       Object.assign(this.$data, this.$options.data.apply(this))
 
       this.title = title
       this.data = data
 
-      if (confirmation !== undefined) this.confirmation = confirmation
-      if (textarea !== undefined) this.textarea = textarea
-      if (input !== undefined) this.input = input
+      this.confirmation = confirmation
+      this.textarea = textarea
+      this.input = input
+      this.secret = secret
       if (button !== undefined) this.button = button
 
       await this.$refs.modal.showModal();

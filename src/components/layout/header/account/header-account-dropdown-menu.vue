@@ -114,7 +114,11 @@ export default {
 
       const secret = await PandoraPay.wallet.getWalletMnemonic(password)
 
-      return this.$store.state.page.secretModal.showModal(secret, `Secret Phrase (Mnemonic)`, 'DO NOT share these secret words with anyone! These secret words can be used to STEAL YOUR FUNDS FROM ALL YOUR ACCOUNTS');
+      return this.$store.state.page.inputModal.showModal({
+        title: "Secret",
+        secret: {value: secret, title: `Secret Phrase (Mnemonic)`, security: 'DO NOT share these secret words with anyone! These secret words can be used to STEAL YOUR FUNDS FROM ALL YOUR ACCOUNTS' },
+        button: null,
+      });
     },
 
     async handleNewWallet() {
@@ -123,9 +127,8 @@ export default {
 
           const confirmed = await this.$store.state.page.inputModal.showModal({
             title: "Clear existing wallet?", data: "It will clear your existing wallet and you will get a new wallet!",
-            confirmation: {type: "warning"}, button: {
-              text: "Yes, I confirm", icon: 'fas fa-times', class:'btn btn-falcon-danger'
-            } })
+            confirmation: {type: "warning"},
+            button: { text: "Yes, I confirm", icon: 'fas fa-times', class:'btn btn-falcon-danger'} })
           if (!confirmed) return
 
           const password = await this.$store.state.page.walletPasswordModal.showModal()

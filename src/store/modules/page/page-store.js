@@ -7,7 +7,6 @@ export default {
 
         loadingModal: null,
         inputModal: null,
-        secretModal: null,
         QRCodeModal: null,
         QRCodeScannerModal: null,
         testnetFaucetModal:null,

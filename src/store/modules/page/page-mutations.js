@@ -8,7 +8,6 @@ export default {
         state.testnetFaucetModal = modals.testnetFaucetModal;
         state.walletPasswordModal = modals.walletPasswordModal;
         state.decryptBalanceModal = modals.decryptBalanceModal;
-        state.secretModal = modals.secretModal
     },
 
     incrementModalIndex(state, value){

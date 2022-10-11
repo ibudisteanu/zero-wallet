@@ -12,7 +12,7 @@ module.exports = (env, argv) => merge( base(env, argv), {
         historyApiFallback: true,
         hot: true,
         open: true,
-        port: 8085,
+        port: 8081,
         static: path.resolve(__dirname, "./../dist/dev"),
     },
 

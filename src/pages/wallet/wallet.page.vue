@@ -148,7 +148,11 @@ export default {
 
       const secretKey = await PandoraPay.wallet.getWalletAddressSecretKey(password, this.walletAddress.publicKey)
 
-      return this.$store.state.page.secretModal.showModal(secretKey, `Secret Key of ${this.walletAddress ? this.walletAddress.name : ''}`, 'DO NOT share this secret key with anyone! This private key can be used to STEAL YOUR FUNDS FROM THIS ACCOUNT');
+      return this.$store.state.page.inputModal.showModal({
+        title: "Secret Key",
+        secret: { value: secretKey, title: `Secret Key of ${this.walletAddress ? this.walletAddress.name : ''}`, security: 'DO NOT share this secret key with anyone! This private key can be used to STEAL YOUR FUNDS FROM THIS ACCOUNT'},
+        button: null,
+      });
     },
 
     handleSignMessage() {

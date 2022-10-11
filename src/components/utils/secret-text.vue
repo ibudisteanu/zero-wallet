@@ -43,19 +43,21 @@ export default {
 
   methods: {
 
-    copySecret() {
-      this.$copyText(this.text).then(
-          e => this.$store.dispatch('addToast', {
-            type: 'success',
-            title: `Copied to clipboard successfully`,
-            text: `Copied ${this.title} to clipboard.`
-          }),
-          e => this.$store.dispatch('addToast', {
-            type: 'error',
-            title: `Clipboard failed`,
-            text: `Failed to copy to clipboard`
-          })
-      )
+    async copySecret() {
+      try{
+        await this.$copyText(this.text)
+        this.$store.dispatch('addToast', {
+          type: 'success',
+          title: `Copied to clipboard successfully`,
+          text: `Copied ${this.title} to clipboard.`
+        })
+      }catch(e){
+        this.$store.dispatch('addToast', {
+          type: 'error',
+          title: `Clipboard failed`,
+          text: `Failed to copy to clipboard`
+        })
+      }
     }
 
   }
