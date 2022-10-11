@@ -476,11 +476,11 @@ export default {
     },
 
     handleShowJSON() {
-      return this.$store.state.page.textareaModal.showModal("TX JSON", JSONStringify(this.tx, null, 2))
+      return this.$store.state.page.inputModal.showModal({ title: "TX JSON", data: JSONStringify(this.tx, null, 2), textarea: { allowEdit:false }, button: null } )
     },
 
     handleShowTxRaw() {
-      return this.$store.state.page.textareaModal.showModal("TX JSON", this.tx._serialized)
+      return this.$store.state.page.inputModal.showModal({ title: "TX JSON", data:this.tx._serialized, textarea: { allowEdit:false }, button: null })
     },
 
 

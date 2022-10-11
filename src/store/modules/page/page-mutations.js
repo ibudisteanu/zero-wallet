@@ -2,8 +2,7 @@ export default {
 
     setModals(state, modals ){
         state.loadingModal = modals.loadingModal;
-        state.textareaModal = modals.textareaModal
-        state.confirmationModal = modals.confirmationModal
+        state.inputModal = modals.inputModal
         state.QRCodeModal = modals.QRCodeModal;
         state.QRCodeScannerModal = modals.QRCodeScannerModal;
         state.testnetFaucetModal = modals.testnetFaucetModal;

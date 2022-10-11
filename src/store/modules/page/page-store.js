@@ -6,8 +6,7 @@ export default {
     state: {
 
         loadingModal: null,
-        textareaModal: null,
-        confirmationModal: null,
+        inputModal: null,
         secretModal: null,
         QRCodeModal: null,
         QRCodeScannerModal: null,

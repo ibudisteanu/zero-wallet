@@ -121,7 +121,11 @@ export default {
 
         try {
 
-          const confirmed = await this.$store.state.page.confirmationModal.showModal("Clear existing wallet?", "It will clear your existing wallet and you will get a new wallet!", "warning")
+          const confirmed = await this.$store.state.page.inputModal.showModal({
+            title: "Clear existing wallet?", data: "It will clear your existing wallet and you will get a new wallet!",
+            confirmation: {type: "warning"}, button: {
+              text: "Yes, I confirm", icon: 'fas fa-times', class:'btn btn-falcon-danger'
+            } })
           if (!confirmed) return
 
           const password = await this.$store.state.page.walletPasswordModal.showModal()

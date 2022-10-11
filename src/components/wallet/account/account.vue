@@ -106,7 +106,7 @@ export default {
         },
 
         showAddressJSON(){
-          return this.$store.state.page.textareaModal.showModal("ADDRESS JSON", JSONStringify(this.account, null, 2) )
+          return this.$store.state.page.inputModal.showModal({ title:"ADDRESS JSON", data: JSONStringify(this.account, null, 2), textarea: { allowEdit:false }, button: null })
         },
 
         showShareStaked(){

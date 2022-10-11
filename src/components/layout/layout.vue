@@ -16,8 +16,7 @@
         <slot/>
 
         <loading-modal ref="loadingModal"/>
-        <textarea-modal ref="textareaModal"/>
-        <confirmation-modal ref="confirmationModal"/>
+        <input-modal ref="inputModal"/>
         <qr-code-modal ref="QRCodeModal"/>
         <qr-code-scanner-modal ref="QRCodeScannerModal"/>
         <testnet-faucet-modal ref="testnetFaucetModal"/>
@@ -44,7 +43,7 @@ import LayoutHeader from "./header/layout-header";
 import LayoutFooter from "./footer/layout-footer";
 import LoadingModal from "./modals/loading.modal"
 import TestnetFaucetModal from "./modals/testnet-faucet.modal"
-import TextareaModal from "./modals/textarea.modal"
+import InputModal from "./modals/input-modal"
 import ConfirmationModal from "./modals/confirmation.modal"
 import WalletPasswordModal from "./modals/wallet-password.modal"
 import DecryptBalanceModal from "./modals/decrypt-balance.modal"
@@ -59,8 +58,7 @@ export default {
 
   components: {
     LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar, QrCodeModal, SecretModal,
-    TestnetFaucetModal, WalletPasswordModal, Toasts, QrCodeScannerModal, DecryptBalanceModal, TextareaModal,
-    ConfirmationModal
+    TestnetFaucetModal, WalletPasswordModal, Toasts, QrCodeScannerModal, DecryptBalanceModal, InputModal,
   },
 
   props: {
@@ -80,8 +78,7 @@ export default {
 
       this.$store.commit('setModals', {
         loadingModal: this.$refs.loadingModal,
-        textareaModal: this.$refs.textareaModal,
-        confirmationModal: this.$refs.confirmationModal,
+        inputModal: this.$refs.inputModal,
         QRCodeModal: this.$refs.QRCodeModal,
         QRCodeScannerModal: this.$refs.QRCodeScannerModal,
         testnetFaucetModal: this.$refs.testnetFaucetModal,

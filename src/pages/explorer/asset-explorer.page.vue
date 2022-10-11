@@ -140,7 +140,7 @@ export default {
 
     },
     showAssetJSON() {
-      return this.$store.state.page.textareaModal.showModal("ASSET JSON", JSONStringify(this.asset, null, 2))
+      return this.$store.state.page.inputModal.showModal({ title:"ASSET JSON", data: JSONStringify(this.asset, null, 2), textarea: { allowEdit:false }, button: null })
     },
 
   },

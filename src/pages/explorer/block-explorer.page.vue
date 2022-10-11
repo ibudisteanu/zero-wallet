@@ -207,7 +207,7 @@ export default {
     },
 
     showBlockJSON() {
-      return this.$store.state.page.textareaModal.showModal("BLOCK JSON", JSONStringify(this.blk, null, 2))
+      return this.$store.state.page.inputModal.showModal({ title: "BLOCK JSON", data: JSONStringify(this.blk, null, 2), allowEdit: false, textarea: { allowEdit:false }, button: null })
     },
 
   },
