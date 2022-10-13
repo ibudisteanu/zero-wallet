@@ -8,7 +8,7 @@
               0: {icon: 'fas fa-pencil-alt', name: 'Information', tooltip: 'Information of the account' },
               1: {icon: 'fas fa-file-code', name: 'Secret Key', tooltip: 'Secret Key' },
               2: {icon: 'fas fa-check', name: 'Done', tooltip: 'Finish importing account' }}"
-              @onSetTab="setTab" controls-class-name="modal-footer bg-light" :allow-scroll="false"
+              :onSetTab="setTab" controls-class-name="modal-footer bg-light" :allow-scroll="false"
               :buttons="{ 1: { icon: 'fas fa-file-upload', text: 'Import Account' }}">
 
         <template v-slot:tab_0>
@@ -66,16 +66,12 @@ export default {
 
   methods: {
 
-    async setTab({resolve, reject, oldTab, value}) {
-      try {
+    async setTab({oldTab, value}) {
 
-        if (oldTab === 1 && value === 2)
-          await this.handleImportAccountSecretKey()
+      if (oldTab === 1 && value === 2)
+        await this.handleImportAccountSecretKey()
 
-        resolve(true)
-      } catch (err) {
-        reject(err)
-      }
+      return true
     },
 
     showModal() {

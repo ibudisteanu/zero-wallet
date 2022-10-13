@@ -13,6 +13,17 @@ export default {
         return ""
     },
 
+    validateAsset: (state)=>(data)=>{
+
+        if (! /^[a-fA-F0-9]+$/.test(data))
+            return "Asset is invalid. It should be Hex encoded."
+
+        const s = Buffer.from(data, "hex")
+        if (s.length !== PandoraPay.cryptography.RIPEMD_SIZE) return "Asset size is invalid"
+
+        return ""
+    },
+
     validateSignature: (state)=>(data)=>{
 
         if (! base64.test(data))

@@ -1,11 +1,12 @@
 <template>
 
-  <div>
+  <div class="row">
     <tx-recipient-address :init-recipient="initRecipient" :text="text" :balances="balances" @changed="changedRecipient"
-                          ref="txRecipientAddress"/>
-    <tx-asset :init-asset="initAsset" :assets="availableAssets" @changed="changedAsset" class="pt-2"/>
+                          ref="txRecipientAddress" class="col-12"/>
+
     <tx-amount v-if="asset" :init-amount="initAmount" :validate-amount="validateAmount" :allow-zero="allowZero"
-               class="pt-2" :balances="balances" :asset="asset" @changed="changedAmount"/>
+               class="pt-2 col-12 col-md-6" :balances="balances" :asset="asset" @changed="changedAmount"/>
+    <tx-asset :init-asset="initAsset" :assets="availableAssets" @changed="changedAsset" class="pt-2 col-12 col-md-6"/>
   </div>
 
 </template>

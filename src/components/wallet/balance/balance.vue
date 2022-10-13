@@ -2,10 +2,8 @@
 
   <div class="pt-2">
     <template v-if="version === 'zether'">
-      <i class="fas fa-lock pe-2 fs-2" v-tooltip.bottom="`Homomorphic Encrypted Amount: ${balance}`"/>
-      <template v-if="decryptedBalance === null">
-        <i v-if="canBeDecrypted"  class="fas fa-key pe-2 cursor-pointer fs-2 text-primary" v-tooltip.bottom="'Decrypt Amount'" @click="decryptBalance"></i>
-      </template>
+      <i v-if="!canBeDecrypted" class="fas fa-lock pe-2 fs-2" v-tooltip.bottom="`Homomorphic Encrypted Amount: ${balance}`"/>
+      <i v-else-if="!decryptedBalance"  class="fas fa-key pe-2 cursor-pointer fs-2 text-primary" v-tooltip.bottom="'Decrypt Amount'" @click="decryptBalance"></i>
     </template>
     <h4 class="fw-medium d-inline-block" v-if="getAsset">
       <template v-if="version === 'zether'">
@@ -14,8 +12,7 @@
       <template v-else>{{ amount }}</template>
     </h4>
     <small class="ps-1 fs--1 text-700 d-inline-block">/
-      <router-link :to="`/explorer/asset/${$base64ToHex(asset)}`" class="currency"
-                   v-tooltip.bottom="$base64ToHex(asset)">
+      <router-link :to="`/explorer/asset/${$base64ToHex(asset)}`" class="currency" v-tooltip.bottom="$base64ToHex(asset)">
         {{ getAsset ? getAsset.identification : '' }}
       </router-link>
     </small>

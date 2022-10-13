@@ -15,9 +15,7 @@ export default {
 
         modalIndex: 0,
 
-        dark: true,
         leftSidebarShow: false,
-
     },
 
     mutations,

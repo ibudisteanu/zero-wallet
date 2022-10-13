@@ -1,8 +1,10 @@
 <template>
   <div>
     <div class="warning" v-if="shown">
-      You are connecting to the <strong>{{ $store.state.network.networkPrefix }}NET</strong>.
-      Don't use your Mainnet accounts in this testnet!
+      You are connected to <strong>{{ $store.state.network.networkPrefix }}NET</strong>.
+      <template class="d-none d-sm-inline-block">
+        Don't use your Mainnet accounts in this testnet!
+      </template>
       <i class="fas fa-times cursor-pointer" @click="hide"></i>
     </div>
   </div>

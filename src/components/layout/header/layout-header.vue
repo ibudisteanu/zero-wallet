@@ -3,9 +3,9 @@
   <nav class="navbar navbar-light navbar-glass navbar-top navbar-expand">
 
     <button class="btn navbar-toggler-humburger-icon navbar-toggler me-1 me-sm-3" @click.stop="handleToggleLeftSidebar">
-         <span class="navbar-toggle-icon">
-            <span class="toggle-line"></span>
-         </span>
+       <span class="navbar-toggle-icon">
+          <span class="toggle-line"></span>
+       </span>
     </button>
 
     <router-link class="navbar-brand me-1 me-sm-3" to="/">
@@ -16,7 +16,7 @@
 
     <div class="menu-right">
 
-      <div class="menu-right-item">
+      <div class="menu-right-item d-none d-sm-block">
         <header-search-bar />
       </div>
 
@@ -24,7 +24,7 @@
         <i :class="`fas fa-${$store.state.settings.dark ?'sun':'moon'} nav-item-icon `"/>
       </div>
 
-      <div class="menu-right-item cursor-pointer" style="min-width: 70px">
+      <div class="menu-right-item cursor-pointer d-none d-sm-block" >
         <header-network ref="refHeaderNetwork" @closeOtherMenus="closeMenu"  />
       </div>
 
@@ -79,9 +79,11 @@ export default {
   },
 
   mounted() {
+    window.addEventListener('click', this.closeMenu)
     document.addEventListener('click', this.closeMenu)
   },
   beforeUnmount() {
+    window.removeEventListener('click', this.closeMenu)
     document.removeEventListener('click', this.closeMenu)
   }
 

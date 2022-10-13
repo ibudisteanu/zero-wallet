@@ -141,7 +141,7 @@ export default {
     },
     showAssetJSON() {
       return this.$store.state.page.inputModal.showModal({ title:"ASSET JSON", data: JSONStringify(this.asset, null, 2),
-        textarea: { allowEdit:false, class:"form-control-sm fs--2" }, button: null })
+        textarea: { allowEdit:false, class:"form-control-sm fs--2", rows: 15 }, button: null })
     },
 
   },

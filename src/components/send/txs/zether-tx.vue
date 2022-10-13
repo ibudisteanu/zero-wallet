@@ -1,13 +1,8 @@
 <template>
   <wait-account :account="account" type="zether">
 
-    <wizard :titles="{
-            0: {icon: 'fas fa-user', name: 'Recipient', tooltip: 'Recipient of the private tx' },
-            1: {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' },
-            2: {icon: 'fas fa-pencil-alt', name: 'Info', tooltip: 'Extra information attached in the tx' },
-            3: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' },
-            ...titlesOffset }"
-            @onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card"
+    <wizard :titles="titles"
+            :onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card"
             ref="refWizard">
 
       <template v-for="(_, index) in titlesOffset" v-slot:[getTabSlotName(index)]>
@@ -19,30 +14,59 @@
         <div v-for="(payload, i) in payloads" :key="`payload-recipient-${i}`">
 
           <h5 class="pe-3 pb-1">PAYLOAD {{ i + 1 }}</h5>
+
           <div class="form-check" v-if="payload.allowRandomRecipient">
             <input class="form-check-input" :id="`random-recipient-${i}`" v-model="payload.randomRecipient" type="checkbox" name="checkbox">
             <label class="form-check-label" :for="`random-recipient-${i}`">Random Recipient with Zero amount</label>
           </div>
+
           <template v-if="!payload.randomRecipient">
             <tx-recipient :text="text" :init-recipient="initRecipients[i]" :init-amount="initAmounts[i]"
-                          :init-asset="initAssets[i]"
-                          :available-assets="availableAssets"
+                          :init-asset="initAssets[i]" :available-assets="availableAssets"
                           :validate-amount="payload.validateRecipientAmount" :balances="availableBalances"
-                          :allow-zero="payload.allowRecipientZeroAmount"
-                          @changed="data =>changedRecipient(i, data)"/>
+                          :allow-zero="payload.allowRecipientZeroAmount" @changed="data =>changedRecipient(i, data)"/>
           </template>
+
+          <extra-data :recipients="null" class="pt-3" :paymentID="(payload.recipient && payload.recipient.address) ? payload.recipient.address.paymentID : null"
+                      :init-data="initExtraData[i]" :init-data-encrypted="(initExtraDataEncrypted[i] !== undefined) ? initExtraDataEncrypted[i] : true"
+                      @changed="data => changedExtraData(i, data)"/>
+
+          <template v-if="$store.state.settings.expert">
+            <tx-fee :balances="availableBalances" :asset="payload.recipient.asset" :allow-zero="true" @changed="data => changedFee(i, data)"/>
+            <template v-if="payload.recipient.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64">
+              <div class="form-check pt-2">
+                <input class="form-check-input" id="assetFeeLiquidityAsset" type="checkbox" v-model="payload.assetFeeLiquidityAsset"/>
+                <label class="form-check-label" for="assetFeeLiquidityAsset">Automatically Determine Asset Fee Liquidity</label>
+              </div>
+              <div class="row" v-if="!payload.assetFeeLiquidityAsset" v-tooltip.bottom="`Conversion rate of the asset fee`">
+                <div class="col-12 col-sm-6">
+                  <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Conversion Rate</label>
+                  <input :class="`form-control ${payload.validationAssetFeeConversionRate ? 'is-invalid' :''}`"
+                         type="number" v-model.number="payload.assetFeeConversionRate" min="0" :step="0.0000000001">
+                </div>
+              </div>
+            </template>
+          </template>
+          <div v-else class="col-12 col-md-3" v-tooltip.bottom="`Bigger the ring, more private is your transaction.`">
+            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Size</label>
+            <select class="form-select" v-model.number="payload.ringSize">
+              <option :value="32">32</option>
+              <option :value="64">64</option>
+              <option :value="128">128</option>
+              <option :value="256">256</option>
+            </select>
+          </div>
 
           <hr class="my-4"/>
 
         </div>
 
-        <button class="btn btn-falcon-default rounded-pill me-1 cursor-pointer" type="button" @click="handleAddPayload">
+        <button type="button" @click="handleAddPayload" class="btn btn-falcon-default rounded-pill me-1 cursor-pointer">
           <i class="fa fa-plus"/>
           Add another recipient
         </button>
 
-        <button class="btn btn-falcon-default rounded-pill me-1 text-danger cursor-pointer" type="button"
-                @click="handleRemovePayload" :disabled="payloads.length <= payloadsCount">
+        <button type="button" @click="handleRemovePayload" :disabled="payloads.length <= payloadsCount" class="btn btn-falcon-default rounded-pill me-1 text-danger cursor-pointer" >
           <i class="fa fa-times"/>
           Remove last recipient
         </button>
@@ -54,9 +78,8 @@
         <div class="row" v-for="(payload, i) in payloads" :key="`payload-ring-${i}`">
 
           <h5 class="pe-3 pb-1">PAYLOAD {{ i + 1 }}</h5>
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-6" v-tooltip.bottom="`Bigger the ring, more private is your transaction.`">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Size</label>
-            <i class="fas fa-question ms-1" v-tooltip.bottom="`Bigger the ring, more private is your transaction.`"/>
             <select class="form-select" v-model.number="payload.ringSize">
               <option :value="2">2</option>
               <option :value="4">4</option>
@@ -71,25 +94,22 @@
 
           <div class="col-12 col-md-6">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring New Addresses</label>
-            <i class="fas fa-question ms-1"
-               v-tooltip.bottom="`Number of new addresses in the ring. Makes fresh new recipients more private.`"/>
+            <i class="fas fa-question ms-1" v-tooltip.bottom="`Number of new addresses in the ring. Makes fresh new recipients more private.`"/>
             <input class="form-control" type="number" v-model.number="payload.ringNewAddresses"/>
           </div>
 
           <div v-if="validationRingSizes[i]" class="invalid-feedback d-block">{{ validationRingSizes[i] }}</div>
 
-          <div class="col-12 pt-4">
+          <div class="col-12 pt-4" v-tooltip.bottom="`Preview of the Sender Ring Members used in your private payload ${i}.`">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Sender Ring Members</label>
-            <i class="fas fa-question ms-1" v-tooltip.bottom="`Preview of the Sender Ring Members used in your private payload ${i}.`"/>
             <div class="pt-2">
               <div v-for="(ringMember, index) in payload.senderRingMembers" class="d-inline-block" :key="`payload-${i}-sender-ring-member-${index}`">
                 <account-identicon :address="ringMember" size="21" outer-size="7" :disable-route="true"/>
               </div>
             </div>
           </div>
-          <div class="col-12 pt-1">
+          <div class="col-12 pt-1" v-tooltip.bottom="`Preview of the Recipient Ring Members used in your private payload ${i}.`">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Recipient Ring Members</label>
-            <i class="fas fa-question ms-1" v-tooltip.bottom="`Preview of the Recipient Ring Members used in your private payload ${i}.`"/>
             <div class="pt-2">
               <div v-for="(ringMember, index) in payload.recipientRingMembers" class="d-inline-block"
                    :key="`payload-${i}-recipient-ring-member-${index}`">
@@ -109,40 +129,6 @@
       </template>
 
       <template v-slot:tab_2>
-
-        <div class="row" v-for="(payload, i) in payloads" :key="`payload-extra-${i}`">
-
-          <h5 class="pe-3 pb-1">PAYLOAD {{ i + 1 }}</h5>
-
-          <extra-data :recipients="payload.recipient ? [payload.recipient] : null"
-                      :paymentID="(payload.recipient && payload.recipient.address) ? payload.recipient.address.paymentID : null"
-                      :init-data="initExtraData[i]" :init-data-encryption="initExtraDataEncryption[i]"
-                      @changed="data => changedExtraData(i, data)"/>
-
-          <tx-fee :balances="availableBalances" :asset="payload.recipient.asset" :allow-zero="true" @changed="data => changedFee(i, data)"/>
-
-          <template v-if="payload.recipient.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64">
-            <div class="form-check pt-2">
-              <input class="form-check-input" id="assetFeeLiquidityAsset" type="checkbox" v-model="payload.assetFeeLiquidityAsset"/>
-              <label class="form-check-label" for="assetFeeLiquidityAsset">Automatically Determine Asset Fee Liquidity</label>
-            </div>
-            <div class="row" v-if="!payload.assetFeeLiquidityAsset">
-              <div class="col-12 col-sm-6">
-                <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Conversion Rate</label>
-                <i class="fas fa-question ms-1" v-tooltip.bottom="`Conversion rate of the asset fee`"/>
-                <input :class="`form-control ${payload.validationAssetFeeConversionRate ? 'is-invalid' :''}`"
-                       type="number" v-model.number="payload.assetFeeConversionRate" min="0"
-                       :step="0.0000000001">
-              </div>
-            </div>
-          </template>
-
-          <hr class="my-4" v-if="payloads.length !== i+1"/>
-        </div>
-
-      </template>
-
-      <template v-slot:tab_3>
         <confirm-broadcasting-tx v-if="tx" class="my-3 fs--1" :tx="tx"/>
       </template>
 
@@ -151,16 +137,15 @@
           {{ error }}
         </alert-box>
 
-        <alert-box v-if="status && statusType === 'signing'" class="w-100" type="info">
-          <h4 class="alert-heading fw-semi-bold">Signing Tx...</h4>
-          <p>Transaction is being created. It will take 1-2 minutes for each payload.</p>
-          <hr>
-          <p class="mb-0">Status: {{ status }}</p>
-        </alert-box>
-
-        <alert-box v-if="status && statusType === 'broadcasting'" class="w-100" type="info">
-          <h4 class="alert-heading fw-semi-bold">Broadcasting Tx...</h4>
-          <p>Your Tx is being broadcasting. It should take 20 seconds max.</p>
+        <alert-box v-if="status" class="w-100" type="info">
+          <template v-if="statusType === 'signing'">
+            <h4 class="alert-heading fw-semi-bold">Signing Tx...</h4>
+            <p >Transaction is being created. It will take 1-2 minutes for each payload.</p>
+          </template>
+          <template v-else-if="statusType === 'broadcasting'">
+            <h4 class="alert-heading fw-semi-bold">Broadcasting Tx...</h4>
+            <p>Your Tx is being broadcasting. It should take 20 seconds max.</p>
+          </template>
           <hr>
           <p class="mb-0">Status: {{ status }}</p>
         </alert-box>
@@ -185,6 +170,7 @@ import TxAsset from "../tx-asset";
 import AccountIdenticon from "../../wallet/account/account-identicon";
 import Wizard from "../../utils/wizard";
 import ConfirmBroadcastingTx from "./confirm-broadcasting-tx"
+import Decimal from "decimal.js";
 
 export default {
 
@@ -207,7 +193,8 @@ export default {
     initAssets: {default: () => []},
     initAmounts: {default: () => []},
     initExtraData: {default: () => []},
-    initExtraDataEncryption: {default: () => []},
+    initExtraDataEncrypted: {default: () => []},
+    onSetTab: {default: null }
   },
 
 
@@ -292,10 +279,30 @@ export default {
       return this.$store.getters.getAsset(this.asset ? this.recipient.asset : null);
     },
 
-    buttons() {
+    titles(){
       return {
-        2: {icon: 'fas fa-file-signature', text: 'Sign Transaction'},
-        3: {icon: 'fas fa-globe-americas', text: 'Propagate Transaction'},
+        0: {icon: 'fas fa-user', name: 'Recipient', tooltip: 'Recipient of the private tx' },
+        1: this.$store.state.settings.expert ? {icon: 'fas fa-eye-slash', name: 'Privacy', tooltip: 'Setting the ring members of the transaction' } : null,
+        2: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating' },
+        3: {icon: 'fas fa-check', name: 'Done', tooltip: 'Transaction is propagated to the network' },
+        ...this.titlesOffset,
+      }
+    },
+
+    buttons() {
+      const x = {}
+
+      let sign =2, propagate = 3;
+      if (!this.$store.state.settings.expert)
+        sign = 0
+
+      propagate = 2
+
+      x[sign] = {icon: 'fas fa-file-signature', text: 'Sign Transaction'}
+      x[propagate] = {icon: 'fas fa-globe-americas', text: 'Propagate Transaction'}
+
+      return {
+        ...x,
         ...this.buttonsOffset,
       }
     },
@@ -383,13 +390,24 @@ export default {
           assetValidationError: "",
         },
 
-        fee: {},
+        fee: {
+          feeType: true,
+
+          feeAuto: {
+            amount: new Decimal(0),
+            validationError: "",
+          },
+          feeManual: {
+            amount: new Decimal(0),
+            validationError: "",
+          },
+        },
         assetFeeLiquidityAsset: true,
         assetFeeConversionRate: 1,
 
         extraData: {
           data: "",
-          type: "public",
+          encrypted: true,
           publicKeyToEncrypt: "",
           validationError: null,
         },
@@ -413,72 +431,72 @@ export default {
       return `tab_${index}`
     },
 
-    async setTab({resolve, reject, oldTab, value}) {
+    async setTab({ oldTab, value}) {
 
-      try {
+      this.status = ""
 
-        this.status = ""
+      let skipped = true
+      if (oldTab === 0 && value > oldTab) {
 
-        if (oldTab === 0 && value > oldTab) {
+        for (let i = 0; i < this.payloads.length; i++) {
 
-          for (let i = 0; i < this.payloads.length; i++) {
+          const payload = this.payloads[i]
+          if (!payload.randomRecipient) {
 
-            const payload = this.payloads[i]
-            if (!payload.randomRecipient) {
+            if (payload.recipient.addressValidationError) throw payload.recipient.addressValidationError;
+            if (payload.recipient.amountValidationError) throw payload.recipient.amountValidationError;
+            if (payload.recipient.assetValidationError) throw payload.recipient.assetValidationError;
 
-              if (payload.recipient.addressValidationError) throw payload.recipient.addressValidationError;
-              if (payload.recipient.amountValidationError) throw payload.recipient.amountValidationError;
-              if (payload.recipient.assetValidationError) throw payload.recipient.assetValidationError;
+            if (payload.recipient.address)
+              if (payload.recipient.address.publicKey === this.walletAddress.publicKey) throw `Recipient ${payload.recipient.addressEncoded} can not be the same with sender`;
 
-              if (payload.recipient.address)
-                if (payload.recipient.address.publicKey === this.walletAddress.publicKey) throw `Recipient ${payload.recipient.addressEncoded} can not be the same with sender`;
+            for (let j = 0; j < i; j++)
+              if (payload.recipient.address.publicKey === this.payloads[j].recipient.address.publicKey)
+                throw `Duplicate recipients detected. You should not use the same recipient twice in a transaction.`
 
-              for (let j = 0; j < i; j++)
-                if (payload.recipient.address.publicKey === this.payloads[j].recipient.address.publicKey)
-                  throw `Duplicate recipients detected. You should not use the same recipient twice in a transaction.`
+            await this.$store.state.blockchain.syncPromise;
+            await this.$store.dispatch('subscribeAccount', {publicKey: payload.recipient.address.publicKey})
 
-              await this.$store.state.blockchain.syncPromise;
-              await this.$store.dispatch('subscribeAccount', {publicKey: payload.recipient.address.publicKey})
-
-              if (!this.$store.state.accounts.list[payload.recipient.address.publicKey] && !payload.recipient.address.registration)
-                throw `Recipient Address ${payload.recipient.addressEncoded} doesn't have the registration. \n You have the shorter version of the address. First time when an address is used it requires the longer version.`
-            }
-
+            if (!this.$store.state.accounts.list[payload.recipient.address.publicKey] && !payload.recipient.address.registration)
+              throw `Recipient Address ${payload.recipient.addressEncoded} doesn't have the registration. \n You have the shorter version of the address. First time when an address is used it requires the longer version.`
           }
 
-        } else if (oldTab === 1 && value > oldTab) {
+          if (payload.extraData.validationError) throw payload.extraData.validationError
+          if (payload.fee.feeAuto.validationError) throw payload.fee.feeAuto.validationError
+          if (payload.fee.feeManual.validationError) throw payload.fee.feeManual.validationError
+        }
 
-          if (!this.payloads[0].senderRingMembers.length || !this.payloads[0].recipientRingMembers.length)
-            await this.handleGenerateRing()
-
-          const o = this.validationRingSizes
-          for (let i = 0; i < this.payloads.length; i++)
-            if (o[i]) throw o[i]
-
-        } else if (oldTab === 2 && value > oldTab) {
-
-          for (let i = 0; i < this.payloads.length; i++) {
-            if (this.payloads[i].extraData.validationError) throw this.payloads[i].extraData.validationError
-            if (this.payloads[i].fee.feeAuto.validationError) throw this.payloads[i].fee.feeAuto.validationError
-            if (this.payloads[i].fee.feeManual.validationError) throw this.payloads[i].fee.feeManual.validationError
-          }
-
-          await this.handleSendFunds()
-
-        } else if (oldTab === 3 && value > oldTab) {
-          try {
-            await this.handlePropagateTx()
-          } catch (e) {
-            this.$refs.refWizard.setTab(resolve, 2)
-            reject(e)
-          }
-        } else return this.$emit('onSetTab', {resolve, reject, oldTab, value})
-
-        resolve(true)
-      } catch (err) {
-        console.error(err)
-        reject(err)
+        skipped = false
       }
+
+      if ( (oldTab === 0 && value > oldTab && !this.$store.state.settings.expert) || ( oldTab === 1 && value > oldTab ) ) {
+
+        if (!this.payloads[0].senderRingMembers.length || !this.payloads[0].recipientRingMembers.length)
+          await this.handleGenerateRing()
+
+        const o = this.validationRingSizes
+        for (let i = 0; i < this.payloads.length; i++)
+          if (o[i]) throw o[i]
+
+        await this.handleSendFunds()
+
+        skipped = false
+      }
+
+      if (oldTab === 2 && value > oldTab) {
+        try {
+          await this.handlePropagateTx()
+        } catch (e) {
+          this.$nextTick( () => this.$refs.refWizard.handleBack(1) )
+          throw e
+        }
+        skipped = false
+      }
+
+      if (skipped && this.onSetTab)
+        return this.onSetTab({ oldTab, value})
+
+      return true
     },
 
     changedRecipient(i, data) {
@@ -863,7 +881,7 @@ export default {
             },
             data: {
               data: (payload.recipient.address && payload.recipient.address.paymentID) ? payload.extraData.data : Buffer.from(payload.extraData.data).toString("base64"),
-              encrypt: payload.extraData.type === "encrypted",
+              encrypt: payload.extraData.encrypted,
             },
             extra: null,
             payloadScript: payload.payloadScript,
@@ -890,7 +908,7 @@ export default {
         if (!out) throw "Transaction couldn't be made";
 
         this.tx = JSONParse(MyTextDecode(out[0]))
-        const serialized = out[1]
+        const serialized = Buffer.from(out[1])
 
         this.tx._serialized = serialized.toString("base64")
         this.txSerialized = serialized

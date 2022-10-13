@@ -1,12 +1,10 @@
 <template>
-  <div class="row">
-    <div class="col-12">
+  <div>
       <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{ text }} Amount</label>
       <i v-if="tooltip" class="fas fa-question ms-1" v-tooltip.bottom="tooltip"/>
       <input :class="`form-control ${validationError ? 'is-invalid' :''}`" type="number" v-model.number="amount" min="0"
              :step="getSteps" :disabled="disabled">
       <div v-if="validationError" class="invalid-feedback d-block">{{ validationError }}</div>
-    </div>
   </div>
 </template>
 
@@ -84,7 +82,7 @@ export default {
     initAmount: {
       immediate: true,
       handler: function (to) {
-        this.amount = to.div(new Decimal(10).pow(this.assetInfo.decimalSeparator))
+        this.amount = this.assetInfo ? to.div(new Decimal(10).pow(this.assetInfo.decimalSeparator)) : to
       }
     },
 

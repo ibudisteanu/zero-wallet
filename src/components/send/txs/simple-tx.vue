@@ -1,7 +1,7 @@
 <template>
   <wait-account :account="account" :type="accountType">
     <wizard :titles="titles"
-            @onSetTab="setTab" :buttons="buttons" controls-class-name="card-footer bg-light" class="card">
+            :onSetTab="setTab" :buttons="buttons" controls-class-name="card-footer bg-light" class="card">
 
       <template v-for="(_, index) in titlesOffset" v-slot:[getTabSlotName(index)]>
         <slot :name="`tab_${index}`"></slot>
@@ -74,6 +74,7 @@ export default {
     beforeProcessCb: {default: null}, //function
     enableFee: {default: true},
     enableSender: {default: true},
+    onSetTab: {default: null},
   },
 
   computed: {
@@ -99,6 +100,7 @@ export default {
       return {
         1: {icon: 'fas fa-file-signature', text: 'Sign Transaction'},
         2: {icon: 'fas fa-globe-americas', text: 'Propagate Transaction'},
+        3: {icon: 'fas fa-check', name: 'Done', tooltip: 'Transaction is propagated to the network' },
         ...this.buttonsOffset,
       }
     },
@@ -120,27 +122,33 @@ export default {
       return `tab_${index}`
     },
 
-    async setTab({resolve, reject, oldTab, value}) {
-      try {
+    async setTab({oldTab, value}) {
 
-        if (oldTab === 0 && value > oldTab) {
-          if (this.extraData.validationError) throw this.extraData.validationError
-          if (!this.enableFee)
-            await this.handeTxProcess()
-
-        } else if (oldTab === 1 && value > oldTab) {
-          if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
-          if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
-
+      let skipped = true
+      if (oldTab === 0 && value > oldTab) {
+        if (this.extraData.validationError) throw this.extraData.validationError
+        if (!this.enableFee)
           await this.handeTxProcess()
-        } else if (oldTab === 2 && value > oldTab) {
-          await this.handlePropagateTx()
-        } else return this.$emit('onSetTab', {resolve, reject, oldTab, value})
 
-        resolve(true)
-      } catch (err) {
-        reject(err)
+        skipped = false
       }
+
+      if (oldTab === 1 && value > oldTab) {
+        if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
+        if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
+
+        await this.handeTxProcess()
+        skipped = false
+      }
+
+      if (oldTab === 2 && value > oldTab) {
+        await this.handlePropagateTx()
+        skipped = false
+      }
+
+      if (skipped && this.onSetTab) return this.onSetTab( { oldTab, value} )
+
+      return true
     },
 
     changedExtraData(data) {
@@ -202,7 +210,7 @@ export default {
         if (!out) throw "Transaction couldn't be made";
 
         this.tx = JSONParse(MyTextDecode(out[0]))
-        const serialized = out[1]
+        const serialized = Buffer.from( out[1] )
 
         this.tx._serialized = serialized.toString("base64")
         this.txSerialized = serialized

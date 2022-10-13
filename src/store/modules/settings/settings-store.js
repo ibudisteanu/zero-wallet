@@ -7,6 +7,7 @@ export default {
         balanceDecryptorTableSize: 18,
         mobile: false,
         tablet: false,
+        expert: false,
     },
 
     mutations,

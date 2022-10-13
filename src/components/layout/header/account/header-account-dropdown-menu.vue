@@ -1,17 +1,17 @@
 <template>
 
   <div class="dropdown-menu dropdown-menu-end dropdown-menu-card dropdown-menu-notification show">
+
     <div class="card card-notification shadow-none">
       <div class="card-header">
         <div class="row justify-content-between align-items-center">
           <div class="col-auto">
-            <h6 class="card-header-title mb-0">My accounts</h6>
+            <h6 class="card-header-title mb-0">Wallet</h6>
           </div>
         </div>
       </div>
 
       <div class="list-group list-group-flush fs--1">
-        <div class="list-group-title border-bottom">All accounts:</div>
         <div class="list-group-item div-scrollable" style="max-height:19rem">
           <div v-for="(walletAddr, index) in walletAddresses"
                :class="`notification notification-flush notification-unread ${ walletAddr.publicKey === mainPublicKey  ? 'fw-black' : ''} ` "
@@ -19,30 +19,36 @@
             <div class="notification-body address">
               <account-identicon :address="walletAddr.addressEncoded" size="21" outer-size="7" :disable-route="true"/>
               <div class="account-title cursor-pointer " @click="setMainPublicKey(walletAddr.publicKey)">
-                <span class="fw-semi-bold text-truncate">{{ walletAddr.name }}</span>
+                <span class="fw-semi-bold text-truncate">{{ walletAddr.name }} - {{walletAddress.isImported ? 'Imported Account' : 'Wallet Account: #'+walletAddress.seedIndex}}  </span>
                 <span class="fw-normal text-truncate">{{ $store.getters.addressDisplay(walletAddr) }} </span>
               </div>
               <div class="account-tools">
-                <span class="fw-light">{{ walletAddr.isImported ? '&nbsp;' : '#' + walletAddr.seedIndex }}</span>
-                <i class="fas fa-copy cursor-pointer " v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( walletAddr)"/>
+                <i class="fas fa-copy cursor-pointer" v-tooltip.bottom="'Copy Address'" @click.stop="copyAddress( walletAddr)"/>
+                <i class="fas fa-qrcode cursor-pointer mt-2" v-tooltip.bottom="'Show QR Code'" @click="showQrCode( walletAddr)"/>
               </div>
             </div>
           </div>
         </div>
         <div class="list-group-item">
           <div class="list-group-title border-bottom">Operations:</div>
-          <loading-button :submit="handleViewAccount" text="View Account" icon="fas fa-hand-cursor-pointer " tooltip="View account" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <loading-button :submit="handleViewAccount" text="View Account" icon="fa fa-cursor-pointer " tooltip="View account" class-custom="cursor-pointer dropdown-item" component="span"/>
           <loading-button :submit="handleCreateNewAddress" text="Create Account" icon="fas fa-plus" tooltip="Create a new Address" class-custom="cursor-pointer dropdown-item" component="span"/>
           <loading-button :submit="handleImportAccount" text="Import Account (json)" icon="fas fa-upload" tooltip="Import an address from json file" class-custom="cursor-pointer dropdown-item" component="span"/>
           <loading-button :submit="handleImportAccountSecretKey" text="Import Account Secret Key" icon="fas fa-upload" tooltip="Import an address from Secret Key" class-custom="cursor-pointer dropdown-item" component="span"/>
           <div class="dropdown-divider"></div>
           <loading-button :submit="handleViewMnemonic" text="View Secret Phrase" icon="fas fa-key" tooltip="Show your Secret Words (Mnemonic)" class-custom="cursor-pointer dropdown-item" component="span"/>
-          <div class="dropdown-divider"></div>
-          <loading-button :submit="handleNewWallet" text="New Wallet" icon="fas fa-trash" tooltip="Clear & create new wallet" class-custom="cursor-pointer dropdown-item" component="span" />
-          <loading-button :submit="handleImportMnemonic" text="Import Secret Phrase" icon="fas fa-file-import" tooltip="Clear wallet & import a new wallet from Secret Words (Mnemonic)" class-custom="cursor-pointer dropdown-item" component="span" />
+          <loading-button :submit="handleImportMnemonic" text="Import Secret Phrase" icon="fas fa-file-import" tooltip="Clear wallet & import a new wallet from Secret Words (Mnemonic)" class-custom="cursor-pointer dropdown-item" class-text="" component="span" />
           <div class="dropdown-divider"></div>
           <loading-button :submit="handleExportWallet" text="Export Wallet" icon="fas fa-download" tooltip="Export your wallet to your computer" class-custom="cursor-pointer dropdown-item" component="span"/>
-          <loading-button :submit="handleImportWallet" text="Improt Wallet" icon="fas fa-upload" tooltip="Import a pandora wallet from your computer" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <loading-button :submit="handleImportWallet" text="Import Wallet" icon="fas fa-upload" tooltip="Import a pandora wallet from your computer" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <div class="form-check form-switch cursor-pointer dropdown-item" @click.stop="switchExpertMode" v-tooltip.bottom="`Switch between the Expert and Basic mode of the Wallet.`" >
+            <input class="form-check-input cursor-pointer" type="checkbox" :checked="$store.state.settings.expert" >
+            <label class="form-check-label cursor-pointer m-0">Switch Expert mode</label>
+          </div>
+          <div class="dropdown-divider"></div>
+          <loading-button v-if="!encrypted" submit="" text="Set Password" icon="fas fa-lock" tooltip="Encrypt your wallet by setting a Password" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <loading-button v-else submit="" text="Remove Password" icon="fas fa-unlock" tooltip="Decrypt your wallet by removing the Password" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <loading-button :submit="handleDeleteWallet" text="Delete Wallet" icon="fas fa-trash" tooltip="Clear & create new wallet" class-custom="cursor-pointer dropdown-item text-danger" component="span" />
           <template v-if="encrypted">
             <div class="dropdown-divider"></div>
             <loading-button :submit="handleLogout" text="Logout" icon="fas fa-sign-out-alt" tooltip="Return to the password screen" class-custom="cursor-pointer dropdown-item" component="span"/>
@@ -92,6 +98,7 @@ export default {
       return this.$store.state.wallet.isEncrypted;
     }
 
+
   },
 
   methods: {
@@ -105,7 +112,7 @@ export default {
     },
 
     setMainPublicKey(publicKey) {
-      return this.$store.commit('setMainPublicKey', publicKey);
+      this.$store.commit('setMainPublicKey', publicKey);
     },
 
     async handleViewMnemonic() {
@@ -121,7 +128,7 @@ export default {
       });
     },
 
-    async handleNewWallet() {
+    async handleDeleteWallet() {
 
         try {
 
@@ -238,6 +245,14 @@ export default {
       }catch(e){
         this.$store.dispatch('addToast', {type: 'error', title: `Clipboard failed`, text: `Failed to copy to clipboard`,})
       }
+    },
+
+    switchExpertMode(){
+      this.$store.commit('setExpert', !this.$store.state.settings.expert)
+    },
+
+    showQrCode(walletAddress){
+      return this.$store.state.page.QRCodeModal.showModal(this.$store.getters.addressDisplay(this.walletAddress), this.walletAddress.name || '');
     }
 
   }
@@ -253,7 +268,7 @@ export default {
 }
 
 .dropdown-menu-notification {
-  min-width: 16.4rem;
+  max-width: 400px;
 }
 
 .notification {
@@ -262,7 +277,7 @@ export default {
 
 .address {
   display: grid;
-  grid-template-columns: 32px 160px 30px;
+  grid-template-columns: 32px 310px 30px;
   grid-column-gap: 10px;
   text-align: left;
 }
@@ -279,5 +294,39 @@ export default {
 .account-tools {
   float: right;
 }
+.form-check-input{
+  margin-left: 0;
+  margin-right: 5px;
+  margin-top: 5px;
+}
+
+@media (min-width: 576px) and (max-width: 1200px) {
+  .dropdown-menu-notification {
+    max-width: 300px;
+  }
+  .address {
+    grid-template-columns: 32px 230px 30px;
+  }
+}
+
+@media (min-width: 320px) and (max-width: 576px) {
+  .dropdown-menu-notification {
+    max-width: 250px;
+  }
+  .address {
+    grid-template-columns: 32px 160px 30px;
+  }
+}
+
+@media (max-width: 320px) {
+  .dropdown-menu-notification {
+    max-width: 200px;
+    min-width: 0;
+  }
+  .address {
+    grid-template-columns: 32px 105px 30px;
+  }
+}
+
 
 </style>

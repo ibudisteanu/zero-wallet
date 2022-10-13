@@ -52,7 +52,7 @@
           <div :class="`tab-pane ${tab === 'expert' ? 'active' : ''}`">
             <div class="row pt-2">
               <div class="col-12 col-sm-6">
-                <div>
+                <div class="form-check">
                   <input class="form-check-input" id="legacyNonHardening" type="checkbox" v-model="legacyNonHardening" @change="changeLegacyNonHardening"/>
                   <label class="form-check-label" for="legacyNonHardening">Legacy Non Hardening</label>
                 </div>

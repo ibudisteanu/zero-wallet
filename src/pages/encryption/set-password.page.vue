@@ -27,7 +27,7 @@
           </div>
         </div>
 
-        <div class="row pt-4">
+        <div class="row pt-4" v-if="$store.state.settings.expert">
           <div class="col-12 col-sm-6">
             <label>
               Encryption difficulty: {{ encryptionDifficulty }}
