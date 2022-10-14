@@ -1,74 +1,47 @@
 <template>
   <div>
 
-    <div class="col">
-
-      <div class="form-check">
-        <input class="form-check-input" type="radio" value="public" v-model="type" :disabled="!!paymentID" id="typePublic" />
-        <label class="form-check-label" for="typePublic">Public Message</label>
+    <div class="d-flex flex-row align-items-center flex-wrap">
+      <div class="form-check col-12 col-sm-5 col-md-3 col-lg-3">
+        <input class="form-check-input" type="checkbox" v-model="encrypted" :disabled="!!paymentID" id="typePublic"/>
+        <label class="form-check-label" for="typePublic">Encrypted Message</label>
         <i class="fas fa-question ms-1" v-tooltip.bottom="`The message will be public on the chain. Anybody can see this message attached to this transaction.`"/>
       </div>
-      <div v-if="type === 'public'">
-        <div class="form-check">
-          <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Message:</label>
-          <input class="form-control" type="text" v-model="data" :disabled="!!paymentID">
-        </div>
+      <div class="col-12 col-sm-7 col-md-9 col-lg-9">
+        <input class="form-control " type="text" v-model="data" :disabled="!!paymentID" >
       </div>
-
-      <template v-if="recipients">
-
-        <div class="form-check pt-2">
-          <input class="form-check-input" type="radio" value="encrypted" v-model="type" :disabled="!!paymentID" id="typeEncrypted" />
-          <label class="form-check-label" for="typeEncrypted">Encrypted Message</label>
-          <i class="fas fa-question ms-1" v-tooltip.bottom="`The message will encrypted to selected recipient. Only the selected address can decrypt the message attached to this transaction.`"/>
-        </div>
-        <div v-if="type === 'encrypted'">
-          <div class="form-check">
-            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">
-              {{ paymentID ? 'PAYMENT ID' : 'Message:' }}
-            </label>
-            <input class="form-control" type="text" v-model="data" :disabled="!!paymentID">
-          </div>
-          <div class="form-check">
-
-            <template v-if="recipients.length > 1">
-              <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Address to encrypt:</label>
-
-              <div :class="`${publicKeyToEncrypt ? 'recipient-row' : '' }`">
-
-                <account-identicon v-if="publicKeyToEncrypt" :public-key="publicKeyToEncrypt" size="30" outer-size="8"/>
-
-                <select :class="`form-select ${validationPublicKeyToEncrypt ? 'is-invalid' :''} `" v-model="publicKeyToEncrypt">
-                  <option v-for="(recipient, id) in recipients" :key="`selected-address-${id}`"
-                          :value="(recipient.address && recipient.address.publicKey) ? recipient.address.publicKey : '' "
-                          :class="`${ (recipient.address && recipient.address.publicKey) ? '' : 'text-danger'}`">
-                    <template v-if="recipient.address">
-                      {{ recipient.addressEncoded }}
-                    </template>
-                  </option>
-                </select>
-
-              </div>
-            </template>
-
-            <div v-if="validationPublicKeyToEncrypt" class="invalid-feedback d-block">
-              {{ validationPublicKeyToEncrypt }}
-            </div>
-
-          </div>
-        </div>
-
-      </template>
-
     </div>
 
+    <template v-if="recipients && recipients.length > 1 && encrypted">
+
+      <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Address to encrypt:</label>
+
+      <div :class="`${publicKeyToEncrypt ? 'recipient-row' : '' }`">
+
+        <account-identicon v-if="publicKeyToEncrypt" :public-key="publicKeyToEncrypt" size="30" outer-size="8"/>
+
+        <select :class="`form-select ${validationPublicKeyToEncrypt ? 'is-invalid' :''} `" v-model="publicKeyToEncrypt">
+          <option v-for="(recipient, id) in recipients" :key="`selected-address-${id}`"
+                  :value="(recipient.address && recipient.address.publicKey) ? recipient.address.publicKey : '' "
+                  :class="`${ (recipient.address && recipient.address.publicKey) ? '' : 'text-danger'}`">
+            <template v-if="recipient.address">
+              {{ recipient.addressEncoded }}
+            </template>
+          </option>
+        </select>
+
+      </div>
+
+      <div v-if="validationPublicKeyToEncrypt" class="invalid-feedback d-block">
+        {{ validationPublicKeyToEncrypt }}
+      </div>
+
+    </template>
   </div>
 </template>
 
 <script>
 import AccountIdenticon from "src/components/wallet/account/account-identicon"
-
-const {version} = PandoraPay.enums.wallet.address;
 
 export default {
 
@@ -78,13 +51,13 @@ export default {
     recipients: {default: null},
     paymentID: {default: null},
     initData: {default: ""},
-    initDataEncryption: {default: "public"}
+    initDataEncrypted: {default: false}
   },
 
   data() {
     return {
       error: '',
-      type: "public",
+      encrypted: true,
       data: '',
       publicKeyToEncrypt: null,
     }
@@ -97,8 +70,8 @@ export default {
     },
 
     validationPublicKeyToEncrypt() {
-      if (this.type === "public") return
-      if (this.recipients.length > 1 && !this.publicKeyToEncrypt) return "No selected address"
+      if (!this.encrypted) return
+      if (this.recipients && this.recipients.length > 1 && !this.publicKeyToEncrypt) return "No selected address"
     },
 
     validationError() {
@@ -116,7 +89,7 @@ export default {
 
         if (to && this.data !== to) {
           this.data = to
-          this.type = "encrypted"
+          this.encrypted = true
           return
         }
 
@@ -131,19 +104,19 @@ export default {
       }
     },
 
-    initDataEncryption: {
+    initDataEncrypted: {
       immediate: true,
       handler: function (to, from) {
-        this.type = to
+        this.encrypted = to
       }
     },
 
-    type: {
+    encrypted: {
       immediate: true,
       handler: function (to, from) {
         return this.$emit('changed', {
-          type: to,
-          publicKeyToEncrypt: (to === 'public') ? null : this.publicKeyToEncrypt,
+          encrypted: to,
+          publicKeyToEncrypt: to ? this.publicKeyToEncrypt: null ,
         })
       }
     },
@@ -176,7 +149,6 @@ export default {
 
 
 <style scoped>
-
 .recipient-row {
   display: grid;
   grid-template-columns: 45px 1fr;

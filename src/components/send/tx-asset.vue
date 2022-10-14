@@ -1,6 +1,5 @@
 <template>
-  <div class="row">
-    <div class="col-12">
+  <div>
       <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Asset</label>
       <select :class="`form-select ${validationError ? 'is-invalid' :''}`" v-model="selectedAsset">
         <option v-for="(asset, id) in assets" :key="`send-money-${id}`" :value="asset">
@@ -8,7 +7,6 @@
         </option>
       </select>
       <div v-if="validationError" class="invalid-feedback d-block">{{ validationError }}</div>
-    </div>
   </div>
 </template>
 

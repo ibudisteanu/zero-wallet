@@ -15,7 +15,7 @@
     </template>
 
     <template v-slot:footer>
-      <loading-button :disabled="!walletData" class-custom="btn btn-falcon-danger" @click="handleImportWallet" text="Import wallet" icon="fas fa-save"/>
+      <loading-button :disabled="!walletData" class-custom="btn btn-falcon-primary" @click="handleImportWallet" text="Import wallet" icon="fas fa-save"/>
       <button class="btn btn-outline-primary" type="button" @click="closeModal">
         <i class="fas fa-ban"></i> Close
       </button>

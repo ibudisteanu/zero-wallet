@@ -6,13 +6,13 @@
       Private conditional payment to a recipient.
     </layout-title>
 
-    <zether-tx :public-key="publicKey" @onSetTab="setTab" ref="zetherTx"
-               :titles-offset="{0.5: {name: 'Conditional Payment', icon: 'fa fa-check',  tooltip: 'Conditional Payment'} }"
+    <zether-tx :public-key="publicKey" :onSetTab="setTab" ref="zetherTx"
+               :titles-offset="{'-1': {name: 'Conditional Payment', icon: 'fas fa-file',  tooltip: 'Conditional Payment'} }"
                :payloads-count="2" :build-payload-cb="buildPayloadCb" :before-process-cb="beforeProcessCb"
                :init-recipients="initRecipients" :init-amounts="initAmounts" :init-assets="initAssets"
-               :init-extra-data="initExtraData" :init-extra-data-encryption="initExtraDataEncryption">
+               :init-extra-data="initExtraData" :init-extra-data-encrypted="initExtraDataEncrypted">
 
-      <template v-slot:tab_0.5>
+      <template v-slot:tab_-1>
 
         <div class="col-12">
           <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Deadline</label>
@@ -93,7 +93,7 @@ export default {
       initAmounts: [],
       initAssets: [],
       initExtraData: [],
-      initExtraDataEncryption: [],
+      initExtraDataEncrypted: [],
     }
   },
 
@@ -125,19 +125,16 @@ export default {
 
   methods: {
 
-    async setTab({resolve, reject, oldTab, value}) {
-      try {
-        if (oldTab === 0.5 && value === 1) {
-          if (this.validationThreshold) throw this.validationThreshold
-          if (this.validationDeadline) throw this.validationDeadline
-          const v = this.validationPublicKeys
-          for (let i = 0; i < this.multisigPublicKeys.length; i++)
-            if (v[i]) throw v[i]
-        }
-        resolve(true)
-      } catch (err) {
-        reject(err)
+    async setTab({ oldTab, value}) {
+      if (oldTab === -1 && value === 0) {
+        if (this.validationThreshold) throw this.validationThreshold
+        if (this.validationDeadline) throw this.validationDeadline
+        const v = this.validationPublicKeys
+        for (let i = 0; i < this.multisigPublicKeys.length; i++)
+          if (v[i]) throw v[i]
+        if (!v.length) throw "No Multisig Public Key was specified"
       }
+      return true
     },
 
     handleDeleteMultisigPublicKey(i) {
@@ -196,8 +193,8 @@ export default {
         if (to.query.extraData !== undefined) this.initExtraData = to.query.extraData.split(',').map(it => Buffer.from(it, "hex").toString("ascii"))
         else this.initExtraData = []
 
-        if (to.query.extraDataEncryption !== undefined) this.initExtraDataEncryption = to.query.extraDataEncryption.split(',').map(it => it === '1' ? 'encrypted' : 'public')
-        else this.initExtraDataEncryption = []
+        if (to.query.extraDataEncrypted !== undefined) this.initExtraDataEncrypted = to.query.extraDataEncrypted.split(',').map(it => it === '1' ? 'encrypted' : 'public')
+        else this.initExtraDataEncrypted = []
 
       } catch (e) {
         this.$store.dispatch('addToast', {

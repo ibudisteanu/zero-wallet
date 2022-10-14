@@ -2,12 +2,13 @@
 
   <layout>
 
-    <layout-title icon="fas fa-money-check-alt" title="Private Send Funds">Send Funds Privately to another address
+    <layout-title icon="fas fa-money-check-alt" title="Private Send Funds">
+      Send Funds Privately to another address
     </layout-title>
 
     <zether-tx :public-key="publicKey" :init-recipients="initRecipients" :init-amounts="initAmounts"
                :init-assets="initAssets"
-               :init-extra-data="initExtraData" :init-extra-data-encryption="initExtraDataEncryption">
+               :init-extra-data="initExtraData" :init-extra-data-encrypted="initExtraDataEncrypted">
 
     </zether-tx>
 
@@ -32,7 +33,7 @@ export default {
       initAmounts: [],
       initAssets: [],
       initExtraData: [],
-      initExtraDataEncryption: [],
+      initExtraDataEncrypted: [],
     }
   },
 
@@ -59,8 +60,8 @@ export default {
         if (to.query.extraData !== undefined) this.initExtraData = to.query.extraData.split(',').map(it => Buffer.from(it, "hex").toString("ascii"))
         else this.initExtraData = []
 
-        if (to.query.extraDataEncryption !== undefined) this.initExtraDataEncryption = to.query.extraDataEncryption.split(',').map(it => it === '1' ? 'encrypted' : 'public')
-        else this.initExtraDataEncryption = []
+        if (to.query.initExtraDataEncrypted !== undefined) this.initExtraDataEncrypted = to.query.initExtraDataEncrypted.split(',').map(it => it === '1' ? true : false )
+        else this.initExtraDataEncrypted = []
 
       } catch (e) {
         this.$store.dispatch('addToast', {

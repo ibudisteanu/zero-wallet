@@ -4,7 +4,7 @@
     <loading-spinner v-if="!loaded"/>
     <template v-else>
       <i v-if="icon && iconLeft" :class="`${text? 'pe-1':''} ${icon}`"/>
-      <span v-if="text" class="hidden-xs">{{ text }}</span>
+      <span v-if="text" :class="classText">{{ text }}</span>
       <i v-if="icon && !iconLeft" :class="`${text ? 'ps-1': ''} ${icon}`"/>
     </template>
 
@@ -29,14 +29,13 @@ export default {
     iconLeft: {default: true},
     component: {default: "button"},
     tooltip: {default: ""},
-    submit: {default: null }
+    submit: {default: null },
+    classText: {default: ""},
   },
   methods: {
     async handleClick(e) {
 
       if (this.disabled ) return false;
-
-      if (e) e.stopPropagation();
 
       this.loaded = false;
       this.disabled = true;

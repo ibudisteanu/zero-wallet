@@ -10,7 +10,7 @@
                 0: {icon: 'fas fa-credit-card', name: 'Transaction Info', tooltip: 'Conditional Payment Transaction ID' },
                 1: {icon: 'fas fa-key', name: 'Private Key', tooltip: 'Private Key of the Conditional Payment' },
                 2: {icon: 'fas fa-signature', name: 'Generated Signature', tooltip: 'View your Signature' }}"
-            @onSetTab="setTab" controls-class-name="card-footer bg-light" class="card"
+            :onSetTab="setTab" controls-class-name="card-footer bg-light" class="card"
             :buttons="{1: {icon: 'fas fa-file-upload', text: 'Sign Resolution'}, 2: {hide: true } }">
 
       <template v-slot:tab_0>
@@ -120,37 +120,33 @@ export default {
 
   methods: {
 
-    async setTab({resolve, reject, oldTab, value}) {
-      try {
+    async setTab({oldTab, value}) {
 
-        if (oldTab === 0 && value === 1) {
-          await this.loadTransaction()
-          if (!this.tx) throw "Transaction was not found"
+      if (oldTab === 0 && value === 1) {
+        await this.loadTransaction()
+        if (!this.tx) throw "Transaction was not found"
 
-          if (!this.tx.version.eq(PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER))
-            throw "Wrong Transaction. It is not not a Zether tx"
+        if (!this.tx.version.eq(PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER))
+          throw "Wrong Transaction. It is not not a Zether tx"
 
-          if (!this.payload) throw "Payload was not found!"
+        if (!this.payload) throw "Payload was not found!"
 
-          if (!this.payload.payloadScript.equals(PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CONDITIONAL_PAYMENT))
-            throw "Payload Script is not SCRIPT_CONDITIONAL_PAYMENT"
+        if (!this.payload.payloadScript.equals(PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CONDITIONAL_PAYMENT))
+          throw "Payload Script is not SCRIPT_CONDITIONAL_PAYMENT"
 
-          if (!this.txInfo)
-            throw "Transaction is not included in Blockchain"
+        if (!this.txInfo)
+          throw "Transaction is not included in Blockchain"
 
-          if (this.$store.state.blockchain.end.minus(this.payload.extra.deadline).gte(this.txInfo.blkHeight))
-            throw "Transaction Conclusion has expired"
+        if (this.$store.state.blockchain.end.minus(this.payload.extra.deadline).gte(this.txInfo.blkHeight))
+          throw "Transaction Conclusion has expired"
 
-          this.multisigPublicKeys = this.payload.extra.multisigPublicKeys.map(it => it)
-        }
-
-        if (oldTab === 1 && value === 2)
-          await this.handleSign()
-
-        resolve(true)
-      } catch (err) {
-        reject(err)
+        this.multisigPublicKeys = this.payload.extra.multisigPublicKeys.map(it => it)
       }
+
+      if (oldTab === 1 && value === 2)
+        await this.handleSign()
+
+      return true
     },
 
     async loadTransaction() {

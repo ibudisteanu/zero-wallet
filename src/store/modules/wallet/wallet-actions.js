@@ -7,7 +7,7 @@ export default {
         const walletData = await PandoraPay.wallet.getWallet()
         const wallet = JSONParse( MyTextDecode( walletData ) )
 
-        wallet.isEncrypted = wallet.encryption.encrypted === PandoraPay.enums.wallet.encryptedVersion.ENCRYPTED_VERSION_ENCRYPTION_ARGON2
+        wallet.isEncrypted = wallet.encryption.encrypted.equals( PandoraPay.enums.wallet.encryptedVersion.ENCRYPTED_VERSION_ENCRYPTION_ARGON2 )
 
         console.log("wallet received", wallet)
 
