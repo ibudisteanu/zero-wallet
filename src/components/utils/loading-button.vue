@@ -3,9 +3,9 @@
 
     <loading-spinner v-if="!loaded"/>
     <template v-else>
-      <i v-if="icon && iconLeft" :class="`${text? 'pe-1':''} ${icon}`"/>
-      <span v-if="text" :class="classText">{{ text }}</span>
-      <i v-if="icon && !iconLeft" :class="`${text ? 'ps-1': ''} ${icon}`"/>
+      <i v-if="icon && iconLeft" :class="`${icon}`"/>
+      <span v-if="text" :class="`${classText} ${iconLeft ? 'ps-1' : '' }`">{{ text }}</span>
+      <i v-if="icon && !iconLeft" :class="`${icon}`"/>
     </template>
 
   </component>

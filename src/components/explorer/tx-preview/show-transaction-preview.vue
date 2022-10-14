@@ -88,7 +88,7 @@
               </span>
             </template>
             <template v-if="payload.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_ENCRYPTED)">
-              <span v-if="!decrypted || !decrypted.zetherTx.payloads[index]" v-tooltip.bottom="`Encrypted Memo`">?</span>
+              <template v-if="!decrypted || !decrypted.zetherTx.payloads[index]"></template>
               <span v-else v-tooltip.bottom="`String: ${$store.getters.printEncryptedTxMemo(decrypted.zetherTx.payloads[index].message)} || Base64: ${decrypted.zetherTx.payloads[index].message}`">
                 {{ $store.getters.printEncryptedTxMemo(decrypted.zetherTx.payloads[index].message) }}
               </span>
@@ -119,12 +119,15 @@
       <span class="col-4 d-block d-md-none text-dark text-truncate">Recipient</span>
       <div class="col-8 col-md-1 text-truncate">
         <template v-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER )">
-          <div v-for="(payload, index) in tx.base.payloads" :key="`tx_payload_${index}`" class="col-12 text-truncate d-md-flex justify-content-center align-items-center">
-            <span v-if="!decrypted || !decrypted.zetherTx.payloads[index] || !decrypted.zetherTx.payloads[index].recipientPublicKey" v-tooltip.bottom="`Unknown Recipient`">
-              ?
-            </span>
-            <account-identicon v-else :publicKey="decrypted.zetherTx.payloads[index].recipientPublicKey" size="21" :outer-size="0"/>
-          </div>
+          <template v-if="canDecrypt && !decrypted"></template>
+          <template v-else>
+            <div v-for="(payload, index) in tx.base.payloads" :key="`tx_payload_${index}`" class="col-12 text-truncate d-md-flex justify-content-center align-items-center">
+              <span v-if="!decrypted || !decrypted.zetherTx.payloads[index] || !decrypted.zetherTx.payloads[index].recipientPublicKey" v-tooltip.bottom="`Unknown Recipient`">
+                ?
+              </span>
+              <account-identicon v-else :publicKey="decrypted.zetherTx.payloads[index].recipientPublicKey" size="21" :outer-size="0"/>
+            </div>
+          </template>
         </template>
       </div>
 
