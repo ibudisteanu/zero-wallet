@@ -150,7 +150,6 @@ export default {
         payload.payloadScript = PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CONDITIONAL_PAYMENT
       } else if (index === 1) {
         payload.allowRandomRecipient = true
-        payload.allowRandomRecipient = true
       }
 
     },

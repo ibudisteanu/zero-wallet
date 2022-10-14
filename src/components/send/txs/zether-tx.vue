@@ -47,29 +47,30 @@
               </div>
             </template>
           </template>
-          <div v-else class="col-12 col-md-3" v-tooltip.bottom="`Bigger the ring, more private is your transaction.`">
-            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Size</label>
-            <select class="form-select" v-model.number="payload.ringSize">
-              <option :value="32">32</option>
-              <option :value="64">64</option>
-              <option :value="128">128</option>
-              <option :value="256">256</option>
-            </select>
-          </div>
 
-          <hr class="my-4"/>
+          <hr :class="`${i === payloads.length-1 ? 'mt-4' : 'my-4' }`"/>
 
         </div>
 
-        <button type="button" @click="handleAddPayload" class="btn btn-falcon-default rounded-pill me-1 cursor-pointer">
+        <button type="button" @click="handleAddPayload" class="mt-2 btn btn-falcon-default rounded-pill me-1 cursor-pointer">
           <i class="fa fa-plus"/>
           Add another recipient
         </button>
 
-        <button type="button" @click="handleRemovePayload" :disabled="payloads.length <= payloadsCount" class="btn btn-falcon-default rounded-pill me-1 text-danger cursor-pointer" >
+        <button type="button" @click="handleRemovePayload" :disabled="payloads.length <= payloadsCount" class="mt-2 btn btn-falcon-default rounded-pill me-1 text-danger cursor-pointer" >
           <i class="fa fa-times"/>
           Remove last recipient
         </button>
+
+        <div v-if="!$store.state.settings.expert" class="d-inline-block mt-2  ms-1" v-tooltip.bottom="`Bigger the ring, more private is your transaction.`">
+          <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Size</label>
+          <select class="form-select" v-model.number="commonRingSize">
+            <option :value="32">32</option>
+            <option :value="64">64</option>
+            <option :value="128">128</option>
+            <option :value="256">256</option>
+          </select>
+        </div>
 
       </template>
 
@@ -231,6 +232,7 @@ export default {
 
       ringSizeInit,
       ringNewAddressesInit,
+      commonRingSize: ringSizeInit,
 
       status: '',
       error: '',
@@ -470,6 +472,10 @@ export default {
       }
 
       if ( (oldTab === 0 && value > oldTab && !this.$store.state.settings.expert) || ( oldTab === 1 && value > oldTab ) ) {
+
+        if (!this.$store.state.settings.expert)
+          for (let i = 0; i < this.payloads.length; i++)
+            this.payloads[i].ringSize = this.commonRingSize
 
         if (!this.payloads[0].senderRingMembers.length || !this.payloads[0].recipientRingMembers.length)
           await this.handleGenerateRing()
