@@ -28,13 +28,13 @@ export default {
   components: {AlertBox, LoadingSpinner},
 
   props: {
-    account: {default: undefined},
+    account: {default: "not-found"},
     type: {default: "all"}, //all,transparent,zether
   },
 
   computed: {
     isLoading() {
-      return this.account === undefined
+      return this.account === "not-found"
     },
     isFound() {
       return this.account !== null

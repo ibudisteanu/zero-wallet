@@ -30,6 +30,7 @@ export default {
 
     async unsubscribeTransaction( {state, dispatch, commit}, txId ){
 
+        if (!txId) return
         if ( !state.subscribed[txId]) return true
 
         if (promises.unsubscribed[txId]) return promises.unsubscribed[txId];

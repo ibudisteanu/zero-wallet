@@ -87,7 +87,7 @@
 
       </div>
       <div class="card-footer bg-light g-0 d-block p-3">
-        <loading-button :disabled="!blk" @submit="showBlockJSON" text="" icon="fas fa-file"
+        <loading-button :disabled="!blk" :submit="showBlockJSON" text="" icon="fas fa-file"
                         tooltip="Show JSON block" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer"/>
       </div>
 
@@ -139,11 +139,9 @@ export default {
 
   data() {
     return {
-
+      oldBlk: null,
       loaded: false,
-
       reward: '',
-
       error: '',
     }
   },
@@ -189,12 +187,16 @@ export default {
 
         await this.$store.state.blockchain.syncPromise;
 
-        if (this.height) await this.$store.dispatch('getBlockByHeight', this.height);
-        if (this.hash) await this.$store.dispatch('getBlockByHash', this.hash);
+        if (this.oldBlk && ( !this.blk || this.oldBlk.bloom.hash !== this.blk.bloom.hash)) await this.removed()
 
-        if (this.blk) {
-          this.$store.commit('setViewBlockHash', this.blk.bloom.hash)
-          const reward = await PandoraPay.config.reward.getRewardAt(this.blk.height.toString())
+        let blk
+        if (this.height) blk = await this.$store.dispatch('getBlockByHeight', this.height);
+        if (this.hash) blk = await this.$store.dispatch('getBlockByHash', this.hash);
+
+        if (blk && !this._.isUnmounted) {
+          this.oldBlk = blk
+          this.$store.commit('setViewBlockHash', blk.bloom.hash)
+          const reward = await PandoraPay.config.reward.getRewardAt(blk.height.toString())
           this.reward = new Decimal(reward)
         }
 
@@ -211,6 +213,11 @@ export default {
         textarea: { allowEdit:false, class:"form-control-sm fs--2", rows: 20 }, button: null })
     },
 
+    removed(blk = this.oldBlk) {
+      if (!blk) return
+      this.$store.commit('setViewBlockHash', null )
+    },
+
   },
 
   watch: {
@@ -224,8 +231,8 @@ export default {
   },
 
   beforeUnmount() {
-    this.$store.commit('setViewBlockHash', null)
-  }
+    return this.removed()
+  },
 
 }
 

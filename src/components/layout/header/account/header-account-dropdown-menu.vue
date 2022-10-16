@@ -46,8 +46,8 @@
             <label class="form-check-label cursor-pointer m-0">Switch Expert mode</label>
           </div>
           <div class="dropdown-divider"></div>
-          <loading-button v-if="!encrypted" submit="" text="Set Password" icon="fas fa-lock" tooltip="Encrypt your wallet by setting a Password" class-custom="cursor-pointer dropdown-item" component="span"/>
-          <loading-button v-else submit="" text="Remove Password" icon="fas fa-unlock" tooltip="Decrypt your wallet by removing the Password" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <loading-button v-if="!encrypted" :submit="()=>$router.push('/set-password')" text="Set Password" icon="fas fa-lock" tooltip="Encrypt your wallet by setting a Password" class-custom="cursor-pointer dropdown-item" component="span"/>
+          <loading-button v-else :submit="()=>$router.push('/remove-password')" text="Remove Password" icon="fas fa-unlock" tooltip="Decrypt your wallet by removing the Password" class-custom="cursor-pointer dropdown-item" component="span"/>
           <loading-button :submit="handleDeleteWallet" text="Delete Wallet" icon="fas fa-trash" tooltip="Clear & create new wallet" class-custom="cursor-pointer dropdown-item text-danger" component="span" />
           <template v-if="encrypted">
             <div class="dropdown-divider"></div>
@@ -130,30 +130,30 @@ export default {
 
     async handleDeleteWallet() {
 
-        try {
+      try {
 
-          const confirmed = await this.$store.state.page.inputModal.showModal({
-            title: "Clear existing wallet?",
-            alert: {type: "warning", text: "It will clear your existing wallet and you will get a new wallet!"},
-            button: { text: "Yes, I confirm", icon: 'fas fa-times', class:'btn btn-falcon-danger'} })
-          if (!confirmed) return
+        const confirmed = await this.$store.state.page.inputModal.showModal({
+          title: "Clear existing wallet?",
+          alert: {type: "warning", text: "It will clear your existing wallet and you will get a new wallet!"},
+          button: { text: "Yes, I confirm", icon: 'fas fa-times', class:'btn btn-falcon-danger'} })
+        if (!confirmed) return
 
-          const password = await this.$store.state.page.walletPasswordModal.showModal()
-          if (password === null) return
+        const password = await this.$store.state.page.walletPasswordModal.showModal()
+        if (password === null) return
 
-          await this.$store.state.page.loadingModal.showModal();
+        await this.$store.state.page.loadingModal.showModal();
 
-          await PandoraPay.wallet.createNewWallet(password)
-          this.$store.dispatch('addToast', {
-            type: 'success',
-            title: `New wallet`,
-            text: `You got a new wallet`,
-          })
-        } catch (e) {
-          throw e
-        } finally {
-          this.$store.state.page.loadingModal.closeModal();
-        }
+        await PandoraPay.wallet.createNewWallet(password)
+        this.$store.dispatch('addToast', {
+          type: 'success',
+          title: `New wallet`,
+          text: `You got a new wallet`,
+        })
+      } catch (e) {
+        throw e
+      } finally {
+        this.$store.state.page.loadingModal.closeModal();
+      }
 
     },
 
@@ -164,7 +164,7 @@ export default {
         textarea: {allowEdit: true, rows: 4}, button: {text: "Import mnemonic", icon: 'fas fa-disk', class:'btn btn-primary'},
         alert: {type: "warning", text: "This operation will delete the existing wallet from your browser and will replace it with the one from the mnemonic", class:"mt-2"},
       })
-      if (!mnemonic) throw "Canceled"
+      if (!mnemonic) return
 
       const password = await this.$store.state.page.walletPasswordModal.showModal()
       if (password === null) return

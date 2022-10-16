@@ -8,21 +8,22 @@
       </template>
 
       <template v-slot:tab_0>
-        <extra-data @changed="changedExtraData"/>
+
+        <tx-extra-data @changed="changedExtraData" :init-data-encrypted="false" />
+
+        <template v-if="$store.state.settings.expert">
+
+          <div class="form-check pt-2">
+            <input class="form-check-input" id="fee-version" type="checkbox" name="checkbox" v-model="feeVersion">
+            <label class="form-check-label" for="fee-version" v-tooltip.bottom="`Subtract the fee from the unclaimed balance or from the delegated stake.`">Pay Fee from Unclaimed balance</label>
+          </div>
+
+          <tx-fee :balances="balancesStakeAvailable" :allow-zero="true" @changed="changedFee"/>
+        </template>
+
       </template>
 
       <template v-slot:tab_1>
-
-        <div class="form-check pb-2">
-          <input class="form-check-input" id="fee-version" type="checkbox" name="checkbox" v-model="feeVersion">
-          <label class="form-check-label" for="fee-version">Pay Fee from Unclaimed balance</label>
-          <i class="fas fa-question ms-1" v-tooltip.bottom="`Subtract the fee from the unclaimed balance or from the delegated stake.`"/>
-        </div>
-
-        <tx-fee :balances="balancesStakeAvailable" :allow-zero="true" @changed="changedFee"/>
-      </template>
-
-      <template v-slot:tab_2>
         <confirm-broadcasting-tx v-if="tx" class="my-3 fs--1" :tx="tx"/>
       </template>
 
@@ -42,7 +43,7 @@
 
 <script>
 import AlertBox from "../../utils/alert-box";
-import ExtraData from "../extra-data";
+import TxExtraData from "../tx-extra-data";
 import Wizard from "../../utils/wizard";
 import TxFee from "../tx-fee";
 import WaitAccount from "src/components/wallet/account/wait-account";
@@ -50,7 +51,7 @@ import ConfirmBroadcastingTx from "./confirm-broadcasting-tx"
 import Decimal from "decimal.js"
 
 export default {
-  components: {AlertBox, ExtraData, Wizard, TxFee, WaitAccount, ConfirmBroadcastingTx},
+  components: {AlertBox, TxExtraData, Wizard, TxFee, WaitAccount, ConfirmBroadcastingTx},
 
   data() {
     return {
@@ -98,21 +99,18 @@ export default {
     },
     buttons() {
       return {
-        1: {icon: 'fas fa-file-signature', text: 'Sign Transaction'},
-        2: {icon: 'fas fa-globe-americas', text: 'Propagate Transaction'},
-        3: {icon: 'fas fa-check', name: 'Done', tooltip: 'Transaction is propagated to the network' },
+        0: {icon: 'fas fa-file-signature', text: 'Sign Transaction'},
+        1: {icon: 'fas fa-globe-americas', text: 'Propagate Transaction'},
+        2: {icon: 'fas fa-check', name: 'Done', tooltip: 'Transaction is propagated to the network' },
         ...this.buttonsOffset,
       }
     },
     titles() {
-      const o = {
-        0: {icon: 'fas fa-pencil-alt', name: 'Memo', tooltip: 'Extra information attached in the tx'},
-        2: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating'},
+      return {
+        0: {icon: 'fas fa-pencil-alt', name: 'Extra', tooltip: 'Extra information attached in the tx'},
+        1: {icon: 'fas fa-search-dollar', name: 'Preview', tooltip: 'Preview the transaction before Propagating'},
         ...this.titlesOffset
       }
-      if (this.enableFee)
-        o['1'] = {icon: 'fas fa-dollar-sign', name: 'Fee', tooltip: 'Setting the fee'}
-      return o
     },
   },
 

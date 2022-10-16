@@ -42,7 +42,7 @@
           <div class="row pt-2 pb-2 bg-light">
             <span class="col-4 col-sm-3 text-truncate">Block Timestamp</span>
             <div class="col-8 col-sm-9 text-truncate">
-              <span v-if="txInfo && txInfo.timestamp" v-tooltip.bottom="`${ $formatTime( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp ).times(1000) ) }`">
+              <span v-if="txInfo && txInfo.timestamp" v-tooltip.bottom="`${ $formatTime( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp ).times(1000).toNumber() ) }`">
                 {{ $timeSince($store.state.blockchain.genesisTimestamp.plus(txInfo.timestamp).times(1000), false)  }}
                 <i class="fas fa-clock"></i>
               </span>
@@ -53,8 +53,8 @@
             <span class="col-4 col-sm-3 text-truncate">Confirmations</span>
             <div class="col-8 col-sm-9 text-truncate">
               <span v-if="txInfo && txInfo.blkHeight">
-                {{ $store.state.blockchain.end.minus(txInfo.blkHeight).minus(1) }}
-                <i v-if="$store.state.blockchain.end.minus( txInfo.blkHeight ).minus(1).gt(8)" class="fas fa-check"></i>
+                {{ $store.state.blockchain.end.minus(txInfo.blkHeight) }}
+                <i v-if="$store.state.blockchain.end.minus( txInfo.blkHeight ).gt(8)" class="fas fa-check"></i>
               </span>
               <span v-else>-</span>
             </div>
@@ -351,13 +351,13 @@
               </div>
 
               <div class="my-2">
-                <router-link :to="`/advanced/sign-resolution-conditional-payment?txId=${$base64ToHex(tx.hash)}&payloadIndex=${index}`"
+                <router-link :to="{path: '/advanced/sign-resolution-conditional-payment', query:{ txId: $base64ToHex(tx.hash), payloadIndex: index }}"
                     :class="`btn btn-falcon-default rounded-pill me-1 cursor-pointer ${!txInfo || !txInfo.blkHeight || $store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight ) ? 'disabled': ''} `">
                   <i class="fa fa-signature"/>
                   Sign Resolution
                 </router-link>
 
-                <router-link :to="`/advanced/public/resolution-conditional-payment?txId=${$base64ToHex(tx.hash)}&payloadIndex=${index}`"
+                <router-link :to="{path: '/advanced/public/resolution-conditional-payment', query: { txId: $base64ToHex(tx.hash), payloadIndex:index}}"
                     :class="`btn btn-falcon-default rounded-pill me-1 cursor-pointer ${!txInfo || !txInfo.blkHeight || $store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight ) ? 'disabled': ''} `">
                   <i class="fa fa-gavel"/>
                   Create Resolution Tx

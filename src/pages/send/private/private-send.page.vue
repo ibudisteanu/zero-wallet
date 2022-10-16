@@ -7,8 +7,8 @@
     </layout-title>
 
     <zether-tx :public-key="publicKey" :init-recipients="initRecipients" :init-amounts="initAmounts"
-               :init-assets="initAssets"
-               :init-extra-data="initExtraData" :init-extra-data-encrypted="initExtraDataEncrypted">
+               :init-assets="initAssets" :init-extra-data="initExtraData"
+               :init-extra-data-encrypted="initExtraDataEncrypted" :init-common-ring-size="initCommonRingSize">
 
     </zether-tx>
 
@@ -34,6 +34,7 @@ export default {
       initAssets: [],
       initExtraData: [],
       initExtraDataEncrypted: [],
+      initCommonRingSize: undefined,
     }
   },
 
@@ -60,8 +61,11 @@ export default {
         if (to.query.extraData !== undefined) this.initExtraData = to.query.extraData.split(',').map(it => Buffer.from(it, "hex").toString("ascii"))
         else this.initExtraData = []
 
-        if (to.query.initExtraDataEncrypted !== undefined) this.initExtraDataEncrypted = to.query.initExtraDataEncrypted.split(',').map(it => it === '1' ? true : false )
+        if (to.query.extraDataEncrypted !== undefined) this.initExtraDataEncrypted = to.query.extraDataEncrypted.split(',').map(it => it === '1' )
         else this.initExtraDataEncrypted = []
+
+        if (to.query.commonRingSize !== undefined) this.initCommonRingSize = Number.parseInt(to.query.commonRingSize)
+        else this.initCommonRingSize = undefined
 
       } catch (e) {
         this.$store.dispatch('addToast', {

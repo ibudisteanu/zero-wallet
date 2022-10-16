@@ -2,7 +2,7 @@
   <div>
     <template v-if="!tx">
       <div>
-        <span class="tx-hash">{{ txHash }}</span>
+        <span class="tx-hash d-inline-block">{{ txHash }}</span>
         <loading-spinner/>
       </div>
     </template>
@@ -210,9 +210,5 @@ export default {
 </script>
 
 <style scoped>
-
-.tx-hash {
-  display: inline-block;
-}
 
 </style>
