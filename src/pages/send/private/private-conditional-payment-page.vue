@@ -115,7 +115,7 @@ export default {
       const v = this.multisigPublicKeys
       for (let i = 0; i < v.length; i++) {
         if (unique[v[i]]) out[i] = "It can not contain duplicate public keys"
-        else out[i] = this.$store.getters.validatePublicKey(v[i])
+        else out[i] = this.$validator.validatePublicKey(v[i])
         unique[v[i]] = true
       }
       return out

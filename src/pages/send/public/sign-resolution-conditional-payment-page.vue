@@ -16,17 +16,17 @@
       <template v-slot:tab_0>
         <div class="pb-2">
           <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Transaction Id:</label>
-          <input :class="`form-control ${$store.getters.validateHash(txId) ? 'is-invalid': ''}`" type="text" v-model="txId" :disabled="$route.query.txId !== undefined && !$store.state.settings.expert" >
-          <div v-if="$store.getters.validateHash(txId)" class="invalid-feedback d-block">
-            {{ $store.getters.validateHash(txId) }}
+          <input :class="`form-control ${$validator.validateHash(txId) ? 'is-invalid': ''}`" type="text" v-model="txId" :disabled="$route.query.txId !== undefined && !$store.state.settings.expert" >
+          <div v-if="$validator.validateHash(txId)" class="invalid-feedback d-block">
+            {{ $validator.validateHash(txId) }}
           </div>
         </div>
 
         <div class="pb-2">
           <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Payload Index:</label>
-          <input :class="`form-control ${$store.getters.validateNumber(payloadIndex) ? 'is-invalid': ''}`" type="number" v-model="payloadIndex" :disabled="$route.query.payloadIndex !== undefined && !$store.state.settings.expert" >
-          <div v-if="$store.getters.validateNumber(payloadIndex)" class="invalid-feedback d-block">
-            {{ $store.getters.validateNumber(payloadIndex) }}
+          <input :class="`form-control ${$validator.validateNumber(payloadIndex) ? 'is-invalid': ''}`" type="number" v-model="payloadIndex" :disabled="$route.query.payloadIndex !== undefined && !$store.state.settings.expert" >
+          <div v-if="$validator.validateNumber(payloadIndex)" class="invalid-feedback d-block">
+            {{ $validator.validateNumber(payloadIndex) }}
           </div>
         </div>
       </template>

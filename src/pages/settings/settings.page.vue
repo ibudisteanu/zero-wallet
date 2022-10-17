@@ -44,7 +44,7 @@
                 <input class="form-range" type="range" min="16" max="22" v-model="balanceDecryptorTableSize"/>
                 <small :class="`fw-semi-bold rounded-pill badge-soft-${balanceDecryptorTableSize >= 20 ? 'danger' : 'warning'} p-1`">
                   <i class="fas fa-exclamation-triangle"/> High will require
-                  {{ $formatMilliseconds(balanceDecryptorTime[balanceDecryptorTableSize] * 1000) }} initialize (bootstrap) time.
+                  {{ $strings.formatMilliseconds(balanceDecryptorTime[balanceDecryptorTableSize] * 1000) }} initialize (bootstrap) time.
                 </small>
               </div>
             </div>

@@ -15,13 +15,13 @@
 
       <span class="col-5 d-block d-sm-none text-dark">Hash</span>
       <span class="col-7 col-sm-2 col-md-2 text-truncate">
-        <router-link :to="`/explorer/block/${$base64ToHex(blockInfo.hash)}`">
-          {{ $base64ToHex(blockInfo.hash) }}
+        <router-link :to="`/explorer/block/${$strings.base64ToHex(blockInfo.hash)}`">
+          {{ $strings.base64ToHex(blockInfo.hash) }}
         </router-link>
       </span>
 
       <span class="col-5 d-xs-none d-sm-none d-md-none text-dark">Kernel Hash</span>
-      <span class="col-7 d-xs-none d-sm-none d-md-block  col-md-2 text-truncate">{{ $base64ToHex(blockInfo.kernelHash) }}</span>
+      <span class="col-7 d-xs-none d-sm-none d-md-block  col-md-2 text-truncate">{{ $strings.base64ToHex(blockInfo.kernelHash) }}</span>
 
       <span class="col-5 d-block d-sm-none text-dark">Height</span>
       <span class="col-7 col-sm-2 col-md-2 text-truncate">
@@ -35,14 +35,14 @@
 
       <span class="col-5 d-block d-sm-none text-dark">Timestamp</span>
       <span class="col-7 col-sm-2 col-md-1  text-truncate"
-            v-tooltip.bottom="`${ $formatTime( $store.state.blockchain.genesisTimestamp.plus( blockInfo.timestamp).times(1000) ) }`">
-        {{ $timeSince($store.state.blockchain.genesisTimestamp.plus(blockInfo.timestamp).times(1000), false) }}
+            v-tooltip.bottom="`${ $strings.formatTime( $store.state.blockchain.genesisTimestamp.plus( blockInfo.timestamp).times(1000) ) }`">
+        {{ $strings.timeSince($store.state.blockchain.genesisTimestamp.plus(blockInfo.timestamp).times(1000), false) }}
       </span>
 
       <span class="col-5 d-block d-sm-none text-dark">Size</span>
       <div class="col-7 col-sm-2 col-md-2 text-truncate">
-        <span v-tooltip.bottom="`${ $formatBytes(blockInfo.size) }`">
-          {{ $formatSize(blockInfo.size, 1) }}
+        <span v-tooltip.bottom="`${ $strings.formatBytes(blockInfo.size) }`">
+          {{ $strings.formatSize(blockInfo.size, 1) }}
         </span>
       </div>
 

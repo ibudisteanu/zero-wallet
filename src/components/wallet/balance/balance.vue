@@ -12,7 +12,7 @@
       <template v-else>{{ amount }}</template>
     </h4>
     <small class="ps-1 fs--1 text-700 d-inline-block">/
-      <router-link :to="`/explorer/asset/${$base64ToHex(asset)}`" class="currency" v-tooltip.bottom="$base64ToHex(asset)">
+      <router-link :to="`/explorer/asset/${$strings.base64ToHex(asset)}`" class="currency" v-tooltip.bottom="$strings.base64ToHex(asset)">
         {{ getAsset ? getAsset.identification : '' }}
       </router-link>
     </small>
@@ -52,7 +52,7 @@ export default {
         if (this.decryptedBalance === null) return
         amount = this.decryptedBalance
       }
-      return this.$formatMoney(new Decimal(amount || 0).div(new Decimal(10).pow(this.getAsset.decimalSeparator)).toString(), this.getAsset.decimalSeparator)
+      return this.$strings.formatMoney(new Decimal(amount || 0).div(new Decimal(10).pow(this.getAsset.decimalSeparator)).toString(), this.getAsset.decimalSeparator)
     },
 
   },

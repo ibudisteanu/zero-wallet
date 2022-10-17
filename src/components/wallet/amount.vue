@@ -4,7 +4,7 @@
       <span :class="valueClass">
         {{ getSign }} {{ amount }}
       </span>
-      <router-link :to="`/explorer/asset/${$base64ToHex(asset)}`" :class="`${assetClass} ps-1`" v-if="showAsset">
+      <router-link :to="`/explorer/asset/${$strings.base64ToHex(asset)}`" :class="`${assetClass} ps-1`" v-if="showAsset">
         {{ getAsset.identification }}
       </router-link>
     </template>
@@ -39,7 +39,7 @@ export default {
 
     amount() {
       const value = this.value || new Decimal(0)
-      return this.$formatMoney(value.div(new Decimal(10).pow(this.getAsset.decimalSeparator)).toString(), this.getAsset.decimalSeparator)
+      return this.$strings.formatMoney(value.div(new Decimal(10).pow(this.getAsset.decimalSeparator)).toString(), this.getAsset.decimalSeparator)
     },
     getSign() {
       if (!this.sign) return '-'

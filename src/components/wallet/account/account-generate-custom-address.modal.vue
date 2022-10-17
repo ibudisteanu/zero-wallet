@@ -140,7 +140,7 @@ export default {
 
     validationPaymentAsset() {
       if (!this.hasPaymentAsset) return ""
-      const validation = this.$store.getters.validateAsset(this.paymentAsset)
+      const validation = this.$validator.validateAsset(this.paymentAsset)
       if (validation) return validation
     },
 

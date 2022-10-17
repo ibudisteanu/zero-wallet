@@ -19,7 +19,6 @@ import NetworkStore from "./modules/network/network-store"
 import MempoolStore from "./modules/mempool/mempool-store"
 import FaucetStore from "./modules/faucet/faucet-store"
 import ToastsStore from "./modules/toasts/toasts-store"
-import ValidatorsStore from "./modules/validators/validators-store";
 
 export default createStore({
 
@@ -47,7 +46,6 @@ export default createStore({
         toasts: ToastsStore,
 
         network: NetworkStore,
-        validators: ValidatorsStore,
     },
 
 
