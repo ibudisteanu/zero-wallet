@@ -1,9 +1,8 @@
 <template>
   <wait-account :account="account" type="zether">
 
-    <wizard :titles="titles"
-            :onSetTab="setTab" controls-class-name="card-footer bg-light" :buttons="buttons" class="card"
-            ref="refWizard">
+    <wizard :titles="titles" ref="refWizard" controls-class-name="card-footer bg-light" :buttons="buttons" class="card"
+            :onSetTab="setTab">
 
       <template v-for="(_, index) in titlesOffset" v-slot:[getTabSlotName(index)]>
         <slot :name="`tab_${index}`"></slot>
@@ -15,20 +14,20 @@
 
           <h5 class="pe-3 pb-1">PAYLOAD {{ i + 1 }}</h5>
 
-          <div class="form-check" v-if="payload.allowRandomRecipient">
-            <input class="form-check-input" :id="`random-recipient-${i}`" v-model="payload.randomRecipient" type="checkbox" name="checkbox">
+          <div class="form-check" v-if="payload.allowRandomRecipient && (initRecipients[i] === undefined || $store.state.settings.expert)">
+            <input class="form-check-input" :id="`random-recipient-${i}`" v-model="payload.randomRecipient" type="checkbox">
             <label class="form-check-label" :for="`random-recipient-${i}`">Random Recipient with Zero amount</label>
           </div>
 
           <template v-if="!payload.randomRecipient">
             <tx-recipient :text="text" :init-recipient="initRecipients[i]" :init-amount="initAmounts[i]"
-                          :init-asset="initAssets[i]" :available-assets="availableAssets"
+                          :init-asset="initAssets[i] " :available-assets="availableAssets"
                           :validate-amount="payload.validateRecipientAmount" :balances="availableBalances"
                           :allow-zero="payload.allowRecipientZeroAmount" @changed="data =>changedRecipient(i, data)"/>
           </template>
 
-          <extra-data :recipients="null" class="pt-3" :paymentID="(payload.recipient && payload.recipient.address) ? payload.recipient.address.paymentID : null"
-                      :init-data="initExtraData[i]" :init-data-encrypted="(initExtraDataEncrypted[i] !== undefined) ? initExtraDataEncrypted[i] : true"
+          <tx-extra-data :recipients="null" class="pt-3" :paymentID="(payload.recipient && payload.recipient.address) ? payload.recipient.address.paymentID : null"
+                      :init-data="initExtraData[i]" :init-data-encrypted="initExtraDataEncrypted[i]"
                       @changed="data => changedExtraData(i, data)"/>
 
           <template v-if="$store.state.settings.expert">
@@ -64,7 +63,7 @@
 
         <div v-if="!$store.state.settings.expert" class="d-inline-block mt-2  ms-1" v-tooltip.bottom="`Bigger the ring, more private is your transaction.`">
           <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Ring Size</label>
-          <select class="form-select" v-model.number="commonRingSize">
+          <select class="form-select" v-model.number="commonRingSize" :disabled="initCommonRingSize !== undefined && !$store.state.settings.expert">
             <option :value="32">32</option>
             <option :value="64">64</option>
             <option :value="128">128</option>
@@ -134,9 +133,6 @@
       </template>
 
       <template #wizard-footer>
-        <alert-box v-if="error" class="w-100" type="error" :dismissible-timeout="10000" :dismissible-text="error" @onDismissible="error=''">
-          {{ error }}
-        </alert-box>
 
         <alert-box v-if="status" class="w-100" type="info">
           <template v-if="statusType === 'signing'">
@@ -164,20 +160,20 @@ import LoadingSpinner from "../../utils/loading-spinner";
 import LoadingButton from "../../utils/loading-button";
 import TxRecipient from "../tx-recipient";
 import TxAmount from "../tx-amount";
-import ExtraData from "../extra-data";
-import AlertBox from "../../utils/alert-box";
+import TxExtraData from "../tx-extra-data";
 import TxFee from "../tx-fee";
 import TxAsset from "../tx-asset";
 import AccountIdenticon from "../../wallet/account/account-identicon";
 import Wizard from "../../utils/wizard";
 import ConfirmBroadcastingTx from "./confirm-broadcasting-tx"
 import Decimal from "decimal.js";
+import AlertBox from "../../utils/alert-box";
 
 export default {
 
   components: {
-    WaitAccount, Account, LoadingSpinner, LoadingButton, TxRecipient, TxAmount,
-    ExtraData, AlertBox, TxFee, TxAsset, AccountIdenticon, Wizard, ConfirmBroadcastingTx,
+    WaitAccount, Account, LoadingSpinner, LoadingButton, TxRecipient, TxAmount, AlertBox,
+    TxExtraData, TxFee, TxAsset, AccountIdenticon, Wizard, ConfirmBroadcastingTx,
   },
 
   props: {
@@ -195,6 +191,7 @@ export default {
     initAmounts: {default: () => []},
     initExtraData: {default: () => []},
     initExtraDataEncrypted: {default: () => []},
+    initCommonRingSize: {default: undefined},
     onSetTab: {default: null }
   },
 
@@ -367,6 +364,15 @@ export default {
       for (const subscribed of deleteList)
         delete (this.subscribedAccounts[subscribed])
     },
+
+    initCommonRingSize:{
+      immediate: true,
+      handler: function (to, from) {
+        if (to === undefined) this.commonRingSize = this.ringSizeInit
+        else this.commonRingSize = to
+      }
+    }
+
   },
 
   methods: {
@@ -527,250 +533,245 @@ export default {
 
     async handleGenerateRing() {
 
-      try {
+      const senderRings = {}, recipientRings = {}
+      const allAlreadyUsed = {} //avoid having same decoy twice
 
-        const senderRings = {}, recipientRings = {}
-        const allAlreadyUsed = {} //avoid having same decoy twice
+      for (let payloadIndex = 0; payloadIndex < this.payloads.length; payloadIndex++) {
 
-        for (let payloadIndex = 0; payloadIndex < this.payloads.length; payloadIndex++) {
+        const canStake = function () {
+          return Math.random() < 0.1 && payload.payloadScript !== PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CONDITIONAL_PAYMENT;
+        }
 
-          const canStake = function () {
-            return Math.random() < 0.1 && payload.payloadScript !== PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CONDITIONAL_PAYMENT;
-          }
+        let senderRingMembers = [], recipientRingMembers = []
 
-          let senderRingMembers = [], recipientRingMembers = []
+        const payload = this.payloads[payloadIndex]
+        const asset = payload.recipient.asset
 
-          const payload = this.payloads[payloadIndex]
-          const asset = payload.recipient.asset
+        let assetCollector
+        if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64) {
+          const outData = await PandoraPay.network.getNetworkFeeLiquidity(0, asset)
+          if (!outData) throw "No Asset Fee Liqiduity for asset"
+          const out = JSONParse(MyTextDecode(outData))
+          assetCollector = out.collector
+        }
 
-          let assetCollector
-          if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64) {
-            const outData = await PandoraPay.network.getNetworkFeeLiquidity(0, asset)
-            if (!outData) throw "No Asset Fee Liqiduity for asset"
-            const out = JSONParse(MyTextDecode(outData))
-            assetCollector = out.collector
-          }
+        const holdersData = await PandoraPay.network.getNetworkAccountsCount(asset)
+        const holders = JSONParse(MyTextDecode(holdersData)).count
 
-          const holdersData = await PandoraPay.network.getNetworkAccountsCount(asset)
-          const holders = JSONParse(MyTextDecode(holdersData)).count
+        const ringSize = payload.ringSize
+        let newAccounts = payload.ringNewAddresses
 
-          const ringSize = payload.ringSize
-          let newAccounts = payload.ringNewAddresses
+        if (ringSize < 0) throw "RingSize can not be negative"
+        if ((Math.log(ringSize) / Math.log(2)) % 1 !== 0) throw "RingSize needs to be power of 2"
+        if (ringSize > 256) throw "RingSize max supported is 256"
 
-          if (ringSize < 0) throw "RingSize can not be negative"
-          if ((Math.log(ringSize) / Math.log(2)) % 1 !== 0) throw "RingSize needs to be power of 2"
-          if (ringSize > 256) throw "RingSize max supported is 256"
-
-          if (newAccounts < 0 || newAccounts > ringSize - 2) throw "New accounts needs to be in the interval [0, ringSize-2]"
+        if (newAccounts < 0 || newAccounts > ringSize - 2) throw "New accounts needs to be in the interval [0, ringSize-2]"
 
 
-          if (!payload.createNewSender) {
+        if (!payload.createNewSender) {
 
-            if (!this.availableAccounts || !this.availableAccounts.length) throw "You don't have any available private funds"
+          if (!this.availableAccounts || !this.availableAccounts.length) throw "You don't have any available private funds"
 
-            let foundSenderIndex
-            for (const availableAccount of this.availableAccounts)
-              if (availableAccount.asset === asset) {
-                foundSenderIndex = availableAccount.index
-                break
-              }
-
-            if (foundSenderIndex === undefined) throw "Account not found for sender"
-
-            if (senderRings[this.walletAddress.publicKey])
-              senderRingMembers = senderRings[this.walletAddress.publicKey]
-            else {
-              senderRingMembers.push(this.walletAddress.addressEncoded)
-              senderRings[this.walletAddress.publicKey] = senderRingMembers
-              allAlreadyUsed[this.walletAddress.publicKey] = true
+          let foundSenderIndex
+          for (const availableAccount of this.availableAccounts)
+            if (availableAccount.asset === asset) {
+              foundSenderIndex = availableAccount.index
+              break
             }
-          } else {
 
-            const json = JSONParse(MyTextDecode(await PandoraPay.addresses.generateNewAddress(MyTextEncode(JSONStringify({
-              registration: true,
-              staked: canStake()
+          if (foundSenderIndex === undefined) throw "Account not found for sender"
+
+          if (senderRings[this.walletAddress.publicKey])
+            senderRingMembers = senderRings[this.walletAddress.publicKey]
+          else {
+            senderRingMembers.push(this.walletAddress.addressEncoded)
+            senderRings[this.walletAddress.publicKey] = senderRingMembers
+            allAlreadyUsed[this.walletAddress.publicKey] = true
+          }
+        } else {
+
+          const json = JSONParse(MyTextDecode(await PandoraPay.addresses.generateNewAddress(MyTextEncode(JSONStringify({
+            registration: true,
+            staked: canStake()
+          })))))
+
+          payload.newSender = {privateKey: json[0], addressEncoded: json[1], publicKey: json[2]}
+          senderRingMembers.push(payload.newSender.addressEncoded)
+
+          senderRings[payload.newSender.publicKey] = senderRingMembers
+          allAlreadyUsed[payload.newSender.publicKey] = true
+        }
+
+
+        if (!payload.randomRecipient) {
+          if (recipientRings[payload.recipient.address.publicKey])
+            recipientRingMembers = recipientRings[payload.recipient.address.publicKey]
+          else {
+            recipientRingMembers.push(payload.recipient.addressEncoded)
+            recipientRings[payload.recipient.address.publicKey] = recipientRingMembers
+          }
+          allAlreadyUsed[payload.recipient.address.publicKey] = true
+        }
+
+        let step = -1
+        while (senderRingMembers.length < ringSize / 2 || recipientRingMembers.length < ringSize / 2) {
+
+          step++
+
+          async function getRandomAccounts(ringMembers, tempSelected) {
+
+            if (holders.gt(2)) {
+              const count = Decimal.min(holders, ringSize / 2).minus(ringMembers.length)
+              for (let i = new Decimal(0); i.lt(count); i = i.plus(1)) {
+
+                let trials = 0
+
+                let index = await PandoraPay.helpers.randomUint64N(holders.toString())
+                while (trials < 100 && (tempSelected[index])) {
+                  index = await PandoraPay.helpers.randomUint64N(holders.toString())
+                  trials++
+                }
+
+                if (trials >= 100) break
+                tempSelected[index] = true
+              }
+            }
+
+          }
+
+          async function getRandomPublicKey(ringAdd) {
+
+            let publicKeysList = Object.keys(ringAdd)
+            if (!publicKeysList.length) return {result: false}
+
+            let index = Math.floor(Math.random() * publicKeysList.length)
+            const publicKeySelected = publicKeysList[index]
+            delete ringAdd[publicKeySelected]
+
+            if (allAlreadyUsed[publicKeySelected])
+              return {result: true, addr: null}
+
+
+            const json = JSONParse(MyTextDecode(await PandoraPay.addresses.createAddress(MyTextEncode(JSONStringify({
+              publicKey: publicKeySelected,
+              registration: "",
+              paymentID: "",
+              paymentAmount: 0,
+              paymentAsset: ""
             })))))
 
-            payload.newSender = {privateKey: json[0], addressEncoded: json[1], publicKey: json[2]}
-            senderRingMembers.push(payload.newSender.addressEncoded)
+            allAlreadyUsed[publicKeySelected] = true
+            return {result: true, addr: {addressEncoded: json[1], publicKey: publicKeySelected}}
 
-            senderRings[payload.newSender.publicKey] = senderRingMembers
-            allAlreadyUsed[payload.newSender.publicKey] = true
           }
 
+          let trial = 0, senderAdd, recipientAdd
 
-          if (!payload.randomRecipient) {
-            if (recipientRings[payload.recipient.address.publicKey])
-              recipientRingMembers = recipientRings[payload.recipient.address.publicKey]
-            else {
-              recipientRingMembers.push(payload.recipient.addressEncoded)
-              recipientRings[payload.recipient.address.publicKey] = recipientRingMembers
+          while (trial < 10) {
+
+            const senderTempSelected = {}, recipientTempSelected = {}
+            senderAdd = {}
+            recipientAdd = {}
+
+            await getRandomAccounts(senderRingMembers, senderTempSelected)
+            await getRandomAccounts(recipientRingMembers, recipientTempSelected)
+
+            const tempSelectedArray = Object.keys(senderTempSelected).concat(Object.keys(recipientTempSelected)).map(it => new Decimal(it))
+            tempSelectedArray.sort((a, b) => a.minus(b))
+
+            let outData = await PandoraPay.network.getNetworkAccountsKeysByIndex(MyTextEncode(JSONStringify({
+              indexes: tempSelectedArray,
+              asset: asset,
+              encodeAddresses: false,
+            })));
+
+            const publicKeys = JSONParse(MyTextDecode(outData)).publicKeys
+
+            outData = await PandoraPay.network.getNetworkAccountsByKeys(MyTextEncode(JSONStringify({
+              keys: publicKeys.map(it => ({publicKey: it})),
+              asset,
+              includeMempool: true,
+            })))
+
+            const accountsData = JSONParse(MyTextDecode(outData))
+
+            for (let i = 0; i < publicKeys.length; i++) {
+
+              if (publicKeys[i] === assetCollector) continue
+
+              const index = tempSelectedArray[i]
+              if (payload.payloadScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CONDITIONAL_PAYMENT && accountsData.registration[i].staked) continue
+
+              if (recipientTempSelected[index]) { //receiver
+                recipientAdd[publicKeys[i]] = {index}
+              } else { //sender
+                if ((!accountsData.registration[i] || !accountsData.registration[i].spendPublicKey)) //making sure it doesn't have a spendPublicKey
+                  senderAdd[publicKeys[i]] = {index}
+              }
             }
-            allAlreadyUsed[payload.recipient.address.publicKey] = true
+
+            if (Object.keys(senderAdd).length !== 0 && Object.keys(recipientAdd).length !== 0)
+              break
+
+            trial++
           }
 
-          let step = -1
-          while (senderRingMembers.length < ringSize / 2 || recipientRingMembers.length < ringSize / 2) {
+          if (step === 0) {
 
-            step++
+            if (payload.randomRecipient) {
+              while (1) {
+                const out = await getRandomPublicKey(recipientAdd)
+                if (!out.result) throw "Error Generating Random Recipient. Try again"
+                if (out.addr == null) continue
 
-            async function getRandomAccounts(ringMembers, tempSelected) {
-
-              if (holders.gt(2)) {
-                const count = Decimal.min(holders, ringSize / 2).minus(ringMembers.length)
-                for (let i = new Decimal(0); i.lt(count); i = i.plus(1)) {
-
-                  let trials = 0
-
-                  let index = await PandoraPay.helpers.randomUint64N(holders.toString())
-                  while (trials < 100 && (tempSelected[index])) {
-                    index = await PandoraPay.helpers.randomUint64N(holders.toString())
-                    trials++
-                  }
-
-                  if (trials >= 100) break
-                  tempSelected[index] = true
+                payload.recipient = {
+                  addressEncoded: out.addr.addressEncoded,
+                  address: {publicKey: out.addr.publicKey},
+                  addressValidationError: "",
+                  amount: new Decimal(0),
+                  amountValidationError: "",
+                  asset,
+                  assetValidationError: "",
                 }
-              }
-
-            }
-
-            async function getRandomPublicKey(ringAdd) {
-
-              let publicKeysList = Object.keys(ringAdd)
-              if (!publicKeysList.length) return {result: false}
-
-              let index = Math.floor(Math.random() * publicKeysList.length)
-              const publicKeySelected = publicKeysList[index]
-              delete ringAdd[publicKeySelected]
-
-              if (allAlreadyUsed[publicKeySelected])
-                return {result: true, addr: null}
-
-
-              const json = JSONParse(MyTextDecode(await PandoraPay.addresses.createAddress(MyTextEncode(JSONStringify({
-                publicKey: publicKeySelected,
-                registration: "",
-                paymentID: "",
-                paymentAmount: 0,
-                paymentAsset: ""
-              })))))
-
-              allAlreadyUsed[publicKeySelected] = true
-              return {result: true, addr: {addressEncoded: json[1], publicKey: publicKeySelected}}
-
-            }
-
-            let trial = 0, senderAdd, recipientAdd
-
-            while (trial < 10) {
-
-              const senderTempSelected = {}, recipientTempSelected = {}
-              senderAdd = {}, recipientAdd = {}
-
-              await getRandomAccounts(senderRingMembers, senderTempSelected)
-              await getRandomAccounts(recipientRingMembers, recipientTempSelected)
-
-              const tempSelectedArray = Object.keys(senderTempSelected).concat(Object.keys(recipientTempSelected)).map(it => new Decimal(it))
-              tempSelectedArray.sort((a, b) => a.minus(b))
-
-              let outData = await PandoraPay.network.getNetworkAccountsKeysByIndex(MyTextEncode(JSONStringify({
-                indexes: tempSelectedArray,
-                asset: asset,
-                encodeAddresses: false,
-              })));
-
-              const publicKeys = JSONParse(MyTextDecode(outData)).publicKeys
-
-              outData = await PandoraPay.network.getNetworkAccountsByKeys(MyTextEncode(JSONStringify({
-                keys: publicKeys.map(it => ({publicKey: it})),
-                asset,
-                includeMempool: true,
-              })))
-
-              const accountsData = JSONParse(MyTextDecode(outData))
-
-              for (let i = 0; i < publicKeys.length; i++) {
-
-                if (publicKeys[i] === assetCollector) continue
-
-                const index = tempSelectedArray[i]
-                if (payload.payloadScript === PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CONDITIONAL_PAYMENT && accountsData.registration[i].staked) continue
-
-                if (recipientTempSelected[index]) { //receiver
-                  recipientAdd[publicKeys[i]] = {index}
-                } else { //sender
-                  if ((!accountsData.registration[i] || !accountsData.registration[i].spendPublicKey)) //making sure it doesn't have a spendPublicKey
-                    senderAdd[publicKeys[i]] = {index}
-                }
-              }
-
-              if (Object.keys(senderAdd).length !== 0 && Object.keys(recipientAdd).length !== 0)
+                if (recipientRings[payload.recipient.address.publicKey])
+                  recipientRingMembers = recipientRings[payload.recipient.address.publicKey]
+                else
+                  recipientRingMembers.push(payload.recipient.addressEncoded)
                 break
-
-              trial++
-            }
-
-            if (step === 0) {
-
-              if (payload.randomRecipient) {
-                while (1) {
-                  const out = await getRandomPublicKey(recipientAdd)
-                  if (!out.result) throw "Error Generating Random Recipient. Try again"
-                  if (out.addr == null) continue
-
-                  payload.recipient = {
-                    addressEncoded: out.addr.addressEncoded,
-                    address: {publicKey: out.addr.publicKey},
-                    addressValidationError: "",
-                    amount: new Decimal(0),
-                    amountValidationError: "",
-                    asset,
-                    assetValidationError: "",
-                  }
-                  if (recipientRings[payload.recipient.address.publicKey])
-                    recipientRingMembers = recipientRings[payload.recipient.address.publicKey]
-                  else
-                    recipientRingMembers.push(payload.recipient.addressEncoded)
-                  break
-                }
               }
-
-              if (holders.lt(ringSize))
-                newAccounts = ringSize
-
-              for (let i = 0; i < newAccounts && recipientRingMembers.length < ringSize / 2; i++) {
-
-                const json = JSONParse(MyTextDecode(await PandoraPay.addresses.generateNewAddress(MyTextEncode(JSONStringify({
-                  registration: true,
-                  staked: canStake()
-                })))))
-                recipientRingMembers.push(json[1])
-              }
-
             }
 
-            for (let i = 0; senderRingMembers.length < ringSize / 2; i++) {
-              const out = await getRandomPublicKey(senderAdd)
-              if (!out.result) break
-              if (out.addr) senderRingMembers.push(out.addr.addressEncoded)
-            }
+            if (holders.lt(ringSize))
+              newAccounts = ringSize
 
-            for (let i = 0; recipientRingMembers.length < ringSize / 2; i++) {
-              const out = await getRandomPublicKey(recipientAdd)
-              if (!out.result) break
-              if (out.addr) recipientRingMembers.push(out.addr.addressEncoded)
+            for (let i = 0; i < newAccounts && recipientRingMembers.length < ringSize / 2; i++) {
+
+              const json = JSONParse(MyTextDecode(await PandoraPay.addresses.generateNewAddress(MyTextEncode(JSONStringify({
+                registration: true,
+                staked: canStake()
+              })))))
+              recipientRingMembers.push(json[1])
             }
 
           }
 
-          payload.senderRingMembers = senderRingMembers
-          payload.recipientRingMembers = recipientRingMembers
+          for (let i = 0; senderRingMembers.length < ringSize / 2; i++) {
+            const out = await getRandomPublicKey(senderAdd)
+            if (!out.result) break
+            if (out.addr) senderRingMembers.push(out.addr.addressEncoded)
+          }
+
+          for (let i = 0; recipientRingMembers.length < ringSize / 2; i++) {
+            const out = await getRandomPublicKey(recipientAdd)
+            if (!out.result) break
+            if (out.addr) recipientRingMembers.push(out.addr.addressEncoded)
+          }
 
         }
 
-      } catch (err) {
-        this.error = err.toString()
+        payload.senderRingMembers = senderRingMembers
+        payload.recipientRingMembers = recipientRingMembers
+
       }
 
     },

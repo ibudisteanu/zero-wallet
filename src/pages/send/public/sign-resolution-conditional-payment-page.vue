@@ -2,8 +2,8 @@
 
   <layout>
 
-    <layout-title icon="fas fa-money-check-alt" title="Resolution Conditional Payment">
-      Sign Resolution for a Conditional Payment
+    <layout-title icon="fas fa-money-check-alt" title="Sign Resolution">
+      Sign a Resolution for a Conditional Payment (Transaction)
     </layout-title>
 
     <wizard :titles="{
@@ -16,17 +16,17 @@
       <template v-slot:tab_0>
         <div class="pb-2">
           <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Transaction Id:</label>
-          <input :class="`form-control ${$store.getters.validateHash(txId) ? 'is-invalid': ''}`" type="text" v-model="txId">
-          <div v-if="$store.getters.validateHash(txId)" class="invalid-feedback d-block">
-            {{ $store.getters.validateHash(txId) }}
+          <input :class="`form-control ${$validator.validateHash(txId) ? 'is-invalid': ''}`" type="text" v-model="txId" :disabled="$route.query.txId !== undefined && !$store.state.settings.expert" >
+          <div v-if="$validator.validateHash(txId)" class="invalid-feedback d-block">
+            {{ $validator.validateHash(txId) }}
           </div>
         </div>
 
         <div class="pb-2">
           <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Payload Index:</label>
-          <input :class="`form-control ${$store.getters.validateNumber(payloadIndex) ? 'is-invalid': ''}`" type="number" v-model="payloadIndex">
-          <div v-if="$store.getters.validateNumber(payloadIndex)" class="invalid-feedback d-block">
-            {{ $store.getters.validateNumber(payloadIndex) }}
+          <input :class="`form-control ${$validator.validateNumber(payloadIndex) ? 'is-invalid': ''}`" type="number" v-model="payloadIndex" :disabled="$route.query.payloadIndex !== undefined && !$store.state.settings.expert" >
+          <div v-if="$validator.validateNumber(payloadIndex)" class="invalid-feedback d-block">
+            {{ $validator.validateNumber(payloadIndex) }}
           </div>
         </div>
       </template>
@@ -37,12 +37,11 @@
           <div class="d-inline-block">
             <label class="form-label me-2">Resolution</label>
             <div class="form-check form-check-inline">
-              <input class="form-check-input cursor-pointer" id="sender" type="radio" value="sender" v-model="resolution"/>
+              <input class="form-check-input cursor-pointer" id="sender" type="radio" value="sender" v-model="resolution" :disabled="$route.query.resolution !== undefined && !$store.state.settings.expert" />
               <label class="form-check-label cursor-pointer" for="sender">Sender</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input cursor-pointer" id="recipient" type="radio" value="recipient"
-                     v-model="resolution"/>
+              <input class="form-check-input cursor-pointer" id="recipient" type="radio" value="recipient" v-model="resolution" :disabled="$route.query.resolution !== undefined && !$store.state.settings.expert"/>
               <label class="form-check-label cursor-pointer" for="recipient">Receiver</label>
             </div>
           </div>
@@ -50,7 +49,7 @@
 
         <div class="row mt-2 mb-2">
           <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Private Key</label>
-          <textarea class="form-control" rows="3" v-model="privateKey"></textarea>
+          <textarea class="form-control" rows="3" v-model="privateKey" :disabled="$route.query.privateKey !== undefined && !$store.state.settings.expert" ></textarea>
         </div>
 
       </template>
@@ -88,6 +87,7 @@ export default {
   data() {
     return {
       txId: "",
+      oldTx: null,
       payloadIndex: 0,
       resolution: "sender",
       privateKey: "",
@@ -155,20 +155,20 @@ export default {
 
       await this.$store.state.blockchain.syncPromise;
 
-      if (this.tx && this.tx.hash === this.hash) return
-
-      if (this.tx) await this.removed()
+      if (this.oldTx && ( !this.tx || this.oldTx.hash !== this.tx.hash)) await this.removed(this.oldTx)
 
       const tx = await this.$store.dispatch('getTransactionByHash', this.hash);
 
-      if (tx) {
+      if (tx && !this._.isUnmounted) {
+        this.oldTx = tx
         this.$store.commit('updateViewTransactionsHashes', {txsHashes: [tx.hash], insert: true})
         await this.$store.dispatch('subscribeTransaction', {txId: tx.hash})
       }
 
     },
 
-    async removed(tx = this.tx) {
+    async removed(tx = this.oldTx) {
+      if (!tx) return
       this.$store.commit('updateViewTransactionsHashes', {txsHashes: [tx.hash], insert: false})
       await this.$store.dispatch('unsubscribeTransaction', tx.hash)
     },
@@ -182,12 +182,11 @@ export default {
         if (to.query.payloadIndex !== undefined) this.payloadIndex = to.query.payloadIndex
         else this.payloadIndex = "0"
 
-        if (to.query.resolution !== undefined) this.resolution = to.query.resolution === "recipient"
+        if (to.query.resolution !== undefined) this.resolution = to.query.resolution
         else this.resolution = "sender"
 
         if (to.query.privateKey !== undefined) this.privateKey = Buffer.from(to.query.privateKey, "hex").toString("base64")
         else this.privateKey = ""
-
 
         if (this.hash) await this.loadTransaction()
 
@@ -238,7 +237,7 @@ export default {
   },
 
   beforeUnmount() {
-    if (this.tx) return this.removed()
+    return this.removed()
   },
 
 }

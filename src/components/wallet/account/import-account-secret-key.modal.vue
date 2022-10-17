@@ -13,17 +13,17 @@
 
         <template v-slot:tab_0>
 
-          <div class="form-group pt-2">
-            <label>Account Name</label>
+          <div class="form-group pb-2">
+            <label class="form-label">Account Name</label>
             <input type="text" class="form-control" v-model="name"/>
           </div>
 
-          <div class="form-check pt-4">
+          <div class="form-check" v-if="$store.state.settings.expert">
             <input class="form-check-input" id="staked" type="checkbox" v-model="staked"/>
             <label class="form-check-label" for="staked">Staked</label>
           </div>
 
-          <div class="form-check pt-2">
+          <div class="form-check" v-if="$store.state.settings.expert">
             <input class="form-check-input" id="spendRequired" type="checkbox" v-model="spendRequired"/>
             <label class="form-check-label" for="spendRequired">Spend Key Required</label>
           </div>
@@ -106,9 +106,8 @@ export default {
 
         this.closeModal();
 
-      } catch (err) {
-        console.error(err)
-        throw err
+      } catch (e) {
+        throw e
       } finally {
         this.$store.state.page.loadingModal.closeModal();
       }

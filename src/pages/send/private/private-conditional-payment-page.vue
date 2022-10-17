@@ -10,36 +10,35 @@
                :titles-offset="{'-1': {name: 'Conditional Payment', icon: 'fas fa-file',  tooltip: 'Conditional Payment'} }"
                :payloads-count="2" :build-payload-cb="buildPayloadCb" :before-process-cb="beforeProcessCb"
                :init-recipients="initRecipients" :init-amounts="initAmounts" :init-assets="initAssets"
-               :init-extra-data="initExtraData" :init-extra-data-encrypted="initExtraDataEncrypted">
+               :init-extra-data="initExtraData" :init-extra-data-encrypted="initExtraDataEncrypted"
+               :init-common-ring-size="initCommonRingSize">
 
       <template v-slot:tab_-1>
 
-        <div class="col-12">
-          <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Deadline</label>
-          <i class="fas fa-question ms-1" v-tooltip.bottom="`Deadline when the default resolution will be enforced.`"/>
-          <input :class="`form-control ${validationDeadline ? 'is-invalid': ''}`" type="number" v-model.number="deadline" max="100000" min="10"/>
-          <div v-if="validationDeadline" class="invalid-feedback d-block">{{ validationDeadline }}</div>
-        </div>
-
-        <div class="col-12 mt-2">
-          <div class="d-inline-block">
-            <label class="form-label me-2">Default Resolution</label>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input cursor-pointer" id="sender" type="radio" value="sender" v-model="defaultResolution"/>
-              <label class="form-check-label cursor-pointer" for="sender">Sender</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input cursor-pointer" id="recipient" type="radio" value="recipient" v-model="defaultResolution"/>
-              <label class="form-check-label cursor-pointer" for="recipient">Recipient</label>
+        <div class="row">
+          <div class="col-12 col-sm-6" v-tooltip.bottom="`Deadline when the default resolution will be enforced.`">
+            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Deadline</label>
+            <input :class="`form-control ${validationDeadline ? 'is-invalid': ''}`" type="number" v-model.number="deadline" max="100000" min="10" :disabled="$route.query.deadline !== undefined && !$store.state.settings.expert" />
+            <div v-if="validationDeadline" class="invalid-feedback d-block">{{ validationDeadline }}</div>
+          </div>
+          <div class="col-12 col-sm-6 mt-2 mt-sm-0">
+            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Default Resolution</label>
+            <div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input cursor-pointer" id="sender" type="radio" value="sender" v-model="defaultResolution" :disabled="$route.query.defaultResolution !== undefined && !$store.state.settings.expert" />
+                <label class="form-check-label cursor-pointer" for="sender">Sender</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input cursor-pointer" id="recipient" type="radio" value="recipient" v-model="defaultResolution" :disabled="$route.query.defaultResolution !== undefined && !$store.state.settings.expert"/>
+                <label class="form-check-label cursor-pointer" for="recipient">Recipient</label>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="col-12 mt-3">
+        <div class="col-12 mt-3" v-tooltip.bottom="`Minimum number of signatures to process the transaction.`">
           <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Threshold</label>
-          <i class="fas fa-question ms-1"
-             v-tooltip.bottom="`Minimum number of signatures to process the transaction.`"/>
-          <input :class="`form-control ${validationThreshold ? 'is-invalid' : ''}`" type="number" v-model.number="threshold"/>
+          <input :class="`form-control ${validationThreshold ? 'is-invalid' : ''}`" type="number" v-model.number="threshold" :disabled="$route.query.threshold !== undefined && !$store.state.settings.expert" />
           <div v-if="validationThreshold" class="invalid-feedback d-block">{{ validationThreshold }}</div>
         </div>
 
@@ -47,16 +46,15 @@
           <div class="col-12" v-for="(key, i) in multisigPublicKeys" :key="`multisig-public-key-${i}`">
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Public Key {{ i }}</label>
             <div class="input-toggle-group">
-              <input :class="`form-control ${validationPublicKeys[i] ? 'is-invalid' : ''}`" type="text" v-model="multisigPublicKeys[i]">
-              <i v-if="i >= 1" class="fas fa-times input-toggle"
-                 :style="`${validationPublicKeys[i] ? 'right: 35px' : ''}`"
+              <input :class="`form-control ${validationPublicKeys[i] ? 'is-invalid' : ''}`" type="text" v-model="multisigPublicKeys[i]" :disabled="$route.query.multisigPublicKeys !== undefined && !$store.state.settings.expert">
+              <i v-if="i >= 1 && ($route.query.multisigPublicKeys === undefined || $store.state.settings.expert)" class="fas fa-times input-toggle" :style="`${validationPublicKeys[i] ? 'right: 35px' : ''}`"
                  @click="()=>handleDeleteMultisigPublicKey(i)"/>
               <div v-if="validationPublicKeys[i]" class="invalid-feedback d-block">{{ validationPublicKeys[i] }}</div>
             </div>
           </div>
         </div>
 
-        <button class="btn btn-falcon-default rounded-pill me-1 mt-3  cursor-pointer" type="button"
+        <button v-if="$route.query.multisigPublicKeys === undefined || $store.state.settings.expert" class="btn btn-falcon-default rounded-pill me-1 mt-3  cursor-pointer" type="button"
                 :disabled="multisigPublicKeys.length >= 5" @click="handleAddNewMultisigPublicKey">
           <i class="fa fa-plus"/>
           Add new Multisig Public Key
@@ -94,6 +92,7 @@ export default {
       initAssets: [],
       initExtraData: [],
       initExtraDataEncrypted: [],
+      initCommonRingSize: undefined,
     }
   },
 
@@ -116,7 +115,7 @@ export default {
       const v = this.multisigPublicKeys
       for (let i = 0; i < v.length; i++) {
         if (unique[v[i]]) out[i] = "It can not contain duplicate public keys"
-        else out[i] = this.$store.getters.validatePublicKey(v[i])
+        else out[i] = this.$validator.validatePublicKey(v[i])
         unique[v[i]] = true
       }
       return out
@@ -169,16 +168,18 @@ export default {
         if (to.query.deadline !== undefined) this.deadline = new Decimal(to.query.deadline)
         else this.deadline = new Decimal(100)
 
-        if (to.query.defaultResolution !== undefined) this.defaultResolution = to.query.defaultResolution === 'sender'
-        else this.defaultResolution = "sender"
+        if (to.query.defaultResolution !== undefined) {
+          if ( to.query.defaultResolution === 'sender' ) this.defaultResolution = "sender"
+          else if ( to.query.defaultResolution === 'recipient' ) this.defaultResolution = "recipient"
+          else throw "Invalid default resolution"
+        } else this.defaultResolution = "sender"
 
         if (to.query.threshold !== undefined) this.threshold = new Decimal(to.query.threshold)
         else this.threshold = new Decimal(1)
 
         if (to.query.multisigPublicKeys !== undefined)
           this.multisigPublicKeys = to.query.multisigPublicKeys.split(',').map(it => Buffer.from(it, "hex").toString("base64"))
-        else
-          this.multisigPublicKeys = [""]
+        else this.multisigPublicKeys = [""]
 
         if (to.query.recipients !== undefined) this.initRecipients = to.query.recipients.split(',')
         else this.initRecipients = []
@@ -192,8 +193,11 @@ export default {
         if (to.query.extraData !== undefined) this.initExtraData = to.query.extraData.split(',').map(it => Buffer.from(it, "hex").toString("ascii"))
         else this.initExtraData = []
 
-        if (to.query.extraDataEncrypted !== undefined) this.initExtraDataEncrypted = to.query.extraDataEncrypted.split(',').map(it => it === '1' ? 'encrypted' : 'public')
+        if (to.query.extraDataEncrypted !== undefined) this.initExtraDataEncrypted = to.query.extraDataEncrypted.split(',').map(it => it === '1')
         else this.initExtraDataEncrypted = []
+
+        if (to.query.commonRingSize !== undefined) this.initCommonRingSize = Number.parseInt(to.query.commonRingSize)
+        else this.initCommonRingSize = undefined
 
       } catch (e) {
         this.$store.dispatch('addToast', {

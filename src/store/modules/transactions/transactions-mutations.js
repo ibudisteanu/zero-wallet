@@ -38,6 +38,7 @@ export default {
         if (!txsHashes) return
 
         for (const txHash of txsHashes ){
+            if (!txHash)continue
             if (insert) state.viewTxsHashes[txHash] = true
             else delete state.viewTxsHashes[txHash]
         }

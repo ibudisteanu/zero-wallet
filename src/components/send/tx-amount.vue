@@ -3,7 +3,7 @@
       <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{ text }} Amount</label>
       <i v-if="tooltip" class="fas fa-question ms-1" v-tooltip.bottom="tooltip"/>
       <input :class="`form-control ${validationError ? 'is-invalid' :''}`" type="number" v-model.number="amount" min="0"
-             :step="getSteps" :disabled="disabled">
+             :step="getSteps" :disabled="!(initAmount === undefined || $store.state.settings.expert)" >
       <div v-if="validationError" class="invalid-feedback d-block">{{ validationError }}</div>
   </div>
 </template>
@@ -20,12 +20,11 @@ export default {
   props: {
     text: {default: ''},
     tooltip: {default: ''},
-    initAmount: {default: new Decimal(0)},
     asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64},
     balances: {default: () => ({})},
     allowZero: {default: false,},
     validateAmount: {default: false},
-    disabled: {default: false},
+    initAmount: {default: undefined},
   },
 
   computed: {
@@ -51,7 +50,7 @@ export default {
           return 'Available funds: none'
 
         if (this.amountBase > this.balances[this.asset].amount)
-          return `Amount is higher than available funds ${this.$formatMoney(new Decimal(this.balances[this.asset].amount).div(new Decimal(10).pow(this.assetInfo.decimalSeparator)).toString(), this.assetInfo.decimalSeparator)}`
+          return `Amount is higher than available funds ${this.$strings.formatMoney(new Decimal(this.balances[this.asset].amount).div(new Decimal(10).pow(this.assetInfo.decimalSeparator)).toString(), this.assetInfo.decimalSeparator)}`
 
       }
     },
@@ -82,7 +81,8 @@ export default {
     initAmount: {
       immediate: true,
       handler: function (to) {
-        this.amount = this.assetInfo ? to.div(new Decimal(10).pow(this.assetInfo.decimalSeparator)) : to
+        if (to === undefined) this.amount = new Decimal(0)
+        else this.amount = this.assetInfo ? to.div(new Decimal(10).pow(this.assetInfo.decimalSeparator)) : to
       }
     },
 
@@ -100,5 +100,3 @@ export default {
 }
 </script>
 
-<style scoped>
-</style>

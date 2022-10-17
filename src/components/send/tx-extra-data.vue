@@ -1,14 +1,13 @@
 <template>
   <div>
 
-    <div class="d-flex flex-row align-items-center flex-wrap">
-      <div class="form-check col-12 col-sm-5 col-md-3 col-lg-3">
-        <input class="form-check-input" type="checkbox" v-model="encrypted" :disabled="!!paymentID" id="typePublic"/>
+    <div class="d-flex flex-row align-items-center flex-wrap" v-tooltip.bottom="`Whether the message will be public or encrypted on the chain.`">
+      <div class="form-check col-12 col-sm-5 col-md-3 col-lg-3" >
+        <input class="form-check-input" type="checkbox" v-model="encrypted" id="typePublic" :disabled="!!paymentID || !(initDataEncrypted === undefined || $store.state.settings.expert)"/>
         <label class="form-check-label" for="typePublic">Encrypted Message</label>
-        <i class="fas fa-question ms-1" v-tooltip.bottom="`The message will be public on the chain. Anybody can see this message attached to this transaction.`"/>
       </div>
       <div class="col-12 col-sm-7 col-md-9 col-lg-9">
-        <input class="form-control " type="text" v-model="data" :disabled="!!paymentID" >
+        <input class="form-control " type="text" v-model="data" :disabled="!!paymentID || !(initData === undefined || $store.state.settings.expert)" >
       </div>
     </div>
 
@@ -24,9 +23,7 @@
           <option v-for="(recipient, id) in recipients" :key="`selected-address-${id}`"
                   :value="(recipient.address && recipient.address.publicKey) ? recipient.address.publicKey : '' "
                   :class="`${ (recipient.address && recipient.address.publicKey) ? '' : 'text-danger'}`">
-            <template v-if="recipient.address">
               {{ recipient.addressEncoded }}
-            </template>
           </option>
         </select>
 
@@ -50,8 +47,9 @@ export default {
   props: {
     recipients: {default: null},
     paymentID: {default: null},
-    initData: {default: ""},
-    initDataEncrypted: {default: false}
+    canEncrypt: {default: true},
+    initData: {default: undefined},
+    initDataEncrypted: {default: undefined}
   },
 
   data() {
@@ -100,14 +98,16 @@ export default {
     initData: {
       immediate: true,
       handler: function (to, from) {
-        this.data = to
+        if (to === undefined) this.data = ""
+        else this.data = to
       }
     },
 
     initDataEncrypted: {
       immediate: true,
       handler: function (to, from) {
-        this.encrypted = to
+        if (to === undefined) this.encrypted = false
+        else this.encrypted = to
       }
     },
 

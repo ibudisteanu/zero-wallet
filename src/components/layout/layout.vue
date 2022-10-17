@@ -86,7 +86,11 @@ export default {
   },
 
   mounted() {
-    this.storeModals()
+    return this.storeModals()
+  },
+
+  beforeUpdate() {
+    return this.storeModals()
   }
 
 }

@@ -2,7 +2,7 @@
   <div>
     <template v-if="!tx">
       <div>
-        <span class="tx-hash">{{ txHash }}</span>
+        <span class="tx-hash d-inline-block">{{ txHash }}</span>
         <loading-spinner/>
       </div>
     </template>
@@ -10,8 +10,8 @@
 
       <span class="col-4 d-block d-md-none text-dark text-truncate">Hash</span>
       <span class="col-8 col-md-1 text-truncate">
-        <router-link :to="`/explorer/tx/${$base64ToHex(tx.hash)}`">
-          {{ $base64ToHex(tx.hash) }}
+        <router-link :to="`/explorer/tx/${$strings.base64ToHex(tx.hash)}`">
+          {{ $strings.base64ToHex(tx.hash) }}
         </router-link>
        </span>
 
@@ -21,9 +21,9 @@
           <span v-if="txInfo.mempool" class="d-md-flex justify-content-center align-items-center">
             <i class="fas fa-clock" v-tooltip.bottom="`Pending...`"/>
           </span>
-          <span v-else-if="txInfo.timestamp" v-tooltip.bottom="`${ $formatTime( $store.state.blockchain.genesisTimestamp.plus(  txInfo.timestamp ).times(1000) ) }`"
+          <span v-else-if="txInfo.timestamp" v-tooltip.bottom="`${ $strings.formatTime( $store.state.blockchain.genesisTimestamp.plus(  txInfo.timestamp ).times(1000) ) }`"
                 class="d-md-flex justify-content-center align-items-center">
-            {{ $timeSince($store.state.blockchain.genesisTimestamp.plus(txInfo.timestamp).times(1000), false) }}
+            {{ $strings.timeSince($store.state.blockchain.genesisTimestamp.plus(txInfo.timestamp).times(1000), false) }}
           </span>
         </template>
       </div>
@@ -210,9 +210,5 @@ export default {
 </script>
 
 <style scoped>
-
-.tx-hash {
-  display: inline-block;
-}
 
 </style>

@@ -5,7 +5,7 @@
       <div class="card-header bg-light">
         <div class="row align-items-center">
           <div class="col">
-            <h5 class="mb-0 text-truncate">Tx {{ $base64ToHex(tx.hash) }}</h5>
+            <h5 class="mb-0 text-truncate">Tx {{ $strings.base64ToHex(tx.hash) }}</h5>
           </div>
         </div>
       </div>
@@ -14,8 +14,8 @@
         <div class="row pb-2">
           <span class="col-4 col-sm-3 text-truncate">Hash</span>
           <div class="col-8 col-sm-9 text-truncate">
-            <router-link :to="`/explorer/tx/${$base64ToHex(tx.hash)}`">
-              {{ $base64ToHex(tx.hash) }}
+            <router-link :to="`/explorer/tx/${$strings.base64ToHex(tx.hash)}`">
+              {{ $strings.base64ToHex(tx.hash) }}
             </router-link>
           </div>
         </div>
@@ -42,8 +42,8 @@
           <div class="row pt-2 pb-2 bg-light">
             <span class="col-4 col-sm-3 text-truncate">Block Timestamp</span>
             <div class="col-8 col-sm-9 text-truncate">
-              <span v-if="txInfo && txInfo.timestamp" v-tooltip.bottom="`${ $formatTime( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp ).times(1000) ) }`">
-                {{ $timeSince($store.state.blockchain.genesisTimestamp.plus(txInfo.timestamp).times(1000), false)  }}
+              <span v-if="txInfo && txInfo.timestamp" v-tooltip.bottom="`${ $strings.formatTime( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp ).times(1000).toNumber() ) }`">
+                {{ $strings.timeSince($store.state.blockchain.genesisTimestamp.plus(txInfo.timestamp).times(1000), false)  }}
                 <i class="fas fa-clock"></i>
               </span>
               <span v-else>-</span>
@@ -53,8 +53,8 @@
             <span class="col-4 col-sm-3 text-truncate">Confirmations</span>
             <div class="col-8 col-sm-9 text-truncate">
               <span v-if="txInfo && txInfo.blkHeight">
-                {{ $store.state.blockchain.end.minus(txInfo.blkHeight).minus(1) }}
-                <i v-if="$store.state.blockchain.end.minus( txInfo.blkHeight ).minus(1).gt(8)" class="fas fa-check"></i>
+                {{ $store.state.blockchain.end.minus(txInfo.blkHeight) }}
+                <i v-if="$store.state.blockchain.end.minus( txInfo.blkHeight ).gt(8)" class="fas fa-check"></i>
               </span>
               <span v-else>-</span>
             </div>
@@ -69,14 +69,14 @@
         <div class="row pt-2 pb-2">
           <span class="col-4 col-sm-3 text-truncate">Size</span>
           <div class="col-8 col-sm-9 text-truncate">
-            <span v-tooltip.bottom="`${ $formatBytes(tx.size.toNumber()) }`"> {{ $formatSize(tx.size.toNumber()) }} </span>
+            <span v-tooltip.bottom="`${ $strings.formatBytes(tx.size.toNumber()) }`"> {{ $strings.formatSize(tx.size.toNumber()) }} </span>
           </div>
         </div>
 
         <div class="row pt-2 pb-2 bg-light" v-if="$store.state.settings.expert">
           <span class="col-4 col-sm-3 text-truncate">Space Extra Size</span>
           <div class="col-8 col-sm-9 text-truncate">
-            <span v-tooltip.bottom="`${ $formatBytes(tx.spaceExtra.toNumber()) }`"> {{ $formatSize(tx.spaceExtra.toNumber()) }} </span>
+            <span v-tooltip.bottom="`${ $strings.formatBytes(tx.spaceExtra.toNumber()) }`"> {{ $strings.formatSize(tx.spaceExtra.toNumber()) }} </span>
           </div>
         </div>
 
@@ -155,8 +155,8 @@
             <div class="row pt-2 pb-2  bg-light">
               <span class="col-4 col-sm-3 text-truncate">Tx Id</span>
               <span class="col-12 col-sm-9 text-truncate">
-                <router-link :to="`/explorer/tx/${$base64ToHex(tx.extra.txId)}`">
-                  {{ $base64ToHex(tx.extra.txId) }}
+                <router-link :to="`/explorer/tx/${$strings.base64ToHex(tx.extra.txId)}`">
+                  {{ $strings.base64ToHex(tx.extra.txId) }}
                 </router-link>
               </span>
             </div>
@@ -218,8 +218,8 @@
             <div class="row pt-2 pb-2">
               <span class="col-4 col-sm-3 text-truncate">Asset</span>
               <span class="col-8 col-sm-9 text-truncate">
-                <router-link :to="`/explorer/asset/${$base64ToHex(payload.asset)}`">
-                    {{ $base64ToHex(payload.asset) }}
+                <router-link :to="`/explorer/asset/${$strings.base64ToHex(payload.asset)}`">
+                    {{ $strings.base64ToHex(payload.asset) }}
                 </router-link>
               </span>
             </div>
@@ -332,7 +332,7 @@
                   <template v-if="!txInfo || !txInfo.blkHeight">Not included</template>
                   <template v-else-if="$store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight )">Deadline expired</template>
                   <template v-else>
-                    ~ {{$formatMilliseconds(payload.extra.deadline.plus(txInfo.blkHeight).minus($store.state.blockchain.end) * PandoraPay.config.BLOCK_TIME * 1000) }}
+                    ~ {{$strings.formatMilliseconds(payload.extra.deadline.plus(txInfo.blkHeight).minus($store.state.blockchain.end) * PandoraPay.config.BLOCK_TIME * 1000) }}
                     <i class="fas fa-clock"></i>
                   </template>
                 </span>
@@ -351,13 +351,13 @@
               </div>
 
               <div class="my-2">
-                <router-link :to="`/advanced/sign-resolution-conditional-payment?txId=${$base64ToHex(tx.hash)}&payloadIndex=${index}`"
+                <router-link :to="{path: '/advanced/sign-resolution-conditional-payment', query:{ txId: $strings.base64ToHex(tx.hash), payloadIndex: index }}"
                     :class="`btn btn-falcon-default rounded-pill me-1 cursor-pointer ${!txInfo || !txInfo.blkHeight || $store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight ) ? 'disabled': ''} `">
                   <i class="fa fa-signature"/>
                   Sign Resolution
                 </router-link>
 
-                <router-link :to="`/advanced/public/resolution-conditional-payment?txId=${$base64ToHex(tx.hash)}&payloadIndex=${index}`"
+                <router-link :to="{path: '/advanced/public/resolution-conditional-payment', query: { txId: $strings.base64ToHex(tx.hash), payloadIndex:index}}"
                     :class="`btn btn-falcon-default rounded-pill me-1 cursor-pointer ${!txInfo || !txInfo.blkHeight || $store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight ) ? 'disabled': ''} `">
                   <i class="fa fa-gavel"/>
                   Create Resolution Tx

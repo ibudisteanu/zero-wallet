@@ -10,7 +10,7 @@
           <div class="row align-items-center">
             <div class="col">
               <h5 class="mb-0 text-truncate">
-                Block Explorer {{ height ? height : $base64ToHex(hash) }}
+                Block Explorer {{ height ? height : $strings.base64ToHex(hash) }}
               </h5>
             </div>
           </div>
@@ -43,13 +43,13 @@ import AlertBox from "src/components/utils/alert-box"
 import LoadingButton from "src/components/utils/loading-button";
 import ShowTransaction from "src/components/explorer/tx/show-transaction"
 import Decimal from "decimal.js"
-
 export default {
 
   components: {LoadingButton, Layout, LoadingSpinner, AccountIdenticon, Amount, AlertBox, LayoutTitle, ShowTransaction},
 
   data() {
     return {
+      oldTx: null,
       error: '',
       loaded: false,
     }
@@ -87,18 +87,18 @@ export default {
         this.loaded = false;
         this.error = ""
 
-        if (!this.height && !this.hash)
-          throw 'Tx height/hash was not specified';
+        if (!this.height && !this.hash) throw 'Tx height/hash was not specified';
 
         await this.$store.state.blockchain.syncPromise;
 
-        if (this.tx) await this.removed()
+        if (this.oldTx && ( !this.tx || this.oldTx.hash !== this.tx.hash)) await this.removed()
 
         let tx
         if (this.height) tx = await this.$store.dispatch('getTransactionByHeight', this.height);
         if (this.hash) tx = await this.$store.dispatch('getTransactionByHash', this.hash);
 
-        if (tx) {
+        if (tx && !this._.isUnmounted) {
+          this.oldTx = tx
           this.$store.commit('updateViewTransactionsHashes', {txsHashes: [tx.hash], insert: true})
           await this.$store.dispatch('subscribeTransaction', {txId: tx.hash})
         }
@@ -111,7 +111,8 @@ export default {
 
     },
 
-    async removed(tx = this.tx) {
+    async removed(tx = this.oldTx) {
+      if (!tx) return
       this.$store.commit('updateViewTransactionsHashes', {txsHashes: [tx.hash], insert: false})
       await this.$store.dispatch('unsubscribeTransaction', tx.hash)
     },
@@ -144,7 +145,7 @@ export default {
   },
 
   beforeUnmount() {
-    if (this.tx) return this.removed()
+    return this.removed()
   },
 
 }

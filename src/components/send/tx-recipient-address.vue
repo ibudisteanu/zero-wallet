@@ -1,5 +1,5 @@
 <template>
-  <div class="col">
+  <div>
     <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{ text }} Address</label>
 
     <div :class="`${finalAddress ? 'recipient-row': ''} `">
@@ -7,9 +7,11 @@
       <account-identicon v-if="finalAddress" :public-key="finalAddress.publicKey" size="30" outer-size="8"/>
 
       <div class="input-toggle-group">
-        <input :class="`form-control ${validationError ? 'is-invalid' : ''}`" type="text" v-model="recipient">
-        <i class="fas fa-qrcode input-toggle" @click="showQrCodeScanner"
-           :style="`${ validationError ?'right: 35px' : ''}`"></i>
+        <input :class="`form-control ${validationError ? 'is-invalid' : ''}`" type="text" v-model="recipient"
+               :disabled="!(initRecipient === undefined || $store.state.settings.expert)" >
+
+        <i v-if="(initRecipient === undefined || $store.state.settings.expert)" class="fas fa-qrcode input-toggle"
+           @click="showQrCodeScanner" :style="`${ validationError ?'right: 35px' : ''}`"></i>
       </div>
 
     </div>
@@ -27,7 +29,7 @@ export default {
 
   props: {
     text: {default: ""},
-    initRecipient: {default: ""},
+    initRecipient: {default: undefined},
   },
 
   data() {
@@ -50,7 +52,8 @@ export default {
     initRecipient: {
       immediate: true,
       handler: async function (to) {
-        this.recipient = to
+        if (to === undefined) this.recipient = ""
+        else this.recipient = to
       }
     },
 
