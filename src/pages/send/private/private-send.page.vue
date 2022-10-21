@@ -49,19 +49,19 @@ export default {
 
       try {
 
-        if (to.query.recipients !== undefined) this.initRecipients = to.query.recipients.split(',')
+        if (to.query.recipients !== undefined) this.initRecipients = to.query.recipients
         else this.initRecipients = []
 
-        if (to.query.amounts !== undefined) this.initAmounts = to.query.amounts.split(',').map(it => new Decimal(it))
+        if (to.query.amounts !== undefined) this.initAmounts = to.query.amounts.map(it => new Decimal(it))
         else this.initAmounts = []
 
-        if (to.query.assets !== undefined) this.initAssets = to.query.assets.split(',').map(it => Buffer.from(it, "hex").toString("base64"))
+        if (to.query.assets !== undefined) this.initAssets = to.query.assets.map(it => Buffer.from(it, "hex").toString("base64"))
         else this.initAssets = []
 
-        if (to.query.extraData !== undefined) this.initExtraData = to.query.extraData.split(',').map(it => Buffer.from(it, "hex").toString("ascii"))
+        if (to.query.extraData !== undefined) this.initExtraData = to.query.extraData.map(it => Buffer.from(it, "hex").toString("ascii"))
         else this.initExtraData = []
 
-        if (to.query.extraDataEncrypted !== undefined) this.initExtraDataEncrypted = to.query.extraDataEncrypted.split(',').map(it => it === '1' )
+        if (to.query.extraDataEncrypted !== undefined) this.initExtraDataEncrypted = to.query.extraDataEncrypted.map(it => it==='true')
         else this.initExtraDataEncrypted = []
 
         if (to.query.commonRingSize !== undefined) this.initCommonRingSize = Number.parseInt(to.query.commonRingSize)

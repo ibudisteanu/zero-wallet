@@ -12,6 +12,9 @@ export default {
         testnetFaucetModal:null,
         walletPasswordModal:null,
         decryptBalanceModal:null,
+        createNewAddressModal: null,
+        importAccountSecretKeyModal: null,
+        importAccountModal: null,
 
         modalIndex: 0,
 

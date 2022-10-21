@@ -58,7 +58,7 @@ export default {
   computed: {
 
     page() {
-      return UtilsHelper.getPage(this.$route.params.page)
+      return this.$utils.getPage(this.$route.params.page)
     },
 
     address() {

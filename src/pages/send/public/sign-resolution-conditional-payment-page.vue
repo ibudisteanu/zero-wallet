@@ -182,7 +182,10 @@ export default {
         if (to.query.payloadIndex !== undefined) this.payloadIndex = to.query.payloadIndex
         else this.payloadIndex = "0"
 
-        if (to.query.resolution !== undefined) this.resolution = to.query.resolution
+        if (to.query.resolution !== undefined) {
+          if (to.query.resolution === "sender" || to.query.resolution === "recipient") this.resolution = to.query.resolution
+          else throw "invalid query resolution"
+        }
         else this.resolution = "sender"
 
         if (to.query.privateKey !== undefined) this.privateKey = Buffer.from(to.query.privateKey, "hex").toString("base64")

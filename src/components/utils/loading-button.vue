@@ -1,10 +1,10 @@
 <template>
-  <component :class="`${classCustom}`" type="button" @click="handleClick" :is="component" v-tooltip.bottom="tooltip">
+  <component :class="`${ loaded ? 'cursor-pointer' : ''} ${classCustom}`" type="button" @click="handleClick" :is="component" v-tooltip.bottom="tooltip">
 
     <loading-spinner v-if="!loaded"/>
     <template v-else>
       <i v-if="icon && iconLeft" :class="`${icon}`"/>
-      <span v-if="text" :class="`${classText} ${iconLeft ? 'ps-1' : '' }`">{{ text }}</span>
+      <span v-if="text" :class="`d-inline-block ${classText} ${iconLeft ? 'ps-1' : '' }`">{{ text }}</span>
       <i v-if="icon && !iconLeft" :class="`${icon}`"/>
     </template>
 
@@ -31,13 +31,14 @@ export default {
     tooltip: {default: ""},
     submit: {default: null },
     classText: {default: ""},
+    canLoad: {default: true},
   },
   methods: {
     async handleClick(e) {
 
       if (this.disabled ) return false;
 
-      this.loaded = false;
+      if (this.canLoad) this.loaded = false;
       this.disabled = true;
 
       try{
@@ -54,8 +55,3 @@ export default {
 }
 </script>
 
-<style scoped>
-span {
-  display: inline-block;
-}
-</style>

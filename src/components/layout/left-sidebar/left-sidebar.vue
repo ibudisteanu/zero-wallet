@@ -28,7 +28,7 @@
               </router-link>
             </div>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" v-if="$store.state.settings.expert">
             <div class="d-flex align-items-center">
               <span :class="`nav-link cursor-pointer ${route.indexOf('/explorer') === 0 ? 'active' : ''}`" @click.native="e => toggleNavElement( e,'explorer')">
                 <i class="fas fa-cubes"></i>
@@ -67,20 +67,20 @@
             <div class="d-flex align-items-center">
               <span :class="`nav-link cursor-pointer ${route.indexOf('/advanced') === 0 ? 'active' : ''}`" @click.native="e => toggleNavElement(e,'advanced')">
                 <i class="fas fa-money-check"></i>
-                <span class="nav-link-text px-1">Advanced</span>
+                <span class="nav-link-text px-1">Advanced Transfers</span>
                 <i :class="`nav-chevron fas fa-chevron-${navElementsShown['advanced'] ? 'up' : 'down' }`"></i>
               </span>
             </div>
             <ul :class="`nav collapse ${navElementsShown['advanced'] ? 'show':''}`">
-              <li class="nav-item">
+              <li class="nav-item" >
                 <router-link :disabled="!isWalletLogged" :class="`nav-link ${ route.indexOf( '/advanced/private/conditional-payment' ) === 0 ? 'active' : ''} nav-link`" to="/advanced/private/conditional-payment" @click.native="disableNavbarMenu">
                   <div class="d-flex align-items-center">
                     <i class="fas fa-balance-scale"></i>
-                    <span class="nav-link-text ps-1">Private Conditional Payment</span>
+                    <span class="nav-link-text ps-1">Conditional Payment</span>
                   </div>
                 </router-link>
               </li>
-              <li class="nav-item">
+              <li class="nav-item" v-if="$store.state.settings.expert">
                 <router-link :class="`nav-link ${ route.indexOf( '/advanced/sign-resolution-conditional-payment' ) === 0 ? 'active' : ''} nav-link`" to="/advanced/sign-resolution-conditional-payment" @click.native="disableNavbarMenu">
                   <div class="d-flex align-items-center">
                     <i class="fas fa-signature"></i>
@@ -88,11 +88,11 @@
                   </div>
                 </router-link>
               </li>
-              <li class="nav-item">
+              <li class="nav-item" v-if="$store.state.settings.expert">
                 <router-link :disabled="!isWalletLogged" :class="`nav-link ${ route.indexOf('/advanced/public/resolution-conditional-payment') === 0 ? 'active' : ''} nav-link`" to="/advanced/public/resolution-conditional-payment" @click.native="disableNavbarMenu">
                   <div class="d-flex align-items-center">
                     <i class="fas fa-gavel"/>
-                    <span class="nav-link-text ps-1">Resolution Conditional Tx</span>
+                    <span class="nav-link-text ps-1">Conditional Resolution</span>
                   </div>
                 </router-link>
               </li>
@@ -100,7 +100,7 @@
                 <router-link :disabled="!isWalletLogged" :class="`nav-link ${ route.indexOf('/advanced/import-link') === 0 ? 'active' : ''} nav-link`" to="/advanced/import-link" @click.native="disableNavbarMenu">
                   <div class="d-flex align-items-center">
                     <i class="fa fa-terminal"/>
-                    <span class="nav-link-text ps-1">Import Link</span>
+                    <span class="nav-link-text ps-1">Import Transfer Link</span>
                   </div>
                 </router-link>
               </li>
@@ -111,6 +111,14 @@
               <div class="d-flex align-items-center">
                 <i class="fas fa-wrench"></i>
                 <span class="nav-link-text ps-1">Settings</span>
+              </div>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/wallet" :class="`${route === '/wallet' ? 'active' : ''} nav-link`" @click.native="disableNavbarMenu">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-wallet"></i>
+                <span class="nav-link-text ps-1">Wallet</span>
               </div>
             </router-link>
           </li>

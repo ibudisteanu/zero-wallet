@@ -28,24 +28,41 @@
             Nonce: {{ account.plainAccount.nonce }}
           </small>
         </div>
-        <div class="p-3" v-if="account && account.registration">
+        <div class="p-3" v-if="account && account.registration && $store.state.settings.expert">
           <div>
             <small class="fs--1 text-700"> Staked: {{ account.registration.staked ? 'Yes' : 'No' }} </small>
           </div>
-          <div>
+          <div >
             <small class="fs--1 text-700"> Spend Public Key: {{ account.registration.spendPublicKey }} </small>
           </div>
         </div>
         <div class="card-footer bg-light g-0 d-block p-3">
-          <loading-button :submit="showAccountQRCode" icon="fas fa-qrcode" tooltip="Show Address QR Code" text="" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer"/>
-          <loading-button v-if="$store.state.settings.expert" :submit="showGenerateCustomAddress" icon="fas fa-tools" tooltip="Generate custom address" text="" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer"/>
-          <loading-button v-if="$store.state.settings.expert" :submit="showAddressJSON" icon="fas fa-file" tooltip="Show JSON address" text="" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer"/>
-          <loading-button :disabled="!walletAddress || !account || !account.registration || !account.registration.staked" :submit="showShareStaked" text="" icon="fas fa-piggy-bank" tooltip="Share staked address with a delegator node" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer"/>
-          <loading-button :disabled="!walletAddress" :submit="handleExportAddress" tooltip="Export Account" icon="fas fa-download" class-custom="btn btn-falcon-default rounded-pill me-2 mb-1 cursor-pointer" text=""/>
-          <loading-button :disabled="!walletAddress" :submit="handleDeleteAddress" tooltip="Delete Account" icon="text-danger fas fa-times" class-custom="btn btn-falcon-default rounded-pill me-2 mb-1 cursor-pointer" text=""/>
-          <loading-button :disabled="!walletAddress" :submit="handleShowSecretKey" tooltip="View Secret Key" icon="fas fa-eye" class-custom="btn btn-falcon-default rounded-pill me-2 mb-1 cursor-pointer" text=""/>
-          <loading-button :disabled="!walletAddress" :submit="handleRenameAddressName" tooltip="Rename Address Tag" icon="fas fa-edit" class-custom="btn btn-falcon-default rounded-pill me-2 mb-1 cursor-pointer" text=""/>
-          <loading-button v-if="$store.state.settings.expert" :disabled="!walletAddress" :submit="handleSignMessage" tooltip="Sign message" icon="fas fa-signature" class-custom="btn btn-falcon-default rounded-pill me-2 mb-1 cursor-pointer" text=""/>
+          <div class="two-buttons">
+            <loading-button :disabled="!walletAddress" :submit="handleRenameAddressName" text="Rename Address" icon="fas fa-edit" class-custom="cursor-pointer dropdown-item" component="span" :can-load="false"/>
+            <loading-button :submit="showAccountQRCode" icon="fas fa-qrcode" text="Show QR Code" class-custom="cursor-pointer dropdown-item" :can-load="false" />
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="two-buttons">
+            <loading-button :disabled="!walletAddress" :submit="handleExportAddress" text="Export Account" icon="fas fa-upload" class-custom="cursor-pointer dropdown-item" :can-load="false"/>
+            <loading-button :disabled="!walletAddress" :submit="handleShowSecretKey" text="View Secret Key" icon="fas fa-eye" class-custom="cursor-pointer dropdown-item"  :can-load="false" />
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="two-buttons">
+            <loading-button :disabled="!walletAddress || !account || !account.registration || !account.registration.staked" :submit="showShareStaked" icon="fas fa-piggy-bank" text="Share staked address" tooltip="Share staked address with a delegator node" class-custom="cursor-pointer dropdown-item" :can-load="false"/>
+            <loading-button :disabled="!walletAddress" :submit="handleDeleteAddress" text="Delete Account" icon="fas fa-times" class-custom="text-danger cursor-pointer dropdown-item" :can-load="false"/>
+          </div>
+          <div class="dropdown-divider"></div>
+          <div class="row" v-if="$store.state.settings.expert">
+            <div class="col-12 col-md-4">
+              <loading-button :submit="showGenerateCustomAddress" icon="fas fa-tools" text="Generate custom address" class-custom="cursor-pointer dropdown-item" :can-load="false"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <loading-button class="col-12 col-md-4" :submit="showAddressJSON" icon="fas fa-file" text="Show JSON address" class-custom="cursor-pointer dropdown-item" :can-load="false"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <loading-button class="col-12 col-md-4" :disabled="!walletAddress" :submit="handleSignMessage" text="Sign message" icon="fas fa-signature" class-custom="cursor-pointer dropdown-item" :can-load="false"/>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -74,9 +91,8 @@ import FileSaver from 'file-saver'
 export default {
 
   components: {
-    AccountGenerateCustomAddressModal, AccountIdenticon, LoadingButton,
-    SharedStakedDelegatorNodeModal, AccountRenameModal, AccountDeleteModal,
-    AccountSignMessageModal
+    AccountGenerateCustomAddressModal, AccountIdenticon, LoadingButton, SharedStakedDelegatorNodeModal,
+    AccountRenameModal, AccountDeleteModal, AccountSignMessageModal
   },
 
   props: {
@@ -189,5 +205,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

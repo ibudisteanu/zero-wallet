@@ -17,7 +17,7 @@
 
         <div class="row">
           <div class="col-12 col-sm-6" v-tooltip.bottom="`Deadline when the default resolution will be enforced.`">
-            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Deadline</label>
+            <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Deadline (No. of Blocks)</label>
             <input :class="`form-control ${validationDeadline ? 'is-invalid': ''}`" type="number" v-model.number="deadline" max="100000" min="10" :disabled="$route.query.deadline !== undefined && !$store.state.settings.expert" />
             <div v-if="validationDeadline" class="invalid-feedback d-block">{{ validationDeadline }}</div>
           </div>
@@ -165,12 +165,12 @@ export default {
     async updateRouteParams(to = this.$route) {
 
       try {
+
         if (to.query.deadline !== undefined) this.deadline = new Decimal(to.query.deadline)
         else this.deadline = new Decimal(100)
 
         if (to.query.defaultResolution !== undefined) {
-          if ( to.query.defaultResolution === 'sender' ) this.defaultResolution = "sender"
-          else if ( to.query.defaultResolution === 'recipient' ) this.defaultResolution = "recipient"
+          if ( to.query.defaultResolution === 'sender' || to.query.defaultResolution === 'recipient' ) this.defaultResolution = to.query.defaultResolution
           else throw "Invalid default resolution"
         } else this.defaultResolution = "sender"
 
@@ -178,28 +178,29 @@ export default {
         else this.threshold = new Decimal(1)
 
         if (to.query.multisigPublicKeys !== undefined)
-          this.multisigPublicKeys = to.query.multisigPublicKeys.split(',').map(it => Buffer.from(it, "hex").toString("base64"))
+          this.multisigPublicKeys = to.query.multisigPublicKeys.map(it => Buffer.from(it, "hex").toString("base64"))
         else this.multisigPublicKeys = [""]
 
-        if (to.query.recipients !== undefined) this.initRecipients = to.query.recipients.split(',')
+        if (to.query.recipients !== undefined) this.initRecipients = to.query.recipients
         else this.initRecipients = []
 
-        if (to.query.amounts !== undefined) this.initAmounts = to.query.amounts.split(',').map(it => new Decimal(it))
+        if (to.query.amounts !== undefined) this.initAmounts = to.query.amounts.map(it => new Decimal(it))
         else this.initAmounts = []
 
-        if (to.query.assets !== undefined) this.initAssets = to.query.assets.split(',').map(it => Buffer.from(it, "hex").toString("base64"))
+        if (to.query.assets !== undefined) this.initAssets = to.query.assets.map(it => Buffer.from(it, "hex").toString("base64"))
         else this.initAssets = []
 
-        if (to.query.extraData !== undefined) this.initExtraData = to.query.extraData.split(',').map(it => Buffer.from(it, "hex").toString("ascii"))
+        if (to.query.extraData !== undefined) this.initExtraData = to.query.extraData.map(it => Buffer.from(it, "hex").toString("ascii"))
         else this.initExtraData = []
 
-        if (to.query.extraDataEncrypted !== undefined) this.initExtraDataEncrypted = to.query.extraDataEncrypted.split(',').map(it => it === '1')
+        if (to.query.extraDataEncrypted !== undefined) this.initExtraDataEncrypted = to.query.extraDataEncrypted.map(it => it==='true')
         else this.initExtraDataEncrypted = []
 
         if (to.query.commonRingSize !== undefined) this.initCommonRingSize = Number.parseInt(to.query.commonRingSize)
         else this.initCommonRingSize = undefined
 
       } catch (e) {
+        console.error(e)
         this.$store.dispatch('addToast', {
           type: 'error',
           title: `There was an error processing URL query`,
