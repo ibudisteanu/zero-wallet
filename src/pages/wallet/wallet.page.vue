@@ -19,7 +19,7 @@
     </div>
 
     <div v-for="(walletAddr, index) in walletAddresses">
-      <account-simple-version :address="walletAddr"/>
+      <wallet-account :address="walletAddr"/>
     </div>
 
     <alert-box v-if="error" type="error">{{ error }}</alert-box>
@@ -34,7 +34,7 @@ import LayoutTitle from "src/components/layout/layout-title";
 import WalletSettings from "../../components/wallet/wallet-settings";
 import AccountIdenticon from "../../components/wallet/account/account-identicon";
 import LoadingSpinner from "../../components/utils/loading-spinner";
-import AccountSimpleVersion from "../../components/wallet/account/account-simple-version";
+import WalletAccount from "../../components/wallet/account/wallet-account";
 import AlertBox from "src/components/utils/alert-box"
 import TransactionsPreview from "../../components/wallet/transactions/transactions-preview";
 import PendingTransactionsPreview from "../../components/wallet/transactions/pending-transactions-preview";
@@ -46,8 +46,7 @@ import WalletAccountsOptions from "../../components/wallet/wallet-accounts-optio
 export default {
 
   components: {
-    AccountSimpleVersion,
-    WaitAccount, WaitAddress, PendingTransactionsPreview, TransactionsPreview,
+    WalletAccount, WaitAccount, WaitAddress, PendingTransactionsPreview, TransactionsPreview,
     Layout, AccountIdenticon, LoadingSpinner, AlertBox, LayoutTitle, WalletSettings, WalletAccountsOptions
   },
 

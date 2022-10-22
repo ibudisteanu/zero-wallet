@@ -38,6 +38,10 @@ export default (options) => {
     store.commit('setScreenInformation')
     store.commit('readLocalStorage')
 
+    window.addEventListener('resize', function(event) {
+        store.commit('setScreenInformation')
+    })
+
     app.use(store);
     app.use(router);
     app.use(VueClipboard);

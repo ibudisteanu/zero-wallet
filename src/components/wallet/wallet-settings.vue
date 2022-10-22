@@ -14,7 +14,7 @@
       <div class="card-footer g-0 d-block p-3">
 
         <div class="two-buttons">
-          <loading-button :submit="handleImportMnemonic" text="Import new wallet From Secret Phrase" icon="fas fa-file-import" tooltip="Clear wallet & import a new wallet from Secret Words (Mnemonic)" class-custom="cursor-pointer dropdown-item" class-text="" component="span" :can-load="false"/>
+          <loading-button :submit="handleImportMnemonic" text="Import new wallet From Secret Phrase" icon="fas fa-file-import" tooltip="Clear wallet & import a new wallet from Secret Words (Mnemonic)" class-custom="cursor-pointer dropdown-item" component="span" :can-load="false"/>
           <loading-button :submit="handleViewMnemonic" text="View current wallet Secret Phrase" icon="fas fa-key" tooltip="Show your Secret Words (Mnemonic)" class-custom="cursor-pointer dropdown-item" component="span" :can-load="false"/>
         </div>
         <div class="dropdown-divider"></div>

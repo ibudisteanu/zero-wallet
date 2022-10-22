@@ -1,9 +1,10 @@
 export default {
 
     setScreenInformation(state ){
-        if (typeof screen !== "undefined" ){
-            state.mobile = screen.width < 760
-            state.tablet = screen.width < 1024
+        if (typeof window !== "undefined" ){
+            console.log(window.innerWidth)
+            state.mobile = window.innerWidth < 760
+            state.tablet = window.innerWidth < 1024
         }
     },
 
