@@ -158,3 +158,19 @@ a, a:hover,a:visited, a:focus {
         padding: 0 .3rem;
     }
 }
+
+.two-buttons{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+@media only screen and (max-width: 766px) {
+    .two-buttons{
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .two-buttons .dropdown-item{
+        padding-bottom: 10px
+    }
+}

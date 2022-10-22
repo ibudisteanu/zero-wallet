@@ -11,6 +11,7 @@ import Decimal from "decimal.js"
 import JSONParse from "../utils/custom-json/json-parse";
 import StringHelper from "../utils/string-helper";
 import ValidatorHelper from "../utils/validator-helper";
+import UtilsHelper from "../utils/utils-helper";
 
 export default (options) => {
 
@@ -24,6 +25,7 @@ export default (options) => {
 
     app.config.globalProperties.$validator = ValidatorHelper
     app.config.globalProperties.$strings = StringHelper
+    app.config.globalProperties.$utils = UtilsHelper
 
     app.config.globalProperties.PandoraPay = PandoraPay
     app.config.globalProperties.Decimal = Decimal

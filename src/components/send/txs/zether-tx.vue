@@ -137,7 +137,7 @@
         <alert-box v-if="status" class="w-100" type="info">
           <template v-if="statusType === 'signing'">
             <h4 class="alert-heading fw-semi-bold">Signing Tx...</h4>
-            <p >Transaction is being created. It will take 1-2 minutes for each payload.</p>
+            <p >Transaction is being created. It will take 1-2 minutes for each payload. Please wait.</p>
           </template>
           <template v-else-if="statusType === 'broadcasting'">
             <h4 class="alert-heading fw-semi-bold">Broadcasting Tx...</h4>
@@ -297,7 +297,7 @@ export default {
 
       propagate = 2
 
-      x[sign] = {icon: 'fas fa-file-signature', text: 'Sign Transaction'}
+      x[sign] = {icon: 'fas fa-file-signature', text: 'Create Transaction'}
       x[propagate] = {icon: 'fas fa-globe-americas', text: 'Propagate Transaction'}
 
       return {

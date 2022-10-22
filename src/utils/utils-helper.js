@@ -7,13 +7,10 @@ class UtilsHelper{
     }
 
     getPage(pageParam){
-        if (pageParam)
-            try{
-                return new Decimal(pageParam)
-            }catch(err){
-                this.error = "Invalid page number"
-                return null
-            }
+        try{
+            return new Decimal(pageParam)
+        }catch(err){
+        }
         return null
     }
 

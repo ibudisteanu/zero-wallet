@@ -22,7 +22,7 @@
 
         <template v-if="!confirmation">
           <div class="row pb-2 bg-light">
-            <span class="col-4 col-sm-3 text-truncate">Height</span>
+            <span class="col-4 col-sm-3 text-truncate">Tx Height</span>
             <div class="col-8 col-sm-9 text-truncate">
               <span v-if="txInfo && txInfo.height">
                 <router-link :to="`/explorer/tx/${txInfo.height}`">{{ txInfo.height }}</router-link>
@@ -43,8 +43,7 @@
             <span class="col-4 col-sm-3 text-truncate">Block Timestamp</span>
             <div class="col-8 col-sm-9 text-truncate">
               <span v-if="txInfo && txInfo.timestamp" v-tooltip.bottom="`${ $strings.formatTime( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp ).times(1000).toNumber() ) }`">
-                {{ $strings.timeSince($store.state.blockchain.genesisTimestamp.plus(txInfo.timestamp).times(1000), false)  }}
-                <i class="fas fa-clock"></i>
+                ~ {{ $strings.timeSince($store.state.blockchain.genesisTimestamp.plus(txInfo.timestamp).times(1000), false)  }} ago
               </span>
               <span v-else>-</span>
             </div>
@@ -60,7 +59,7 @@
             </div>
           </div>
           <div class="row pt-2 pb-2 bg-light">
-            <span class="col-4 col-sm-3 text-truncate">Mem Pool</span>
+            <span class="col-4 col-sm-3 text-truncate">Pending Tx</span>
             <span class="col-8 col-sm-9 text-truncate">{{ txInfo.mempool ? 'YES' : ' No' }}</span>
           </div>
 
@@ -215,7 +214,7 @@
               </div>
             </template>
 
-            <div class="row pt-2 pb-2">
+            <div class="row pt-2 pb-2 ">
               <span class="col-4 col-sm-3 text-truncate">Asset</span>
               <span class="col-8 col-sm-9 text-truncate">
                 <router-link :to="`/explorer/asset/${$strings.base64ToHex(payload.asset)}`">
@@ -235,35 +234,30 @@
               </span>
             </div>
 
-            <div class="row pt-2 pb-2" v-if="$store.state.settings.expert">
-              <span class="col-4 col-sm-3 text-truncate">Parity</span>
-              <span class="col-8 col-sm-9 text-truncate">{{ payload.parity ? 'true' : 'false' }}</span>
-            </div>
-
-            <div class="row pt-2 pb-2 bg-light">
+            <div class="row pt-2 pb-2">
               <span class="col-4 col-sm-3 text-truncate">Burn</span>
               <span class="col-8 col-sm-9 text-truncate"><amount :value="payload.burnValue" :sign="false"/></span>
             </div>
 
-            <div class="row pt-2 pb-2">
+            <div class="row pt-2 pb-2 bg-light">
               <span class="col-12 col-sm-3 text-truncate">Sender Ring</span>
               <span class="col-12 col-sm-9">
                 <show-transaction-data :tx="tx" :payload="payload" :parity="0"/>
               </span>
             </div>
 
-            <div class="row pt-2 pb-2 bg-light">
+            <div class="row pt-2 pb-2">
               <span class="col-12 col-sm-3 text-truncate">Recipient Ring</span>
               <span class="col-12 col-sm-9">
                 <show-transaction-data :tx="tx" :payload="payload" :parity="1"/>
               </span>
             </div>
 
-            <div class="row pt-2 pb-2">
+            <div class="row pt-2 pb-2 bg-light">
               <span class="col-4 col-sm-3 text-truncate">
                 {{payload.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT) ? 'Plain Text ' : ''}}
                 {{payload.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_ENCRYPTED) ? 'Encrypted ' : ''}}
-                Memo
+                Tx Message
               </span>
               <span class="col-8 col-sm-9 text-truncate">
                 <template v-if="payload.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT)">
@@ -280,6 +274,31 @@
               </span>
             </div>
 
+            <div class="row pt-2 pb-2">
+              <span class="col-4 col-sm-3 text-truncate">Amount</span>
+              <span class="col-8 col-sm-9 text-truncate">
+                <span v-if="!decrypted || !decrypted.zetherTx.payloads[index]" v-tooltip.bottom="`Confidential amount`"> Confidential </span>
+                <amount v-else-if="decrypted.zetherTx.payloads[index].whisperSenderValid"
+                        :value="decrypted.zetherTx.payloads[index].sentAmount" :sign="false" value-class="text-danger"/>
+                <amount v-else-if="decrypted.zetherTx.payloads[index].whisperRecipientValid"
+                        :value="decrypted.zetherTx.payloads[index].receivedAmount" :sign="true" value-class="text-success" :show-plus-sign="true"/>
+                <amount v-else v-tooltip.bottom="`You received zero`" :value="new Decimal(0)" :sign="true"/>
+              </span>
+            </div>
+
+            <div class="row pt-2 pb-2 bg-light">
+              <span class="col-4 col-sm-3 text-truncate">Recipient</span>
+              <span class="col-8 col-sm-9">
+                <span v-if="!decrypted || !decrypted.zetherTx.payloads[index] || !decrypted.zetherTx.payloads[index].recipientPublicKey" v-tooltip.bottom="`Unknown Recipient`"> Anonymous </span>
+                <account-identicon v-else :publicKey="decrypted.zetherTx.payloads[index].recipientPublicKey" size="21" outer-size="7"/>
+              </span>
+            </div>
+
+            <div class="row pt-2 pb-2" v-if="$store.state.settings.expert">
+              <span class="col-4 col-sm-3 text-truncate">Parity</span>
+              <span class="col-8 col-sm-9 text-truncate">{{ payload.parity ? 'true' : 'false' }}</span>
+            </div>
+
             <div class="row pt-2 pb-2 bg-light" v-if="$store.state.settings.expert">
               <span class="col-4 col-sm-3 text-truncate">Base64 Memo</span>
               <span class="col-8 col-sm-9 text-truncate">
@@ -292,26 +311,6 @@
                     {{ decrypted.zetherTx.payloads[index].message }}
                   </span>
                 </template>
-              </span>
-            </div>
-
-            <div class="row pt-2 pb-2">
-              <span class="col-4 col-sm-3 text-truncate">Amount</span>
-              <span class="col-8 col-sm-9 text-truncate">
-                <span v-if="!decrypted || !decrypted.zetherTx.payloads[index]" v-tooltip.bottom="`Confidential amount`">?</span>
-                <amount v-else-if="decrypted.zetherTx.payloads[index].whisperSenderValid"
-                        :value="decrypted.zetherTx.payloads[index].sentAmount" :sign="false" value-class="text-danger"/>
-                <amount v-else-if="decrypted.zetherTx.payloads[index].whisperRecipientValid"
-                        :value="decrypted.zetherTx.payloads[index].receivedAmount" :sign="true" value-class="text-success" :show-plus-sign="true"/>
-                <amount v-else v-tooltip.bottom="`You received zero`" :value="new Decimal(0)" :sign="true"/>
-              </span>
-            </div>
-
-            <div class="row pt-2 pb-2 bg-light">
-              <span class="col-4 col-sm-3 text-truncate">Recipient</span>
-              <span class="col-8 col-sm-9">
-                <span v-if="!decrypted || !decrypted.zetherTx.payloads[index] || !decrypted.zetherTx.payloads[index].recipientPublicKey" v-tooltip.bottom="`Unknown Recipient`">?</span>
-                <account-identicon v-else :publicKey="decrypted.zetherTx.payloads[index].recipientPublicKey" size="21" outer-size="7"/>
               </span>
             </div>
 
@@ -392,9 +391,9 @@
         </div>
       </div>
       <div class="card-footer bg-light g-0 d-block p-3">
-        <loading-button v-if="canDecrypt && !decrypted" :submit="handleDecryptTx" text="" icon="fas fa-unlock" tooltip="Decrypt transaction to see the amount, shared text and recipient" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer"/>
-        <loading-button v-if="$store.state.settings.expert" :submit="handleShowJSON" text="" icon="fas fa-file" tooltip="Show transaction as JSON" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer"/>
-        <loading-button v-if="$store.state.settings.expert" :submit="handleShowTxRaw" text="" icon="fas fa-file-code" tooltip="Show transaction as raw serialized binary" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer"/>
+        <loading-button v-if="canDecrypt && !decrypted" :submit="handleDecryptTx" component="span" icon="fas fa-unlock" text="Decrypt transaction" tooltip="Decrypt transaction to see the amount, shared text and recipient" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer"/>
+        <loading-button v-if="$store.state.settings.expert" :submit="handleShowJSON" component="span" icon="fas fa-file" text="Show transaction (JSON)" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer"/>
+        <loading-button v-if="$store.state.settings.expert" :submit="handleShowTxRaw" component="span" icon="fas fa-file-code" text="Show transaction (Binary)" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer"/>
       </div>
     </div>
 

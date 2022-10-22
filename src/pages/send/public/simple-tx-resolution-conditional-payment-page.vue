@@ -24,7 +24,7 @@
 
         <div class="pb-2">
           <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Payload Index:</label>
-          <input :class="`form-control ${$validators.validateNumber(payloadIndex) ? 'is-invalid': ''}`" type="number" v-model="payloadIndex" :disabled="$route.query.payloadIndex !== undefined && !$store.state.settings.expert">
+          <input :class="`form-control ${$validator.validateNumber(payloadIndex) ? 'is-invalid': ''}`" type="number" v-model="payloadIndex" :disabled="$route.query.payloadIndex !== undefined && !$store.state.settings.expert">
           <div v-if="$validator.validateNumber(payloadIndex)" class="invalid-feedback d-block">
             {{ $validator.validateNumber(payloadIndex) }}
           </div>
@@ -219,12 +219,15 @@ export default {
         else this.txId = ""
 
         if (to.query.payloadIndex !== undefined) this.payloadIndex = to.query.payloadIndex
-        else this.payloadIndex = "0"
+        else this.payloadIndex = 0
 
-        if (to.query.resolution !== undefined) this.resolution = to.query.resolution
+        if (to.query.resolution !== undefined) {
+          if (to.query.resolution === "sender" || to.query.resolution === "recipient") this.resolution = to.query.resolution
+          else throw "invalid query resolution"
+        }
         else this.resolution = "sender"
 
-        if (to.query.signatures !== undefined) this.signatures = to.query.signatures.split(",").map(it => Buffer.from(it, "hex").toString("base64"))
+        if (to.query.signatures !== undefined) this.signatures = to.query.signatures.map(it => Buffer.from(it, "hex").toString("base64"))
         else this.signatures = []
 
         if (this.hash) await this.loadTransaction()
