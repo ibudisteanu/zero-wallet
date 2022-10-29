@@ -1,5 +1,17 @@
 export default {
 
+    setScreenInformation(state ){
+        if (typeof window === "undefined" ) return
+        const width = window.innerWidth
+        const height = window.innerHeight
+
+        state.width = width
+        state.height = height
+
+        state.mobile = width < 760
+        state.tablet = width < 1024
+    },
+
     setModals(state, modals ){
         state.loadingModal = modals.loadingModal
         state.inputModal = modals.inputModal
