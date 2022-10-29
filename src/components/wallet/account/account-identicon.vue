@@ -1,6 +1,6 @@
 <template>
   <identicon :hash="identiconHash" :size="size" :outer-size="outerSize"
-             :uri="`${route  ? route+finalAddress: ''}`" :tooltip="showTooltip ? $strings.truncateText(this.finalAddress, 4, 10) : ''"/>
+             :uri="`${route && finalAddress ? route+finalAddress: ''}`" :tooltip="showTooltip ? $strings.truncateText(this.finalAddress, 4, 10) : ''"/>
 </template>
 
 <script>
