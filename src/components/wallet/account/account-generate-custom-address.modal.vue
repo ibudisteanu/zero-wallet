@@ -58,7 +58,7 @@
             <div class="form-outline">
               <label class="form-label" for="address">Generated Address</label>
               <div id="address" class="address align-items-center">
-                <account-identicon :address="this.addressGenerated" size="30" outer-size="10"/>
+                <account-identicon :address="this.addressGenerated" size="30" outer-size="10" route="" />
                 <span class="text-break">
                   {{ this.addressGenerated }}
                 </span>

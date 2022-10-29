@@ -14,7 +14,7 @@
             <div class="d-flex align-items-center d-block p-2">
               <div class="avatar avatar-xxl me-sm-3 me-2">
                 <account-identicon :public-key="address.publicKey" :size="$store.state.settings.mobile ? 36 : 56"
-                                   :outer-size="$store.state.settings.mobile ? 8 : 20"/>
+                                   :outer-size="$store.state.settings.mobile ? 8 : 20" route="" />
               </div>
               <span class="fw-bold d-block text-break">
                 {{ getAddress }}
