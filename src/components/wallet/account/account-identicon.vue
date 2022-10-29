@@ -1,6 +1,6 @@
 <template>
   <identicon :hash="identiconHash" :size="size" :outer-size="outerSize"
-             :uri="`${disableRoute ? '' : '/address/'+finalAddress}`" :tooltip="showTooltip ? $strings.truncateText(this.finalAddress, 4, 10) : ''"/>
+             :uri="`${route  ? route+finalAddress: ''}`" :tooltip="showTooltip ? $strings.truncateText(this.finalAddress, 4, 10) : ''"/>
 </template>
 
 <script>
@@ -18,7 +18,7 @@ export default {
     address: {default: null},
     publicKey: {default: ""},
 
-    disableRoute: {default: false},
+    route: {default: "/address/"},
     showTooltip: {default: true},
   },
 

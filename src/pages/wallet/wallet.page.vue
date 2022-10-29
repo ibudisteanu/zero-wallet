@@ -40,7 +40,6 @@ import TransactionsPreview from "../../components/wallet/transactions/transactio
 import PendingTransactionsPreview from "../../components/wallet/transactions/pending-transactions-preview";
 import WaitAddress from "src/components/wallet/account/wait-address";
 import WaitAccount from "../../components/wallet/account/wait-account";
-import UtilsHelper from "src/utils/utils-helper";
 import WalletAccountsOptions from "../../components/wallet/wallet-accounts-options";
 
 export default {
