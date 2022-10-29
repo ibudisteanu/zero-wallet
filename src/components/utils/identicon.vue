@@ -33,7 +33,6 @@ export default {
   data(){
     return{
       identiconSrc: "",
-      finalAddress: "",
     }
   },
 
@@ -43,7 +42,6 @@ export default {
         if (!this.hash) throw "invalid"
         this.identiconSrc = await Identicons.getIdenticon( this.hash, this.size )
       }catch(err){
-        this.finalAddress = ""
         this.identiconSrc = ""
       }
     },
@@ -51,15 +49,12 @@ export default {
 
   watch:{
     hash:{
+      immediate: true,
       handler (val, oldVal) {
         if (val === oldVal) return
         return this.load()
       }
     }
-  },
-
-  mounted(){
-    return this.load()
   },
 
 }
