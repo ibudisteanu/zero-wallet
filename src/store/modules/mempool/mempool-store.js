@@ -7,10 +7,10 @@ export default {
     state: {
         list: {},
 
-        count: new Decimal(0),
+        count: Decimal_0,
 
-        page: new Decimal(0),
-        start: new Decimal(0),
+        page: Decimal_0,
+        start: Decimal_0,
     },
 
     mutations,

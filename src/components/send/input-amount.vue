@@ -16,7 +16,7 @@ export default {
   components: {LoadingSpinner},
   data() {
     return {
-      amountBase: new Decimal(0),
+      amountBase: Decimal_0,
       lastTo: null,
     }
   },
@@ -46,13 +46,13 @@ export default {
     usedDecimalSeparator(){
       if (this.decimalSeparator !== null) return this.decimalSeparator
       if (this.assetInfo) return this.assetInfo.decimalSeparator
-      return new Decimal(1)
+      return Decimal_1
     },
 
     amount: {
 
       get() {
-        return this.amountBase.div(new Decimal(10).pow( this.usedDecimalSeparator )).toString()
+        return this.amountBase.div( Decimal_10.pow( this.usedDecimalSeparator )).toString()
       },
       set(to, from) {
         this.calculateAmount(to)
@@ -71,7 +71,7 @@ export default {
         return
       }
 
-      this.amountBase = to.mul(new Decimal(10).pow( this.usedDecimalSeparator )).round()
+      this.amountBase = to.mul( Decimal_10.pow( this.usedDecimalSeparator )).round()
       return this.$emit('changed', { amount: this.amountBase, });
     },
   },
@@ -92,7 +92,7 @@ export default {
     initAmount: {
       immediate: true,
       handler: function (to) {
-        if (to === undefined) this.amount = new Decimal(0)
+        if (to === undefined) this.amount = Decimal_0
         else this.calculateAmount(to)
       }
     },

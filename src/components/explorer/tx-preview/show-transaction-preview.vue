@@ -111,7 +111,7 @@
                     :value="decrypted.zetherTx.payloads[index].sentAmount" :sign="false" value-class="text-danger"/>
             <amount v-else-if="decrypted.zetherTx.payloads[index].whisperRecipientValid"
                     :value="decrypted.zetherTx.payloads[index].receivedAmount" :sign="true" value-class="text-success" :show-plus-sign="true"/>
-            <amount v-else v-tooltip.bottom="`You received zero`" :value="new Decimal(0)" :sign="true"/>
+            <amount v-else v-tooltip.bottom="`You received zero`" :value="Decimal_0" :sign="true"/>
           </div>
         </div>
       </div>

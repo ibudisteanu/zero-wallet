@@ -210,7 +210,7 @@
 
               <div class="row pt-2 pb-2 bg-light">
                 <span class="col-4 col-sm-3 text-truncate">Fee Conversion Rate</span>
-                <span class="col-8 col-sm-9 text-truncate">{{payload.feeRate.div(new Decimal(10).pow(payload.feeLeadingZeros)) }}</span>
+                <span class="col-8 col-sm-9 text-truncate">{{payload.feeRate.div( Decimal_10.pow(payload.feeLeadingZeros)) }}</span>
               </div>
             </template>
 
@@ -282,7 +282,7 @@
                         :value="decrypted.zetherTx.payloads[index].sentAmount" :sign="false" value-class="text-danger"/>
                 <amount v-else-if="decrypted.zetherTx.payloads[index].whisperRecipientValid"
                         :value="decrypted.zetherTx.payloads[index].receivedAmount" :sign="true" value-class="text-success" :show-plus-sign="true"/>
-                <amount v-else v-tooltip.bottom="`You received zero`" :value="new Decimal(0)" :sign="true"/>
+                <amount v-else v-tooltip.bottom="`You received zero`" :value="Decimal_0" :sign="true"/>
               </span>
             </div>
 
@@ -435,7 +435,7 @@ export default {
         for (const payload of this.tx.payloads)
           out.push({
             amount: payload.statement.fee,
-            amountNative: payload.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 ? payload.statement.fee.mul(payload.feeRate).div(new Decimal(10).pow(payload.feeLeadingZeros)) : null,
+            amountNative: payload.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 ? payload.statement.fee.mul(payload.feeRate).div( Decimal_10.pow(payload.feeLeadingZeros)) : null,
             asset: payload.asset,
             feeRate: payload.feeRate
           })

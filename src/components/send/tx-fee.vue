@@ -27,7 +27,7 @@ export default {
       feeType: true,
 
       feeManual: {
-        amount: new Decimal(0),
+        amount: Decimal_0,
         validationError: "",
       },
     }

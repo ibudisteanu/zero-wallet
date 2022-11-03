@@ -8,7 +8,7 @@ export default {
         origin: null,
         challengeUri: null,
         faucetTestnetEnabled: false,
-        faucetTestnetCoins: new Decimal(0),
+        faucetTestnetCoins: Decimal_0,
 
     },
 

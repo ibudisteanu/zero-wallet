@@ -24,7 +24,7 @@ export default {
 
   props: {
     asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64},
-    value: {default: () => new Decimal(0)},
+    value: {default: () => Decimal_0},
     sign: {default: false},
     showPlusSign: {default: false},
     showAsset: {default: true},
@@ -38,8 +38,8 @@ export default {
     },
 
     amount() {
-      const value = this.value || new Decimal(0)
-      return this.$strings.formatMoney(value.div(new Decimal(10).pow(this.getAsset.decimalSeparator)).toString(), this.getAsset.decimalSeparator)
+      const value = this.value || Decimal_0
+      return this.$strings.formatMoney(value.div( Decimal_10.pow(this.getAsset.decimalSeparator)).toString(), this.getAsset.decimalSeparator)
     },
     getSign() {
       if (!this.sign) return '-'

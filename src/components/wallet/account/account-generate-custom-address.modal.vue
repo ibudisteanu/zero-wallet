@@ -97,7 +97,7 @@ import LoadingButton from "../../utils/loading-button";
 
 export default {
 
-  components: {LoadingButton, AccountIdenticon, Modal, InputAmount, Wizard},
+  components: {LoadingButton, AccountIdenticon, Modal, TxAmount, Wizard},
 
   data() {
     return {
@@ -211,7 +211,7 @@ export default {
         publicKey: this.address.publicKey,
         registration: this.hasRegistration ? this.address.registration : "",
         paymentID: this.hasPaymentID ? Buffer.from(this.paymentID, "hex").toString("base64") : "",
-        paymentAmount: this.hasPaymentAmount ? this.paymentAmount.amount : new Decimal(0),
+        paymentAmount: this.hasPaymentAmount ? this.paymentAmount.amount : Decimal_0,
         paymentAsset: this.hasPaymentAsset ? Buffer.from(this.paymentAsset, "hex").toString("base64") : "",
       }
 

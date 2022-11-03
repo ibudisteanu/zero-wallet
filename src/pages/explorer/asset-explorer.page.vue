@@ -111,10 +111,10 @@ export default {
       return this.$store.state.assets.list[this.hash];
     },
     maxSupply() {
-      return (this.asset.maxSupply || new Decimal(0)).div(new Decimal(10).pow(this.asset.decimalSeparator))
+      return (this.asset.maxSupply || Decimal_0).div( Decimal_10.pow(this.asset.decimalSeparator))
     },
     supply() {
-      return (this.asset.supply || new Decimal(0)).div(new Decimal(10).pow(this.asset.decimalSeparator))
+      return (this.asset.supply || Decimal_0).div( Decimal_10.pow(this.asset.decimalSeparator))
     },
 
   },

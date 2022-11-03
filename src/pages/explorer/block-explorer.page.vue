@@ -181,7 +181,7 @@ export default {
 
         this.loaded = false
         this.error = '';
-        this.reward = new Decimal(0)
+        this.reward = Decimal_0
 
         if (!this.height && !this.hash) throw 'Block index was not specified';
 

@@ -390,7 +390,7 @@ export default {
           address: null,
           addressEncoded: "",
           addressValidationError: "",
-          amount: new Decimal(0),
+          amount: Decimal_0,
           amountValidationError: "",
           asset: null,
           assetValidationError: "",
@@ -400,11 +400,11 @@ export default {
           feeType: true,
 
           feeAuto: {
-            amount: new Decimal(0),
+            amount: Decimal_0,
             validationError: "",
           },
           feeManual: {
-            amount: new Decimal(0),
+            amount: Decimal_0,
             validationError: "",
           },
         },
@@ -620,7 +620,7 @@ export default {
 
             if (holders.gt(2)) {
               const count = Decimal.min(holders, ringSize / 2).minus(ringMembers.length)
-              for (let i = new Decimal(0); i.lt(count); i = i.plus(1)) {
+              for (let i = Decimal_0; i.lt(count); i = i.plus(1)) {
 
                 let trials = 0
 
@@ -726,7 +726,7 @@ export default {
                   addressEncoded: out.addr.addressEncoded,
                   address: {publicKey: out.addr.publicKey},
                   addressValidationError: "",
-                  amount: new Decimal(0),
+                  amount: Decimal_0,
                   amountValidationError: "",
                   asset,
                   assetValidationError: "",
@@ -845,7 +845,7 @@ export default {
           const amount = payload.recipient.amount
           const fee = payload.fee.feeType ? 0 : payload.fee.feeManual.amount
 
-          let feeRate = new Decimal(0), feeLeadingZeros = new Decimal(0)
+          let feeRate = Decimal_0, feeLeadingZeros = Decimal_0
 
           if (asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64)
             if (payload.assetFeeLiquidityAsset) {
@@ -861,7 +861,7 @@ export default {
               if (parts.length > 1)
                 feeLeadingZeros = parts[1].length
 
-              feeRate = new Decimal(payload.assetFeeConversionRate).mul(new Decimal(10).pow(feeLeadingZeros))
+              feeRate = new Decimal(payload.assetFeeConversionRate).mul( Decimal_10.pow(feeLeadingZeros))
             }
 
           txData.payloads.push({
@@ -873,13 +873,13 @@ export default {
             asset,
             amount,
             recipient: payload.recipient.addressEncoded,
-            burn: new Decimal(0),
+            burn: Decimal_0,
             senderRingMembers: payload.senderRingMembers,
             recipientRingMembers: payload.recipientRingMembers,
             fees: {
               fixed: fee,
-              perByte: new Decimal(0),
-              perByteExtraSpace: new Decimal(0),
+              perByte: Decimal_0,
+              perByteExtraSpace: Decimal_0,
               perByteAuto: payload.fee.feeType,
               rate: feeRate,
               leadingZeros: feeLeadingZeros,
