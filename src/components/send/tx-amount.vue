@@ -1,9 +1,8 @@
 <template>
   <div>
-      <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">{{ text }} Amount</label>
+      <label v-if="text !== null" class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1" v-tooltip.bottom="tooltip" >{{ text }} Amount</label>
       <loading-spinner v-if="!assetInfo"/>
       <template v-else>
-        <i v-if="tooltip" class="fas fa-question ms-1" v-tooltip.bottom="tooltip"/>
         <input :class="`form-control ${validationError ? 'is-invalid' :''}`" type="number" v-model="amount"
                :disabled="!(initAmount === undefined || $store.state.settings.expert)" >
         <div v-if="validationError" class="invalid-feedback d-block">{{ validationError }}</div>
