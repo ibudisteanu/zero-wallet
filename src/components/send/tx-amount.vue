@@ -38,7 +38,7 @@ export default {
     validationError() {
       const amount = new Decimal(this.amount)
       if (!this.allowZero && amount.isZero() ) return "Amount needs to be greater than 0"
-      if (amount.isNan() || amount.lt(0) ) return "Amount can not be negative"
+      if (amount.isNaN() || amount.lt(0) ) return "Amount can not be negative"
     },
 
     amount: {
