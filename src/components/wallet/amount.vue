@@ -2,22 +2,16 @@
   <span>
     <loading-spinner v-if="!assetInfo && decimalSeparator === null"/>
     <template v-else>
-      <span :class="valueClass">
-        {{ getSign }} {{ amount }}
-      </span>
+      <span :class="valueClass">{{ sign }}{{ amount }}</span>
       <router-link v-if="assetInfo && showAsset" :to="`/explorer/asset/${$strings.base64ToHex(asset)}`" :class="`${assetClass} ps-1`">
         {{ getAsset.identification }}
       </router-link>
-    </template>
-    <template v-else>
     </template>
   </span>
 </template>
 
 <script>
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import Decimal from 'decimal.js';
-
 export default {
 
   components: {LoadingSpinner},
@@ -25,8 +19,7 @@ export default {
   props: {
     asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64},
     value: {default: () => Decimal_0},
-    sign: {default: false},
-    showPlusSign: {default: false},
+    sign: {default: ""},
     showAsset: {default: true},
     decimalSeparator: {default: null},
     valueClass: {default: ""},
@@ -47,11 +40,7 @@ export default {
       const value = this.value || Decimal_0
       return this.$strings.formatMoney(value.div( Decimal_10.pow(this.usedDecimalSeparator)).toString(), this.usedDecimalSeparator.toNumber() )
     },
-    getSign() {
-      if (!this.sign) return '-'
-      if (this.showPlusSign) return '+'
-      return ''
-    },
+
   },
 
   watch: {
@@ -66,6 +55,3 @@ export default {
 
 }
 </script>
-
-<style scoped>
-</style>

@@ -30,7 +30,7 @@
 
       <span class="col-5 d-xs-none d-sm-none d-md-none text-dark">Fees</span>
       <span class="col-7 col-sm-2 col-md-2 text-truncate">
-        <amount :value="blockInfo.fees" :sign="true" :show-asset="false "/>
+        <amount :value="blockInfo.fees" :show-asset="false "/>
       </span>
 
       <span class="col-5 d-block d-sm-none text-dark">Timestamp</span>

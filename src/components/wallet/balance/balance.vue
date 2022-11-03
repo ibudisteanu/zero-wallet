@@ -63,7 +63,7 @@ export default {
         if (this.decryptedBalance === null) return
         amount = this.decryptedBalance
       }
-      return this.$strings.formatMoney(new Decimal(amount || 0).div( Decimal_10.pow(this.getAsset.decimalSeparator)).toString(), this.getAsset.decimalSeparator)
+      return this.$strings.formatMoney(new Decimal(amount || 0).div( Decimal_10.pow(this.getAsset.decimalSeparator)).toString(), this.getAsset.decimalSeparator.toNumber())
     },
 
   },

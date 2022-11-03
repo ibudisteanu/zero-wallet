@@ -15,10 +15,10 @@
         <span class="pe-1">{{ Decimal_2.pow(payload.ring) }}</span>
         <template v-if="payload.payloadScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_STAKING_REWARD) && payload.extra">
           <account-identicon :publicKey="payload.extra.delegatePublicKey" size="21" :outer-size="0"/>
-          <amount :value="payload.extra.delegatedStakingClaimAmount" :sign="true"/>
+          <amount :value="payload.extra.delegatedStakingClaimAmount" />
         </template>
         <template v-if="payload.payloadScript.eq( PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_STAKING) && payload.extra">
-          <amount :value="payload.burnValue" :sign="true"/>
+          <amount :value="payload.burnValue"/>
         </template>
       </div>
     </div>
