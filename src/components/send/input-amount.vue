@@ -4,7 +4,7 @@
       <loading-spinner v-if="!assetInfo"/>
       <template v-else>
         <input :class="`form-control ${validationError ? 'is-invalid' :''} ${spinner ? '': 'no-spinner'}`" type="number" v-model="amount"
-               :disabled="!(initAmount === undefined || $store.state.settings.expert)" >
+               :disabled="initAmountDisable && !(initAmount === undefined || $store.state.settings.expert)" >
         <div v-if="validationError" class="invalid-feedback d-block">{{ validationError }}</div>
       </template>
   </div>
@@ -27,6 +27,7 @@ export default {
     asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64},
     allowZero: {default: false,},
     initAmount: {default: undefined},
+    initAmountDisable: {default: true},
     decimalSeparator: {default: null},
     spinner: {default: true},
   },
