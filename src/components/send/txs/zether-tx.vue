@@ -159,7 +159,6 @@ import Account from "../../wallet/account/account";
 import LoadingSpinner from "../../utils/loading-spinner";
 import LoadingButton from "../../utils/loading-button";
 import TxRecipient from "../tx-recipient";
-import TxAmount from "../tx-amount";
 import TxExtraData from "../tx-extra-data";
 import TxFee from "../tx-fee";
 import TxAsset from "../tx-asset";
@@ -172,7 +171,7 @@ import AlertBox from "../../utils/alert-box";
 export default {
 
   components: {
-    WaitAccount, Account, LoadingSpinner, LoadingButton, TxRecipient, TxAmount, AlertBox,
+    WaitAccount, Account, LoadingSpinner, LoadingButton, TxRecipient, AlertBox,
     TxExtraData, TxFee, TxAsset, AccountIdenticon, Wizard, ConfirmBroadcastingTx,
   },
 

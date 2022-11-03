@@ -4,8 +4,8 @@
     <tx-recipient-address :init-recipient="initRecipient" :text="text" :balances="balances" @changed="changedRecipient"
                           class="col-12" />
 
-    <tx-amount v-if="asset" :init-amount="initAmount" :allow-zero="allowZero" :asset="asset" @changed="changedAmount"
-               class="pt-2 col-12 col-md-6"/>
+    <input-amount v-if="asset" :init-amount="initAmount" :allow-zero="allowZero" :asset="asset" @changed="changedAmount"
+                  class="pt-2 col-12 col-md-6"/>
 
     <tx-asset :init-asset="initAsset" :assets="availableAssets" @changed="changedAsset" class="pt-2 col-12 col-md-6"/>
   </div>
@@ -14,13 +14,14 @@
 
 <script>
 
-import TxAmount from "./tx-amount"
+import TxAmount from "./input-amount"
 import TxAsset from "./tx-asset"
 import TxRecipientAddress from "./tx-recipient-address";
+import InputAmount from "./input-amount";
 
 export default {
 
-  components: {TxRecipientAddress, TxAsset, TxAmount},
+  components: {InputAmount, TxRecipientAddress, TxAsset, TxAmount},
 
   props: {
     availableAssets: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64},

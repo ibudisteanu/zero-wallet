@@ -3,7 +3,7 @@
       <label v-if="text !== null" class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1" v-tooltip.bottom="tooltip" >{{ text }} Amount</label>
       <loading-spinner v-if="!assetInfo"/>
       <template v-else>
-        <input :class="`form-control ${validationError ? 'is-invalid' :''}`" type="number" v-model="amount"
+        <input :class="`form-control ${validationError ? 'is-invalid' :''} ${spinner ? '': 'no-spinner'}`" type="number" v-model="amount"
                :disabled="!(initAmount === undefined || $store.state.settings.expert)" >
         <div v-if="validationError" class="invalid-feedback d-block">{{ validationError }}</div>
       </template>
@@ -27,6 +27,8 @@ export default {
     asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64},
     allowZero: {default: false,},
     initAmount: {default: undefined},
+    decimalSeparator: {default: null},
+    spinner: {default: true},
   },
 
   computed: {
@@ -41,10 +43,16 @@ export default {
       if (amount.isNaN() || amount.lt(0) ) return "Amount can not be negative"
     },
 
+    usedDecimalSeparator(){
+      if (this.decimalSeparator !== null) return this.decimalSeparator
+      if (this.assetInfo) return this.assetInfo.decimalSeparator
+      return new Decimal(1)
+    },
+
     amount: {
 
       get() {
-        return this.amountBase.div(new Decimal(10).pow(this.assetInfo.decimalSeparator)).toString()
+        return this.amountBase.div(new Decimal(10).pow( this.usedDecimalSeparator )).toString()
       },
       set(to, from) {
         this.calculateAmount(to)
@@ -63,7 +71,7 @@ export default {
         return
       }
 
-      this.amountBase = to.mul(new Decimal(10).pow(this.assetInfo.decimalSeparator)).round()
+      this.amountBase = to.mul(new Decimal(10).pow( this.usedDecimalSeparator )).round()
       return this.$emit('changed', { amount: this.amountBase, });
     },
   },
