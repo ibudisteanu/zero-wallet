@@ -30,7 +30,7 @@
             <label class="form-check-label" for="paymentAmount"> Amount </label>
             <i class="fas fa-question ms-1" v-tooltip.bottom="'Specify a default amount to be sent to you'"></i> <br>
             <template v-if="hasPaymentAmount">
-              <tx-amount :allow-zero="true" :allow-empty-asset="true" :balances="null" @changed="amountChanged"
+              <tx-amount :allow-zero="true" :allow-empty-asset="true" @changed="amountChanged"
                          text="Amount to Receive" :asset="finalAsset"
                          :disabled="!hasPaymentAmount"/>
             </template>

@@ -21,9 +21,9 @@
 
           <template v-if="!payload.randomRecipient">
             <tx-recipient :text="text" :init-recipient="initRecipients[i]" :init-amount="initAmounts[i]"
-                          :init-asset="initAssets[i] " :available-assets="availableAssets"
-                          :validate-amount="payload.validateRecipientAmount" :balances="availableBalances"
-                          :allow-zero="payload.allowRecipientZeroAmount" @changed="data =>changedRecipient(i, data)"/>
+                          :init-asset="initAssets[i]" :available-assets="availableAssets"
+                          :balances="availableBalances" :allow-zero="payload.allowRecipientZeroAmount"
+                          @changed="data =>changedRecipient(i, data)"/>
           </template>
 
           <tx-extra-data :recipients="null" class="pt-3" :paymentID="(payload.recipient && payload.recipient.address) ? payload.recipient.address.paymentID : null"
@@ -31,7 +31,7 @@
                       @changed="data => changedExtraData(i, data)"/>
 
           <template v-if="$store.state.settings.expert">
-            <tx-fee :balances="availableBalances" :asset="payload.recipient.asset" :allow-zero="true" @changed="data => changedFee(i, data)"/>
+            <tx-fee :asset="payload.recipient.asset" :allow-zero="true" @changed="data => changedFee(i, data)"/>
             <template v-if="payload.recipient.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64">
               <div class="form-check pt-2">
                 <input class="form-check-input" id="assetFeeLiquidityAsset" type="checkbox" v-model="payload.assetFeeLiquidityAsset"/>
@@ -386,7 +386,6 @@ export default {
         randomRecipient: false,
 
         allowRecipientZeroAmount: true,
-        validateRecipientAmount: true,
 
         recipient: {
           address: null,

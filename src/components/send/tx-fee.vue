@@ -5,8 +5,7 @@
       <label class="form-check-label" for="feeAuto">Automatically Calculate Tx Fee</label>
     </div>
 
-    <tx-amount v-if="!feeType" text="Fee Amount" :balances="balances" @changed="changedFeeManual"
-               :allow-zero="allowZero" :asset="asset"/>
+    <tx-amount v-if="!feeType" text="Fee Amount" @changed="changedFeeManual" :allow-zero="allowZero" :asset="asset"/>
   </div>
 </template>
 
@@ -19,7 +18,6 @@ export default {
   components: {TxAmount},
 
   props: {
-    balances: {default: null},
     allowZero: {default: false},
     asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64},
   },

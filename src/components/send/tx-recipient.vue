@@ -4,8 +4,8 @@
     <tx-recipient-address :init-recipient="initRecipient" :text="text" :balances="balances" @changed="changedRecipient"
                           class="col-12" />
 
-    <tx-amount v-if="asset" :init-amount="initAmount" :validate-amount="validateAmount" :allow-zero="allowZero"
-               class="pt-2 col-12 col-md-6" :balances="balances" :asset="asset" @changed="changedAmount"/>
+    <tx-amount v-if="asset" :init-amount="initAmount" :allow-zero="allowZero" :asset="asset" @changed="changedAmount"
+               class="pt-2 col-12 col-md-6"/>
 
     <tx-asset :init-asset="initAsset" :assets="availableAssets" @changed="changedAsset" class="pt-2 col-12 col-md-6"/>
   </div>
@@ -27,8 +27,6 @@ export default {
     balances: {default: null},
     text: {default: "Recipient"},
     allowZero: {default: false},
-    validateAmount: {default: false},
-
     initRecipient: {default: undefined},
     initAmount: {default: undefined},
     initAsset: {default: undefined},

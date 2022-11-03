@@ -18,7 +18,7 @@
             <label class="form-check-label" for="fee-version" v-tooltip.bottom="`Subtract the fee from the unclaimed balance or from the delegated stake.`">Pay Fee from Unclaimed balance</label>
           </div>
 
-          <tx-fee :balances="balancesStakeAvailable" :allow-zero="true" @changed="changedFee"/>
+          <tx-fee  :allow-zero="true" @changed="changedFee"/>
         </template>
 
       </template>
