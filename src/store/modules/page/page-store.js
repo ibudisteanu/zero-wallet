@@ -16,6 +16,11 @@ export default {
         importAccountSecretKeyModal: null,
         importAccountModal: null,
 
+        mobile: false,
+        tablet: false,
+        width: 0,
+        height: 0,
+
         modalIndex: 0,
 
         leftSidebarShow: false,

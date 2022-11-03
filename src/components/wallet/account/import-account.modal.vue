@@ -24,7 +24,7 @@
           <span class="mb-3 d-block">Preview Imported Account</span>
           <div class="d-block" v-if="address">
             <div class="address align-items-center">
-              <account-identicon :address="address.addressEncoded" size="35" outer-size="13"/>
+              <account-identicon :address="address.addressEncoded" size="35" outer-size="13" route=""/>
               <span class="text-break">{{ address.addressEncoded }}</span>
             </div>
           </div>

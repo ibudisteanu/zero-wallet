@@ -17,7 +17,7 @@
                :class="`notification notification-flush notification-unread ${ walletAddr.publicKey === mainPublicKey  ? 'fw-black' : ''} ` "
                :key="`wallet-address-${index}`">
             <div class="notification-body address">
-              <account-identicon :address="walletAddr.addressEncoded" size="21" outer-size="7" :disable-route="true"/>
+              <account-identicon :address="walletAddr.addressEncoded" size="21" outer-size="7" route=""/>
               <div class="account-title cursor-pointer " @click="setMainPublicKey(walletAddr.publicKey)">
                 <span class="fw-semi-bold text-truncate">{{ walletAddr.name }} - {{walletAddress.isImported ? 'Imported Account' : 'Wallet Account: #'+walletAddress.seedIndex }}  </span>
                 <span class="fw-normal text-truncate">{{ $store.getters.addressDisplay(walletAddr) }} </span>

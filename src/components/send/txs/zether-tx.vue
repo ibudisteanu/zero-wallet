@@ -104,7 +104,7 @@
             <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Sender Ring Members</label>
             <div class="pt-2">
               <div v-for="(ringMember, index) in payload.senderRingMembers" class="d-inline-block" :key="`payload-${i}-sender-ring-member-${index}`">
-                <account-identicon :address="ringMember" size="21" outer-size="7" :disable-route="true"/>
+                <account-identicon :address="ringMember" size="21" outer-size="7" />
               </div>
             </div>
           </div>
@@ -113,7 +113,7 @@
             <div class="pt-2">
               <div v-for="(ringMember, index) in payload.recipientRingMembers" class="d-inline-block"
                    :key="`payload-${i}-recipient-ring-member-${index}`">
-                <account-identicon :address="ringMember" size="21" outer-size="7" :disable-route="true"/>
+                <account-identicon :address="ringMember" size="21" outer-size="7" />
               </div>
             </div>
           </div>

@@ -4,7 +4,7 @@
 
     <div class="cursor-pointer unselectable" @click.stop="toggleMenu">
       <account-identicon :address="$store.getters.addressDisplay(this.walletAddress)" size="21" outer-size="7"
-                         :disable-route="true" :show-tooltip="!menuOpen"/>
+                         route="" :show-tooltip="!menuOpen"/>
       <i class="right-float chevron-down fas fa-chevron-down"></i>
     </div>
 

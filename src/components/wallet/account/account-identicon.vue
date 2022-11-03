@@ -1,12 +1,10 @@
 <template>
   <identicon :hash="identiconHash" :size="size" :outer-size="outerSize"
-             :uri="`${disableRoute ? '' : '/address/'+finalAddress}`" :tooltip="showTooltip ? $strings.truncateText(this.finalAddress, 4, 10) : ''"/>
+             :uri="`${route && finalAddress ? route+finalAddress: ''}`" :tooltip="showTooltip ? $strings.truncateText(this.finalAddress, 4, 10) : ''"/>
 </template>
 
 <script>
 
-import Identicons from "src/utils/identicons"
-import StringHelper from "src/utils/string-helper";
 import Identicon from "src/components/utils/identicon"
 
 export default {
@@ -19,9 +17,8 @@ export default {
 
     address: {default: null},
     publicKey: {default: ""},
-    hash: {default: ""},
 
-    disableRoute: {default: false},
+    route: {default: "/address/"},
     showTooltip: {default: true},
   },
 
@@ -33,19 +30,6 @@ export default {
   },
 
   watch: {
-
-    hash: {
-      immediate: true,
-      handler: async function (newVal, oldVal) {
-        if (!newVal) return
-        try {
-          this.identiconHash = newVal
-        } catch (err) {
-          this.finalAddress = ""
-          this.identiconHash = ""
-        }
-      }
-    },
 
     publicKey: {
       immediate: true,

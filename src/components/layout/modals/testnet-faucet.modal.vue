@@ -5,7 +5,7 @@
       <div class="pb-4">
         <label class="pb-2">Receive your testnet coins to this address:</label>
         <div class="address align-items-center">
-          <account-identicon :address="walletAddress.addressEncoded" size="35" outer-size="13"/>
+          <account-identicon :address="walletAddress.addressEncoded" size="35" outer-size="13" route=""/>
           <span class="text-break fw-bold">{{ $store.getters.addressDisplay(this.walletAddress) }}</span>
         </div>
       </div>

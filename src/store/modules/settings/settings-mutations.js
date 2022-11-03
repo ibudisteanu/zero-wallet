@@ -1,12 +1,6 @@
 export default {
 
-    setScreenInformation(state ){
-        if (typeof window !== "undefined" ){
-            console.log(window.innerWidth)
-            state.mobile = window.innerWidth < 760
-            state.tablet = window.innerWidth < 1024
-        }
-    },
+
 
     setDark(state, value ){
 

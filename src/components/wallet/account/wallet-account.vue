@@ -6,7 +6,7 @@
 
           <div class="account-simple-version align-items-center d-flex px-2 px-sm-3">
             <div class="avatar avatar-xxl me-sm-3 me-2">
-              <account-identicon :public-key="address.publicKey" :size="$store.state.settings.mobile ? 21 : 56" :outer-size="$store.state.settings.mobile ? 7 : 20"/>
+              <account-identicon :public-key="address.publicKey" :size="$store.state.page.mobile ? 21 : 56" :outer-size="$store.state.page.mobile ? 7 : 20" route=""/>
             </div>
             <div class="text-truncate">
                <span class="fw-bold d-block text-break">
