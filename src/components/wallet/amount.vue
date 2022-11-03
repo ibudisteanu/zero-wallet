@@ -1,15 +1,15 @@
 <template>
   <span>
-    <template v-if="getAsset">
+    <loading-spinner v-if="!assetInfo && decimalSeparator === null"/>
+    <template v-else>
       <span :class="valueClass">
         {{ getSign }} {{ amount }}
       </span>
-      <router-link :to="`/explorer/asset/${$strings.base64ToHex(asset)}`" :class="`${assetClass} ps-1`" v-if="showAsset">
+      <router-link v-if="assetInfo && showAsset" :to="`/explorer/asset/${$strings.base64ToHex(asset)}`" :class="`${assetClass} ps-1`">
         {{ getAsset.identification }}
       </router-link>
     </template>
     <template v-else>
-      <loading-spinner/>
     </template>
   </span>
 </template>
@@ -28,18 +28,24 @@ export default {
     sign: {default: false},
     showPlusSign: {default: false},
     showAsset: {default: true},
+    decimalSeparator: {default: null},
     valueClass: {default: ""},
     assetClass: {default: ""}
   },
 
   computed: {
-    getAsset() {
+    assetInfo() {
+      if (this.decimalSeparator !== null) return null
       return this.$store.getters.getAsset(this.asset);
     },
-
+    usedDecimalSeparator(){
+      if (this.decimalSeparator !== null) return this.decimalSeparator
+      if (this.assetInfo) return this.assetInfo.decimalSeparator
+      return Decimal_1
+    },
     amount() {
       const value = this.value || Decimal_0
-      return this.$strings.formatMoney(value.div( Decimal_10.pow(this.getAsset.decimalSeparator)).toString(), this.getAsset.decimalSeparator)
+      return this.$strings.formatMoney(value.div( Decimal_10.pow(this.usedDecimalSeparator)).toString(), this.usedDecimalSeparator.toNumber() )
     },
     getSign() {
       if (!this.sign) return '-'
@@ -53,8 +59,7 @@ export default {
       immediate: true,
       handler: function (to, from) {
         if (to === from) return
-        if (to)
-          this.$store.dispatch('getAssetByHash', to)
+        if (to) this.$store.dispatch('getAssetByHash', to)
       }
     }
   }

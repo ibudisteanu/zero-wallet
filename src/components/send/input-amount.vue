@@ -72,12 +72,23 @@ export default {
         return
       }
 
-      this.amountBase = to.mul( Decimal_10.pow( this.usedDecimalSeparator )).round()
-      return this.$emit('changed', { amount: this.amountBase, });
+      const newAmountBase = to.mul( Decimal_10.pow( this.usedDecimalSeparator )).round()
+      if (!newAmountBase.eq(this.amountBase)){
+        this.amountBase = newAmountBase
+        return this.$emit('changed', { amount: this.amountBase, });
+      }
     },
   },
 
   watch: {
+
+    asset: {
+      immediate: true,
+      handler: function (to, from) {
+        if (to === from) return
+        if (to) this.$store.dispatch('getAssetByHash', to)
+      }
+    },
 
     assetInfo:{
       immediate: true,
@@ -92,14 +103,16 @@ export default {
 
     initAmount: {
       immediate: true,
-      handler: function (to) {
-        return this.calculateAmount(to)
+      handler: function (to, from) {
+        if (to && from && to.eq(from) ) return
+        return this.calculateAmount( to.div(  Decimal_10.pow( this.usedDecimalSeparator )) )
       }
     },
 
     validationError: {
       immediate: true,
       handler: function (to, from) {
+        if (to === from) return
         return this.$emit('changed', { amountValidationError: to, })
       }
     },
