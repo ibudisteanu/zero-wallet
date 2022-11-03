@@ -34,6 +34,7 @@ export default {
   computed: {
 
     assetInfo() {
+      if (this.decimalSeparator !== null) return null
       return this.$store.getters.getAsset(this.asset);
     },
 
@@ -65,9 +66,9 @@ export default {
     calculateAmount(to){
       to = new Decimal(to || 0)
 
-      if (!this.assetInfo) {
+      if (!this.assetInfo && this.decimalSeparator == null) {
         this.lastTo = to
-        this.amountBase = 0
+        this.amountBase = Decimal_0
         return
       }
 
@@ -92,8 +93,7 @@ export default {
     initAmount: {
       immediate: true,
       handler: function (to) {
-        if (to === undefined) this.amount = Decimal_0
-        else this.calculateAmount(to)
+        return this.calculateAmount(to)
       }
     },
 
