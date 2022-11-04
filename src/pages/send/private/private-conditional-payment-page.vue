@@ -175,7 +175,7 @@ export default {
         } else this.defaultResolution = "sender"
 
         if (to.query.threshold !== undefined) this.threshold = new Decimal(to.query.threshold)
-        else this.threshold = new Decimal(1)
+        else this.threshold = Decimal_1
 
         if (to.query.multisigPublicKeys !== undefined)
           this.multisigPublicKeys = to.query.multisigPublicKeys.map(it => Buffer.from(it, "hex").toString("base64"))

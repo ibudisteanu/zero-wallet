@@ -11,7 +11,7 @@ export default {
 
         const obj = {
             hashes: {},
-            count: new Decimal(0),
+            count: Decimal_0,
         };
 
         if (accountTxs){
@@ -23,8 +23,8 @@ export default {
 
             console.log(obj.hashes)
         } else {
-            obj.count = new Decimal(0)
-            obj.next = new Decimal(0)
+            obj.count = Decimal_0
+            obj.next = Decimal_0
         }
 
         state.list[publicKey] = obj
@@ -36,7 +36,7 @@ export default {
 
         const obj = state.list[publicKey] || {}
         if (!obj.hashes) obj.hashes = {}
-        if (!obj.count) obj.count = new Decimal(0)
+        if (!obj.count) obj.count = Decimal_0
 
         if (!extraInfo.blockchain.inserted){ //removed
             obj.count = obj.count.minus(1)

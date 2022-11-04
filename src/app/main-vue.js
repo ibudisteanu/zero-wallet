@@ -28,7 +28,13 @@ export default (options) => {
     app.config.globalProperties.$utils = UtilsHelper
 
     app.config.globalProperties.PandoraPay = PandoraPay
+
     app.config.globalProperties.Decimal = Decimal
+    app.config.globalProperties.Decimal_0 = new Decimal(0)
+    app.config.globalProperties.Decimal_1 = new Decimal(1)
+    app.config.globalProperties.Decimal_2 = new Decimal(2)
+    app.config.globalProperties.Decimal_10 = new Decimal(10)
+
     app.config.globalProperties.Buffer = Buffer
 
     app.config.globalProperties.JSONStringify = JSONStringify

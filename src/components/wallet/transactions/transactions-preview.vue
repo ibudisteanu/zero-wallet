@@ -78,7 +78,7 @@ export default {
     },
 
     ending() {
-      return this.txs ? this.txs.count : new Decimal(0)
+      return this.txs ? this.txs.count : Decimal_0
     },
 
     starting() {

@@ -44,7 +44,7 @@
 
       <span class="col-4 d-block d-md-none text-dark text-truncate">Fees</span>
       <div class="col-8 col-md-1 text-truncate">
-        <amount :value="tx.fee" :sign="true" :show-asset="false" value-class="d-md-flex justify-content-center align-items-center"/>
+        <amount :value="tx.fee" :show-asset="false" value-class="d-md-flex justify-content-center align-items-center"/>
       </div>
 
       <span class="col-4 d-block d-md-none text-dark text-truncate">Type</span>
@@ -108,10 +108,10 @@
                class="col-12 text-truncate d-md-flex justify-content-center align-items-center">
             <span v-if="!decrypted || !decrypted.zetherTx.payloads[index]" v-tooltip.bottom="`Confidential amount`">?</span>
             <amount v-else-if="decrypted.zetherTx.payloads[index].whisperSenderValid"
-                    :value="decrypted.zetherTx.payloads[index].sentAmount" :sign="false" value-class="text-danger"/>
+                    :value="decrypted.zetherTx.payloads[index].sentAmount" sign="-" value-class="text-danger"/>
             <amount v-else-if="decrypted.zetherTx.payloads[index].whisperRecipientValid"
-                    :value="decrypted.zetherTx.payloads[index].receivedAmount" :sign="true" value-class="text-success" :show-plus-sign="true"/>
-            <amount v-else v-tooltip.bottom="`You received zero`" :value="new Decimal(0)" :sign="true"/>
+                    :value="decrypted.zetherTx.payloads[index].receivedAmount" sign="+" value-class="text-success"/>
+            <amount v-else v-tooltip.bottom="`You received zero`" :value="Decimal_0" sign="+"/>
           </div>
         </div>
       </div>

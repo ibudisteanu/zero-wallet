@@ -76,7 +76,7 @@
           </div>
           <div class="row pt-2 pb-2  bg-light">
             <span class="col-5 col-sm-3 text-truncate">Reward</span>
-            <span class="col-7 col-sm-9 text-truncate"><amount :value="this.reward" :sign="true"/></span>
+            <span class="col-7 col-sm-9 text-truncate"><amount :value="this.reward" sign=""/></span>
           </div>
           <div class="row pt-2 pb-2">
             <span class="col-5 col-sm-3 text-truncate">Version</span>
@@ -181,7 +181,7 @@ export default {
 
         this.loaded = false
         this.error = '';
-        this.reward = new Decimal(0)
+        this.reward = Decimal_0
 
         if (!this.height && !this.hash) throw 'Block index was not specified';
 

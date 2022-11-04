@@ -17,6 +17,10 @@ class Main {
 
         global.Buffer = Buffer
         global.Decimal = Decimal
+        global.Decimal_0 = new Decimal(0)
+        global.Decimal_1 = new Decimal(1)
+        global.Decimal_2 = new Decimal(2)
+        global.Decimal_10 = new Decimal(10)
 
         window.addEventListener("load", () => {
             this.initialize()

@@ -35,7 +35,7 @@ export default {
   props: {
     version: {default: "transparent"},
     asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64},
-    balance: {default: () => new Decimal(0)},
+    balance: {default: () => Decimal_0},
     publicKey: {default: ""},     //required for version zether
     canBeDecrypted: {default: false}  //required for version zether
   },
@@ -63,7 +63,7 @@ export default {
         if (this.decryptedBalance === null) return
         amount = this.decryptedBalance
       }
-      return this.$strings.formatMoney(new Decimal(amount || 0).div(new Decimal(10).pow(this.getAsset.decimalSeparator)).toString(), this.getAsset.decimalSeparator)
+      return this.$strings.formatMoney(new Decimal(amount || 0).div( Decimal_10.pow(this.getAsset.decimalSeparator)).toString(), this.getAsset.decimalSeparator.toNumber())
     },
 
   },

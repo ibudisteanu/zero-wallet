@@ -18,7 +18,7 @@
             <label class="form-check-label" for="fee-version" v-tooltip.bottom="`Subtract the fee from the unclaimed balance or from the delegated stake.`">Pay Fee from Unclaimed balance</label>
           </div>
 
-          <tx-fee :balances="balancesStakeAvailable" :allow-zero="true" @changed="changedFee"/>
+          <tx-fee  :allow-zero="true" @changed="changedFee"/>
         </template>
 
       </template>
@@ -86,7 +86,7 @@ export default {
       return this.$store.state.accounts.list[this.publicKey]
     },
     balancesStakeAvailable() {
-      const amount = (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ? this.account.plainAccount.delegatedStake.stakeAvailable : new Decimal(0)
+      const amount = (this.account && this.account.plainAccount && this.account.plainAccount.delegatedStake) ? this.account.plainAccount.delegatedStake.stakeAvailable : Decimal_0
       return {
         [PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64]: {
           amount,
@@ -171,7 +171,7 @@ export default {
 
         let fee
 
-        if (this.enableFee) fee = this.fee.feeType ? new Decimal(0) : this.fee.feeManual.amount
+        if (this.enableFee) fee = this.fee.feeType ? Decimal_0 : this.fee.feeManual.amount
 
         if (this.enableSender) {
           const nonceOut = await PandoraPay.network.getNetworkAccountMempoolNonce(MyTextEncode(JSONStringify({publicKey: this.publicKey})))
@@ -189,8 +189,8 @@ export default {
           },
           fee: this.enableFee ? {
             fixed: fee,
-            perByte: new Decimal(0),
-            perByteExtraSpace: new Decimal(0),
+            perByte: Decimal_0,
+            perByteExtraSpace: Decimal_0,
             perByteAuto: this.fee.feeType,
           } : null,
           feeVersion: this.feeVersion,

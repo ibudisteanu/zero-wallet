@@ -30,9 +30,8 @@
             <label class="form-check-label" for="paymentAmount"> Amount </label>
             <i class="fas fa-question ms-1" v-tooltip.bottom="'Specify a default amount to be sent to you'"></i> <br>
             <template v-if="hasPaymentAmount">
-              <tx-amount :allow-zero="true" :allow-empty-asset="true" :balances="null" @changed="amountChanged"
-                         text="Amount to Receive" :asset="finalAsset"
-                         :disabled="!hasPaymentAmount"/>
+              <input-amount :allow-zero="true" :allow-empty-asset="true" @changed="amountChanged"
+                            text="Amount to Receive" :asset="finalAsset" :disabled="!hasPaymentAmount"/>
             </template>
           </div>
 
@@ -91,7 +90,7 @@
 
 import Modal from "src/components/utils/modal"
 import AccountIdenticon from "./account-identicon";
-import TxAmount from "src/components/send/tx-amount"
+import InputAmount from "src/components/send/input-amount"
 import Wizard from "src/components/utils/wizard"
 import Decimal from "decimal.js"
 import LoadingButton from "../../utils/loading-button";
@@ -212,7 +211,7 @@ export default {
         publicKey: this.address.publicKey,
         registration: this.hasRegistration ? this.address.registration : "",
         paymentID: this.hasPaymentID ? Buffer.from(this.paymentID, "hex").toString("base64") : "",
-        paymentAmount: this.hasPaymentAmount ? this.paymentAmount.amount : new Decimal(0),
+        paymentAmount: this.hasPaymentAmount ? this.paymentAmount.amount : Decimal_0,
         paymentAsset: this.hasPaymentAsset ? Buffer.from(this.paymentAsset, "hex").toString("base64") : "",
       }
 

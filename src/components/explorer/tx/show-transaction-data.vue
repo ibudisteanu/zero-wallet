@@ -5,7 +5,7 @@
       <template v-if="tx.txScript.eq( PandoraPay.enums.transactions.transactionSimple.ScriptType.SCRIPT_UPDATE_ASSET_FEE_LIQUIDITY)">
         <div class="input">
           <account-identicon :publicKey="tx.vin.publicKey" size="21" outer-size="7"/>
-          <amount :value="vinSimpleAmount" :sign="false"/>
+          <amount :value="vinSimpleAmount" sign="-"/>
         </div>
       </template>
 

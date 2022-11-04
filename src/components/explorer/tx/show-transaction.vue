@@ -210,7 +210,7 @@
 
               <div class="row pt-2 pb-2 bg-light">
                 <span class="col-4 col-sm-3 text-truncate">Fee Conversion Rate</span>
-                <span class="col-8 col-sm-9 text-truncate">{{payload.feeRate.div(new Decimal(10).pow(payload.feeLeadingZeros)) }}</span>
+                <span class="col-8 col-sm-9 text-truncate">{{payload.feeRate.div( Decimal_10.pow(payload.feeLeadingZeros)) }}</span>
               </div>
             </template>
 
@@ -236,7 +236,7 @@
 
             <div class="row pt-2 pb-2">
               <span class="col-4 col-sm-3 text-truncate">Burn</span>
-              <span class="col-8 col-sm-9 text-truncate"><amount :value="payload.burnValue" :sign="false"/></span>
+              <span class="col-8 col-sm-9 text-truncate"><amount :value="payload.burnValue" sign="-"/></span>
             </div>
 
             <div class="row pt-2 pb-2 bg-light">
@@ -279,10 +279,10 @@
               <span class="col-8 col-sm-9 text-truncate">
                 <span v-if="!decrypted || !decrypted.zetherTx.payloads[index]" v-tooltip.bottom="`Confidential amount`"> Confidential </span>
                 <amount v-else-if="decrypted.zetherTx.payloads[index].whisperSenderValid"
-                        :value="decrypted.zetherTx.payloads[index].sentAmount" :sign="false" value-class="text-danger"/>
+                        :value="decrypted.zetherTx.payloads[index].sentAmount" sign="-" value-class="text-danger"/>
                 <amount v-else-if="decrypted.zetherTx.payloads[index].whisperRecipientValid"
-                        :value="decrypted.zetherTx.payloads[index].receivedAmount" :sign="true" value-class="text-success" :show-plus-sign="true"/>
-                <amount v-else v-tooltip.bottom="`You received zero`" :value="new Decimal(0)" :sign="true"/>
+                        :value="decrypted.zetherTx.payloads[index].receivedAmount" sign="+" value-class="text-success" />
+                <amount v-else v-tooltip.bottom="`You received zero`" :value="Decimal_0" />
               </span>
             </div>
 
@@ -384,8 +384,8 @@
           <div :class="`row pt-2 pb-2 ${index % 2 ? 'bg-light':''}`">
             <span class="col-4 col-sm-3 fw-medium text-truncate">Fee{{ (fees.length > 1) ? index : '' }}</span>
             <span class="col-8 col-sm-9 text-truncate">
-              <amount :asset="fee.asset" :value="fee.amount" value-class="text-900 text-danger" :sign="false"/>
-              <template v-if="fee.amountNative"> => <amount :value="fee.amountNative" value-class="text-900" :sign="true"/></template>
+              <amount :asset="fee.asset" :value="fee.amount" value-class="text-900 text-danger" sign="-"/>
+              <template v-if="fee.amountNative"> => <amount :value="fee.amountNative" value-class="text-900" sign=""/></template>
             </span>
           </div>
         </div>
@@ -435,7 +435,7 @@ export default {
         for (const payload of this.tx.payloads)
           out.push({
             amount: payload.statement.fee,
-            amountNative: payload.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 ? payload.statement.fee.mul(payload.feeRate).div(new Decimal(10).pow(payload.feeLeadingZeros)) : null,
+            amountNative: payload.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 ? payload.statement.fee.mul(payload.feeRate).div( Decimal_10.pow(payload.feeLeadingZeros)) : null,
             asset: payload.asset,
             feeRate: payload.feeRate
           })

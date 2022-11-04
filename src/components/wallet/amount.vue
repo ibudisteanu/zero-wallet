@@ -1,51 +1,46 @@
 <template>
   <span>
-    <template v-if="getAsset">
-      <span :class="valueClass">
-        {{ getSign }} {{ amount }}
-      </span>
-      <router-link :to="`/explorer/asset/${$strings.base64ToHex(asset)}`" :class="`${assetClass} ps-1`" v-if="showAsset">
+    <loading-spinner v-if="!assetInfo && decimalSeparator === null"/>
+    <template v-else>
+      <span :class="valueClass">{{ sign }}{{ amount }}</span>
+      <router-link v-if="assetInfo && showAsset" :to="`/explorer/asset/${$strings.base64ToHex(asset)}`" :class="`${assetClass} ps-1`">
         {{ getAsset.identification }}
       </router-link>
-    </template>
-    <template v-else>
-      <loading-spinner/>
     </template>
   </span>
 </template>
 
 <script>
 import LoadingSpinner from "src/components/utils/loading-spinner";
-import Decimal from 'decimal.js';
-
 export default {
 
   components: {LoadingSpinner},
 
   props: {
     asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64},
-    value: {default: () => new Decimal(0)},
-    sign: {default: false},
-    showPlusSign: {default: false},
+    value: {default: () => Decimal_0},
+    sign: {default: ""},
     showAsset: {default: true},
+    decimalSeparator: {default: null},
     valueClass: {default: ""},
     assetClass: {default: ""}
   },
 
   computed: {
-    getAsset() {
+    assetInfo() {
+      if (this.decimalSeparator !== null) return null
       return this.$store.getters.getAsset(this.asset);
     },
-
+    usedDecimalSeparator(){
+      if (this.decimalSeparator !== null) return this.decimalSeparator
+      if (this.assetInfo) return this.assetInfo.decimalSeparator
+      return Decimal_1
+    },
     amount() {
-      const value = this.value || new Decimal(0)
-      return this.$strings.formatMoney(value.div(new Decimal(10).pow(this.getAsset.decimalSeparator)).toString(), this.getAsset.decimalSeparator)
+      const value = this.value || Decimal_0
+      return this.$strings.formatMoney(value.div( Decimal_10.pow(this.usedDecimalSeparator)).toString(), this.usedDecimalSeparator.toNumber() )
     },
-    getSign() {
-      if (!this.sign) return '-'
-      if (this.showPlusSign) return '+'
-      return ''
-    },
+
   },
 
   watch: {
@@ -53,14 +48,10 @@ export default {
       immediate: true,
       handler: function (to, from) {
         if (to === from) return
-        if (to)
-          this.$store.dispatch('getAssetByHash', to)
+        if (to) this.$store.dispatch('getAssetByHash', to)
       }
     }
   }
 
 }
 </script>
-
-<style scoped>
-</style>
