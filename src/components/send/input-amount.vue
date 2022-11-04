@@ -73,11 +73,8 @@ export default {
         return
       }
 
-      const newAmountBase = to.mul( Decimal_10.pow( this.usedDecimalSeparator )).round()
-      if (!newAmountBase.eq(this.amountBase)){
-        this.amountBase = newAmountBase
-        return this.$emit('changed', { amount: this.amountBase, });
-      }
+      this.amountBase = to.mul( Decimal_10.pow( this.usedDecimalSeparator )).round()
+      return this.$emit('changed', { amount: this.amountBase, });
     },
   },
 
@@ -106,7 +103,7 @@ export default {
       immediate: true,
       handler: function (to, from) {
         if (to && from && to.eq(from) ) return
-        return this.calculateAmount( to.div(  Decimal_10.pow( this.usedDecimalSeparator )) )
+        if (to) return this.calculateAmount( to.div(  Decimal_10.pow( this.usedDecimalSeparator )) )
       }
     },
 
