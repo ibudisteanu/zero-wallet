@@ -14,14 +14,13 @@
 
 <script>
 
-import TxAmount from "./input-amount"
+import InputAmount from "./input-amount"
 import TxAsset from "./tx-asset"
 import TxRecipientAddress from "./tx-recipient-address";
-import InputAmount from "./input-amount";
 
 export default {
 
-  components: {InputAmount, TxRecipientAddress, TxAsset, TxAmount},
+  components: {InputAmount, TxRecipientAddress, TxAsset},
 
   props: {
     availableAssets: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64},
