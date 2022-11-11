@@ -4,7 +4,7 @@
     <template v-else>
       <span :class="valueClass">{{ sign }}{{ amount }}</span>
       <router-link v-if="assetInfo && showAsset" :to="`/explorer/asset/${$strings.base64ToHex(asset)}`" :class="`${assetClass} ps-1`">
-        {{ getAsset.identification }}
+        {{ assetInfo.identification }}
       </router-link>
     </template>
   </span>
