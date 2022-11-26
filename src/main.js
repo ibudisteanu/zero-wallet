@@ -32,6 +32,13 @@ class Main {
 
         if (typeof PandoraPayWalletOptions === "undefined") global.PandoraPayWalletOptions = {}
 
+        global.FILES_VERSIONING = FILES_VERSIONING
+        global.SRI_WEB_WORKER_WASM = SRI_WEB_WORKER_WASM
+        global.SRI_WASM_MAIN = SRI_WASM_MAIN
+        global.SIZE_WASM_MAIN = SIZE_WASM_MAIN
+        global.SRI_WASM_HELPER = SRI_WASM_HELPER
+        global.SIZE_WASM_HELPER = SIZE_WASM_HELPER
+
         const options = PandoraPayWalletOptions
 
         if (!options.router) options.router = {}
