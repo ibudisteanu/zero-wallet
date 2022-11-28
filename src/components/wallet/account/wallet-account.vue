@@ -9,10 +9,10 @@
               <account-identicon :public-key="address.publicKey" :size="$store.state.page.mobile ? 21 : 56" :outer-size="$store.state.page.mobile ? 7 : 20" route=""/>
             </div>
             <div class="text-truncate">
-               <span class="fw-bold d-block text-break">
-              {{ title }} - {{ walletAddress ? walletAddress.name : '' }}
+              <span class="fw-bold d-block text-break">
+                {{ title }} - {{ walletAddress ? walletAddress.name : '' }}
               </span>
-                <span >
+              <span >
                 {{ getAddress }}
               </span>
             </div>

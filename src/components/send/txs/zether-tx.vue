@@ -40,8 +40,8 @@
               <div class="row" v-if="!payload.assetFeeLiquidityAsset" v-tooltip.bottom="`Conversion rate of the asset fee`">
                 <div class="col-12 col-sm-6">
                   <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Conversion Rate</label>
-                  <input :class="`form-control ${payload.validationAssetFeeConversionRate ? 'is-invalid' :''}`"
-                         type="number" v-model.number="payload.assetFeeConversionRate" min="0" :step="0.0000000001">
+                  <input-amount :decimal-separator="10" :init-amount="initAssetFeeConversionRate[i]"
+                                @changed="data => changedAssetFeeConversionRate(i, data)"/>
                 </div>
               </div>
             </template>
@@ -167,10 +167,12 @@ import Wizard from "../../utils/wizard";
 import ConfirmBroadcastingTx from "./confirm-broadcasting-tx"
 import Decimal from "decimal.js";
 import AlertBox from "../../utils/alert-box";
+import InputAmount from "../input-amount";
 
 export default {
 
   components: {
+    InputAmount,
     WaitAccount, Account, LoadingSpinner, LoadingButton, TxRecipient, AlertBox,
     TxExtraData, TxFee, TxAsset, AccountIdenticon, Wizard, ConfirmBroadcastingTx,
   },
@@ -191,6 +193,7 @@ export default {
     initExtraData: {default: () => []},
     initExtraDataEncrypted: {default: () => []},
     initCommonRingSize: {default: undefined},
+    initAssetFeeConversionRate: {default: () => []},
     onSetTab: {default: null }
   },
 
@@ -263,14 +266,6 @@ export default {
         final[acc.asset] = acc
 
       return final
-    },
-
-    validationAssetFeeConversionRate() {
-      try {
-
-      } catch (err) {
-        return err.toString()
-      }
     },
 
     getAsset() {
@@ -399,17 +394,18 @@ export default {
         fee: {
           feeType: true,
 
-          feeAuto: {
-            amount: Decimal_0,
-            validationError: "",
-          },
+          feeAuto: true,
+
           feeManual: {
             amount: Decimal_0,
             validationError: "",
           },
         },
         assetFeeLiquidityAsset: true,
-        assetFeeConversionRate: 1,
+        assetFeeConversionRate: {
+          amount: Decimal_1,
+          validationError: "",
+        },
 
         extraData: {
           data: "",
@@ -468,8 +464,8 @@ export default {
           }
 
           if (payload.extraData.validationError) throw payload.extraData.validationError
-          if (payload.fee.feeAuto.validationError) throw payload.fee.feeAuto.validationError
           if (payload.fee.feeManual.validationError) throw payload.fee.feeManual.validationError
+          if (payload.assetFeeConversionRate.validationError) throw payload.assetFeeConversionRate.validationError
         }
 
         skipped = false
@@ -517,6 +513,9 @@ export default {
     },
     changedExtraData(i, data) {
       this.payloads[i].extraData = {...this.payloads[i].extraData, ...data,}
+    },
+    changedAssetFeeConversionRate(i, data){
+      this.payloads[i].assetFeeConversionRate = {...this.payload[i].assetFeeConversionRate, ...data}
     },
 
     handleAddPayload() {
@@ -799,7 +798,7 @@ export default {
           const asset = payload.recipient.asset
           if (!accs[asset]) accs[asset] = {}
 
-          let senderPrivateKey, senderDecryptedBalance, senderSpendPrivateKey
+          let sender, senderPrivateKey, senderDecryptedBalance, senderSpendPrivateKey
           if (!payload.createNewSender) {
 
             let balance
@@ -814,10 +813,12 @@ export default {
               if (decryptedWalletBalance.decryptedBalance === null) throw "Decrypting was canceled"
             }
 
+            sender = this.walletAddress.addressEncoded
             senderPrivateKey = decryptedWalletBalance.privateKey
             senderSpendPrivateKey = decryptedWalletBalance.spendPrivateKey
             senderDecryptedBalance = decryptedWalletBalance.decryptedBalance
           } else {
+            sender = payload.newSender.addressEncoded
             senderPrivateKey = payload.newSender.privateKey
             senderSpendPrivateKey = null
             senderDecryptedBalance = this.availableBalances[asset].amount
@@ -843,7 +844,7 @@ export default {
           }
 
           const amount = payload.recipient.amount
-          const fee = payload.fee.feeType ? 0 : payload.fee.feeManual.amount
+          const fee = payload.fee.feeType ? Decimal_0 : payload.fee.feeManual.amount
 
           let feeRate = Decimal_0, feeLeadingZeros = Decimal_0
 
@@ -856,16 +857,14 @@ export default {
               feeRate = out.rate
               feeLeadingZeros = out.leadingZeros
             } else {
-
-              const parts = payload.assetFeeConversionRate.toString().split(".")
-              if (parts.length > 1)
-                feeLeadingZeros = parts[1].length
-
-              feeRate = new Decimal(payload.assetFeeConversionRate).mul( Decimal_10.pow(feeLeadingZeros))
+              if (payload.assetFeeConversionRate.amount.e < 0)
+                feeLeadingZeros = new Decimal( -payload.assetFeeConversionRate.amount.e )
+              feeRate = new Decimal(payload.assetFeeConversionRate.amount).mul( Decimal_10.pow(feeLeadingZeros))
             }
 
           txData.payloads.push({
-            sender: {
+            sender,
+            senderData: {
               privateKey: senderPrivateKey,
               spendPrivateKey: senderSpendPrivateKey,
               decryptedBalance: senderDecryptedBalance,
@@ -874,6 +873,7 @@ export default {
             amount,
             recipient: payload.recipient.addressEncoded,
             burn: Decimal_0,
+            ringSize: payload.ringSize,
             senderRingMembers: payload.senderRingMembers,
             recipientRingMembers: payload.recipientRingMembers,
             fees: {
@@ -920,6 +920,8 @@ export default {
 
         this.status = "Tx built"
 
+      } catch(e){
+        throw e
       } finally {
         this.status = ""
       }
@@ -948,7 +950,9 @@ export default {
         this.$router.push(`/explorer/tx/${Buffer.from(this.tx.hash, "base64").toString("hex")}`);
 
         this.$emit('onBroadcast', {tx: this.tx})
-      } finally {
+      } catch(e){
+        throw e
+      } finally{
         this.status = ""
       }
 

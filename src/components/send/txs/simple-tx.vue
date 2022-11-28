@@ -55,7 +55,15 @@ export default {
 
   data() {
     return {
-      fee: {},
+      fee: {
+        feeType: true,
+
+        feeAuto: true,
+        feeManual: {
+          amount: Decimal_0,
+          validationError: "",
+        },
+      },
       feeVersion: false,
 
       extraData: {},
@@ -132,7 +140,6 @@ export default {
       }
 
       if (oldTab === 1 && value > oldTab) {
-        if (this.fee.feeAuto.validationError) throw this.fee.feeAuto.validationError
         if (this.fee.feeManual.validationError) throw this.fee.feeManual.validationError
 
         await this.handeTxProcess()

@@ -123,7 +123,7 @@ export default {
 
 .address {
   display: grid;
-  grid-template-columns: 32px 310px 30px;
+  grid-template-columns: 32px 300px 30px;
   grid-column-gap: 10px;
   text-align: left;
 }
@@ -151,7 +151,7 @@ export default {
     max-width: 300px;
   }
   .address {
-    grid-template-columns: 32px 230px 30px;
+    grid-template-columns: 32px 220px 30px;
   }
 }
 

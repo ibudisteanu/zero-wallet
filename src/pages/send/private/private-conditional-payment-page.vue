@@ -73,10 +73,11 @@ import Layout from "src/components/layout/layout"
 import LayoutTitle from "src/components/layout/layout-title";
 import ZetherTx from "src/components/send/txs/zether-tx";
 import TxRecipientAddress from "src/components/send/tx-recipient-address";
+import InputAmount from "src/components/send/input-amount";
 
 export default {
 
-  components: {ZetherTx, LayoutTitle, Layout, TxRecipientAddress},
+  components: {InputAmount, ZetherTx, LayoutTitle, Layout, TxRecipientAddress},
 
   props: {},
 
@@ -101,8 +102,8 @@ export default {
       return this.$store.state.wallet.mainPublicKey
     },
     validationDeadline() {
-      if (this.deadline < 10) return `The deadline should be greater or equal to 10`
-      if (this.deadline > 100000) return `The deadline should be smaller or equal to 100000`
+      if (this.deadline < 10 ) return `The deadline should be greater or equal to 10`
+      if (this.deadline >  100000 ) return `The deadline should be smaller or equal to 100000`
       return ""
     },
     validationThreshold() {
@@ -166,16 +167,16 @@ export default {
 
       try {
 
-        if (to.query.deadline !== undefined) this.deadline = new Decimal(to.query.deadline)
-        else this.deadline = new Decimal(100)
+        if (to.query.deadline !== undefined) this.deadline = new Decimal(to.query.deadline).toNumber()
+        else this.deadline = 100
 
         if (to.query.defaultResolution !== undefined) {
           if ( to.query.defaultResolution === 'sender' || to.query.defaultResolution === 'recipient' ) this.defaultResolution = to.query.defaultResolution
           else throw "Invalid default resolution"
         } else this.defaultResolution = "sender"
 
-        if (to.query.threshold !== undefined) this.threshold = new Decimal(to.query.threshold)
-        else this.threshold = Decimal_1
+        if (to.query.threshold !== undefined) this.threshold = new Decimal(to.query.threshold).toNumber()
+        else this.threshold = 1
 
         if (to.query.multisigPublicKeys !== undefined)
           this.multisigPublicKeys = to.query.multisigPublicKeys.map(it => Buffer.from(it, "hex").toString("base64"))
