@@ -92,12 +92,11 @@ import Modal from "src/components/utils/modal"
 import AccountIdenticon from "./account-identicon";
 import InputAmount from "src/components/send/input-amount"
 import Wizard from "src/components/utils/wizard"
-import Decimal from "decimal.js"
 import LoadingButton from "../../utils/loading-button";
 
 export default {
 
-  components: {LoadingButton, AccountIdenticon, Modal, TxAmount, Wizard},
+  components: {LoadingButton, AccountIdenticon, Modal, InputAmount, Wizard},
 
   data() {
     return {
