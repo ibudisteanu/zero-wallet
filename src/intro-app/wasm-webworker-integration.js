@@ -17,6 +17,31 @@ export default class WasmWebworkerIntegration {
         this.initializedEvent = initializedEvent || function (){}
     }
 
+    async downloadWasm( progressStatusCallback){
+
+        const wasmFileSize = this.wasmFileSize
+
+        function formatLoadedSize (loaded, total) {
+            if (wasmFileSize > 0) {
+                const totalStr = total ? `${ (total/1024/1024).toFixed(2)}mb - ` : ''
+                return totalStr + `${Math.floor(loaded / wasmFileSize * 10000) / 100}%`
+            }
+            return `${( loaded / 1024 / 1024 ).toFixed(2)}mb`
+        }
+
+        const output = await this.download(this.wasmFileName, this.wasmSri, (loaded, total) => {
+            progressStatusCallback("WASM downloading "+ formatLoadedSize(loaded, total) )
+        })
+
+        if (!output) throw `Error downloading ${this.wasmFileName}`
+
+        const {serialized, loaded} = output
+
+        progressStatusCallback("WASM processing...")
+
+        return serialized
+    }
+
     async download(filename, sri, progressStatusCallback){
 
         while(true) {
