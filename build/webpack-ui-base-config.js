@@ -46,7 +46,10 @@ module.exports = (env, argv) => {
                 filename: path.resolve(__dirname + `/../dist/${isProd ? 'build' : 'dev'}/index.html`) //relative to root of the application
             }),
             new SubresourceIntegrityPlugin({enabled: isProd }),
-            new HtmlWebpackTagsPlugin({ tags: [ 'static/OverlayScrollbars.min.css', 'static/fonts.css', 'static/theme.css'], append: true }),
+            new HtmlWebpackTagsPlugin({
+                tags: [ 'static/OverlayScrollbars.min.css', 'static/fonts.css', 'static/theme.css', 'static/fontawesome.min.css'],
+                append: true
+            }),
             new webpack.DefinePlugin({
                 SRI_WEB_WORKER_WASM: isProd ? "'"+sha256file( path.resolve(__dirname + `/../dist/${isProd ? 'build' : 'dev'}/workers/PandoraPay-webworker-wasm.js`) )+"'" : "''",
                 SRI_WASM_MAIN: isProd ? "'"+sha256file( path.resolve(__dirname + `/../dist/${isProd ? 'build' : 'dev'}/wasm/PandoraPay-wallet-main.wasm`) )+"'" : "''",
