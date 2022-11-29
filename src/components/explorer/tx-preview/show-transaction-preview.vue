@@ -2,7 +2,7 @@
   <div>
     <template v-if="!tx">
       <div>
-        <span class="tx-hash">{{ txHash }}</span>
+        <span class="tx-hash d-inline-block">{{ txHash }}</span>
         <loading-spinner/>
       </div>
     </template>
@@ -10,8 +10,8 @@
 
       <span class="col-4 d-block d-md-none text-dark text-truncate">Hash</span>
       <span class="col-8 col-md-1 text-truncate">
-        <router-link :to="`/explorer/tx/${$base64ToHex(tx.hash)}`">
-          {{ $base64ToHex(tx.hash) }}
+        <router-link :to="`/explorer/tx/${$strings.base64ToHex(tx.hash)}`">
+          {{ $strings.base64ToHex(tx.hash) }}
         </router-link>
        </span>
 
@@ -21,9 +21,9 @@
           <span v-if="txInfo.mempool" class="d-md-flex justify-content-center align-items-center">
             <i class="fas fa-clock" v-tooltip.bottom="`Pending...`"/>
           </span>
-          <span v-else-if="txInfo.timestamp" v-tooltip.bottom="`${ $formatTime( $store.state.blockchain.genesisTimestamp.plus(  txInfo.timestamp ).times(1000) ) }`"
+          <span v-else-if="txInfo.timestamp" v-tooltip.bottom="`${ $strings.formatTime( $store.state.blockchain.genesisTimestamp.plus(  txInfo.timestamp ).times(1000) ) }`"
                 class="d-md-flex justify-content-center align-items-center">
-            {{ $timeSince($store.state.blockchain.genesisTimestamp.plus(txInfo.timestamp).times(1000), false) }}
+            {{ $strings.timeSince($store.state.blockchain.genesisTimestamp.plus(txInfo.timestamp).times(1000), false) }}
           </span>
         </template>
       </div>
@@ -34,8 +34,7 @@
           <span v-if="txInfo.mempool" class="d-md-flex justify-content-center align-items-center">
             <i class="fas fa-clock" v-tooltip.bottom="`Pending...`"/>
           </span>
-          <span v-else-if="txInfo.blkHeight" v-tooltip.bottom="`${ txInfo.blkHeight }`"
-                class="d-md-flex justify-content-center align-items-center">
+          <span v-else-if="txInfo.blkHeight" v-tooltip.bottom="`${ txInfo.blkHeight }`" class="d-md-flex justify-content-center align-items-center">
             <router-link :to="`/explorer/block/${txInfo.blkHeight}`">
               {{ $store.state.blockchain.end.minus(txInfo.blkHeight) }}
             </router-link>
@@ -45,7 +44,7 @@
 
       <span class="col-4 d-block d-md-none text-dark text-truncate">Fees</span>
       <div class="col-8 col-md-1 text-truncate">
-        <amount :value="tx.fee" :sign="true" :show-asset="false" value-class="d-md-flex justify-content-center align-items-center"/>
+        <amount :value="tx.fee" :show-asset="false" value-class="d-md-flex justify-content-center align-items-center"/>
       </div>
 
       <span class="col-4 d-block d-md-none text-dark text-truncate">Type</span>
@@ -89,7 +88,7 @@
               </span>
             </template>
             <template v-if="payload.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_ENCRYPTED)">
-              <span v-if="!decrypted || !decrypted.zetherTx.payloads[index]" v-tooltip.bottom="`Encrypted Memo`">?</span>
+              <template v-if="!decrypted || !decrypted.zetherTx.payloads[index]"></template>
               <span v-else v-tooltip.bottom="`String: ${$store.getters.printEncryptedTxMemo(decrypted.zetherTx.payloads[index].message)} || Base64: ${decrypted.zetherTx.payloads[index].message}`">
                 {{ $store.getters.printEncryptedTxMemo(decrypted.zetherTx.payloads[index].message) }}
               </span>
@@ -109,10 +108,10 @@
                class="col-12 text-truncate d-md-flex justify-content-center align-items-center">
             <span v-if="!decrypted || !decrypted.zetherTx.payloads[index]" v-tooltip.bottom="`Confidential amount`">?</span>
             <amount v-else-if="decrypted.zetherTx.payloads[index].whisperSenderValid"
-                    :value="decrypted.zetherTx.payloads[index].sentAmount" :sign="false" value-class="text-danger"/>
+                    :value="decrypted.zetherTx.payloads[index].sentAmount" sign="-" value-class="text-danger"/>
             <amount v-else-if="decrypted.zetherTx.payloads[index].whisperRecipientValid"
-                    :value="decrypted.zetherTx.payloads[index].receivedAmount" :sign="true" value-class="text-success" :show-plus-sign="true"/>
-            <amount v-else v-tooltip.bottom="`You received zero`" :value="new Decimal(0)" :sign="true"/>
+                    :value="decrypted.zetherTx.payloads[index].receivedAmount" sign="+" value-class="text-success"/>
+            <amount v-else v-tooltip.bottom="`You received zero`" :value="Decimal_0" sign="+"/>
           </div>
         </div>
       </div>
@@ -120,11 +119,15 @@
       <span class="col-4 d-block d-md-none text-dark text-truncate">Recipient</span>
       <div class="col-8 col-md-1 text-truncate">
         <template v-if="tx.version.eq( PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER )">
-          <div v-for="(payload, index) in tx.base.payloads" :key="`tx_payload_${index}`" class="col-12 text-truncate d-md-flex justify-content-center align-items-center">
-            <span v-if="!decrypted || !decrypted.zetherTx.payloads[index] || !decrypted.zetherTx.payloads[index].recipientPublicKey"
-                  v-tooltip.bottom="`Unknown Recipient`">?</span>
-            <account-identicon v-else :publicKey="decrypted.zetherTx.payloads[index].recipientPublicKey" size="21" :outer-size="0"/>
-          </div>
+          <template v-if="canDecrypt && !decrypted"></template>
+          <template v-else>
+            <div v-for="(payload, index) in tx.base.payloads" :key="`tx_payload_${index}`" class="col-12 text-truncate d-md-flex justify-content-center align-items-center">
+              <span v-if="!decrypted || !decrypted.zetherTx.payloads[index] || !decrypted.zetherTx.payloads[index].recipientPublicKey" v-tooltip.bottom="`Unknown Recipient`">
+                ?
+              </span>
+              <account-identicon v-else :publicKey="decrypted.zetherTx.payloads[index].recipientPublicKey" size="21" :outer-size="0"/>
+            </div>
+          </template>
         </template>
       </div>
 
@@ -171,14 +174,9 @@ export default {
 
   methods: {
 
-    async decryptTx({resolve, reject}) {
-      try{
-        const decrypted = await this.$store.dispatch('decryptTx', {hash: this.txHash, publicKey: this.publicKey})
-        if (decrypted) this.decrypted = decrypted
-        resolve()
-      }catch(e){
-        reject(e)
-      }
+    async decryptTx() {
+      const decrypted = await this.$store.dispatch('decryptTx', {hash: this.txHash, publicKey: this.publicKey})
+      if (decrypted) this.decrypted = decrypted
     },
 
     loadTxDecrypted(txHash, publicKey) {
@@ -212,9 +210,5 @@ export default {
 </script>
 
 <style scoped>
-
-.tx-hash {
-  display: inline-block;
-}
 
 </style>

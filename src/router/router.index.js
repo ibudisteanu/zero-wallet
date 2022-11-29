@@ -5,8 +5,6 @@ import PrivateConditionalPaymentPage from "../pages/send/private/private-conditi
 import SimpleTxResolutionConditionalPaymentPage from "../pages/send/public/simple-tx-resolution-conditional-payment-page"
 import SignResolutionConditionalPaymentPage from "src/pages/send/public/sign-resolution-conditional-payment-page";
 import ImportLinkPage from "../pages/other/import-link-page";
-import ReceivePage from "src/pages/receive/receive.page"
-import WalletPage from "src/pages/wallet/wallet.page"
 import AddressPage from "src/pages/address/address.page"
 import SetPasswordPage from "src/pages/encryption/set-password.page"
 import RemovePasswordPage from "src/pages/encryption/remove-password.page"
@@ -18,6 +16,7 @@ import MempoolExplorerPage from "src/pages/explorer/mempool-explorer.page"
 import AssetsPage from "src/pages/assets/assets.page"
 import SettingsPage from "src/pages/settings/settings.page"
 import NotFoundPage from "src/pages/not-found/not-found.page"
+import WalletPage from "../pages/wallet/wallet.page";
 
 import store from "./../store/store"
 
@@ -39,13 +38,12 @@ const routes = [
 
     {path: '/txs/private/send', component: PrivateSendPage, beforeEnter: guardDecrypted },
 
-    {path: '/advanced-txs/private/conditional-payment', component: PrivateConditionalPaymentPage, beforeEnter: guardDecrypted },
-    {path: '/advanced-txs/public/resolution-conditional-payment', component: SimpleTxResolutionConditionalPaymentPage, beforeEnter: guardDecrypted},
-    {path: '/advanced-txs/sign-resolution-conditional-payment', component: SignResolutionConditionalPaymentPage },
-    {path: '/advanced-txs/import-link', component: ImportLinkPage },
-
-    {path: '/receive', component: ReceivePage, beforeEnter: guardDecrypted },
     {path: '/wallet', component: WalletPage, beforeEnter: guardDecrypted },
+
+    {path: '/advanced/private/conditional-payment', component: PrivateConditionalPaymentPage, beforeEnter: guardDecrypted },
+    {path: '/advanced/public/resolution-conditional-payment', component: SimpleTxResolutionConditionalPaymentPage, beforeEnter: guardDecrypted},
+    {path: '/advanced/sign-resolution-conditional-payment', component: SignResolutionConditionalPaymentPage },
+    {path: '/advanced/import-link', component: ImportLinkPage },
 
     {path: '/set-password', component: SetPasswordPage , beforeEnter: guardDecrypted},
     {path: '/remove-password', component: RemovePasswordPage, beforeEnter: guardDecrypted },

@@ -7,9 +7,11 @@ import router from "../router/router.index"
 import VueClipboard from 'vue-clipboard2'
 import VueTooltip from "v-tooltip"
 import VueTooltipCss from "v-tooltip/dist/v-tooltip.css"
-import StringHelper from "../utils/string-helper";
 import Decimal from "decimal.js"
 import JSONParse from "../utils/custom-json/json-parse";
+import StringHelper from "../utils/string-helper";
+import ValidatorHelper from "../utils/validator-helper";
+import UtilsHelper from "../utils/utils-helper";
 
 export default (options) => {
 
@@ -21,36 +23,18 @@ export default (options) => {
         }
     });
 
-    app.config.globalProperties.$base64ToHex = function(b) {
-        return Buffer.from(b, "base64").toString("hex")
-    }
-    app.config.globalProperties.$base64ToString = function(b) {
-        return Buffer.from(b, "base64").toString()
-    }
-    app.config.globalProperties.$hexToBase64 = function(b) {
-        return Buffer.from(b, "hex").toString("base64")
-    }
-    app.config.globalProperties.$timeSince = function(a, b) {
-        return StringHelper.timeSince(a, b)
-    }
-    app.config.globalProperties.$formatTime = function(a) {
-        return StringHelper.formatTime(a)
-    }
-    app.config.globalProperties.$formatBytes = function(a) {
-        return StringHelper.formatBytes(a)
-    }
-    app.config.globalProperties.$formatSize = function(a) {
-        return StringHelper.formatSize(a)
-    }
-    app.config.globalProperties.$formatMoney = function(a, b, c) {
-        return StringHelper.formatMoney(a, b, c )
-    }
-    app.config.globalProperties.$formatMilliseconds = function(a, b, c) {
-        return StringHelper.formatMilliseconds(a, b, c )
-    }
+    app.config.globalProperties.$validator = ValidatorHelper
+    app.config.globalProperties.$strings = StringHelper
+    app.config.globalProperties.$utils = UtilsHelper
 
     app.config.globalProperties.PandoraPay = PandoraPay
+
     app.config.globalProperties.Decimal = Decimal
+    app.config.globalProperties.Decimal_0 = new Decimal(0)
+    app.config.globalProperties.Decimal_1 = new Decimal(1)
+    app.config.globalProperties.Decimal_2 = new Decimal(2)
+    app.config.globalProperties.Decimal_10 = new Decimal(10)
+
     app.config.globalProperties.Buffer = Buffer
 
     app.config.globalProperties.JSONStringify = JSONStringify
@@ -59,6 +43,10 @@ export default (options) => {
     store.commit('createSyncPromise')
     store.commit('setScreenInformation')
     store.commit('readLocalStorage')
+
+    window.addEventListener('resize', function(event) {
+        store.commit('setScreenInformation')
+    })
 
     app.use(store);
     app.use(router);

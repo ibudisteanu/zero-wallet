@@ -2,37 +2,40 @@
 
   <div class="pt-2">
     <template v-if="version === 'zether'">
-      <i class="fas fa-lock pe-2 fs-2" v-tooltip.bottom="`Homomorphic Encrypted Amount: ${balance}`"/>
-      <template v-if="decryptedBalance === null">
-        <i v-if="canBeDecrypted"  class="fas fa-key pe-2 cursor-pointer fs-2 text-primary" v-tooltip.bottom="'Decrypt Amount'" @click="decryptBalance"></i>
-      </template>
+      <i v-if="!canBeDecrypted" class="fas fa-lock pe-2 fs-2" v-tooltip.bottom="`Homomorphic Encrypted Amount: ${balance}`"/>
+      <loading-button v-else-if="!decryptedBalance" :submit="decryptBalance" :text="getCurrencyType" icon="fas fa-key" tooltip="ecrypt All your balances" class-custom="cursor-pointer dropdown-item" component="span"/>
     </template>
-    <h4 class="fw-medium d-inline-block" v-if="getAsset">
-      <template v-if="version === 'zether'">
-        <template v-if="decryptedBalance !== null">{{ amount }}</template>
-      </template>
-      <template v-else>{{ amount }}</template>
-    </h4>
-    <small class="ps-1 fs--1 text-700 d-inline-block">/
-      <router-link :to="`/explorer/asset/${$base64ToHex(asset)}`" class="currency"
-                   v-tooltip.bottom="$base64ToHex(asset)">
-        {{ getAsset ? getAsset.identification : '' }}
-      </router-link>
-    </small>
+
+    <div v-if="decryptedBalance">
+      <h4 class="fw-medium d-inline-block" v-if="getAsset">
+        <template v-if="version === 'zether'">
+          <template v-if="decryptedBalance !== null">{{ amount }}</template>
+        </template>
+        <template v-else>{{ amount }}</template>
+      </h4>
+      <small class="ps-1 fs--1 text-700 d-inline-block">
+        <router-link :to="`/explorer/asset/${$strings.base64ToHex(asset)}`" class="currency" v-tooltip.bottom="$strings.base64ToHex(asset)">
+          {{  this.getAsset ? this.getAsset.identification : ''  }}
+        </router-link>
+      </small>
+    </div>
+
   </div>
 
 </template>
 
 <script>
 
+import LoadingButton from "../../utils/loading-button";
+
 export default {
 
-  components: {},
+  components: {LoadingButton},
 
   props: {
     version: {default: "transparent"},
     asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64},
-    balance: {default: () => new Decimal(0)},
+    balance: {default: () => Decimal_0},
     publicKey: {default: ""},     //required for version zether
     canBeDecrypted: {default: false}  //required for version zether
   },
@@ -44,6 +47,11 @@ export default {
   },
 
   computed: {
+
+    getCurrencyType(){
+      return "Decrypt " + ( this.getAsset ? this.getAsset.identification : '' ) + " token"
+    },
+
     getAsset() {
       return this.$store.getters.getAsset(this.asset);
     },
@@ -55,7 +63,7 @@ export default {
         if (this.decryptedBalance === null) return
         amount = this.decryptedBalance
       }
-      return this.$formatMoney(new Decimal(amount || 0).div(new Decimal(10).pow(this.getAsset.decimalSeparator)).toString(), this.getAsset.decimalSeparator)
+      return this.$strings.formatMoney(new Decimal(amount || 0).div( Decimal_10.pow(this.getAsset.decimalSeparator)).toString(), this.getAsset.decimalSeparator.toNumber())
     },
 
   },

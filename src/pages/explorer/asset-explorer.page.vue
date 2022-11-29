@@ -8,7 +8,7 @@
       <div class="card-header bg-light">
         <div class="row align-items-center">
           <div class="col">
-            <h5 class="mb-0 text-truncate">Asset Explorer {{ $base64ToHex(hash) }} </h5>
+            <h5 class="mb-0 text-truncate">Asset Explorer {{ $strings.base64ToHex(hash) }} </h5>
           </div>
         </div>
       </div>
@@ -24,7 +24,7 @@
           <div class="row pb-2">
             <span class="col-5 col-sm-3 text-truncate">Identicon</span>
             <span class="col-7 col-sm-9 text-truncate">
-              <identicon v-if="asset.hash" :hash="asset.hash" size="21" outer-size="7" :uri="`/explorer/asset/${$base64ToHex(asset.hash)}`"/>
+              <identicon v-if="asset.hash" :hash="asset.hash" size="21" outer-size="7" :uri="`/explorer/asset/${$strings.base64ToHex(asset.hash)}`"/>
             </span>
           </div>
           <div class="row pt-2 pb-2 bg-light">
@@ -38,7 +38,7 @@
           <div class="row pt-2 pb-2 bg-light">
             <span class="col-5 col-sm-3 text-truncate">Hash</span>
             <span class="col-7 col-sm-9 text-truncate">
-              <router-link :to="`/explorer/asset/${$base64ToHex(asset.hash)}`">{{ $base64ToHex(asset.hash) }}</router-link>
+              <router-link :to="`/explorer/asset/${$strings.base64ToHex(asset.hash)}`">{{ $strings.base64ToHex(asset.hash) }}</router-link>
             </span>
           </div>
           <div class="row pt-2 pb-2">
@@ -111,10 +111,10 @@ export default {
       return this.$store.state.assets.list[this.hash];
     },
     maxSupply() {
-      return (this.asset.maxSupply || new Decimal(0)).div(new Decimal(10).pow(this.asset.decimalSeparator))
+      return (this.asset.maxSupply || Decimal_0).div( Decimal_10.pow(this.asset.decimalSeparator))
     },
     supply() {
-      return (this.asset.supply || new Decimal(0)).div(new Decimal(10).pow(this.asset.decimalSeparator))
+      return (this.asset.supply || Decimal_0).div( Decimal_10.pow(this.asset.decimalSeparator))
     },
 
   },
@@ -140,7 +140,8 @@ export default {
 
     },
     showAssetJSON() {
-      return this.$store.state.page.inputModal.showModal({ title:"ASSET JSON", data: JSONStringify(this.asset, null, 2), textarea: { allowEdit:false }, button: null })
+      return this.$store.state.page.inputModal.showModal({ title:"ASSET JSON", data: JSONStringify(this.asset, null, 2),
+        textarea: { allowEdit:false, class:"form-control-sm fs--2", rows: 15 }, button: null })
     },
 
   },

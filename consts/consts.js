@@ -14,7 +14,7 @@ module.exports = {
         'js',
         '--network=devnet',
         '--new-devnet',
-        '--consensus=wallet',
+        '--node-consensus=app',
         '--tcp-max-clients=1'
     ],
 

@@ -1,11 +1,23 @@
-class StringHelper{
+export default {
 
-    truncateText(string = "", size1 = 8, size2 = 8){
+    base64ToHex (b) {
+        return Buffer.from(b, "base64").toString("hex")
+    },
+
+    base64ToString (b) {
+        return Buffer.from(b, "base64").toString()
+    },
+
+    hexToBase64 (b) {
+        return Buffer.from(b, "hex").toString("base64")
+    },
+
+    truncateText (string = "", size1 = 8, size2 = 8) {
         if (string.length <= size1 + size2 ) return string
         return string.slice(0, size1)+'...'+string.slice(string.length-size2)
-    }
+    },
 
-    formatMilliseconds(millisec){
+    formatMilliseconds (millisec) {
 
         const seconds = (millisec / 1000).toFixed(1);
         const minutes = (millisec / (1000 * 60)).toFixed(1);
@@ -17,9 +29,9 @@ class StringHelper{
         else if (hours < 24) return hours + " Hrs";
         else return days + " Days"
 
-    }
+    },
 
-    timeSince(date, longVersion = true ) {
+    timeSince (date, longVersion = true ) {
 
         var seconds = Math.floor((new Date().getTime() - date) / 1000);
 
@@ -43,7 +55,7 @@ class StringHelper{
             return interval + (longVersion ? " minutes" : ' m');
 
         return Math.floor(seconds) + (longVersion? " seconds": ' s');
-    }
+    },
 
     formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
         try {
@@ -63,7 +75,7 @@ class StringHelper{
         } catch (e) {
             console.log(e)
         }
-    }
+    },
 
     formatSize(bytes, decimals = 2) {
         if (bytes === 0) return '0 B';
@@ -75,19 +87,19 @@ class StringHelper{
         const i = Math.floor(Math.log(bytes) / Math.log(k));
 
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-    }
+    },
 
     formatBytes(bytes) {
         return bytes + ' bytes'
-    }
+    },
 
     formatTime(timestamp) {
         return new Date(timestamp).toLocaleString()
-    }
+    },
 
     generateRandomId( ){
         return Math.random().toString()+Math.random().toString()
-    }
+    },
 
     badgeColors(number){
         switch (number % 8){
@@ -101,7 +113,4 @@ class StringHelper{
             case 7: return "dark"
         }
     }
-
 }
-
-export default new StringHelper()

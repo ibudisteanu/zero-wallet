@@ -1,6 +1,6 @@
 <template>
 
-  <modal ref="modal" :title="`Decrypting ${status}`" contentClass="" @opened="start" :closing-function="stop">
+  <modal ref="modal" :title="statusTitle" contentClass="" @opened="start" :closing-function="stop">
 
     <template v-slot:body>
 
@@ -34,6 +34,7 @@ export default {
       returnPrivateKey: false,
       cancelCallback: null,
       status: "",
+      statusTitle: "",
       closed: false,
     }
   },
@@ -97,16 +98,19 @@ export default {
 
       this.startMatrix()
 
-      this.status = "Downloading wasm"
+      this.status = "Downloading..."
+      this.statusTitle = "Downloading Web Assembly..."
       await PandoraPayHelperPromise
       this.status = ""
 
       PandoraPayHelper.balanceDecoderCallback = (status) => {
         this.status = "Init  " + status
+        this.statusTitle = "Initialize library " + status
       }
 
       await PandoraPayHelper.decoderPromise
       this.status = ""
+      this.statusTitle = ""
 
       if (this.closed) return
 
@@ -117,8 +121,9 @@ export default {
         balance: this.balance,
         asset: this.asset,
       })), async (status) => {
-        const final = this.$formatMoney(new Decimal(status).div(new Decimal(10).pow(this.getAsset.decimalSeparator), this.getAsset.decimalSeparator))
+        const final = this.$strings.formatMoney(new Decimal(status).div( Decimal_10.pow(this.getAsset.decimalSeparator), this.getAsset.decimalSeparator.toNumber() ))
         this.status = "Scan  " + final
+        this.statusTitle = "Scanning balance  " + final
       })
 
       this.cancelCallback = decryptedData[1]

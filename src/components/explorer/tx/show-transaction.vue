@@ -5,7 +5,7 @@
       <div class="card-header bg-light">
         <div class="row align-items-center">
           <div class="col">
-            <h5 class="mb-0 text-truncate">Tx {{ $base64ToHex(tx.hash) }}</h5>
+            <h5 class="mb-0 text-truncate">Tx {{ $strings.base64ToHex(tx.hash) }}</h5>
           </div>
         </div>
       </div>
@@ -14,15 +14,15 @@
         <div class="row pb-2">
           <span class="col-4 col-sm-3 text-truncate">Hash</span>
           <div class="col-8 col-sm-9 text-truncate">
-            <router-link :to="`/explorer/tx/${$base64ToHex(tx.hash)}`">
-              {{ $base64ToHex(tx.hash) }}
+            <router-link :to="`/explorer/tx/${$strings.base64ToHex(tx.hash)}`">
+              {{ $strings.base64ToHex(tx.hash) }}
             </router-link>
           </div>
         </div>
 
         <template v-if="!confirmation">
           <div class="row pb-2 bg-light">
-            <span class="col-4 col-sm-3 text-truncate">Height</span>
+            <span class="col-4 col-sm-3 text-truncate">Tx Height</span>
             <div class="col-8 col-sm-9 text-truncate">
               <span v-if="txInfo && txInfo.height">
                 <router-link :to="`/explorer/tx/${txInfo.height}`">{{ txInfo.height }}</router-link>
@@ -42,9 +42,8 @@
           <div class="row pt-2 pb-2 bg-light">
             <span class="col-4 col-sm-3 text-truncate">Block Timestamp</span>
             <div class="col-8 col-sm-9 text-truncate">
-              <span v-if="txInfo && txInfo.timestamp" v-tooltip.bottom="`${ $formatTime( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp ).times(1000) ) }`">
-                {{ $timeSince($store.state.blockchain.genesisTimestamp.plus(txInfo.timestamp).times(1000), false)  }}
-                <i class="fas fa-clock"></i>
+              <span v-if="txInfo && txInfo.timestamp" v-tooltip.bottom="`${ $strings.formatTime( $store.state.blockchain.genesisTimestamp.plus( txInfo.timestamp ).times(1000).toNumber() ) }`">
+                ~ {{ $strings.timeSince($store.state.blockchain.genesisTimestamp.plus(txInfo.timestamp).times(1000), false)  }} ago
               </span>
               <span v-else>-</span>
             </div>
@@ -53,14 +52,14 @@
             <span class="col-4 col-sm-3 text-truncate">Confirmations</span>
             <div class="col-8 col-sm-9 text-truncate">
               <span v-if="txInfo && txInfo.blkHeight">
-                {{ $store.state.blockchain.end.minus(txInfo.blkHeight).minus(1) }}
-                <i v-if="$store.state.blockchain.end.minus( txInfo.blkHeight ).minus(1).gt(8)" class="fas fa-check"></i>
+                {{ $store.state.blockchain.end.minus(txInfo.blkHeight) }}
+                <i v-if="$store.state.blockchain.end.minus( txInfo.blkHeight ).gt(8)" class="fas fa-check"></i>
               </span>
               <span v-else>-</span>
             </div>
           </div>
           <div class="row pt-2 pb-2 bg-light">
-            <span class="col-4 col-sm-3 text-truncate">Mem Pool</span>
+            <span class="col-4 col-sm-3 text-truncate">Pending Tx</span>
             <span class="col-8 col-sm-9 text-truncate">{{ txInfo.mempool ? 'YES' : ' No' }}</span>
           </div>
 
@@ -69,18 +68,18 @@
         <div class="row pt-2 pb-2">
           <span class="col-4 col-sm-3 text-truncate">Size</span>
           <div class="col-8 col-sm-9 text-truncate">
-            <span v-tooltip.bottom="`${ $formatBytes(tx.size.toNumber()) }`"> {{ $formatBytes(tx.size.toNumber()) }} </span>
+            <span v-tooltip.bottom="`${ $strings.formatBytes(tx.size.toNumber()) }`"> {{ $strings.formatSize(tx.size.toNumber()) }} </span>
           </div>
         </div>
 
-        <div class="row pt-2 pb-2 bg-light">
+        <div class="row pt-2 pb-2 bg-light" v-if="$store.state.settings.expert">
           <span class="col-4 col-sm-3 text-truncate">Space Extra Size</span>
           <div class="col-8 col-sm-9 text-truncate">
-            <span v-tooltip.bottom="`${ $formatBytes(tx.spaceExtra.toNumber()) }`"> {{ $formatBytes(tx.spaceExtra.toNumber()) }} </span>
+            <span v-tooltip.bottom="`${ $strings.formatBytes(tx.spaceExtra.toNumber()) }`"> {{ $strings.formatSize(tx.spaceExtra.toNumber()) }} </span>
           </div>
         </div>
 
-        <div class="row pt-2 pb-2">
+        <div class="row pt-2 pb-2" v-if="$store.state.settings.expert">
           <span class="col-4 col-sm-3 text-truncate">Version</span>
           <span class="col-8 col-sm-9 text-truncate">
             {{ tx.version }}
@@ -134,7 +133,7 @@
           </div>
 
           <div class="row pt-2 pb-2  bg-light">
-            <span class="col-12 col-sm-3 text-truncate">Memo</span>
+            <span class="col-12 col-sm-3 text-truncate">Plain Text Memo</span>
             <span class="col-12 col-sm-9 text-truncate">
               <template v-if="tx.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT)"
                         v-tooltip.bottom="`${Buffer.from(tx.data, 'hex').toString()}`">
@@ -143,10 +142,9 @@
             </span>
           </div>
 
-          <div class="row pt-2 pb-2 ">
+          <div class="row pt-2 pb-2 " v-if="$store.state.settings.expert">
             <span class="col-4 col-sm-3 text-truncate">Memo as Base64</span>
-            <template v-if="tx.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT)"
-                      v-tooltip.bottom="`${tx.data}`">
+            <template v-if="tx.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT)" v-tooltip.bottom="`${tx.data}`">
               {{ tx.data }}
             </template>
           </div>
@@ -156,8 +154,8 @@
             <div class="row pt-2 pb-2  bg-light">
               <span class="col-4 col-sm-3 text-truncate">Tx Id</span>
               <span class="col-12 col-sm-9 text-truncate">
-                <router-link :to="`/explorer/tx/${$base64ToHex(tx.extra.txId)}`">
-                  {{ $base64ToHex(tx.extra.txId) }}
+                <router-link :to="`/explorer/tx/${$strings.base64ToHex(tx.extra.txId)}`">
+                  {{ $strings.base64ToHex(tx.extra.txId) }}
                 </router-link>
               </span>
             </div>
@@ -212,15 +210,15 @@
 
               <div class="row pt-2 pb-2 bg-light">
                 <span class="col-4 col-sm-3 text-truncate">Fee Conversion Rate</span>
-                <span class="col-8 col-sm-9 text-truncate">{{payload.feeRate.div(new Decimal(10).pow(payload.feeLeadingZeros)) }}</span>
+                <span class="col-8 col-sm-9 text-truncate">{{payload.feeRate.div( Decimal_10.pow(payload.feeLeadingZeros)) }}</span>
               </div>
             </template>
 
-            <div class="row pt-2 pb-2">
+            <div class="row pt-2 pb-2 ">
               <span class="col-4 col-sm-3 text-truncate">Asset</span>
               <span class="col-8 col-sm-9 text-truncate">
-                <router-link :to="`/explorer/asset/${$base64ToHex(payload.asset)}`">
-                    {{ $base64ToHex(payload.asset) }}
+                <router-link :to="`/explorer/asset/${$strings.base64ToHex(payload.asset)}`">
+                    {{ $strings.base64ToHex(payload.asset) }}
                 </router-link>
               </span>
             </div>
@@ -237,29 +235,30 @@
             </div>
 
             <div class="row pt-2 pb-2">
-              <span class="col-4 col-sm-3 text-truncate">Parity</span>
-              <span class="col-8 col-sm-9 text-truncate">{{ payload.parity ? 'true' : 'false' }}</span>
+              <span class="col-4 col-sm-3 text-truncate">Burn</span>
+              <span class="col-8 col-sm-9 text-truncate"><amount :value="payload.burnValue" sign="-"/></span>
             </div>
 
             <div class="row pt-2 pb-2 bg-light">
-              <span class="col-4 col-sm-3 text-truncate">Burn</span>
-              <span class="col-8 col-sm-9 text-truncate"><amount :value="payload.burnValue" :sign="false"/></span>
+              <span class="col-12 col-sm-3 text-truncate">Sender Ring</span>
+              <span class="col-12 col-sm-9">
+                <show-transaction-data :tx="tx" :payload="payload" :parity="0"/>
+              </span>
             </div>
 
             <div class="row pt-2 pb-2">
-              <span class="col-12 col-sm-3 text-truncate">Sender</span>
-              <span class="col-12 col-sm-9"><show-transaction-data :tx="tx" :payload="payload" :parity="0"/></span>
-            </div>
-
-            <div class="row pt-2 pb-2 bg-light">
-              <span class="col-12 col-sm-3 text-truncate">Recipient</span>
+              <span class="col-12 col-sm-3 text-truncate">Recipient Ring</span>
               <span class="col-12 col-sm-9">
                 <show-transaction-data :tx="tx" :payload="payload" :parity="1"/>
               </span>
             </div>
 
-            <div class="row pt-2 pb-2">
-              <span class="col-4 col-sm-3 text-truncate">Memo</span>
+            <div class="row pt-2 pb-2 bg-light">
+              <span class="col-4 col-sm-3 text-truncate">
+                {{payload.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT) ? 'Plain Text ' : ''}}
+                {{payload.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_ENCRYPTED) ? 'Encrypted ' : ''}}
+                Tx Message
+              </span>
               <span class="col-8 col-sm-9 text-truncate">
                 <template v-if="payload.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT)">
                     <span class="text-truncate" v-tooltip.bottom="`${Buffer.from(payload.data, 'base64').toString()}`">
@@ -275,7 +274,32 @@
               </span>
             </div>
 
+            <div class="row pt-2 pb-2">
+              <span class="col-4 col-sm-3 text-truncate">Amount</span>
+              <span class="col-8 col-sm-9 text-truncate">
+                <span v-if="!decrypted || !decrypted.zetherTx.payloads[index]" v-tooltip.bottom="`Confidential amount`"> Confidential </span>
+                <amount v-else-if="decrypted.zetherTx.payloads[index].whisperSenderValid"
+                        :value="decrypted.zetherTx.payloads[index].sentAmount" sign="-" value-class="text-danger"/>
+                <amount v-else-if="decrypted.zetherTx.payloads[index].whisperRecipientValid"
+                        :value="decrypted.zetherTx.payloads[index].receivedAmount" sign="+" value-class="text-success" />
+                <amount v-else v-tooltip.bottom="`You received zero`" :value="Decimal_0" />
+              </span>
+            </div>
+
             <div class="row pt-2 pb-2 bg-light">
+              <span class="col-4 col-sm-3 text-truncate">Recipient</span>
+              <span class="col-8 col-sm-9">
+                <span v-if="!decrypted || !decrypted.zetherTx.payloads[index] || !decrypted.zetherTx.payloads[index].recipientPublicKey" v-tooltip.bottom="`Unknown Recipient`"> Anonymous </span>
+                <account-identicon v-else :publicKey="decrypted.zetherTx.payloads[index].recipientPublicKey" size="21" outer-size="7"/>
+              </span>
+            </div>
+
+            <div class="row pt-2 pb-2" v-if="$store.state.settings.expert">
+              <span class="col-4 col-sm-3 text-truncate">Parity</span>
+              <span class="col-8 col-sm-9 text-truncate">{{ payload.parity ? 'true' : 'false' }}</span>
+            </div>
+
+            <div class="row pt-2 pb-2 bg-light" v-if="$store.state.settings.expert">
               <span class="col-4 col-sm-3 text-truncate">Base64 Memo</span>
               <span class="col-8 col-sm-9 text-truncate">
                 <template v-if="payload.dataVersion.eq( PandoraPay.enums.transactions.TransactionDataVersion.TX_DATA_PLAIN_TEXT)">
@@ -287,26 +311,6 @@
                     {{ decrypted.zetherTx.payloads[index].message }}
                   </span>
                 </template>
-              </span>
-            </div>
-
-            <div class="row pt-2 pb-2">
-              <span class="col-4 col-sm-3 text-truncate">Amount</span>
-              <span class="col-8 col-sm-9 text-truncate">
-                <span v-if="!decrypted || !decrypted.zetherTx.payloads[index]" v-tooltip.bottom="`Confidential amount`">?</span>
-                <amount v-else-if="decrypted.zetherTx.payloads[index].whisperSenderValid"
-                        :value="decrypted.zetherTx.payloads[index].sentAmount" :sign="false" value-class="text-danger"/>
-                <amount v-else-if="decrypted.zetherTx.payloads[index].whisperRecipientValid"
-                        :value="decrypted.zetherTx.payloads[index].receivedAmount" :sign="true" value-class="text-success" :show-plus-sign="true"/>
-                <amount v-else v-tooltip.bottom="`You received zero`" :value="new Decimal(0)" :sign="true"/>
-              </span>
-            </div>
-
-            <div class="row pt-2 pb-2 bg-light">
-              <span class="col-4 col-sm-3 text-truncate">Recipient</span>
-              <span class="col-8 col-sm-9">
-                <span v-if="!decrypted || !decrypted.zetherTx.payloads[index] || !decrypted.zetherTx.payloads[index].recipientPublicKey" v-tooltip.bottom="`Unknown Recipient`">?</span>
-                <account-identicon v-else :publicKey="decrypted.zetherTx.payloads[index].recipientPublicKey" size="21" outer-size="7"/>
               </span>
             </div>
 
@@ -327,7 +331,7 @@
                   <template v-if="!txInfo || !txInfo.blkHeight">Not included</template>
                   <template v-else-if="$store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight )">Deadline expired</template>
                   <template v-else>
-                    ~ {{$formatMilliseconds(payload.extra.deadline.plus(txInfo.blkHeight).minus($store.state.blockchain.end) * PandoraPay.config.BLOCK_TIME * 1000) }}
+                    ~ {{$strings.formatMilliseconds(payload.extra.deadline.plus(txInfo.blkHeight).minus($store.state.blockchain.end) * PandoraPay.config.BLOCK_TIME * 1000) }}
                     <i class="fas fa-clock"></i>
                   </template>
                 </span>
@@ -346,13 +350,13 @@
               </div>
 
               <div class="my-2">
-                <router-link :to="`/advanced-txs/sign-resolution-conditional-payment?txId=${$base64ToHex(tx.hash)}&payloadIndex=${index}`"
+                <router-link :to="{path: '/advanced/sign-resolution-conditional-payment', query:{ txId: $strings.base64ToHex(tx.hash), payloadIndex: index }}"
                     :class="`btn btn-falcon-default rounded-pill me-1 cursor-pointer ${!txInfo || !txInfo.blkHeight || $store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight ) ? 'disabled': ''} `">
                   <i class="fa fa-signature"/>
                   Sign Resolution
                 </router-link>
 
-                <router-link :to="`/advanced-txs/public/resolution-conditional-payment?txId=${$base64ToHex(tx.hash)}&payloadIndex=${index}`"
+                <router-link :to="{path: '/advanced/public/resolution-conditional-payment', query: { txId: $strings.base64ToHex(tx.hash), payloadIndex:index}}"
                     :class="`btn btn-falcon-default rounded-pill me-1 cursor-pointer ${!txInfo || !txInfo.blkHeight || $store.state.blockchain.end.minus( payload.extra.deadline ).gte( txInfo.blkHeight ) ? 'disabled': ''} `">
                   <i class="fa fa-gavel"/>
                   Create Resolution Tx
@@ -380,19 +384,16 @@
           <div :class="`row pt-2 pb-2 ${index % 2 ? 'bg-light':''}`">
             <span class="col-4 col-sm-3 fw-medium text-truncate">Fee{{ (fees.length > 1) ? index : '' }}</span>
             <span class="col-8 col-sm-9 text-truncate">
-              <amount :asset="fee.asset" :value="fee.amount" value-class="text-900 text-danger" :sign="false"/>
-              <template v-if="fee.amountNative"> => <amount :value="fee.amountNative" value-class="text-900" :sign="true"/></template>
+              <amount :asset="fee.asset" :value="fee.amount" value-class="text-900 text-danger" sign="-"/>
+              <template v-if="fee.amountNative"> => <amount :value="fee.amountNative" value-class="text-900" sign=""/></template>
             </span>
           </div>
         </div>
       </div>
       <div class="card-footer bg-light g-0 d-block p-3">
-        <loading-button v-if="canDecrypt && !decrypted" :submit="handleDecryptTx" text="" icon="fas fa-unlock"
-                        tooltip="Decrypt transaction to see the amount, shared text and recipient" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer"/>
-        <loading-button :submit="handleShowJSON" text="" icon="fas fa-file"
-                        tooltip="Show transaction as JSON" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer"/>
-        <loading-button :submit="handleShowTxRaw" text="" icon="fas fa-file-code"
-                        tooltip="Show transaction as raw serialized binary" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer"/>
+        <loading-button v-if="canDecrypt && !decrypted" :submit="handleDecryptTx" component="span" icon="fas fa-unlock" text="Decrypt transaction" tooltip="Decrypt transaction to see the amount, shared text and recipient" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer"/>
+        <loading-button v-if="$store.state.settings.expert" :submit="handleShowJSON" component="span" icon="fas fa-file" text="Show transaction (JSON)" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer"/>
+        <loading-button v-if="$store.state.settings.expert" :submit="handleShowTxRaw" component="span" icon="fas fa-file-code" text="Show transaction (Binary)" class-custom="btn btn-falcon-default rounded-pill me-1 mb-1 cursor-pointer"/>
       </div>
     </div>
 
@@ -434,7 +435,7 @@ export default {
         for (const payload of this.tx.payloads)
           out.push({
             amount: payload.statement.fee,
-            amountNative: payload.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 ? payload.statement.fee.mul(payload.feeRate).div(new Decimal(10).pow(payload.feeLeadingZeros)) : null,
+            amountNative: payload.asset !== PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64 ? payload.statement.fee.mul(payload.feeRate).div( Decimal_10.pow(payload.feeLeadingZeros)) : null,
             asset: payload.asset,
             feeRate: payload.feeRate
           })
@@ -476,11 +477,13 @@ export default {
     },
 
     handleShowJSON() {
-      return this.$store.state.page.inputModal.showModal({ title: "TX JSON", data: JSONStringify(this.tx, null, 2), textarea: { allowEdit:false }, button: null } )
+      return this.$store.state.page.inputModal.showModal({ title: "TX JSON", data: JSONStringify(this.tx, null, 2),
+        textarea: { allowEdit:false, class:"form-control-sm fs--2", rows: 20 }, button: null } )
     },
 
     handleShowTxRaw() {
-      return this.$store.state.page.inputModal.showModal({ title: "TX JSON", data:this.tx._serialized, textarea: { allowEdit:false }, button: null })
+      return this.$store.state.page.inputModal.showModal({ title: "TX JSON", data:this.tx._serialized,
+        textarea: { allowEdit:false, class:"form-control-sm fs--2", rows: 20 }, button: null })
     },
 
 

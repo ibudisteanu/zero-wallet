@@ -78,16 +78,14 @@ export default {
 
       async start(){
 
-        const formatLoadedSize = (loaded, total) => {
-          return `${( Math.min(loaded, total) / 1024 / 1024 ).toFixed(2)}mb / ${( total / 1024 / 1024).toFixed(2)}mb`
-        }
-
         try{
 
           this.isDownloading = true;
 
           const wasmMainSri = global.SRI_WASM_MAIN || ''
-          const integration = new WasmWebworkerIntegration( "PandoraPay", this.options.resPrefix + "wasm/PandoraPay-wallet-main.wasm?"+wasmMainSri, wasmMainSri, consts.goArgv, this.options.resPrefix + "workers/PandoraPay-webworker-wasm.js", (status)=>{
+          const wasmMainFileSize = global.SIZE_WASM_MAIN || 0
+
+          const integration = new WasmWebworkerIntegration( "PandoraPay", this.options.resPrefix + "wasm/PandoraPay-wallet-main.wasm?"+wasmMainSri, wasmMainSri, wasmMainFileSize, consts.goArgv, this.options.resPrefix + "workers/PandoraPay-webworker-wasm.js", (status)=>{
             console.log("Main status:", status)
             this.progressStatus = status
           }, async ()=>{
@@ -108,7 +106,9 @@ export default {
                   helperPromiseResolved = true
 
                   const wasmHelperSri = global.SRI_WASM_HELPER || ''
-                  const integrationHelper = new WasmWebworkerIntegration("PandoraPayHelper", this.options.resPrefix +"wasm/PandoraPay-wallet-helper.wasm?"+wasmHelperSri, wasmHelperSri, consts.goArgv, this.options.resPrefix + "workers/PandoraPay-webworker-wasm.js", (status)=>{
+                  const wasmHelperFileSize = global.SIZE_WASM_HELPER || 0
+
+                  const integrationHelper = new WasmWebworkerIntegration("PandoraPayHelper", this.options.resPrefix +"wasm/PandoraPay-wallet-helper.wasm?"+wasmHelperSri, wasmHelperSri, wasmHelperFileSize, consts.goArgv, this.options.resPrefix + "workers/PandoraPay-webworker-wasm.js", (status)=>{
                     console.log("Helper status:", status)
                   }, async ()=>{
 
@@ -136,16 +136,10 @@ export default {
                     await promise
                   } )
 
-                  let lastSize = 0
-                  const r = await integrationHelper.downloadWasm( (loaded, total)=>{
-                    if (loaded - lastSize > 5*1024){
-                      lastSize = loaded
-                      console.log( 'WASM: ' + formatLoadedSize(loaded, total ) )
-                    }
-                  })
-                  const data = await r.arrayBuffer()
+
+                  const data = await integrationHelper.downloadWasm(status => console.log( "helper:", status ) )
                   await integrationHelper.createWorker()
-                  integrationHelper.initialize(data)
+                  integrationHelper.initialize( data )
                 }
 
               })
@@ -157,20 +151,13 @@ export default {
 
           })
 
-          let lastSize = 0
-          const r = await integration.downloadWasm((loaded, total)=>{
-            if (loaded - lastSize > 5*1024) {
-              lastSize = loaded
-              this.progressStatus = 'WASM: ' + formatLoadedSize(loaded, total)
-            }
-          })
+          const data = await integration.downloadWasm(status => this.progressStatus = status )
 
-          this.progressStatus = "WASM serializing...";
-          const data = await r.arrayBuffer()
-          this.progressStatus = "WASM instantiating...";
-
+          this.progressStatus = "Web Worker created"
           await integration.createWorker()
-          integration.initialize(data)
+
+          this.progressStatus = "WASM instantiating..."
+          integration.initialize( data )
 
         }catch(err){
           this.error = err.toString()

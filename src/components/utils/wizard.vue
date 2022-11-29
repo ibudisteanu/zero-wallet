@@ -66,6 +66,7 @@ export default {
     controlsClassName: {default: ""},
     buttons: {default: () => ({})}, //{icon, text}
     allowScroll: {default: true},
+    onSetTab: {default: null }
   },
 
   computed: {
@@ -97,11 +98,7 @@ export default {
         value = Math.max(value, this.start)
         value = Math.min(value, this.end + 1)
 
-        const promise = new Promise((resolve, reject) => {
-          this.$emit('onSetTab', {resolve, reject, oldTab: this.tab, value})
-        })
-
-        const result = await promise
+        const result = await this.onSetTab({oldTab: this.tab, value})
 
         if (this.allowScroll)
           this.$refs.wizard.scrollIntoView({behavior: "smooth"})
@@ -115,16 +112,16 @@ export default {
       }
     },
 
-    handleBack() {
+    handleBack(steps = 1) {
       return new Promise((resolve, reject)=>{
         for (let i = 0; i < this.titlesSorted.length; i++)
           if (this.titlesSorted[i] === this.tab)
-            return this.setTab(resolve, this.titlesSorted[i - 1])
+            return this.setTab(resolve, this.titlesSorted[i - steps])
 
         resolve()
       })
-
     },
+
     handleNext() {
       return new Promise((resolve, reject)=>{
         for (let i = 0; i < this.titlesSorted.length; i++)

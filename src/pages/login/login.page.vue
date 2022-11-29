@@ -7,7 +7,7 @@
       <div class="d-flex flex-center mb-3">
         <img :src="require(`src/assets/logo-square${$store.state.settings.dark?'':''}.png`).default" class="logo" :alt="name">
       </div>
-      <h1 class="d-flex flex-center mb-3 logo-color">Pandora Pay</h1>
+      <h1 class="d-flex flex-center mb-3 logo-color">{{ name }}</h1>
 
       <div class="d-flex flex-center mb-2 mb-sm-4">
         <h2 class="fs-0 fs-sm-2 fs-md-3">The Anonymous Cash awaits</h2>
@@ -15,7 +15,7 @@
 
       <div>
         <label>Password</label>
-        <password-input :value="password" @changed="a=>this.password=a" @enter="$refs.refLoadingButton.handleClick"/>
+        <password-input :value="password" @changed="a=>this.password=a" @enter="clickLogin"/>
 
         <alert-box class="mt-3" v-if="error" type="error" :dismissible-timeout="10000" :dismissible-text="error"
                    @onDismissible="error=''">{{ error }}
@@ -40,7 +40,6 @@ import PasswordInput from "src/components/utils/password-input";
 import LoadingSpinner from "src/components/utils/loading-spinner";
 import LoadingButton from "src/components/utils/loading-button"
 import AlertBox from "src/components/utils/alert-box"
-import UtilsHelper from "src/utils/utils-helper"
 
 export default {
   components: {LoadingSpinner, PasswordInput, Layout, LoadingButton, AlertBox},
@@ -66,7 +65,7 @@ export default {
 
       try {
 
-        await UtilsHelper.sleep(50)
+        await this.$utils.sleep(50)
 
         const out = await PandoraPay.wallet.manager.encryption.decryptWallet(this.password);
 
@@ -88,6 +87,11 @@ export default {
       }
 
     },
+
+    clickLogin(){
+      if (this.$refs.refLoadingButton)
+        this.$refs.refLoadingButton.handleClick()
+    }
 
   },
 

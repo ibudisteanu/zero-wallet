@@ -22,7 +22,10 @@
         <testnet-faucet-modal ref="testnetFaucetModal"/>
         <wallet-password-modal ref="walletPasswordModal"/>
         <decrypt-balance-modal ref="decryptBalanceModal"/>
+        <create-new-address-modal ref="createNewAddressModal"/>
         <layout-footer v-if="!disableLayout"/>
+        <import-account-modal ref="importAccountModal"/>
+        <import-account-secret-key-modal ref="importAccountSecretKeyModal"/>
 
       </div>
 
@@ -49,13 +52,17 @@ import QrCodeModal from "./modals/qr-code.modal"
 import LeftSidebar from "./left-sidebar/left-sidebar"
 import WarningBar from "./header/warning-bar"
 import Toasts from "./toasts/toasts"
-import QrCodeScannerModal from "../utils/qr-code-scanner/qr-code-scanner.modal";
+import QrCodeScannerModal from "src/components/utils/qr-code-scanner/qr-code-scanner.modal"
+import CreateNewAddressModal from "src/components/wallet/account/create-new-address.modal"
+import ImportAccountModal from "src/components/wallet/account/import-account.modal"
+import ImportAccountSecretKeyModal from "src/components/wallet/account/import-account-secret-key.modal"
 
 export default {
 
   components: {
-    LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar, QrCodeModal,
+    LeftSidebar, LayoutHeader, LayoutFooter, LoadingModal, WarningBar, QrCodeModal, CreateNewAddressModal,
     TestnetFaucetModal, WalletPasswordModal, Toasts, QrCodeScannerModal, DecryptBalanceModal, InputModal,
+    ImportAccountModal, ImportAccountSecretKeyModal,
   },
 
   props: {
@@ -81,12 +88,19 @@ export default {
         testnetFaucetModal: this.$refs.testnetFaucetModal,
         walletPasswordModal: this.$refs.walletPasswordModal,
         decryptBalanceModal: this.$refs.decryptBalanceModal,
+        createNewAddressModal: this.$refs.createNewAddressModal,
+        importAccountSecretKeyModal: this.$refs.importAccountSecretKeyModal,
+        importAccountModal: this.$refs.importAccountModal,
       })
     }
   },
 
   mounted() {
-    this.storeModals()
+    return this.storeModals()
+  },
+
+  beforeUpdate() {
+    return this.storeModals()
   }
 
 }

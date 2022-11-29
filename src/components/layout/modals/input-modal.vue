@@ -3,10 +3,10 @@
   <modal ref="modal" :title="title">
 
     <template v-slot:body>
-      <textarea v-if="textarea" class="form-control form-control-sm fs--2" :rows="textarea.rows" v-model="data" :disabled="!textarea.allowEdit"/>
-      <input v-if="input" class="form-control" v-model="data" :disabled="!input.allowEdit"/>
-      <alert-box v-if="confirmation" :type="confirmation.type">{{data}}</alert-box>
-      <secret-text v-if="secret" class="pt-1" :text="secret.value" :title="secret.title">
+      <textarea v-if="textarea" :class="`form-control ${textarea.class||''}`" :rows="textarea.rows" v-model="data" :disabled="!textarea.allowEdit"/>
+      <input v-if="input" :class="`form-control ${input.class||''}`" v-model="data" :disabled="!input.allowEdit"/>
+      <alert-box v-if="alert" :type="alert.type" :class="`${alert.class||''}`">{{alert.text}}</alert-box>
+      <secret-text v-if="secret" :class="`${secret.class||''}`" :text="secret.value" :title="secret.title">
         <template v-slot:warning>
           {{ secret.security }}
         </template>
@@ -46,7 +46,7 @@ export default {
       final: "",
       input: {allowEdit: true},
       textarea: {rows: 20, allowEdit:true},
-      confirmation: {type: "info"},
+      alert: {type: "info", text: ""},
       secret: {title: "Secret", security: "DO NOT share this secret key with anyone! This private key can be used to STEAL YOUR FUNDS FROM THIS ACCOUNT"},
       button: {text: "Save", icon: 'fas fa-disk', class:'btn btn-primary'},
     }
@@ -54,14 +54,14 @@ export default {
 
   methods: {
 
-    async showModal( { title = "Text", data = "", confirmation = null, textarea = null, input = null, secret = null, button }) {
+    async showModal( { title = "Text", data = "", alert = null, textarea = null, input = null, secret = null, button }) {
 
       Object.assign(this.$data, this.$options.data.apply(this))
 
       this.title = title
       this.data = data
 
-      this.confirmation = confirmation
+      this.alert = alert
       this.textarea = textarea
       this.input = input
       this.secret = secret
@@ -78,8 +78,8 @@ export default {
 
     handleSave(){
 
-      if (this.confirmation) this.final = true
-      else this.final = this.data
+      if (this.textarea || this.input) this.final = this.data
+      else this.final = true
 
       this.closeModal()
     },

@@ -2,31 +2,31 @@
 
   <layout>
 
-    <layout-title icon="fas fa-money-check-alt" title="Resolution Conditional Payment">
-      Sign Resolution for a Conditional Payment
+    <layout-title icon="fas fa-money-check-alt" title="Sign Resolution">
+      Sign a Resolution for a Conditional Payment (Transaction)
     </layout-title>
 
     <wizard :titles="{
                 0: {icon: 'fas fa-credit-card', name: 'Transaction Info', tooltip: 'Conditional Payment Transaction ID' },
                 1: {icon: 'fas fa-key', name: 'Private Key', tooltip: 'Private Key of the Conditional Payment' },
                 2: {icon: 'fas fa-signature', name: 'Generated Signature', tooltip: 'View your Signature' }}"
-            @onSetTab="setTab" controls-class-name="card-footer bg-light" class="card"
+            :onSetTab="setTab" controls-class-name="card-footer bg-light" class="card"
             :buttons="{1: {icon: 'fas fa-file-upload', text: 'Sign Resolution'}, 2: {hide: true } }">
 
       <template v-slot:tab_0>
         <div class="pb-2">
           <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Transaction Id:</label>
-          <input :class="`form-control ${$store.getters.validateHash(txId) ? 'is-invalid': ''}`" type="text" v-model="txId">
-          <div v-if="$store.getters.validateHash(txId)" class="invalid-feedback d-block">
-            {{ $store.getters.validateHash(txId) }}
+          <input :class="`form-control ${$validator.validateHash(txId) ? 'is-invalid': ''}`" type="text" v-model="txId" :disabled="$route.query.txId !== undefined && !$store.state.settings.expert" >
+          <div v-if="$validator.validateHash(txId)" class="invalid-feedback d-block">
+            {{ $validator.validateHash(txId) }}
           </div>
         </div>
 
         <div class="pb-2">
           <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Payload Index:</label>
-          <input :class="`form-control ${$store.getters.validateNumber(payloadIndex) ? 'is-invalid': ''}`" type="number" v-model="payloadIndex">
-          <div v-if="$store.getters.validateNumber(payloadIndex)" class="invalid-feedback d-block">
-            {{ $store.getters.validateNumber(payloadIndex) }}
+          <input :class="`form-control ${$validator.validateNumber(payloadIndex) ? 'is-invalid': ''}`" type="number" v-model="payloadIndex" :disabled="$route.query.payloadIndex !== undefined && !$store.state.settings.expert" >
+          <div v-if="$validator.validateNumber(payloadIndex)" class="invalid-feedback d-block">
+            {{ $validator.validateNumber(payloadIndex) }}
           </div>
         </div>
       </template>
@@ -37,12 +37,11 @@
           <div class="d-inline-block">
             <label class="form-label me-2">Resolution</label>
             <div class="form-check form-check-inline">
-              <input class="form-check-input cursor-pointer" id="sender" type="radio" value="sender" v-model="resolution"/>
+              <input class="form-check-input cursor-pointer" id="sender" type="radio" value="sender" v-model="resolution" :disabled="$route.query.resolution !== undefined && !$store.state.settings.expert" />
               <label class="form-check-label cursor-pointer" for="sender">Sender</label>
             </div>
             <div class="form-check form-check-inline">
-              <input class="form-check-input cursor-pointer" id="recipient" type="radio" value="recipient"
-                     v-model="resolution"/>
+              <input class="form-check-input cursor-pointer" id="recipient" type="radio" value="recipient" v-model="resolution" :disabled="$route.query.resolution !== undefined && !$store.state.settings.expert"/>
               <label class="form-check-label cursor-pointer" for="recipient">Receiver</label>
             </div>
           </div>
@@ -50,7 +49,7 @@
 
         <div class="row mt-2 mb-2">
           <label class="form-label ls text-uppercase text-600 fw-semi-bold mb-0 fs--1">Private Key</label>
-          <textarea class="form-control" rows="3" v-model="privateKey"></textarea>
+          <textarea class="form-control" rows="3" v-model="privateKey" :disabled="$route.query.privateKey !== undefined && !$store.state.settings.expert" ></textarea>
         </div>
 
       </template>
@@ -88,6 +87,7 @@ export default {
   data() {
     return {
       txId: "",
+      oldTx: null,
       payloadIndex: 0,
       resolution: "sender",
       privateKey: "",
@@ -120,37 +120,33 @@ export default {
 
   methods: {
 
-    async setTab({resolve, reject, oldTab, value}) {
-      try {
+    async setTab({oldTab, value}) {
 
-        if (oldTab === 0 && value === 1) {
-          await this.loadTransaction()
-          if (!this.tx) throw "Transaction was not found"
+      if (oldTab === 0 && value === 1) {
+        await this.loadTransaction()
+        if (!this.tx) throw "Transaction was not found"
 
-          if (!this.tx.version.eq(PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER))
-            throw "Wrong Transaction. It is not not a Zether tx"
+        if (!this.tx.version.eq(PandoraPay.enums.transactions.TransactionVersion.TX_ZETHER))
+          throw "Wrong Transaction. It is not not a Zether tx"
 
-          if (!this.payload) throw "Payload was not found!"
+        if (!this.payload) throw "Payload was not found!"
 
-          if (!this.payload.payloadScript.equals(PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CONDITIONAL_PAYMENT))
-            throw "Payload Script is not SCRIPT_CONDITIONAL_PAYMENT"
+        if (!this.payload.payloadScript.equals(PandoraPay.enums.transactions.transactionZether.PayloadScriptType.SCRIPT_CONDITIONAL_PAYMENT))
+          throw "Payload Script is not SCRIPT_CONDITIONAL_PAYMENT"
 
-          if (!this.txInfo)
-            throw "Transaction is not included in Blockchain"
+        if (!this.txInfo)
+          throw "Transaction is not included in Blockchain"
 
-          if (this.$store.state.blockchain.end.minus(this.payload.extra.deadline).gte(this.txInfo.blkHeight))
-            throw "Transaction Conclusion has expired"
+        if (this.$store.state.blockchain.end.minus(this.payload.extra.deadline).gte(this.txInfo.blkHeight))
+          throw "Transaction Conclusion has expired"
 
-          this.multisigPublicKeys = this.payload.extra.multisigPublicKeys.map(it => it)
-        }
-
-        if (oldTab === 1 && value === 2)
-          await this.handleSign()
-
-        resolve(true)
-      } catch (err) {
-        reject(err)
+        this.multisigPublicKeys = this.payload.extra.multisigPublicKeys.map(it => it)
       }
+
+      if (oldTab === 1 && value === 2)
+        await this.handleSign()
+
+      return true
     },
 
     async loadTransaction() {
@@ -159,20 +155,20 @@ export default {
 
       await this.$store.state.blockchain.syncPromise;
 
-      if (this.tx && this.tx.hash === this.hash) return
-
-      if (this.tx) await this.removed()
+      if (this.oldTx && ( !this.tx || this.oldTx.hash !== this.tx.hash)) await this.removed(this.oldTx)
 
       const tx = await this.$store.dispatch('getTransactionByHash', this.hash);
 
-      if (tx) {
+      if (tx && !this._.isUnmounted) {
+        this.oldTx = tx
         this.$store.commit('updateViewTransactionsHashes', {txsHashes: [tx.hash], insert: true})
         await this.$store.dispatch('subscribeTransaction', {txId: tx.hash})
       }
 
     },
 
-    async removed(tx = this.tx) {
+    async removed(tx = this.oldTx) {
+      if (!tx) return
       this.$store.commit('updateViewTransactionsHashes', {txsHashes: [tx.hash], insert: false})
       await this.$store.dispatch('unsubscribeTransaction', tx.hash)
     },
@@ -186,12 +182,14 @@ export default {
         if (to.query.payloadIndex !== undefined) this.payloadIndex = to.query.payloadIndex
         else this.payloadIndex = "0"
 
-        if (to.query.resolution !== undefined) this.resolution = to.query.resolution === "recipient"
+        if (to.query.resolution !== undefined) {
+          if (to.query.resolution === "sender" || to.query.resolution === "recipient") this.resolution = to.query.resolution
+          else throw "invalid query resolution"
+        }
         else this.resolution = "sender"
 
         if (to.query.privateKey !== undefined) this.privateKey = Buffer.from(to.query.privateKey, "hex").toString("base64")
         else this.privateKey = ""
-
 
         if (this.hash) await this.loadTransaction()
 
@@ -242,7 +240,7 @@ export default {
   },
 
   beforeUnmount() {
-    if (this.tx) return this.removed()
+    return this.removed()
   },
 
 }

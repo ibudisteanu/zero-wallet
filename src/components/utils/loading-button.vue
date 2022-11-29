@@ -1,11 +1,11 @@
 <template>
-  <component :class="`${classCustom}`" type="button" @click="handleClick" :is="component" v-tooltip.bottom="tooltip">
+  <component :class="`${ loaded ? 'cursor-pointer' : ''} ${classCustom}`" type="button" @click="handleClick" :is="component" v-tooltip.bottom="tooltip">
 
     <loading-spinner v-if="!loaded"/>
     <template v-else>
-      <i v-if="icon && iconLeft" :class="`${text? 'pe-1':''} ${icon}`"/>
-      <span v-if="text" class="hidden-xs">{{ text }}</span>
-      <i v-if="icon && !iconLeft" :class="`${text ? 'ps-1': ''} ${icon}`"/>
+      <i v-if="icon && iconLeft" :class="`${icon}`"/>
+      <span v-if="text" :class="`d-inline-block ${classText} ${iconLeft ? 'ps-1' : '' }`">{{ text }}</span>
+      <i v-if="icon && !iconLeft" :class="`${icon}`"/>
     </template>
 
   </component>
@@ -29,22 +29,22 @@ export default {
     iconLeft: {default: true},
     component: {default: "button"},
     tooltip: {default: ""},
-    submit: {default: null }
+    submit: {default: null },
+    classText: {default: ""},
+    canLoad: {default: true},
   },
   methods: {
     async handleClick(e) {
 
       if (this.disabled ) return false;
 
-      if (e) e.stopPropagation();
-
-      this.loaded = false;
+      if (this.canLoad) this.loaded = false;
       this.disabled = true;
 
       try{
         if (this.submit) await this.submit()
       }catch(e){
-        this.$store.dispatch('addToast', {type:"error", title:`Unexpected error`, body: e.toString() })
+        this.$store.dispatch('addToast', {type:"error", title:`Unexpected error`, text: e.toString() })
       }finally {
         this.loaded = true;
         this.disabled = false;
@@ -55,8 +55,3 @@ export default {
 }
 </script>
 
-<style scoped>
-span {
-  display: inline-block;
-}
-</style>

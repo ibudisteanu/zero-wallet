@@ -6,6 +6,7 @@
     <template v-else>
       <div class="d-flex flex-center" v-if="!walletInitialized" style="height: 100vh;">
         <loading-spinner class="fs-5"/>
+        <label class="ms-1">Loading...</label>
       </div>
       <router-view v-else></router-view>
     </template>

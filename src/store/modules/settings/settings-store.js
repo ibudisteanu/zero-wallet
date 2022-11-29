@@ -5,8 +5,8 @@ export default {
     state: {
         dark: true,
         balanceDecryptorTableSize: 18,
-        mobile: false,
-        tablet: false,
+
+        expert: false,
     },
 
     mutations,

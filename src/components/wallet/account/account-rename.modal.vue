@@ -4,7 +4,7 @@
         <template v-slot:body v-if="account">
             <span class="text-break mb-2 d-block">Do you want to <b>rename</b> address {{this.account.name}} in your wallet</span>
             <div class="address align-items-center">
-                <account-identicon :address="this.account.addressEncoded" size="35" outer-size="13" />
+                <account-identicon :address="this.account.addressEncoded" size="35" outer-size="13" route="" />
                 <span class="text-break">{{ this.account.addressEncoded }}</span>
             </div>
 

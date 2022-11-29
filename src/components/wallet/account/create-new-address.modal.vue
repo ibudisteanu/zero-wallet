@@ -4,17 +4,17 @@
 
     <template v-slot:body>
 
-      <div class="form-group">
-        <label>Account Name</label>
+      <div class="form-group pb-2">
+        <label class="form-label">Account Name</label>
         <input type="text" class="form-control" v-model="name"/>
       </div>
 
-      <div class="form-check pt-4">
+      <div class="form-check" v-if="$store.state.settings.expert">
         <input class="form-check-input" id="staked" type="checkbox" v-model="staked"/>
         <label class="form-check-label" for="staked">Staked</label>
       </div>
 
-      <div class="form-check pt-2">
+      <div class="form-check" v-if="$store.state.settings.expert">
         <input class="form-check-input" id="spendRequired" type="checkbox" v-model="spendRequired"/>
         <label class="form-check-label" for="spendRequired">Spend Key Required</label>
       </div>

@@ -41,8 +41,8 @@ export default {
 
   props: {
     label: {default: ""},
-    total: {default: () => new Decimal(0)},
-    current: {default: () => new Decimal(0)},
+    total: {default: () => Decimal_0},
+    current: {default: () => Decimal_0},
     countPerPage: {default: 20},
     prefix: {default: ""},
     suffix: {default: ""},

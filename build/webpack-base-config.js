@@ -95,7 +95,7 @@ module.exports = (env, argv) => {
                 BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
                 LASTCOMMITDATETIME: JSON.stringify(gitRevisionPlugin.lastcommitdatetime()),
                 BROWSER: true,
-                FILES_VERSIONING: Math.random().toString(),
+                FILES_VERSIONING: `Math.random().toString()`,
                 __VUE_OPTIONS_API__: true,
                 __VUE_PROD_DEVTOOLS__: false,
             }),

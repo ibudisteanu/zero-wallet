@@ -27,7 +27,7 @@
           </div>
         </div>
 
-        <div class="row pt-4">
+        <div class="row pt-4" v-if="$store.state.settings.expert">
           <div class="col-12 col-sm-6">
             <label>
               Encryption difficulty: {{ encryptionDifficulty }}
@@ -36,7 +36,7 @@
             <input class="form-range" type="range" min="1" max="5" v-model.number="encryptionDifficulty"/>
             <small v-if="encryptionDifficulty > 2" :class="`fw-semi-bold rounded-pill badge-soft-${encryptionDifficulty > 7 ? 'danger' : 'warning'} p-1`">
               <i class="fas fa-exclamation-triangle"/> High Difficulty requires
-              {{ $formatMilliseconds(encryptionTime[encryptionDifficulty] * 1000) }} seconds to login.
+              {{ $strings.formatMilliseconds(encryptionTime[encryptionDifficulty] * 1000) }} seconds to login.
             </small>
           </div>
           <div class="col-12 col-sm-6">

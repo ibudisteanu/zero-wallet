@@ -8,7 +8,7 @@ export default {
     state: {
 
         list: {},
-        count: new Decimal(0),
+        count: Decimal_0,
 
     },
 

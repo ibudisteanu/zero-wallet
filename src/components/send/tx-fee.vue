@@ -5,21 +5,19 @@
       <label class="form-check-label" for="feeAuto">Automatically Calculate Tx Fee</label>
     </div>
 
-    <tx-amount v-if="!feeType" text="Fee Amount" :balances="balances" @changed="changedFeeManual"
-               :allow-zero="allowZero" :asset="asset"/>
+    <input-amount v-if="!feeType" text="Fee Amount" @changed="changedFeeManual" :allow-zero="allowZero" :asset="asset"/>
   </div>
 </template>
 
 <script>
-import TxAmount from "./tx-amount"
+import InputAmount from "./input-amount"
 import Decimal from "decimal.js"
 
 export default {
 
-  components: {TxAmount},
+  components: {InputAmount},
 
   props: {
-    balances: {default: null},
     allowZero: {default: false},
     asset: {default: PandoraPay.config.coins.NATIVE_ASSET_FULL_STRING_BASE64},
   },
@@ -28,12 +26,8 @@ export default {
     return {
       feeType: true,
 
-      feeAuto: {
-        amount: new Decimal(0),
-        validationError: "",
-      },
       feeManual: {
-        amount: new Decimal(0),
+        amount: Decimal_0,
         validationError: "",
       },
     }
@@ -42,9 +36,6 @@ export default {
   methods: {
     changedFeeManual(data) {
       this.feeManual = {...this.feeManual, ...data,}
-    },
-    changedFeeAuto(data) {
-      this.feeAuto = {...this.feeAuto, ...data,}
     },
   },
 

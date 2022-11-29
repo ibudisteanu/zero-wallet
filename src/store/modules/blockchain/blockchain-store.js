@@ -6,15 +6,15 @@ export default {
 
     state: {
 
-        genesisTimestamp: new Decimal(0),
+        genesisTimestamp: Decimal_0,
 
-        end: new Decimal(0),
+        end: Decimal_0,
 
         hash: '',
         prevHash: '',
         prevKernelHash: '',
-        assets: new Decimal(0),
-        transactions: new Decimal(0),
+        assets: Decimal_0,
+        transactions: Decimal_0,
 
         status: '',
 

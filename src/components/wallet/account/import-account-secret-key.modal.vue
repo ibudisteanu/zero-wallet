@@ -8,22 +8,22 @@
               0: {icon: 'fas fa-pencil-alt', name: 'Information', tooltip: 'Information of the account' },
               1: {icon: 'fas fa-file-code', name: 'Secret Key', tooltip: 'Secret Key' },
               2: {icon: 'fas fa-check', name: 'Done', tooltip: 'Finish importing account' }}"
-              @onSetTab="setTab" controls-class-name="modal-footer bg-light" :allow-scroll="false"
+              :onSetTab="setTab" controls-class-name="modal-footer bg-light" :allow-scroll="false"
               :buttons="{ 1: { icon: 'fas fa-file-upload', text: 'Import Account' }}">
 
         <template v-slot:tab_0>
 
-          <div class="form-group pt-2">
-            <label>Account Name</label>
+          <div class="form-group pb-2">
+            <label class="form-label">Account Name</label>
             <input type="text" class="form-control" v-model="name"/>
           </div>
 
-          <div class="form-check pt-4">
+          <div class="form-check" v-if="$store.state.settings.expert">
             <input class="form-check-input" id="staked" type="checkbox" v-model="staked"/>
             <label class="form-check-label" for="staked">Staked</label>
           </div>
 
-          <div class="form-check pt-2">
+          <div class="form-check" v-if="$store.state.settings.expert">
             <input class="form-check-input" id="spendRequired" type="checkbox" v-model="spendRequired"/>
             <label class="form-check-label" for="spendRequired">Spend Key Required</label>
           </div>
@@ -66,16 +66,12 @@ export default {
 
   methods: {
 
-    async setTab({resolve, reject, oldTab, value}) {
-      try {
+    async setTab({oldTab, value}) {
 
-        if (oldTab === 1 && value === 2)
-          await this.handleImportAccountSecretKey()
+      if (oldTab === 1 && value === 2)
+        await this.handleImportAccountSecretKey()
 
-        resolve(true)
-      } catch (err) {
-        reject(err)
-      }
+      return true
     },
 
     showModal() {
@@ -110,9 +106,8 @@ export default {
 
         this.closeModal();
 
-      } catch (err) {
-        console.error(err)
-        throw err
+      } catch (e) {
+        throw e
       } finally {
         this.$store.state.page.loadingModal.closeModal();
       }

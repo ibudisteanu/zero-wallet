@@ -47,7 +47,7 @@ export default {
     const img = new Image()
     img.src = this.logo
 
-    if (this.$store.state.settings.mobile) {
+    if (this.$store.state.page.mobile) {
       img.width = '64'
       img.height = '64'
     }
