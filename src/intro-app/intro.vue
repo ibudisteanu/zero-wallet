@@ -140,6 +140,7 @@ export default {
                   const data = await integrationHelper.downloadWasm(status => console.log( "helper:", status ) )
                   await integrationHelper.createWorker()
                   integrationHelper.initialize( data )
+                }
 
               })
 
